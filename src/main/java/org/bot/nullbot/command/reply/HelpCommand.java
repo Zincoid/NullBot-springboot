@@ -35,11 +35,14 @@ public class HelpCommand implements Command
                     RandomSaying 或 say  随机语录
                     
                     ◉ [图片功能]
-                    ImageSave  保存引用的图片至本地
-                    ImageGet  获取保存的图片
-                    ImageDelete  删除保存的图片
-                    ImageList  获取保存图片的列表
+                    ImageSave  保存引用图片
+                    ImageGet  获取保存图片
+                    ImageDelete  删除保存图片
+                    ImageList  获取保存图片列表
                     RandomImage 或 img  发送保存的随机图片
+                    
+                    ◉ [老婆功能]
+                    Wife  今日群友老婆
 
                     ◉ [管理功能]
                     UserBan  禁言群内用户
@@ -50,7 +53,7 @@ public class HelpCommand implements Command
                     Help  获取帮助信息
                     指令后加 -help或-h 获取详情
                     
-                    指令前缀为 """ + commandPrefix;
+                    指令前缀为\s""" + commandPrefix;
 
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "======= HELP =======\n" + help, false);
             logger.info("\t\t\t\t├─[Help] 已打印帮助");
