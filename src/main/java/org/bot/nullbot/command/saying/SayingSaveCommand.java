@@ -33,8 +33,8 @@ public class SayingSaveCommand implements Command
                 String userName = replyMsg.getSender().getNickname();
                 String text = replyMsg.getMessage();
                 int inserted = sayingMapper.insert(userId, userName, text);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Saying.Save] 语录已保存 id: " + inserted, false);
-                logger.info("\t\t\t\t├─[Saying.Save] 语录已保存 - id -> {}", inserted);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Saying.Save] 语录保存" + (inserted == 1 ? "成功" : "失败"), false);
+                logger.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", inserted == 1 ? "成功" : "失败");
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Saying.Save] 该命令需回复文本", false);
                 logger.info("\t\t\t\t├─[Saying.Save] 未指定消息");

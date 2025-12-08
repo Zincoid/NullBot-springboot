@@ -5,8 +5,8 @@ CREATE TABLE saying (
     id INT PRIMARY KEY AUTO_INCREMENT,
     time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id Long NOT NULL,
-    user_name VARCHAR(20) NOT NULL,
-    text VARCHAR(100) NOT NULL
+    user_name VARCHAR(50) NOT NULL,
+    text VARCHAR(1000) NOT NULL
 );
 
 # DROP TABLE saying;

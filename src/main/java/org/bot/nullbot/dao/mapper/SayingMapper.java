@@ -17,7 +17,6 @@ public interface SayingMapper extends BaseMapper<SayingPO>
     boolean deleteById(Integer id);
 
     @Insert("insert into saying(user_id, user_name, text) values(#{userId}, #{userName}, #{text})")
-    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(Long userId, String userName, String text);
 
     @Select("select text from saying order by rand() limit 1")
