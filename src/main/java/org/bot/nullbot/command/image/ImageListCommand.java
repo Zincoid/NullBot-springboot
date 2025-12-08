@@ -32,7 +32,10 @@ public class ImageListCommand implements Command
     }
 
     @Override
+    public Integer getAccess() { return 2; }
+
+    @Override
     public String getHelp() {
-        return "/ImageList 命令\n功能: 获取保存图片的列表\n格式: /ImageList";
+        return "/ImageList 命令\n功能: 获取保存图片的列表\n限权: 2\n格式: /ImageList";
     }
 }

@@ -36,6 +36,6 @@ public class ChatCommand implements Command
 
     @Override
     public String getHelp() {
-        return "/Chat 命令\n功能: 与AI聊天\n格式: /Chat [对话内容] 或 @Null [对话内容] 或 戳一戳";
+        return "/Chat 命令\n功能: 与AI聊天\n限权: 0\n格式: /Chat [对话内容] 或 @Null [对话内容] 或 戳一戳";
     }
 }

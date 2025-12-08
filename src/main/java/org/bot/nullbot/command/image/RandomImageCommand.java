@@ -37,6 +37,6 @@ public class RandomImageCommand implements Command {
 
     @Override
     public String getHelp() {
-        return "/RandomImage 或 /img 命令\n功能: 发送保存的随机图片\n格式: /RandomImage 或 /img";
+        return "/RandomImage 或 /img 命令\n功能: 发送保存的随机图片\n限权: 0\n格式: /RandomImage 或 /img";
     }
 }

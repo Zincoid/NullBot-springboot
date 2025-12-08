@@ -26,7 +26,7 @@ public class SayingDeleteCommand implements Command
                 try {
                     int id = Integer.parseInt(event.getCommandParameters().get(0));
                     boolean deleted = sayingMapper.deleteById(id);
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Saying.Delete] 执行语录删除: ID(" + id + ") -> " + (deleted ? "成功" : "无记录"), false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Saying.Delete] 执行语录删除: No." + id + " -> " + (deleted ? "成功" : "无记录"), false);
                     logger.info("\t\t\t\t├─[Saying.Delete] 执行语录删除 - ID {} -> {}", id, deleted ? "成功" : "无记录");
                 } catch (NumberFormatException e) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Saying.Delete] 参数格式错误", false);
@@ -41,7 +41,10 @@ public class SayingDeleteCommand implements Command
     }
 
     @Override
+    public Integer getAccess() { return 1; }
+
+    @Override
     public String getHelp() {
-        return "/SayingDelete 命令\n功能:  删除语录\n格式: /SayingDelete [语录ID]";
+        return "/SayingDelete 命令\n功能:  删除语录\n限权: 1\n限权: 1\n格式: /SayingDelete [语录ID]";
     }
 }
