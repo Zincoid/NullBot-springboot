@@ -31,7 +31,7 @@ public class SayingSaveCommand implements Command
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                 long userId = Long.parseLong(replyMsg.getSender().getUserId());
                 String userName = replyMsg.getSender().getNickname();
-                String text = replyMsg.getRawMessage().replaceAll("\\[CQ:.*?\\]", "");
+                String text = replyMsg.getRawMessage().replaceAll("\\[CQ:at,qq=(\\d+)\\]", "@$1").replaceAll("\\[CQ:.*?\\]", "");
                 int inserted = sayingMapper.insert(userId, userName, text);
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Saying.Save] 语录保存" + (inserted == 1 ? "成功" : "失败"), false);
                 logger.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", inserted == 1 ? "成功" : "失败");
