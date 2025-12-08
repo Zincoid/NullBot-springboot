@@ -1,0 +1,38 @@
+package org.bot.qqbot.command.image;
+
+import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import lombok.RequiredArgsConstructor;
+import org.bot.qqbot.annotation.CommandMapping;
+import org.bot.qqbot.command.Command;
+import org.bot.qqbot.config.FileStorageConfig;
+import org.bot.qqbot.entity.CommandEvent;
+import org.bot.qqbot.plugin.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+
+@CommandMapping({"ImageList"})
+@Component
+@RequiredArgsConstructor
+public class ImageListCommand implements Command
+{
+    private static final Logger logger = LoggerFactory.getLogger(ImageListCommand.class);
+    private final FileStorageConfig fileStorageConfig;
+
+    @Override
+    public void execute(Bot bot, CommandEvent<?> event) {
+        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            String imageList = FileUtil.getFileListAsString(fileStorageConfig.getImagePath() + "/collect");
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), imageList, false);
+            logger.info("\t\t\t\t├─[Image.List] 已获取 - 图片列表");
+        }else
+            logger.info("\t\t\t\t├─[Image.List] 未设计 - 非群消息事件响应方式");
+    }
+
+    @Override
+    public String getHelp() {
+        return "/ImageList 命令\n功能: 获取保存图片的列表\n格式: /ImageList";
+    }
+}
