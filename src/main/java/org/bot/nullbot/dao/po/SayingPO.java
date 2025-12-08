@@ -20,4 +20,9 @@ public class SayingPO {
     private Long userId;
     private String userName;
     private String text;
+
+    @Override
+    public String toString() {
+        return "[" + time + "][No." + id + "]\n" + text + "\n" + "\t\t—— " + userName + "(" + userId + ")";
+    }
 }

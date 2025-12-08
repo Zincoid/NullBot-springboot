@@ -25,7 +25,8 @@ public class RandomSayingCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             SayingPO saying = sayingMapper.getRand();
             if (saying != null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), saying.getText() + "\n" + "\t—— " + saying.getUserName() + "(" + saying.getUserId() + ")", false);
+                String text = saying.toString();
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), text, false);
                 logger.info("\t\t\t\t├─[Saying.Random] 已发送语录 - {}", saying);
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "无语录", false);
