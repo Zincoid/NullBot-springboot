@@ -1,6 +1,11 @@
 spring:
   application:
     name: NullBot
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/nullbot
+    username: root
+    password: root
 
 server:
   port: 9001
