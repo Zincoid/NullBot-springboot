@@ -33,6 +33,6 @@ public class ChatHistoryCommand implements Command
 
     @Override
     public String getHelp() {
-        return "/ChatHistory 命令\n功能: 获取AI聊天历史\n限权: 0\n格式: /ChatHistory";
+        return "/ChatHistory 命令\n功能: 获取AI聊天历史\n限权: " + getAccess() + "\n格式: /ChatHistory";
     }
 }

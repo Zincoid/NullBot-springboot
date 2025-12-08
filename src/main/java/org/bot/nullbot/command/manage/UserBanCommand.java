@@ -42,6 +42,6 @@ public class UserBanCommand implements Command {
 
     @Override
     public String getHelp() {
-        return "/UserBan 命令\n功能: 用户禁言(时长设置为0则解除禁言)\n限权: 1\n格式: /UserBan [QQ号] [时长(min)]";
+        return "/UserBan 命令\n功能: 用户禁言(时长设置为0则解除禁言)\n限权: " + getAccess() + "\n格式: /UserBan [QQ号] [时长(min)]";
     }
 }

@@ -36,6 +36,6 @@ public class ChatModeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "/ChatMode 命令\n功能: 切换AI聊天模式\n限权: 1\n格式: /ChatMode";
+        return "/ChatMode 命令\n功能: 切换AI聊天模式\n限权: " + getAccess() + "\n格式: /ChatMode";
     }
 }

@@ -46,6 +46,6 @@ public class FunctionControlCommand implements Command {
 
     @Override
     public String getHelp() {
-        return "/FunctionControl 命令\n功能: 转换功能启用状态\n限权: 2\n格式: /FunctionControl [功能控制标志]";
+        return "/FunctionControl 命令\n功能: 转换功能启用状态\n限权: " + getAccess() + "\n格式: /FunctionControl [功能控制标志]";
     }
 }

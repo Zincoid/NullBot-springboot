@@ -55,6 +55,6 @@ public class WifeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "/Wife 命令\n功能: 今日老婆\n限权: 0\n格式: /Wife";
+        return "/Wife 命令\n功能: 今日老婆\n限权: " + getAccess() + "\n格式: /Wife";
     }
 }
