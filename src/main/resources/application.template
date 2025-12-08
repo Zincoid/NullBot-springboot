@@ -32,7 +32,7 @@ nullbot:
       scope: group
   file:
     storage:
-      image-path: /root/Nullbot/download/image
+      image-path: /root/Nullbot/download/image  # src/main/resources/download/image
   accesses:
     2660181154: 2
 
