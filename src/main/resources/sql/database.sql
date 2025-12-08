@@ -1,0 +1,9 @@
+CREATE DATABASE NullBot;
+USE NullBot;
+
+CREATE TABLE saying (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id Long NOT NULL,
+    user_name VARCHAR(20) NOT NULL,
+    text VARCHAR(100) NOT NULL
+);
