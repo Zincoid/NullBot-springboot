@@ -7,6 +7,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"Help", "help"})
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Component;
 public class HelpCommand implements Command
 {
     private static final Logger logger = LoggerFactory.getLogger(HelpCommand.class);
+
+    @Value("${nullbot.command.prefix}")
+    private String commandPrefix;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -24,6 +28,11 @@ public class HelpCommand implements Command
                     ResetHistory  清空历史记忆
                     ChatHistory   获取聊天历史
                     ChatMode  切换聊天模式
+                    
+                    ◉ [语录功能]
+                    SayingSave  保存语录
+                    SayingDelete  删除语录
+                    RandomSaying 或 say  随机语录
                     
                     ◉ [图片功能]
                     ImageSave  保存引用的图片至本地
@@ -41,7 +50,7 @@ public class HelpCommand implements Command
                     Help  获取帮助信息
                     指令后加 -help或-h 获取详情
                     
-                    指令前缀为 /""";
+                    指令前缀为 """ + commandPrefix;
 
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "======= HELP =======\n" + help, false);
             logger.info("\t\t\t\t├─[Help] 已打印帮助");
