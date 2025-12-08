@@ -1,10 +1,12 @@
 package org.bot.nullbot.dispatcher.listener;
 
 import com.mikuac.shiro.annotation.GroupMessageHandler;
+import com.mikuac.shiro.annotation.GroupPokeNoticeHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.mikuac.shiro.enums.AtEnum;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
@@ -60,6 +62,7 @@ public class MonitorListener
         }
     }
 
+    @FunctionControl(config = "enableMessageCollect")
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)
     @Async("virtualThreadExecutor")
@@ -86,5 +89,13 @@ public class MonitorListener
             commandProcessor.processQQ(bot, new CommandEvent<>("UserBan", List.of(event.getSender().getUserId().toString(), "1"), event, false));
             // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("你也受着"), event, false));
         }
+    }
+
+    @FunctionControl(config = "enablePokeDetect")
+    @GroupPokeNoticeHandler
+    @Async("virtualThreadExecutor")
+    public void GroupPokeDetect(Bot bot, PokeNoticeEvent event) throws Exception {
+        logger.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {}", event.getGroupId(), event.getUserId(), event.getTargetId());
+        commandProcessor.processQQ(bot, new CommandEvent<>(event));
     }
 }

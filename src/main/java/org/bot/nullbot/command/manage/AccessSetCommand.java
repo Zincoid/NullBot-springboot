@@ -58,6 +58,6 @@ public class AccessSetCommand implements Command
 
     @Override
     public String getHelp() {
-        return "/AccessSet 命令\n功能: 设置用户限权等级\n限权: 无法修改高于或等于自身限权用户 设置的限权无法高于或等于自身限权\n格式: /AccessSet [QQ号] [限权等级]";
+        return "AccessSet 命令\n功能: 设置用户限权等级\n限权: 无法修改高于或等于自身限权用户 设置的限权无法高于或等于自身限权\n格式: AccessSet [QQ号] [限权等级]";
     }
 }

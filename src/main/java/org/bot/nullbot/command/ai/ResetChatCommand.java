@@ -38,6 +38,6 @@ public class ResetChatCommand implements Command
 
     @Override
     public String getHelp() {
-        return "/ResetChat 命令\n功能: 重置AI聊天记忆\n限权: " + getAccess() + "\n格式: /ResetChat";
+        return "ResetChat 命令\n功能: 重置AI聊天记忆\n限权: " + getAccess() + "\n格式: ResetChat";
     }
 }

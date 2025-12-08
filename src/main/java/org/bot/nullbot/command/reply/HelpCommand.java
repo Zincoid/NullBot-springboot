@@ -50,7 +50,7 @@ public class HelpCommand implements Command
                     AccessSet  设置用户限权
                     
                     ◉ [帮助功能]
-                    Help  获取帮助信息
+                    Help 或 help  获取帮助信息
                     指令后加 -help或-h 获取详情
                     
                     当前指令前缀为\s""" + commandPrefix;

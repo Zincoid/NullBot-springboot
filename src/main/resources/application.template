@@ -3,9 +3,9 @@ spring:
     name: NullBot
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/nullbot
+    url: jdbc:mysql://localhost:3306/NullBot
     username: root
-    password: root
+    password:
 
 server:
   port: 9001
@@ -28,6 +28,8 @@ shiro:
 nullbot:
   enable-image-collect: false
   enable-keyword-detect: true
+  enable-poke-detect: true
+  enable-message-collect: true  # DeepSeek Monitor模式下需启用
   command:
     prefix: /
     rate-limit:

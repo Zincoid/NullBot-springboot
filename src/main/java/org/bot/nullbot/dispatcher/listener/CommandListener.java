@@ -53,11 +53,4 @@ public class CommandListener
         logger.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
         commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
     }
-
-    @GroupPokeNoticeHandler
-    @Async("virtualThreadExecutor")
-    public void onGroupPokeInteraction(Bot bot, PokeNoticeEvent event) throws Exception {
-        logger.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {}", event.getGroupId(), event.getUserId(), event.getTargetId());
-        commandProcessor.processQQ(bot, new CommandEvent<>(event));
-    }
 }

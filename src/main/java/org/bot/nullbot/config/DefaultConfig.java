@@ -12,5 +12,7 @@ import java.util.Map;
 public class DefaultConfig {
     private Boolean enableImageCollect;
     private Boolean enableKeywordDetect;
+    private Boolean enablePokeDetect;
+    private Boolean enableMessageCollect;
     private Map<Long, Integer> accesses;
 }

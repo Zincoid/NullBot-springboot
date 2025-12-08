@@ -59,6 +59,6 @@ public class ImageSaveCommand implements Command {
 
     @Override
     public String getHelp() {
-        return "/ImageSave 命令\n功能: 保存图片至本地\n限权: " + getAccess() + "\n格式: [引用图片]/ImageSave";
+        return "ImageSave 命令\n功能: 保存图片至本地\n限权: " + getAccess() + "\n格式: [引用图片]ImageSave";
     }
 }
