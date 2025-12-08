@@ -39,21 +39,21 @@ public class HelpCommand implements Command
                     ImageGet  获取保存图片
                     ImageDelete  删除保存图片
                     ImageList  获取保存图片列表
-                    RandomImage 或 img  发送保存的随机图片
+                    RandomImage 或 img  发送随机保存图片
                     
                     ◉ [老婆功能]
                     Wife  今日群友老婆
 
                     ◉ [管理功能]
                     UserBan  禁言群内用户
-                    FunctionControl  修改部分功能启用状态
+                    FunctionControl  修改功能启用状态
                     AccessSet  设置用户限权
                     
                     ◉ [帮助功能]
                     Help  获取帮助信息
                     指令后加 -help或-h 获取详情
                     
-                    指令前缀为\s""" + commandPrefix;
+                    当前指令前缀为\s""" + commandPrefix;
 
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "======= HELP =======\n" + help, false);
             logger.info("\t\t\t\t├─[Help] 已打印帮助");
