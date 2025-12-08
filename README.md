@@ -24,4 +24,4 @@ sudo screen -r nullbot # 恢复 nullbot
 在会话内输入 exit
 
 # 本地访问服务器NapCat配置服务
-ssh -L 6099:127.0.0.1:6099 root@101.200.136.96
+ssh -L 6099:127.0.0.1:6099 root@ip
