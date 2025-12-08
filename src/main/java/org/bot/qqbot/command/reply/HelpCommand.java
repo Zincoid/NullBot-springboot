@@ -31,6 +31,8 @@ public class HelpCommand implements Command
                     /ImageList  获取保存图片的列表
                     
                     /UserBan  禁言群内用户
+                    /FunctionControl  修改部分功能启用状态
+                    /AccessSet  设置用户限权
                     
                     /Help  获取帮助信息
                     指令后加 -help或-h 获取详情""";
