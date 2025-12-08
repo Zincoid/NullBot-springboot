@@ -19,6 +19,6 @@ public interface SayingMapper extends BaseMapper<SayingPO>
     @Insert("insert into saying(user_id, user_name, text) values(#{userId}, #{userName}, #{text})")
     int insert(Long userId, String userName, String text);
 
-    @Select("select text from saying order by rand() limit 1")
-    String getRand();
+    @Select("select * from saying order by rand() limit 1")
+    SayingPO getRand();
 }

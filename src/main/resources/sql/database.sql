@@ -1,6 +1,8 @@
 CREATE DATABASE NullBot;
 USE NullBot;
 
+DROP TABLE saying;
+
 CREATE TABLE saying (
     id INT PRIMARY KEY AUTO_INCREMENT,
     time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -8,5 +10,3 @@ CREATE TABLE saying (
     user_name VARCHAR(50) NOT NULL,
     text VARCHAR(1000) NOT NULL
 );
-
-# DROP TABLE saying;

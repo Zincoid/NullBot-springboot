@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dao.mapper.SayingMapper;
+import org.bot.nullbot.dao.po.SayingPO;
 import org.bot.nullbot.entity.CommandEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +23,14 @@ public class RandomSayingCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String saying = sayingMapper.getRand();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), saying, false);
-            logger.info("\t\t\t\t├─[Saying.Random] 已发送语录 - {}", saying);
+            SayingPO saying = sayingMapper.getRand();
+            if (saying != null) {
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), saying.getText() + "\n" + "\t—— " + saying.getUserName() + "(" + saying.getUserId() + ")", false);
+                logger.info("\t\t\t\t├─[Saying.Random] 已发送语录 - {}", saying);
+            }else{
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "无语录", false);
+                logger.info("\t\t\t\t├─[Saying.Random] 无语录");
+            }
         }else
             logger.info("\t\t\t\t├─[Saying.Random] 未设计 - 非群消息事件响应方式");
     }
