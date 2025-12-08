@@ -23,6 +23,6 @@ public class SayingPO {
 
     @Override
     public String toString() {
-        return "[" + time + "][No." + id + "]\n" + text + "\n" + "\t\t—— " + userName + "(" + userId + ")";
+        return "[" + time + "][No." + id + "]\n" + text + "\n" + "\t—— " + userName + "(" + userId + ")";
     }
 }
