@@ -9,7 +9,7 @@ import java.util.Map;
 @Data
 @Component
 @ConfigurationProperties(prefix = "nullbot")
-public class FunctionDefaultConfig {
+public class DefaultConfig {
     private Boolean enableImageCollect;
     private Boolean enableKeywordDetect;
     private Map<Long, Integer> accesses;

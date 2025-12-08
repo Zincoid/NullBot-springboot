@@ -1,6 +1,6 @@
 package org.bot.nullbot.plugin.component.control;
 
-import org.bot.nullbot.config.FunctionDefaultConfig;
+import org.bot.nullbot.config.DefaultConfig;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -9,10 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class FunctionManager {
-    private final FunctionDefaultConfig defaultConfig;
+    private final DefaultConfig defaultConfig;
     private final Map<String, Boolean> enableFlags = new ConcurrentHashMap<>();
 
-    public FunctionManager(FunctionDefaultConfig defaultConfig) {
+    public FunctionManager(DefaultConfig defaultConfig) {
         this.defaultConfig = defaultConfig;
         // 使用反射获取所有字段
         loadConfigViaReflection();

@@ -1,6 +1,6 @@
 package org.bot.nullbot.plugin.component.control;
 
-import org.bot.nullbot.config.FunctionDefaultConfig;
+import org.bot.nullbot.config.DefaultConfig;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -11,7 +11,7 @@ public class AccessManager
 {
     private final Map<Long, Integer> accesses;
 
-    public AccessManager(FunctionDefaultConfig defaultConfig) { accesses = new ConcurrentHashMap<>(defaultConfig.getAccesses()); }
+    public AccessManager(DefaultConfig defaultConfig) { accesses = new ConcurrentHashMap<>(defaultConfig.getAccesses()); }
 
     public Integer getAccess(Long id) { return accesses.getOrDefault(id, 0); }
 
