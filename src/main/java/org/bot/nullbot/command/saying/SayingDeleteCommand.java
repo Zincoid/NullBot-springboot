@@ -1,6 +1,5 @@
 package org.bot.nullbot.command.saying;
 
-import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +7,6 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dao.mapper.SayingMapper;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
