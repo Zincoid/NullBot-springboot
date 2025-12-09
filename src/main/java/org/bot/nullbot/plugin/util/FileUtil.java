@@ -48,9 +48,11 @@ public class FileUtil {
                 // 当前行的前缀
                 sb.append(prefix);
                 if (isLast) {
-                    sb.append("└── ");
+                    // sb.append("└── ");
+                    sb.append("└ ");
                 } else {
-                    sb.append("├── ");
+                    // sb.append("├── ");
+                    sb.append("├ ");
                 }
                 sb.append(item.getFileName()).append("\n");
                 // 子项的前缀
