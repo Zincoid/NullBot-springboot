@@ -30,6 +30,7 @@ nullbot:
   enable-keyword-detect: true
   enable-poke-detect: true
   enable-message-collect: true  # DeepSeek Monitor模式下需启用
+  enable-recall-detect: true
   command:
     prefix: /
     rate-limit:
