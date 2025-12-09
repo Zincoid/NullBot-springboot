@@ -9,6 +9,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.mikuac.shiro.enums.AtEnum;
 import com.mikuac.shiro.enums.MsgTypeEnum;
+import com.mikuac.shiro.enums.ReplyEnum;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
@@ -45,6 +46,26 @@ public class CommandListener
             }
         }
     }
+
+    // @GroupMessageHandler
+    // @Async("virtualThreadExecutor")
+    // public void onGroupBasicCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception {
+    //     if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
+    //         logger.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
+    //         commandProcessor.processQQ(bot, new CommandEvent<>(event));
+    //     }
+    // }
+
+    // @GroupMessageHandler
+    // @MessageHandlerFilter(reply = ReplyEnum.REPLY_ALL)
+    // @Async("virtualThreadExecutor")
+    // public void onGroupReplyCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception {  // 检测引用命令
+    //     String slashCommand = event.getArrayMsg().get(1).getData().get("text");
+    //     if(slashCommand != null && slashCommand.startsWith(commandPrefix)){
+    //         logger.info("◉ [GroupAction:ReplyCommand] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
+    //         commandProcessor.processQQ(bot, new CommandEvent<>(event));
+    //     }
+    // }
 
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NEED)
