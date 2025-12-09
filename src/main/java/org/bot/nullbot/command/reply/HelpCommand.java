@@ -37,7 +37,7 @@ public class HelpCommand implements Command
                     ◉ [图片功能]
                     ImageSave  保存引用图片
                     ImageGet  获取保存图片
-                    ImageDelete  删除保存图片
+                    ImageDelete  删除保存图片(可引用删除)
                     ImageList  获取保存图片列表
                     RandomImage 或 img  发送随机保存图片
                     

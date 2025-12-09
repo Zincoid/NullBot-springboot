@@ -67,6 +67,6 @@ public class ImageDeleteCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ImageDelete 命令\n功能: 删除保存的图片\n限权: " + getAccess() + "\n格式: ImageDelete [文件名]\n中文命令: 删除图片";
+        return "◉ ImageDelete 命令\n功能: 删除保存的图片\n限权: " + getAccess() + "\n格式: ImageDelete [文件名] 或 [引用图片]ImageDelete\n中文命令: 删除图片";
     }
 }
