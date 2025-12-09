@@ -46,6 +46,7 @@ public class HelpCommand implements Command
 
                     ◉ [管理功能]
                     UserBan  禁言群内用户
+                    FunctionCheck  检查功能启用状态
                     FunctionControl  修改功能启用状态
                     AccessSet  设置用户限权
                     

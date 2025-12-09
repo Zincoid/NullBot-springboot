@@ -22,14 +22,11 @@ public class FunctionCheckCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (!event.getCommandParameters().isEmpty()) {
-                String function = event.getCommandParameters().get(0);
                 String status = functionManager.getStatus();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能检查]\n" + status, false);
                 logger.info("\t\t\t\t├─[Function.Check] 已输出 - 功能状态列表");
             } else
                 logger.info("\t\t\t\t├─[Function.Check] 未设计 - 非群消息事件响应方式");
-        }
     }
 
     @Override
