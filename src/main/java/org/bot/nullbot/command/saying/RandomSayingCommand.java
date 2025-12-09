@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"RandomSaying", "say", "随机语录"})
+@CommandMapping({"RandomSaying", "say", "随机语录", "语录"})
 @Component
 @RequiredArgsConstructor
 public class RandomSayingCommand implements Command
@@ -38,6 +38,6 @@ public class RandomSayingCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ RandomSaying 或 say 命令\n功能: 随机语录\n限权: " + getAccess() + "\n格式: RandomSaying 或 say\n中文命令: 随机语录";
+        return "◉ RandomSaying 或 say 命令\n功能: 随机语录\n限权: " + getAccess() + "\n格式: RandomSaying 或 say\n中文命令: 随机语录 或 语录";
     }
 }
