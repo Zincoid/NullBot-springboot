@@ -56,4 +56,12 @@ public class FunctionManager {
         }
         return null;
     }
+
+    public String getStatus() {
+        StringBuilder status = new StringBuilder();
+        for (Map.Entry<String, Boolean> entry : enableFlags.entrySet()) {
+            status.append(entry.getKey()).append(" -> ").append(entry.getValue() ? "ON" : "OFF").append('\n');
+        }
+        return status.toString();
+    }
 }

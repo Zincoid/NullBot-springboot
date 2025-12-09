@@ -48,7 +48,7 @@ public class AccessSetCommand implements Command
                 logger.info("\t\t\t\t├─[Access.Set] 参数不足");
             }
         }else
-            logger.info("\t\t\t\t├─[Access.Set] 无 - 非群消息事件响应方式");
+            logger.info("\t\t\t\t├─[Access.Set] 未设计 - 非群消息事件响应方式");
     }
 
     // @Override
