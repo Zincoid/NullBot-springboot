@@ -27,7 +27,7 @@ public class RandomSayingCommand implements Command
             if (saying != null) {
                 String text = saying.toString();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), text, false);
-                logger.info("\t\t\t\t├─[Saying.Random] 已发送语录 - {}", saying);
+                logger.info("\t\t\t\t├─[Saying.Random] 已发送语录 - {}", text.replaceAll("\\R", ""));
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[随机语录] 无语录", false);
                 logger.info("\t\t\t\t├─[Saying.Random] 无语录");
