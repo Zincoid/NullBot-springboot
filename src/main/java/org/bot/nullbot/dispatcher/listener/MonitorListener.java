@@ -1,11 +1,13 @@
 package org.bot.nullbot.dispatcher.listener;
 
 import com.mikuac.shiro.annotation.GroupMessageHandler;
+import com.mikuac.shiro.annotation.GroupMsgDeleteNoticeHandler;
 import com.mikuac.shiro.annotation.GroupPokeNoticeHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.mikuac.shiro.enums.AtEnum;
 import com.mikuac.shiro.enums.MsgTypeEnum;
@@ -96,6 +98,14 @@ public class MonitorListener
     @Async("virtualThreadExecutor")
     public void GroupPokeDetect(Bot bot, PokeNoticeEvent event) throws Exception {
         logger.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {}", event.getGroupId(), event.getUserId(), event.getTargetId());
+        commandProcessor.processQQ(bot, new CommandEvent<>(event));
+    }
+
+    @FunctionControl(config = "enableRecallDetect")
+    @GroupMsgDeleteNoticeHandler
+    @Async("virtualThreadExecutor")
+    public void GroupRecallDetect(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
+        logger.info("◉ [GroupMonitor:Recall] 来自群 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));
     }
 }

@@ -24,7 +24,7 @@ public class MessageParseUtil {
                     message.append("[引用 ")
                             .append(replyMsg.getSender().getNickname())
                             .append(":")
-                            .append(replyMsg.getRawMessage().replaceAll("\\[CQ:.*?\\]", ""))
+                            .append(replyMsg.getRawMessage().replaceAll("\\[CQ:at,qq=(\\d+)\\]", "@$1").replaceAll("\\[CQ:.*?\\]", ""))
                             .append("] ");
                 }
                 case at -> {

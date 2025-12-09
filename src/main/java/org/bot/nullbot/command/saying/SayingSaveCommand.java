@@ -38,7 +38,7 @@ public class SayingSaveCommand implements Command
                 if(!Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\]\\[No\\.\\d+\\][\\s\\S]*", ShiroUtils.unescape(text))){
                     int inserted = sayingMapper.insert(userId, userName, text);
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] " + (inserted == 1 ? "已记录" : "出错"), false);
-                    logger.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", inserted == 1 ? "已记录 ->" : "出错 ->" + text);
+                    logger.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", (inserted == 1 ? "已记录 ->" : "出错 ->") + text);
                 }else{
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] 禁止套娃！", false);
                     logger.info("\t\t\t\t├─[Saying.Save] 试图保存已输出的语录 -> 已忽略");

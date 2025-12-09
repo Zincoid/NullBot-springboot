@@ -2,6 +2,7 @@ package org.bot.nullbot.entity;
 
 import com.mikuac.shiro.dto.event.Event;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,9 @@ public class CommandEvent<T extends Event> {
         if(event instanceof GroupMessageEvent groupMessageEvent)
             parseGroupMessageEvent(groupMessageEvent, groupMessageEvent.getArrayMsg().get(0).getType() == MsgTypeEnum.reply ? 1 : 0);
         else if(event instanceof PokeNoticeEvent)
-            parsePokeNoticeEvent();
+            parseGroupPokeNoticeEvent();
+        else if (event instanceof GroupMsgDeleteNoticeEvent)
+            parseGroupMsgDeleteNoticeEvent();
     }
 
     public CommandEvent(String commandType, T event) {
@@ -40,8 +43,13 @@ public class CommandEvent<T extends Event> {
         commandParameters = information.subList(1, information.size());
     }
 
-    private void parsePokeNoticeEvent() {
+    private void parseGroupPokeNoticeEvent() {
         commandType = "PokeReact";
+        commandParameters = new ArrayList<>();
+    }
+
+    private void parseGroupMsgDeleteNoticeEvent() {
+        commandType = "RecallReact";
         commandParameters = new ArrayList<>();
     }
 
