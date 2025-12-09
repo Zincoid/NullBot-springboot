@@ -45,7 +45,7 @@ public class RecallReactCommand implements Command
                     return;
                 }
             }
-            bot.sendGroupMsg(groupId, "[撤回记录] 该消息已被清理", false);
+            bot.sendGroupMsg(groupId, "[撤回记录] ❌该消息已被清理", false);
             logger.info("\t\t\t\t├─[React.Recall] 该消息已被清理 - MessageId -> {}", messageId);
         }else
             logger.info("\t\t\t\t├─[React.Recall] 未设计 - 非群消息撤回事件响应方式");

@@ -26,7 +26,7 @@ public class ImageFolderStructureCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) throws IOException {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String structure = FileUtil.getFolderTreeString(fileStorageConfig.getImagePath(), 0);
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片目录结构]\n" + structure, false);
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片目录结构] \uD83D\uDCC1已获取！\n" + structure, false);
             logger.info("\t\t\t\t├─[Image.FolderStructure] 已输出 - 图片目录结构");
         } else
             logger.info("\t\t\t\t├─[Image.FolderStructure] 未设计 - 非群消息事件响应方式");

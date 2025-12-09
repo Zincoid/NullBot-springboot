@@ -33,7 +33,7 @@ public class RandomImageCommand implements Command {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 logger.info("\t\t\t\t├─[Image.Random] 已发送图片: {}", imagePath);
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] 暂无图片", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌暂无图片", false);
                 logger.info("\t\t\t\t├─[Image.Random] 暂无图片");
             }
         }else

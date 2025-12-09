@@ -29,22 +29,22 @@ public class AccessSetCommand implements Command
                     int targetNewAccess = Integer.parseInt(event.getCommandParameters().get(1));
                     int selfAccess = accessManager.getAccess(groupMessageEvent.getUserId());
                     if(targetAccess >= selfAccess){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] 修改失败: 目标限权等级" + targetAccess + " 高于或等于 自身限权等级" + selfAccess, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改失败: 目标限权等级" + targetAccess + " 高于或等于 自身限权等级" + selfAccess, false);
                         logger.info("\t\t\t\t├─[Access.Set] 修改失败 - 目标限权等级{} 高于或等于 自身限权等级{}", targetAccess, selfAccess);
                     }else if(targetNewAccess >= selfAccess){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] 修改失败: 新限权等级" + targetNewAccess + " 高于或等于 自身限权等级" + selfAccess, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改失败: 新限权等级" + targetNewAccess + " 高于或等于 自身限权等级" + selfAccess, false);
                         logger.info("\t\t\t\t├─[Access.Set] 修改失败 - 新限权等级{} 高于或等于 自身限权等级{}", targetNewAccess, selfAccess);
                     }else{
                         accessManager.setAccess(targetId, targetNewAccess);
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] 已修改用户 " + targetId + " 限权: " + targetAccess + " -> " + targetNewAccess, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ✅已修改用户 " + targetId + " 限权: " + targetAccess + " -> " + targetNewAccess, false);
                         logger.info("\t\t\t\t├─[Access.Set] 已修改用户 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
                     }
                 } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] 参数格式错误", false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌参数格式错误", false);
                     logger.info("\t\t\t\t├─[Access.Set] 参数格式错误");
                 }
             }else {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] 参数不足", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌参数不足", false);
                 logger.info("\t\t\t\t├─[Access.Set] 参数不足");
             }
         }else

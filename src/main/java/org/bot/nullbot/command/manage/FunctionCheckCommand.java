@@ -23,8 +23,8 @@ public class FunctionCheckCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
                 String status = functionManager.getStatus();
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能检查]\n" + status, false);
-                logger.info("\t\t\t\t├─[Function.Check] 已输出 - 功能状态列表");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能检查] ℹ️已获取功能状态！\n" + status, false);
+                logger.info("\t\t\t\t├─[Function.Check] 已获取 - 功能状态列表");
             } else
                 logger.info("\t\t\t\t├─[Function.Check] 未设计 - 非群消息事件响应方式");
     }

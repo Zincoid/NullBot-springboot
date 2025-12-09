@@ -46,7 +46,7 @@ public class WifeCommand implements Command
                 expireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
                 String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
                 String response = MsgUtils.builder()
-                        .text("你的今日老婆是\n" + wife.getNickname() + "(" + wifeId + ")")
+                        .text("✨你的今日老婆是\n" + wife.getNickname() + "(" + wifeId + ")")
                         .img(avatarUrl)
                         .build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
@@ -55,7 +55,7 @@ public class WifeCommand implements Command
                 Long wifeId = wifeMap.get(userId);
                 String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
                 String response = MsgUtils.builder()
-                        .text("今天已经选过了哦... 你的老婆是\n" + bot.getStrangerInfo(wifeId, false).getData().getNickname() + "(" + wifeId + ")")
+                        .text("\uD83D\uDCA6今天已经选过了哦... 你的老婆是\n" + bot.getStrangerInfo(wifeId, false).getData().getNickname() + "(" + wifeId + ")")
                         .img(avatarUrl)
                         .build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);

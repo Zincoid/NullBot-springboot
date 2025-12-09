@@ -25,14 +25,14 @@ public class FunctionControlCommand implements Command {
                 String function = event.getCommandParameters().get(0);
                 Boolean isEnabled = functionManager.switchEnabled(function);
                 if (isEnabled != null){
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] 状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
                     logger.info("\t\t\t\t├─[Function.Control] 已切换功能状态 - {}", isEnabled ? "ON" : "OFF");
                 }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] 无此功能标志", false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] ❌无此功能标志", false);
                     logger.info("\t\t\t\t├─[Function.Control] 无此功能标志 - {}", function);
                 }
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] 参数不足", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] ❌参数不足", false);
                 logger.info("\t\t\t\t├─[Function.Control] 参数不足");
             }
         }else

@@ -29,7 +29,7 @@ public class RandomSayingCommand implements Command
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), text, false);
                 logger.info("\t\t\t\t├─[Saying.Random] 已发送语录 - {}", text.replaceAll("\\R", ""));
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] 暂无语录", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌暂无语录", false);
                 logger.info("\t\t\t\t├─[Saying.Random] 暂无语录");
             }
         }else

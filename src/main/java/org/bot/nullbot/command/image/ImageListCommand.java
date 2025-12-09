@@ -25,7 +25,7 @@ public class ImageListCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String imageList = FileUtil.getFileListAsString(fileStorageConfig.getImagePath() + "/collect");
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), imageList, false);
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ✅列表已获取！\n" + imageList, false);
             logger.info("\t\t\t\t├─[Image.List] 已获取 - 图片列表");
         }else
             logger.info("\t\t\t\t├─[Image.List] 未设计 - 非群消息事件响应方式");
