@@ -8,55 +8,57 @@ import java.util.stream.Stream;
 
 public class FileUtil {
     /**
-     * 获取目录树结构（递归）
+     * 获取文件夹的树形结构字符串
+     * @param rootPath 根目录路径
+     * @param maxDepth 最大深度，0表示不限制
+     * @return 树形结构字符串
      */
-    public static Map<String, Object> getFolderTree(String rootPath) throws IOException {
+    public static String getFolderTreeString(String rootPath, int maxDepth) throws IOException {
         Path root = Paths.get(rootPath);
-        return getFolderTreeRecursive(root);
-    }
-
-    private static Map<String, Object> getFolderTreeRecursive(Path directory) throws IOException {
-        Map<String, Object> tree = new LinkedHashMap<>();
-
-        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-            return tree;
-        }
-
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
-            for (Path entry : stream) {
-                if (Files.isDirectory(entry)) {
-                    // 递归获取子文件夹
-                    tree.put(entry.getFileName().toString(),
-                            getFolderTreeRecursive(entry));
-                }
-            }
-        }
-        return tree;
-    }
-
-    /**
-     * 打印目录树
-     */
-    public static String getFolderTreeAsString(Map<String, Object> tree) {
-        return getFolderTreeAsStringRecursive(tree, 0);
-    }
-
-    private static String getFolderTreeAsStringRecursive(Map<String, Object> tree, int level) {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, Object> entry : tree.entrySet()) {
-            // 缩进
-            String indent = "  ".repeat(level);
-            sb.append(indent).append("├── ").append(entry.getKey()).append("\n");
+        if (!Files.exists(root)) {
+            return "路径不存在: " + rootPath;
+        }
+        if (!Files.isDirectory(root)) {
+            return "不是文件夹: " + rootPath;
+        }
+        // 添加根目录
+        sb.append(root.getFileName().toString()).append("\n");
+        // 构建树形结构
+        buildTreeString(root, "", true, sb, maxDepth, 0);
+        return sb.toString();
+    }
 
-            if (entry.getValue() instanceof Map) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> subTree = (Map<String, Object>) entry.getValue();
-                if (!subTree.isEmpty()) {
-                    getFolderTreeAsStringRecursive(subTree, level + 1);
+    private static void buildTreeString(Path directory, String prefix, boolean isLast,
+                                        StringBuilder sb, int maxDepth, int currentDepth)
+            throws IOException {
+        if (maxDepth > 0 && currentDepth >= maxDepth) {
+            return;
+        }
+        try (Stream<Path> stream = Files.list(directory)) {
+            List<Path> items = stream
+                    .filter(Files::isDirectory)
+                    .sorted((p1, p2) -> p1.getFileName().toString()
+                            .compareToIgnoreCase(p2.getFileName().toString()))
+                    .toList();
+
+            for (int i = 0; i < items.size(); i++) {
+                Path item = items.get(i);
+                boolean itemIsLast = (i == items.size() - 1);
+                // 当前行的前缀
+                sb.append(prefix);
+                if (isLast) {
+                    sb.append("└── ");
+                } else {
+                    sb.append("├── ");
                 }
+                sb.append(item.getFileName()).append("\n");
+                // 子项的前缀
+                String childPrefix = prefix + (isLast ? "    " : "│   ");
+                // 递归处理子文件夹
+                buildTreeString(item, childPrefix, itemIsLast, sb, maxDepth, currentDepth + 1);
             }
         }
-        return sb.toString();
     }
 
     /**

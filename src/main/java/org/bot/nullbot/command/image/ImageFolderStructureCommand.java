@@ -25,7 +25,7 @@ public class ImageFolderStructureCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws IOException {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String structure = FileUtil.getFolderTreeAsString(FileUtil.getFolderTree(fileStorageConfig.getImagePath()));
+            String structure = FileUtil.getFolderTreeString(fileStorageConfig.getImagePath(), 0);
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片目录结构]\n" + structure, false);
             logger.info("\t\t\t\t├─[Image.FolderStructure] 已输出 - 图片目录结构");
         } else
