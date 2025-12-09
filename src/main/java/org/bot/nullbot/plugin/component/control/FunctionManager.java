@@ -20,7 +20,7 @@ public class FunctionManager {
 
     private void loadConfigViaReflection() {
         try {
-            // 获取FunctionConfig的所有字段
+            // 获取DefaultConfig的所有字段
             Field[] fields = defaultConfig.getClass().getDeclaredFields();
             for (Field field : fields) {
                 field.setAccessible(true); // 允许访问私有字段

@@ -14,5 +14,6 @@ public class DefaultConfig {
     private Boolean enableKeywordDetect;
     private Boolean enablePokeDetect;
     private Boolean enableMessageCollect;
+    private Boolean enableRecallDetect;
     private Map<Long, Integer> accesses;
 }
