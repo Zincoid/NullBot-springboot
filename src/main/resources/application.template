@@ -27,10 +27,10 @@ shiro:
 
 nullbot:
   enable-image-collect: false
+  enable-message-collect: false  # 使用AI Monitor模式及Recall Detect功能 需启用该项
   enable-keyword-detect: true
   enable-poke-detect: true
-  enable-message-collect: true  # DeepSeek Monitor模式下需启用
-  enable-recall-detect: true
+  enable-recall-detect: false
   command:
     prefix: /
     rate-limit:

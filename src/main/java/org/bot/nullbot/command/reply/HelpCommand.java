@@ -53,6 +53,8 @@ public class HelpCommand implements Command
                     Help 或 help 或 "帮助" 获取帮助信息
                     指令后加 -help 或 -h 获取详情
                     
+                    注: 使用AI Monitor模式及Recall Detect功能 需通过FunctionControl启用MessageCollect
+                    
                     中文命令 在对应指令详情中获得
                     当前指令前缀为\s""" + commandPrefix;
 

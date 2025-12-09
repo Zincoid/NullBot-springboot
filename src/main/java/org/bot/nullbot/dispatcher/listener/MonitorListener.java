@@ -69,7 +69,7 @@ public class MonitorListener
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)
     @Async("virtualThreadExecutor")
     public void GroupMessageCollect(Bot bot, GroupMessageEvent event) {
-        if(deepSeekClient.getMode() == DeepSeekClient.Mode.Monitor && !event.getMessage().startsWith("/Chat")){
+        if(!event.getMessage().startsWith("/Chat")){
             logger.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
             chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
