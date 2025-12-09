@@ -91,7 +91,7 @@ public class FileUtil {
     }
 
     /**
-     * 使用NIO从目录随机选择文件
+     * 使用NIO从目录随机选择文件（已修改）
      * @param directoryPath 目录路径
      * @return 随机文件的完整路径
      */
@@ -110,8 +110,9 @@ public class FileUtil {
                     .filter(Files::isRegularFile)  // 只选择普通文件
                     .collect(Collectors.toList());
             if (files.isEmpty()) {
-                System.err.println("目录中没有文件: " + directoryPath);
-                return null;
+                // System.err.println("目录中没有文件: " + directoryPath);
+                // return null;
+                throw new IllegalArgumentException("目录中没有文件: " + directoryPath);
             }
             // 随机选择
             Random random = new Random();
@@ -120,8 +121,9 @@ public class FileUtil {
             // 转换为绝对路径
             return selectedFile.toAbsolutePath().toString();
         } catch (IOException e) {
-            System.err.println("读取目录出错: " + e.getMessage());
-            return null;
+            // System.err.println("读取目录出错: " + e.getMessage());
+            // return null;
+            throw new IllegalArgumentException("读取目录出错: " + directoryPath);
         }
     }
 

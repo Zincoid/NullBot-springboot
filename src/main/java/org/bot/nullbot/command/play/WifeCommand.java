@@ -56,7 +56,7 @@ public class WifeCommand implements Command
                     memberExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
                     String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
                     String response = MsgUtils.builder()
-                            .text("✨你的今日群友老婆是\n" + wife.getNickname() + "(" + wifeId + ")")
+                            .text("你的今日群友老婆✨是\n" + wife.getNickname() + "(" + wifeId + ")")
                             .img(avatarUrl)
                             .build();
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
@@ -65,7 +65,7 @@ public class WifeCommand implements Command
                     Long wifeId = memberWifeMap.get(userId);
                     String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
                     String response = MsgUtils.builder()
-                            .text("\uD83D\uDCA6今天已经选过了哦... 你的群友老婆是\n" + bot.getStrangerInfo(wifeId, false).getData().getNickname() + "(" + wifeId + ")")
+                            .text("今天已经选过了哦\uD83D\uDCA6...\n你的群友老婆是\n" + bot.getStrangerInfo(wifeId, false).getData().getNickname() + "(" + wifeId + ")")
                             .img(avatarUrl)
                             .build();
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
@@ -73,33 +73,44 @@ public class WifeCommand implements Command
                 }
             }else{
                 Long userId = groupMessageEvent.getUserId();
-                LocalDateTime expireTime = memberExpireMap.get(userId);
+                LocalDateTime expireTime = acgExpireMap.get(userId);
                 if(expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
                     String category = event.getCommandParameters().get(0);
                     String acgPath = fileStorageConfig.getImagePath() + "/acg/" + category;
-                    String wifePath = FileUtil.getRandomFile(acgPath);
-                    String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,
-                            wifePath.lastIndexOf('.') > wifePath.lastIndexOf('/') ?
-                                    wifePath.lastIndexOf('.') : wifePath.length());
-                    acgWifeMap.put(userId, wifePath);
-                    acgExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
-                    String response = MsgUtils.builder()
-                            .text("✨你的今日二次元老婆是\n" + category + " - " + wifeName)
-                            .img(wifePath)
-                            .build();
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                    logger.info("\t\t\t\t├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
+                    String wifePath = null;
+                    try {
+                        wifePath = FileUtil.getRandomFile(acgPath);
+                        String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,
+                                wifePath.lastIndexOf('.') > wifePath.lastIndexOf('/') ?
+                                        wifePath.lastIndexOf('.') : wifePath.length());
+                        acgWifeMap.put(userId, wifePath);
+                        acgExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
+                        String response = MsgUtils.builder()
+                                .text("你的今日二次元老婆✨是\n" + category + " - " + wifeName)
+                                .img(wifePath)
+                                .build();
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+                        logger.info("\t\t\t\t├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
+                    } catch (Exception e) {
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[今日老婆] ❌不存在该类别", false);
+                        logger.info("\t\t\t\t├─[Wife] 不存在该类别 - {}", category);
+                    }
                 }else{
-                    String wifePath = acgWifeMap.get(userId);
-                    String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,
-                            wifePath.lastIndexOf('.') > wifePath.lastIndexOf('/') ?
-                                    wifePath.lastIndexOf('.') : wifePath.length());
-                    String response = MsgUtils.builder()
-                            .text("\uD83D\uDCA6今天已经选过了哦... 你的二次元老婆是\n" + wifeName)
-                            .img(wifePath)
-                            .build();
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                    logger.info("\t\t\t\t├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);
+                    try {
+                        String wifePath = acgWifeMap.get(userId);
+                        String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,
+                                wifePath.lastIndexOf('.') > wifePath.lastIndexOf('/') ?
+                                        wifePath.lastIndexOf('.') : wifePath.length());
+                        String response = MsgUtils.builder()
+                                .text("今天已经选过了哦\uD83D\uDCA6...\n你的二次元老婆是\n" + wifeName)
+                                .img(wifePath)
+                                .build();
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+                        logger.info("\t\t\t\t├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);
+                    } catch (Exception e) {
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[今日老婆] ❌文件已被修改", false);
+                        logger.info("\t\t\t\t├─[Wife] 文件已被修改");
+                    }
                 }
             }
         }else
