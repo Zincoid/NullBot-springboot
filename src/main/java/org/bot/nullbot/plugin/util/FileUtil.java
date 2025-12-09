@@ -285,15 +285,6 @@ public class FileUtil {
                 System.out.printf("%3d. %s\n", i + 1, file.toAbsolutePath());
             }
 
-            // // 确认删除
-            // Scanner scanner = new Scanner(System.in);
-            // System.out.print("确认删除这些文件吗？(输入 'yes' 确认): ");
-            // String input = scanner.nextLine().trim();
-            //
-            // if (!input.equalsIgnoreCase("yes")) {
-            //     return "取消：删除操作已取消";
-            // }
-
             // 执行删除
             int successCount = 0;
             int failCount = 0;
@@ -320,66 +311,92 @@ public class FileUtil {
     }
 
     /**
-     * 删除匹配特定模式的文件（NIO版本，使用PathMatcher）（不安全）
+     * 删除匹配特定模式的文件（NIO版本，使用PathMatcher）（已修改）
      * @param directoryPath 目录路径
      * @param pattern 通配符模式（如 "*.tmp", "temp_*.*"）
      * @return 删除结果统计
      */
     public static String deleteFilesByPattern(String directoryPath, String pattern) {
         try {
-            Path directory = Paths.get(directoryPath);
-            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-                return "错误：目录不存在或不是目录";
+            // 获取基础目录的真实路径并进行安全验证
+            Path baseDir = Paths.get(directoryPath).toRealPath();
+            if (!Files.isDirectory(baseDir)) {
+                return "错误：路径不是目录";
             }
+
             // 使用PathMatcher进行模式匹配
             FileSystem fs = FileSystems.getDefault();
             PathMatcher matcher = fs.getPathMatcher("glob:" + pattern);
+
             // 收集匹配的文件
             List<Path> filesToDelete;
-            try (Stream<Path> stream = Files.list(directory)) {
+            try (Stream<Path> stream = Files.list(baseDir)) {
                 filesToDelete = stream
                         .filter(Files::isRegularFile)
                         .filter(path -> matcher.matches(path.getFileName()))
                         .collect(Collectors.toList());
             }
+
             if (filesToDelete.isEmpty()) {
-                return "提示：没有找到匹配模式 '" + pattern + "' 的文件";
-            }
-            // 显示将要删除的文件
-            System.out.println("将删除以下 " + filesToDelete.size() + " 个文件:");
-            for (int i = 0; i < filesToDelete.size(); i++) {
-                System.out.printf("%3d. %s\n", i + 1, filesToDelete.get(i).getFileName());
+                return "错误: 文件不存在或访问被拒绝";
+                // return "提示：没有找到匹配模式 '" + pattern + "' 的文件";
             }
 
-            // // 确认删除
-            // Scanner scanner = new Scanner(System.in);
-            // System.out.print("确认删除这些文件吗？(输入 'yes' 确认): ");
-            // String input = scanner.nextLine().trim();
-            //
-            // if (!input.equalsIgnoreCase("yes")) {
-            //     return "取消：删除操作已取消";
-            // }
-
-            // 执行删除
+            // 执行删除（带安全验证）
             int successCount = 0;
             int failCount = 0;
             List<String> failedFiles = new ArrayList<>();
+            List<String> securityRejectedFiles = new ArrayList<>();
+            List<String> successFiles = new ArrayList<>(); // 新增：记录成功删除的文件名
+
             for (Path file : filesToDelete) {
                 try {
-                    Files.delete(file);
+                    // 安全验证：规范化路径 + 真实路径检查
+                    Path targetFile = baseDir.resolve(file.getFileName()).normalize();
+                    Path realTarget = targetFile.toRealPath();
+
+                    // 验证真实路径是否在基础目录内（防止路径遍历攻击）
+                    if (!realTarget.startsWith(baseDir)) {
+                        securityRejectedFiles.add(file.getFileName().toString());
+                        continue;
+                    }
+
+                    Files.delete(realTarget);
                     successCount++;
+                    successFiles.add(file.getFileName().toString()); // 记录成功删除的文件名
                 } catch (IOException e) {
                     failCount++;
                     failedFiles.add(file.getFileName() + " (" + e.getMessage() + ")");
                 }
             }
+
             StringBuilder result = new StringBuilder();
-            result.append("删除完成：成功 ").append(successCount)
-                    .append(" 个，失败 ").append(failCount).append(" 个\n");
-            if (failCount > 0) {
-                result.append("失败的文件：").append(String.join(", ", failedFiles));
+
+            // result.append("删除完成：成功 ").append(successCount)
+            //         .append(" 个，失败 ").append(failCount).append(" 个\n");
+
+            if (!securityRejectedFiles.isEmpty()) {
+                result.append("安全阻止：").append(securityRejectedFiles.size())
+                        .append(" 个文件因路径安全问题被阻止删除: ")
+                        .append(String.join(", ", securityRejectedFiles)).append("\n");
             }
-            return result.toString();
+
+            if(successCount == 1) {
+                result.append("已删除: ");
+                result.append(String.join(", ", successFiles));
+            }
+            else
+                result.append("错误: 删除失败");
+
+            // if (!successFiles.isEmpty()) {
+            //     result.append("成功删除的文件：").append(String.join(", ", successFiles)).append("\n");
+            // }
+
+            // if (failCount > 0) {
+            //     result.append("删除失败的文件：").append(String.join(", ", failedFiles));
+            // }
+
+            return result.toString().trim();
         } catch (IOException e) {
             return "错误：读取目录时发生IO异常 - " + e.getMessage();
         }
