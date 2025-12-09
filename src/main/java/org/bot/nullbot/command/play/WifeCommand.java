@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.daily;
+package org.bot.nullbot.command.play;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.ShiroUtils;
@@ -44,7 +44,7 @@ public class WifeCommand implements Command
                 Long wifeId = wife.getUserId();
                 wifeMap.put(userId, wifeId);
                 expireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
-                String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 100);
+                String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
                 String response = MsgUtils.builder()
                         .text("你的今日老婆是\n" + wife.getNickname() + "(" + wifeId + ")")
                         .img(avatarUrl)
@@ -53,7 +53,7 @@ public class WifeCommand implements Command
                 logger.info("\t\t\t\t├─[Wife] 今日老婆: {} -> {}", userId, wifeId);
             }else{
                 Long wifeId = wifeMap.get(userId);
-                String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 100);
+                String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
                 String response = MsgUtils.builder()
                         .text("今天已经选过了哦... 你的老婆是\n" + bot.getStrangerInfo(wifeId, false).getData().getNickname() + "(" + wifeId + ")")
                         .img(avatarUrl)

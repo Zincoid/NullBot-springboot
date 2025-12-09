@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @NoArgsConstructor
@@ -23,6 +24,8 @@ public class SayingPO {
 
     @Override
     public String toString() {
-        return "[" + time + "][No." + id + "]\n" + text + "\n" + "\t—— " + userName + "(" + userId + ")";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedTime = time != null ? time.format(formatter) : "";
+        return "[" + formattedTime + "][No." + id + "]\n" + text + "\n" + "\t—— " + userName + "(" + userId + ")";
     }
 }
