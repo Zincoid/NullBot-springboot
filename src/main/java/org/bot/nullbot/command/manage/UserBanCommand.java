@@ -24,11 +24,11 @@ public class UserBanCommand implements Command {
                     bot.setGroupBan(groupMessageEvent.getGroupId(), userId, time * 60);
                     logger.info("\t\t\t\t├─[User.Ban] 已执行禁言 - {} -> {} min", userId, time);
                 } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[User.Ban] 参数格式错误", false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[用户禁言] 参数格式错误", false);
                     logger.info("\t\t\t\t├─[User.Ban] 参数格式错误");
                 }
             }else {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[User.Ban] 参数不足", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[用户禁言] 参数不足", false);
                 logger.info("\t\t\t\t├─[User.Ban] 参数不足");
             }
         }else

@@ -42,15 +42,15 @@ public class ImageSaveCommand implements Command {
                         // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
                         //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存图片] 已保存为: " + info, false);
                         // }
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存图片] 已保存为: " + info, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] 已保存: " + info, false);
                         logger.info("\t\t\t\t├─[Image.Save] 已保存为: {}", info);
                     }
                 }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存图片] 无图片", false);
-                    logger.info("\t\t\t\t├─[Image.Save] 无图片");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] 未包含可保存图片", false);
+                    logger.info("\t\t\t\t├─[Image.Save] 未包含可保存图片");
                 }
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存图片] 该命令需回复要保存的图片", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] 需回复要保存的图片", false);
                 logger.info("\t\t\t\t├─[Image.Save] 未指定消息");
             }
         }else

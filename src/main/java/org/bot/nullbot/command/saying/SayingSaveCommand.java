@@ -37,14 +37,14 @@ public class SayingSaveCommand implements Command
                 String text = replyMsg.getRawMessage().replaceAll("\\[CQ:at,qq=(\\d+)\\]", "@$1").replaceAll("\\[CQ:.*?\\]", "");
                 if(!Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\]\\[No\\.\\d+\\][\\s\\S]*", ShiroUtils.unescape(text))){
                     int inserted = sayingMapper.insert(userId, userName, text);
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存语录] " + (inserted == 1 ? "已记录" : "出错"), false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] " + (inserted == 1 ? "已记录" : "出错"), false);
                     logger.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", inserted == 1 ? "已记录 ->" : "出错 ->" + text);
                 }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存语录] 禁止套娃！", false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] 禁止套娃！", false);
                     logger.info("\t\t\t\t├─[Saying.Save] 试图保存已输出的语录 -> 已忽略");
                 }
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存语录] 该命令需回复文本", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] 需回复要保存的文本", false);
                 logger.info("\t\t\t\t├─[Saying.Save] 未指定消息");
             }
         }else

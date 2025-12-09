@@ -29,8 +29,8 @@ public class RandomSayingCommand implements Command
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), text, false);
                 logger.info("\t\t\t\t├─[Saying.Random] 已发送语录 - {}", text.replaceAll("\\R", ""));
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[随机语录] 无语录", false);
-                logger.info("\t\t\t\t├─[Saying.Random] 无语录");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] 暂无语录", false);
+                logger.info("\t\t\t\t├─[Saying.Random] 暂无语录");
             }
         }else
             logger.info("\t\t\t\t├─[Saying.Random] 未设计 - 非群消息事件响应方式");

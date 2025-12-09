@@ -40,21 +40,21 @@ public class ImageDeleteCommand implements Command
                         String url = entry.getValue();
                         String fileName = originName.substring(0, originName.lastIndexOf("."));
                         String response = FileUtil.deleteFilesByPattern(fileStorageConfig.getImagePath() + "/collect", fileName + ".*");
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除图片] " + response, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] " + response, false);
                         logger.info("\t\t\t\t├─[Image.Delete] {}", response);
                     }
                 }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除图片] 无图片", false);
-                    logger.info("\t\t\t\t├─[Image.Delete] 无图片");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] 未包含可删除图片", false);
+                    logger.info("\t\t\t\t├─[Image.Delete] 未包含可删除图片");
                 }
             }else if(!event.getCommandParameters().isEmpty()){
                 String fileName = event.getCommandParameters().get(0);
                 String response = FileUtil.deleteFileByName(fileStorageConfig.getImagePath() + "/collect", fileName);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除图片] " + response, false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] " + response, false);
                 logger.info("\t\t\t\t├─[Image.Delete] {}", response);
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除图片] 无参数或引用", false);
-                logger.info("\t\t\t\t├─[Image.Delete] 无参数或引用");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] 无删除参数或引用", false);
+                logger.info("\t\t\t\t├─[Image.Delete] 无删除参数或引用");
             }
         }else
             logger.info("\t\t\t\t├─[Image.Delete] 未设计 - 非群消息事件响应方式");

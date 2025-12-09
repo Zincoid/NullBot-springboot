@@ -28,8 +28,8 @@ public class FunctionControlCommand implements Command {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] 已切换状态: " + (isEnabled ? "启用" : "未启用"), false);
                     logger.info("\t\t\t\t├─[Function.Control] 已切换功能状态 - {}", isEnabled ? "启用" : "未启用");
                 }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] 无此功能", false);
-                    logger.info("\t\t\t\t├─[Function.Control] 无此功能 - {}", function);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] 无此功能标志", false);
+                    logger.info("\t\t\t\t├─[Function.Control] 无此功能标志 - {}", function);
                 }
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] 参数不足", false);

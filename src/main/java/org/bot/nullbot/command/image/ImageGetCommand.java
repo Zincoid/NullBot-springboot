@@ -34,12 +34,12 @@ public class ImageGetCommand implements Command
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                     logger.info("\t\t\t\t├─[Image.Get] 已获取图片: {}", imagePath);
                 }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[获取图片] 未找到该图", false);
-                    logger.info("\t\t\t\t├─[Image.Get] 未找到图片");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] 未找到该图片", false);
+                    logger.info("\t\t\t\t├─[Image.Get] 未找到该图片");
                 }
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[获取图片] 无参数", false);
-                logger.info("\t\t\t\t├─[Image.Get] 无参数");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] 无文件名参数", false);
+                logger.info("\t\t\t\t├─[Image.Get] 无文件名参数");
             }
         }else
             logger.info("\t\t\t\t├─[Image.Get] 未设计 - 非群消息事件响应方式");

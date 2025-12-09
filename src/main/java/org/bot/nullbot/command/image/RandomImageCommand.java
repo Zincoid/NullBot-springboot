@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
-@CommandMapping({"RandomImage", "img", "随机图片"})
+@CommandMapping({"RandomImage", "img", "随机图片", "图片"})
 @Component
 @RequiredArgsConstructor
 public class RandomImageCommand implements Command {
@@ -33,7 +33,7 @@ public class RandomImageCommand implements Command {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 logger.info("\t\t\t\t├─[Image.Random] 已发送图片: {}", imagePath);
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[随机图片] 暂未保存图片", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] 暂无图片", false);
                 logger.info("\t\t\t\t├─[Image.Random] 暂无图片");
             }
         }else
@@ -42,6 +42,6 @@ public class RandomImageCommand implements Command {
 
     @Override
     public String getHelp() {
-        return "◉ RandomImage 或 img 命令\n功能: 发送保存的随机图片\n限权: " + getAccess() + "\n格式: RandomImage 或 img\n中文命令: 随机图片";
+        return "◉ RandomImage 或 img 命令\n功能: 发送保存的随机图片\n限权: " + getAccess() + "\n格式: RandomImage 或 img\n中文命令: 随机图片 或 图片";
     }
 }

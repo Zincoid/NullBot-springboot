@@ -26,15 +26,15 @@ public class SayingDeleteCommand implements Command
                 try {
                     int id = Integer.parseInt(event.getCommandParameters().get(0));
                     boolean deleted = sayingMapper.deleteById(id);
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除语录] 语录 No." + id + " -> " + (deleted ? "已删除" : "无记录"), false);
-                    logger.info("\t\t\t\t├─[Saying.Delete] 执行语录删除 - ID {} -> {}", id, deleted ? "已删除" : "无记录");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] 删除语录 No." + id + " -> " + (deleted ? "已删除" : "无记录"), false);
+                    logger.info("\t\t\t\t├─[Saying.Delete] 执行语录删除 - No.{} -> {}", id, deleted ? "已删除" : "无记录");
                 } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除语录] 参数格式错误", false);
-                    logger.info("\t\t\t\t├─[Saying.Delete] 参数格式错误");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] 删除参数格式错误", false);
+                    logger.info("\t\t\t\t├─[Saying.Delete] 删除参数格式错误");
                 }
             }else {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除语录] 参数不足", false);
-                logger.info("\t\t\t\t├─[Saying.Delete] 参数不足");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] 删除参数不足", false);
+                logger.info("\t\t\t\t├─[Saying.Delete] 删除参数不足");
             }
         }else
             logger.info("\t\t\t\t├─[Saying.Delete] 无 - 非群消息事件响应方式");
