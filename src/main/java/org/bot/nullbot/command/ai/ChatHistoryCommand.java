@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"ChatHistory"})
+@CommandMapping({"ChatHistory", "聊天历史"})
 @Component
 @RequiredArgsConstructor
 public class ChatHistoryCommand implements Command
@@ -33,6 +33,6 @@ public class ChatHistoryCommand implements Command
 
     @Override
     public String getHelp() {
-        return "ChatHistory 命令\n功能: 获取AI聊天历史\n限权: " + getAccess() + "\n格式: ChatHistory";
+        return "◉ ChatHistory 命令\n功能: 获取AI聊天历史\n限权: " + getAccess() + "\n格式: ChatHistory\n中文命令: 聊天历史";
     }
 }

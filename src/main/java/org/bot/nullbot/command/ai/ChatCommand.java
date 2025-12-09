@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"Chat"})
+@CommandMapping({"Chat", "聊天"})
 @Component
 @RequiredArgsConstructor
 public class ChatCommand implements Command
@@ -36,6 +36,6 @@ public class ChatCommand implements Command
 
     @Override
     public String getHelp() {
-        return "Chat 命令\n功能: 与AI对话\n限权: " + getAccess() + "\n格式: Chat [对话内容] 或 @Null [对话内容] 或 戳一戳";
+        return "◉ Chat 命令\n功能: 与AI对话\n限权: " + getAccess() + "\n格式: Chat [对话内容] 或 @Null [对话内容] 或 戳一戳\n中文命令: 聊天";
     }
 }

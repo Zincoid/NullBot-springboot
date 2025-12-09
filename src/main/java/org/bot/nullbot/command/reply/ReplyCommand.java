@@ -34,6 +34,6 @@ public class ReplyCommand implements Command
 
     @Override
     public String getHelp() {
-        return "Reply 命令\n功能: 简单回复(子功能 不是给用户用的)\n限权: " + getAccess() + "\n格式: Reply [内容]";
+        return "◉ Reply 命令\n功能: 简单回复(子功能 不是给用户用的)\n限权: " + getAccess() + "\n格式: Reply [内容]";
     }
 }

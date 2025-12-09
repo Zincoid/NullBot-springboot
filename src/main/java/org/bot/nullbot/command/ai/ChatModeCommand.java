@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"ChatMode"})
+@CommandMapping({"ChatMode", "聊天模式"})
 @Component
 @RequiredArgsConstructor
 public class ChatModeCommand implements Command
@@ -36,6 +36,6 @@ public class ChatModeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "ChatMode 命令\n功能: 切换AI聊天模式\n限权: " + getAccess() + "\n格式: ChatMode\nAI模式: Group-群聊会话 Personal-个人会话 Monitor-监听群聊";
+        return "◉ ChatMode 命令\n功能: 切换AI聊天模式\n限权: " + getAccess() + "\n格式: ChatMode\nAI模式: Group-群聊会话 Personal-个人会话 Monitor-监听群聊\n中文命令: 聊天模式";
     }
 }
