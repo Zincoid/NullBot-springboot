@@ -1,5 +1,7 @@
 package org.bot.nullbot.command.daily;
 
+import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.GroupMemberInfoResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -42,11 +44,21 @@ public class WifeCommand implements Command
                 Long wifeId = wife.getUserId();
                 wifeMap.put(userId, wifeId);
                 expireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "你的今日老婆是 " + wife.getNickname() + "(" + wifeId + ")", false);
+                String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 100);
+                String response = MsgUtils.builder()
+                        .text("你的今日老婆是\n" + wife.getNickname() + "(" + wifeId + ")")
+                        .img(avatarUrl)
+                        .build();
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 logger.info("\t\t\t\t├─[Wife] 今日老婆: {} -> {}", userId, wifeId);
             }else{
                 Long wifeId = wifeMap.get(userId);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "今天已经选过了哦... 你的老婆是 " + bot.getStrangerInfo(wifeId, false).getData().getNickname() + "(" + wifeId + ")", false);
+                String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 100);
+                String response = MsgUtils.builder()
+                        .text("今天已经选过了哦... 你的老婆是\n" + bot.getStrangerInfo(wifeId, false).getData().getNickname() + "(" + wifeId + ")")
+                        .img(avatarUrl)
+                        .build();
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 logger.info("\t\t\t\t├─[Wife] 今日已选过老婆: {} -> {}", userId, wifeId);
             }
         }else
