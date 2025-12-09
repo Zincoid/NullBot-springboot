@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"Reply"})
+@CommandMapping({"Reply", "应答"})
 @Component
 public class ReplyCommand implements Command
 {
@@ -34,6 +34,6 @@ public class ReplyCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Reply 命令\n功能: 简单回复(子功能 不是给用户用的)\n限权: " + getAccess() + "\n格式: Reply [内容]";
+        return "◉ Reply 命令\n功能: 简单回复(子功能 不是给用户用的)\n限权: " + getAccess() + "\n格式: Reply [内容]\n中文命令: 应答";
     }
 }

@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"AccessSet"})
+@CommandMapping({"AccessSet", "限权设置"})
 @Component
 @RequiredArgsConstructor
 public class AccessSetCommand implements Command
@@ -29,22 +29,22 @@ public class AccessSetCommand implements Command
                     int targetNewAccess = Integer.parseInt(event.getCommandParameters().get(1));
                     int selfAccess = accessManager.getAccess(groupMessageEvent.getUserId());
                     if(targetAccess >= selfAccess){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access.Set] 修改失败: 目标限权等级" + targetAccess + " 高于或等于 自身限权等级" + selfAccess, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] 修改失败: 目标限权等级" + targetAccess + " 高于或等于 自身限权等级" + selfAccess, false);
                         logger.info("\t\t\t\t├─[Access.Set] 修改失败 - 目标限权等级{} 高于或等于 自身限权等级{}", targetAccess, selfAccess);
                     }else if(targetNewAccess >= selfAccess){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access.Set] 修改失败: 新限权等级" + targetNewAccess + " 高于或等于 自身限权等级" + selfAccess, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] 修改失败: 新限权等级" + targetNewAccess + " 高于或等于 自身限权等级" + selfAccess, false);
                         logger.info("\t\t\t\t├─[Access.Set] 修改失败 - 新限权等级{} 高于或等于 自身限权等级{}", targetNewAccess, selfAccess);
                     }else{
                         accessManager.setAccess(targetId, targetNewAccess);
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access.Set] 已修改用户 " + targetId + " 限权: " + targetAccess + " -> " + targetNewAccess, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] 已修改用户 " + targetId + " 限权: " + targetAccess + " -> " + targetNewAccess, false);
                         logger.info("\t\t\t\t├─[Access.Set] 已修改用户 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
                     }
                 } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access.Set] 参数格式错误", false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] 参数格式错误", false);
                     logger.info("\t\t\t\t├─[Access.Set] 参数格式错误");
                 }
             }else {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access.Set] 参数不足", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] 参数不足", false);
                 logger.info("\t\t\t\t├─[Access.Set] 参数不足");
             }
         }else
@@ -58,6 +58,6 @@ public class AccessSetCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ AccessSet 命令\n功能: 设置用户限权等级\n限权: 无法修改高于或等于自身限权用户 设置的限权无法高于或等于自身限权\n格式: AccessSet [QQ号] [限权等级]";
+        return "◉ AccessSet 命令\n功能: 设置用户限权等级\n限权: 无法修改高于或等于自身限权用户 设置的限权无法高于或等于自身限权\n格式: AccessSet [QQ号] [限权等级]\n中文命令: 限权设置";
     }
 }

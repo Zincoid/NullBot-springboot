@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-@CommandMapping({"Wife"})
+@CommandMapping({"Wife", "今日老婆"})
 @Component
 public class WifeCommand implements Command
 {
@@ -42,11 +42,11 @@ public class WifeCommand implements Command
                 Long wifeId = wife.getUserId();
                 wifeMap.put(userId, wifeId);
                 expireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Wife] 你的今日老婆是 " + wife.getNickname() + "(" + wifeId + ")", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "你的今日老婆是 " + wife.getNickname() + "(" + wifeId + ")", false);
                 logger.info("\t\t\t\t├─[Wife] 今日老婆: {} -> {}", userId, wifeId);
             }else{
                 Long wifeId = wifeMap.get(userId);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Wife] 今天已经选过了哦... 你的老婆是 " + bot.getStrangerInfo(wifeId, false).getData().getNickname() + "(" + wifeId + ")", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "今天已经选过了哦... 你的老婆是 " + bot.getStrangerInfo(wifeId, false).getData().getNickname() + "(" + wifeId + ")", false);
                 logger.info("\t\t\t\t├─[Wife] 今日已选过老婆: {} -> {}", userId, wifeId);
             }
         }else
@@ -55,6 +55,6 @@ public class WifeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Wife 命令\n功能: 今日老婆(每天可抽一次)\n限权: " + getAccess() + "\n格式: Wife";
+        return "◉ Wife 命令\n功能: 今日老婆(每天可抽一次)\n限权: " + getAccess() + "\n格式: Wife\n中文命令: 今日老婆";
     }
 }

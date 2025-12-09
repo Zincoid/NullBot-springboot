@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"FunctionControl"})
+@CommandMapping({"FunctionControl", "功能控制"})
 @Component
 @RequiredArgsConstructor
 public class FunctionControlCommand implements Command {
@@ -25,14 +25,14 @@ public class FunctionControlCommand implements Command {
                 String function = event.getCommandParameters().get(0);
                 Boolean isEnabled = functionManager.switchEnabled(function);
                 if (isEnabled != null){
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Function.Control] 已切换功能状态: " + (isEnabled ? "启用" : "未启用"), false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] 已切换功能状态: " + (isEnabled ? "启用" : "未启用"), false);
                     logger.info("\t\t\t\t├─[Function.Control] 已切换功能状态 - {}", isEnabled ? "启用" : "未启用");
                 }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Function.Control] 无此功能", false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] 无此功能", false);
                     logger.info("\t\t\t\t├─[Function.Control] 无此功能 - {}", function);
                 }
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Function.Control] 参数不足", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] 参数不足", false);
                 logger.info("\t\t\t\t├─[Function.Control] 参数不足");
             }
         }else
@@ -46,6 +46,6 @@ public class FunctionControlCommand implements Command {
 
     @Override
     public String getHelp() {
-        return "◉ FunctionControl 命令\n功能: 转换功能启用状态\n限权: " + getAccess() + "\n格式: FunctionControl [功能控制标志]\n功能控制标志: enableImageCollect/enableKeywordDetect/enablePokeDetect/enableMessageCollect";
+        return "◉ FunctionControl 命令\n功能: 转换功能启用状态\n限权: " + getAccess() + "\n格式: FunctionControl [功能控制标志]\n标志: enableImageCollect/enableKeywordDetect/enablePokeDetect/enableMessageCollect\n中文命令: 功能控制";
     }
 }

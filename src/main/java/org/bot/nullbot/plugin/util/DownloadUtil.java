@@ -13,8 +13,8 @@ public class DownloadUtil
     /**
      * 使用HttpURLConnection下载图片
      */
-    public static String downloadImage(String imageUrl, String savePath, String filename) {
-        String fullPath = savePath + "/" + filename;
+    public static String downloadImage(String imageUrl, String savePath, String fileName) {
+        String fullPath = savePath + "/" + fileName;
         try {
             URL url = new URL(imageUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -39,7 +39,8 @@ public class DownloadUtil
             try (InputStream inputStream = connection.getInputStream()) {
                 Files.copy(inputStream, saveFilePath, StandardCopyOption.REPLACE_EXISTING);
             }
-            return saveFilePath.toString();
+            return fileName + fileExtension;
+            // return saveFilePath.toString();  // 完整路径
         } catch (Exception e) {
             e.printStackTrace();
             return "Failed: Unknown error";

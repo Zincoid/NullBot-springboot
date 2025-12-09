@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"ImageDelete"})
+@CommandMapping({"ImageDelete", "删除图片"})
 @Component
 @RequiredArgsConstructor
 public class ImageDeleteCommand implements Command
@@ -25,7 +25,7 @@ public class ImageDeleteCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String fileName = event.getCommandParameters().get(0);
             String response = FileUtil.deleteFileByName(fileStorageConfig.getImagePath() + "/collect", fileName);
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Image.Delete] " + response, false);
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除图片] " + response, false);
             logger.info("\t\t\t\t├─[Image.Delete] {}", response);
         }else
             logger.info("\t\t\t\t├─[Image.Delete] 未设计 - 非群消息事件响应方式");
@@ -38,6 +38,6 @@ public class ImageDeleteCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ImageDelete 命令\n功能: 删除保存的图片\n限权: " + getAccess() + "\n格式: ImageDelete [文件名]";
+        return "◉ ImageDelete 命令\n功能: 删除保存的图片\n限权: " + getAccess() + "\n格式: ImageDelete [文件名]\n中文命令: 删除图片";
     }
 }

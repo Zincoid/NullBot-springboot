@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
-@CommandMapping({"SayingSave"})
+@CommandMapping({"SayingSave", "保存语录"})
 @Component
 @RequiredArgsConstructor
 public class SayingSaveCommand implements Command
@@ -33,10 +33,10 @@ public class SayingSaveCommand implements Command
                 String userName = replyMsg.getSender().getNickname();
                 String text = replyMsg.getRawMessage().replaceAll("\\[CQ:at,qq=(\\d+)\\]", "@$1").replaceAll("\\[CQ:.*?\\]", "");
                 int inserted = sayingMapper.insert(userId, userName, text);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Saying.Save] 语录保存" + (inserted == 1 ? "成功" : "失败"), false);
-                logger.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", inserted == 1 ? "成功" : "失败");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存语录] " + (inserted == 1 ? "已保存" : "出错"), false);
+                logger.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", inserted == 1 ? "已保存" : "出错");
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Saying.Save] 该命令需回复文本", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存语录] 该命令需回复文本", false);
                 logger.info("\t\t\t\t├─[Saying.Save] 未指定消息");
             }
         }else
@@ -45,6 +45,6 @@ public class SayingSaveCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ SayingSave 命令\n功能: 保存语录\n限权: " + getAccess() + "\n格式: [引用文本]ImageSave";
+        return "◉ SayingSave 命令\n功能: 保存语录\n限权: " + getAccess() + "\n格式: [引用文本]SayingSave\n中文命令: 保存语录";
     }
 }

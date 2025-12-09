@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"RandomSaying", "say"})
+@CommandMapping({"RandomSaying", "say", "随机语录"})
 @Component
 @RequiredArgsConstructor
 public class RandomSayingCommand implements Command
@@ -29,7 +29,7 @@ public class RandomSayingCommand implements Command
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), text, false);
                 logger.info("\t\t\t\t├─[Saying.Random] 已发送语录 - {}", saying);
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "无语录", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[随机语录] 无语录", false);
                 logger.info("\t\t\t\t├─[Saying.Random] 无语录");
             }
         }else
@@ -38,6 +38,6 @@ public class RandomSayingCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ RandomSaying 或 say 命令\n功能: 随机语录\n限权: " + getAccess() + "\n格式: RandomSaying 或 say";
+        return "◉ RandomSaying 或 say 命令\n功能: 随机语录\n限权: " + getAccess() + "\n格式: RandomSaying 或 say\n中文命令: 随机语录";
     }
 }

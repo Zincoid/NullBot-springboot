@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 
-@CommandMapping({"ImageSave"})
+@CommandMapping({"ImageSave", "保存图片"})
 @Component
 @RequiredArgsConstructor
 public class ImageSaveCommand implements Command {
@@ -40,17 +40,17 @@ public class ImageSaveCommand implements Command {
                         String fileName = originName.substring(0, originName.lastIndexOf("."));
                         String info = DownloadUtil.downloadImage(url, fileStorageConfig.getImagePath() + "/collect", fileName);
                         // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
-                        //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Image.Save] 已保存至: " + info, false);
+                        //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存图片] 已保存为: " + info, false);
                         // }
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Image.Save] 已保存至: " + info, false);
-                        logger.info("\t\t\t\t├─[Image.Save] 已保存至: {}", info);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存图片] 已保存为: " + info, false);
+                        logger.info("\t\t\t\t├─[Image.Save] 已保存为: {}", info);
                     }
                 }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Image.Save] 无图片", false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存图片] 无图片", false);
                     logger.info("\t\t\t\t├─[Image.Save] 无图片");
                 }
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Image.Save] 该命令需回复要保存的图片", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存图片] 该命令需回复要保存的图片", false);
                 logger.info("\t\t\t\t├─[Image.Save] 未指定消息");
             }
         }else
@@ -59,6 +59,6 @@ public class ImageSaveCommand implements Command {
 
     @Override
     public String getHelp() {
-        return "◉ ImageSave 命令\n功能: 保存图片至本地\n限权: " + getAccess() + "\n格式: [引用图片]ImageSave";
+        return "◉ ImageSave 命令\n功能: 保存图片至本地\n限权: " + getAccess() + "\n格式: [引用图片]ImageSave\n中文命令: 保存图片";
     }
 }

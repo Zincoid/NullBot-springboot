@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"ImageGet"})
+@CommandMapping({"ImageGet", "获取图片"})
 @Component
 @RequiredArgsConstructor
 public class ImageGetCommand implements Command
@@ -34,11 +34,11 @@ public class ImageGetCommand implements Command
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                     logger.info("\t\t\t\t├─[Image.Get] 已获取图片: {}", imagePath);
                 }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Image.Get] 未找到图片", false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[获取图片] 未找到该图", false);
                     logger.info("\t\t\t\t├─[Image.Get] 未找到图片");
                 }
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Image.Get] 无参数", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[获取图片] 无参数", false);
                 logger.info("\t\t\t\t├─[Image.Get] 无参数");
             }
         }else
@@ -47,6 +47,6 @@ public class ImageGetCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ImageGet 命令\n功能: 获取保存的图片\n限权: " + getAccess() + "\n格式: ImageGet [文件名]";
+        return "◉ ImageGet 命令\n功能: 获取保存的图片\n限权: " + getAccess() + "\n格式: ImageGet [文件名]\n中文命令: 获取图片";
     }
 }

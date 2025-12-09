@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"Help", "help"})
+@CommandMapping({"Help", "help", "帮助"})
 @Component
 public class HelpCommand implements Command
 {
@@ -25,7 +25,7 @@ public class HelpCommand implements Command
             String help = """
                     ◉ [AI功能]
                     Chat 或 @Null 或 戳一戳  与AI对话
-                    ResetHistory  清空历史记忆
+                    ChatReset  清空历史记忆
                     ChatHistory   获取聊天历史
                     ChatMode  切换聊天模式
                     
@@ -50,9 +50,10 @@ public class HelpCommand implements Command
                     AccessSet  设置用户限权
                     
                     ◉ [帮助功能]
-                    Help 或 help  获取帮助信息
-                    指令后加 -help或-h 获取详情
+                    Help 或 help 或 "帮助" 获取帮助信息
+                    指令后加 -help 或 -h 获取详情
                     
+                    中文命令 在对应指令详情中获得
                     当前指令前缀为\s""" + commandPrefix;
 
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "======= HELP =======\n" + help, false);
