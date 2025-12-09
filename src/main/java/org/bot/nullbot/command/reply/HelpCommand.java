@@ -40,6 +40,7 @@ public class HelpCommand implements Command
                     ImageDelete  删除保存图片(可引用删除)
                     ImageList  获取保存图片列表
                     RandomImage 或 img  发送随机保存图片
+                    ImageFolderStructure  获取图片文件夹树状结构
                     
                     ◉ [娱乐功能]
                     Wife  今日群友老婆
@@ -54,10 +55,12 @@ public class HelpCommand implements Command
                     Help 或 help 或 "帮助" 获取帮助信息
                     指令后加 -help 或 -h 获取详情
                     
-                    注: 使用AI Monitor模式及Recall Detect功能 需通过FunctionControl启用MessageCollect
-                    
-                    中文命令 在对应指令详情中获得
-                    当前指令前缀为\s""" + commandPrefix;
+                    注:
+                    1. 图片保存路径为{配置路径}/collect 图片自动收集路径为{配置路径}/monitor
+                    2. 选老婆功能的可选人物来源可通过ImageFolderStructure查看acg下子目录名
+                    3. 使用AI Monitor模式及Recall Detect功能 需通过FunctionControl启用MessageCollect
+                    4. 中文命令 在对应指令详情中获得
+                    5. 当前指令前缀为\s""" + commandPrefix;
 
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "======= HELP =======\n" + help, false);
             logger.info("\t\t\t\t├─[Help] 已打印帮助");
