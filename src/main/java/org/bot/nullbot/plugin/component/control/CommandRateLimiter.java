@@ -1,4 +1,4 @@
-package org.bot.nullbot.plugin.component;
+package org.bot.nullbot.plugin.component.control;
 
 import java.time.Duration;
 import java.util.Map;

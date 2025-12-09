@@ -18,8 +18,8 @@ import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.component.ai.ChatStorage;
-import org.bot.nullbot.plugin.component.ai.DeepSeekClient;
+import org.bot.nullbot.plugin.component.ChatStorage;
+import org.bot.nullbot.plugin.component.DeepSeekClient;
 import org.bot.nullbot.plugin.util.DownloadUtil;
 import org.bot.nullbot.plugin.util.MessageParseUtil;
 import org.slf4j.Logger;
@@ -72,7 +72,7 @@ public class MonitorListener
         if(deepSeekClient.getMode() == DeepSeekClient.Mode.Monitor && !event.getMessage().startsWith("/Chat")){
             logger.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
-            chatMessages.add(new ChatMessage("user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
+            chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
             chatStorage.trimHistory(chatMessages, deepSeekClient.getDeepSeekConfig().getMaxMonitorLength());
             logger.info("└─[Record] {} item(s)", chatMessages.size());
         }

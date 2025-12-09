@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.component.ai.DeepSeekClient;
+import org.bot.nullbot.plugin.component.DeepSeekClient;
 import org.bot.nullbot.plugin.util.MessageParseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,8 @@ public class ChatCommand implements Command
             String userName = groupMessageEvent.getSender().getNickname();
             Long userId = groupMessageEvent.getSender().getUserId();
             Long groupId = groupMessageEvent.getGroupId();
-            String response = deepSeekClient.chat(groupId, userId, userName, message);
+            Integer messageId = groupMessageEvent.getMessageId();
+            String response = deepSeekClient.chat(messageId, groupId, userId, userName, message);
             bot.sendGroupMsg(groupId, response, false);
             logger.info("\t\t\t\t├─[AI.Chat] 已回复: {}", response.replaceAll("\\R", ""));
         }else

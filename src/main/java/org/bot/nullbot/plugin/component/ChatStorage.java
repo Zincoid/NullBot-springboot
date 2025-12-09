@@ -1,4 +1,4 @@
-package org.bot.nullbot.plugin.component.ai;
+package org.bot.nullbot.plugin.component;
 
 import lombok.Data;
 import org.bot.nullbot.entity.ChatMessage;
@@ -32,13 +32,13 @@ public class ChatStorage
         }
     }
 
-    public String getUserHistoryAsString(Long userId) { return getString(userId, userHistories); }
+    public String getUserHistoryAsString(Long userId) { return getHistoryStringForAI(userId, userHistories); }
 
-    public String getGroupHistoryAsString(Long groupId) { return getString(groupId, groupHistories); }
+    public String getGroupHistoryAsString(Long groupId) { return getHistoryStringForAI(groupId, groupHistories); }
 
-    public String getMonitorHistoryAsString(Long groupId) { return getString(groupId, monitorHistories); }
+    public String getMonitorHistoryAsString(Long groupId) { return getHistoryStringForAI(groupId, monitorHistories); }
 
-    private String getString(Long id, Map<Long, List<ChatMessage>> histories) {
+    private String getHistoryStringForAI(Long id, Map<Long, List<ChatMessage>> histories) {
         StringBuilder sb = new StringBuilder();
         List<ChatMessage> history =  histories.get(id);
         if (history == null || history.isEmpty()) return "无对话历史";

@@ -1,4 +1,4 @@
-package org.bot.nullbot.plugin.component.ai;
+package org.bot.nullbot.plugin.component;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -54,17 +54,17 @@ public class DeepSeekClient {
      * @param userMessage 用户当前消息
      * @return AI回复内容
      */
-    public String chat(Long groupId, Long userId, String userName, String userMessage) throws Exception {
+    public String chat(Integer messageId, Long groupId, Long userId, String userName, String userMessage) throws Exception {
         List<ChatMessage> chatMessages = switch (mode) {
             case Group -> chatStorage.getGroupHistory(groupId);
             case Personal -> chatStorage.getUserHistory(userId);
             case Monitor -> chatStorage.getMonitorHistory(groupId);
         };
-        chatMessages.add(new ChatMessage("user", userMessage, userId, userName));  // 将用户当前消息添加到历史
+        chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));  // 将用户当前消息添加到历史
         try {
             List<Map<String, String>> _messages = buildMessages(chatMessages);  // 添加系统信息构建完整的请求消息列表
             String response = sendRequest(_messages);  // 发送请求到API
-            chatMessages.add(new ChatMessage("assistant", response, null, null));  // 将AI回复添加到历史
+            chatMessages.add(new ChatMessage(null ,"assistant", response, null, null));  // 将AI回复添加到历史
             if(mode == Mode.Monitor)  // 限制历史记录长度
                 chatStorage.trimHistory(chatMessages, deepSeekConfig.getMaxMonitorLength());
             else
@@ -88,8 +88,8 @@ public class DeepSeekClient {
             case Personal -> deepSeekConfig.getSystemMessage().getPersonal();
             case Monitor -> deepSeekConfig.getSystemMessage().getMonitor();
         };
-        _messages.add(new ChatMessage("system", systemMessage, null, null).toMap());  // 系统消息
-        for (ChatMessage msg : chatMessages) _messages.add(msg.toMap());  // 历史消息
+        _messages.add(new ChatMessage(null, "system", systemMessage, null, null).toMapForAI());  // 系统消息
+        for (ChatMessage msg : chatMessages) _messages.add(msg.toMapForAI());  // 历史消息
         return _messages;
     }
 
