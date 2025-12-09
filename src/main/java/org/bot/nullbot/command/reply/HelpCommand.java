@@ -41,7 +41,7 @@ public class HelpCommand implements Command
                     ImageList  获取保存图片列表
                     RandomImage 或 img  发送随机保存图片
                     
-                    ◉ [老婆功能]
+                    ◉ [娱乐功能]
                     Wife  今日群友老婆
 
                     ◉ [管理功能]
