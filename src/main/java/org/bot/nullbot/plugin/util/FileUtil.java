@@ -2,14 +2,63 @@ package org.bot.nullbot.plugin.util;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileUtil {
+    /**
+     * 获取目录树结构（递归）
+     */
+    public static Map<String, Object> getFolderTree(String rootPath) throws IOException {
+        Path root = Paths.get(rootPath);
+        return getFolderTreeRecursive(root);
+    }
+
+    private static Map<String, Object> getFolderTreeRecursive(Path directory) throws IOException {
+        Map<String, Object> tree = new LinkedHashMap<>();
+
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+            return tree;
+        }
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+            for (Path entry : stream) {
+                if (Files.isDirectory(entry)) {
+                    // 递归获取子文件夹
+                    tree.put(entry.getFileName().toString(),
+                            getFolderTreeRecursive(entry));
+                }
+            }
+        }
+        return tree;
+    }
+
+    /**
+     * 打印目录树
+     */
+    public static String getFolderTreeAsString(Map<String, Object> tree) {
+        return getFolderTreeAsStringRecursive(tree, 0);
+    }
+
+    private static String getFolderTreeAsStringRecursive(Map<String, Object> tree, int level) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, Object> entry : tree.entrySet()) {
+            // 缩进
+            String indent = "  ".repeat(level);
+            sb.append(indent).append("├── ").append(entry.getKey()).append("\n");
+
+            if (entry.getValue() instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> subTree = (Map<String, Object>) entry.getValue();
+                if (!subTree.isEmpty()) {
+                    getFolderTreeAsStringRecursive(subTree, level + 1);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
     /**
      * 获取目录下所有文件名列表（带扩展名），每行一个
      * @param directoryPath 目录路径
@@ -311,7 +360,7 @@ public class FileUtil {
     }
 
     /**
-     * 删除匹配特定模式的文件（NIO版本，使用PathMatcher）（已修改）
+     * 删除匹配特定模式的文件（NIO版本，使用PathMatcher）（已修改，非通用方法，用于回复删除图片功能）
      * @param directoryPath 目录路径
      * @param pattern 通配符模式（如 "*.tmp", "temp_*.*"）
      * @return 删除结果统计
