@@ -15,8 +15,7 @@ public class DownloadUtil
     /**
      * 下载文件（支持图片、视频、音频等）
      */
-    public static String downloadFile(String fileUrl, String savePath, String fileName) {
-        String fullPath = savePath + "/" + fileName;
+    public static String downloadFile(String fileUrl, String savePath, String baseFileName) {
         try {
             URL url = new URL(fileUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -25,7 +24,6 @@ public class DownloadUtil
             connection.setRequestProperty("User-Agent",
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
             connection.setRequestProperty("Accept", "*/*");
-            connection.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8");
 
             connection.setConnectTimeout(10000); // 10秒连接超时
             connection.setReadTimeout(30000);    // 30秒读取超时
@@ -35,62 +33,105 @@ public class DownloadUtil
 
             // 检查响应码
             int responseCode = connection.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_MOVED_TEMP
-                    && responseCode != HttpURLConnection.HTTP_MOVED_PERM) {
+            if (responseCode != HttpURLConnection.HTTP_OK) {
                 return "Failed: HTTP error code " + responseCode;
-            }
-
-            // 处理重定向
-            if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP
-                    || responseCode == HttpURLConnection.HTTP_MOVED_PERM) {
-                String newUrl = connection.getHeaderField("Location");
-                return downloadFile(newUrl, savePath, fileName);
             }
 
             // 获取文件类型和大小
             String contentType = connection.getContentType();
             long contentLength = connection.getContentLengthLong();
 
-            // System.out.println("Downloading: " + fileUrl);
-            // System.out.println("Content-Type: " + contentType);
-            // System.out.println("File Size: " + formatFileSize(contentLength));
+            System.out.println("Downloading: " + fileUrl);
+            System.out.println("Content-Type: " + contentType);
+            if (contentLength > 0) {
+                System.out.println("File Size: " + formatFileSize(contentLength));
+            }
 
-            // 生成保存路径和扩展名
+            // 获取正确的文件扩展名
             String fileExtension = getFileExtension(contentType, fileUrl);
-            String finalFileName = fileName + fileExtension;
-            Path saveFilePath = Paths.get(savePath, finalFileName);
+
+            // 构建最终文件名（包含扩展名）
+            String fileNameWithExt = baseFileName + fileExtension;
+            Path saveFilePath = Paths.get(savePath, fileNameWithExt);
 
             // 确保目录存在
             Files.createDirectories(Paths.get(savePath));
 
             // 下载文件
-            try (InputStream inputStream = connection.getInputStream();
-                 OutputStream outputStream = new FileOutputStream(saveFilePath.toFile())) {
+            try (InputStream inputStream = connection.getInputStream()) {
+                Files.copy(inputStream, saveFilePath, StandardCopyOption.REPLACE_EXISTING);
+            }
 
-                byte[] buffer = new byte[8192];
+            // 验证文件是否下载成功
+            long downloadedSize = Files.size(saveFilePath);
+            System.out.println("Download completed: " + fileNameWithExt + " (" + formatFileSize(downloadedSize) + ")");
+
+            return fileNameWithExt;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Failed: " + e.getMessage();
+        }
+    }
+
+    /**
+     * 下载文件（支持进度显示）
+     */
+    public static String downloadFileWithProgress(String fileUrl, String savePath, String baseFileName) {
+        try {
+            URL url = new URL(fileUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // 设置请求头
+            connection.setRequestProperty("User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(30000);
+
+            // 检查响应码
+            int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                return "Failed: HTTP error code " + responseCode;
+            }
+
+            // 获取文件信息
+            String contentType = connection.getContentType();
+            long fileSize = connection.getContentLengthLong();
+
+            // 获取扩展名
+            String fileExtension = getFileExtension(contentType, fileUrl);
+            String fileNameWithExt = baseFileName + fileExtension;
+            Path saveFilePath = Paths.get(savePath, fileNameWithExt);
+
+            // 确保目录存在
+            Files.createDirectories(Paths.get(savePath));
+
+            // 下载文件（带进度）
+            try (InputStream inputStream = connection.getInputStream();
+                 FileOutputStream outputStream = new FileOutputStream(saveFilePath.toFile())) {
+
+                byte[] buffer = new byte[4096];
                 int bytesRead;
                 long totalBytesRead = 0;
+
+                System.out.println("Downloading: " + fileNameWithExt);
 
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, bytesRead);
                     totalBytesRead += bytesRead;
 
-                    // 显示下载进度（可选）
-                    if (contentLength > 0) {
-                        int progress = (int) ((totalBytesRead * 100) / contentLength);
-                        System.out.print("\rDownloading: " + progress + "%");
+                    // 显示下载进度
+                    if (fileSize > 0) {
+                        int progress = (int) ((totalBytesRead * 100) / fileSize);
+                        System.out.print("\rProgress: " + progress + "% (" +
+                                formatFileSize(totalBytesRead) + " / " + formatFileSize(fileSize) + ")");
                     }
                 }
                 System.out.println("\nDownload completed!");
             }
 
-            // 验证文件是否下载成功
-            long downloadedSize = Files.size(saveFilePath);
-            if (contentLength > 0 && downloadedSize != contentLength) {
-                System.out.println("Warning: File size mismatch. Expected: " + contentLength + ", Downloaded: " + downloadedSize);
-            }
-
-            return finalFileName;
+            return fileNameWithExt;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,94 +145,84 @@ public class DownloadUtil
     private static String getFileExtension(String contentType, String fileUrl) {
         // 首先尝试从Content-Type判断
         if (contentType != null) {
-            contentType = contentType.toLowerCase();
+            String lowerContentType = contentType.toLowerCase();
 
             // 图片类型
-            if (contentType.contains("image/")) {
-                return switch (contentType) {
-                    case "image/png" -> ".png";
-                    case "image/gif" -> ".gif";
-                    case "image/webp" -> ".webp";
-                    case "image/bmp" -> ".bmp";
-                    case "image/svg+xml" -> ".svg";
-                    case "image/tiff" -> ".tiff";
-                    default -> ".jpg"; // 默认图片格式
-                };
+            if (lowerContentType.startsWith("image/")) {
+                if (lowerContentType.contains("png")) return ".png";
+                if (lowerContentType.contains("gif")) return ".gif";
+                if (lowerContentType.contains("webp")) return ".webp";
+                if (lowerContentType.contains("bmp")) return ".bmp";
+                if (lowerContentType.contains("svg")) return ".svg";
+                if (lowerContentType.contains("tiff")) return ".tiff";
+                return ".jpg"; // 默认图片格式
             }
 
             // 视频类型
-            else if (contentType.contains("video/")) {
-                return switch (contentType) {
-                    case "video/mp4" -> ".mp4";
-                    case "video/mpeg" -> ".mpeg";
-                    case "video/ogg" -> ".ogv";
-                    case "video/webm" -> ".webm";
-                    case "video/x-msvideo" -> ".avi";
-                    case "video/quicktime" -> ".mov";
-                    case "video/x-flv" -> ".flv";
-                    case "video/x-matroska" -> ".mkv";
-                    default -> ".mp4"; // 默认视频格式
-                };
+            else if (lowerContentType.startsWith("video/")) {
+                if (lowerContentType.contains("mp4")) return ".mp4";
+                if (lowerContentType.contains("mpeg")) return ".mpeg";
+                if (lowerContentType.contains("ogg") || lowerContentType.contains("ogv")) return ".ogv";
+                if (lowerContentType.contains("webm")) return ".webm";
+                if (lowerContentType.contains("avi")) return ".avi";
+                if (lowerContentType.contains("quicktime") || lowerContentType.contains("mov")) return ".mov";
+                if (lowerContentType.contains("x-flv")) return ".flv";
+                if (lowerContentType.contains("matroska")) return ".mkv";
+                return ".mp4"; // 默认视频格式
             }
 
             // 音频类型
-            else if (contentType.contains("audio/")) {
-                return switch (contentType) {
-                    case "audio/mpeg" -> ".mp3";
-                    case "audio/ogg" -> ".ogg";
-                    case "audio/wav" -> ".wav";
-                    case "audio/webm" -> ".weba";
-                    case "audio/aac" -> ".aac";
-                    case "audio/flac" -> ".flac";
-                    case "audio/x-m4a" -> ".m4a";
-                    case "audio/x-wav" -> ".wav";
-                    default -> ".mp3"; // 默认音频格式
-                };
+            else if (lowerContentType.startsWith("audio/")) {
+                if (lowerContentType.contains("mpeg")) return ".mp3";
+                if (lowerContentType.contains("ogg")) return ".ogg";
+                if (lowerContentType.contains("wav")) return ".wav";
+                if (lowerContentType.contains("webm")) return ".weba";
+                if (lowerContentType.contains("aac")) return ".aac";
+                if (lowerContentType.contains("flac")) return ".flac";
+                if (lowerContentType.contains("x-m4a")) return ".m4a";
+                return ".mp3"; // 默认音频格式
             }
 
-            // 其他常见文件类型
-            else {
-                return switch (contentType) {
-                    case "application/pdf" -> ".pdf";
-                    case "application/zip" -> ".zip";
-                    case "application/x-rar-compressed" -> ".rar";
-                    case "application/x-tar" -> ".tar";
-                    case "application/gzip" -> ".gz";
-                    case "application/x-7z-compressed" -> ".7z";
-                    case "text/plain" -> ".txt";
-                    case "text/html" -> ".html";
-                    case "text/css" -> ".css";
-                    case "text/javascript", "application/javascript" -> ".js";
-                    case "application/json" -> ".json";
-                    case "application/xml" -> ".xml";
-                    default -> "";
-                };
-            }
+            // 其他类型
+            else if (lowerContentType.contains("pdf")) return ".pdf";
+            else if (lowerContentType.contains("zip")) return ".zip";
+            else if (lowerContentType.contains("rar")) return ".rar";
+            else if (lowerContentType.contains("tar")) return ".tar";
+            else if (lowerContentType.contains("gzip") || lowerContentType.contains("x-gzip")) return ".gz";
+            else if (lowerContentType.contains("7z")) return ".7z";
+            else if (lowerContentType.contains("text/plain")) return ".txt";
+            else if (lowerContentType.contains("text/html")) return ".html";
+            else if (lowerContentType.contains("text/css")) return ".css";
+            else if (lowerContentType.contains("javascript")) return ".js";
+            else if (lowerContentType.contains("json")) return ".json";
+            else if (lowerContentType.contains("xml")) return ".xml";
         }
 
         // 如果无法从Content-Type判断，尝试从URL中提取扩展名
         if (fileUrl != null && !fileUrl.isEmpty()) {
-            int lastDotIndex = fileUrl.lastIndexOf('.');
-            int lastSlashIndex = fileUrl.lastIndexOf('/');
+            // 移除查询参数
+            String urlWithoutQuery = fileUrl.split("\\?")[0];
+            int lastDotIndex = urlWithoutQuery.lastIndexOf('.');
+            int lastSlashIndex = urlWithoutQuery.lastIndexOf('/');
 
-            if (lastDotIndex > lastSlashIndex && lastDotIndex < fileUrl.length() - 1) {
-                String extension = fileUrl.substring(lastDotIndex);
-                // 验证扩展名是否合理（避免包含查询参数）
+            if (lastDotIndex > lastSlashIndex && lastDotIndex < urlWithoutQuery.length() - 1) {
+                String extension = urlWithoutQuery.substring(lastDotIndex);
+                // 只保留合理的扩展名（1-10个字符，只包含字母数字）
                 if (extension.length() <= 10 && extension.matches("\\.[a-zA-Z0-9]+")) {
                     return extension.toLowerCase();
                 }
             }
         }
 
-        // 默认扩展名（可根据需要修改）
-        return ".bin";
+        // 默认扩展名
+        return ".dat";
     }
 
     /**
      * 格式化文件大小
      */
     private static String formatFileSize(long size) {
-        if (size <= 0) return "Unknown";
+        if (size <= 0) return "0 B";
 
         final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));

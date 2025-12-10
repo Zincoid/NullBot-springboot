@@ -32,13 +32,12 @@ public class VideoSaveCommand implements Command
             ArrayMsg reply = groupMessageEvent.getArrayMsg().get(0);
             if (reply.getType() == MsgTypeEnum.reply) {
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
-                logger.info(replyMsg.getRawMessage());
+                // logger.info(replyMsg.getRawMessage());
                 Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());
                 if(!videoMap.isEmpty()){
                     for (Map.Entry<String, String> entry : videoMap.entrySet()) {
-                        String originName = entry.getKey();
+                        String fileName = entry.getKey();
                         String url = entry.getValue();
-                        String fileName = originName.substring(0, originName.lastIndexOf("."));
                         String info = DownloadUtil.downloadFile(url, fileStorageConfig.getVideoPath(), fileName);
                         // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
                         //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存视频] 已保存为: " + info, false);
@@ -56,6 +55,11 @@ public class VideoSaveCommand implements Command
             }
         }else
             logger.info("\t\t\t\t├─[Video.Save] 未设计 - 非群消息事件响应方式");
+    }
+
+    @Override
+    public Integer getAccess() {
+        return 1;
     }
 
     @Override
