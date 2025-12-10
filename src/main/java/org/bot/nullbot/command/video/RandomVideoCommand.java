@@ -28,12 +28,12 @@ public class RandomVideoCommand implements Command
             String videoPath = FileUtil.getRandomFile(fileStorageConfig.getVideoPath());
             if (videoPath != null) {
                 String response = MsgUtils.builder()
-                        .video(videoPath, null)
+                        .video(videoPath, "")
                         .build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 logger.info("\t\t\t\t├─[Video.Random] 已发送视频: {}", videoPath);
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌暂无视频", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌暂无视频", false);
                 logger.info("\t\t\t\t├─[Video.Random] 暂无视频");
             }
         }else
