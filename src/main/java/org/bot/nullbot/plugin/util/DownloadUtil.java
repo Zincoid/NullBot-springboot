@@ -45,23 +45,23 @@ public class DownloadUtil
             // 获取文件类型和大小
             String contentType = connection.getContentType();
             long contentLength = connection.getContentLengthLong();
-            logger.info("Downloading: {}", fileUrl);
-            logger.info("Content-Type: {}", contentType);
+            logger.info("\t\t\t\t├─ Downloading: {}", fileUrl);
+            logger.info("\t\t\t\t├─ Content-Type: {}", contentType);
             if (contentLength > 0) {
-                logger.info("File Size: {}", formatFileSize(contentLength));
+                logger.info("\t\t\t\t├─ File Size: {}", formatFileSize(contentLength));
             }
 
             // 如果文件名已经包含扩展名，则使用原文件名
             String finalFileName;
             if (hasExtension(fileName)) {
                 finalFileName = fileName;
-                logger.info("Using provided filename with extension: {}", finalFileName);
+                logger.info("\t\t\t\t├─ Using provided filename with extension: {}", finalFileName);
                 System.out.println();
             } else {
                 // 获取正确的文件扩展名
                 String fileExtension = getFileExtension(contentType, fileUrl, fileName);
                 finalFileName = fileName + fileExtension;
-                logger.info("Added extension to filename: {}", finalFileName);
+                logger.info("\t\t\t\t├─ Added extension to filename: {}", finalFileName);
             }
 
             Path saveFilePath = Paths.get(savePath, finalFileName);
@@ -76,7 +76,7 @@ public class DownloadUtil
 
             // 验证文件是否下载成功
             long downloadedSize = Files.size(saveFilePath);
-            logger.info("Download completed: {} ({})", finalFileName, formatFileSize(downloadedSize));
+            logger.info("\t\t\t\t├─ Download completed: {} ({})", finalFileName, formatFileSize(downloadedSize));
 
             return finalFileName;
 
@@ -123,7 +123,7 @@ public class DownloadUtil
         if (fileName != null && !fileName.isEmpty()) {
             String extensionFromFileName = extractExtensionFromFileName(fileName);
             if (!extensionFromFileName.isEmpty()) {
-                logger.info("Extension from filename: {}", extensionFromFileName);
+                logger.info("\t\t\t\t├─ Extension from filename: {}", extensionFromFileName);
                 return extensionFromFileName;
             }
         }
@@ -132,7 +132,7 @@ public class DownloadUtil
         if (contentType != null && !contentType.isEmpty()) {
             String extensionFromContentType = getExtensionFromContentType(contentType);
             if (!extensionFromContentType.isEmpty()) {
-                logger.info("Extension from Content-Type: {}", extensionFromContentType);
+                logger.info("\t\t\t\t├─ Extension from Content-Type: {}", extensionFromContentType);
                 return extensionFromContentType;
             }
         }
@@ -141,13 +141,13 @@ public class DownloadUtil
         if (fileUrl != null && !fileUrl.isEmpty()) {
             String extensionFromUrl = extractExtensionFromUrl(fileUrl);
             if (!extensionFromUrl.isEmpty()) {
-                logger.info("Extension from URL: {}", extensionFromUrl);
+                logger.info("\t\t\t\t├─ Extension from URL: {}", extensionFromUrl);
                 return extensionFromUrl;
             }
         }
 
         // 4. 默认扩展名（根据情况选择）
-        logger.info("Using default extension: .dat");
+        logger.info("\t\t\t\t├─ Using default extension: .dat");
         return ".dat";
     }
 
