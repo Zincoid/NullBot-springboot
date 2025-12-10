@@ -1,12 +1,12 @@
-CREATE DATABASE NullBot;
-USE NullBot;
+# CREATE DATABASE NullBot;
+# USE NullBot;
 
 DROP TABLE user;
 DROP TABLE item;
 DROP TABLE inventory;
 
 CREATE TABLE user (
-    id LONG PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     level INT DEFAULT 1,
     draw_times INT DEFAULT 50,
     capacity INT DEFAULT 100
