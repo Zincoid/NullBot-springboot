@@ -26,7 +26,7 @@ public class ShowInventoryCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<InventoryPO> inventories = userService.getInventories(groupMessageEvent.getUserId());
-            StringBuilder sb = new StringBuilder().append("物品ID======物品名======数量\n");
+            StringBuilder sb = new StringBuilder().append("物品ID==稀有度======物品名==数量\n");
             for(InventoryPO inventoryPO : inventories) {
                 sb.append(inventoryPO.toString()).append("\n");
             }

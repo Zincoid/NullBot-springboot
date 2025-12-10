@@ -28,6 +28,7 @@ CREATE TABLE inventory (
     owner_id LONG NOT NULL,
     item_id INT NOT NULL,
     item_name VARCHAR(100) NOT NULL,
+    rarity VARCHAR(50) NOT NULL,
     amount INT DEFAULT 1
 );
 

@@ -35,7 +35,7 @@ public class ItemServiceImpl implements ItemService
             Rarity rarity = DrawUtil.drawRarityByProbability();
             List<ItemPO> itemList = itemMapper.selectList(new QueryWrapper<ItemPO>().eq("rarity", rarity.toString()));
             ItemPO item = DrawUtil.drawItemByLogPrice(itemList);
-            if(inventoryService.increaseInventory(userId, item.getId()))
+            if(inventoryService.increaseInventory(userId, item))
                 return item;
             else
                 return null;

@@ -27,7 +27,7 @@ public class InventoryServiceImpl implements InventoryService
     public boolean increaseInventory(Long userId, ItemPO item) {
         List<InventoryPO> inventories = inventoryMapper.selectList(new QueryWrapper<InventoryPO>().eq("owner_id", userId).eq("item_id", item.getId()));
         if(inventories == null || inventories.isEmpty()){
-            inventoryMapper.insert(new InventoryPO(null, userId, item.getId(), item.getName(), 1));
+            inventoryMapper.insert(new InventoryPO(null, userId, item.getId(), item.getName(), item.getRarity(), 1));
             return true;
         }else if(inventories.size() == 1){
             InventoryPO inventory = inventories.getFirst();
