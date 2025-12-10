@@ -10,15 +10,15 @@ import java.util.List;
 @Mapper
 public interface SayingMapper extends BaseMapper<SayingPO>
 {
-    @Select("select * from saying")
+    @Select("SELECT * FROM saying")
     List<SayingPO> getList();
 
-    @Delete("delete from saying where id = #{id}")
+    @Delete("DELETE FROM saying WHERE id = #{id}")
     boolean deleteById(Integer id);
 
-    @Insert("insert into saying(user_id, user_name, text) values(#{userId}, #{userName}, #{text})")
+    @Insert("INSERT INTO saying(user_id, user_name, text) VALUES(#{userId}, #{userName}, #{text})")
     int insert(Long userId, String userName, String text);
 
-    @Select("select * from saying order by rand() limit 1")
+    @Select("SELECT * FROM saying ORDER BY RAND() LIMIT 1")
     SayingPO getRand();
 }

@@ -14,7 +14,8 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("saying")
-public class SayingPO {
+public class SayingPO
+{
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private LocalDateTime time;
