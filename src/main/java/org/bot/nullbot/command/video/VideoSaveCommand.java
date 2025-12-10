@@ -33,7 +33,7 @@ public class VideoSaveCommand implements Command
             if (reply.getType() == MsgTypeEnum.reply) {
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                 // logger.info(replyMsg.getRawMessage());
-                Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());
+                Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());  // 可优化为单个键值对
                 if(!videoMap.isEmpty()){
                     for (Map.Entry<String, String> entry : videoMap.entrySet()) {
                         String fileName = entry.getKey();

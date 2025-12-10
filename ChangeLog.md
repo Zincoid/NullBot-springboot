@@ -13,4 +13,5 @@
 - 添加打印图片目录树状结构功能；
 - 选群友老婆功能外添加选二次元老婆功能，可通过人物来源参数抽取不同种类人物；
 - 添加SpringBootTest对Command的测试功能；
-- 添加StaticResourceUtil读取静态资源的图片文件，并将help命令输出改为静态资源图片。
+- 添加StaticResourceUtil读取静态资源的图片文件，并将help命令输出改为静态资源图片；
+- 添加视频保存和随机获取功能，优化DownloadUtil。
