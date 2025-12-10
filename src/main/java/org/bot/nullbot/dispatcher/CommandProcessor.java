@@ -40,6 +40,12 @@ public class CommandProcessor
             logger.info("[CommandProcessor] 正在处理 {} 命令 (TEST)...", event.getCommandType());
             chainProcess(null, event, command);
             logger.info("[CommandProcessor] {} 命令处理完毕", event.getCommandType());
+
+            // 在Command组件中使用
+            // if(bot == null){
+            //     logger.info("[Test] 测试结果");
+            // }
+
         } else
             logger.info("[CommandProcessor] 命令不存在");
     }
