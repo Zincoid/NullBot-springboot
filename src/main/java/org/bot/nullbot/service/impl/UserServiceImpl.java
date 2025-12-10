@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
+    @Transactional
     public List<InventoryPO> getInventories(Long userId) {
         return inventoryMapper.selectList(new QueryWrapper<InventoryPO>().eq("owner_id", userId));
     }
