@@ -111,8 +111,7 @@ public class FileUtil {
                     .collect(Collectors.toList());
             if (files.isEmpty()) {
                 // System.err.println("目录中没有文件: " + directoryPath);
-                // return null;
-                throw new IllegalArgumentException("目录中没有文件: " + directoryPath);
+                return null;
             }
             // 随机选择
             Random random = new Random();

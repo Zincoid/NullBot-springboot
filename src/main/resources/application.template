@@ -41,6 +41,7 @@ nullbot:
   file:
     storage:
       image-path: /root/Nullbot/file/image  # src/main/resources/file/image
+      video-path: /root/Nullbot/file/video  # src/main/resources/file/video
   accesses:
     2660181154: 2
 

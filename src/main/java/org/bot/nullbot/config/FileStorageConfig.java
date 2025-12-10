@@ -9,4 +9,5 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "nullbot.file.storage")
 public class FileStorageConfig {
     private String imagePath;
+    private String videoPath;
 }

@@ -47,6 +47,9 @@ public class HelpCommand implements Command
             //         RandomImage 或 img  发送随机保存图片
             //         ImageFolderStructure  获取图片文件夹树状结构
             //
+            //         ◉ [视频功能]
+            //         RandomVideo 或 video  发送随机视频
+            //
             //         ◉ [娱乐功能]
             //         Wife  今日老婆(群友/二次元)
             //
