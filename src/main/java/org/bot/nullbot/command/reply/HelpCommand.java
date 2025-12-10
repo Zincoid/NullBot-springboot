@@ -73,10 +73,11 @@ public class HelpCommand implements Command
                 String helpBase64 = StaticResourceUtil.loadImageAsBase64("help.png");
                 String response = MsgUtils.builder().img("base64://" + helpBase64).build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+                logger.info("\t\t\t\t├─[Help] 已获取帮助");
             } catch (IOException e) {
-                logger.info("[Help] ❌帮助资源缺失");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Help] ❌帮助资源缺失", false);
+                logger.info("\t\t\t\t├─[Help] 帮助资源缺失");
             }
-            logger.info("\t\t\t\t├─[Help] 已打印帮助");
         }else
             logger.info("\t\t\t\t├─[Help] 未设计 非群消息事件响应方式");
     }
