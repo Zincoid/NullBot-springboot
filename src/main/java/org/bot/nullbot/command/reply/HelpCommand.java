@@ -6,10 +6,14 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.plugin.util.StaticResourceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Base64;
 
 @CommandMapping({"Help", "help", "帮助"})
 @Component
@@ -65,12 +69,13 @@ public class HelpCommand implements Command
 
             // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "======= HELP =======\n" + help, false);
 
-            String helpPic = MsgUtils.builder()
-                    // .text("Info")
-                    .img("classpath:static/help.png")
-                    .build();
-
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), helpPic, false);
+            try {
+                String helpBase64 = StaticResourceUtil.loadImageAsBase64("help.png");
+                String response = MsgUtils.builder().img("base64://" + helpBase64).build();
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+            } catch (IOException e) {
+                logger.info("[Help] ❌帮助资源缺失");
+            }
             logger.info("\t\t\t\t├─[Help] 已打印帮助");
         }else
             logger.info("\t\t\t\t├─[Help] 未设计 非群消息事件响应方式");
