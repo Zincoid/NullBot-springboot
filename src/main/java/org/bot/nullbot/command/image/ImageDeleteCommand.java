@@ -39,7 +39,7 @@ public class ImageDeleteCommand implements Command
                         String originName = entry.getKey();
                         String url = entry.getValue();
                         String fileName = originName.substring(0, originName.lastIndexOf("."));
-                        String response = FileUtil.deleteFilesByPattern(fileStorageConfig.getImagePath() + "/collect", fileName + ".*");
+                        String response = FileUtil.deleteFilesByPattern(fileStorageConfig.getImagePath() + "/collect", fileName + ".*");  // 因为QQ获取文件名后缀全是jpg所以模式匹配...
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1\uFE0F" + response, false);
                         logger.info("\t\t\t\t├─[Image.Delete] {}", response);
                     }
