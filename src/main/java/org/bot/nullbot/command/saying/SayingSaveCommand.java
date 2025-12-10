@@ -9,8 +9,8 @@ import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.dao.mapper.SayingMapper;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.service.SayingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class SayingSaveCommand implements Command
 {
     private static final Logger logger = LoggerFactory.getLogger(SayingSaveCommand.class);
-    private final SayingMapper sayingMapper;
+    private final SayingService sayingService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -37,7 +37,7 @@ public class SayingSaveCommand implements Command
                 String text = replyMsg.getRawMessage().replaceAll("\\[CQ:at,qq=(\\d+)\\]", "@$1").replaceAll("\\[CQ:.*?\\]", "");
                 if(!Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\]\\[No\\.\\d+\\][\\s\\S]*", ShiroUtils.unescape(text))){
                     if(!text.trim().isEmpty()){
-                        int inserted = sayingMapper.insert(userId, userName, text);
+                        int inserted = sayingService.insert(userId, userName, text);
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] " + (inserted == 1 ? "\uD83D\uDCBE已记录！" : "❌出错"), false);
                         logger.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", (inserted == 1 ? "已记录 ->" : "出错 ->") + text);
                     }else{

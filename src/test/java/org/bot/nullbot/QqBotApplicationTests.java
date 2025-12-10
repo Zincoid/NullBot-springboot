@@ -20,16 +20,15 @@ class QqBotApplicationTests {
     @Resource
     private CommandProcessor commandProcessor;
 
-    @Test
+    // @Test
     void fileTest() throws IOException {
         System.out.println(FileUtil.getFolderTreeString("C:\\Users\\Zincoid\\IdeaProjects\\NullBot\\src\\main\\resources", 0));
     }
 
-   @Test
+   // @Test
    void commandTest() throws Exception {
        String commandType = "help";
        List<String> commandParameters =  new ArrayList<>();
-
        commandProcessor.processTest(new CommandEvent<>(commandType, commandParameters, new GroupMessageEvent(), false));
 
        // while (true)

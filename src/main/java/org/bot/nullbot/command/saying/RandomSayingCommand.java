@@ -5,9 +5,9 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.dao.mapper.SayingMapper;
 import org.bot.nullbot.dao.po.SayingPO;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.service.SayingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -18,12 +18,12 @@ import org.springframework.stereotype.Component;
 public class RandomSayingCommand implements Command
 {
     private static final Logger logger = LoggerFactory.getLogger(RandomSayingCommand.class);
-    private final SayingMapper sayingMapper;
+    private final SayingService sayingService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            SayingPO saying = sayingMapper.getRand();
+            SayingPO saying = sayingService.getRand();
             if (saying != null) {
                 String text = saying.toString();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), text, false);

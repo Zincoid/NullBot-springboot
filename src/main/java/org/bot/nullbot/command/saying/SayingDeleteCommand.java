@@ -5,8 +5,8 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.dao.mapper.SayingMapper;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.service.SayingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class SayingDeleteCommand implements Command
 {
     private static final Logger logger = LoggerFactory.getLogger(SayingDeleteCommand.class);
-    private final SayingMapper sayingMapper;
+    private final SayingService sayingService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -25,7 +25,7 @@ public class SayingDeleteCommand implements Command
             if (!event.getCommandParameters().isEmpty()){
                 try {
                     int id = Integer.parseInt(event.getCommandParameters().get(0));
-                    boolean deleted = sayingMapper.deleteById(id);
+                    boolean deleted = sayingService.deleteById(id);
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] \uD83D\uDDD1\uFE0F删除语录 No." + id + " -> " + (deleted ? "已删除" : "无记录"), false);
                     logger.info("\t\t\t\t├─[Saying.Delete] 执行语录删除 - No.{} -> {}", id, deleted ? "已删除" : "无记录");
                 } catch (NumberFormatException e) {

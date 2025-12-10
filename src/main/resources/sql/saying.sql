@@ -6,7 +6,7 @@ DROP TABLE saying;
 CREATE TABLE saying (
     id INT PRIMARY KEY AUTO_INCREMENT,
     time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id Long NOT NULL,
+    user_id LONG NOT NULL,
     user_name VARCHAR(50) NOT NULL,
     text VARCHAR(1000) NOT NULL
 );
