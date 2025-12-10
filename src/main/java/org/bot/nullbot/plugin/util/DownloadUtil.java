@@ -45,7 +45,8 @@ public class DownloadUtil
             // 获取文件类型和大小
             String contentType = connection.getContentType();
             long contentLength = connection.getContentLengthLong();
-            logger.info("\t\t\t\t├─ Downloading: {}", fileUrl);
+            // logger.info("\t\t\t\t├─ Downloading: {}", fileUrl);
+            logger.info("\t\t\t\t├─ Downloading from url...");
             logger.info("\t\t\t\t├─ Content-Type: {}", contentType);
             if (contentLength > 0) {
                 logger.info("\t\t\t\t├─ File Size: {}", formatFileSize(contentLength));
@@ -56,7 +57,6 @@ public class DownloadUtil
             if (hasExtension(fileName)) {
                 finalFileName = fileName;
                 logger.info("\t\t\t\t├─ Using provided filename with extension: {}", finalFileName);
-                System.out.println();
             } else {
                 // 获取正确的文件扩展名
                 String fileExtension = getFileExtension(contentType, fileUrl, fileName);
