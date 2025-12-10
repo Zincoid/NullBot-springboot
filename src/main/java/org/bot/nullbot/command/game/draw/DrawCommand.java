@@ -28,8 +28,8 @@ public class DrawCommand implements Command
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] 你抽到了...\n" + item.toString(), false);
                 logger.info("\t\t\t\t├─[Draw] 已抽取 - {}", item.toString().replaceAll("\\R", ""));
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌添加物品到库存失败", false);
-                logger.info("\t\t\t\t├─[Draw] 添加物品到库存失败");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌次数已耗尽", false);
+                logger.info("\t\t\t\t├─[Draw] 次数已耗尽");
             }
         }else
             logger.info("\t\t\t\t├─[Draw] 未设计 非群消息事件响应方式");
