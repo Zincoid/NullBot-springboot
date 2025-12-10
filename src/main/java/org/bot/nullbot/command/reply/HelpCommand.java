@@ -43,7 +43,7 @@ public class HelpCommand implements Command
                     ImageFolderStructure  获取图片文件夹树状结构
                     
                     ◉ [娱乐功能]
-                    Wife  今日群友老婆
+                    Wife  今日老婆(群友/二次元)
 
                     ◉ [管理功能]
                     UserBan  禁言群内用户
@@ -57,7 +57,7 @@ public class HelpCommand implements Command
                     
                     注:
                     1. 图片保存路径为{配置路径}/collect 图片自动收集路径为{配置路径}/monitor
-                    2. 选老婆功能的可选人物来源可通过ImageFolderStructure查看acg下子目录名
+                    2. 选老婆功能的二次元可选人物来源可通过ImageFolderStructure查看acg下子目录名获得
                     3. 使用AI Monitor模式及Recall Detect功能 需通过FunctionControl启用MessageCollect
                     4. 中文命令 在对应指令详情中获得
                     5. 当前指令前缀为\s""" + commandPrefix;
