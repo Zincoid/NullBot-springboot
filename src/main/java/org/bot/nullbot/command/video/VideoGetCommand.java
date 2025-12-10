@@ -1,0 +1,52 @@
+package org.bot.nullbot.command.video;
+
+import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.annotation.CommandMapping;
+import org.bot.nullbot.command.Command;
+import org.bot.nullbot.command.image.ImageGetCommand;
+import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.plugin.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+@CommandMapping({"VideoGet", "获取视频"})
+@Component
+@RequiredArgsConstructor
+public class VideoGetCommand implements Command
+{
+    private static final Logger logger = LoggerFactory.getLogger(VideoGetCommand.class);
+    private final FileStorageConfig fileStorageConfig;
+
+    @Override
+    public void execute(Bot bot, CommandEvent<?> event) {
+        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            if(!event.getCommandParameters().isEmpty()){
+                String videoPath = FileUtil.getFilePathByName(fileStorageConfig.getVideoPath(), event.getCommandParameters().get(0));
+                if (videoPath != null) {
+                    String response = MsgUtils.builder()
+                            .video(videoPath, "")
+                            .build();
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+                    logger.info("\t\t\t\t├─[Video.Get] 已获取视频: {}", videoPath);
+                }else{
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌未找到该视频", false);
+                    logger.info("\t\t\t\t├─[Video.Get] 未找到该视频");
+                }
+            }else{
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌无文件名参数", false);
+                logger.info("\t\t\t\t├─[Video.Get] 无文件名参数");
+            }
+        }else
+            logger.info("\t\t\t\t├─[Video.Get] 未设计 - 非群消息事件响应方式");
+    }
+
+    @Override
+    public String getHelp() {
+        return "◉ VideoGet 命令\n功能: 获取保存的视频\n限权: " + getAccess() + "\n格式: VideoGet [文件名]\n中文命令: 获取视频";
+    }
+}
