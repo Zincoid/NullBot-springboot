@@ -20,5 +20,9 @@ sudo screen -r 会话名
 ### 本地访问服务器NapCat配置服务
 ssh -L 6099:127.0.0.1:6099 root@ip
 
+### 性能分析
+sudo perf record -g java -jar /root/Nullbot/jar/NullBot-0.0.1-SNAPSHOT.jar  
+sudo perf report -i perf.data
+
 ### Java版本切换
 sudo alternatives --config java
