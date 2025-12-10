@@ -8,6 +8,7 @@ DROP TABLE inventory;
 CREATE TABLE user (
     id LONG PRIMARY KEY,
     level INT DEFAULT 1,
+    draw_times INT DEFAULT 50,
     capacity INT DEFAULT 100
 );
 
@@ -26,6 +27,7 @@ CREATE TABLE inventory (
     id INT PRIMARY KEY AUTO_INCREMENT,
     owner_id LONG NOT NULL,
     item_id INT NOT NULL,
+    item_name VARCHAR(100) NOT NULL,
     amount INT DEFAULT 1
 );
 
