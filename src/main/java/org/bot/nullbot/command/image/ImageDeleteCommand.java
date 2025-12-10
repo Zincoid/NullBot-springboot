@@ -62,7 +62,7 @@ public class ImageDeleteCommand implements Command
 
     @Override
     public Integer getAccess() {
-        return 2;
+        return 1;
     }
 
     @Override
