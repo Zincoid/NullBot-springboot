@@ -48,7 +48,11 @@ public class HelpCommand implements Command
             //         ImageFolderStructure  获取图片文件夹树状结构
             //
             //         ◉ [视频功能]
-            //         RandomVideo 或 video  发送随机视频
+            //         VideoSave  保存引用视频
+            //         VideoGet  获取保存视频
+            //         VideoDelete  删除保存视频(可引用删除)
+            //         VideoList  获取保存视频列表
+            //         RandomVideo 或 video  发送随机保存视频
             //
             //         ◉ [娱乐功能]
             //         Wife  今日老婆(群友/二次元)
