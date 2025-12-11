@@ -1,5 +1,6 @@
 package org.bot.nullbot.plugin.util;
 
+import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.GetMsgResp;
 import com.mikuac.shiro.model.ArrayMsg;
@@ -36,6 +37,14 @@ public class MessageParseUtil
             }
         }
         return message.toString();
+    }
+
+    public static String parseRawSaying(String rawSaying) {
+        String text = rawSaying.replaceAll("\\[CQ:at,qq=(\\d+)\\]", "@$1").replaceAll("\\[CQ:.*?\\]", "");
+        if(!Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\]\\[No\\.\\d+\\][\\s\\S]*", ShiroUtils.unescape(text))){
+            return text;
+        }else
+            return null;
     }
 
     public static Map<String, String> parseGroupRawMessageAsImageMap(String rawMessage) {

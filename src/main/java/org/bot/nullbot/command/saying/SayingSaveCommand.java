@@ -1,6 +1,5 @@
 package org.bot.nullbot.command.saying;
 
-import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.GetMsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -11,10 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.plugin.util.MessageParseUtil;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Component;
-
-import java.util.regex.Pattern;
 
 
 @CommandMapping({"SayingSave", "保存语录"})
@@ -33,8 +31,8 @@ public class SayingSaveCommand implements Command
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                 long userId = Long.parseLong(replyMsg.getSender().getUserId());
                 String userName = replyMsg.getSender().getNickname();
-                String text = replyMsg.getRawMessage().replaceAll("\\[CQ:at,qq=(\\d+)\\]", "@$1").replaceAll("\\[CQ:.*?\\]", "");
-                if(!Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\]\\[No\\.\\d+\\][\\s\\S]*", ShiroUtils.unescape(text))){
+                String text = MessageParseUtil.parseRawSaying(replyMsg.getRawMessage());
+                if(text != null) {
                     if(!text.trim().isEmpty()){
                         int inserted = sayingService.insert(userId, userName, text);
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] " + (inserted == 1 ? "\uD83D\uDCBE已记录！" : "❌出错"), false);
