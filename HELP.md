@@ -1,6 +1,6 @@
 # 快捷运行
 screen -dmS napcat bash -c "xvfb-run -a /root/Napcat/opt/QQ/qq --no-sandbox  -q 3408240018"  
-screen -dmS napcat bash -c "java -jar /root/Nullbot/jar/NullBot-0.0.1-SNAPSHOT.jar 2>&1 | tee /root/Nullbot/output.log"
+screen -dmS nullbot bash -c "java -jar /root/Nullbot/jar/NullBot-0.0.1-SNAPSHOT.jar 2>&1 | tee /root/Nullbot/output.log"
 
 # 启动命令
 ### NapCat 运行命令
