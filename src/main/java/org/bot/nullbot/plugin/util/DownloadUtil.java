@@ -3,376 +3,288 @@ package org.bot.nullbot.plugin.util;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.regex.Pattern;
 
+
 @Slf4j
-public class DownloadUtil
-{
+public class DownloadUtil {
+
     /**
-     * 下载文件（支持图片、视频、音频等）
+     * 主下载方法
      */
     public static String downloadFile(String fileUrl, String savePath, String fileName) {
+        HttpURLConnection connection = null;
+
         try {
             URL url = new URL(fileUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
 
-            // 设置请求头，模拟浏览器访问
-            connection.setRequestProperty("User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
-            connection.setRequestProperty("Accept", "*/*");
-
-            connection.setConnectTimeout(10000); // 10秒连接超时
-            connection.setReadTimeout(30000);    // 30秒读取超时
-
-            // 自动处理重定向
+            setCommonHeaders(connection);
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(30000);
             connection.setInstanceFollowRedirects(true);
 
-            // 检查响应码
             int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
+                drainStream(connection.getErrorStream());
                 return "Failed: HTTP error code " + responseCode;
             }
 
-            // 获取文件类型和大小
             String contentType = connection.getContentType();
             long contentLength = connection.getContentLengthLong();
-            // logger.info("\t\t\t\t├─ Downloading: {}", fileUrl);
+
+            final long MAX_FILE_SIZE = 500L * 1024 * 1024;
+            if (contentLength > MAX_FILE_SIZE) {
+                log.warn("\t\t\t\t├─ File too large: {} > {}", formatFileSize(contentLength), formatFileSize(MAX_FILE_SIZE));
+                return "Failed: File too large";
+            }
+
             log.info("\t\t\t\t├─ Downloading from url...");
             log.info("\t\t\t\t├─ Content-Type: {}", contentType);
             if (contentLength > 0) {
                 log.info("\t\t\t\t├─ File Size: {}", formatFileSize(contentLength));
             }
 
-            // 如果文件名已经包含扩展名，则使用原文件名
-            String finalFileName;
-            if (hasExtension(fileName)) {
-                finalFileName = fileName;
-                log.info("\t\t\t\t├─ Using provided filename with extension: {}", finalFileName);
-            } else {
-                // 获取正确的文件扩展名
-                String fileExtension = getFileExtension(contentType, fileUrl, fileName);
-                finalFileName = fileName + fileExtension;
-                log.info("\t\t\t\t├─ Added extension to filename: {}", finalFileName);
-            }
-
+            String finalFileName = determineFileName(fileName, contentType, fileUrl);
             Path saveFilePath = Paths.get(savePath, finalFileName);
-
-            // 确保目录存在
             Files.createDirectories(Paths.get(savePath));
 
-            // 下载文件
-            try (InputStream inputStream = connection.getInputStream()) {
-                Files.copy(inputStream, saveFilePath, StandardCopyOption.REPLACE_EXISTING);
+            try (InputStream inputStream = connection.getInputStream();
+                 OutputStream outputStream = Files.newOutputStream(saveFilePath)) {
+
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                long totalBytesRead = 0;
+
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    if (Thread.currentThread().isInterrupted()) {
+                        log.warn("\t\t\t\t├─ Download interrupted by thread");
+                        Files.deleteIfExists(saveFilePath);
+                        return "Failed: Download interrupted";
+                    }
+
+                    outputStream.write(buffer, 0, bytesRead);
+                    totalBytesRead += bytesRead;
+
+                    if (contentLength > 0 && totalBytesRead % (10 * 1024 * 1024) == 0) {
+                        log.info("\t\t\t\t├─ Download progress: {}/{}", formatFileSize(totalBytesRead), formatFileSize(contentLength));
+                    }
+                }
+
+                long downloadedSize = Files.size(saveFilePath);
+                log.info("\t\t\t\t├─ Download completed: {} ({})", finalFileName, formatFileSize(downloadedSize));
+                return finalFileName;
             }
 
-            // 验证文件是否下载成功
-            long downloadedSize = Files.size(saveFilePath);
-            log.info("\t\t\t\t├─ Download completed: {} ({})", finalFileName, formatFileSize(downloadedSize));
-
-            return finalFileName;
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            log.error("\t\t\t\t├─ Download failed: {}", e.getMessage(), e);
             return "Failed: " + e.getMessage();
+        } catch (Exception e) {
+            log.error("\t\t\t\t├─ Unexpected error: {}", e.getMessage(), e);
+            return "Failed: Unexpected error";
+        } finally {
+            closeConnection(connection);
         }
     }
 
-    /**
-     * 检查文件名是否包含扩展名
-     */
-    private static boolean hasExtension(String fileName) {
-        if (fileName == null || fileName.isEmpty()) {
-            return false;
-        }
+    // =============================
+    // 工具
+    // =============================
 
-        // 查找最后一个点号的位置
+    private static void setCommonHeaders(HttpURLConnection connection) {
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
+        connection.setRequestProperty("Accept", "*/*");
+    }
+
+    private static void drainStream(InputStream stream) {
+        if (stream == null) return;
+        try (InputStream s = stream) {
+            byte[] buffer = new byte[2048];
+            while (s.read(buffer) > 0) {
+                // drain
+            }
+        } catch (IOException ignored) {
+        }
+    }
+
+    private static void closeConnection(HttpURLConnection connection) {
+        if (connection == null) return;
+        try {
+            try {
+                drainStream(connection.getInputStream());
+            } catch (Exception ignored) {
+            }
+        } finally {
+            try {
+                connection.disconnect();
+            } catch (Exception e) {
+                log.warn("\t\t\t\t├─ Failed to disconnect connection: {}", e.getMessage());
+            }
+        }
+    }
+
+    private static String determineFileName(String fileName, String contentType, String fileUrl) {
+        if (hasExtension(fileName)) {
+            return fileName;
+        }
+        String extension = getFileExtension(contentType, fileUrl, fileName);
+        return fileName + extension;
+    }
+
+    private static boolean hasExtension(String fileName) {
+        if (fileName == null || fileName.isEmpty()) return false;
+
         int lastDotIndex = fileName.lastIndexOf('.');
         int lastSlashIndex = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
 
-        // 点号必须在最后一个斜杠之后，且不能是第一个字符或最后一个字符
-        if (lastDotIndex > lastSlashIndex &&
-                lastDotIndex > 0 &&
-                lastDotIndex < fileName.length() - 1) {
-
+        if (lastDotIndex > lastSlashIndex && lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
             String extension = fileName.substring(lastDotIndex + 1);
-
-            // 扩展名应该是1-10个字母数字字符
-            return extension.length() >= 1 &&
-                    extension.length() <= 10 &&
-                    extension.matches("[a-zA-Z0-9]+");
+            return !extension.isEmpty() && extension.length() <= 10 && extension.matches("[a-zA-Z0-9]+");
         }
 
         return false;
     }
 
-    /**
-     * 根据Content-Type、URL和文件名获取文件扩展名
-     * 优先级：文件名 > Content-Type > URL
-     */
     private static String getFileExtension(String contentType, String fileUrl, String fileName) {
-        // 1. 首先尝试从文件名中提取扩展名
+        String ext;
+
         if (fileName != null && !fileName.isEmpty()) {
-            String extensionFromFileName = extractExtensionFromFileName(fileName);
-            if (!extensionFromFileName.isEmpty()) {
-                log.info("\t\t\t\t├─ Extension from filename: {}", extensionFromFileName);
-                return extensionFromFileName;
+            ext = extractExtensionFromFileName(fileName);
+            if (!ext.isEmpty()) {
+                log.info("\t\t\t\t├─ Extension from filename: {}", ext);
+                return ext;
             }
         }
 
-        // 2. 如果文件名没有扩展名，尝试从Content-Type判断
         if (contentType != null && !contentType.isEmpty()) {
-            String extensionFromContentType = getExtensionFromContentType(contentType);
-            if (!extensionFromContentType.isEmpty()) {
-                log.info("\t\t\t\t├─ Extension from Content-Type: {}", extensionFromContentType);
-                return extensionFromContentType;
+            ext = getExtensionFromContentType(contentType);
+            if (!ext.isEmpty()) {
+                log.info("\t\t\t\t├─ Extension from Content-Type: {}", ext);
+                return ext;
             }
         }
 
-        // 3. 如果Content-Type也没有，尝试从URL中提取扩展名
         if (fileUrl != null && !fileUrl.isEmpty()) {
-            String extensionFromUrl = extractExtensionFromUrl(fileUrl);
-            if (!extensionFromUrl.isEmpty()) {
-                log.info("\t\t\t\t├─ Extension from URL: {}", extensionFromUrl);
-                return extensionFromUrl;
+            ext = extractExtensionFromUrl(fileUrl);
+            if (!ext.isEmpty()) {
+                log.info("\t\t\t\t├─ Extension from URL: {}", ext);
+                return ext;
             }
         }
 
-        // 4. 默认扩展名（根据情况选择）
         log.info("\t\t\t\t├─ Using default extension: .dat");
         return ".dat";
     }
 
-    /**
-     * 从文件名中提取扩展名
-     */
     private static String extractExtensionFromFileName(String fileName) {
-        // 移除路径部分，只保留文件名
         String simpleName = new File(fileName).getName();
-
         int lastDotIndex = simpleName.lastIndexOf('.');
+
         if (lastDotIndex > 0 && lastDotIndex < simpleName.length() - 1) {
             String extension = simpleName.substring(lastDotIndex).toLowerCase();
-
-            // 验证扩展名是否合理
-            if (isValidExtension(extension)) {
-                return extension;
-            }
+            if (isValidExtension(extension)) return extension;
         }
 
         return "";
     }
 
-    /**
-     * 从Content-Type获取扩展名
-     */
     private static String getExtensionFromContentType(String contentType) {
-        String lowerContentType = contentType.toLowerCase();
+        String lower = contentType.toLowerCase();
 
-        // 图片类型
-        if (lowerContentType.startsWith("image/")) {
-            if (lowerContentType.contains("jpeg") || lowerContentType.contains("jpg")) return ".jpg";
-            if (lowerContentType.contains("png")) return ".png";
-            if (lowerContentType.contains("gif")) return ".gif";
-            if (lowerContentType.contains("webp")) return ".webp";
-            if (lowerContentType.contains("bmp")) return ".bmp";
-            if (lowerContentType.contains("svg")) return ".svg";
-            if (lowerContentType.contains("tiff")) return ".tiff";
+        if (lower.startsWith("image/")) {
+            if (lower.contains("jpeg") || lower.contains("jpg")) return ".jpg";
+            if (lower.contains("png")) return ".png";
+            if (lower.contains("gif")) return ".gif";
+            if (lower.contains("webp")) return ".webp";
+            if (lower.contains("bmp")) return ".bmp";
+            if (lower.contains("svg")) return ".svg";
+            if (lower.contains("tiff")) return ".tiff";
             return ".jpg";
         }
 
-        // 视频类型
-        else if (lowerContentType.startsWith("video/")) {
-            if (lowerContentType.contains("mp4")) return ".mp4";
-            if (lowerContentType.contains("mpeg")) return ".mpeg";
-            if (lowerContentType.contains("ogg") || lowerContentType.contains("ogv")) return ".ogv";
-            if (lowerContentType.contains("webm")) return ".webm";
-            if (lowerContentType.contains("avi")) return ".avi";
-            if (lowerContentType.contains("quicktime") || lowerContentType.contains("mov")) return ".mov";
-            if (lowerContentType.contains("x-flv")) return ".flv";
-            if (lowerContentType.contains("matroska")) return ".mkv";
+        if (lower.startsWith("video/")) {
+            if (lower.contains("mp4")) return ".mp4";
+            if (lower.contains("mpeg")) return ".mpeg";
+            if (lower.contains("og")) return ".ogv";
+            if (lower.contains("webm")) return ".webm";
+            if (lower.contains("avi")) return ".avi";
+            if (lower.contains("mov")) return ".mov";
+            if (lower.contains("flv")) return ".flv";
+            if (lower.contains("mkv")) return ".mkv";
             return ".mp4";
         }
 
-        // 音频类型
-        else if (lowerContentType.startsWith("audio/")) {
-            if (lowerContentType.contains("mpeg") || lowerContentType.contains("mp3")) return ".mp3";
-            if (lowerContentType.contains("ogg")) return ".ogg";
-            if (lowerContentType.contains("wav")) return ".wav";
-            if (lowerContentType.contains("webm")) return ".weba";
-            if (lowerContentType.contains("aac")) return ".aac";
-            if (lowerContentType.contains("flac")) return ".flac";
-            if (lowerContentType.contains("x-m4a")) return ".m4a";
+        if (lower.startsWith("audio/")) {
+            if (lower.contains("mp3") || lower.contains("mpeg")) return ".mp3";
+            if (lower.contains("ogg")) return ".ogg";
+            if (lower.contains("wav")) return ".wav";
+            if (lower.contains("webm")) return ".weba";
+            if (lower.contains("aac")) return ".aac";
+            if (lower.contains("flac")) return ".flac";
+            if (lower.contains("m4a")) return ".m4a";
             return ".mp3";
         }
 
-        // 其他常见类型
-        else if (lowerContentType.contains("application/")) {
-            if (lowerContentType.contains("pdf")) return ".pdf";
-            if (lowerContentType.contains("zip")) return ".zip";
-            if (lowerContentType.contains("x-rar-compressed") || lowerContentType.contains("rar")) return ".rar";
-            if (lowerContentType.contains("x-tar")) return ".tar";
-            if (lowerContentType.contains("x-gzip") || lowerContentType.contains("gzip")) return ".gz";
-            if (lowerContentType.contains("x-7z-compressed")) return ".7z";
-            if (lowerContentType.contains("msword") || lowerContentType.contains("word")) return ".doc";
-            if (lowerContentType.contains("vnd.ms-excel") || lowerContentType.contains("excel")) return ".xls";
-            if (lowerContentType.contains("vnd.ms-powerpoint") || lowerContentType.contains("powerpoint")) return ".ppt";
-            if (lowerContentType.contains("octet-stream")) return ".bin";
+        if (lower.contains("application/")) {
+            if (lower.contains("pdf")) return ".pdf";
+            if (lower.contains("zip")) return ".zip";
+            if (lower.contains("rar")) return ".rar";
+            if (lower.contains("tar")) return ".tar";
+            if (lower.contains("gzip")) return ".gz";
+            if (lower.contains("7z")) return ".7z";
+            if (lower.contains("word")) return ".doc";
+            if (lower.contains("excel")) return ".xls";
+            if (lower.contains("powerpoint")) return ".ppt";
+            if (lower.contains("octet-stream")) return ".bin";
         }
 
-        // 文本类型
-        else if (lowerContentType.startsWith("text/")) {
-            if (lowerContentType.contains("plain")) return ".txt";
-            if (lowerContentType.contains("html")) return ".html";
-            if (lowerContentType.contains("css")) return ".css";
-            if (lowerContentType.contains("javascript") || lowerContentType.contains("js")) return ".js";
-            if (lowerContentType.contains("xml")) return ".xml";
-            if (lowerContentType.contains("csv")) return ".csv";
+        if (lower.startsWith("text/")) {
+            if (lower.contains("plain")) return ".txt";
+            if (lower.contains("html")) return ".html";
+            if (lower.contains("css")) return ".css";
+            if (lower.contains("javascript")) return ".js";
+            if (lower.contains("xml")) return ".xml";
+            if (lower.contains("csv")) return ".csv";
             return ".txt";
         }
 
-        // JSON
-        else if (lowerContentType.contains("json")) {
-            return ".json";
-        }
+        if (lower.contains("json")) return ".json";
 
         return "";
     }
 
-    /**
-     * 从URL中提取扩展名
-     */
     private static String extractExtensionFromUrl(String fileUrl) {
-        // 移除查询参数和片段标识符
-        String urlWithoutQuery = fileUrl.split("[?#]")[0];
+        String urlNoQuery = fileUrl.split("[?#]")[0];
+        int lastDot = urlNoQuery.lastIndexOf('.');
+        int lastSlash = urlNoQuery.lastIndexOf('/');
 
-        int lastDotIndex = urlWithoutQuery.lastIndexOf('.');
-        int lastSlashIndex = urlWithoutQuery.lastIndexOf('/');
-
-        if (lastDotIndex > lastSlashIndex && lastDotIndex < urlWithoutQuery.length() - 1) {
-            String extension = urlWithoutQuery.substring(lastDotIndex).toLowerCase();
-
-            // 验证扩展名是否合理
-            if (isValidExtension(extension)) {
-                return extension;
-            }
+        if (lastDot > lastSlash && lastDot < urlNoQuery.length() - 1) {
+            String ext = urlNoQuery.substring(lastDot).toLowerCase();
+            if (isValidExtension(ext)) return ext;
         }
-
         return "";
     }
 
-    /**
-     * 验证扩展名是否有效
-     */
-    private static boolean isValidExtension(String extension) {
-        if (extension == null || extension.length() < 2 || extension.length() > 10) {
-            return false;
-        }
-
-        // 检查扩展名格式（以点开头，后跟字母数字，可能包含连字符）
-        return Pattern.matches("^\\.[a-zA-Z0-9\\-]{1,9}$", extension);
+    private static boolean isValidExtension(String ext) {
+        return ext != null && ext.length() >= 2 && ext.length() <= 10
+                && Pattern.matches("^\\.[a-zA-Z0-9\\-]{1,9}$", ext);
     }
 
-    /**
-     * 常见扩展名白名单（可选，用于额外验证）
-     */
-    private static boolean isInExtensionWhitelist(String extension) {
-        String[] whitelist = {
-                // 图片
-                ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".tiff", ".tif",
-                // 视频
-                ".mp4", ".mpeg", ".mpg", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm", ".ogv",
-                // 音频
-                ".mp3", ".wav", ".ogg", ".flac", ".aac", ".m4a", ".wma",
-                // 文档
-                ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf",
-                // 压缩文件
-                ".zip", ".rar", ".7z", ".tar", ".gz", ".bz2",
-                // 其他
-                ".html", ".htm", ".css", ".js", ".json", ".xml", ".csv"
-        };
-
-        for (String ext : whitelist) {
-            if (ext.equalsIgnoreCase(extension)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * 格式化文件大小
-     */
     private static String formatFileSize(long size) {
         if (size <= 0) return "0 B";
 
-        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
-        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        final String[] units = {"B", "KB", "MB", "GB", "TB"};
+        int idx = (int) (Math.log10(size) / Math.log10(1024));
+        idx = Math.min(idx, units.length - 1);
 
-        if (digitGroups >= units.length) {
-            digitGroups = units.length - 1;
-        }
-
-        return String.format("%.2f %s", size / Math.pow(1024, digitGroups), units[digitGroups]);
-    }
-
-    /**
-     * 使用HttpURLConnection下载图片
-     */
-    @Deprecated
-    public static String downloadImage(String imageUrl, String savePath, String fileName) {
-        String fullPath = savePath + "/" + fileName;
-        try {
-            URL url = new URL(imageUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            // 设置请求头，模拟浏览器访问
-            connection.setRequestProperty("User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
-            connection.setConnectTimeout(10000); // 10秒连接超时
-            connection.setReadTimeout(30000);    // 30秒读取超时
-            // 检查响应码
-            int responseCode = connection.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                return "Failed: " + responseCode;
-            }
-            // 获取文件类型
-            String contentType = connection.getContentType();
-            String fileExtension = getFileExtension(contentType);
-            // 生成保存路径
-            Path saveFilePath = Paths.get(fullPath + fileExtension);
-            // 确保目录存在
-            Files.createDirectories(saveFilePath.getParent());
-            // 下载文件
-            try (InputStream inputStream = connection.getInputStream()) {
-                Files.copy(inputStream, saveFilePath, StandardCopyOption.REPLACE_EXISTING);
-            }
-            return fileName + fileExtension;
-            // return saveFilePath.toString();  // 完整路径
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Failed: Unknown error";
-        }
-    }
-
-    /**
-     * 根据Content-Type获取文件扩展名
-     */
-    @Deprecated
-    private static String getFileExtension(String contentType) {
-        if (contentType == null) return ".jpg";
-        return switch (contentType.toLowerCase()) {
-            case "image/png" -> ".png";
-            case "image/gif" -> ".gif";
-            case "image/webp" -> ".webp";
-            case "image/bmp" -> ".bmp";
-            default -> ".jpg";
-        };
+        return String.format("%.2f %s", size / Math.pow(1024, idx), units[idx]);
     }
 }

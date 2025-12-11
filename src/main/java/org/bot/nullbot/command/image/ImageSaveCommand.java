@@ -38,9 +38,9 @@ public class ImageSaveCommand implements Command
                         String originName = entry.getKey();
                         String url = entry.getValue();
                         String fileName = originName.substring(0, originName.lastIndexOf("."));
-                        String info = DownloadUtil.downloadImage(url, fileStorageConfig.getImagePath() + "/collect", fileName);
-                        // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
-                        //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存图片] 已保存为: " + info, false);
+                        String info = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/collect", fileName);
+                        // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().getFirst())){
+                        //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！\n" + info, false);
                         // }
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！\n" + info, false);
                         log.info("\t\t\t\t├─[Image.Save] 已保存为: {}", info);

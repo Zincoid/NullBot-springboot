@@ -57,7 +57,7 @@ public class MonitorListener
                     String originName =msg.getData().get("file");
                     String url = msg.getData().get("url");
                     String fileName = originName.substring(0, originName.lastIndexOf("."));
-                    String info = DownloadUtil.downloadImage(url, fileStorageConfig.getImagePath() + "/monitor", fileName);
+                    String info = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/monitor", fileName);
                     logger.info("└─[Saved] {}", info);
                 }
             }
