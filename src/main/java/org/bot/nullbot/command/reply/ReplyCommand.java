@@ -1,6 +1,5 @@
 package org.bot.nullbot.command.reply;
 
-import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,9 @@ public class ReplyCommand implements Command
             String reply = "无内容";
             if (!event.getCommandParameters().isEmpty())
                 reply = event.getCommandParameters().getFirst();
-            bot.sendGroupNotice(groupMessageEvent.getGroupId(), MsgUtils.builder().poke(groupMessageEvent.getUserId()).build());
+            // Long groupId = groupMessageEvent.getGroupId();
+            // Long userId = groupMessageEvent.getUserId();
+            // Long selfId = bot.getSelfId();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), reply, false);
             log.info("\t\t\t\t├─[Reply] 已回复 - {}", reply.replaceAll("\\R", ""));
         }else

@@ -39,7 +39,7 @@ public class RateLimitHandler implements Handler
                 chain.doHandle(bot, event, command);
             }else{
                 log.info("\t\t├─[RateLimitHandler] 戳一戳达到速率限制");
-                bot.sendGroupNotice(pokeNoticeEvent.getGroupId(), MsgUtils.builder().poke(pokeNoticeEvent.getUserId()).build());
+                // bot.sendGroupNotice(pokeNoticeEvent.getGroupId(), MsgUtils.builder().poke(pokeNoticeEvent.getUserId()).build());
             }
         }else{
             log.info("\t\t├─[RateLimitHandler] 默认不限速的事件");
