@@ -3,29 +3,26 @@ package org.bot.nullbot.command.game.system;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.Event;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.command.manage.UserBanCommand;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.ItemService;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"UseInventory", "使用库存"})
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class UseInventoryCommand implements Command
 {
-    @Resource
-    private InventoryService inventoryService;
-    @Resource
-    private ItemService itemService;
-    @Resource
-    private CommandProcessor commandProcessor;
+    private final InventoryService inventoryService;
+    private final ItemService itemService;
+    private final UserBanCommand userBanCommand;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
@@ -40,10 +37,16 @@ public class UseInventoryCommand implements Command
 
                                 // 根据情况替换参数
                                 command = command.replace("userId", groupMessageEvent.getSender().getUserId().toString());
-
                                 CommandEvent<GroupMessageEvent> commandEvent = new CommandEvent<>(command);
-                                commandEvent.setEvent(groupMessageEvent);
-                                commandProcessor.processQQ(bot, commandEvent);
+
+                                if("UserBan".equals(commandEvent.getCommandType())){
+                                    commandEvent.setEvent(groupMessageEvent);
+                                    userBanCommand.execute(bot, commandEvent);
+                                }else{
+                                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌找不到指令！", false);
+                                    log.info("\t\t\t\t├─[Inventory.Use] 找不到指令");
+                                }
+
                                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ✅已使用！", false);
                                 log.info("\t\t\t\t├─[Inventory.Use] 已使用");
                             }else{
