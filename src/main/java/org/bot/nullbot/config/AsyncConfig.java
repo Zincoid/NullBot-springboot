@@ -45,7 +45,6 @@ public class AsyncConfig implements AsyncConfigurer
 
         // 根据 CPU 核心数配置
         int corePoolSize = Runtime.getRuntime().availableProcessors();
-
         executor.setCorePoolSize(corePoolSize * 2);      // IO密集型：2倍CPU核心数
         executor.setMaxPoolSize(corePoolSize * 4);       // 最大线程数
         executor.setQueueCapacity(100);                  // 队列容量

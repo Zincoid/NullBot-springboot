@@ -27,6 +27,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Shiro
 @Component
@@ -95,8 +96,10 @@ public class MonitorListener
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void GroupPokeDetect(Bot bot, PokeNoticeEvent event) throws Exception {
-        log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {}", event.getGroupId(), event.getUserId(), event.getTargetId());
-        commandProcessor.processQQ(bot, new CommandEvent<>(event));
+        if(Objects.equals(event.getTargetId(), event.getSelfId())){
+            log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (已限制为戳Bot)", event.getGroupId(), event.getUserId(), event.getTargetId());
+            commandProcessor.processQQ(bot, new CommandEvent<>(event));
+        }
     }
 
     @FunctionControl(config = "enableRecallDetect")

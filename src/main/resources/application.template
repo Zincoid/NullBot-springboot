@@ -20,6 +20,11 @@ server:
 #    org.apache.coyote.http11.Http11Processor: ERROR
 #    org.apache.coyote.http11.Http11InputBuffer: ERROR
 
+logging:
+  level:
+    root: INFO
+    org.bot.nullbot: WARN
+
 shiro:
   ws:
     server:
