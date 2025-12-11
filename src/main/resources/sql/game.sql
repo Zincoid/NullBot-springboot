@@ -12,7 +12,7 @@ CREATE TABLE user (
     capacity INT DEFAULT 100
 );
 
-# description 可通过 {} 嵌入指令, 不需要前缀
+# description 可通过 {} 嵌入指令, 指令不需要前缀
 CREATE TABLE item (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE inventory (
 );
 
 INSERT INTO item (name, category, rarity, price, weight, description, image_path, available) VALUES
--- 白色稀有度物品 (0，15%，数量较多，价格较低)
+-- 白色稀有度物品
 ('普通长剑', 0, 0, 50, 1, '一把普通的铁制长剑，适合新手使用', NULL, TRUE),
 ('木制盾牌', 0, 0, 30, 2, '轻便的木制盾牌，防御力有限', NULL, TRUE),
 ('布甲上衣', 0, 0, 80, 1, '简单的布制上衣，提供基础防护', NULL, TRUE),
@@ -58,7 +58,7 @@ INSERT INTO item (name, category, rarity, price, weight, description, image_path
 ('记事本', 0, 0, 12, 1, '用于记录信息的笔记本', NULL, TRUE),
 ('麻绳', 0, 0, 18, 2, '结实耐用的麻绳，长10米', NULL, TRUE),
 
--- 绿色稀有度物品 (1，15%，价格适中)
+-- 绿色稀有度物品
 ('精铁长剑', 0, 1, 180, 2, '经过精细锻造的铁制长剑', NULL, TRUE),
 ('镶边皮甲', 0, 1, 220, 3, '经过加固的皮甲，防御力不错', NULL, TRUE),
 ('魔法水晶', 0, 1, 150, 1, '蕴含微弱魔力的水晶', NULL, TRUE),
@@ -75,7 +75,7 @@ INSERT INTO item (name, category, rarity, price, weight, description, image_path
 ('精灵之茶', 0, 1, 85, 2, '可以恢复精神的茶叶', NULL, TRUE),
 ('夜视护目镜', 0, 1, 165, 2, '可以在黑暗中看清东西的护目镜', NULL, TRUE),
 
--- 蓝色稀有度物品 (2，25%，较好的装备)
+-- 蓝色稀有度物品
 ('寒冰法杖', 0, 2, 350, 2, '镶嵌着冰晶的法杖，能释放冰系魔法', NULL, TRUE),
 ('骑士铠甲', 0, 2, 450, 15, '完整的骑士铠甲，提供优秀防护', NULL, TRUE),
 ('大师之剑', 0, 2, 420, 3, '名匠打造的精钢长剑', NULL, TRUE),
@@ -87,7 +87,7 @@ INSERT INTO item (name, category, rarity, price, weight, description, image_path
 ('龙骨项链', 0, 2, 360, 1, '用龙骨制作的魔法项链', NULL, TRUE),
 ('雷霆战锤', 0, 2, 500, 20, '沉重但威力巨大的战锤', NULL, TRUE),
 
--- 紫色稀有度物品 (3，35%，高级装备)
+-- 紫色稀有度物品
 ('圣光权杖', 0, 3, 800, 4, '散发神圣光芒的强大权杖', NULL, TRUE),
 ('龙鳞铠甲', 0, 3, 1200, 25, '用龙鳞制作的传说级铠甲', NULL, TRUE),
 ('虚空之刃', 0, 3, 900, 3, '可以切割空间的魔法匕首', NULL, TRUE),
@@ -97,17 +97,18 @@ INSERT INTO item (name, category, rarity, price, weight, description, image_path
 ('时间沙漏', 0, 3, 1100, 5, '可以操控时间的魔法沙漏', NULL, TRUE),
 ('精灵王冠', 0, 3, 950, 2, '精灵王的冠冕，具有自然魔力', NULL, TRUE),
 
--- 金色稀有度物品 (4，8%，顶级装备)
+-- 金色稀有度物品
 ('神之剑·裁决', 0, 4, 3000, 5, '传说中的神造武器，具有审判之力', NULL, TRUE),
 ('创世之书', 0, 4, 2500, 8, '记载创世秘密的神秘书籍', NULL, TRUE),
 ('永恒之心', 0, 4, 2800, 1, '永不停止跳动的水晶心脏', NULL, TRUE),
 ('命运之轮', 0, 4, 3200, 10, '可以窥探命运的魔法物品', NULL, TRUE),
 ('神格碎片', 0, 4, 4000, 1, '失落神明的神格碎片', NULL, TRUE),
 
--- 红色稀有度物品 (5，2%，传说级神器)
+-- 红色稀有度物品
 ('混沌核心', 0, 5, 10000, 1, '维持世界平衡的混沌核心', NULL, TRUE),
 ('无限宝石', 0, 5, 15000, 1, '蕴含着无限可能性的宝石', NULL, TRUE),
 ('世界树之种', 0, 5, 8000, 1, '可以生长出世界树的种子', NULL, TRUE);
 
+-- 可以使用的物品
 INSERT INTO item (name, category, rarity, price, weight, description, image_path, available) VALUES
 ('口球', 1, 3, 25, 1, '(可使用物品) 如果Bot是管理员，用了会禁言自己一分钟 {UserBan userId 1}', NULL, TRUE);

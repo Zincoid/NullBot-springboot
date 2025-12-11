@@ -1,5 +1,5 @@
-CREATE DATABASE NullBot;
-USE NullBot;
+# CREATE DATABASE NullBot;
+# USE NullBot;
 
 DROP TABLE saying;
 

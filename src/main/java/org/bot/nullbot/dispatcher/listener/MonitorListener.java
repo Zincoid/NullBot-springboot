@@ -41,7 +41,7 @@ public class MonitorListener
 
     @FunctionControl(config = "enableImageCollect")
     @GroupMessageHandler
-    @Async("virtualThreadExecutor")
+    @Async("ThreadExecutor")
     public void GroupImageCollect(Bot bot, GroupMessageEvent event) {
         List<Long> groupBypass = List.of(875310845L, 459358160L);
         if(groupBypass.contains(event.getGroupId())){
@@ -65,7 +65,7 @@ public class MonitorListener
     @FunctionControl(config = "enableMessageCollect")
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)
-    @Async("virtualThreadExecutor")
+    @Async("ThreadExecutor")
     public void GroupMessageCollect(Bot bot, GroupMessageEvent event) {
         if(!event.getMessage().startsWith("/Chat")){
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
@@ -78,7 +78,7 @@ public class MonitorListener
 
     @FunctionControl(config = "enableKeywordDetect")
     @GroupMessageHandler
-    @Async("virtualThreadExecutor")
+    @Async("ThreadExecutor")
     public void GroupKeywordDetect(Bot bot, GroupMessageEvent event) throws Exception {
         if (event.getMessage().contains("男娘")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
@@ -93,7 +93,7 @@ public class MonitorListener
 
     @FunctionControl(config = "enablePokeDetect")
     @GroupPokeNoticeHandler
-    @Async("virtualThreadExecutor")
+    @Async("ThreadExecutor")
     public void GroupPokeDetect(Bot bot, PokeNoticeEvent event) throws Exception {
         log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {}", event.getGroupId(), event.getUserId(), event.getTargetId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));
@@ -101,7 +101,7 @@ public class MonitorListener
 
     @FunctionControl(config = "enableRecallDetect")
     @GroupMsgDeleteNoticeHandler
-    @Async("virtualThreadExecutor")
+    @Async("ThreadExecutor")
     public void GroupRecallDetect(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
         log.info("◉ [GroupMonitor:Recall] 来自群 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));

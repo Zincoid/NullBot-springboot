@@ -29,7 +29,7 @@ public class CommandListener
 
 
     @GroupMessageHandler
-    @Async("virtualThreadExecutor")
+    @Async("ThreadExecutor")
     public void onGroupCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception {
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
             log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
@@ -44,7 +44,7 @@ public class CommandListener
     }
 
     // @GroupMessageHandler
-    // @Async("virtualThreadExecutor")
+    // @Async("ThreadExecutor")
     // public void onGroupBasicCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception {
     //     if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
     //         logger.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
@@ -54,7 +54,7 @@ public class CommandListener
 
     // @GroupMessageHandler
     // @MessageHandlerFilter(reply = ReplyEnum.REPLY_ALL)
-    // @Async("virtualThreadExecutor")
+    // @Async("ThreadExecutor")
     // public void onGroupReplyCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception {  // 检测引用命令
     //     String slashCommand = event.getArrayMsg().get(1).getData().get("text");
     //     if(slashCommand != null && slashCommand.startsWith(commandPrefix)){
@@ -65,7 +65,7 @@ public class CommandListener
 
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NEED)
-    @Async("virtualThreadExecutor")
+    @Async("ThreadExecutor")
     public void onGroupAtInteraction(Bot bot, GroupMessageEvent event) throws Exception {
         log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
         commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));

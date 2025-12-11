@@ -19,7 +19,7 @@ public class CommandProcessor
     private final CommandRegistry registry;
     private final List<Handler> handlers;
 
-    @Async("virtualThreadExecutor")
+    @Async("ThreadExecutor")
     public void processQQ(Bot bot, CommandEvent<?> event) throws Exception {
         Command command = registry.getCommand(event.getCommandType());
         if (command != null) {
@@ -30,7 +30,7 @@ public class CommandProcessor
             log.info("└─[CommandProcessor] 命令不存在");
     }
 
-    @Async("virtualThreadExecutor")
+    @Async("ThreadExecutor")
     public void processTest(CommandEvent<?> event) throws Exception {
         Command command = registry.getCommand(event.getCommandType());
         if (command != null) {
