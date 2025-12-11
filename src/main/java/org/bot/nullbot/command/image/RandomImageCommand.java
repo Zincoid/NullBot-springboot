@@ -27,7 +27,6 @@ public class RandomImageCommand implements Command
             String imagePath = FileUtil.getRandomFile(fileStorageConfig.getImagePath() + "/collect");
             if (imagePath != null) {
                 String response = MsgUtils.builder()
-                        // .text("Info")
                         .img(imagePath)
                         .build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);

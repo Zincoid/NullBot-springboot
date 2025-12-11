@@ -11,7 +11,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class MessageParseUtil {
+public class MessageParseUtil
+{
     public static String parseGroupArrayMsgForAI(Bot bot, List<ArrayMsg> arrayMsgs) {
         StringBuilder message = new StringBuilder();
         for (ArrayMsg msg : arrayMsgs) {

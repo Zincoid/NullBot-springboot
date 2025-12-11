@@ -24,10 +24,9 @@ public class ImageGetCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             if(!event.getCommandParameters().isEmpty()){
-                String imagePath = FileUtil.getFilePathByName(fileStorageConfig.getImagePath() + "/collect", event.getCommandParameters().get(0));
+                String imagePath = FileUtil.getFilePathByName(fileStorageConfig.getImagePath() + "/collect", event.getCommandParameters().getFirst());
                 if (imagePath != null) {
                     String response = MsgUtils.builder()
-                            // .text("Info")
                             .img(imagePath)
                             .build();
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);

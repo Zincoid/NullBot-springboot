@@ -73,7 +73,7 @@ public class WifeCommand implements Command
                 Long userId = groupMessageEvent.getUserId();
                 LocalDateTime expireTime = acgExpireMap.get(userId);
                 if(expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
-                    String category = event.getCommandParameters().get(0);
+                    String category = event.getCommandParameters().getFirst();
                     String acgPath = fileStorageConfig.getImagePath() + "/acg/" + category;
                     try {
                         String wifePath = FileUtil.getRandomFile(acgPath);

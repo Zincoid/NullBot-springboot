@@ -8,7 +8,6 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.util.StaticResourceUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -18,9 +17,6 @@ import java.io.IOException;
 @Slf4j
 public class HelpCommand implements Command
 {
-    @Value("${nullbot.command.prefix}")
-    private String commandPrefix;
-
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {

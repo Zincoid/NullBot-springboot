@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "ai.deepseek")
-public class DeepSeekConfig {
+public class DeepSeekConfig
+{
     private String apiKey;
     private String apiUrl;
     private Integer maxHistoryLength;

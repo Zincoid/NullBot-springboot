@@ -30,7 +30,6 @@ public class ItemServiceImpl implements ItemService
     private final ItemMapper itemMapper;
     private final InventoryMapper inventoryMapper;
 
-
     @Override
     @Transactional
     public ItemPO getAndKeepRandomItem(Long userId) {

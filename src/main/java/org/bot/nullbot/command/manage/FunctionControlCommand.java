@@ -22,7 +22,7 @@ public class FunctionControlCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             if (!event.getCommandParameters().isEmpty()){
-                String function = event.getCommandParameters().get(0);
+                String function = event.getCommandParameters().getFirst();
                 Boolean isEnabled = functionManager.switchEnabled(function);
                 if (isEnabled != null){
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);

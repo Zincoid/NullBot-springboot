@@ -28,10 +28,9 @@ public class VideoSaveCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            ArrayMsg reply = groupMessageEvent.getArrayMsg().get(0);
+            ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
             if (reply.getType() == MsgTypeEnum.reply) {
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
-                // logger.info(replyMsg.getRawMessage());
                 Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());  // 可优化为单个键值对
                 if(!videoMap.isEmpty()){
                     for (Map.Entry<String, String> entry : videoMap.entrySet()) {
@@ -39,7 +38,7 @@ public class VideoSaveCommand implements Command
                         String url = entry.getValue();
                         String info = DownloadUtil.downloadFile(url, fileStorageConfig.getVideoPath(), fileName);
                         // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
-                        //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[保存视频] 已保存为: " + info, false);
+                        //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！\n" + info, false);
                         // }
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！\n" + info, false);
                         log.info("\t\t\t\t├─[Video.Save] 已保存为: {}", info);

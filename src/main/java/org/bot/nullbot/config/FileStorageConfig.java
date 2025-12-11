@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "nullbot.file.storage")
-public class FileStorageConfig {
+public class FileStorageConfig
+{
     private String imagePath;
     private String videoPath;
 }

@@ -6,8 +6,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileUtil {
-
+public class FileUtil
+{
     public static String getFolderTreeString(String rootPath, int maxDepth) throws IOException {
         Path root = Paths.get(rootPath);
         StringBuilder sb = new StringBuilder();

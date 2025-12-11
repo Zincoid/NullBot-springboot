@@ -24,7 +24,7 @@ public class VideoGetCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             if(!event.getCommandParameters().isEmpty()){
-                String videoPath = FileUtil.getFilePathByName(fileStorageConfig.getVideoPath(), event.getCommandParameters().get(0));
+                String videoPath = FileUtil.getFilePathByName(fileStorageConfig.getVideoPath(), event.getCommandParameters().getFirst());
                 if (videoPath != null) {
                     String response = MsgUtils.builder()
                             .video(videoPath, "")

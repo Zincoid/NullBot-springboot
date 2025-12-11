@@ -21,7 +21,6 @@ public class InventoryServiceImpl implements InventoryService
     private final ItemMapper itemMapper;
     private final InventoryMapper inventoryMapper;
 
-
     @Override
     @Transactional
     public boolean increaseInventory(Long userId, ItemPO item) {

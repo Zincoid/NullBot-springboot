@@ -8,9 +8,10 @@ import java.util.Map;
 
 @Data
 @RequiredArgsConstructor
-public class ChatMessage {
+public class ChatMessage
+{
     private final Integer messageId;
-    private final String role; // "user" 或 "assistant"
+    private final String role;  // "user" 或 "assistant" 或 "system"
     private final String content;
     private final Long userId;
     private final String userName;

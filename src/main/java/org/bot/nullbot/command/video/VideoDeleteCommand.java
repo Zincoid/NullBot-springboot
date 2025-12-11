@@ -28,16 +28,15 @@ public class VideoDeleteCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            ArrayMsg reply = groupMessageEvent.getArrayMsg().get(0);
+            ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
             if(reply.getType() == MsgTypeEnum.reply){
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                 Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());  // 可优化为单个键值对
                 if(!videoMap.isEmpty()) {
                     for (Map.Entry<String, String> entry : videoMap.entrySet()) {
                         String fileName = entry.getKey();
-                        String url = entry.getValue();
                         String response = FileUtil.deleteFileByName(fileStorageConfig.getVideoPath(), fileName);
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDDD1\uFE0F" + response, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDDD1️" + response, false);
                         log.info("\t\t\t\t├─[Video.Delete] {}", response);
                     }
                 }else{
@@ -45,9 +44,9 @@ public class VideoDeleteCommand implements Command
                     log.info("\t\t\t\t├─[Video.Delete] 未包含可删除视频");
                 }
             }else if(!event.getCommandParameters().isEmpty()){
-                String fileName = event.getCommandParameters().get(0);
+                String fileName = event.getCommandParameters().getFirst();
                     String response = FileUtil.deleteFileByName(fileStorageConfig.getVideoPath(), fileName);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDDD1\uFE0F" + response, false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDDD1️" + response, false);
                 log.info("\t\t\t\t├─[Video.Delete] {}", response);
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌无删除参数或引用", false);

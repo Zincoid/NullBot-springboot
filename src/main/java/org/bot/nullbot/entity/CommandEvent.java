@@ -13,7 +13,8 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class CommandEvent<T extends Event> {
+public class CommandEvent<T extends Event>
+{
     private String commandType;
     private List<String> commandParameters;
     private T event;
@@ -22,7 +23,7 @@ public class CommandEvent<T extends Event> {
     public CommandEvent(T event) {
         this.event = event;
         if(event instanceof GroupMessageEvent groupMessageEvent)
-            parseGroupMessageEvent(groupMessageEvent, groupMessageEvent.getArrayMsg().get(0).getType() == MsgTypeEnum.reply ? 1 : 0);
+            parseGroupMessageEvent(groupMessageEvent, groupMessageEvent.getArrayMsg().getFirst().getType() == MsgTypeEnum.reply ? 1 : 0);
         else if(event instanceof PokeNoticeEvent)
             parseGroupPokeNoticeEvent();
         else if (event instanceof GroupMsgDeleteNoticeEvent)

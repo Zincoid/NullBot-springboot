@@ -28,17 +28,16 @@ public class ImageDeleteCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            ArrayMsg reply = groupMessageEvent.getArrayMsg().get(0);
+            ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
             if(reply.getType() == MsgTypeEnum.reply){
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                 Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
                 if(!imageMap.isEmpty()) {
                     for (Map.Entry<String, String> entry : imageMap.entrySet()) {
                         String originName = entry.getKey();
-                        String url = entry.getValue();
                         String fileName = originName.substring(0, originName.lastIndexOf("."));
                         String response = FileUtil.deleteFilesByPattern(fileStorageConfig.getImagePath() + "/collect", fileName + ".*");  // 因为QQ获取文件名后缀全是jpg所以模式匹配...
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1\uFE0F" + response, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1️" + response, false);
                         log.info("\t\t\t\t├─[Image.Delete] {}", response);
                     }
                 }else{
@@ -46,9 +45,9 @@ public class ImageDeleteCommand implements Command
                     log.info("\t\t\t\t├─[Image.Delete] 未包含可删除图片");
                 }
             }else if(!event.getCommandParameters().isEmpty()){
-                String fileName = event.getCommandParameters().get(0);
+                String fileName = event.getCommandParameters().getFirst();
                 String response = FileUtil.deleteFileByName(fileStorageConfig.getImagePath() + "/collect", fileName);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1\uFE0F" + response, false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1️" + response, false);
                 log.info("\t\t\t\t├─[Image.Delete] {}", response);
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌无删除参数或引用", false);

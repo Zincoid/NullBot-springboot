@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "nullbot.command.rate-limit")
-public class RateLimitConfig {
+public class RateLimitConfig
+{
     private Boolean enabled;
     private Integer capacity;
     private Integer refill;

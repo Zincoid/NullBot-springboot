@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
 
 
 @Slf4j
-public class DownloadUtil {
-
+public class DownloadUtil
+{
     /**
      * 主下载方法
      */

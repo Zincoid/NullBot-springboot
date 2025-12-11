@@ -23,9 +23,9 @@ public class SayingDeleteCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             if (!event.getCommandParameters().isEmpty()){
                 try {
-                    int id = Integer.parseInt(event.getCommandParameters().get(0));
+                    int id = Integer.parseInt(event.getCommandParameters().getFirst());
                     boolean deleted = sayingService.deleteById(id);
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] \uD83D\uDDD1\uFE0F删除语录 No." + id + " -> " + (deleted ? "已删除" : "无记录"), false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] \uD83D\uDDD1️删除语录 No." + id + " -> " + (deleted ? "已删除" : "无记录"), false);
                     log.info("\t\t\t\t├─[Saying.Delete] 执行语录删除 - No.{} -> {}", id, deleted ? "已删除" : "无记录");
                 } catch (NumberFormatException e) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌删除参数格式错误", false);

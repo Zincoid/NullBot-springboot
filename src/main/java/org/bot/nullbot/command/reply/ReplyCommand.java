@@ -18,7 +18,7 @@ public class ReplyCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String reply = "无内容";
             if (!event.getCommandParameters().isEmpty())
-                reply = event.getCommandParameters().get(0);
+                reply = event.getCommandParameters().getFirst();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), reply, false);
             log.info("\t\t\t\t├─[Reply] 已回复 - {}", reply.replaceAll("\\R", ""));
         }else

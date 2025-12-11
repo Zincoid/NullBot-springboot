@@ -19,7 +19,8 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @RequiredArgsConstructor
-public class DeepSeekClient {
+public class DeepSeekClient
+{
     private final DeepSeekConfig deepSeekConfig;
     private final ChatStorage chatStorage;
 
@@ -71,7 +72,7 @@ public class DeepSeekClient {
                 chatStorage.trimHistory(chatMessages, deepSeekConfig.getMaxHistoryLength());
             return response;
         } catch (Exception e) {
-            chatMessages.remove(chatMessages.size() - 1);  // 如果请求失败, 移除刚才添加的用户消息
+            chatMessages.removeLast();  // 如果请求失败, 移除刚才添加的用户消息
             throw e;
         }
     }

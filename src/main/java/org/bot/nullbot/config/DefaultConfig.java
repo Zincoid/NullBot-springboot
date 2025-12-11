@@ -9,7 +9,8 @@ import java.util.Map;
 @Data
 @Component
 @ConfigurationProperties(prefix = "nullbot")
-public class DefaultConfig {
+public class DefaultConfig
+{
     private Boolean enableImageCollect;
     private Boolean enableKeywordDetect;
     private Boolean enablePokeDetect;

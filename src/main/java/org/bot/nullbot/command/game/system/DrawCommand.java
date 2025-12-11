@@ -9,8 +9,6 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dao.po.ItemPO;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.ItemService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"Draw", "抽奖"})
@@ -26,7 +24,7 @@ public class DrawCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             ItemPO item = itemService.getAndKeepRandomItem(groupMessageEvent.getUserId());
             if (item != null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] 你抽到了...\n" + item.toString(), false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] 你抽到了...\n" + item, false);
                 log.info("\t\t\t\t├─[Draw] 已抽取 - {}", item.toString().replaceAll("\\R", ""));
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌次数已耗尽", false);

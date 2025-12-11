@@ -1,7 +1,6 @@
 package org.bot.nullbot.command.game.system;
 
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.dto.event.Event;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

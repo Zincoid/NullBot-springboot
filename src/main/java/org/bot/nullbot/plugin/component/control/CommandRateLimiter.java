@@ -14,7 +14,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CommandRateLimiter {
+public class CommandRateLimiter
+{
     private final RateLimitConfig rateLimitConfig;
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 

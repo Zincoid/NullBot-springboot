@@ -28,7 +28,7 @@ public class SayingSaveCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            ArrayMsg reply = groupMessageEvent.getArrayMsg().get(0);
+            ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
             if (reply.getType() == MsgTypeEnum.reply) {
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                 long userId = Long.parseLong(replyMsg.getSender().getUserId());

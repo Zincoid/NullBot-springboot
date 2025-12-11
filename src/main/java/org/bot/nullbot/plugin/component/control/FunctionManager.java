@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class FunctionManager {
+public class FunctionManager
+{
     private final DefaultConfig defaultConfig;
     private final Map<String, Boolean> enableFlags = new ConcurrentHashMap<>();
 
@@ -23,7 +24,7 @@ public class FunctionManager {
             // 获取DefaultConfig的所有字段
             Field[] fields = defaultConfig.getClass().getDeclaredFields();
             for (Field field : fields) {
-                field.setAccessible(true); // 允许访问私有字段
+                field.setAccessible(true);
                 // 只处理布尔类型的字段
                 if (field.getType().equals(boolean.class) ||
                         field.getType().equals(Boolean.class)) {
@@ -35,7 +36,6 @@ public class FunctionManager {
                 }
             }
         } catch (IllegalAccessException e) {
-            // 处理异常
             e.printStackTrace();
         }
     }

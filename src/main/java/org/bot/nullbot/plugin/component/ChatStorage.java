@@ -18,24 +18,20 @@ public class ChatStorage
     private final Map<Long, List<ChatMessage>> monitorHistories = new ConcurrentHashMap<>();
 
     public List<ChatMessage> getUserHistory(Long userId) { return userHistories.computeIfAbsent(userId, k -> new ArrayList<>()); }
-
     public List<ChatMessage> getGroupHistory(Long groupId) { return groupHistories.computeIfAbsent(groupId, k -> new ArrayList<>()); }
-
     public List<ChatMessage> getMonitorHistory(Long groupId) { return monitorHistories.computeIfAbsent(groupId, k -> new ArrayList<>()); }
 
     public void trimHistory(List<ChatMessage> history, int maxHistoryLength) {
         if (history.size() > maxHistoryLength) {
             int removeCount = history.size() - maxHistoryLength;
             int startIndex = 0;
-            if ("system".equals(history.get(0).getRole())) startIndex = 1;  // 跳过系统消息
+            if ("system".equals(history.getFirst().getRole())) startIndex = 1;  // 跳过系统消息
             for (int i = 0; i < removeCount; i++) history.remove(startIndex);  // 移除最旧消息对
         }
     }
 
     public String getUserHistoryAsString(Long userId) { return getHistoryStringForAI(userId, userHistories); }
-
     public String getGroupHistoryAsString(Long groupId) { return getHistoryStringForAI(groupId, groupHistories); }
-
     public String getMonitorHistoryAsString(Long groupId) { return getHistoryStringForAI(groupId, monitorHistories); }
 
     private String getHistoryStringForAI(Long id, Map<Long, List<ChatMessage>> histories) {
@@ -52,9 +48,7 @@ public class ChatStorage
     }
 
     public void clearUserHistory(Long userId) { userHistories.remove(userId); }
-
     public void clearGroupHistory(Long groupId) { groupHistories.remove(groupId); }
-
     public void clearMonitorHistory(Long groupId) { monitorHistories.remove(groupId); }
 
     public void resetAllHistories() {
