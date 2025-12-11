@@ -18,10 +18,11 @@ public class InventoryPO
     Integer ItemId;
     String ItemName;
     Rarity rarity;
+    Integer price;
     Integer amount;
 
     @Override
     public String toString() {
-        return ItemId + " " + rarity + " " + ItemName + " : " + amount;
+        return ItemId + "  " + ItemName + "  " + rarity.getDescription() + "  " + price + "  " + amount;
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SayingServiceImpl implements SayingService
 {
-    SayingMapper sayingMapper;
+    private final SayingMapper sayingMapper;
 
     @Override
     @Transactional

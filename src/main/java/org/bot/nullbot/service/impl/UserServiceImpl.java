@@ -40,6 +40,6 @@ public class UserServiceImpl implements UserService
     @Override
     @Transactional
     public List<InventoryPO> getInventories(Long userId) {
-        return inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId));
+        return inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).orderByDesc(InventoryPO::getRarity));
     }
 }
