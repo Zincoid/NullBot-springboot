@@ -1,7 +1,6 @@
 package org.bot.nullbot.plugin.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.InputStream;
@@ -13,10 +12,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class DownloadUtil
 {
-    private static final Logger logger = LoggerFactory.getLogger(DownloadUtil.class);
-
     /**
      * 下载文件（支持图片、视频、音频等）
      */
@@ -46,22 +44,22 @@ public class DownloadUtil
             String contentType = connection.getContentType();
             long contentLength = connection.getContentLengthLong();
             // logger.info("\t\t\t\t├─ Downloading: {}", fileUrl);
-            logger.info("\t\t\t\t├─ Downloading from url...");
-            logger.info("\t\t\t\t├─ Content-Type: {}", contentType);
+            log.info("\t\t\t\t├─ Downloading from url...");
+            log.info("\t\t\t\t├─ Content-Type: {}", contentType);
             if (contentLength > 0) {
-                logger.info("\t\t\t\t├─ File Size: {}", formatFileSize(contentLength));
+                log.info("\t\t\t\t├─ File Size: {}", formatFileSize(contentLength));
             }
 
             // 如果文件名已经包含扩展名，则使用原文件名
             String finalFileName;
             if (hasExtension(fileName)) {
                 finalFileName = fileName;
-                logger.info("\t\t\t\t├─ Using provided filename with extension: {}", finalFileName);
+                log.info("\t\t\t\t├─ Using provided filename with extension: {}", finalFileName);
             } else {
                 // 获取正确的文件扩展名
                 String fileExtension = getFileExtension(contentType, fileUrl, fileName);
                 finalFileName = fileName + fileExtension;
-                logger.info("\t\t\t\t├─ Added extension to filename: {}", finalFileName);
+                log.info("\t\t\t\t├─ Added extension to filename: {}", finalFileName);
             }
 
             Path saveFilePath = Paths.get(savePath, finalFileName);
@@ -76,7 +74,7 @@ public class DownloadUtil
 
             // 验证文件是否下载成功
             long downloadedSize = Files.size(saveFilePath);
-            logger.info("\t\t\t\t├─ Download completed: {} ({})", finalFileName, formatFileSize(downloadedSize));
+            log.info("\t\t\t\t├─ Download completed: {} ({})", finalFileName, formatFileSize(downloadedSize));
 
             return finalFileName;
 
@@ -123,7 +121,7 @@ public class DownloadUtil
         if (fileName != null && !fileName.isEmpty()) {
             String extensionFromFileName = extractExtensionFromFileName(fileName);
             if (!extensionFromFileName.isEmpty()) {
-                logger.info("\t\t\t\t├─ Extension from filename: {}", extensionFromFileName);
+                log.info("\t\t\t\t├─ Extension from filename: {}", extensionFromFileName);
                 return extensionFromFileName;
             }
         }
@@ -132,7 +130,7 @@ public class DownloadUtil
         if (contentType != null && !contentType.isEmpty()) {
             String extensionFromContentType = getExtensionFromContentType(contentType);
             if (!extensionFromContentType.isEmpty()) {
-                logger.info("\t\t\t\t├─ Extension from Content-Type: {}", extensionFromContentType);
+                log.info("\t\t\t\t├─ Extension from Content-Type: {}", extensionFromContentType);
                 return extensionFromContentType;
             }
         }
@@ -141,13 +139,13 @@ public class DownloadUtil
         if (fileUrl != null && !fileUrl.isEmpty()) {
             String extensionFromUrl = extractExtensionFromUrl(fileUrl);
             if (!extensionFromUrl.isEmpty()) {
-                logger.info("\t\t\t\t├─ Extension from URL: {}", extensionFromUrl);
+                log.info("\t\t\t\t├─ Extension from URL: {}", extensionFromUrl);
                 return extensionFromUrl;
             }
         }
 
         // 4. 默认扩展名（根据情况选择）
-        logger.info("\t\t\t\t├─ Using default extension: .dat");
+        log.info("\t\t\t\t├─ Using default extension: .dat");
         return ".dat";
     }
 

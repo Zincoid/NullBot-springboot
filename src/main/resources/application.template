@@ -8,15 +8,17 @@ spring:
     password:
 
 server:
+  address: 127.0.0.1  # 仅监听本地回环
   port: 9001
 
-logging:
-  level:
-    org.apache.coyote: WARN
-    org.apache.tomcat: WARN
-    org.apache.catalina: WARN
-    org.apache.coyote.http11.Http11Processor: ERROR
-    org.apache.coyote.http11.Http11InputBuffer: ERROR
+#logging:
+#  level:
+#    org.apache.coyote: WARN
+#    org.apache.tomcat: WARN
+#    org.apache.catalina: WARN
+#
+#    org.apache.coyote.http11.Http11Processor: ERROR
+#    org.apache.coyote.http11.Http11InputBuffer: ERROR
 
 shiro:
   ws:
@@ -26,6 +28,7 @@ shiro:
     timeout: 10
     max-binary-message-buffer-size: 5120000
     max-text-message-buffer-size: 512000
+    access-token:
   limiter:
     enable: true
     rate: 10

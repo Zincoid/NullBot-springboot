@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.command.manage.UserBanCommand;
-import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.ItemService;
