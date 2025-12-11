@@ -35,11 +35,18 @@ public class CommandEvent<T extends Event> {
         commandParameters = new ArrayList<>();
     }
 
+    public CommandEvent(String command) {  // 用于使用库存物品时创建事件
+        event = null;
+        List<String> information = List.of(command.split(" "));
+        commandType = information.getFirst();
+        commandParameters = information.subList(1, information.size());
+    }
+
     private void parseGroupMessageEvent(GroupMessageEvent event, int i)
     {
         String command = event.getArrayMsg().get(i).getData().get("text").substring(1);
         List<String> information = List.of(command.split(" "));
-        commandType = information.get(0);
+        commandType = information.getFirst();
         commandParameters = information.subList(1, information.size());
     }
 

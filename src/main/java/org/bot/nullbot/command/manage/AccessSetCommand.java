@@ -42,7 +42,7 @@ public class AccessSetCommand implements Command
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌参数格式错误", false);
                     log.info("\t\t\t\t├─[Access.Set] 参数格式错误");
                 }
-            }else {
+            }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌参数不足", false);
                 log.info("\t\t\t\t├─[Access.Set] 参数不足");
             }

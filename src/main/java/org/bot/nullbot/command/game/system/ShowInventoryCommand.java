@@ -30,9 +30,9 @@ public class ShowInventoryCommand implements Command
                 sb.append("\n").append(inventoryPO.toString());
             }
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
-            log.info("\t\t\t\t├─[Inventory] 已获取库存 - {}", sb.toString().replaceAll("\\R", ""));
+            log.info("\t\t\t\t├─[Inventory.Show] 已获取库存 - {}", sb.toString().replaceAll("\\R", ""));
         }else
-            log.info("\t\t\t\t├─[Inventory] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Inventory.Show] 未设计 非群消息事件响应方式");
     }
 
     @Override

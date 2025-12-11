@@ -6,6 +6,7 @@ import org.bot.nullbot.dao.mapper.InventoryMapper;
 import org.bot.nullbot.dao.mapper.ItemMapper;
 import org.bot.nullbot.dao.mapper.UserMapper;
 import org.bot.nullbot.dao.po.ItemPO;
+import org.bot.nullbot.enums.Category;
 import org.bot.nullbot.enums.Rarity;
 import org.bot.nullbot.plugin.util.game.DrawUtil;
 import org.bot.nullbot.service.InventoryService;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +43,29 @@ public class ItemServiceImpl implements ItemService
             else
                 return null;
         }else
+            return null;
+    }
+
+    @Override
+    @Transactional
+    public boolean exist(Integer itemId) {
+        return !itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, itemId)).isEmpty();
+    }
+
+    @Override
+    @Transactional
+    public boolean isUsable(Integer itemId) {
+        return !itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, itemId).eq(ItemPO::getCategory, Category.USABLE)).isEmpty();
+    }
+
+    @Override
+    @Transactional
+    public String getCommandFromItemDesc(Integer itemId) {
+        String description = itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, itemId)).getFirst().getDescription();
+        Matcher m = Pattern.compile("\\{(.*?)\\}").matcher(description);
+        if (m.find())
+            return m.group(1);
+        else
             return null;
     }
 }

@@ -37,4 +37,22 @@ public class InventoryServiceImpl implements InventoryService
         }else
             return false;
     }
+
+    @Override
+    @Transactional
+    public boolean decreaseInventory(Long userId, Integer itemId) {
+        List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
+        if(inventories == null || inventories.isEmpty()){
+            return false;
+        }else if(inventories.size() == 1){
+            InventoryPO inventory = inventories.getFirst();
+            inventory.setAmount(inventory.getAmount() - 1);
+            if (inventory.getAmount() > 0)
+                inventoryMapper.updateById(inventory);
+            else
+                inventoryMapper.deleteById(inventory.getId());
+            return true;
+        }else
+            return false;
+    }
 }

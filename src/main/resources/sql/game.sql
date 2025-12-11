@@ -12,6 +12,7 @@ CREATE TABLE user (
     capacity INT DEFAULT 100
 );
 
+# description 可通过 {} 嵌入指令, 不需要前缀
 CREATE TABLE item (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
