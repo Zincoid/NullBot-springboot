@@ -24,5 +24,8 @@ ssh -L 6099:127.0.0.1:6099 root@ip
 sudo perf record -g java -jar /root/Nullbot/jar/NullBot-0.0.1-SNAPSHOT.jar  
 sudo perf report -i perf.data
 
+### 指定输出到指定文件
+nohup java -jar /root/Nullbot/jar/NullBot-0.0.1-SNAPSHOT.jar > output.log 2>&1 &
+
 ### Java版本切换
 sudo alternatives --config java

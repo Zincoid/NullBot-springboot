@@ -10,6 +10,14 @@ spring:
 server:
   port: 9001
 
+logging:
+  level:
+    org.apache.coyote: WARN
+    org.apache.tomcat: WARN
+    org.apache.catalina: WARN
+    org.apache.coyote.http11.Http11Processor: ERROR
+    org.apache.coyote.http11.Http11InputBuffer: ERROR
+
 shiro:
   ws:
     server:
