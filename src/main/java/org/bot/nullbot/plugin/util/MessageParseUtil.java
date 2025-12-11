@@ -26,7 +26,7 @@ public class MessageParseUtil
                     message.append("[引用 ")
                             .append(replyMsg.getSender().getNickname())
                             .append(":")
-                            .append(replyMsg.getRawMessage().replaceAll("\\[CQ:at,qq=(\\d+)\\]", "@$1").replaceAll("\\[CQ:.*?\\]", ""))
+                            .append(replyMsg.getRawMessage().replaceAll("\\[CQ:at,qq=(\\d+)]", "@$1").replaceAll("\\[CQ:.*?]", ""))
                             .append("] ");
                 }
                 case at -> {
@@ -40,15 +40,15 @@ public class MessageParseUtil
     }
 
     public static String parseRawSaying(String rawSaying) {
-        String text = rawSaying.replaceAll("\\[CQ:at,qq=(\\d+)\\]", "@$1").replaceAll("\\[CQ:.*?\\]", "");
-        if(!Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\]\\[No\\.\\d+\\][\\s\\S]*", ShiroUtils.unescape(text))){
+        String text = rawSaying.replaceAll("\\[CQ:at,qq=(\\d+)]", "@$1").replaceAll("\\[CQ:.*?]", "");
+        if(!Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(text))){
             return text;
         }else
             return null;
     }
 
     public static Map<String, String> parseGroupRawMessageAsImageMap(String rawMessage) {
-        return Pattern.compile("\\[CQ:image([^\\]]+)\\]")
+        return Pattern.compile("\\[CQ:image([^]]+)]")
                 .matcher(rawMessage == null ? "" : rawMessage)
                 .results()
                 .map(match -> match.group(1))
@@ -68,7 +68,7 @@ public class MessageParseUtil
     }
 
     public static Map<String, String> parseGroupRawMessageAsVideoMap(String rawMessage) {
-        return Pattern.compile("\\[CQ:video([^\\]]+)\\]")
+        return Pattern.compile("\\[CQ:video([^]]+)]")
                 .matcher(rawMessage == null ? "" : rawMessage)
                 .results()
                 .map(match -> match.group(1))
