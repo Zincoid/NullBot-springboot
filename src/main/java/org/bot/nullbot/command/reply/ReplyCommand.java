@@ -2,19 +2,17 @@ package org.bot.nullbot.command.reply;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"Reply", "应答"})
 @Component
+@Slf4j
 public class ReplyCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(ReplyCommand.class);
-
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
@@ -22,9 +20,9 @@ public class ReplyCommand implements Command
             if (!event.getCommandParameters().isEmpty())
                 reply = event.getCommandParameters().get(0);
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), reply, false);
-            logger.info("\t\t\t\t├─[Reply] 已回复 - {}", reply.replaceAll("\\R", ""));
+            log.info("\t\t\t\t├─[Reply] 已回复 - {}", reply.replaceAll("\\R", ""));
         }else
-            logger.info("\t\t\t\t├─[Reply] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Reply] 未设计 非群消息事件响应方式");
     }
 
     @Override

@@ -3,20 +3,19 @@ package org.bot.nullbot.command.saying;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.SayingService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"SayingDelete", "删除语录"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class SayingDeleteCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(SayingDeleteCommand.class);
     private final SayingService sayingService;
 
     @Override
@@ -27,17 +26,17 @@ public class SayingDeleteCommand implements Command
                     int id = Integer.parseInt(event.getCommandParameters().get(0));
                     boolean deleted = sayingService.deleteById(id);
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] \uD83D\uDDD1\uFE0F删除语录 No." + id + " -> " + (deleted ? "已删除" : "无记录"), false);
-                    logger.info("\t\t\t\t├─[Saying.Delete] 执行语录删除 - No.{} -> {}", id, deleted ? "已删除" : "无记录");
+                    log.info("\t\t\t\t├─[Saying.Delete] 执行语录删除 - No.{} -> {}", id, deleted ? "已删除" : "无记录");
                 } catch (NumberFormatException e) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌删除参数格式错误", false);
-                    logger.info("\t\t\t\t├─[Saying.Delete] 删除参数格式错误");
+                    log.info("\t\t\t\t├─[Saying.Delete] 删除参数格式错误");
                 }
             }else {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌删除参数不足", false);
-                logger.info("\t\t\t\t├─[Saying.Delete] 删除参数不足");
+                log.info("\t\t\t\t├─[Saying.Delete] 删除参数不足");
             }
         }else
-            logger.info("\t\t\t\t├─[Saying.Delete] 无 - 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Saying.Delete] 无 - 非群消息事件响应方式");
     }
 
     @Override

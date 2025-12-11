@@ -3,12 +3,11 @@ package org.bot.nullbot.command.ai;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.component.DeepSeekClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -16,8 +15,9 @@ import java.util.Objects;
 @CommandMapping({"PokeReact"})
 @Component
 @RequiredArgsConstructor
-public class PokeReactCommand implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(PokeReactCommand.class);
+@Slf4j
+public class PokeReactCommand implements Command
+{
     private final DeepSeekClient deepSeekClient;
 
     @Override
@@ -29,10 +29,10 @@ public class PokeReactCommand implements Command {
             if(Objects.equals(pokeNoticeEvent.getTargetId(), pokeNoticeEvent.getSelfId())){
                 String response = deepSeekClient.chat(null, groupId, userId, userName, "揉了你一下");
                 bot.sendGroupMsg(groupId, response, false);
-                logger.info("\t\t\t\t├─[AI.PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", ""));
+                log.info("\t\t\t\t├─[AI.PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", ""));
             }
         }else
-            logger.info("\t\t\t\t├─[AI.PokeReact] 未设计 - 非戳一戳消息事件响应方式");
+            log.info("\t\t\t\t├─[AI.PokeReact] 未设计 - 非戳一戳消息事件响应方式");
     }
 
     // 限权: 0

@@ -3,20 +3,19 @@ package org.bot.nullbot.command.ai;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.component.DeepSeekClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"ChatMode", "聊天模式"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ChatModeCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(ChatModeCommand.class);
     private final DeepSeekClient deepSeekClient;
 
     @Override
@@ -24,9 +23,9 @@ public class ChatModeCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String mode = deepSeekClient.changeMode();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[聊天模式] \uD83D\uDD04已切换至: " + mode, false);
-            logger.info("\t\t\t\t├─[AI.ChatMode] 聊天模式已切换 - {}", mode);
+            log.info("\t\t\t\t├─[AI.ChatMode] 聊天模式已切换 - {}", mode);
         }else
-            logger.info("\t\t\t\t├─[AI.ChatMode] 未设计 - 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[AI.ChatMode] 未设计 - 非群消息事件响应方式");
     }
 
     @Override

@@ -6,14 +6,13 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.util.FileUtil;
 import org.bot.nullbot.plugin.util.MessageParseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -21,9 +20,9 @@ import java.util.Map;
 @CommandMapping({"VideoDelete", "删除视频"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class VideoDeleteCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(VideoDeleteCommand.class);
     private final FileStorageConfig fileStorageConfig;
 
     @Override
@@ -39,23 +38,23 @@ public class VideoDeleteCommand implements Command
                         String url = entry.getValue();
                         String response = FileUtil.deleteFileByName(fileStorageConfig.getVideoPath(), fileName);
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDDD1\uFE0F" + response, false);
-                        logger.info("\t\t\t\t├─[Video.Delete] {}", response);
+                        log.info("\t\t\t\t├─[Video.Delete] {}", response);
                     }
                 }else{
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌未包含可删除视频", false);
-                    logger.info("\t\t\t\t├─[Video.Delete] 未包含可删除视频");
+                    log.info("\t\t\t\t├─[Video.Delete] 未包含可删除视频");
                 }
             }else if(!event.getCommandParameters().isEmpty()){
                 String fileName = event.getCommandParameters().get(0);
                     String response = FileUtil.deleteFileByName(fileStorageConfig.getVideoPath(), fileName);
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDDD1\uFE0F" + response, false);
-                logger.info("\t\t\t\t├─[Video.Delete] {}", response);
+                log.info("\t\t\t\t├─[Video.Delete] {}", response);
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌无删除参数或引用", false);
-                logger.info("\t\t\t\t├─[Video.Delete] 无删除参数或引用");
+                log.info("\t\t\t\t├─[Video.Delete] 无删除参数或引用");
             }
         }else
-            logger.info("\t\t\t\t├─[Video.Delete] 未设计 - 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Video.Delete] 未设计 - 非群消息事件响应方式");
     }
 
     @Override

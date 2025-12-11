@@ -3,19 +3,19 @@ package org.bot.nullbot.command.manage;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.component.control.FunctionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"FunctionControl", "功能控制"})
 @Component
 @RequiredArgsConstructor
-public class FunctionControlCommand implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(FunctionControlCommand.class);
+@Slf4j
+public class FunctionControlCommand implements Command
+{
     private final FunctionManager functionManager;
 
     @Override
@@ -26,17 +26,17 @@ public class FunctionControlCommand implements Command {
                 Boolean isEnabled = functionManager.switchEnabled(function);
                 if (isEnabled != null){
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
-                    logger.info("\t\t\t\t├─[Function.Control] 已切换功能状态 - {}", isEnabled ? "ON" : "OFF");
+                    log.info("\t\t\t\t├─[Function.Control] 已切换功能状态 - {}", isEnabled ? "ON" : "OFF");
                 }else{
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] ❌无此功能标志", false);
-                    logger.info("\t\t\t\t├─[Function.Control] 无此功能标志 - {}", function);
+                    log.info("\t\t\t\t├─[Function.Control] 无此功能标志 - {}", function);
                 }
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] ❌参数不足", false);
-                logger.info("\t\t\t\t├─[Function.Control] 参数不足");
+                log.info("\t\t\t\t├─[Function.Control] 参数不足");
             }
         }else
-            logger.info("\t\t\t\t├─[Function.Control] 未设计 - 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Function.Control] 未设计 - 非群消息事件响应方式");
     }
 
     @Override

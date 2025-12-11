@@ -3,20 +3,19 @@ package org.bot.nullbot.command.ai;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.component.DeepSeekClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"ChatReset", "重置聊天"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ChatResetCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(ChatResetCommand.class);
     private final DeepSeekClient deepSeekClient;
 
     @Override
@@ -26,9 +25,9 @@ public class ChatResetCommand implements Command
             Long groupId = groupMessageEvent.getGroupId();
             String target = deepSeekClient.clearHistory(groupId, userId);
             bot.sendGroupMsg(groupId, "[聊天历史] ♻️" + target + "聊天已重置！", false);
-            logger.info("\t\t\t\t├─[AI.ChatReset] 已清除 - {} 历史聊天记录", target);
+            log.info("\t\t\t\t├─[AI.ChatReset] 已清除 - {} 历史聊天记录", target);
         }else
-            logger.info("\t\t\t\t├─[AI.ChatReset] 未设计 - 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[AI.ChatReset] 未设计 - 非群消息事件响应方式");
     }
 
     @Override

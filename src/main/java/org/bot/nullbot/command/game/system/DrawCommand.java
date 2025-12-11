@@ -1,8 +1,9 @@
-package org.bot.nullbot.command.game.draw;
+package org.bot.nullbot.command.game.system;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dao.po.ItemPO;
@@ -15,9 +16,9 @@ import org.springframework.stereotype.Component;
 @CommandMapping({"Draw", "抽奖"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class DrawCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(DrawCommand.class);
     private final ItemService itemService;
 
     @Override
@@ -26,13 +27,13 @@ public class DrawCommand implements Command
             ItemPO item = itemService.getAndKeepRandomItem(groupMessageEvent.getUserId());
             if (item != null) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] 你抽到了...\n" + item.toString(), false);
-                logger.info("\t\t\t\t├─[Draw] 已抽取 - {}", item.toString().replaceAll("\\R", ""));
+                log.info("\t\t\t\t├─[Draw] 已抽取 - {}", item.toString().replaceAll("\\R", ""));
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌次数已耗尽", false);
-                logger.info("\t\t\t\t├─[Draw] 次数已耗尽");
+                log.info("\t\t\t\t├─[Draw] 次数已耗尽");
             }
         }else
-            logger.info("\t\t\t\t├─[Draw] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Draw] 未设计 非群消息事件响应方式");
     }
 
     @Override

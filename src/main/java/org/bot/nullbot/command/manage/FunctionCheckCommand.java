@@ -3,20 +3,19 @@ package org.bot.nullbot.command.manage;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.component.control.FunctionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"FunctionCheck", "功能检查"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class FunctionCheckCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(FunctionCheckCommand.class);
     private final FunctionManager functionManager;
 
     @Override
@@ -24,9 +23,9 @@ public class FunctionCheckCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
                 String status = functionManager.getStatus();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能检查] ℹ️已获取功能状态！\n" + status, false);
-                logger.info("\t\t\t\t├─[Function.Check] 已获取 - 功能状态列表");
+                log.info("\t\t\t\t├─[Function.Check] 已获取 - 功能状态列表");
             } else
-                logger.info("\t\t\t\t├─[Function.Check] 未设计 - 非群消息事件响应方式");
+                log.info("\t\t\t\t├─[Function.Check] 未设计 - 非群消息事件响应方式");
     }
 
     @Override

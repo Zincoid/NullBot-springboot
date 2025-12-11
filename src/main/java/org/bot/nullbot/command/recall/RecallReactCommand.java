@@ -3,13 +3,12 @@ package org.bot.nullbot.command.recall;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.component.ChatStorage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,9 +18,9 @@ import java.util.Objects;
 @CommandMapping({"RecallReact"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class RecallReactCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(RecallReactCommand.class);
     private final ChatStorage chatStorage;
 
     @Override
@@ -41,14 +40,14 @@ public class RecallReactCommand implements Command
                     }else{
                         bot.sendGroupMsg(groupId, operatorName + "(" + operatorId + ") 撤回了 "+ userName + "(" + userId + ") 的一条消息: " + chatMessage.getContent(), false);
                     }
-                    logger.info("\t\t\t\t├─[React.Recall] 已重发撤回的消息 - {}", bot.getMsg(messageId).getData().getRawMessage());
+                    log.info("\t\t\t\t├─[React.Recall] 已重发撤回的消息 - {}", bot.getMsg(messageId).getData().getRawMessage());
                     return;
                 }
             }
             bot.sendGroupMsg(groupId, "[撤回记录] ❌该消息已被清理", false);
-            logger.info("\t\t\t\t├─[React.Recall] 该消息已被清理 - MessageId -> {}", messageId);
+            log.info("\t\t\t\t├─[React.Recall] 该消息已被清理 - MessageId -> {}", messageId);
         }else
-            logger.info("\t\t\t\t├─[React.Recall] 未设计 - 非群消息撤回事件响应方式");
+            log.info("\t\t\t\t├─[React.Recall] 未设计 - 非群消息撤回事件响应方式");
     }
 
     // 限权: 0

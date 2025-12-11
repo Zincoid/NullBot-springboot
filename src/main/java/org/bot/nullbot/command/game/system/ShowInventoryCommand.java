@@ -1,15 +1,14 @@
-package org.bot.nullbot.command.game.draw;
+package org.bot.nullbot.command.game.system;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dao.po.InventoryPO;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,9 +16,9 @@ import java.util.List;
 @CommandMapping({"ShowInventory", "展示库存", "库存"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ShowInventoryCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(ShowInventoryCommand.class);
     private final UserService userService;
 
     @Override
@@ -31,9 +30,9 @@ public class ShowInventoryCommand implements Command
                 sb.append("\n").append(inventoryPO.toString());
             }
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
-            logger.info("\t\t\t\t├─[Inventory] 已获取库存 - {}", sb.toString().replaceAll("\\R", ""));
+            log.info("\t\t\t\t├─[Inventory] 已获取库存 - {}", sb.toString().replaceAll("\\R", ""));
         }else
-            logger.info("\t\t\t\t├─[Inventory] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Inventory] 未设计 非群消息事件响应方式");
     }
 
     @Override

@@ -3,20 +3,19 @@ package org.bot.nullbot.command.ai;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.component.DeepSeekClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"ChatHistory", "聊天历史"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ChatHistoryCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(ChatHistoryCommand.class);
     private final DeepSeekClient deepSeekClient;
 
     @Override
@@ -26,9 +25,9 @@ public class ChatHistoryCommand implements Command
             Long groupId = groupMessageEvent.getGroupId();
             String history = deepSeekClient.getHistoryAsString(groupId, userId);
             bot.sendGroupMsg(groupId, "[聊天历史] ✅已获取！\n" + history, false);
-            logger.info("\t\t\t\t├─[AI.ChatHistory] 已获取 - 历史聊天记录");
+            log.info("\t\t\t\t├─[AI.ChatHistory] 已获取 - 历史聊天记录");
         }else
-            logger.info("\t\t\t\t├─[AI.ChatHistory] 未设计 - 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[AI.ChatHistory] 未设计 - 非群消息事件响应方式");
     }
 
     @Override

@@ -6,15 +6,13 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.util.DownloadUtil;
 import org.bot.nullbot.plugin.util.FileUtil;
 import org.bot.nullbot.plugin.util.MessageParseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -22,9 +20,9 @@ import java.util.Map;
 @CommandMapping({"ImageDelete", "删除图片"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ImageDeleteCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(ImageDeleteCommand.class);
     private final FileStorageConfig fileStorageConfig;
 
     @Override
@@ -41,23 +39,23 @@ public class ImageDeleteCommand implements Command
                         String fileName = originName.substring(0, originName.lastIndexOf("."));
                         String response = FileUtil.deleteFilesByPattern(fileStorageConfig.getImagePath() + "/collect", fileName + ".*");  // 因为QQ获取文件名后缀全是jpg所以模式匹配...
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1\uFE0F" + response, false);
-                        logger.info("\t\t\t\t├─[Image.Delete] {}", response);
+                        log.info("\t\t\t\t├─[Image.Delete] {}", response);
                     }
                 }else{
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌未包含可删除图片", false);
-                    logger.info("\t\t\t\t├─[Image.Delete] 未包含可删除图片");
+                    log.info("\t\t\t\t├─[Image.Delete] 未包含可删除图片");
                 }
             }else if(!event.getCommandParameters().isEmpty()){
                 String fileName = event.getCommandParameters().get(0);
                 String response = FileUtil.deleteFileByName(fileStorageConfig.getImagePath() + "/collect", fileName);
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1\uFE0F" + response, false);
-                logger.info("\t\t\t\t├─[Image.Delete] {}", response);
+                log.info("\t\t\t\t├─[Image.Delete] {}", response);
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌无删除参数或引用", false);
-                logger.info("\t\t\t\t├─[Image.Delete] 无删除参数或引用");
+                log.info("\t\t\t\t├─[Image.Delete] 无删除参数或引用");
             }
         }else
-            logger.info("\t\t\t\t├─[Image.Delete] 未设计 - 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Image.Delete] 未设计 - 非群消息事件响应方式");
     }
 
     @Override

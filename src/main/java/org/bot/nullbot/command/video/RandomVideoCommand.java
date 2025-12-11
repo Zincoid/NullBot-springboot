@@ -4,22 +4,20 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.command.image.RandomImageCommand;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.util.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"RandomVideo", "video", "随机视频", "视频"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class RandomVideoCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(RandomVideoCommand.class);
     private final FileStorageConfig fileStorageConfig;
 
     @Override
@@ -31,13 +29,13 @@ public class RandomVideoCommand implements Command
                         .video(videoPath, "")
                         .build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                logger.info("\t\t\t\t├─[Video.Random] 已发送视频: {}", videoPath);
+                log.info("\t\t\t\t├─[Video.Random] 已发送视频: {}", videoPath);
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌暂无视频", false);
-                logger.info("\t\t\t\t├─[Video.Random] 暂无视频");
+                log.info("\t\t\t\t├─[Video.Random] 暂无视频");
             }
         }else
-            logger.info("\t\t\t\t├─[Video.Random] 未设计 - 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Video.Random] 未设计 - 非群消息事件响应方式");
     }
 
     @Override

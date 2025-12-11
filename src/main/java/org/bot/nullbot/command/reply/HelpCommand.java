@@ -3,12 +3,11 @@ package org.bot.nullbot.command.reply;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.util.StaticResourceUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +15,9 @@ import java.io.IOException;
 
 @CommandMapping({"Help", "help", "帮助"})
 @Component
+@Slf4j
 public class HelpCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(HelpCommand.class);
-
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
 
@@ -79,13 +77,13 @@ public class HelpCommand implements Command
                 String helpBase64 = StaticResourceUtil.loadImageAsBase64("help.png");
                 String response = MsgUtils.builder().img("base64://" + helpBase64).build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                logger.info("\t\t\t\t├─[Help] 已获取帮助");
+                log.info("\t\t\t\t├─[Help] 已获取帮助");
             } catch (IOException e) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Help] ❌帮助资源缺失", false);
-                logger.info("\t\t\t\t├─[Help] 帮助资源缺失");
+                log.info("\t\t\t\t├─[Help] 帮助资源缺失");
             }
         }else
-            logger.info("\t\t\t\t├─[Help] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Help] 未设计 非群消息事件响应方式");
     }
 
     @Override

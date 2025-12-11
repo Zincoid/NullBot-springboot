@@ -6,13 +6,12 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.GroupMemberInfoResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.plugin.util.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -27,9 +26,9 @@ import java.util.concurrent.ThreadLocalRandom;
 @CommandMapping({"Wife", "今日老婆"})
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class WifeCommand implements Command
 {
-    private static final Logger logger = LoggerFactory.getLogger(WifeCommand.class);
     private final FileStorageConfig fileStorageConfig;
 
     private final Map<Long, Long> memberWifeMap = new ConcurrentHashMap<>();
@@ -59,7 +58,7 @@ public class WifeCommand implements Command
                             .img(avatarUrl)
                             .build();
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                    logger.info("\t\t\t\t├─[Wife] 今日群友老婆: {} -> {}", userId, wifeId);
+                    log.info("\t\t\t\t├─[Wife] 今日群友老婆: {} -> {}", userId, wifeId);
                 }else{
                     Long wifeId = memberWifeMap.get(userId);
                     String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
@@ -68,7 +67,7 @@ public class WifeCommand implements Command
                             .img(avatarUrl)
                             .build();
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                    logger.info("\t\t\t\t├─[Wife] 今日已选过群友老婆: {} -> {}", userId, wifeId);
+                    log.info("\t\t\t\t├─[Wife] 今日已选过群友老婆: {} -> {}", userId, wifeId);
                 }
             }else{
                 Long userId = groupMessageEvent.getUserId();
@@ -89,14 +88,14 @@ public class WifeCommand implements Command
                                     .img(wifePath)
                                     .build();
                             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                            logger.info("\t\t\t\t├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
+                            log.info("\t\t\t\t├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
                         }else{
                             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[今日老婆] ❌该类别下暂无角色", false);
-                            logger.info("\t\t\t\t├─[Wife] 该类别下暂无角色 - {}", category);
+                            log.info("\t\t\t\t├─[Wife] 该类别下暂无角色 - {}", category);
                         }
                     } catch (Exception e) {
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[今日老婆] ❌不存在该类别", false);
-                        logger.info("\t\t\t\t├─[Wife] 不存在该类别 - {}", category);
+                        log.info("\t\t\t\t├─[Wife] 不存在该类别 - {}", category);
                     }
                 }else{
                     try {
@@ -109,15 +108,15 @@ public class WifeCommand implements Command
                                 .img(wifePath)
                                 .build();
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                        logger.info("\t\t\t\t├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);
+                        log.info("\t\t\t\t├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);
                     } catch (Exception e) {
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[今日老婆] ❌文件已被修改", false);
-                        logger.info("\t\t\t\t├─[Wife] 文件已被修改");
+                        log.info("\t\t\t\t├─[Wife] 文件已被修改");
                     }
                 }
             }
         }else
-            logger.info("\t\t\t\t├─[Wife] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Wife] 未设计 非群消息事件响应方式");
     }
 
     @Override
