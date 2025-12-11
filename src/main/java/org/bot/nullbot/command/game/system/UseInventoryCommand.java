@@ -33,6 +33,10 @@ public class UseInventoryCommand implements Command
                         String command = itemService.getCommandFromItemDesc(itemId);
                         if(command != null){
                             if (inventoryService.decreaseInventory(groupMessageEvent.getUserId(), itemId)) {
+
+                                // 根据情况替换参数
+                                command = command.replace("userId", groupMessageEvent.getSender().getUserId().toString());
+
                                 CommandEvent<GroupMessageEvent> commandEvent = new CommandEvent<>(command);
                                 commandEvent.setEvent(groupMessageEvent);
                                 commandProcessor.processQQ(bot, commandEvent);

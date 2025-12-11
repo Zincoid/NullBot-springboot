@@ -108,3 +108,6 @@ INSERT INTO item (name, category, rarity, price, weight, description, image_path
 ('混沌核心', 0, 5, 10000, 1, '维持世界平衡的混沌核心', NULL, TRUE),
 ('无限宝石', 0, 5, 15000, 1, '蕴含着无限可能性的宝石', NULL, TRUE),
 ('世界树之种', 0, 5, 8000, 1, '可以生长出世界树的种子', NULL, TRUE);
+
+INSERT INTO item (name, category, rarity, price, weight, description, image_path, available) VALUES
+('口球', 1, 3, 25, 1, '(可使用物品) 如果Bot是管理员，用了会禁言自己一分钟 {UserBan userId 1}', NULL, TRUE);
