@@ -3,6 +3,7 @@ package org.bot.nullbot.command.game.system;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.Event;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
@@ -11,17 +12,20 @@ import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.ItemService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"UseInventory", "使用库存"})
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class UseInventoryCommand implements Command
 {
-    private final InventoryService inventoryService;
-    private final ItemService itemService;
-    private final CommandProcessor commandProcessor;
+    @Resource
+    private InventoryService inventoryService;
+    @Resource
+    private ItemService itemService;
+    @Resource
+    private CommandProcessor commandProcessor;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
