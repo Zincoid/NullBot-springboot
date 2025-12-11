@@ -1,6 +1,6 @@
 package org.bot.nullbot.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.dao.mapper.InventoryMapper;
 import org.bot.nullbot.dao.mapper.ItemMapper;
@@ -33,7 +33,7 @@ public class ItemServiceImpl implements ItemService
     public ItemPO getAndKeepRandomItem(Long userId) {
         if (userService.decreaseDrawTimes(userId)) {
             Rarity rarity = DrawUtil.drawRarityByProbability();
-            List<ItemPO> itemList = itemMapper.selectList(new QueryWrapper<ItemPO>().eq("rarity", rarity.getValue()));
+            List<ItemPO> itemList = itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getRarity, rarity));
             ItemPO item = DrawUtil.drawItemByLogPrice(itemList);
             if(inventoryService.increaseInventory(userId, item))
                 return item;

@@ -1,6 +1,6 @@
 package org.bot.nullbot.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.dao.mapper.InventoryMapper;
 import org.bot.nullbot.dao.mapper.ItemMapper;
@@ -25,7 +25,7 @@ public class InventoryServiceImpl implements InventoryService
     @Override
     @Transactional
     public boolean increaseInventory(Long userId, ItemPO item) {
-        List<InventoryPO> inventories = inventoryMapper.selectList(new QueryWrapper<InventoryPO>().eq("owner_id", userId).eq("item_id", item.getId()));
+        List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, item.getId()));
         if(inventories == null || inventories.isEmpty()){
             inventoryMapper.insert(new InventoryPO(null, userId, item.getId(), item.getName(), item.getRarity(), 1));
             return true;

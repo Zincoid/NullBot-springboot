@@ -1,6 +1,6 @@
 package org.bot.nullbot.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.dao.mapper.InventoryMapper;
 import org.bot.nullbot.dao.mapper.ItemMapper;
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService
     public boolean decreaseDrawTimes(Long userId) {
         UserPO user = userMapper.selectById(userId);
         if(user == null){
-            userMapper.insert(new UserPO(userId, 1, 50, 99));
+            userMapper.insert(new UserPO(userId, 1, 49, 100));
             return true;
         }else if(user.getDrawTimes() > 0){
             user.setDrawTimes(user.getDrawTimes() - 1);
@@ -40,6 +40,6 @@ public class UserServiceImpl implements UserService
     @Override
     @Transactional
     public List<InventoryPO> getInventories(Long userId) {
-        return inventoryMapper.selectList(new QueryWrapper<InventoryPO>().eq("owner_id", userId));
+        return inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId));
     }
 }

@@ -19,5 +19,6 @@
 - 添加SpringBootTest对Command的测试功能；
 - 添加StaticResourceUtil读取静态资源的图片文件，并将help命令输出改为静态资源图片；
 - 添加视频的保存、删除、获取、列表和随机获取功能，优化DownloadUtil；
+- 构建个人仓库相关数据结构，添加抽奖和库存功能。
 - 优化输出内容;
 - 优化代码结构。
