@@ -8,7 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dao.po.InventoryPO;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.service.UserService;
+import org.bot.nullbot.service.InventoryService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,15 +19,15 @@ import java.util.List;
 @Slf4j
 public class ShowInventoryCommand implements Command
 {
-    private final UserService userService;
+    private final InventoryService inventoryService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long userId = groupMessageEvent.getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            List<InventoryPO> inventories = userService.getInventories(userId);
-            StringBuilder sb = new StringBuilder().append("[库存] ").append(userName).append("(").append(userId).append(")\n").append("物品ID-名称-稀有度-单价-数量");
+            List<InventoryPO> inventories = inventoryService.getInventories(userId);
+            StringBuilder sb = new StringBuilder().append("[库存] ").append(userName).append("(").append(userId).append(")\n").append("[ID -- 名称 -- 品质/单价 - 数量]");
             for(InventoryPO inventoryPO : inventories) {
                 sb.append("\n").append(inventoryPO.toString());
             }

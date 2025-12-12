@@ -11,7 +11,5 @@ public interface UserService
 
     boolean decreaseDrawTimes(Long userId);
 
-    List<InventoryPO> getInventories(Long userId);
-
     UserPO getUser(Long userId);
 }
