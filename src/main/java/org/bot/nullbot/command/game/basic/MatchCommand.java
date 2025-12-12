@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.game.MatchService;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MatchCommand implements Command
 {
+    private final MatchManager matchManager;
     private final MatchService matchService;
 
     @Override
@@ -28,7 +30,11 @@ public class MatchCommand implements Command
                 String userName = bot.getStrangerInfo(userId, false).getData().getNickname();
                 String gameType = event.getCommandParameters().getFirst();
                 String result = matchService.joinMatch(userId, groupId, userName, gameType);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), result, false);
+                if(result.contains("匹配成功")){
+                    Long opponentGroupId = matchManager.getOpponentGroupIdBySelfId(userId);
+                    bot.sendGroupMsg(opponentGroupId, result, false);
+                }
+                bot.sendGroupMsg(groupId, result, false);
                 log.info("\t\t\t\t├─[Match] 匹配结果 - {}", result.replaceAll("\\R", ""));
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[匹配] ❌无游戏类型参数", false);
