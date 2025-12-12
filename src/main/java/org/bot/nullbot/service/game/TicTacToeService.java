@@ -1,5 +1,7 @@
-package org.bot.nullbot.component.game;
+package org.bot.nullbot.service.game;
 
+import org.bot.nullbot.component.game.MatchManager;
+import org.bot.nullbot.component.game.MatchService;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.tictactoe.TicTacToeState;
 import org.bot.nullbot.component.game.impl.TicTacToeMatchHandler;
