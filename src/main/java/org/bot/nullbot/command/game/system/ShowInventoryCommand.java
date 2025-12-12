@@ -40,7 +40,7 @@ public class ShowInventoryCommand implements Command
             for(InventoryPO inventoryPO : inventoryPage.getInventories()) {
                 sb.append("\n").append(inventoryPO.toString());
             }
-            sb.append("\n").append("第").append(inventoryPage.getCurrentPage()).append("页").append(" / 共").append(inventoryPage.getTotalPage()).append("页(每页").append(inventoryPage.getPageSize()).append("条)");
+            sb.append("\n").append("第").append(inventoryPage.getCurrentPage()).append("页").append(" / 共").append(inventoryPage.getTotalPage()).append("页 (每页").append(inventoryPage.getPageSize()).append("条)");
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
             log.info("\t\t\t\t├─[Inventory.Show] 已获取库存 - {}", sb.toString().replaceAll("\\R", ""));
         }else
@@ -49,6 +49,6 @@ public class ShowInventoryCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ShowInventory 命令\n功能: 展示库存物品\n限权: " + getAccess() + "\n格式: ShowInventory\n中文命令: 展示库存 或 库存";
+        return "◉ ShowInventory 命令\n功能: 通过页码展示库存物品(默认第1页)\n限权: " + getAccess() + "\n格式: ShowInventory [可选: 页码]\n中文命令: 展示库存 或 库存";
     }
 }
