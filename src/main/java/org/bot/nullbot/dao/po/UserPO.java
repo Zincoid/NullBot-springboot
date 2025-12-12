@@ -23,9 +23,9 @@ public class UserPO
                         ├ 用户ID：%d
                         ├ 等级：%d
                         ├ 现金：%d
-                        ├ 仓库容量：%d
-                        └ 抽卡次数：%d""",
-                id, level, cash, capacity, drawTimes
+                        ├ 抽数：%d
+                        └ 仓库容量：%d""",
+                id, level, cash, drawTimes, capacity
         );
     }
 }
