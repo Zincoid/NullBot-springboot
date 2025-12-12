@@ -25,10 +25,11 @@ public class TicTacToeService
     public String move(Long userId, int x, int y) {
         String matchId = matchManager.getMatchIdByPlayerId(userId);
 
-        Match match = matchManager.getMatch(matchId);
-        if (match == null) {
+        if (matchId == null) {
             return "对局不存在";
         }
+
+        Match match = matchManager.getMatch(matchId);
 
         TicTacToeState state = handler.getState(matchId);
         if (state == null) {
