@@ -356,9 +356,9 @@ public class FileUtil
             }
 
             if (successCount == 1) {
-                result.append("已删除: ").append(String.join(", ", successFiles));
+                result.append("已删除！\n ").append(String.join(", ", successFiles));
             } else {
-                result.append("错误: 删除失败");
+                result.append("错误: 删除出错");
             }
 
             return result.toString().trim();

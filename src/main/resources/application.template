@@ -40,6 +40,12 @@ shiro:
     capacity: 30
     awaitTask: true
     timeout: 10
+#  task-pool:
+#    core-pool-size: 10
+#    queue-capacity: 200
+#    keep-alive-time: 10
+#    max-pool-size: 30
+#    thread-name-prefix: "ShiroTaskPool-"
 
 nullbot:
   enable-image-collect: false

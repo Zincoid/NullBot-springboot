@@ -13,4 +13,17 @@ public class UserPO
     Integer level;
     Integer drawTimes;
     Integer capacity;
+
+    @Override
+    public String toString() {
+        return String.format(
+                """
+                        👤 用户信息
+                        ├ 用户ID：%d
+                        ├ 用户等级：%d
+                        ├ 抽卡次数：%d
+                        └ 仓库容量：%d""",
+                id, level, drawTimes, capacity
+        );
+    }
 }
