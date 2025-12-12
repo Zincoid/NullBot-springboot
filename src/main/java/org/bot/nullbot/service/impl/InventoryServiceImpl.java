@@ -8,7 +8,7 @@ import org.bot.nullbot.dao.mapper.ItemMapper;
 import org.bot.nullbot.dao.mapper.UserMapper;
 import org.bot.nullbot.dao.po.InventoryPO;
 import org.bot.nullbot.dao.po.ItemPO;
-import org.bot.nullbot.entity.InventoryPage;
+import org.bot.nullbot.entity.game.basic.InventoryPage;
 import org.bot.nullbot.service.InventoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

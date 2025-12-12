@@ -2,7 +2,7 @@ package org.bot.nullbot.service;
 
 import org.bot.nullbot.dao.po.InventoryPO;
 import org.bot.nullbot.dao.po.ItemPO;
-import org.bot.nullbot.entity.InventoryPage;
+import org.bot.nullbot.entity.game.basic.InventoryPage;
 
 import java.util.List;
 

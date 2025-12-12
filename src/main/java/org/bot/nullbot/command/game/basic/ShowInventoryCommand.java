@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.game.system;
+package org.bot.nullbot.command.game.basic;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -8,7 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dao.po.InventoryPO;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.entity.InventoryPage;
+import org.bot.nullbot.entity.game.basic.InventoryPage;
 import org.bot.nullbot.service.InventoryService;
 import org.springframework.stereotype.Component;
 
