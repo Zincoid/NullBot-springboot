@@ -1,4 +1,4 @@
-package org.bot.nullbot.plugin.util.game;
+package org.bot.nullbot.util.game;
 
 import org.bot.nullbot.dao.po.ItemPO;
 import org.bot.nullbot.enums.Rarity;

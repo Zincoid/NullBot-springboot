@@ -1,6 +1,5 @@
 package org.bot.nullbot.dispatcher.handler.impl;
 
-import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
@@ -10,7 +9,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dispatcher.CommandHandlerChain;
 import org.bot.nullbot.dispatcher.handler.Handler;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.component.control.CommandRateLimiter;
+import org.bot.nullbot.component.control.CommandRateLimiter;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 

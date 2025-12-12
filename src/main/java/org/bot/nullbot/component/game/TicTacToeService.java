@@ -1,8 +1,8 @@
-package org.bot.nullbot.plugin.component.game;
+package org.bot.nullbot.component.game;
 
 import org.bot.nullbot.entity.game.basic.Match;
-import org.bot.nullbot.entity.game.delta.TicTacToeState;
-import org.bot.nullbot.plugin.component.game.impl.TicTacToeMatchHandler;
+import org.bot.nullbot.entity.game.tictactoe.TicTacToeState;
+import org.bot.nullbot.component.game.impl.TicTacToeMatchHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

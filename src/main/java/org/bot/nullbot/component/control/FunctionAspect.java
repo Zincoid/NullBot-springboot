@@ -1,4 +1,4 @@
-package org.bot.nullbot.plugin.component.control;
+package org.bot.nullbot.component.control;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

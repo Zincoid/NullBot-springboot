@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.util.StaticResourceUtil;
+import org.bot.nullbot.util.StaticResourceUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

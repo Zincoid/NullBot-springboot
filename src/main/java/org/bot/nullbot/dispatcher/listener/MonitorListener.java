@@ -19,10 +19,10 @@ import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.component.ChatStorage;
-import org.bot.nullbot.plugin.component.DeepSeekClient;
-import org.bot.nullbot.plugin.util.DownloadUtil;
-import org.bot.nullbot.plugin.util.MessageParseUtil;
+import org.bot.nullbot.component.ChatStorage;
+import org.bot.nullbot.component.DeepSeekClient;
+import org.bot.nullbot.util.DownloadUtil;
+import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 

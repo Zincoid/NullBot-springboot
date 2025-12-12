@@ -1,4 +1,4 @@
-package org.bot.nullbot.plugin.component;
+package org.bot.nullbot.component;
 
 import lombok.Data;
 import org.bot.nullbot.entity.ChatMessage;

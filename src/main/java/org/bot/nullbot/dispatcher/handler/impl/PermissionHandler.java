@@ -8,7 +8,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dispatcher.CommandHandlerChain;
 import org.bot.nullbot.dispatcher.handler.Handler;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.component.control.AccessManager;
+import org.bot.nullbot.component.control.AccessManager;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 

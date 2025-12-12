@@ -1,4 +1,4 @@
-package org.bot.nullbot.plugin.util;
+package org.bot.nullbot.util;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;

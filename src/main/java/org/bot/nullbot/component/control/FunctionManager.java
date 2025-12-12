@@ -1,4 +1,4 @@
-package org.bot.nullbot.plugin.component.control;
+package org.bot.nullbot.component.control;
 
 import org.bot.nullbot.config.DefaultConfig;
 import org.springframework.stereotype.Component;

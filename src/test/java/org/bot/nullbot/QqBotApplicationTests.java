@@ -4,9 +4,9 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import jakarta.annotation.Resource;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.component.game.MatchService;
-import org.bot.nullbot.plugin.component.game.TicTacToeService;
-import org.bot.nullbot.plugin.util.FileUtil;
+import org.bot.nullbot.component.game.MatchService;
+import org.bot.nullbot.component.game.TicTacToeService;
+import org.bot.nullbot.util.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

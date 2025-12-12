@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.component.control.FunctionManager;
+import org.bot.nullbot.component.control.FunctionManager;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"FunctionCheck", "功能检查"})

@@ -1,4 +1,4 @@
-package org.bot.nullbot.entity.game.delta;
+package org.bot.nullbot.entity.game.tictactoe;
 
 import lombok.Data;
 

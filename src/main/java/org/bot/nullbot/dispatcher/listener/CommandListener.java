@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.util.MessageParseUtil;
+import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;

@@ -8,7 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.component.ChatStorage;
+import org.bot.nullbot.component.ChatStorage;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

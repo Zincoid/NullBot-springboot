@@ -1,4 +1,4 @@
-package org.bot.nullbot.plugin.util;
+package org.bot.nullbot.util;
 
 import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;

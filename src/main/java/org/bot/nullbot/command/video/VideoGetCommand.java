@@ -9,7 +9,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.util.FileUtil;
+import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"VideoGet", "获取视频"})

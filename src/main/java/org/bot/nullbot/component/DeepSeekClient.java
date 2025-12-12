@@ -1,4 +1,4 @@
-package org.bot.nullbot.plugin.component;
+package org.bot.nullbot.component;
 
 import java.net.URI;
 import java.net.http.HttpClient;

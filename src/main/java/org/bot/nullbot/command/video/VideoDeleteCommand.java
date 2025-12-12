@@ -11,8 +11,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.util.FileUtil;
-import org.bot.nullbot.plugin.util.MessageParseUtil;
+import org.bot.nullbot.util.FileUtil;
+import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

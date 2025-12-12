@@ -1,9 +1,9 @@
-package org.bot.nullbot.plugin.component.game.impl;
+package org.bot.nullbot.component.game.impl;
 
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
-import org.bot.nullbot.entity.game.delta.TicTacToeState;
-import org.bot.nullbot.plugin.component.game.GameMatchHandler;
+import org.bot.nullbot.entity.game.tictactoe.TicTacToeState;
+import org.bot.nullbot.component.game.GameMatchHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

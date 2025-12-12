@@ -8,7 +8,7 @@ import org.bot.nullbot.dao.mapper.UserMapper;
 import org.bot.nullbot.dao.po.ItemPO;
 import org.bot.nullbot.enums.Category;
 import org.bot.nullbot.enums.Rarity;
-import org.bot.nullbot.plugin.util.game.DrawUtil;
+import org.bot.nullbot.util.game.DrawUtil;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.ItemService;
 import org.bot.nullbot.service.UserService;
