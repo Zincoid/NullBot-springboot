@@ -22,20 +22,24 @@ public class MatchCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            Long groupId = groupMessageEvent.getGroupId();
-            Long userId = groupMessageEvent.getUserId();
-            String userName = bot.getStrangerInfo(userId, false).getData().getNickname();
-            Long selfId = bot.getSelfId();
-
-            // String result = handleMatch(groupId, userId, userName);
-            // bot.sendGroupMsg(groupMessageEvent.getGroupId(), result, false);
-            // log.info("\t\t\t\t├─[Match] 匹配结果 - {}", result.replaceAll("\\R", ""));
+            if(!event.getCommandParameters().isEmpty()){
+                Long groupId = groupMessageEvent.getGroupId();
+                Long userId = groupMessageEvent.getUserId();
+                String userName = bot.getStrangerInfo(userId, false).getData().getNickname();
+                String gameType = event.getCommandParameters().getFirst();
+                String result = matchService.joinMatch(userId, groupId, userName, gameType);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), result, false);
+                log.info("\t\t\t\t├─[Match] 匹配结果 - {}", result.replaceAll("\\R", ""));
+            }else{
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[匹配] ❌无游戏类型参数", false);
+                log.info("\t\t\t\t├─[Match] 无游戏类型参数");
+            }
         }else
             log.info("\t\t\t\t├─[Match] 未设计 非群消息事件响应方式");
     }
 
     @Override
     public String getHelp() {
-        return "◉ Match 命令\n功能: 游戏匹配\n限权: " + getAccess() + "\n格式: Match\n中文命令: 匹配";
+        return "◉ Match 命令\n功能: 按游戏类型匹配\n限权: " + getAccess() + "\n格式: Match [游戏类型]\n游戏类型: 现在只有tictactoe\n中文命令: 匹配";
     }
 }
