@@ -1,12 +1,11 @@
 package org.bot.nullbot;
 
-import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import jakarta.annotation.Resource;
-import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.component.delta.GameService;
+import org.bot.nullbot.plugin.component.game.MatchService;
+import org.bot.nullbot.plugin.component.game.TicTacToeService;
 import org.bot.nullbot.plugin.util.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +19,10 @@ import java.util.Scanner;
 class QqBotApplicationTests {
     @Resource
     private CommandProcessor commandProcessor;
+    @Resource
+    MatchService matchService;
+    @Resource
+    TicTacToeService ticTacToeService;
 
     // @Test
     void fileTest() throws IOException {
@@ -42,9 +45,34 @@ class QqBotApplicationTests {
    }
 
    @Test
-   void matchTest() throws Exception {
-       GameService gameService = new GameService();
-       gameService.matchPlayer(0L, 1L, "Zincoid");
-       gameService.matchPlayer(0L, 2L, "Nekozn");
+   void matchTest() {
+       System.out.println(matchService.joinMatch(0L, 1L, "A", "tictactoe"));
+       // System.out.println(matchService.joinMatch(0L, 1L, "B", "tictactoe"));
+       System.out.println(matchService.joinMatch(1L, 2L, "C", "tictactoe"));
+       // System.out.println(matchService.joinMatch(2L, 3L, "D", "punch"));
+
+
+       boolean current = true;
+       Scanner scanner = new Scanner(System.in);
+       while (true)
+       {
+           System.out.println("Enter command: ");
+           String command = scanner.nextLine();
+           int i = Integer.parseInt(command.split(" ")[0]);
+           int j = Integer.parseInt(command.split(" ")[1]);
+
+           if(current){
+               System.out.println(ticTacToeService.move(0L, i, j));
+               current = false;
+           }else{
+               System.out.println(ticTacToeService.move(1L, i, j));
+               current = true;
+           }
+       }
+
+       // System.out.println(ticTacToeService.move(0L, 1, 3));
+       // System.out.println(ticTacToeService.move(1L, 2, 2));
+       // System.out.println(ticTacToeService.move(0L, 1, 1));
+       // System.out.println(ticTacToeService.move(0L, 1, 1));
    }
 }

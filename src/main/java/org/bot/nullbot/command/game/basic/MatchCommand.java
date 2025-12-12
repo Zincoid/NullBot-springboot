@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.game.delta;
+package org.bot.nullbot.command.game.basic;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.plugin.component.delta.GameService;
+import org.bot.nullbot.plugin.component.game.MatchService;
 import org.springframework.stereotype.Component;
 
 
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MatchCommand implements Command
 {
-    private final GameService gameService;
+    private final MatchService matchService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -27,10 +27,9 @@ public class MatchCommand implements Command
             String userName = bot.getStrangerInfo(userId, false).getData().getNickname();
             Long selfId = bot.getSelfId();
 
-            GameService.MatchResult result = gameService.matchPlayer(groupId, userId, userName);
-
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.toString(), false);
-            log.info("\t\t\t\t├─[Match] 匹配结果 - {}", result.toString().replaceAll("\\R", ""));
+            // String result = handleMatch(groupId, userId, userName);
+            // bot.sendGroupMsg(groupMessageEvent.getGroupId(), result, false);
+            // log.info("\t\t\t\t├─[Match] 匹配结果 - {}", result.replaceAll("\\R", ""));
         }else
             log.info("\t\t\t\t├─[Match] 未设计 非群消息事件响应方式");
     }
