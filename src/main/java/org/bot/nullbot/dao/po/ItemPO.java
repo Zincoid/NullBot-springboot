@@ -36,9 +36,10 @@ public class ItemPO
         String rarityIcon = getRarityEmoji();
 
         return String.format(
-                "%s【%s】  \n" +
-                        "💎 稀有度: %s | 💰 价格: %,d | ⚖️ 重量: %d  \n" +
-                        "📋 %s",
+                """
+                        %s【%s】
+                        💎 品质: %s | 💰 价格: %,d | ⚖️ 重量: %d \s
+                        📋 %s""",
                 rarityIcon,
                 name,
                 getRarityDisplay(),

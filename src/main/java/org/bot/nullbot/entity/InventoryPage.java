@@ -10,8 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 public class InventoryPage
 {
-    List<InventoryPO> inventories;
-    long currentPage;
-    long totalPage;
-    long pageSize;
+    private List<InventoryPO> inventories;
+    private long currentPage;
+    private long totalPage;
+    private long pageSize;
 }

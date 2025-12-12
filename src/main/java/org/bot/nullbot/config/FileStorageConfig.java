@@ -11,4 +11,5 @@ public class FileStorageConfig
 {
     private String imagePath;
     private String videoPath;
+    private String audioPath;
 }
