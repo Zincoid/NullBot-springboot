@@ -20,7 +20,7 @@ public class UserPO
         return String.format(
                 """
                         👤 用户信息
-                        ├ 用户ID：%d
+                        ├ ID：%d
                         ├ 等级：%d
                         ├ 现金：%d
                         ├ 抽数：%d

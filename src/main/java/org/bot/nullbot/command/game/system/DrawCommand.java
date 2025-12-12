@@ -22,13 +22,15 @@ public class DrawCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            ItemPO item = itemService.getAndKeepRandomItem(groupMessageEvent.getUserId());
+            Long userId = groupMessageEvent.getUserId();
+            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+            ItemPO item = itemService.getAndKeepRandomItem(userId);
             if (item != null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] 你抽到了...\n" + item, false);
-                log.info("\t\t\t\t├─[Draw] 已抽取 - {}", item.toString().replaceAll("\\R", ""));
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] " + userName + "抽到了...\n" + item, false);
+                log.info("\t\t\t\t├─[Draw] 已抽取 - {} -> {}", userId, item.toString().replaceAll("\\R", ""));
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌次数已耗尽", false);
-                log.info("\t\t\t\t├─[Draw] 次数已耗尽");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌" + userName + "抽数已耗尽", false);
+                log.info("\t\t\t\t├─[Draw] - {} -> 抽数已耗尽",  userId);
             }
         }else
             log.info("\t\t\t\t├─[Draw] 未设计 非群消息事件响应方式");

@@ -23,6 +23,27 @@ public class InventoryPO
 
     @Override
     public String toString() {
-        return ItemId + "  " + ItemName + "  " + rarity.getDescription() + "  " + price + "  " + amount;
+        return padRight(String.valueOf(ItemId), 6) +
+                padRight(ItemName, 16) +
+                padRight(rarity.getDescription(), 4) +
+                padRight(String.valueOf(price), 8) +
+                padRight(String.valueOf(amount), 4);
     }
+
+    private int getDisplayWidth(String s) {
+        int width = 0;
+        for (char c : s.toCharArray()) {
+            width += (c <= 127 ? 1 : 2);
+        }
+        return width;
+    }
+
+    private String padRight(String s, int totalWidth) {
+        int need = totalWidth - getDisplayWidth(s);
+        if (need <= 0) return s;
+        StringBuilder sb = new StringBuilder(s);
+        for (int i = 0; i < need; i++) sb.append(' ');
+        return sb.toString();
+    }
+
 }

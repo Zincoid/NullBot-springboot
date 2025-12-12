@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.command.manage.UserBanCommand;
+import org.bot.nullbot.dao.po.ItemPO;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.ItemService;
@@ -29,12 +30,15 @@ public class UseInventoryCommand implements Command
                 try {
                     Integer itemId = Integer.valueOf(event.getCommandParameters().getFirst());
                     if(itemService.isUsable(itemId)){
-                        String command = itemService.getCommandFromItemDesc(itemId);
+                        ItemPO item = itemService.getItem(itemId);
+                        Long userId = groupMessageEvent.getUserId();
+                        String userName = bot.getStrangerInfo(userId, false).getData().getNickname();
+                        String command = itemService.getCommandFromItemDesc(itemId);  // 冗余 暂时不想改
                         if(command != null){
                             if (inventoryService.decreaseInventory(groupMessageEvent.getUserId(), itemId)) {
 
                                 // 根据情况替换参数
-                                command = command.replace("userId", groupMessageEvent.getSender().getUserId().toString());
+                                command = command.replace("userId", userId.toString());
                                 CommandEvent<GroupMessageEvent> commandEvent = new CommandEvent<>(command);
 
                                 if("UserBan".equals(commandEvent.getCommandType())){
@@ -45,7 +49,7 @@ public class UseInventoryCommand implements Command
                                     log.info("\t\t\t\t├─[Inventory.Use] 找不到指令");
                                 }
 
-                                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ✅已使用！", false);
+                                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ✅" + userName + "已使用" + item.getName() + "！", false);
                                 log.info("\t\t\t\t├─[Inventory.Use] 已使用");
                             }else{
                                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌该物品数量不足", false);

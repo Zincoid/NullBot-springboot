@@ -4,6 +4,8 @@ import org.bot.nullbot.dao.po.ItemPO;
 
 public interface ItemService
 {
+    ItemPO getItem(Integer itemId);
+
     ItemPO getAndKeepRandomItem(Long userId);
 
     boolean exist(Integer itemId);
