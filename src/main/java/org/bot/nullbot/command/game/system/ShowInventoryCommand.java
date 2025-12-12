@@ -40,7 +40,7 @@ public class ShowInventoryCommand implements Command
             for(InventoryPO inventoryPO : inventoryPage.getInventories()) {
                 sb.append("\n").append(inventoryPO.toString());
             }
-            sb.append("\n").append("第").append(inventoryPage.getCurrentPage()).append("页").append(" / 共").append(inventoryPage.getTotalPage()).append("页 (每页").append(inventoryPage.getPageSize()).append("条)");
+            sb.append("\n").append("[第").append(inventoryPage.getCurrentPage()).append("页").append(" / 共").append(inventoryPage.getTotalPage()).append("页 (每页").append(inventoryPage.getPageSize()).append("条)]");
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
             log.info("\t\t\t\t├─[Inventory.Show] 已获取库存 - {}", sb.toString().replaceAll("\\R", ""));
         }else
