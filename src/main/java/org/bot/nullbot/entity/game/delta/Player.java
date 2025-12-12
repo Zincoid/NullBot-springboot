@@ -1,24 +1,16 @@
 package org.bot.nullbot.entity.game.delta;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 
 @Data
-@RequiredArgsConstructor
-public class Player
-{
+public class Player {
     private Long userId;
     private String userName;
     private PlayerStatus status = PlayerStatus.IDLE;
-    private LocalDateTime lastActive = LocalDateTime.now();
-
-    public Player(Long userId, String userName) {
-        this.userId = userId;
-        this.userName = userName;
-    }
+    private LocalDateTime lastActive;
 
     public enum PlayerStatus {
         IDLE, WAITING, PLAYING
