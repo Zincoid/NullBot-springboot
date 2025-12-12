@@ -8,10 +8,10 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dao.po.InventoryPO;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.entity.InventoryPage;
 import org.bot.nullbot.service.InventoryService;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 @CommandMapping({"ShowInventory", "展示库存", "库存"})
 @Component
@@ -24,10 +24,10 @@ public class ShowInventoryCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            int page = 1;
+            long p = 1;
             if(!event.getCommandParameters().isEmpty())
                 try {
-                    page = Integer.parseInt(event.getCommandParameters().getFirst());
+                    p = Integer.parseInt(event.getCommandParameters().getFirst());
                 } catch (NumberFormatException e) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌页码格式错误", false);
                     log.info("\t\t\t\t├─[Inventory.Show] 页码格式错误");
@@ -35,11 +35,12 @@ public class ShowInventoryCommand implements Command
                 }
             Long userId = groupMessageEvent.getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            List<InventoryPO> inventories = inventoryService.getInventoriesPage(userId, page);
+            InventoryPage inventoryPage = inventoryService.getInventoriesPage(userId, p, 8);
             StringBuilder sb = new StringBuilder().append("[库存] ").append(userName).append("(").append(userId).append(")\n").append("[ID -- 名称 -- 品质/单价 - 数量]");
-            for(InventoryPO inventoryPO : inventories) {
+            for(InventoryPO inventoryPO : inventoryPage.getInventories()) {
                 sb.append("\n").append(inventoryPO.toString());
             }
+            sb.append("\n").append("第").append(inventoryPage.getCurrentPage()).append("页").append(" / 共").append(inventoryPage.getTotalPage()).append("页(每页").append(inventoryPage.getPageSize()).append("条)");
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
             log.info("\t\t\t\t├─[Inventory.Show] 已获取库存 - {}", sb.toString().replaceAll("\\R", ""));
         }else

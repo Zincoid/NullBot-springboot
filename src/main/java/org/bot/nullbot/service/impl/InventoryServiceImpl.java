@@ -8,6 +8,7 @@ import org.bot.nullbot.dao.mapper.ItemMapper;
 import org.bot.nullbot.dao.mapper.UserMapper;
 import org.bot.nullbot.dao.po.InventoryPO;
 import org.bot.nullbot.dao.po.ItemPO;
+import org.bot.nullbot.entity.InventoryPage;
 import org.bot.nullbot.service.InventoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,10 +31,10 @@ public class InventoryServiceImpl implements InventoryService
 
     @Override
     @Transactional
-    public List<InventoryPO> getInventoriesPage(Long userId, int i) {
-        Page<InventoryPO> page = new Page<>(i, 10);
+    public InventoryPage getInventoriesPage(Long userId, long p, long size) {
+        Page<InventoryPO> page = new Page<>(p, size);
         Page<InventoryPO> inventoryPage = inventoryMapper.selectPage(page, new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).orderByDesc(InventoryPO::getRarity));
-        return inventoryPage.getRecords();
+        return new InventoryPage(inventoryPage.getRecords(), inventoryPage.getCurrent(), inventoryPage.getPages(), inventoryPage.getSize());
     }
 
     @Override
