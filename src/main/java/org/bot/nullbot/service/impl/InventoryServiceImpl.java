@@ -1,6 +1,7 @@
 package org.bot.nullbot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.dao.mapper.InventoryMapper;
 import org.bot.nullbot.dao.mapper.ItemMapper;
@@ -25,6 +26,14 @@ public class InventoryServiceImpl implements InventoryService
     @Transactional
     public List<InventoryPO> getInventories(Long userId) {
         return inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).orderByDesc(InventoryPO::getRarity));
+    }
+
+    @Override
+    @Transactional
+    public List<InventoryPO> getInventoriesPage(Long userId, int i) {
+        Page<InventoryPO> page = new Page<>(i, 10);
+        Page<InventoryPO> inventoryPage = inventoryMapper.selectPage(page, new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).orderByDesc(InventoryPO::getRarity));
+        return inventoryPage.getRecords();
     }
 
     @Override

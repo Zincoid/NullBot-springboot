@@ -24,9 +24,18 @@ public class ShowInventoryCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            int page = 1;
+            if(!event.getCommandParameters().isEmpty())
+                try {
+                    page = Integer.parseInt(event.getCommandParameters().getFirst());
+                } catch (NumberFormatException e) {
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌页码格式错误", false);
+                    log.info("\t\t\t\t├─[Inventory.Show] 页码格式错误");
+                    return;
+                }
             Long userId = groupMessageEvent.getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            List<InventoryPO> inventories = inventoryService.getInventories(userId);
+            List<InventoryPO> inventories = inventoryService.getInventoriesPage(userId, page);
             StringBuilder sb = new StringBuilder().append("[库存] ").append(userName).append("(").append(userId).append(")\n").append("[ID -- 名称 -- 品质/单价 - 数量]");
             for(InventoryPO inventoryPO : inventories) {
                 sb.append("\n").append(inventoryPO.toString());
