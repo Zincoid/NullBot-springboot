@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface UserService
 {
+    void increaseDrawTimes(Long userId, int i);
+
     boolean decreaseDrawTimes(Long userId);
 
     List<InventoryPO> getInventories(Long userId);

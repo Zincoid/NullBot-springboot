@@ -24,6 +24,18 @@ public class UserServiceImpl implements UserService
 
     @Override
     @Transactional
+    public void increaseDrawTimes(Long userId, int i) {
+        UserPO user = userMapper.selectById(userId);
+        if(user == null){
+            userMapper.insert(new UserPO(userId, 1, 50 + i, 100));
+        }else{
+            user.setDrawTimes(user.getDrawTimes() + i);
+            userMapper.updateById(user);
+        }
+    }
+
+    @Override
+    @Transactional
     public boolean decreaseDrawTimes(Long userId) {
         UserPO user = userMapper.selectById(userId);
         if(user == null){
@@ -44,6 +56,7 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
+    @Transactional
     public UserPO getUser(Long userId) {
         return userMapper.selectById(userId);
     }
