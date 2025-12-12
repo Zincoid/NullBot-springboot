@@ -50,5 +50,13 @@ public class MatchManager
     public String getMatchIdByPlayerId(Long playerId) {
         return playerMatchIndex.get(playerId);
     }
+
+    public Long getOpponentGroupIdBySelfId(Long playerId) {
+        Match match = matchMap.get(playerMatchIndex.get(playerId));
+        if(match.getPlayer1().getUserId().equals(playerId))
+            return match.getPlayer2().getGroupId();
+        else
+            return match.getPlayer1().getGroupId();
+    }
 }
 

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.game.TicTacToeService;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TicTacToeCommand implements Command
 {
+    private final MatchManager matchManager;
     private final TicTacToeService ticTacToeService;
 
     @Override
@@ -33,8 +35,13 @@ public class TicTacToeCommand implements Command
                     log.info("\t\t\t\t├─[TicTacToe] 参数类型错误");
                     return;
                 }
-                String result = ticTacToeService.move(groupMessageEvent.getUserId(), x, y);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), result, false);
+                Long userId = groupMessageEvent.getUserId();
+                String result = ticTacToeService.move(userId, x, y);
+                Long groupId = groupMessageEvent.getGroupId();
+                Long opponentGroupId = matchManager.getOpponentGroupIdBySelfId(userId);
+                if(!opponentGroupId.equals(groupId))
+                    bot.sendGroupMsg(opponentGroupId, result, false);
+                bot.sendGroupMsg(groupId, result, false);
                 log.info("\t\t\t\t├─[TicTacToe]  落子结果 - {}", result.replaceAll("\\R", ""));
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[井字棋] ❌参数数量错误", false);
