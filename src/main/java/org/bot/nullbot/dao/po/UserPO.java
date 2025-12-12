@@ -11,8 +11,9 @@ public class UserPO
 {
     Long  id;
     Integer level;
-    Integer drawTimes;
+    Integer cash;
     Integer capacity;
+    Integer drawTimes;
 
     @Override
     public String toString() {
@@ -20,10 +21,11 @@ public class UserPO
                 """
                         👤 用户信息
                         ├ 用户ID：%d
-                        ├ 用户等级：%d
-                        ├ 抽卡次数：%d
-                        └ 仓库容量：%d""",
-                id, level, drawTimes, capacity
+                        ├ 等级：%d
+                        ├ 现金：%d
+                        ├ 仓库容量：%d
+                        └ 抽卡次数：%d""",
+                id, level, cash, capacity, drawTimes
         );
     }
 }
