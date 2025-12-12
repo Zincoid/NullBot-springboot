@@ -11,8 +11,10 @@ public class Match {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
+    private Long group1Id;
     private Long player1Id;
     private String player1Name;
+    private Long group2Id;
     private Long player2Id;
     private String player2Name;
 

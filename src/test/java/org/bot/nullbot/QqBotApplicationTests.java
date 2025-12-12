@@ -6,6 +6,7 @@ import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.plugin.component.delta.GameService;
 import org.bot.nullbot.plugin.util.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,5 +39,12 @@ class QqBotApplicationTests {
        //     String command = scanner.nextLine();
        //     commandProcessor.processTest(new CommandEvent<>(command));
        // }
+   }
+
+   @Test
+   void matchTest() throws Exception {
+       GameService gameService = new GameService();
+       gameService.matchPlayer(0L, 1L, "Zincoid");
+       gameService.matchPlayer(0L, 2L, "Nekozn");
    }
 }

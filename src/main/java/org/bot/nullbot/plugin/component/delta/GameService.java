@@ -1,80 +1,98 @@
 package org.bot.nullbot.plugin.component.delta;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.game.delta.Match;
 import org.bot.nullbot.entity.game.delta.Player;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.scheduling.annotation.Scheduled;
 
 @Slf4j
 @Service
-public class GameService {
+public class GameService
+{
+    // 存储玩家信息: groupId:userId -> Player
+    private final Map<String, Player> players = new ConcurrentHashMap<>();
 
-    // 存储在线玩家：userId -> Player
-    private final Map<Long, Player> onlinePlayers = new ConcurrentHashMap<>();
+    // 存储等待匹配的玩家: groupId -> 玩家列表
+    private final Map<Long, List<Player>> waitingPlayers = new ConcurrentHashMap<>();
 
-    // 等待匹配的玩家列表
-    private final List<Player> waitingPlayers = new ArrayList<>();
-
-    // 进行中的游戏：matchId -> Match
+    // 存储进行中的游戏: matchId -> Match
     private final Map<String, Match> activeMatches = new ConcurrentHashMap<>();
 
-    // 游戏历史：userId -> 游戏历史列表（限制最近50条）
-    private final Map<Long, List<Match>> gameHistory = new ConcurrentHashMap<>();
+    // 存储已完成的游戏: matchId -> Match（历史记录）
+    private final Map<String, Match> finishedMatches = new ConcurrentHashMap<>();
+
+    // 存储玩家历史记录: groupId:userId -> matchId列表
+    private final Map<String, List<String>> playerHistory = new ConcurrentHashMap<>();
 
     /**
-     * 匹配玩家 - 开始和加入功能
-     * 如果已有玩家在等待，则创建游戏；否则自己进入等待
+     * 匹配玩家 - 整合开始和加入功能
+     * 如果群组内有等待玩家，则匹配创建游戏；否则自己进入等待
      */
-    public MatchResult matchPlayer(Long userId, String userName) {
-        log.info("玩家 {} [{}] 请求匹配", userName, userId);
+    public MatchResult matchPlayer(Long groupId, Long userId, String userName) {
+        log.info("玩家 [{}:{}] {} 请求匹配", groupId, userId, userName);
 
-        // 更新或创建玩家信息
-        Player player = getOrCreatePlayer(userId, userName);
+        String playerKey = getPlayerKey(groupId, userId);
 
         // 检查玩家是否已经在游戏中
-        Optional<Match> existingMatch = findActiveMatchByPlayer(userId);
+        Optional<Match> existingMatch = findActiveMatchByPlayer(groupId, userId);
         if (existingMatch.isPresent()) {
             return MatchResult.error("您已经在游戏中，请先完成当前游戏");
         }
 
-        synchronized (waitingPlayers) {
-            // 查找是否有等待中的其他玩家
-            Optional<Player> opponent = waitingPlayers.stream()
+        // 更新或创建玩家信息
+        Player player = getOrCreatePlayer(groupId, userId, userName);
+        player.setStatus(Player.PlayerStatus.WAITING);
+        player.setLastActive(LocalDateTime.now());
+        players.put(playerKey, player);
+
+        // 获取该群组的等待队列
+        List<Player> queue = waitingPlayers.computeIfAbsent(groupId, k -> new ArrayList<>());
+
+        synchronized (queue) {
+            // 查找是否有等待中的其他玩家（同一群组）
+            Optional<Player> opponent = queue.stream()
                     .filter(p -> !p.getUserId().equals(userId))
                     .findFirst();
 
             if (opponent.isPresent()) {
                 // 找到对手，创建游戏对局
-                Player player1 = opponent.get();
+                Player player2 = opponent.get();
 
                 // 从等待队列移除双方
-                waitingPlayers.remove(player1);
+                queue.remove(player);
+                queue.remove(player2);
 
                 // 创建游戏对局
-                Match match = createMatch(player1, player);
+                Match match = createMatch(player, player2);
+
+                // 更新玩家状态
+                player.setStatus(Player.PlayerStatus.PLAYING);
+                player.setInProgressMatchId(match.getMatchId());
+
+                player2.setStatus(Player.PlayerStatus.PLAYING);
+                player2.setInProgressMatchId(match.getMatchId());
+
+                players.put(getPlayerKey(player), player);
+                players.put(getPlayerKey(player2), player2);
 
                 log.info("创建游戏对局 {}: {} [{}] vs {} [{}]",
                         match.getMatchId(),
-                        player1.getUserName(), player1.getUserId(),
-                        player.getUserName(), player.getUserId());
+                        player.getUserName(), player.getUserId(),
+                        player2.getUserName(), player2.getUserId());
 
                 return MatchResult.success(match);
 
             } else {
                 // 没有对手，自己加入等待队列
-                if (!waitingPlayers.contains(player)) {
-                    player.setStatus(Player.PlayerStatus.WAITING);
-                    waitingPlayers.add(player);
-                }
+                queue.add(player);
 
-                log.info("玩家 {} [{}] 加入等待队列", userName, userId);
+                log.info("玩家 {} [{}] 加入等待队列，群组: {}", userName, userId, groupId);
 
                 return MatchResult.waiting(player);
             }
@@ -84,66 +102,69 @@ public class GameService {
     /**
      * 取消匹配
      */
-    public boolean cancelMatch(Long userId) {
-        log.info("玩家 {} 取消匹配", userId);
+    public boolean cancelMatch(Long groupId, Long userId) {
+        log.info("玩家 [{}:{}] 取消匹配", groupId, userId);
 
-        synchronized (waitingPlayers) {
-            waitingPlayers.removeIf(p -> p.getUserId().equals(userId));
+        List<Player> queue = waitingPlayers.get(groupId);
+        if (queue != null) {
+            synchronized (queue) {
+                return queue.removeIf(p -> p.getUserId().equals(userId));
+            }
         }
-
-        // 更新玩家状态
-        Player player = onlinePlayers.get(userId);
-        if (player != null) {
-            player.setStatus(Player.PlayerStatus.IDLE);
-            player.setLastActive(LocalDateTime.now());
-        }
-
-        return true;
+        return false;
     }
 
     /**
      * 获取玩家状态
      */
-    public PlayerStatusResult getPlayerStatus(Long userId) {
+    public PlayerStatusResult getPlayerStatus(Long groupId, Long userId) {
+        Player player = players.get(getPlayerKey(groupId, userId));
+
         PlayerStatusResult result = new PlayerStatusResult();
+        result.setGroupId(groupId);
         result.setUserId(userId);
         result.setTimestamp(LocalDateTime.now());
 
-        Player player = onlinePlayers.get(userId);
         if (player == null) {
-            result.setStatus("OFFLINE");
+            result.setStatus("NOT_FOUND");
             return result;
         }
 
-        result.setUserName(player.getUserName());
         result.setStatus(player.getStatus().name());
+        result.setUserName(player.getUserName());
 
-        switch (player.getStatus()) {
-            case WAITING:
-                synchronized (waitingPlayers) {
-                    // 计算排队位置（前面有多少人）
-                    int position = waitingPlayers.indexOf(player);
-                    if (position >= 0) {
-                        result.setQueuePosition(position);
-                        result.setQueueSize(waitingPlayers.size());
-                    }
-                }
-                break;
-
-            case PLAYING:
-                Optional<Match> match = findActiveMatchByPlayer(userId);
-                match.ifPresent(m -> {
-                    result.setMatchId(m.getMatchId());
-                    result.setOpponentId(getOpponentId(m, userId));
-                    result.setOpponentName(getOpponentName(m, userId));
-                    result.setMatchStatus(m.getStatus().name());
-                });
-                break;
-
-            case IDLE:
-                // 无需额外信息
-                break;
+        if (player.getStatus() == Player.PlayerStatus.WAITING) {
+            // 获取等待队列信息
+            List<Player> queue = waitingPlayers.get(groupId);
+            if (queue != null) {
+                result.setQueueSize(queue.size() - 1); // 减去自己
+            }
+        } else if (player.getStatus() == Player.PlayerStatus.PLAYING) {
+            // 获取游戏信息
+            Optional<Match> match = findActiveMatchByPlayer(groupId, userId);
+            if (match.isPresent()) {
+                result.setMatchId(match.get().getMatchId());
+                result.setMatchStatus(match.get().getStatus().name());
+                result.setOpponentId(getOpponentId(match.get(), groupId, userId));
+            }
         }
+
+        return result;
+    }
+
+    /**
+     * 获取群组等待队列信息
+     */
+    public QueueInfoResult getQueueInfo(Long groupId) {
+        List<Player> queue = waitingPlayers.getOrDefault(groupId, new ArrayList<>());
+
+        QueueInfoResult result = new QueueInfoResult();
+        result.setGroupId(groupId);
+        result.setQueueSize(queue.size());
+        result.setWaitingPlayers(queue.stream()
+                .map(p -> p.getUserName() + "[" + p.getUserId() + "]")
+                .toList());
+        result.setTimestamp(LocalDateTime.now());
 
         return result;
     }
@@ -161,16 +182,12 @@ public class GameService {
         match.setStatus(Match.MatchStatus.PLAYING);
         match.setStartTime(LocalDateTime.now());
 
-        // 更新玩家状态
-        updatePlayerStatus(match.getPlayer1Id(), Player.PlayerStatus.PLAYING);
-        updatePlayerStatus(match.getPlayer2Id(), Player.PlayerStatus.PLAYING);
-
         log.info("游戏开始: {} - {} vs {}", matchId, match.getPlayer1Name(), match.getPlayer2Name());
         return true;
     }
 
     /**
-     * 结束游戏并保存结果
+     * 结束游戏
      */
     public GameResult endGame(String matchId, Long winnerId, String gameData) {
         Match match = activeMatches.get(matchId);
@@ -183,15 +200,15 @@ public class GameService {
         match.setEndTime(LocalDateTime.now());
         match.setGameData(gameData);
 
-        // 保存到历史记录
-        saveToHistory(match);
-
         // 更新玩家状态
-        updatePlayerStatus(match.getPlayer1Id(), Player.PlayerStatus.IDLE);
-        updatePlayerStatus(match.getPlayer2Id(), Player.PlayerStatus.IDLE);
+        updatePlayersAfterGame(match);
 
-        // 从活跃游戏中移除
+        // 移动到历史记录
+        finishedMatches.put(matchId, match);
         activeMatches.remove(matchId);
+
+        // 添加到玩家历史
+        addToPlayerHistory(match);
 
         log.info("游戏结束: {} - 胜者: {}", matchId, winnerId);
 
@@ -209,18 +226,52 @@ public class GameService {
     }
 
     /**
-     * 获取游戏历史
+     * 取消游戏
      */
-    public List<Match> getGameHistory(Long userId, int limit) {
-        List<Match> history = gameHistory.getOrDefault(userId, new ArrayList<>());
+    public boolean cancelGame(String matchId) {
+        Match match = activeMatches.get(matchId);
+        if (match == null) {
+            return false;
+        }
 
-        // 按结束时间倒序排序，取最近的记录
-        return history.stream()
-                .sorted((a, b) -> {
-                    if (a.getEndTime() == null) return 1;
-                    if (b.getEndTime() == null) return -1;
-                    return b.getEndTime().compareTo(a.getEndTime());
-                })
+        match.setStatus(Match.MatchStatus.CANCELLED);
+        match.setEndTime(LocalDateTime.now());
+
+        // 更新玩家状态
+        updatePlayersAfterGame(match);
+
+        // 移动到历史记录
+        finishedMatches.put(matchId, match);
+        activeMatches.remove(matchId);
+
+        log.info("游戏取消: {}", matchId);
+        return true;
+    }
+
+    /**
+     * 获取游戏信息
+     */
+    public Match getMatch(String matchId) {
+        // 先查活跃游戏，再查历史记录
+        Match match = activeMatches.get(matchId);
+        if (match == null) {
+            match = finishedMatches.get(matchId);
+        }
+        return match;
+    }
+
+    /**
+     * 获取玩家游戏历史
+     */
+    public List<Match> getPlayerHistory(Long groupId, Long userId, int limit) {
+        String playerKey = getPlayerKey(groupId, userId);
+        List<String> matchIds = playerHistory.getOrDefault(playerKey, new ArrayList<>());
+
+        // 获取所有历史对局
+        return matchIds.stream()
+                .map(this::getMatch)
+                .filter(Objects::nonNull)
+                .sorted((a, b) -> b.getEndTime().compareTo(a.getEndTime()))
                 .limit(limit)
                 .toList();
     }
@@ -232,45 +283,19 @@ public class GameService {
     public void cleanupExpiredPlayers() {
         LocalDateTime expireTime = LocalDateTime.now().minusMinutes(5);
 
-        synchronized (waitingPlayers) {
-            waitingPlayers.removeIf(player -> {
-                if (player.getLastActive().isBefore(expireTime)) {
-                    log.info("清理过期等待玩家: {} [{}]", player.getUserName(), player.getUserId());
-                    player.setStatus(Player.PlayerStatus.IDLE);
-                    return true;
-                }
-                return false;
-            });
-        }
+        waitingPlayers.forEach((groupId, playersList) -> {
+            synchronized (playersList) {
+                playersList.removeIf(player ->
+                        player.getLastActive().isBefore(expireTime)
+                );
+            }
+        });
 
-        // 清理离线玩家（超过10分钟）
-        LocalDateTime offlineTime = LocalDateTime.now().minusMinutes(10);
-        onlinePlayers.entrySet().removeIf(entry ->
-                entry.getValue().getLastActive().isBefore(offlineTime)
-        );
-
-        log.debug("清理过期玩家完成");
+        log.debug("清理过期等待玩家完成");
     }
 
     /**
-     * 获取等待队列信息
-     */
-    public QueueInfo getQueueInfo() {
-        QueueInfo info = new QueueInfo();
-        info.setTimestamp(LocalDateTime.now());
-
-        synchronized (waitingPlayers) {
-            info.setQueueSize(waitingPlayers.size());
-            info.setPlayers(waitingPlayers.stream()
-                    .map(p -> new PlayerInfo(p.getUserId(), p.getUserName(), p.getLastActive()))
-                    .toList());
-        }
-
-        return info;
-    }
-
-    /**
-     * 获取活跃游戏列表
+     * 获取所有活跃游戏（管理用）
      */
     public List<Match> getActiveMatches() {
         return new ArrayList<>(activeMatches.values());
@@ -278,104 +303,113 @@ public class GameService {
 
     // ========== 私有方法 ==========
 
-    private Player getOrCreatePlayer(Long userId, String userName) {
-        Player player = onlinePlayers.get(userId);
+    private Player getOrCreatePlayer(Long groupId, Long userId, String userName) {
+        String playerKey = getPlayerKey(groupId, userId);
+        Player player = players.get(playerKey);
 
         if (player == null) {
             player = new Player();
+            player.setGroupId(groupId);
             player.setUserId(userId);
             player.setUserName(userName);
-            player.setStatus(Player.PlayerStatus.IDLE);
-            player.setLastActive(LocalDateTime.now());
-            onlinePlayers.put(userId, player);
-        } else {
-            player.setUserName(userName); // 更新用户名
-            player.setLastActive(LocalDateTime.now());
         }
 
         return player;
     }
 
     private Match createMatch(Player player1, Player player2) {
-        String matchId = generateMatchId();
+        String matchId = "MATCH-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
         Match match = new Match();
         match.setMatchId(matchId);
-        match.setPlayer1Id(player1.getUserId());
-        match.setPlayer1Name(player1.getUserName());
-        match.setPlayer2Id(player2.getUserId());
-        match.setPlayer2Name(player2.getUserName());
         match.setCreateTime(LocalDateTime.now());
         match.setStatus(Match.MatchStatus.READY);
 
+        // 玩家1信息
+        match.setGroup1Id(player1.getGroupId());
+        match.setPlayer1Id(player1.getUserId());
+        match.setPlayer1Name(player1.getUserName());
+
+        // 玩家2信息
+        match.setGroup2Id(player2.getGroupId());
+        match.setPlayer2Id(player2.getUserId());
+        match.setPlayer2Name(player2.getUserName());
+
         activeMatches.put(matchId, match);
+
+        startGame(matchId);  // 自动开始对局
         return match;
     }
 
-    private Optional<Match> findActiveMatchByPlayer(Long userId) {
+    private Optional<Match> findActiveMatchByPlayer(Long groupId, Long userId) {
         return activeMatches.values().stream()
-                .filter(match -> match.getPlayer1Id().equals(userId) ||
-                        match.getPlayer2Id().equals(userId))
-                .filter(match -> match.getStatus() != Match.MatchStatus.FINISHED)
+                .filter(match -> (match.getGroup1Id().equals(groupId) && match.getPlayer1Id().equals(userId)) ||
+                        (match.getGroup2Id().equals(groupId) && match.getPlayer2Id().equals(userId)))
+                .filter(match -> match.getStatus() != Match.MatchStatus.FINISHED &&
+                        match.getStatus() != Match.MatchStatus.CANCELLED)
                 .findFirst();
     }
 
-    private Long getOpponentId(Match match, Long currentUserId) {
-        if (match.getPlayer1Id().equals(currentUserId)) {
+    private Long getOpponentId(Match match, Long groupId, Long userId) {
+        if (match.getGroup1Id().equals(groupId) && match.getPlayer1Id().equals(userId)) {
             return match.getPlayer2Id();
         } else {
             return match.getPlayer1Id();
         }
     }
 
-    private String getOpponentName(Match match, Long currentUserId) {
-        if (match.getPlayer1Id().equals(currentUserId)) {
-            return match.getPlayer2Name();
-        } else {
-            return match.getPlayer1Name();
+    private void updatePlayersAfterGame(Match match) {
+        // 更新玩家1状态
+        String player1Key = getPlayerKey(match.getGroup1Id(), match.getPlayer1Id());
+        Player player1 = players.get(player1Key);
+        if (player1 != null) {
+            player1.setStatus(Player.PlayerStatus.IDLE);
+            player1.setInProgressMatchId(null);
+            player1.setLastActive(LocalDateTime.now());
+        }
+
+        // 更新玩家2状态
+        String player2Key = getPlayerKey(match.getGroup2Id(), match.getPlayer2Id());
+        Player player2 = players.get(player2Key);
+        if (player2 != null) {
+            player2.setStatus(Player.PlayerStatus.IDLE);
+            player2.setInProgressMatchId(null);
+            player2.setLastActive(LocalDateTime.now());
         }
     }
 
-    private void updatePlayerStatus(Long userId, Player.PlayerStatus status) {
-        Player player = onlinePlayers.get(userId);
-        if (player != null) {
-            player.setStatus(status);
-            player.setLastActive(LocalDateTime.now());
-        }
-    }
-
-    private void saveToHistory(Match match) {
-        // 为两个玩家都保存历史
-        Long player1Id = match.getPlayer1Id();
-        Long player2Id = match.getPlayer2Id();
-
-        // 为玩家1保存
-        List<Match> history1 = gameHistory.computeIfAbsent(player1Id, k -> new ArrayList<>());
+    private void addToPlayerHistory(Match match) {
+        // 添加到玩家1历史
+        String player1Key = getPlayerKey(match.getGroup1Id(), match.getPlayer1Id());
+        List<String> history1 = playerHistory.computeIfAbsent(player1Key, k -> new ArrayList<>());
         synchronized (history1) {
-            history1.add(match.copy());
-            // 限制历史记录数量
+            history1.add(match.getMatchId());
             if (history1.size() > 50) {
                 history1.remove(0);
             }
         }
 
-        // 为玩家2保存
-        List<Match> history2 = gameHistory.computeIfAbsent(player2Id, k -> new ArrayList<>());
+        // 添加到玩家2历史
+        String player2Key = getPlayerKey(match.getGroup2Id(), match.getPlayer2Id());
+        List<String> history2 = playerHistory.computeIfAbsent(player2Key, k -> new ArrayList<>());
         synchronized (history2) {
-            history2.add(match.copy());
+            history2.add(match.getMatchId());
             if (history2.size() > 50) {
                 history2.remove(0);
             }
         }
     }
 
-    private String generateMatchId() {
-        return "MATCH-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    private String getPlayerKey(Long groupId, Long userId) {
+        return groupId + ":" + userId;
+    }
+
+    private String getPlayerKey(Player player) {
+        return getPlayerKey(player.getGroupId(), player.getUserId());
     }
 
     // ========== 返回结果类 ==========
 
-    @Data
     public static class MatchResult {
         private boolean success;
         private String message;
@@ -417,43 +451,77 @@ public class GameService {
             result.setMessage(message);
             return result;
         }
+
+        // getters and setters
+        public boolean isSuccess() { return success; }
+        public void setSuccess(boolean success) { this.success = success; }
+        public String getMessage() { return message; }
+        public void setMessage(String message) { this.message = message; }
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
+        public String getMatchId() { return matchId; }
+        public void setMatchId(String matchId) { this.matchId = matchId; }
+        public Long getPlayer1Id() { return player1Id; }
+        public void setPlayer1Id(Long player1Id) { this.player1Id = player1Id; }
+        public String getPlayer1Name() { return player1Name; }
+        public void setPlayer1Name(String player1Name) { this.player1Name = player1Name; }
+        public Long getPlayer2Id() { return player2Id; }
+        public void setPlayer2Id(Long player2Id) { this.player2Id = player2Id; }
+        public String getPlayer2Name() { return player2Name; }
+        public void setPlayer2Name(String player2Name) { this.player2Name = player2Name; }
+        public LocalDateTime getCreateTime() { return createTime; }
+        public void setCreateTime(LocalDateTime createTime) { this.createTime = createTime; }
     }
 
-    @Data
     public static class PlayerStatusResult {
+        private Long groupId;
         private Long userId;
         private String userName;
-        private String status; // OFFLINE, IDLE, WAITING, PLAYING
+        private String status;
         private String matchId;
-        private Long opponentId;
-        private String opponentName;
         private String matchStatus;
-        private Integer queuePosition;
-        private Integer queueSize;
+        private Long opponentId;
+        private int queueSize;
         private LocalDateTime timestamp;
+
+        // getters and setters
+        public Long getGroupId() { return groupId; }
+        public void setGroupId(Long groupId) { this.groupId = groupId; }
+        public Long getUserId() { return userId; }
+        public void setUserId(Long userId) { this.userId = userId; }
+        public String getUserName() { return userName; }
+        public void setUserName(String userName) { this.userName = userName; }
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
+        public String getMatchId() { return matchId; }
+        public void setMatchId(String matchId) { this.matchId = matchId; }
+        public String getMatchStatus() { return matchStatus; }
+        public void setMatchStatus(String matchStatus) { this.matchStatus = matchStatus; }
+        public Long getOpponentId() { return opponentId; }
+        public void setOpponentId(Long opponentId) { this.opponentId = opponentId; }
+        public int getQueueSize() { return queueSize; }
+        public void setQueueSize(int queueSize) { this.queueSize = queueSize; }
+        public LocalDateTime getTimestamp() { return timestamp; }
+        public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
     }
 
-    @Data
-    public static class QueueInfo {
+    public static class QueueInfoResult {
+        private Long groupId;
+        private int queueSize;
+        private List<String> waitingPlayers;
         private LocalDateTime timestamp;
-        private Integer queueSize;
-        private List<PlayerInfo> players;
+
+        // getters and setters
+        public Long getGroupId() { return groupId; }
+        public void setGroupId(Long groupId) { this.groupId = groupId; }
+        public int getQueueSize() { return queueSize; }
+        public void setQueueSize(int queueSize) { this.queueSize = queueSize; }
+        public List<String> getWaitingPlayers() { return waitingPlayers; }
+        public void setWaitingPlayers(List<String> waitingPlayers) { this.waitingPlayers = waitingPlayers; }
+        public LocalDateTime getTimestamp() { return timestamp; }
+        public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
     }
 
-    @Data
-    public static class PlayerInfo {
-        private final Long userId;
-        private final String userName;
-        private final LocalDateTime waitSince;
-
-        public PlayerInfo(Long userId, String userName, LocalDateTime waitSince) {
-            this.userId = userId;
-            this.userName = userName;
-            this.waitSince = waitSince;
-        }
-    }
-
-    @Data
     public static class GameResult {
         private String matchId;
         private Long winnerId;
@@ -469,5 +537,23 @@ public class GameService {
             // 这里可以添加错误信息字段
             return result;
         }
+
+        // getters and setters
+        public String getMatchId() { return matchId; }
+        public void setMatchId(String matchId) { this.matchId = matchId; }
+        public Long getWinnerId() { return winnerId; }
+        public void setWinnerId(Long winnerId) { this.winnerId = winnerId; }
+        public Long getPlayer1Id() { return player1Id; }
+        public void setPlayer1Id(Long player1Id) { this.player1Id = player1Id; }
+        public String getPlayer1Name() { return player1Name; }
+        public void setPlayer1Name(String player1Name) { this.player1Name = player1Name; }
+        public Long getPlayer2Id() { return player2Id; }
+        public void setPlayer2Id(Long player2Id) { this.player2Id = player2Id; }
+        public String getPlayer2Name() { return player2Name; }
+        public void setPlayer2Name(String player2Name) { this.player2Name = player2Name; }
+        public String getGameData() { return gameData; }
+        public void setGameData(String gameData) { this.gameData = gameData; }
+        public LocalDateTime getEndTime() { return endTime; }
+        public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
     }
 }
