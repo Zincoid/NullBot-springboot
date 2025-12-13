@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.component.game.impl.ReversiMatchHandler;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.game.basic.GameResult;
@@ -16,9 +15,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ReversiCommand implements Command {
-
-    private final MatchManager matchManager;
+public class ReversiCommand implements Command
+{
     private final ReversiMatchHandler reversiMatchHandler;
 
     @Override

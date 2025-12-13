@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 public class MatchConfig
 {
     // 等待匹配超时（秒）
-    private final long waitingTimeoutSeconds = 60;
+    private final long waitingTimeoutSeconds = 120;
 
     // 对局无操作超时（秒）
-    private final long playingTimeoutSeconds = 120;
+    private final long playingTimeoutSeconds = 240;
 }
