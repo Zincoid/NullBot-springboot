@@ -1,6 +1,6 @@
 package org.bot.nullbot.util.game;
 
-import org.bot.nullbot.dao.po.ItemPO;
+import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.enums.Rarity;
 
 import java.util.List;

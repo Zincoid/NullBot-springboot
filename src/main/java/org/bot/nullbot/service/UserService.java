@@ -1,9 +1,6 @@
 package org.bot.nullbot.service;
 
-import org.bot.nullbot.dao.po.InventoryPO;
-import org.bot.nullbot.dao.po.UserPO;
-
-import java.util.List;
+import org.bot.nullbot.entity.po.UserPO;
 
 public interface UserService
 {

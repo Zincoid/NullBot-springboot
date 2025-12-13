@@ -2,10 +2,10 @@ package org.bot.nullbot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.dao.mapper.InventoryMapper;
-import org.bot.nullbot.dao.mapper.ItemMapper;
-import org.bot.nullbot.dao.mapper.UserMapper;
-import org.bot.nullbot.dao.po.ItemPO;
+import org.bot.nullbot.mapper.InventoryMapper;
+import org.bot.nullbot.mapper.ItemMapper;
+import org.bot.nullbot.mapper.UserMapper;
+import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.enums.Category;
 import org.bot.nullbot.enums.Rarity;
 import org.bot.nullbot.util.game.DrawUtil;

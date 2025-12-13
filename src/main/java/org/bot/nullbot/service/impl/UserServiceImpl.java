@@ -1,17 +1,13 @@
 package org.bot.nullbot.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.dao.mapper.InventoryMapper;
-import org.bot.nullbot.dao.mapper.ItemMapper;
-import org.bot.nullbot.dao.mapper.UserMapper;
-import org.bot.nullbot.dao.po.InventoryPO;
-import org.bot.nullbot.dao.po.UserPO;
+import org.bot.nullbot.mapper.InventoryMapper;
+import org.bot.nullbot.mapper.ItemMapper;
+import org.bot.nullbot.mapper.UserMapper;
+import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 
 @Service

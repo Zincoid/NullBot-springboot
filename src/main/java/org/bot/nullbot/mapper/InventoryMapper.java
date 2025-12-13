@@ -1,8 +1,8 @@
-package org.bot.nullbot.dao.mapper;
+package org.bot.nullbot.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.bot.nullbot.dao.po.InventoryPO;
+import org.bot.nullbot.entity.po.InventoryPO;
 
 
 @Mapper

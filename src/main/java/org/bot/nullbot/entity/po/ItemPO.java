@@ -1,4 +1,4 @@
-package org.bot.nullbot.dao.po;
+package org.bot.nullbot.entity.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

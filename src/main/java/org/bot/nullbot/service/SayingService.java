@@ -1,6 +1,6 @@
 package org.bot.nullbot.service;
 
-import org.bot.nullbot.dao.po.SayingPO;
+import org.bot.nullbot.entity.po.SayingPO;
 
 import java.util.List;
 

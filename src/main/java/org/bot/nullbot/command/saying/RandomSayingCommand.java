@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.dao.po.SayingPO;
+import org.bot.nullbot.entity.po.SayingPO;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Component;

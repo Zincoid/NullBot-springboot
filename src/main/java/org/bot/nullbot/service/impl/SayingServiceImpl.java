@@ -1,8 +1,8 @@
 package org.bot.nullbot.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.dao.mapper.SayingMapper;
-import org.bot.nullbot.dao.po.SayingPO;
+import org.bot.nullbot.mapper.SayingMapper;
+import org.bot.nullbot.entity.po.SayingPO;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

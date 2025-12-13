@@ -2,7 +2,7 @@ package org.bot.nullbot.entity.game.basic;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.bot.nullbot.dao.po.InventoryPO;
+import org.bot.nullbot.entity.po.InventoryPO;
 
 import java.util.List;
 

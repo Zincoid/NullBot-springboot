@@ -1,6 +1,6 @@
 package org.bot.nullbot.service;
 
-import org.bot.nullbot.dao.po.ItemPO;
+import org.bot.nullbot.entity.po.ItemPO;
 
 public interface ItemService
 {
