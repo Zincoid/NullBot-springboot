@@ -2,12 +2,11 @@ package org.bot.nullbot;
 
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import jakarta.annotation.Resource;
+import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.game.Matcher;
-import org.bot.nullbot.service.game.TicTacToeService;
 import org.bot.nullbot.util.FileUtil;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
@@ -22,7 +21,7 @@ class QqBotApplicationTests {
     @Resource
     Matcher matcher;
     @Resource
-    TicTacToeService ticTacToeService;
+    TicTacToeGameLogic ticTacToeGameLogic;
 
     // @Test
     void fileTest() throws IOException {
@@ -62,10 +61,10 @@ class QqBotApplicationTests {
            int j = Integer.parseInt(command.split(" ")[1]);
 
            if(current){
-               System.out.println(ticTacToeService.move(0L, i, j).getInfo());
+               System.out.println(ticTacToeGameLogic.move(0L, i, j).getInfo());
                current = false;
            }else{
-               System.out.println(ticTacToeService.move(1L, i, j).getInfo());
+               System.out.println(ticTacToeGameLogic.move(1L, i, j).getInfo());
                current = true;
            }
        }

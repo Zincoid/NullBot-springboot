@@ -7,9 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.game.MatchManager;
+import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.game.basic.GameResult;
-import org.bot.nullbot.service.game.TicTacToeService;
 import org.springframework.stereotype.Component;
 
 
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class TicTacToeCommand implements Command
 {
     private final MatchManager matchManager;
-    private final TicTacToeService ticTacToeService;
+    private final TicTacToeGameLogic ticTacToeGameLogic;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -35,7 +35,7 @@ public class TicTacToeCommand implements Command
                     log.info("\t\t\t\t├─[TicTacToe] 参数类型错误");
                     return;
                 }
-                GameResult result = ticTacToeService.move(groupMessageEvent.getUserId(), x, y);
+                GameResult result = ticTacToeGameLogic.move(groupMessageEvent.getUserId(), x, y);
                 if(result.getSuccess() && !result.getIsSameGroup()){
                     bot.sendGroupMsg(result.getOpponentGroupId(), result.getInfo(), false);
                 }

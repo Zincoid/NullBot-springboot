@@ -3,17 +3,22 @@ package org.bot.nullbot.component.game.impl;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
 import org.bot.nullbot.entity.game.tictactoe.TicTacToeState;
-import org.bot.nullbot.component.game.MatchStateHandler;
+import org.bot.nullbot.component.game.GameMatchHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class TicTacToeStateHandler implements MatchStateHandler
+public class TicTacToeGameMatchHandler implements GameMatchHandler
 {
     // matchId → state
     private final Map<String, TicTacToeState> stateStore = new ConcurrentHashMap<>();
+
+    @Override
+    public String gameType() {
+        return "tictactoe";
+    }
 
     @Override
     public boolean canMatch(Player p1, Player p2) {

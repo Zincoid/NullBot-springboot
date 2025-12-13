@@ -3,8 +3,10 @@ package org.bot.nullbot.component.game;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
 
-public interface MatchStateHandler
+public interface GameMatchHandler
 {
+    String gameType();
+
     // 判断是否能够匹配
     boolean canMatch(Player p1, Player p2);
 

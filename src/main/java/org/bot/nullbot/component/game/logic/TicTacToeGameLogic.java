@@ -1,4 +1,4 @@
-package org.bot.nullbot.service.game;
+package org.bot.nullbot.component.game.logic;
 
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.game.MatchManager;
@@ -6,17 +6,17 @@ import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.tictactoe.TicTacToeState;
-import org.bot.nullbot.component.game.impl.TicTacToeStateHandler;
-import org.springframework.stereotype.Service;
+import org.bot.nullbot.component.game.impl.TicTacToeGameMatchHandler;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class TicTacToeService
+public class TicTacToeGameLogic
 {
-    private final TicTacToeStateHandler handler;
+    private final TicTacToeGameMatchHandler handler;
     private final MatchManager matchManager;
     private final Matcher matcher;
 

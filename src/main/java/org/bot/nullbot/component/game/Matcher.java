@@ -23,14 +23,14 @@ public class Matcher
     private final MatchPoolManager poolManager;
 
     // gameType -> match handler
-    private final Map<String, MatchStateHandler> handlerMap = new HashMap<>();
+    private final Map<String, GameMatchHandler> handlerMap = new HashMap<>();
 
     public Matcher(
             BotContainer botContainer,
             PlayerManager playerManager,
             MatchPoolManager poolManager,
             MatchManager matchManager,
-            List<MatchStateHandler> handlers
+            List<GameMatchHandler> handlers
     ) {
         this.botContainer = botContainer;
         this.playerManager = playerManager;
@@ -49,7 +49,7 @@ public class Matcher
 
         if (player.getStatus() != Player.PlayerStatus.IDLE) { return MatchResult.notMatched("你已经在匹配或游戏中！"); }
 
-        MatchStateHandler handler = handlerMap.get(gameType);
+        GameMatchHandler handler = handlerMap.get(gameType);
         if (handler == null) { return MatchResult.notMatched("暂不支持该类型游戏：" + gameType); }
 
         // 尝试匹配另一个玩家
@@ -132,7 +132,7 @@ public class Matcher
         if (match == null) { return MatchResult.notMatched("Match 不存在"); }
 
         // 清理游戏数据
-        MatchStateHandler handler = handlerMap.get(match.getGameType());
+        GameMatchHandler handler = handlerMap.get(match.getGameType());
         if (handler != null) { handler.onMatchEnd(match); }
 
         // 重置玩家状态
