@@ -4,7 +4,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import jakarta.annotation.Resource;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.component.game.MatchService;
+import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.service.game.TicTacToeService;
 import org.bot.nullbot.util.FileUtil;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class QqBotApplicationTests {
     @Resource
     private CommandProcessor commandProcessor;
     @Resource
-    MatchService matchService;
+    Matcher matcher;
     @Resource
     TicTacToeService ticTacToeService;
 
@@ -46,9 +46,9 @@ class QqBotApplicationTests {
 
    // @Test
    void matchTest() {
-       System.out.println(matchService.joinMatch(0L, 1L, "A", "tictactoe"));
+       System.out.println(matcher.joinMatch(0L, 1L, "A", "tictactoe"));
        // System.out.println(matchService.joinMatch(0L, 1L, "B", "tictactoe"));
-       System.out.println(matchService.joinMatch(1L, 2L, "C", "tictactoe"));
+       System.out.println(matcher.joinMatch(1L, 2L, "C", "tictactoe"));
        // System.out.println(matchService.joinMatch(2L, 3L, "D", "punch"));
 
 

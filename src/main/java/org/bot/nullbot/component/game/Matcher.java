@@ -2,15 +2,14 @@ package org.bot.nullbot.component.game;
 
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 
-@Service
-public class MatchService
+@Component
+public class Matcher
 {
     private final PlayerManager playerManager;
     private final MatchPoolManager poolManager;
@@ -19,8 +18,7 @@ public class MatchService
     // gameType -> match handler
     private final Map<String, GameMatchHandler> handlerMap = new HashMap<>();
 
-    @Autowired
-    public MatchService(
+    public Matcher(
             PlayerManager playerManager,
             MatchPoolManager poolManager,
             MatchManager matchManager,

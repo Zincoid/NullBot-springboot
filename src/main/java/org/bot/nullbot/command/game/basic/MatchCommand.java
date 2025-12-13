@@ -8,7 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.component.game.MatchService;
+import org.bot.nullbot.component.game.Matcher;
 import org.springframework.stereotype.Component;
 
 
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class MatchCommand implements Command
 {
     private final MatchManager matchManager;
-    private final MatchService matchService;
+    private final Matcher matcher;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -29,7 +29,7 @@ public class MatchCommand implements Command
                 Long userId = groupMessageEvent.getUserId();
                 String userName = bot.getStrangerInfo(userId, false).getData().getNickname();
                 String gameType = event.getCommandParameters().getFirst();
-                String result = matchService.joinMatch(userId, groupId, userName, gameType);
+                String result = matcher.joinMatch(userId, groupId, userName, gameType);
                 if(result.contains("匹配成功")){
                     Long opponentGroupId = matchManager.getOpponentGroupIdBySelfId(userId);
                     bot.sendGroupMsg(opponentGroupId, result, false);

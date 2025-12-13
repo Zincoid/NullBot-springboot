@@ -2,11 +2,10 @@ package org.bot.nullbot.service.game;
 
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.game.MatchManager;
-import org.bot.nullbot.component.game.MatchService;
+import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.tictactoe.TicTacToeState;
 import org.bot.nullbot.component.game.impl.TicTacToeMatchHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,7 +17,7 @@ public class TicTacToeService
 {
     private final TicTacToeMatchHandler handler;
     private final MatchManager matchManager;
-    private final MatchService matchService;
+    private final Matcher matcher;
 
     public String move(Long userId, int x, int y) {
         String matchId = matchManager.getMatchIdByPlayerId(userId);
@@ -54,13 +53,13 @@ public class TicTacToeService
         // 判断胜负
         if (checkWin(state.getBoard(), piece)) {
             handler.getState(matchId); // Optional, maybe update
-            matchService.finishMatch(matchId);
+            matcher.finishMatch(matchId);
             return printBoard(state.getBoard()) + "\n玩家 " + piece + " 获胜！对局已结束。";
         }
 
         // 判断平局
         if (isDraw(state.getBoard())) {
-            matchService.finishMatch(matchId);
+            matcher.finishMatch(matchId);
             return printBoard(state.getBoard()) + "\n平局！对局已结束。";
         }
 
@@ -98,13 +97,13 @@ public class TicTacToeService
     // 文本形式的棋盘
     private String printBoard(char[][] b) {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n");
+        sb.append("[TicTacToe]\n");
         for (int i = 0; i < 3; i++) {
             sb.append(" ")
                     .append(b[i][0]).append(" | ")
                     .append(b[i][1]).append(" | ")
                     .append(b[i][2]).append("\n");
-            if (i < 2) sb.append("---+---+---\n");
+            if (i < 2) sb.append("----------\n");
         }
         return sb.toString();
     }
