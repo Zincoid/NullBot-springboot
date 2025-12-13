@@ -1,8 +1,11 @@
 package org.bot.nullbot.component.game;
 
+import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.core.BotContainer;
 import org.bot.nullbot.entity.game.basic.MatchResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -11,6 +14,10 @@ import java.util.*;
 @Component
 public class Matcher
 {
+    @Value("${nullbot.self-id}")
+    private Long selfId;
+    private final Bot bot;
+
     private final PlayerManager playerManager;
     private final MatchManager matchManager;
     private final MatchPoolManager poolManager;
@@ -19,11 +26,13 @@ public class Matcher
     private final Map<String, MatchStateHandler> handlerMap = new HashMap<>();
 
     public Matcher(
+            BotContainer botContainer,
             PlayerManager playerManager,
             MatchPoolManager poolManager,
             MatchManager matchManager,
             List<MatchStateHandler> handlers
     ) {
+        bot = botContainer.robots.get(selfId);
         this.playerManager = playerManager;
         this.poolManager = poolManager;
         this.matchManager = matchManager;
@@ -103,8 +112,15 @@ public class Matcher
      * 结束游戏 通过用户ID
      */
     public MatchResult finishMatchByPlayerId(Long userId) {
-        Player player = playerManager.getPlayer(userId);
-        return finishMatch(player.getInProgressMatchId());
+        String matchId = playerManager.getPlayer(userId).getInProgressMatchId();
+        Match match = matchManager.getMatch(matchId);
+        Player p1 = match.getPlayer1();
+        Player p2 = match.getPlayer2();
+        if(!Objects.equals(p1.getGroupId(), p2.getGroupId())){
+            bot.sendGroupMsg(p1.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已被终止", false);
+        }
+        bot.sendGroupMsg(p2.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已被终止", false);
+        return finishMatch(matchId);
     }
 
     /**
@@ -112,7 +128,7 @@ public class Matcher
      */
     public MatchResult finishMatch(String matchId) {
         Match match = matchManager.getMatch(matchId);
-        if (match == null) { return "Match 不存在"; }
+        if (match == null) { return MatchResult.notMatched("Match 不存在"); }
 
         // 清理游戏数据
         MatchStateHandler handler = handlerMap.get(match.getGameType());
