@@ -32,7 +32,7 @@ public class Matcher
     }
 
     /**
-     * 玩家加入匹配
+     * 加入匹配
      */
     public String joinMatch(Long userId, Long groupId, String userName, String gameType) {
         Player player = playerManager.getOrCreate(userId, groupId, userName);
