@@ -2,7 +2,6 @@ package org.bot.nullbot.component.game;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.MatchConfig;
 import org.bot.nullbot.entity.game.basic.Match;
@@ -17,18 +16,32 @@ import java.util.Objects;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class MatchCleanupScheduler
 {
-    @Value("${nullbot.self-id}")
-    private Long selfId;
-    private final BotContainer botContainer;
+    private final Bot bot;
 
     private final MatchPoolManager poolManager;
     private final MatchManager matchManager;
     private final PlayerManager playerManager;
     private final MatchConfig matchConfig;
     private final Matcher matcher;
+
+    public MatchCleanupScheduler(
+            @Value("${nullbot.self-id}") Long selfId,
+            BotContainer bot,
+            MatchPoolManager poolManager,
+            MatchManager matchManager,
+            PlayerManager playerManager,
+            MatchConfig matchConfig,
+            Matcher matcher
+    ) {
+        this.bot = bot.robots.get(selfId);
+        this.poolManager = poolManager;
+        this.matchManager = matchManager;
+        this.playerManager = playerManager;
+        this.matchConfig = matchConfig;
+        this.matcher = matcher;
+    }
 
     /**
      * 每 10 秒清理一次超时
@@ -44,7 +57,6 @@ public class MatchCleanupScheduler
      * 清理等待匹配超时的玩家
      */
     private void cleanWaitingPlayers() {
-        Bot bot = botContainer.robots.get(selfId);
         LocalDateTime now = LocalDateTime.now();
         poolManager.getAllPools().forEach((gameType, queue) -> queue.removeIf(p -> {
             long seconds = Duration.between(p.getLastActionTime(), now).getSeconds();
@@ -62,7 +74,6 @@ public class MatchCleanupScheduler
      * 清理对局超时（无操作）
      */
     private void cleanTimeoutMatches() {
-        Bot bot = botContainer.robots.get(selfId);
         LocalDateTime now = LocalDateTime.now();
         matchManager.getAllMatches().forEach(match -> {
             if (match.getStatus() != Match.MatchStatus.PLAYING) { return; }

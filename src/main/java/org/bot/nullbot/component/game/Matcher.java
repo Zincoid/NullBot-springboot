@@ -14,8 +14,6 @@ import java.util.*;
 @Component
 public class Matcher
 {
-    @Value("${nullbot.self-id}")
-    private Long selfId;
     private final Bot bot;
 
     private final PlayerManager playerManager;
@@ -26,6 +24,7 @@ public class Matcher
     private final Map<String, MatchStateHandler> handlerMap = new HashMap<>();
 
     public Matcher(
+            @Value("${nullbot.self-id}") Long selfId,
             BotContainer botContainer,
             PlayerManager playerManager,
             MatchPoolManager poolManager,
