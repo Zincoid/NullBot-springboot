@@ -11,11 +11,11 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.game.basic.MatchResult;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"DisMatch", "取消匹配"})
+@CommandMapping({"FinishMatch", "结束对局"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class DisMatchCommand implements Command
+public class FinishMatchCommand implements Command
 {
     private final Matcher matcher;
 
@@ -24,15 +24,20 @@ public class DisMatchCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getUserId();
-            MatchResult result = matcher.cancelMatch(userId);
+            MatchResult result = matcher.finishMatchByPlayerId(userId);
             bot.sendGroupMsg(groupId, result.getInfo(), false);
-            log.info("\t\t\t\t├─[DisMatch] 取消匹配结果 - {}", result.getInfo().replaceAll("\\R", ""));
+            log.info("\t\t\t\t├─[FinishMatch] 结束对局结果 - {}", result.getInfo().replaceAll("\\R", ""));
         }else
-            log.info("\t\t\t\t├─[DisMatch] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[FinishMatch] 未设计 非群消息事件响应方式");
+    }
+
+    @Override
+    public Integer getAccess() {
+        return 1;
     }
 
     @Override
     public String getHelp() {
-        return "◉ DisMatch 命令\n功能: 取消当前匹配\n限权: " + getAccess() + "\n格式: DisMatch\n中文命令: 取消匹配";
+        return "◉ FinishMatch 命令\n功能: 结束自己的对局\n限权: " + getAccess() + "\n格式: FinishMatch\n中文命令: 结束对局";
     }
 }

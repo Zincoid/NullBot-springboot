@@ -102,7 +102,7 @@ public class Matcher
     /**
      * 结束游戏 通过用户ID
      */
-    public String finishMatchByPlayerId(Long userId) {
+    public MatchResult finishMatchByPlayerId(Long userId) {
         Player player = playerManager.getPlayer(userId);
         return finishMatch(player.getInProgressMatchId());
     }
@@ -110,7 +110,7 @@ public class Matcher
     /**
      * 结束游戏 通过对局ID
      */
-    public String finishMatch(String matchId) {
+    public MatchResult finishMatch(String matchId) {
         Match match = matchManager.getMatch(matchId);
         if (match == null) { return "Match 不存在"; }
 
@@ -125,6 +125,6 @@ public class Matcher
         // 移除游戏会话
         matchManager.removeMatch(matchId);
 
-        return "Match 已结束：" + matchId;
+        return MatchResult.notMatched("Match 已结束：" + matchId);
     }
 }
