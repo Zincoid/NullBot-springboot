@@ -23,8 +23,14 @@ public class MatchPoolManager
         return queue.isEmpty() ? null : queue.poll();
     }
 
+    public boolean removePlayer(Player player) {
+        for (Queue<Player> queue : waitingPools.values())
+            if (queue.remove(player))
+                return true;
+        return false;
+    }
+
     public Map<String, Queue<Player>> getAllPools() {
         return waitingPools;
     }
-
 }

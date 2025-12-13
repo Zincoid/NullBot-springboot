@@ -36,7 +36,7 @@ public class Matcher
      * 加入匹配
      */
     public MatchResult joinMatch(Long userId, Long groupId, String userName, String gameType) {
-        Player player = playerManager.getRefreshedPlayer(userId, groupId, userName);
+        Player player = playerManager.refreshAndGetPlayer(userId, groupId, userName);
 
         if (player.getStatus() != Player.PlayerStatus.IDLE) { return MatchResult.notMatched("你已经在匹配或游戏中！"); }
 
@@ -82,6 +82,23 @@ public class Matcher
                 gameType, player.getUserName(), other.getUserName(), match.getMatchId());
         return MatchResult.matched(player.getGroupId(), other.getGroupId(), info);
     }
+
+    /**
+     * 取消匹配
+     */
+    public MatchResult cancelMatch(Long userId) {
+        Player player = playerManager.getPlayer(userId);
+        if (player == null) { return MatchResult.notMatched("暂无玩家记录"); }
+        if (player.getStatus() != Player.PlayerStatus.WAITING) { return MatchResult.notMatched("无法取消，当前不在匹配队列中"); }
+
+        // 从匹配池中移除
+        if (!poolManager.removePlayer(player)) { return MatchResult.notMatched("取消失败，未在匹配队列中找到你"); }
+        // 重置玩家状态
+        playerManager.updateStatus(player, Player.PlayerStatus.IDLE);
+
+        return MatchResult.notMatched("已成功取消匹配");
+    }
+
 
     /**
      * 结束游戏

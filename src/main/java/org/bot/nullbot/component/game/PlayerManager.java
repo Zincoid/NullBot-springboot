@@ -12,25 +12,25 @@ public class PlayerManager
 {
     private final Map<Long, Player> playerMap = new ConcurrentHashMap<>();
 
-    public Player getRefreshedPlayer(Long userId, Long groupId, String userName) {
-        Player player = playerMap.get(userId);
-        if (player == null) {
+    public Player getPlayer(Long userId) {
+        return playerMap.get(userId);
+    }
+
+    public Player refreshAndGetPlayer(Long userId, Long groupId, String userName) {
+        Player player = playerMap.computeIfAbsent(userId, id -> {
             Player p = new Player();
-            p.setUserId(userId);
-            p.setGroupId(groupId);
+            p.setUserId(id);
             p.setUserName(userName);
             p.setInProgressMatchId(null);
-            p.setLastActionTime(LocalDateTime.now());
-            playerMap.put(userId, p);
             return p;
-        } else {
-            if (player.getStatus() != Player.PlayerStatus.IDLE) { return player; }
+        });
+        if (player.getStatus() == Player.PlayerStatus.IDLE) {
             player.setGroupId(groupId);
             player.setLastActionTime(LocalDateTime.now());
-            playerMap.put(userId, player);
-            return player;
         }
+        return player;
     }
+
 
     public void updateStatus(Player player, Player.PlayerStatus status) {
         player.setStatus(status);
