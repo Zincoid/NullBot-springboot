@@ -1,8 +1,7 @@
-package org.bot.nullbot.component.game.impl;
+package org.bot.nullbot.component.game.extend;
 
-import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.bot.nullbot.component.game.GameMatchHandler;
 import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.entity.game.basic.GameResult;
@@ -10,28 +9,30 @@ import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
 import org.bot.nullbot.entity.game.reversi.ReversiGameState;
 import org.bot.nullbot.component.game.logic.ReversiGameLogic;
-import org.bot.nullbot.entity.game.tictactoe.TicTacToeGameState;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 @Component
-@RequiredArgsConstructor
-public class ReversiMatchHandler implements GameMatchHandler
+public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState>
 {
-    @Value("${nullbot.bot-id}")
-    private Long botId;
-    private final BotContainer botContainer;
-
     private final ReversiGameLogic gameLogic;
     private final MatchManager matchManager;
 
     // matchId -> game state
     private final Map<String, ReversiGameState> games = new ConcurrentHashMap<>();
+
+    public ReversiMatchHandler(
+            @Value("${nullbot.bot-id}") Long botId,
+            BotContainer botContainer,
+            ReversiGameLogic gameLogic,
+            MatchManager matchManager) {
+        super(botId, botContainer);
+        this.gameLogic = gameLogic;
+        this.matchManager = matchManager;
+    }
 
     @Override
     public String gameType() {
@@ -57,19 +58,6 @@ public class ReversiMatchHandler implements GameMatchHandler
         games.remove(match.getMatchId());
     }
 
-    public void sendInitMessage(Match match, ReversiGameState state){
-        Bot bot = botContainer.robots.get(botId);
-
-        Player p1 = match.getPlayer1();
-        Player p2 = match.getPlayer2();
-        String info = render(state);
-
-        if (!Objects.equals(p1.getGroupId(), p2.getGroupId())) {
-            bot.sendGroupMsg(p1.getGroupId(), info, false);
-        }
-        bot.sendGroupMsg(p2.getGroupId(), info, false);
-    }
-
     /**
      * 黑白棋落子
      */
@@ -91,10 +79,6 @@ public class ReversiMatchHandler implements GameMatchHandler
         char myColor =
                 userId.equals(state.getBlackPlayerId()) ? 'B' :
                         userId.equals(state.getWhitePlayerId()) ? 'W' : 0;
-
-        // if (myColor == 0) {
-        //     return GameResult.error("[黑白棋] ❌你不是该对局的玩家");
-        // }
 
         if (state.getCurrentTurn() != myColor) {
             return GameResult.error("[黑白棋] ⏳还没轮到你下棋");
@@ -119,21 +103,7 @@ public class ReversiMatchHandler implements GameMatchHandler
             info.append("\n").append(judge(state));
         }
 
-        // ===== 跨群判断 =====
-        boolean sameGroup =
-                match.getPlayer1().getGroupId()
-                        .equals(match.getPlayer2().getGroupId());
-
-        if (sameGroup) {
-            return GameResult.success(null, info.toString());
-        }
-
-        Long opponentGroupId =
-                userId.equals(match.getPlayer1().getUserId())
-                        ? match.getPlayer2().getGroupId()
-                        : match.getPlayer1().getGroupId();
-
-        return GameResult.success(opponentGroupId, info.toString());
+        return getGameResult(userId, match, info.toString());
     }
 
     // ================== 工具方法 ==================
@@ -147,7 +117,8 @@ public class ReversiMatchHandler implements GameMatchHandler
             "5⃣️", "6⃣️", "7⃣️", "8⃣️"
     };
 
-    private String render(ReversiGameState s) {
+    @Override
+    protected String render(ReversiGameState s) {
         StringBuilder sb = new StringBuilder();
         sb.append("【黑白棋】\n");
 

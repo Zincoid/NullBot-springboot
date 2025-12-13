@@ -1,8 +1,6 @@
-package org.bot.nullbot.component.game.impl;
+package org.bot.nullbot.component.game.extend;
 
-import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
-import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.game.GameMatchHandler;
 import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
@@ -14,21 +12,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-@RequiredArgsConstructor
-public class TicTacToeMatchHandler implements GameMatchHandler {
-
-    @Value("${nullbot.bot-id}")
-    private Long botId;
-    private final BotContainer botContainer;
-
+public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState>
+{
     private final TicTacToeGameLogic gameLogic;
     private final MatchManager matchManager;
 
     private final Map<String, TicTacToeGameState> games = new ConcurrentHashMap<>();
+
+    public TicTacToeMatchHandler(
+            @Value("${nullbot.bot-id}") Long botId,
+            BotContainer botContainer,
+            TicTacToeGameLogic gameLogic,
+            MatchManager matchManager) {
+        super(botId, botContainer);
+        this.gameLogic = gameLogic;
+        this.matchManager = matchManager;
+    }
 
     @Override
     public String gameType() {
@@ -52,19 +54,6 @@ public class TicTacToeMatchHandler implements GameMatchHandler {
     @Override
     public void onMatchEnd(Match match) {
         games.remove(match.getMatchId());
-    }
-
-    public void sendInitMessage(Match match, TicTacToeGameState state){
-        Bot bot = botContainer.robots.get(botId);
-
-        Player p1 = match.getPlayer1();
-        Player p2 = match.getPlayer2();
-        String info = render(state);
-
-        if (!Objects.equals(p1.getGroupId(), p2.getGroupId())) {
-            bot.sendGroupMsg(p1.getGroupId(), info, false);
-        }
-        bot.sendGroupMsg(p2.getGroupId(), info, false);
     }
 
     public GameResult move(Long userId, int r, int c) {
@@ -108,33 +97,47 @@ public class TicTacToeMatchHandler implements GameMatchHandler {
             info.append("\n🤝 平局！");
         }
 
-        boolean sameGroup =
-                match.getPlayer1().getGroupId()
-                        .equals(match.getPlayer2().getGroupId());
-
-        if (sameGroup) {
-            return GameResult.success(null, info.toString());
-        }
-
-        Long opponentGroupId =
-                userId.equals(match.getPlayer1().getUserId())
-                        ? match.getPlayer2().getGroupId()
-                        : match.getPlayer1().getGroupId();
-
-        return GameResult.success(opponentGroupId, info.toString());
+        return getGameResult(userId, match, info.toString());
     }
 
-    private String render(TicTacToeGameState s) {
-        StringBuilder sb = new StringBuilder("【井字棋】\n");
+    @Override
+    protected String render(TicTacToeGameState s) {
+        return printBoard(s.getBoard())
+                + "\n当前回合："
+                + (s.getCurrentTurn() == 'X' ? "Ｘ" : "Ｏ");
+    }
+
+    // 文本形式的棋盘
+    private String printBoard(char[][] b) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[井字棋]\n");
+
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                char c = s.getBoard()[i][j];
-                sb.append(c == '.' ? "➕" : c == 'X' ? "❌" : "⭕");
+            char c1 = toFullWidth(b[i][0]);
+            char c2 = toFullWidth(b[i][1]);
+            char c3 = toFullWidth(b[i][2]);
+
+            sb.append(" ")
+                    .append(c1).append(" │ ")
+                    .append(c2).append(" │ ")
+                    .append(c3).append("\n");
+
+            if (i < 2) {
+                sb.append("----+----+----\n");
             }
-            sb.append("\n");
         }
-        sb.append("当前回合：")
-                .append(s.getCurrentTurn() == 'X' ? "❌ X" : "⭕ O");
         return sb.toString();
     }
+
+    // 将半角字符转换为全角字符
+    private char toFullWidth(char c) {
+        if (c == 'X' || c == 'x') {
+            return 'Ｘ';
+        } else if (c == 'O' || c == 'o') {
+            return 'Ｏ';
+        } else {
+            return '　'; // 全角空格
+        }
+    }
+
 }
