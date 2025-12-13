@@ -42,7 +42,7 @@ public class InventoryPO
         int need = totalWidth - getDisplayWidth(s);
         if (need <= 0) return s;
         StringBuilder sb = new StringBuilder(s);
-        for (int i = 0; i < need; i++) sb.append(' ');
+        sb.append(" ".repeat(need));
         return sb.toString();
     }
 

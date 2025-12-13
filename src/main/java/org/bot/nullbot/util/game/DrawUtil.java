@@ -52,6 +52,6 @@ public class DrawUtil
                 return item;
             }
         }
-        return items.get(items.size() - 1);
+        return items.getLast();
     }
 }

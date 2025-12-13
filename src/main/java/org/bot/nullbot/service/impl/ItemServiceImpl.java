@@ -67,7 +67,7 @@ public class ItemServiceImpl implements ItemService
     @Transactional
     public String getCommandFromItemDesc(Integer itemId) {
         String description = itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, itemId)).getFirst().getDescription();
-        Matcher m = Pattern.compile("\\{(.*?)\\}").matcher(description);
+        Matcher m = Pattern.compile("\\{(.*?)}").matcher(description);
         if (m.find())
             return m.group(1);
         else

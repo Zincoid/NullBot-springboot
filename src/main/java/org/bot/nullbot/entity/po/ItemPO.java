@@ -60,7 +60,6 @@ public class ItemPO
             case PURPLE -> "紫";
             case GOLD -> "金";
             case RED -> "红";
-            default -> "未知";
         };
     }
 
@@ -75,7 +74,6 @@ public class ItemPO
             case PURPLE -> "🟣";
             case GOLD -> "🟡";
             case RED -> "🔴";
-            default -> "⚫";
         };
     }
 
