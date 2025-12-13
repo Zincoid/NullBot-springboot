@@ -5,6 +5,7 @@ import org.bot.nullbot.entity.game.basic.Player;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +29,6 @@ public class MatchManager
 
         matchMap.put(match.getMatchId(), match);
 
-        // 建立索引
         playerMatchIndex.put(p1.getUserId(), match.getMatchId());
         playerMatchIndex.put(p2.getUserId(), match.getMatchId());
 
@@ -46,6 +46,15 @@ public class MatchManager
             playerMatchIndex.remove(match.getPlayer2().getUserId());
         }
     }
+
+    public Collection<Match> getAllMatches() {
+        return matchMap.values();
+    }
+
+    public void remove(String matchId) {
+        matchMap.remove(matchId);
+    }
+
 
     public String getMatchIdByPlayerId(Long playerId) {
         return playerMatchIndex.get(playerId);

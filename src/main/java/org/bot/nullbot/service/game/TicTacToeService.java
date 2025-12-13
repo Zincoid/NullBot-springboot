@@ -1,5 +1,6 @@
 package org.bot.nullbot.service.game;
 
+import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.component.game.MatchService;
 import org.bot.nullbot.entity.game.basic.Match;
@@ -8,19 +9,16 @@ import org.bot.nullbot.component.game.impl.TicTacToeMatchHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class TicTacToeService
 {
-    @Autowired
-    private TicTacToeMatchHandler handler;
-
-    @Autowired
-    private MatchManager matchManager;
-
-    @Autowired
-    private MatchService matchService;
+    private final TicTacToeMatchHandler handler;
+    private final MatchManager matchManager;
+    private final MatchService matchService;
 
     public String move(Long userId, int x, int y) {
         String matchId = matchManager.getMatchIdByPlayerId(userId);
@@ -35,6 +33,8 @@ public class TicTacToeService
         if (state == null) {
             return "对局状态不存在";
         }
+
+        match.setLastActionTime(LocalDateTime.now());
 
         if (!Objects.equals(state.getCurrentPlayerId(), userId)) {
             return "还没轮到你下棋！";

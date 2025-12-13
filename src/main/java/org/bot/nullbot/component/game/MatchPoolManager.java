@@ -26,4 +26,9 @@ public class MatchPoolManager
     public Queue<Player> getPool(String gameType) {
         return waitingPools.computeIfAbsent(gameType, k -> new ConcurrentLinkedQueue<>());
     }
+
+    public Map<String, Queue<Player>> getAllPools() {
+        return waitingPools;
+    }
+
 }

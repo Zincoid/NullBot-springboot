@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 public class Match {
     private String matchId;
     private String gameType;
-    private LocalDateTime createTime;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-
     private Player player1;
     private Player player2;
 
+    private LocalDateTime createTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private LocalDateTime lastActionTime;
     private MatchStatus status = MatchStatus.CREATED;
 
     public enum MatchStatus {

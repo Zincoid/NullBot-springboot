@@ -12,9 +12,11 @@ public class Player {
     private Long groupId;
     private Long userId;
     private String userName;
+    private String inProgressMatchId;
+
+    private LocalDateTime lastActive;
+    private LocalDateTime waitingSince;
     private PlayerStatus status = PlayerStatus.IDLE;
-    private String inProgressMatchId = null;
-    private LocalDateTime lastActive = LocalDateTime.now();
 
     public Player(Long userId, Long groupId, String userName) {
         this.userId = userId;
