@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class TicTacToeGameMatchHandler implements GameMatchHandler
+public class TicTacToeMatchHandler implements GameMatchHandler
 {
     // matchId → state
     private final Map<String, TicTacToeState> stateStore = new ConcurrentHashMap<>();

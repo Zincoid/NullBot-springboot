@@ -6,7 +6,7 @@ import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.tictactoe.TicTacToeState;
-import org.bot.nullbot.component.game.impl.TicTacToeGameMatchHandler;
+import org.bot.nullbot.component.game.impl.TicTacToeMatchHandler;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class TicTacToeGameLogic
 {
-    private final TicTacToeGameMatchHandler handler;
+    private final TicTacToeMatchHandler handler;
     private final MatchManager matchManager;
     private final Matcher matcher;
 

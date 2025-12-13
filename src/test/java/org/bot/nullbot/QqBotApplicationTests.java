@@ -44,13 +44,12 @@ class QqBotApplicationTests {
        // }
    }
 
-   @Test
+   // @Test
    void matchTest() {
        System.out.println(matcher.joinMatch(0L, 1L, "A", "reversi"));
        // System.out.println(matchService.joinMatch(0L, 1L, "B", "tictactoe"));
        System.out.println(matcher.joinMatch(1L, 2L, "C", "reversi"));
        // System.out.println(matchService.joinMatch(2L, 3L, "D", "punch"));
-
 
        boolean current = true;
        Scanner scanner = new Scanner(System.in);
@@ -69,10 +68,5 @@ class QqBotApplicationTests {
                current = true;
            }
        }
-
-       // System.out.println(ticTacToeService.move(0L, 1, 3));
-       // System.out.println(ticTacToeService.move(1L, 2, 2));
-       // System.out.println(ticTacToeService.move(0L, 1, 1));
-       // System.out.println(ticTacToeService.move(0L, 1, 1));
    }
 }
