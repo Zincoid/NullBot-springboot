@@ -1,5 +1,7 @@
 package org.bot.nullbot.component.game.impl;
 
+import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.core.BotContainer;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.game.GameMatchHandler;
 import org.bot.nullbot.component.game.MatchManager;
@@ -8,14 +10,20 @@ import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
 import org.bot.nullbot.entity.game.tictactoe.TicTacToeGameState;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @RequiredArgsConstructor
 public class TicTacToeMatchHandler implements GameMatchHandler {
+
+    @Value("${nullbot.bot-id}")
+    private Long botId;
+    private final BotContainer botContainer;
 
     private final TicTacToeGameLogic gameLogic;
     private final MatchManager matchManager;
@@ -38,11 +46,25 @@ public class TicTacToeMatchHandler implements GameMatchHandler {
         state.setPlayerX(match.getPlayer1().getUserId());
         state.setPlayerO(match.getPlayer2().getUserId());
         games.put(match.getMatchId(), state);
+        sendInitMessage(match, state);
     }
 
     @Override
     public void onMatchEnd(Match match) {
         games.remove(match.getMatchId());
+    }
+
+    public void sendInitMessage(Match match, TicTacToeGameState state){
+        Bot bot = botContainer.robots.get(botId);
+
+        Player p1 = match.getPlayer1();
+        Player p2 = match.getPlayer2();
+        String info = render(state);
+
+        if (!Objects.equals(p1.getGroupId(), p2.getGroupId())) {
+            bot.sendGroupMsg(p1.getGroupId(), info, false);
+        }
+        bot.sendGroupMsg(p2.getGroupId(), info, false);
     }
 
     public GameResult move(Long userId, int r, int c) {
