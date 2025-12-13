@@ -19,12 +19,8 @@ public class MatchPoolManager
     }
 
     public Player pollPlayer(String gameType) {
-        Queue<Player> queue = waitingPools.get(gameType);
-        return queue == null ? null : queue.poll();
-    }
-
-    public Queue<Player> getPool(String gameType) {
-        return waitingPools.computeIfAbsent(gameType, k -> new ConcurrentLinkedQueue<>());
+        Queue<Player> queue = waitingPools.computeIfAbsent(gameType, k -> new ConcurrentLinkedQueue<>());
+        return queue.isEmpty() ? null : queue.poll();
     }
 
     public Map<String, Queue<Player>> getAllPools() {
