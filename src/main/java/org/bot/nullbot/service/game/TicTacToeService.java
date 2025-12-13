@@ -41,7 +41,7 @@ public class TicTacToeService
         }
 
         if (x < 1 || x > 3 || y < 1 || y > 3) {
-            return "落子范围 1-3，例如：下棋 1 3";
+            return "落子范围 1-3，例如：/TicTacToe 1 3";
         }
 
         if (state.getBoard()[x - 1][y - 1] != ' ') {

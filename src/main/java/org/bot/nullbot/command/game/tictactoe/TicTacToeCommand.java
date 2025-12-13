@@ -36,9 +36,9 @@ public class TicTacToeCommand implements Command
                     return;
                 }
                 Long userId = groupMessageEvent.getUserId();
-                String result = ticTacToeService.move(userId, x, y);
                 Long groupId = groupMessageEvent.getGroupId();
                 Long opponentGroupId = matchManager.getOpponentGroupIdBySelfId(userId);
+                String result = ticTacToeService.move(userId, x, y);
                 if(!opponentGroupId.equals(groupId))
                     bot.sendGroupMsg(opponentGroupId, result, false);
                 bot.sendGroupMsg(groupId, result, false);
