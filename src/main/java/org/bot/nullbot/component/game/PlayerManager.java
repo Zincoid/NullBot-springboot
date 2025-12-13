@@ -12,18 +12,17 @@ public class PlayerManager
 {
     private final Map<Long, Player> playerMap = new ConcurrentHashMap<>();
 
-    public Player getOrCreate(Long userId, Long groupId, String userName) {
-        return playerMap.computeIfAbsent(
-                userId,
-                id -> {
-                    Player p = new Player();
-                    p.setUserId(userId);
-                    p.setGroupId(groupId);
-                    p.setUserName(userName);
-                    p.setLastActionTime(LocalDateTime.now());
-                    return p;
-                }
-        );
+    public Player createPlayer(Long userId, Long groupId, String userName) {
+        return playerMap.compute(userId, (id, p) -> {
+            if (p == null) {
+                p = new Player();
+                p.setUserId(userId);
+            }
+            p.setGroupId(groupId);
+            p.setUserName(userName);
+            p.setLastActionTime(LocalDateTime.now());
+            return p;
+        });
     }
 
     public void updateStatus(Player player, Player.PlayerStatus status) {

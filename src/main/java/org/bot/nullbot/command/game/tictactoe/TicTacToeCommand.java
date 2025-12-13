@@ -36,8 +36,9 @@ public class TicTacToeCommand implements Command
                     return;
                 }
                 GameResult result = ticTacToeService.move(groupMessageEvent.getUserId(), x, y);
-                if(!result.getIsSameGroup())
+                if(result.getSuccess() && !result.getIsSameGroup()){
                     bot.sendGroupMsg(result.getOpponentGroupId(), result.getInfo(), false);
+                }
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getInfo(), false);
                 log.info("\t\t\t\t├─[TicTacToe] 落子结果 - {}", result.getInfo().replaceAll("\\R", ""));
             }else{

@@ -21,15 +21,16 @@ public class TicTacToeService
     private final Matcher matcher;
 
     public GameResult move(Long userId, int x, int y) {
+        // 检测玩家是否在可用对局中
         Match match = matchManager.getMatchBySelfId(userId);
-        Long opponentGroupId = matchManager.getOpponentGroupIdIfDifferentBySelfId(userId);
-
         if (match == null) { return GameResult.error("对局不存在"); }
         match.setLastActionTime(LocalDateTime.now());
-
         String matchId = match.getMatchId();
         TicTacToeState state = handler.getState(matchId);
         if (state == null) { return GameResult.error("对局状态不存在"); }
+
+        // 正式进入游戏逻辑
+        Long opponentGroupId = matchManager.getOpponentGroupIdIfDifferentBySelfId(userId);
 
         if (!Objects.equals(state.getCurrentPlayerId(), userId)) { return GameResult.error("还没轮到你下棋！"); }
         if (x < 1 || x > 3 || y < 1 || y > 3) { return GameResult.error("落子范围 1-3，例如：/TicTacToe 1 3"); }
