@@ -52,6 +52,9 @@ public class ReversiMatchHandler implements GameMatchHandler
      */
     public GameResult move(Long userId, String pos) {
         Match match = matchManager.getMatchBySelfId(userId);
+        if (match == null) {
+            return GameResult.error("[黑白棋] ❌对局不存在");
+        }
 
         ReversiGameState state = games.get(match.getMatchId());
         if (state == null) {
