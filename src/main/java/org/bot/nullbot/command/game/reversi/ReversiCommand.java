@@ -34,7 +34,7 @@ public class ReversiCommand implements Command {
                 log.info("\t\t\t\t├─[Reversi] 参数数量错误");
                 return;
             }
-            String pos = event.getCommandParameters().get(0).toUpperCase();
+            String pos = event.getCommandParameters().getFirst().toUpperCase();
             // 坐标合法性校验
             if (!pos.matches("^[A-H][1-8]$")) {
                 bot.sendGroupMsg(

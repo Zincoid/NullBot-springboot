@@ -21,7 +21,7 @@ public class ReversiMatchHandler implements GameMatchHandler
     private final ReversiGameLogic gameLogic;
     private final MatchManager matchManager;
 
-    /** matchId -> game state */
+    // matchId -> game state
     private final Map<String, ReversiGameState> games = new ConcurrentHashMap<>();
 
     @Override
@@ -66,9 +66,9 @@ public class ReversiMatchHandler implements GameMatchHandler
                 userId.equals(state.getBlackPlayerId()) ? 'B' :
                         userId.equals(state.getWhitePlayerId()) ? 'W' : 0;
 
-        if (myColor == 0) {
-            return GameResult.error("[黑白棋] ❌你不是该对局的玩家");
-        }
+        // if (myColor == 0) {
+        //     return GameResult.error("[黑白棋] ❌你不是该对局的玩家");
+        // }
 
         if (state.getCurrentTurn() != myColor) {
             return GameResult.error("[黑白棋] ⏳还没轮到你下棋");
