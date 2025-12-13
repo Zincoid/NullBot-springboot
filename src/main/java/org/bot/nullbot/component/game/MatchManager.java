@@ -33,7 +33,7 @@ public class MatchManager
         return match;
     }
 
-    public void finishMatch(String matchId) {
+    public void removeMatch(String matchId) {
         Match match = matchMap.remove(matchId);
         if (match != null) {
             match.setStatus(Match.MatchStatus.FINISHED);
@@ -58,6 +58,8 @@ public class MatchManager
         match.setStatus(status);
         match.setLastActionTime(LocalDateTime.now());
     }
+
+    // 游戏服务工具
 
     public Match getMatchByPlayerId(Long playerId) {
         String matchId = playerMatchIndex.get(playerId);

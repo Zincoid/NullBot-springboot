@@ -33,6 +33,7 @@ public class PlayerManager
 
     public void resetPlayer(Player player) {
         player.setStatus(Player.PlayerStatus.IDLE);
+        player.setLastActionTime(LocalDateTime.now());
         player.setInProgressMatchId(null);
     }
 }

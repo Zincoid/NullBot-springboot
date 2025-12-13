@@ -28,7 +28,7 @@ public class Matcher
         this.matchManager = matchManager;
 
         // 自动注册所有 Handler
-        handlers.forEach(h -> handlerMap.put(h.getClass().getSimpleName().replace("MatchHandler", "").toLowerCase(), h));
+        handlers.forEach(h -> handlerMap.put(h.getClass().getSimpleName().replace("StateHandler", "").toLowerCase(), h));
     }
 
     /**
@@ -52,7 +52,7 @@ public class Matcher
             return "已加入 " + gameType + " 匹配队列，正在等待对手…";
         }
 
-        // 自定义匹配规则
+        // 判断 handler 中自定义的匹配规则
         if (!handler.canMatch(player, other)) {
             // 不适配，other 继续入队
             poolManager.addPlayer(other, gameType);
@@ -60,20 +60,24 @@ public class Matcher
             return "暂时无法匹配到合适的玩家，已重新加入队列";
         }
 
-        // 匹配成功
+        // 匹配成功 创建对局
         Match match = matchManager.createMatch(gameType, player, other);
 
-        player.setStatus(Player.PlayerStatus.PLAYING);
-        other.setStatus(Player.PlayerStatus.PLAYING);
-
+        // 为双方设置对局ID
         player.setInProgressMatchId(match.getMatchId());
         other.setInProgressMatchId(match.getMatchId());
 
+        // 初始化对应游戏模式的数据
         handler.onMatchStart(match);
 
+        // 更新双方玩家状态
+        playerManager.updateStatus(player, Player.PlayerStatus.PLAYING);
+        playerManager.updateStatus(other, Player.PlayerStatus.PLAYING);
+
+        // 开始游戏 更新对局状态
         matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
 
-        return String.format("匹配成功！游戏类型：%s\n玩家1：%s\n玩家2：%s\nMatchID=%s",
+        return String.format("匹配成功！游戏类型：%s\n玩家1：%s\n玩家2：%s\nMatch ID: %s",
                 gameType, player.getUserName(), other.getUserName(), match.getMatchId());
     }
 
@@ -82,22 +86,18 @@ public class Matcher
      */
     public String finishMatch(String matchId) {
         Match match = matchManager.getMatch(matchId);
-        if (match == null) {
-            return "Match 不存在";
-        }
+        if (match == null) { return "Match 不存在"; }
 
         // 清理游戏数据
         MatchStateHandler handler = handlerMap.get(match.getGameType());
-        if (handler != null) {
-            handler.onMatchEnd(match);
-        }
+        if (handler != null) { handler.onMatchEnd(match); }
 
         // 重置玩家状态
         playerManager.resetPlayer(match.getPlayer1());
         playerManager.resetPlayer(match.getPlayer2());
 
-        // 清理游戏会话
-        matchManager.finishMatch(matchId);
+        // 移除游戏会话
+        matchManager.removeMatch(matchId);
 
         return "Match 已结束：" + matchId;
     }
