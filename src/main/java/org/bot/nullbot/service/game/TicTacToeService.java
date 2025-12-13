@@ -3,6 +3,7 @@ package org.bot.nullbot.service.game;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.component.game.Matcher;
+import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.tictactoe.TicTacToeState;
 import org.bot.nullbot.component.game.impl.TicTacToeStateHandler;
@@ -19,33 +20,35 @@ public class TicTacToeService
     private final MatchManager matchManager;
     private final Matcher matcher;
 
-    public String move(Long userId, int x, int y) {
-        Match match = matchManager.getMatchByPlayerId(userId);
-        if (match == null) { return "对局不存在"; }
+    public GameResult move(Long userId, int x, int y) {
+        Match match = matchManager.getMatchBySelfId(userId);
+        Long opponentGroupId = matchManager.getOpponentGroupIdIfDifferentBySelfId(userId);
+
+        if (match == null) { return GameResult.error("对局不存在"); }
         match.setLastActionTime(LocalDateTime.now());
 
         String matchId = match.getMatchId();
         TicTacToeState state = handler.getState(matchId);
-        if (state == null) { return "对局状态不存在"; }
+        if (state == null) { return GameResult.error("对局状态不存在"); }
 
-        if (!Objects.equals(state.getCurrentPlayerId(), userId)) { return "还没轮到你下棋！"; }
-        if (x < 1 || x > 3 || y < 1 || y > 3) { return "落子范围 1-3，例如：/TicTacToe 1 3"; }
-        if (state.getBoard()[x - 1][y - 1] != ' ') { return "此位置已有棋子！"; }
+        if (!Objects.equals(state.getCurrentPlayerId(), userId)) { return GameResult.error("还没轮到你下棋！"); }
+        if (x < 1 || x > 3 || y < 1 || y > 3) { return GameResult.error("落子范围 1-3，例如：/TicTacToe 1 3"); }
+        if (state.getBoard()[x - 1][y - 1] != ' ') { return GameResult.error("此位置已有棋子！"); }
 
         char piece = (match.getPlayer1().getUserId().equals(userId)) ? 'X' : 'O';
         state.getBoard()[x - 1][y - 1] = piece;
 
         // 判断胜负
         if (checkWin(state.getBoard(), piece)) {
-            handler.getState(matchId); // Optional, maybe update
+            handler.getState(matchId);
             matcher.finishMatch(matchId);
-            return printBoard(state.getBoard()) + "\n玩家 " + piece + " 获胜！对局已结束。";
+            return GameResult.success(opponentGroupId, printBoard(state.getBoard()) + "\n玩家 " + piece + " 获胜！对局已结束。");
         }
 
         // 判断平局
         if (isDraw(state.getBoard())) {
             matcher.finishMatch(matchId);
-            return printBoard(state.getBoard()) + "\n平局！对局已结束。";
+            return GameResult.success(opponentGroupId, printBoard(state.getBoard()) + "\n平局！对局已结束。");
         }
 
         // 切换玩家
@@ -55,8 +58,7 @@ public class TicTacToeService
 
         state.setCurrentPlayerId(next);
 
-        return printBoard(state.getBoard()) +
-                "\n落子成功！轮到玩家：" + next;
+        return GameResult.success(opponentGroupId, printBoard(state.getBoard()) + "\n落子成功！轮到玩家：" + next);
     }
 
     private boolean checkWin(char[][] b, char p) {

@@ -8,6 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.service.game.TicTacToeService;
 import org.springframework.stereotype.Component;
 
@@ -34,14 +35,11 @@ public class TicTacToeCommand implements Command
                     log.info("\t\t\t\t├─[TicTacToe] 参数类型错误");
                     return;
                 }
-                Long userId = groupMessageEvent.getUserId();
-                Long groupId = groupMessageEvent.getGroupId();
-                Long opponentGroupId = matchManager.getOpponentGroupIdBySelfId(userId);
-                String result = ticTacToeService.move(userId, x, y);
-                if(!opponentGroupId.equals(groupId))
-                    bot.sendGroupMsg(opponentGroupId, result, false);
-                bot.sendGroupMsg(groupId, result, false);
-                log.info("\t\t\t\t├─[TicTacToe]  落子结果 - {}", result.replaceAll("\\R", ""));
+                GameResult result = ticTacToeService.move(groupMessageEvent.getUserId(), x, y);
+                if(!result.getIsSameGroup())
+                    bot.sendGroupMsg(result.getOpponentGroupId(), result.getInfo(), false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getInfo(), false);
+                log.info("\t\t\t\t├─[TicTacToe] 落子结果 - {}", result.getInfo().replaceAll("\\R", ""));
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[井字棋] ❌参数数量错误", false);
                 log.info("\t\t\t\t├─[TicTacToe] 参数数量错误");
