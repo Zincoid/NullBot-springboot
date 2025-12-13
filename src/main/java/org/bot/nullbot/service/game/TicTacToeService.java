@@ -97,14 +97,48 @@ public class TicTacToeService
     // 文本形式的棋盘
     private String printBoard(char[][] b) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[TicTacToe]\n");
+        sb.append("[井字棋]\n");
+
+        // 使用全角字符和Unicode制表符确保对齐
         for (int i = 0; i < 3; i++) {
+            // 将半角字符转换为全角字符
+            char c1 = toFullWidth(b[i][0]);
+            char c2 = toFullWidth(b[i][1]);
+            char c3 = toFullWidth(b[i][2]);
+
             sb.append(" ")
-                    .append(b[i][0]).append(" | ")
-                    .append(b[i][1]).append(" | ")
-                    .append(b[i][2]).append("\n");
-            if (i < 2) sb.append("----------\n");
+                    .append(c1).append(" │ ")  // 使用全角竖线
+                    .append(c2).append(" │ ")
+                    .append(c3).append("\n");
+
+            if (i < 2) {
+                sb.append("----+----+----\n");  // 使用全角横线和交叉符
+            }
         }
         return sb.toString();
     }
+
+    // 将半角字符转换为全角字符
+    private char toFullWidth(char c) {
+        if (c == 'X' || c == 'x') {
+            return 'Ｘ';  // 全角X
+        } else if (c == 'O' || c == 'o') {
+            return 'Ｏ';  // 全角O
+        } else {
+            return '　';  // 全角空格
+        }
+    }
+
+    // private String printBoard(char[][] b) {
+    //     StringBuilder sb = new StringBuilder();
+    //     sb.append("[TicTacToe]\n");
+    //     for (int i = 0; i < 3; i++) {
+    //         sb.append(" ")
+    //                 .append(b[i][0]).append(" | ")
+    //                 .append(b[i][1]).append(" | ")
+    //                 .append(b[i][2]).append("\n");
+    //         if (i < 2) sb.append("---+---+---\n");
+    //     }
+    //     return sb.toString();
+    // }
 }

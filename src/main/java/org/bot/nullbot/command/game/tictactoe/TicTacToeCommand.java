@@ -25,8 +25,7 @@ public class TicTacToeCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             if(event.getCommandParameters().size() == 2) {
-                int x = 0;
-                int y = 0;
+                int x, y;
                 try {
                     x = Integer.parseInt(event.getCommandParameters().get(0));
                     y = Integer.parseInt(event.getCommandParameters().get(1));

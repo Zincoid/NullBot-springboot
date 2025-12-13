@@ -24,6 +24,7 @@ public class MatchManager
         match.setMatchId(UUID.randomUUID().toString());
         match.setGameType(gameType);
         match.setCreateTime(LocalDateTime.now());
+        match.setLastActionTime(LocalDateTime.now());
         match.setPlayer1(p1);
         match.setPlayer2(p2);
 
@@ -35,10 +36,6 @@ public class MatchManager
         return match;
     }
 
-    public Match getMatch(String id) {
-        return matchMap.get(id);
-    }
-
     public void finishMatch(String id) {
         Match match = matchMap.remove(id);
         if (match != null) {
@@ -47,14 +44,18 @@ public class MatchManager
         }
     }
 
+    public void updateMatchStatus(Match match, Match.MatchStatus status) {
+        match.setStatus(status);
+        match.setLastActionTime(LocalDateTime.now());
+    }
+
+    public Match getMatch(String id) {
+        return matchMap.get(id);
+    }
+
     public Collection<Match> getAllMatches() {
         return matchMap.values();
     }
-
-    public void remove(String matchId) {
-        matchMap.remove(matchId);
-    }
-
 
     public String getMatchIdByPlayerId(Long playerId) {
         return playerMatchIndex.get(playerId);

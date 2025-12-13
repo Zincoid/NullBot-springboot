@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Iterator;
 
 @Component
 @Slf4j
@@ -23,10 +22,11 @@ public class MatchCleanupScheduler
     private final MatchConfig matchConfig;
 
     /**
-     * 每 30 秒扫描一次
+     * 每 10 秒扫描一次
      */
-    @Scheduled(fixedDelay = 30_000)
+    @Scheduled(fixedDelay = 10_000)
     public void cleanup() {
+        log.info("[MatchCleanupScheduler] 定时任务触发");
         cleanWaitingPlayers();
         cleanTimeoutMatches();
     }
@@ -36,34 +36,25 @@ public class MatchCleanupScheduler
      */
     private void cleanWaitingPlayers() {
         LocalDateTime now = LocalDateTime.now();
-
         poolManager.getAllPools().forEach((gameType, queue) -> {
-
-            Iterator<Player> iterator = queue.iterator();
-
-            while (iterator.hasNext()) {
-                Player p = iterator.next();
-
+            queue.removeIf(p -> {
                 if (p.getStatus() != Player.PlayerStatus.WAITING) {
-                    iterator.remove();
-                    continue;
+                    return true;
                 }
-
-                if (p.getWaitingSince() == null) {
-                    continue;
+                if (p.getLastActionTime() == null) {
+                    return false;
                 }
-
-                long seconds = Duration.between(p.getWaitingSince(), now).getSeconds();
-
+                long seconds = Duration.between(p.getLastActionTime(), now).getSeconds();
                 if (seconds >= matchConfig.getWaitingTimeoutSeconds()) {
-                    iterator.remove();
+                    log.info("清理 WAITING 玩家: {}", p.getUserId());
                     p.setStatus(Player.PlayerStatus.IDLE);
-                    p.setWaitingSince(null);
+                    p.setLastActionTime(LocalDateTime.now());
 
-                    log.info("玩家 {} 等待匹配超时，已移除", p.getUserName());
-                    // TODO：推送 QQ 消息提示
+                    // TODO：通知群聊 & 玩家
+                    return true;
                 }
-            }
+                return false;
+            });
         });
     }
 
@@ -72,23 +63,16 @@ public class MatchCleanupScheduler
      */
     private void cleanTimeoutMatches() {
         LocalDateTime now = LocalDateTime.now();
-
         matchManager.getAllMatches().forEach(match -> {
-
             if (match.getStatus() != Match.MatchStatus.PLAYING) {
                 return;
             }
+            LocalDateTime lastActionTime = match.getLastActionTime();
+            if (lastActionTime == null) lastActionTime = match.getStartTime();
 
-            LocalDateTime lastAction = match.getLastActionTime();
-            if (lastAction == null) {
-                lastAction = match.getStartTime();
-            }
-
-            long seconds = Duration.between(lastAction, now).getSeconds();
-
+            long seconds = Duration.between(lastActionTime, now).getSeconds();
             if (seconds >= matchConfig.getPlayingTimeoutSeconds()) {
-                log.warn("Match {} 超时，强制结束", match.getMatchId());
-
+                log.warn("Match {} 超时结束", match.getMatchId());
                 forceFinishMatch(match);
             }
         });
@@ -104,7 +88,7 @@ public class MatchCleanupScheduler
         resetPlayer(p1);
         resetPlayer(p2);
 
-        matchManager.remove(match.getMatchId());
+        matchManager.finishMatch(match.getMatchId());
 
         // TODO：通知群聊 & 玩家
     }
@@ -112,6 +96,6 @@ public class MatchCleanupScheduler
     private void resetPlayer(Player p) {
         p.setStatus(Player.PlayerStatus.IDLE);
         p.setInProgressMatchId(null);
-        p.setWaitingSince(null);
+        p.setLastActionTime(LocalDateTime.now());
     }
 }

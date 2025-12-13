@@ -20,7 +20,7 @@ public class PlayerManager
                     p.setUserId(userId);
                     p.setGroupId(groupId);
                     p.setUserName(userName);
-                    p.setLastActive(LocalDateTime.now());
+                    p.setLastActionTime(LocalDateTime.now());
                     return p;
                 }
         );
@@ -28,6 +28,6 @@ public class PlayerManager
 
     public void updateStatus(Player player, Player.PlayerStatus status) {
         player.setStatus(status);
-        player.setLastActive(LocalDateTime.now());
+        player.setLastActionTime(LocalDateTime.now());
     }
 }

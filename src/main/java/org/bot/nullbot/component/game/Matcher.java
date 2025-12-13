@@ -79,6 +79,8 @@ public class Matcher
 
         handler.onMatchStart(match);
 
+        matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
+
         return String.format("匹配成功！游戏类型：%s\n玩家1：%s\n玩家2：%s\nMatchID=%s",
                 gameType, player.getUserName(), other.getUserName(), match.getMatchId());
     }

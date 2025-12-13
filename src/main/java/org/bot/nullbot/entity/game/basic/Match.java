@@ -14,6 +14,7 @@ public class Match {
     private LocalDateTime createTime;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+
     private LocalDateTime lastActionTime;
     private MatchStatus status = MatchStatus.CREATED;
 
