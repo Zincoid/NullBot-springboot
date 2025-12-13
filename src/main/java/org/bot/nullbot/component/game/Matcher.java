@@ -14,7 +14,9 @@ import java.util.*;
 @Component
 public class Matcher
 {
-    private final Bot bot;
+    @Value("${nullbot.bot-id}")
+    private Long botId;
+    private final BotContainer botContainer;
 
     private final PlayerManager playerManager;
     private final MatchManager matchManager;
@@ -24,14 +26,13 @@ public class Matcher
     private final Map<String, MatchStateHandler> handlerMap = new HashMap<>();
 
     public Matcher(
-            @Value("${nullbot.self-id}") Long selfId,
             BotContainer botContainer,
             PlayerManager playerManager,
             MatchPoolManager poolManager,
             MatchManager matchManager,
             List<MatchStateHandler> handlers
     ) {
-        bot = botContainer.robots.get(selfId);
+        this.botContainer = botContainer;
         this.playerManager = playerManager;
         this.poolManager = poolManager;
         this.matchManager = matchManager;
@@ -115,6 +116,7 @@ public class Matcher
         Match match = matchManager.getMatch(matchId);
         Player p1 = match.getPlayer1();
         Player p2 = match.getPlayer2();
+        Bot bot = botContainer.robots.get(botId);
         if(!Objects.equals(p1.getGroupId(), p2.getGroupId())){
             bot.sendGroupMsg(p1.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已被终止", false);
         }
