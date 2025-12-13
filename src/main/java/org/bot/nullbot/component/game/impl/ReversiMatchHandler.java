@@ -115,18 +115,36 @@ public class ReversiMatchHandler implements GameMatchHandler
 
     // ================== 工具方法 ==================
 
+    private static final String[] COLS = {
+            "🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭"
+    };
+
+    private static final String[] ROWS = {
+            "1⃣️", "2⃣️", "3⃣️", "4⃣️",
+            "5⃣️", "6⃣️", "7⃣️", "8⃣️"
+    };
+
     private String render(ReversiGameState s) {
         StringBuilder sb = new StringBuilder();
         sb.append("【黑白棋】\n");
-        sb.append("　Ａ｜Ｂ｜Ｃ｜Ｄ｜Ｅ｜Ｆ｜Ｇ｜Ｈ\n");
+        // 列头
+        sb.append("⬛");
+        for (String c : COLS) {
+            sb.append(c);
+        }
+        sb.append("\n");
+        // 棋盘
         for (int i = 0; i < 8; i++) {
-            sb.append(i + 1).append("｜");
+            sb.append(ROWS[i]);
             for (int j = 0; j < 8; j++) {
-                char c = s.getBoard()[i][j];
-                if (c == 'B') sb.append("⚫");
-                else if (c == 'W') sb.append("⚪");
-                else sb.append("＋");
-                if (j < 7) sb.append("｜");
+                char cell = s.getBoard()[i][j];
+                if (cell == 'B') {
+                    sb.append("⚫");
+                } else if (cell == 'W') {
+                    sb.append("⚪");
+                } else {
+                    sb.append("⬜");
+                }
             }
             sb.append("\n");
         }
@@ -134,6 +152,27 @@ public class ReversiMatchHandler implements GameMatchHandler
                 .append(s.getCurrentTurn() == 'B' ? "⚫ 黑棋" : "⚪ 白棋");
         return sb.toString();
     }
+
+
+    // private String render(ReversiGameState s) {
+    //     StringBuilder sb = new StringBuilder();
+    //     sb.append("【黑白棋】\n");
+    //     sb.append("　Ａ｜Ｂ｜Ｃ｜Ｄ｜Ｅ｜Ｆ｜Ｇ｜Ｈ\n");
+    //     for (int i = 0; i < 8; i++) {
+    //         sb.append(i + 1).append("｜");
+    //         for (int j = 0; j < 8; j++) {
+    //             char c = s.getBoard()[i][j];
+    //             if (c == 'B') sb.append("⚫");
+    //             else if (c == 'W') sb.append("⚪");
+    //             else sb.append("＋");
+    //             if (j < 7) sb.append("｜");
+    //         }
+    //         sb.append("\n");
+    //     }
+    //     sb.append("当前回合：")
+    //             .append(s.getCurrentTurn() == 'B' ? "⚫ 黑棋" : "⚪ 白棋");
+    //     return sb.toString();
+    // }
 
     private String judge(ReversiGameState s) {
         int b = 0, w = 0;
