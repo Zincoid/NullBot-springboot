@@ -67,6 +67,8 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState>
             return GameResult.error("[黑白棋] ❌对局不存在");
         }
 
+        matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
+
         ReversiGameState state = games.get(match.getMatchId());
         if (state == null) {
             return GameResult.error("[黑白棋] ❌游戏状态不存在");

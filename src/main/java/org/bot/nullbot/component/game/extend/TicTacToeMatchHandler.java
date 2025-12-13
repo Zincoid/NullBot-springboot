@@ -62,6 +62,8 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState>
             return GameResult.error("[井字棋] ❌对局不存在");
         }
 
+        matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
+
         TicTacToeGameState state = games.get(match.getMatchId());
         if (state == null) {
             return GameResult.error("[井字棋] ❌游戏状态不存在");
