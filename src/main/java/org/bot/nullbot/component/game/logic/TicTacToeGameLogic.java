@@ -1,132 +1,39 @@
 package org.bot.nullbot.component.game.logic;
 
-import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.component.game.MatchManager;
-import org.bot.nullbot.component.game.Matcher;
-import org.bot.nullbot.entity.game.basic.GameResult;
-import org.bot.nullbot.entity.game.basic.Match;
-import org.bot.nullbot.entity.game.tictactoe.TicTacToeState;
-import org.bot.nullbot.component.game.impl.TicTacToeMatchHandler;
+import org.bot.nullbot.entity.game.tictactoe.TicTacToeGameState;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-
 @Component
-@RequiredArgsConstructor
-public class TicTacToeGameLogic
-{
-    private final TicTacToeMatchHandler handler;
-    private final MatchManager matchManager;
-    private final Matcher matcher;
+public class TicTacToeGameLogic {
 
-    public GameResult move(Long userId, int x, int y) {
-        // 检测玩家是否在可用对局中
-        Match match = matchManager.getMatchBySelfId(userId);
-        if (match == null) { return GameResult.error("对局不存在"); }
-        match.setLastActionTime(LocalDateTime.now());
-        String matchId = match.getMatchId();
-        TicTacToeState state = handler.getState(matchId);
-        if (state == null) { return GameResult.error("对局状态不存在"); }
+    public boolean place(TicTacToeGameState s, int r, int c) {
+        if (r < 0 || r >= 3 || c < 0 || c >= 3) return false;
+        if (s.getBoard()[r][c] != '.') return false;
 
-        // 正式进入游戏逻辑
-        Long opponentGroupId = matchManager.getOpponentGroupIdIfDifferentBySelfId(userId);
-
-        if (!Objects.equals(state.getCurrentPlayerId(), userId)) { return GameResult.error("还没轮到你下棋！"); }
-        if (x < 1 || x > 3 || y < 1 || y > 3) { return GameResult.error("落子范围 1-3，例如：/TicTacToe 1 3"); }
-        if (state.getBoard()[x - 1][y - 1] != ' ') { return GameResult.error("此位置已有棋子！"); }
-
-        char piece = (match.getPlayer1().getUserId().equals(userId)) ? 'X' : 'O';
-        state.getBoard()[x - 1][y - 1] = piece;
-
-        // 判断胜负
-        if (checkWin(state.getBoard(), piece)) {
-            handler.getState(matchId);
-            matcher.finishMatch(matchId);
-            return GameResult.success(opponentGroupId, printBoard(state.getBoard()) + "\n玩家 " + piece + " 获胜！对局已结束。");
-        }
-
-        // 判断平局
-        if (isDraw(state.getBoard())) {
-            matcher.finishMatch(matchId);
-            return GameResult.success(opponentGroupId, printBoard(state.getBoard()) + "\n平局！对局已结束。");
-        }
-
-        // 切换玩家
-        Long next = match.getPlayer1().getUserId().equals(userId)
-                ? match.getPlayer2().getUserId()
-                : match.getPlayer1().getUserId();
-
-        state.setCurrentPlayerId(next);
-
-        return GameResult.success(opponentGroupId, printBoard(state.getBoard()) + "\n落子成功！轮到玩家：" + next);
-    }
-
-    private boolean checkWin(char[][] b, char p) {
-        for (int i = 0; i < 3; i++) {
-            if ((b[i][0] == p && b[i][1] == p && b[i][2] == p) ||
-                    (b[0][i] == p && b[1][i] == p && b[2][i] == p)) {
-                return true;
-            }
-        }
-        return (b[0][0] == p && b[1][1] == p && b[2][2] == p) ||
-                (b[0][2] == p && b[1][1] == p && b[2][0] == p);
-    }
-
-    private boolean isDraw(char[][] b) {
-        for (char[] row : b) {
-            for (char c : row) {
-                if (c == ' ') return false;
-            }
-        }
+        s.getBoard()[r][c] = s.getCurrentTurn();
+        s.setCurrentTurn(s.getCurrentTurn() == 'X' ? 'O' : 'X');
         return true;
     }
 
-    // 文本形式的棋盘
-    private String printBoard(char[][] b) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[井字棋]\n");
-
-        // 使用全角字符和Unicode制表符确保对齐
+    public Character checkWinner(TicTacToeGameState s) {
+        char[][] b = s.getBoard();
         for (int i = 0; i < 3; i++) {
-            // 将半角字符转换为全角字符
-            char c1 = toFullWidth(b[i][0]);
-            char c2 = toFullWidth(b[i][1]);
-            char c3 = toFullWidth(b[i][2]);
-
-            sb.append(" ")
-                    .append(c1).append(" │ ")  // 使用全角竖线
-                    .append(c2).append(" │ ")
-                    .append(c3).append("\n");
-
-            if (i < 2) {
-                sb.append("----+----+----\n");  // 使用全角横线和交叉符
-            }
+            if (b[i][0] != '.' && b[i][0] == b[i][1] && b[i][1] == b[i][2])
+                return b[i][0];
+            if (b[0][i] != '.' && b[0][i] == b[1][i] && b[1][i] == b[2][i])
+                return b[0][i];
         }
-        return sb.toString();
+        if (b[0][0] != '.' && b[0][0] == b[1][1] && b[1][1] == b[2][2])
+            return b[0][0];
+        if (b[0][2] != '.' && b[0][2] == b[1][1] && b[1][1] == b[2][0])
+            return b[0][2];
+        return null;
     }
 
-    // 将半角字符转换为全角字符
-    private char toFullWidth(char c) {
-        if (c == 'X' || c == 'x') {
-            return 'Ｘ';  // 全角X
-        } else if (c == 'O' || c == 'o') {
-            return 'Ｏ';  // 全角O
-        } else {
-            return '　';  // 全角空格
-        }
+    public boolean isDraw(TicTacToeGameState s) {
+        for (char[] row : s.getBoard())
+            for (char c : row)
+                if (c == '.') return false;
+        return true;
     }
-
-    // private String printBoard(char[][] b) {
-    //     StringBuilder sb = new StringBuilder();
-    //     sb.append("[TicTacToe]\n");
-    //     for (int i = 0; i < 3; i++) {
-    //         sb.append(" ")
-    //                 .append(b[i][0]).append(" | ")
-    //                 .append(b[i][1]).append(" | ")
-    //                 .append(b[i][2]).append("\n");
-    //         if (i < 2) sb.append("---+---+---\n");
-    //     }
-    //     return sb.toString();
-    // }
 }

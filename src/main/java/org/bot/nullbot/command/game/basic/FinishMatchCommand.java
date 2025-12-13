@@ -22,10 +22,10 @@ public class FinishMatchCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            Long groupId = groupMessageEvent.getGroupId();
+            // Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getUserId();
             MatchResult result = matcher.finishMatchByPlayerId(userId);
-            bot.sendGroupMsg(groupId, result.getInfo(), false);
+            // bot.sendGroupMsg(groupId, result.getInfo(), false);
             log.info("\t\t\t\t├─[FinishMatch] 结束对局结果 - {}", result.getInfo().replaceAll("\\R", ""));
         }else
             log.info("\t\t\t\t├─[FinishMatch] 未设计 非群消息事件响应方式");

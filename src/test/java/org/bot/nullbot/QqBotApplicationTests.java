@@ -45,28 +45,28 @@ class QqBotApplicationTests {
    }
 
    // @Test
-   void matchTest() {
-       System.out.println(matcher.joinMatch(0L, 1L, "A", "reversi"));
-       // System.out.println(matchService.joinMatch(0L, 1L, "B", "tictactoe"));
-       System.out.println(matcher.joinMatch(1L, 2L, "C", "reversi"));
-       // System.out.println(matchService.joinMatch(2L, 3L, "D", "punch"));
-
-       boolean current = true;
-       Scanner scanner = new Scanner(System.in);
-       while (true)
-       {
-           System.out.println("Enter command: ");
-           String command = scanner.nextLine();
-           int i = Integer.parseInt(command.split(" ")[0]);
-           int j = Integer.parseInt(command.split(" ")[1]);
-
-           if(current){
-               System.out.println(ticTacToeGameLogic.move(0L, i, j).getInfo());
-               current = false;
-           }else{
-               System.out.println(ticTacToeGameLogic.move(1L, i, j).getInfo());
-               current = true;
-           }
-       }
-   }
+   // void matchTest() {
+   //     System.out.println(matcher.joinMatch(0L, 1L, "A", "reversi"));
+   //     // System.out.println(matchService.joinMatch(0L, 1L, "B", "tictactoe"));
+   //     System.out.println(matcher.joinMatch(1L, 2L, "C", "reversi"));
+   //     // System.out.println(matchService.joinMatch(2L, 3L, "D", "punch"));
+   //
+   //     boolean current = true;
+   //     Scanner scanner = new Scanner(System.in);
+   //     while (true)
+   //     {
+   //         System.out.println("Enter command: ");
+   //         String command = scanner.nextLine();
+   //         int i = Integer.parseInt(command.split(" ")[0]);
+   //         int j = Integer.parseInt(command.split(" ")[1]);
+   //
+   //         if(current){
+   //             System.out.println(ticTacToeGameLogic.move(0L, i, j).getInfo());
+   //             current = false;
+   //         }else{
+   //             System.out.println(ticTacToeGameLogic.move(1L, i, j).getInfo());
+   //             current = true;
+   //         }
+   //     }
+   // }
 }
