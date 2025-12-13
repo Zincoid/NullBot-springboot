@@ -62,10 +62,10 @@ class QqBotApplicationTests {
            int j = Integer.parseInt(command.split(" ")[1]);
 
            if(current){
-               System.out.println(ticTacToeService.move(0L, i, j));
+               System.out.println(ticTacToeService.move(0L, i, j).getInfo());
                current = false;
            }else{
-               System.out.println(ticTacToeService.move(1L, i, j));
+               System.out.println(ticTacToeService.move(1L, i, j).getInfo());
                current = true;
            }
        }
