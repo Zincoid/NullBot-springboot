@@ -38,7 +38,7 @@ public class Matcher
         this.matchManager = matchManager;
 
         // 自动注册所有 Handler
-        handlers.forEach(h -> handlerMap.put(h.getClass().getSimpleName().replace("StateHandler", "").toLowerCase(), h));
+        handlers.forEach(h -> handlerMap.put(h.getClass().getSimpleName().replace("MatchHandler", "").toLowerCase(), h));
     }
 
     /**
