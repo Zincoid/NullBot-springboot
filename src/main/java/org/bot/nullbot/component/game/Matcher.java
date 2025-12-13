@@ -99,9 +99,16 @@ public class Matcher
         return MatchResult.notMatched("已成功取消匹配");
     }
 
+    /**
+     * 结束游戏 通过用户ID
+     */
+    public String finishMatchByPlayerId(Long userId) {
+        Player player = playerManager.getPlayer(userId);
+        return finishMatch(player.getInProgressMatchId());
+    }
 
     /**
-     * 结束游戏
+     * 结束游戏 通过对局ID
      */
     public String finishMatch(String matchId) {
         Match match = matchManager.getMatch(matchId);
