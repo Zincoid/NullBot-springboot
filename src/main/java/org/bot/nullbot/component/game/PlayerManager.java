@@ -12,7 +12,7 @@ public class PlayerManager
 {
     private final Map<Long, Player> playerMap = new ConcurrentHashMap<>();
 
-    public Player refreshPlayer(Long userId, Long groupId, String userName) {
+    public Player getRefreshedPlayer(Long userId, Long groupId, String userName) {
         Player player = playerMap.get(userId);
         if (player == null) {
             Player p = new Player();

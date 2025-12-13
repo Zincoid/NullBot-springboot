@@ -36,7 +36,7 @@ public class Matcher
      * 加入匹配
      */
     public MatchResult joinMatch(Long userId, Long groupId, String userName, String gameType) {
-        Player player = playerManager.refreshPlayer(userId, groupId, userName);
+        Player player = playerManager.getRefreshedPlayer(userId, groupId, userName);
 
         if (player.getStatus() != Player.PlayerStatus.IDLE) { return MatchResult.notMatched("你已经在匹配或游戏中！"); }
 
