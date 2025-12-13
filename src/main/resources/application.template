@@ -48,6 +48,7 @@ shiro:
 #    thread-name-prefix: "ShiroTaskPool-"
 
 nullbot:
+  self-id:
   enable-image-collect: false
   enable-message-collect: false  # 使用AI Monitor模式及Recall Detect功能 需启用该项
   enable-keyword-detect: true
