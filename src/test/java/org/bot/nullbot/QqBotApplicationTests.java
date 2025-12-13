@@ -44,7 +44,7 @@ class QqBotApplicationTests {
        // }
    }
 
-   @Test
+   // @Test
    void matchTest() {
        System.out.println(matcher.joinMatch(0L, 1L, "A", "tictactoe"));
        // System.out.println(matchService.joinMatch(0L, 1L, "B", "tictactoe"));

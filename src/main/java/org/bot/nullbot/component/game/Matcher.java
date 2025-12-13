@@ -4,7 +4,6 @@ import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -12,17 +11,17 @@ import java.util.*;
 public class Matcher
 {
     private final PlayerManager playerManager;
-    private final MatchPoolManager poolManager;
     private final MatchManager matchManager;
+    private final MatchPoolManager poolManager;
 
     // gameType -> match handler
-    private final Map<String, GameMatchHandler> handlerMap = new HashMap<>();
+    private final Map<String, MatchStateHandler> handlerMap = new HashMap<>();
 
     public Matcher(
             PlayerManager playerManager,
             MatchPoolManager poolManager,
             MatchManager matchManager,
-            List<GameMatchHandler> handlers
+            List<MatchStateHandler> handlers
     ) {
         this.playerManager = playerManager;
         this.poolManager = poolManager;
@@ -43,7 +42,7 @@ public class Matcher
             return "你已经在匹配或游戏中！";
         }
 
-        GameMatchHandler handler = handlerMap.get(gameType);
+        MatchStateHandler handler = handlerMap.get(gameType);
         if (handler == null) {
             return "暂不支持该类型游戏：" + gameType;
         }
@@ -94,24 +93,17 @@ public class Matcher
             return "Match 不存在";
         }
 
-        match.setStatus(Match.MatchStatus.FINISHED);
-        match.setEndTime(LocalDateTime.now());
-
-        GameMatchHandler handler = handlerMap.get(match.getGameType());
+        // 清理游戏数据
+        MatchStateHandler handler = handlerMap.get(match.getGameType());
         if (handler != null) {
             handler.onMatchEnd(match);
         }
 
-        // 清理玩家状态
-        Player p1 = match.getPlayer1();
-        Player p2 = match.getPlayer2();
+        // 重置玩家状态
+        playerManager.resetPlayer(match.getPlayer1());
+        playerManager.resetPlayer(match.getPlayer2());
 
-        p1.setStatus(Player.PlayerStatus.IDLE);
-        p1.setInProgressMatchId(null);
-
-        p2.setStatus(Player.PlayerStatus.IDLE);
-        p2.setInProgressMatchId(null);
-
+        // 清理游戏会话
         matchManager.finishMatch(matchId);
 
         return "Match 已结束：" + matchId;

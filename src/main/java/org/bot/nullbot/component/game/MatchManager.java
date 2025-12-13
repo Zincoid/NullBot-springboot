@@ -13,11 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class MatchManager
 {
-    private final Map<String, Match> matchMap = new ConcurrentHashMap<>();
-
     // playerId → matchId，用于快速查找玩家所在的对局
     private final Map<Long, String> playerMatchIndex = new ConcurrentHashMap<>();
-
+    private final Map<String, Match> matchMap = new ConcurrentHashMap<>();
 
     public Match createMatch(String gameType, Player p1, Player p2) {
         Match match = new Match();
@@ -28,20 +26,32 @@ public class MatchManager
         match.setPlayer1(p1);
         match.setPlayer2(p2);
 
-        matchMap.put(match.getMatchId(), match);
-
         playerMatchIndex.put(p1.getUserId(), match.getMatchId());
         playerMatchIndex.put(p2.getUserId(), match.getMatchId());
+        matchMap.put(match.getMatchId(), match);
 
         return match;
     }
 
-    public void finishMatch(String id) {
-        Match match = matchMap.remove(id);
+    public void finishMatch(String matchId) {
+        Match match = matchMap.remove(matchId);
         if (match != null) {
+            match.setStatus(Match.MatchStatus.FINISHED);
+            match.setEndTime(LocalDateTime.now());
+
+            // TODO: 保存对局历史
+
             playerMatchIndex.remove(match.getPlayer1().getUserId());
             playerMatchIndex.remove(match.getPlayer2().getUserId());
         }
+    }
+
+    public Match getMatch(String matchId) {
+        return matchMap.get(matchId);
+    }
+
+    public Collection<Match> getAllMatches() {
+        return matchMap.values();
     }
 
     public void updateMatchStatus(Match match, Match.MatchStatus status) {
@@ -49,16 +59,12 @@ public class MatchManager
         match.setLastActionTime(LocalDateTime.now());
     }
 
-    public Match getMatch(String id) {
-        return matchMap.get(id);
-    }
-
-    public Collection<Match> getAllMatches() {
-        return matchMap.values();
-    }
-
-    public String getMatchIdByPlayerId(Long playerId) {
-        return playerMatchIndex.get(playerId);
+    public Match getMatchByPlayerId(Long playerId) {
+        String matchId = playerMatchIndex.get(playerId);
+        if (matchId != null) {
+            return matchMap.get(matchId);
+        }else
+            return null;
     }
 
     public Long getOpponentGroupIdBySelfId(Long playerId) {

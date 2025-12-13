@@ -30,4 +30,9 @@ public class PlayerManager
         player.setStatus(status);
         player.setLastActionTime(LocalDateTime.now());
     }
+
+    public void resetPlayer(Player player) {
+        player.setStatus(Player.PlayerStatus.IDLE);
+        player.setInProgressMatchId(null);
+    }
 }

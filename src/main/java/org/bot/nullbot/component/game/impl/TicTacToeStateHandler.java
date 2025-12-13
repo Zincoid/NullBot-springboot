@@ -3,14 +3,14 @@ package org.bot.nullbot.component.game.impl;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
 import org.bot.nullbot.entity.game.tictactoe.TicTacToeState;
-import org.bot.nullbot.component.game.GameMatchHandler;
+import org.bot.nullbot.component.game.MatchStateHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class TicTacToeMatchHandler extends GameMatchHandler
+public class TicTacToeStateHandler implements MatchStateHandler
 {
     // matchId → state
     private final Map<String, TicTacToeState> stateStore = new ConcurrentHashMap<>();

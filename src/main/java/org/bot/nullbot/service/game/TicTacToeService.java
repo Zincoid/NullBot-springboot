@@ -5,7 +5,7 @@ import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.tictactoe.TicTacToeState;
-import org.bot.nullbot.component.game.impl.TicTacToeMatchHandler;
+import org.bot.nullbot.component.game.impl.TicTacToeStateHandler;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,37 +15,22 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class TicTacToeService
 {
-    private final TicTacToeMatchHandler handler;
+    private final TicTacToeStateHandler handler;
     private final MatchManager matchManager;
     private final Matcher matcher;
 
     public String move(Long userId, int x, int y) {
-        String matchId = matchManager.getMatchIdByPlayerId(userId);
-
-        if (matchId == null) {
-            return "对局不存在";
-        }
-
-        Match match = matchManager.getMatch(matchId);
-
-        TicTacToeState state = handler.getState(matchId);
-        if (state == null) {
-            return "对局状态不存在";
-        }
-
+        Match match = matchManager.getMatchByPlayerId(userId);
+        if (match == null) { return "对局不存在"; }
         match.setLastActionTime(LocalDateTime.now());
 
-        if (!Objects.equals(state.getCurrentPlayerId(), userId)) {
-            return "还没轮到你下棋！";
-        }
+        String matchId = match.getMatchId();
+        TicTacToeState state = handler.getState(matchId);
+        if (state == null) { return "对局状态不存在"; }
 
-        if (x < 1 || x > 3 || y < 1 || y > 3) {
-            return "落子范围 1-3，例如：/TicTacToe 1 3";
-        }
-
-        if (state.getBoard()[x - 1][y - 1] != ' ') {
-            return "此位置已有棋子！";
-        }
+        if (!Objects.equals(state.getCurrentPlayerId(), userId)) { return "还没轮到你下棋！"; }
+        if (x < 1 || x > 3 || y < 1 || y > 3) { return "落子范围 1-3，例如：/TicTacToe 1 3"; }
+        if (state.getBoard()[x - 1][y - 1] != ' ') { return "此位置已有棋子！"; }
 
         char piece = (match.getPlayer1().getUserId().equals(userId)) ? 'X' : 'O';
         state.getBoard()[x - 1][y - 1] = piece;
