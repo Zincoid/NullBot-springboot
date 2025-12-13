@@ -109,7 +109,7 @@ public class Matcher
     }
 
     /**
-     * 结束游戏 通过用户ID
+     * 结束游戏 通过用户ID 暴露给用户的方法
      */
     public MatchResult finishMatchByPlayerId(Long userId) {
         String matchId = playerManager.getPlayer(userId).getInProgressMatchId();

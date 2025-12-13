@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -66,17 +65,6 @@ public class MatchManager
         String matchId = playerMatchIndex.get(selfId);
         if (matchId != null) {
             return matchMap.get(matchId);
-        }else
-            return null;
-    }
-
-    public Long getOpponentGroupIdIfDifferentBySelfId(Long selfId) {
-        Match match = matchMap.get(playerMatchIndex.get(selfId));
-        if (!Objects.equals(match.getPlayer1().getGroupId(), match.getPlayer2().getGroupId())) {
-            if(Objects.equals(match.getPlayer1().getUserId(), selfId))
-                return match.getPlayer2().getGroupId();
-            else
-                return match.getPlayer1().getGroupId();
         }else
             return null;
     }
