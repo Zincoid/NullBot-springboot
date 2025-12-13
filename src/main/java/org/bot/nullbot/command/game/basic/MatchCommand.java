@@ -9,6 +9,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.game.Matcher;
+import org.bot.nullbot.entity.game.basic.MatchResult;
 import org.springframework.stereotype.Component;
 
 
@@ -29,13 +30,17 @@ public class MatchCommand implements Command
                 Long userId = groupMessageEvent.getUserId();
                 String userName = bot.getStrangerInfo(userId, false).getData().getNickname();
                 String gameType = event.getCommandParameters().getFirst();
-                String result = matcher.joinMatch(userId, groupId, userName, gameType);
-                if(result.contains("匹配成功")){
-                    Long opponentGroupId = matchManager.getOpponentGroupIdBySelfId(userId);
-                    bot.sendGroupMsg(opponentGroupId, result, false);
+                MatchResult result = matcher.joinMatch(userId, groupId, userName, gameType);
+                if(result != null){
+                    if(result.getIsMatched() && !result.getIsSameGroup()){
+                        bot.sendGroupMsg(result.getOpponentGroupId(), result.getInfo(), false);
+                    }
+                    bot.sendGroupMsg(groupId, result.getInfo(), false);
+                    log.info("\t\t\t\t├─[Match] 匹配结果 - {}", result.getInfo().replaceAll("\\R", ""));
+                }else{
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[匹配] ❌未知错误", false);
+                    log.info("\t\t\t\t├─[Match] 未知错误");
                 }
-                bot.sendGroupMsg(groupId, result, false);
-                log.info("\t\t\t\t├─[Match] 匹配结果 - {}", result.replaceAll("\\R", ""));
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[匹配] ❌无游戏类型参数", false);
                 log.info("\t\t\t\t├─[Match] 无游戏类型参数");

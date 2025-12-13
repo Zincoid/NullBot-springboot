@@ -1,5 +1,6 @@
 package org.bot.nullbot.component.game;
 
+import org.bot.nullbot.entity.game.basic.MatchResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
 import org.springframework.stereotype.Component;
@@ -34,13 +35,13 @@ public class Matcher
     /**
      * 加入匹配
      */
-    public String joinMatch(Long userId, Long groupId, String userName, String gameType) {
+    public MatchResult joinMatch(Long userId, Long groupId, String userName, String gameType) {
         Player player = playerManager.getOrCreate(userId, groupId, userName);
 
-        if (player.getStatus() != Player.PlayerStatus.IDLE) { return "你已经在匹配或游戏中！"; }
+        if (player.getStatus() != Player.PlayerStatus.IDLE) { return MatchResult.notMatched("你已经在匹配或游戏中！"); }
 
         MatchStateHandler handler = handlerMap.get(gameType);
-        if (handler == null) { return "暂不支持该类型游戏：" + gameType; }
+        if (handler == null) { return MatchResult.notMatched("暂不支持该类型游戏：" + gameType); }
 
         // 尝试匹配另一个玩家
         Player other = poolManager.pollPlayer(gameType);
@@ -49,7 +50,7 @@ public class Matcher
             // 加入等待队列
             poolManager.addPlayer(player, gameType);
             playerManager.updateStatus(player, Player.PlayerStatus.WAITING);
-            return "已加入 " + gameType + " 匹配队列，正在等待对手…";
+            return MatchResult.notMatched("已加入 " + gameType + " 匹配队列，正在等待对手…");
         }
 
         // 判断 handler 中自定义的匹配规则
@@ -57,7 +58,7 @@ public class Matcher
             // 不适配，other 继续入队
             poolManager.addPlayer(other, gameType);
             poolManager.addPlayer(player, gameType);
-            return "暂时无法匹配到合适的玩家，已重新加入队列";
+            return MatchResult.notMatched("暂时无法匹配到合适的玩家，已重新加入队列");
         }
 
         // 匹配成功 创建对局
@@ -77,8 +78,9 @@ public class Matcher
         // 开始游戏 更新对局状态
         matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
 
-        return String.format("匹配成功！游戏类型：%s\n玩家1：%s\n玩家2：%s\nMatch ID: %s",
+        String info = String.format("匹配成功！游戏类型：%s\n玩家1：%s\n玩家2：%s\nMatch ID: %s",
                 gameType, player.getUserName(), other.getUserName(), match.getMatchId());
+        return MatchResult.matched(player.getGroupId(), other.getGroupId(), info);
     }
 
     /**
