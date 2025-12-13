@@ -1,0 +1,26 @@
+[Unit]
+Description=NapCat QQ
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/Napcat
+ExecStart=/usr/bin/xvfb-run -a /root/Napcat/opt/QQ/qq \
+  --no-sandbox \
+  --disable-crash-reporter \
+  --disable-logging \
+  --log-level=3 \
+  --disable-gpu \
+  --disable-software-rasterizer \
+  -q 3408240018
+
+StandardOutput=append:/root/Napcat/qq.out.log
+StandardError=append:/root/Napcat/qq.err.log
+
+Restart=always
+RestartSec=10
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
