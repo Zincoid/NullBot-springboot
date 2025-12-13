@@ -20,26 +20,26 @@ server:
 #    org.apache.coyote.http11.Http11Processor: ERROR
 #    org.apache.coyote.http11.Http11InputBuffer: ERROR
 
-logging:
-  level:
-    root: INFO
-    org.bot.nullbot: WARN
+#logging:
+#  level:
+#    root: INFO
+#    org.bot.nullbot: WARN
 
 shiro:
   ws:
     server:
       enable: true
       url: /NullBot
-    timeout: 10
+    timeout: 20  # 10
     max-binary-message-buffer-size: 5120000
     max-text-message-buffer-size: 512000
-    access-token:
+    access-token: mtHOn@THXxr*6cCb
   limiter:
     enable: true
     rate: 10
     capacity: 30
     awaitTask: true
-    timeout: 10
+    timeout: 20  # 10
 #  task-pool:
 #    core-pool-size: 10
 #    queue-capacity: 200
@@ -64,6 +64,7 @@ nullbot:
     storage:
       image-path: /root/Nullbot/file/image  # src/main/resources/file/image
       video-path: /root/Nullbot/file/video  # src/main/resources/file/video
+      audio-path: /root/Nullbot/file/audio  # src/main/resources/file/audio
   accesses:
     2660181154: 2
 
