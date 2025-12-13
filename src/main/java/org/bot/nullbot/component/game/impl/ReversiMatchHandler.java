@@ -114,14 +114,16 @@ public class ReversiMatchHandler implements GameMatchHandler
 
     private String render(ReversiGameState s) {
         StringBuilder sb = new StringBuilder();
-        sb.append("  A B C D E F G H\n");
+        sb.append("【黑白棋】\n");
+        sb.append("　Ａ｜Ｂ｜Ｃ｜Ｄ｜Ｅ｜Ｆ｜Ｇ｜Ｈ\n");
         for (int i = 0; i < 8; i++) {
-            sb.append(i + 1).append(" ");
+            sb.append(i + 1).append("｜");
             for (int j = 0; j < 8; j++) {
-                sb.append(
-                        s.getBoard()[i][j] == 'B' ? "⚫" :
-                                s.getBoard()[i][j] == 'W' ? "⚪" : "·"
-                ).append(" ");
+                char c = s.getBoard()[i][j];
+                if (c == 'B') sb.append("⚫");
+                else if (c == 'W') sb.append("⚪");
+                else sb.append("＋");
+                if (j < 7) sb.append("｜");
             }
             sb.append("\n");
         }
