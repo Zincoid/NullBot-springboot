@@ -96,11 +96,11 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
             state.setFinished(true);
             info.append("\n🎉 ")
                     .append(winner == 'X' ? "X" : "O")
-                    .append(" 获胜！");
+                    .append(" 获胜！\n 完成对局双方均可获得10抽数！");
             return getFinishResult(userId, match, info.toString());
         } else if (gameLogic.isDraw(state)) {
             state.setFinished(true);
-            info.append("\n🤝 平局！");
+            info.append("\n🤝 平局！\n 完成对局双方均可获得10抽数！");
             return getFinishResult(userId, match, info.toString());
         }
 

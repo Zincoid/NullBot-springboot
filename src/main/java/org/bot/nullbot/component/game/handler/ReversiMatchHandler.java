@@ -49,7 +49,8 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
         ReversiGameState state = games.get(match.getMatchId());
         // 黑白棋 奖励逻辑
         if(state.isFinished()){
-
+            // userService.increaseDrawTimes(match.getPlayer1().getUserId(), 20);
+            // userService.increaseDrawTimes(match.getPlayer1().getUserId(), 20);
         }
 
         super.onMatchEnd(match);
