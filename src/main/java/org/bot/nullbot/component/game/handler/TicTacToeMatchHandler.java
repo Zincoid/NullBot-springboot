@@ -98,13 +98,13 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
         if (winner != null) {
             state.setFinished(true);
             state.setWinnerId(winner == 'X' ? state.getPlayerX() : state.getPlayerO());
-            info.append("\n🎉 ")
+            info.append("\n\n🎉 ")
                     .append(winner == 'X' ? "X" : "O")
                     .append(" 获胜！获得30抽数！");
             return getFinishResult(userId, match, info.toString());
         } else if (gameLogic.isDraw(state)) {
             state.setFinished(true);
-            info.append("\n🤝 平局！\n 双方均可获得15抽数！");
+            info.append("\n\n🤝 平局！\n 双方均可获得15抽数！");
             return getFinishResult(userId, match, info.toString());
         }
 

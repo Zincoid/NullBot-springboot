@@ -88,25 +88,25 @@ public class Matcher
     /**
      * 取消匹配
      */
-    public MatchResult cancelMatch(Long userId) {
+    public String cancelMatch(Long userId) {
         Player player = playerManager.getPlayer(userId);
-        if (player == null) { return MatchResult.notMatched("暂无玩家记录"); }
-        if (player.getStatus() != Player.PlayerStatus.WAITING) { return MatchResult.notMatched("无法取消，当前不在匹配队列中"); }
+        if (player == null) { return "暂无玩家记录"; }
+        if (player.getStatus() != Player.PlayerStatus.WAITING) { return "无法取消，当前不在匹配队列中"; }
 
         // 从匹配池中移除
-        if (!poolManager.removePlayer(player)) { return MatchResult.notMatched("取消失败，未在匹配队列中找到你"); }
+        if (!poolManager.removePlayer(player)) { return "取消失败，未在匹配队列中找到你"; }
         // 重置玩家状态
         playerManager.updateStatus(player, Player.PlayerStatus.IDLE);
 
-        return MatchResult.notMatched("已成功取消匹配");
+        return "已成功取消匹配";
     }
 
     /**
      * 结束对局
      */
-    public MatchResult finishMatch(Long userId) {
+    public String finishMatch(Long userId) {
         String matchId = playerManager.getPlayer(userId).getInProgressMatchId();
-        if (matchId == null) { return MatchResult.notMatched("没有正在进行的对局"); }
+        if (matchId == null) { return "没有正在进行的对局"; }
         Match match = matchManager.getMatch(matchId);
         Player p1 = match.getPlayer1();
         Player p2 = match.getPlayer2();
@@ -119,6 +119,6 @@ public class Matcher
         // 在对应游戏执行器中触发对局结束流程
         handlerMap.get(match.getGameType()).onMatchEnd(match);
 
-        return MatchResult.notMatched("Match 已结束：" + matchId);
+        return null;
     }
 }
