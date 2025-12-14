@@ -89,7 +89,7 @@ public class DeepSeekClient
             case Personal -> deepSeekConfig.getSystemMessage().getPersonal();
             case Monitor -> deepSeekConfig.getSystemMessage().getMonitor();
         };
-        _messages.add(new ChatMessage(null, "basic", systemMessage, null, null).toMapForAI());  // 系统消息
+        _messages.add(new ChatMessage(null, "system", systemMessage, null, null).toMapForAI());  // 系统消息
         for (ChatMessage msg : chatMessages) _messages.add(msg.toMapForAI());  // 历史消息
         return _messages;
     }
