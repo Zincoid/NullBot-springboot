@@ -94,10 +94,11 @@ public class MatchCleanupScheduler
                 log.warn("Match {} 超时未响应自动结束", match.getMatchId());
                 Player p1 = match.getPlayer1();
                 Player p2 = match.getPlayer2();
+                String info = p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已超时\nMatch ID: " + match.getMatchId();
                 if(!Objects.equals(p1.getGroupId(), p2.getGroupId())){
-                    bot.sendGroupMsg(p1.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已超时", false);
+                    bot.sendGroupMsg(p1.getGroupId(), info, false);
                 }
-                bot.sendGroupMsg(p2.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已超时", false);
+                bot.sendGroupMsg(p2.getGroupId(), info, false);
 
                 // 在对应游戏执行器中触发对局结束流程
                 handlerMap.get(match.getGameType()).onMatchEnd(match);

@@ -100,7 +100,7 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
     // 文本形式的棋盘
     private String printBoard(char[][] b) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[井字棋]\n");
+        sb.append("[井字棋]\n\n");
 
         for (int i = 0; i < 3; i++) {
             char c1 = toFullWidth(b[i][0]);
