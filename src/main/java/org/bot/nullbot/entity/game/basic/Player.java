@@ -28,7 +28,6 @@ public class Player {
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId);
+        return Objects.hash(userId);  // groupId 是动态的 不能用来哈希
     }
-
 }

@@ -105,7 +105,9 @@ public class Matcher
      * 结束对局
      */
     public String finishMatch(Long userId) {
-        String matchId = playerManager.getPlayer(userId).getInProgressMatchId();
+        Player player = playerManager.getPlayer(userId);
+        if (player == null) { return "用户未活跃"; }
+        String matchId = player.getInProgressMatchId();
         if (matchId == null) { return "没有正在进行的对局"; }
         Match match = matchManager.getMatch(matchId);
         Player p1 = match.getPlayer1();
