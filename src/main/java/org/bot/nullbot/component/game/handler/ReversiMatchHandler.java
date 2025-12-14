@@ -1,15 +1,17 @@
 package org.bot.nullbot.component.game.handler;
 
 import com.mikuac.shiro.core.BotContainer;
+import org.bot.nullbot.component.game.PlayerManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.bot.nullbot.component.game.GameMatchHandler;
 import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
-import org.bot.nullbot.entity.game.basic.Player;
 import org.bot.nullbot.entity.game.reversi.ReversiGameState;
 import org.bot.nullbot.component.game.logic.ReversiGameLogic;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Component
@@ -18,19 +20,15 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
     public ReversiMatchHandler(
             @Value("${nullbot.bot-id}") Long botId,
             BotContainer botContainer,
-            ReversiGameLogic gameLogic,
-            MatchManager matchManager) {
-        super(botId, botContainer, matchManager, gameLogic);
+            MatchManager matchManager,
+            PlayerManager playerManager,
+            ReversiGameLogic gameLogic) {
+        super(botId, botContainer, matchManager, playerManager, gameLogic, new ConcurrentHashMap<>());
     }
 
     @Override
     public String gameType() {
-        return "reversi";
-    }
-
-    @Override
-    public boolean canMatch(Player p1, Player p2) {
-        return true;
+        return "黑白棋";
     }
 
     @Override
@@ -40,11 +38,6 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
         state.setWhitePlayerId(match.getPlayer2().getUserId());
         games.put(match.getMatchId(), state);
         sendInitMessage(match, state);
-    }
-
-    @Override
-    public void onMatchEnd(Match match) {
-        games.remove(match.getMatchId());
     }
 
     /**
@@ -89,9 +82,9 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
         // 判定是否结束
         if (!gameLogic.hasAnyMove(state, 'B')
                 && !gameLogic.hasAnyMove(state, 'W')) {
-
             state.setFinished(true);
             info.append("\n").append(judge(state));
+            onMatchEnd(match);
         }
 
         return getGameResult(userId, match, info.toString());

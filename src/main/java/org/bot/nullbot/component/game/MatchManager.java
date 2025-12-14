@@ -38,6 +38,7 @@ public class MatchManager
         if (match != null) {
             match.setStatus(Match.MatchStatus.FINISHED);
             match.setEndTime(LocalDateTime.now());
+            match.setLastActionTime(LocalDateTime.now());
 
             // TODO: 保存对局历史
 

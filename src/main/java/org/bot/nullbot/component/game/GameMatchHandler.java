@@ -2,6 +2,7 @@ package org.bot.nullbot.component.game;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
+import lombok.AllArgsConstructor;
 import org.bot.nullbot.entity.game.GameState;
 import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
@@ -9,25 +10,19 @@ import org.bot.nullbot.entity.game.basic.Player;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 
+@AllArgsConstructor
 public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
 {
     protected Long botId;
     protected BotContainer botContainer;
     protected final MatchManager matchManager;
+    protected final PlayerManager playerManager;
 
     protected final L gameLogic;
     protected final Map<String, S> games;  // matchId -> game state
 
-    protected GameMatchHandler(Long botId, BotContainer botContainer, MatchManager matchManager, L gameLogic) {
-        this.botId = botId;
-        this.botContainer = botContainer;
-        this.matchManager = matchManager;
-        this.gameLogic = gameLogic;
-        games = new ConcurrentHashMap<>();
-    }
 
     // 发送初始信息方法
     protected void sendInitMessage(Match match, S state){
@@ -62,13 +57,21 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
     public abstract String gameType();
 
     // 判断是否能够匹配
-    public abstract boolean canMatch(Player p1, Player p2);
+    public boolean canMatch(Player p1, Player p2) { return true; };
 
     // 游戏开始前初始化
     public abstract void onMatchStart(Match match);
 
     // 游戏结束后的清理
-    public abstract void onMatchEnd(Match match);
+    public void onMatchEnd(Match match) {
+        // 移除游戏数据
+        games.remove(match.getMatchId());
+        // 重置玩家状态
+        playerManager.resetPlayer(match.getPlayer1());
+        playerManager.resetPlayer(match.getPlayer2());
+        // 移除游戏会话
+        matchManager.removeMatch(match.getMatchId());
+    }
 
     // 游戏输出渲染方法
     protected abstract String render(S state);

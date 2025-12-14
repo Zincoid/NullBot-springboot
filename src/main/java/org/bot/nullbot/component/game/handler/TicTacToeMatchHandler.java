@@ -3,13 +3,15 @@ package org.bot.nullbot.component.game.handler;
 import com.mikuac.shiro.core.BotContainer;
 import org.bot.nullbot.component.game.GameMatchHandler;
 import org.bot.nullbot.component.game.MatchManager;
+import org.bot.nullbot.component.game.PlayerManager;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
 import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
-import org.bot.nullbot.entity.game.basic.Player;
 import org.bot.nullbot.entity.game.tictactoe.TicTacToeGameState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Component
@@ -18,19 +20,15 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
     public TicTacToeMatchHandler(
             @Value("${nullbot.bot-id}") Long botId,
             BotContainer botContainer,
-            TicTacToeGameLogic gameLogic,
-            MatchManager matchManager) {
-        super(botId, botContainer, matchManager, gameLogic);
+            MatchManager matchManager,
+            PlayerManager playerManager,
+            TicTacToeGameLogic gameLogic) {
+        super(botId, botContainer, matchManager, playerManager, gameLogic, new ConcurrentHashMap<>());
     }
 
     @Override
     public String gameType() {
-        return "tictactoe";
-    }
-
-    @Override
-    public boolean canMatch(Player p1, Player p2) {
-        return true;
+        return "井字棋";
     }
 
     @Override
@@ -40,11 +38,6 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
         state.setPlayerO(match.getPlayer2().getUserId());
         games.put(match.getMatchId(), state);
         sendInitMessage(match, state);
-    }
-
-    @Override
-    public void onMatchEnd(Match match) {
-        games.remove(match.getMatchId());
     }
 
     public GameResult move(Long userId, int r, int c) {
@@ -85,9 +78,11 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
             info.append("\n🎉 ")
                     .append(winner == 'X' ? "X" : "O")
                     .append(" 获胜！");
+            onMatchEnd(match);
         } else if (gameLogic.isDraw(state)) {
             state.setFinished(true);
             info.append("\n🤝 平局！");
+            onMatchEnd(match);
         }
 
         return getGameResult(userId, match, info.toString());

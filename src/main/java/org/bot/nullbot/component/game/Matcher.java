@@ -38,7 +38,7 @@ public class Matcher
         this.matchManager = matchManager;
 
         // 自动注册所有 Handler
-        handlers.forEach(h -> handlerMap.put(h.getClass().getSimpleName().replace("MatchHandler", "").toLowerCase(), h));
+        handlers.forEach(h -> handlerMap.put(h.gameType(), h));
     }
 
     /**
@@ -109,7 +109,7 @@ public class Matcher
     }
 
     /**
-     * 结束游戏 通过用户ID 暴露给用户的方法
+     * 结束游戏 通过用户ID 暴露给用户可通知方法
      */
     public MatchResult finishMatchByPlayerId(Long userId) {
         String matchId = playerManager.getPlayer(userId).getInProgressMatchId();
@@ -131,16 +131,9 @@ public class Matcher
         Match match = matchManager.getMatch(matchId);
         if (match == null) { return MatchResult.notMatched("Match 不存在"); }
 
-        // 清理游戏数据
+        // 执行游戏对局结束流程
         GameMatchHandler handler = handlerMap.get(match.getGameType());
         if (handler != null) { handler.onMatchEnd(match); }
-
-        // 重置玩家状态
-        playerManager.resetPlayer(match.getPlayer1());
-        playerManager.resetPlayer(match.getPlayer2());
-
-        // 移除游戏会话
-        matchManager.removeMatch(matchId);
 
         return MatchResult.notMatched("Match 已结束：" + matchId);
     }
