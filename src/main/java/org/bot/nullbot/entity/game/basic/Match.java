@@ -3,6 +3,7 @@ package org.bot.nullbot.entity.game.basic;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Data
 public class Match {
@@ -20,5 +21,10 @@ public class Match {
 
     public enum MatchStatus {
         CREATED, WAITING, PLAYING, FINISHED
+    }
+
+    // 用于因己方动作需单独通知对方时快速获取对方群号
+    public Long getOpponentGroupIdBySelfId(Long id) {
+        return Objects.equals(id, player1.getUserId()) ? player2.getGroupId(): player1.getGroupId();
     }
 }

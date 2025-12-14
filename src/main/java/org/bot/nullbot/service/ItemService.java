@@ -6,6 +6,8 @@ public interface ItemService
 {
     ItemPO getItem(Integer itemId);
 
+    ItemPO getRandomItem();
+
     ItemPO getAndKeepRandomItem(Long userId);
 
     boolean exist(Integer itemId);
