@@ -99,9 +99,8 @@ public class MatchCleanupScheduler
                 }
                 bot.sendGroupMsg(p2.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已超时", false);
 
-                // 执行游戏对局结束流程
-                GameMatchHandler handler = handlerMap.get(match.getGameType());
-                if (handler != null) { handler.onMatchEnd(match); }
+                // 在对应游戏执行器中触发对局结束流程
+                handlerMap.get(match.getGameType()).onMatchEnd(match);
             }
         });
     }
