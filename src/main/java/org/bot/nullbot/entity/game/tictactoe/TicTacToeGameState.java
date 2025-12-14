@@ -1,10 +1,13 @@
 package org.bot.nullbot.entity.game.tictactoe;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.bot.nullbot.entity.game.GameState;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class TicTacToeGameState {
-
+public class TicTacToeGameState extends GameState
+{
     private char[][] board = new char[3][3];
 
     private Long playerX;

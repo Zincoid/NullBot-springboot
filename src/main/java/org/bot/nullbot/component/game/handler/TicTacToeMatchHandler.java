@@ -1,4 +1,4 @@
-package org.bot.nullbot.component.game.extend;
+package org.bot.nullbot.component.game.handler;
 
 import com.mikuac.shiro.core.BotContainer;
 import org.bot.nullbot.component.game.GameMatchHandler;
@@ -13,17 +13,14 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState>
+public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, TicTacToeGameLogic>
 {
-    private final TicTacToeGameLogic gameLogic;
-
     public TicTacToeMatchHandler(
             @Value("${nullbot.bot-id}") Long botId,
             BotContainer botContainer,
             TicTacToeGameLogic gameLogic,
             MatchManager matchManager) {
-        super(botId, botContainer, matchManager);
-        this.gameLogic = gameLogic;
+        super(botId, botContainer, matchManager, gameLogic);
     }
 
     @Override

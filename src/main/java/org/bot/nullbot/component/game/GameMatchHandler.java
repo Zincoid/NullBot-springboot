@@ -2,6 +2,7 @@ package org.bot.nullbot.component.game;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
+import org.bot.nullbot.entity.game.GameState;
 import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
@@ -11,25 +12,25 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public abstract class GameMatchHandler<T>
+public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
 {
     protected Long botId;
     protected BotContainer botContainer;
-
     protected final MatchManager matchManager;
 
-    // matchId -> game state
-    protected final Map<String, T> games;
+    protected final L gameLogic;
+    protected final Map<String, S> games;  // matchId -> game state
 
-    protected GameMatchHandler(Long botId, BotContainer botContainer, MatchManager matchManager) {
+    protected GameMatchHandler(Long botId, BotContainer botContainer, MatchManager matchManager, L gameLogic) {
         this.botId = botId;
         this.botContainer = botContainer;
         this.matchManager = matchManager;
+        this.gameLogic = gameLogic;
         games = new ConcurrentHashMap<>();
     }
 
     // 发送初始信息方法
-    protected void sendInitMessage(Match match, T state){
+    protected void sendInitMessage(Match match, S state){
         Bot bot = botContainer.robots.get(botId);
 
         Player p1 = match.getPlayer1();
@@ -70,5 +71,5 @@ public abstract class GameMatchHandler<T>
     public abstract void onMatchEnd(Match match);
 
     // 游戏输出渲染方法
-    protected abstract String render(T state);
+    protected abstract String render(S state);
 }

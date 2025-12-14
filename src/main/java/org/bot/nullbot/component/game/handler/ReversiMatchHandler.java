@@ -1,4 +1,4 @@
-package org.bot.nullbot.component.game.extend;
+package org.bot.nullbot.component.game.handler;
 
 import com.mikuac.shiro.core.BotContainer;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,17 +13,14 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState>
+public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, ReversiGameLogic>
 {
-    private final ReversiGameLogic gameLogic;
-
     public ReversiMatchHandler(
             @Value("${nullbot.bot-id}") Long botId,
             BotContainer botContainer,
             ReversiGameLogic gameLogic,
             MatchManager matchManager) {
-        super(botId, botContainer, matchManager);
-        this.gameLogic = gameLogic;
+        super(botId, botContainer, matchManager, gameLogic);
     }
 
     @Override

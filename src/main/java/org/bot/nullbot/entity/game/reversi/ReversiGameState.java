@@ -1,11 +1,14 @@
 package org.bot.nullbot.entity.game.reversi;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.bot.nullbot.entity.game.GameState;
 
 import java.util.Arrays;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class ReversiGameState
+public class ReversiGameState  extends GameState
 {
     public static final int SIZE = 8;
 
