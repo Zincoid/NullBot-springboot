@@ -30,7 +30,7 @@ public class RecentPlayerCommand implements Command
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 StringBuilder sb = new StringBuilder().append("[最近玩家] 当前状态-上次活跃");
                 for (Player player : players) {
-                    sb.append("\n").append(player.getUserName()).append("(").append(player.getUserId()).append(") :\n").append(player.getStatus()).append(" - ").append(player.getLastActionTime().format(formatter));
+                    sb.append("\n").append(player.getUserName()).append("(").append(player.getUserId()).append(") :\n").append(player.getStatus()).append(" ~ ").append(player.getLastActionTime().format(formatter));
                 }
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
                 log.info("\t\t\t\t├─[RecentPlayer] 已获取 - {}", sb.toString().replaceAll("\\R", ""));

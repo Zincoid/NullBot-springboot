@@ -29,12 +29,8 @@ public class ItemPO
         return formatForChat();
     }
 
-    /**
-     * 适合聊天软件的简洁格式（推荐）
-     */
     public String formatForChat() {
         String rarityIcon = getRarityEmoji();
-
         return String.format(
                 """
                         %s【%s】
@@ -49,9 +45,6 @@ public class ItemPO
         );
     }
 
-    /**
-     * 获取稀有度显示名称（带颜色）
-     */
     private String getRarityDisplay() {
         return switch (rarity) {
             case WHITE -> "白";
@@ -63,9 +56,6 @@ public class ItemPO
         };
     }
 
-    /**
-     * 获取稀有度对应的表情符号
-     */
     private String getRarityEmoji() {
         return switch (rarity) {
             case WHITE -> "⚪";
@@ -77,17 +67,11 @@ public class ItemPO
         };
     }
 
-    /**
-     * 获取稀有度星级表示
-     */
     private String getRarityStar() {
         int level = rarity.ordinal() + 1;
         return "★".repeat(level) + "☆".repeat(5 - level);
     }
 
-    /**
-     * 截断字符串，超过长度加省略号
-     */
     private String truncate(String text, int maxLength) {
         if (text == null || text.length() <= maxLength) {
             return text != null ? text : "";
