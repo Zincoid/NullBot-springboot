@@ -11,25 +11,19 @@ import org.bot.nullbot.entity.game.tictactoe.TicTacToeGameState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState>
 {
     private final TicTacToeGameLogic gameLogic;
-    private final MatchManager matchManager;
-
-    private final Map<String, TicTacToeGameState> games = new ConcurrentHashMap<>();
 
     public TicTacToeMatchHandler(
             @Value("${nullbot.bot-id}") Long botId,
             BotContainer botContainer,
             TicTacToeGameLogic gameLogic,
             MatchManager matchManager) {
-        super(botId, botContainer);
+        super(botId, botContainer, matchManager);
         this.gameLogic = gameLogic;
-        this.matchManager = matchManager;
     }
 
     @Override

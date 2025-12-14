@@ -11,27 +11,19 @@ import org.bot.nullbot.entity.game.reversi.ReversiGameState;
 import org.bot.nullbot.component.game.logic.ReversiGameLogic;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 
 @Component
 public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState>
 {
     private final ReversiGameLogic gameLogic;
-    private final MatchManager matchManager;
-
-    // matchId -> game state
-    private final Map<String, ReversiGameState> games = new ConcurrentHashMap<>();
 
     public ReversiMatchHandler(
             @Value("${nullbot.bot-id}") Long botId,
             BotContainer botContainer,
             ReversiGameLogic gameLogic,
             MatchManager matchManager) {
-        super(botId, botContainer);
+        super(botId, botContainer, matchManager);
         this.gameLogic = gameLogic;
-        this.matchManager = matchManager;
     }
 
     @Override

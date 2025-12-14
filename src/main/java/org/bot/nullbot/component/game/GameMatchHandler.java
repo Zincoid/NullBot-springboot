@@ -6,17 +6,26 @@ import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public abstract class GameMatchHandler<T>
 {
     protected Long botId;
-    protected final BotContainer botContainer;
+    protected BotContainer botContainer;
 
-    protected GameMatchHandler(Long botId, BotContainer botContainer) {
+    protected final MatchManager matchManager;
+
+    // matchId -> game state
+    protected final Map<String, T> games;
+
+    protected GameMatchHandler(Long botId, BotContainer botContainer, MatchManager matchManager) {
         this.botId = botId;
         this.botContainer = botContainer;
+        this.matchManager = matchManager;
+        games = new ConcurrentHashMap<>();
     }
 
     // 发送初始信息方法
