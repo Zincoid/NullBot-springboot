@@ -11,6 +11,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.game.basic.Player;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @CommandMapping({"RecentPlayer", "最近玩家"})
@@ -26,9 +27,10 @@ public class RecentPlayerCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<Player> players = playerManager.getRecentPlayers(6);
             if (players != null && !players.isEmpty()) {
-                StringBuilder sb = new StringBuilder().append("[最近玩家] 当前状态 & 上次活跃");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                StringBuilder sb = new StringBuilder().append("[最近玩家] 当前状态-上次活跃");
                 for (Player player : players) {
-                    sb.append("\n").append(player.getUserName()).append("(").append(player.getUserId()).append(") : ").append(player.getStatus()).append("\n").append(player.getLastActionTime());
+                    sb.append("\n").append(player.getUserName()).append("(").append(player.getUserId()).append(") :\n").append(player.getStatus()).append(" - ").append(player.getLastActionTime().format(formatter));
                 }
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
                 log.info("\t\t\t\t├─[RecentPlayer] 已获取 - {}", sb.toString().replaceAll("\\R", ""));
