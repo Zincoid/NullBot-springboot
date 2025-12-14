@@ -7,6 +7,7 @@ import org.bot.nullbot.entity.game.GameState;
 import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
+import org.bot.nullbot.service.UserService;
 
 import java.util.Map;
 import java.util.Objects;
@@ -20,18 +21,26 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
     protected BotContainer botContainer;
     protected final MatchManager matchManager;
     protected final PlayerManager playerManager;
+    protected final UserService userService;
 
     protected final L gameLogic;
     protected final Map<String, S> games;  // matchId -> game state
 
 
+    // 定义游戏类型名称
     public abstract String gameType();
 
     // 判断是否能够匹配
     public boolean canMatch(Player p1, Player p2) { return true; }
 
     // 游戏开始前初始化
-    public abstract void onMatchStart(Match match);
+    public void onMatchStart(Match match) {
+        // 更新玩家状态
+        playerManager.updateStatus(match.getPlayer1(), Player.PlayerStatus.PLAYING);
+        playerManager.updateStatus(match.getPlayer2(), Player.PlayerStatus.PLAYING);
+        // 更新对局状态
+        matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
+    }
 
     // 游戏结束后的清理
     public void onMatchEnd(Match match) {

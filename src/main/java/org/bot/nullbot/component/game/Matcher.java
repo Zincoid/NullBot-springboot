@@ -77,15 +77,8 @@ public class Matcher
         player.setInProgressMatchId(match.getMatchId());
         other.setInProgressMatchId(match.getMatchId());
 
-        // 初始化对应游戏模式的数据
+        // 初始化游戏对局和玩家状态
         handler.onMatchStart(match);
-
-        // 开始游戏 更新玩家状态
-        playerManager.updateStatus(player, Player.PlayerStatus.PLAYING);
-        playerManager.updateStatus(other, Player.PlayerStatus.PLAYING);
-
-        // 开始游戏 更新对局状态
-        matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
 
         String info = String.format("匹配成功！游戏类型：%s\n玩家1：%s\n玩家2：%s\nMatch ID: %s",
                 gameType, player.getUserName(), other.getUserName(), match.getMatchId());

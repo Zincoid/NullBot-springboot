@@ -2,6 +2,7 @@ package org.bot.nullbot.component.game.handler;
 
 import com.mikuac.shiro.core.BotContainer;
 import org.bot.nullbot.component.game.PlayerManager;
+import org.bot.nullbot.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.bot.nullbot.component.game.GameMatchHandler;
 import org.bot.nullbot.component.game.MatchManager;
@@ -22,8 +23,9 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
             BotContainer botContainer,
             MatchManager matchManager,
             PlayerManager playerManager,
+            UserService userService,
             ReversiGameLogic gameLogic) {
-        super(botId, botContainer, matchManager, playerManager, gameLogic, new ConcurrentHashMap<>());
+        super(botId, botContainer, matchManager, playerManager, userService, gameLogic, new ConcurrentHashMap<>());
     }
 
     @Override
@@ -37,11 +39,24 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
         state.setBlackPlayerId(match.getPlayer1().getUserId());
         state.setWhitePlayerId(match.getPlayer2().getUserId());
         games.put(match.getMatchId(), state);
+
+        super.onMatchStart(match);
         sendInitMessage(match, state);
     }
 
+    @Override
+    public void onMatchEnd(Match match) {
+        ReversiGameState state = games.get(match.getMatchId());
+        // 黑白棋 奖励逻辑
+        if(state.isFinished()){
+
+        }
+
+        super.onMatchEnd(match);
+    }
+
     /**
-     * 黑白棋落子
+     * 黑白棋落子 (用户调用)
      */
     public GameResult move(Long userId, String pos) {
         Match match = matchManager.getMatchBySelfId(userId);

@@ -8,6 +8,7 @@ import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
 import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.tictactoe.TicTacToeGameState;
+import org.bot.nullbot.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +23,9 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
             BotContainer botContainer,
             MatchManager matchManager,
             PlayerManager playerManager,
+            UserService userService,
             TicTacToeGameLogic gameLogic) {
-        super(botId, botContainer, matchManager, playerManager, gameLogic, new ConcurrentHashMap<>());
+        super(botId, botContainer, matchManager, playerManager, userService, gameLogic, new ConcurrentHashMap<>());
     }
 
     @Override
@@ -37,9 +39,26 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
         state.setPlayerX(match.getPlayer1().getUserId());
         state.setPlayerO(match.getPlayer2().getUserId());
         games.put(match.getMatchId(), state);
+
+        super.onMatchStart(match);
         sendInitMessage(match, state);
     }
 
+    @Override
+    public void onMatchEnd(Match match) {
+        TicTacToeGameState state = games.get(match.getMatchId());
+        // 井字棋 奖励逻辑
+        if(state.isFinished()){
+            userService.increaseDrawTimes(match.getPlayer1().getUserId(), 10);
+            userService.increaseDrawTimes(match.getPlayer1().getUserId(), 10);
+        }
+
+        super.onMatchEnd(match);
+    }
+
+    /**
+     * 井字棋落子 (用户调用)
+     */
     public GameResult move(Long userId, int r, int c) {
         Match match = matchManager.getMatchBySelfId(userId);
         if (match == null) {
