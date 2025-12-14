@@ -90,7 +90,8 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
 
     // 返回游戏结束结果 (自动结束游戏)
     protected GameResult getFinishResult(Long userId, Match match, String info) {
+        GameResult result = getGameResult(userId, match, info + "\n\nMatch 已结束：" + match.getMatchId());
         onMatchEnd(match);
-        return getGameResult(userId, match, info + "\n\nMatch 已结束：" + match.getMatchId());
+        return result;
     }
 }
