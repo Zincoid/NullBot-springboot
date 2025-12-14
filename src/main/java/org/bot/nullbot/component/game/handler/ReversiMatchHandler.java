@@ -75,7 +75,6 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
             return GameResult.error("[黑白棋] ❌非法落子");
         }
 
-        // ===== 构造返回文本 =====
         StringBuilder info = new StringBuilder();
         info.append(render(state));
 
@@ -84,7 +83,7 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
                 && !gameLogic.hasAnyMove(state, 'W')) {
             state.setFinished(true);
             info.append("\n").append(judge(state));
-            getFinishResult(userId, match, info.toString());
+            return getFinishResult(userId, match, info.toString());
         }
 
         return getGameResult(userId, match, info.toString());

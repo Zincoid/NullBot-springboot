@@ -80,7 +80,7 @@ public class Matcher
         // 初始化对应游戏模式的数据
         handler.onMatchStart(match);
 
-        // 更新双方玩家状态
+        // 开始游戏 更新玩家状态
         playerManager.updateStatus(player, Player.PlayerStatus.PLAYING);
         playerManager.updateStatus(other, Player.PlayerStatus.PLAYING);
 

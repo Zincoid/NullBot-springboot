@@ -16,6 +16,7 @@ import java.util.Objects;
 public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
 {
     protected Long botId;
+
     protected BotContainer botContainer;
     protected final MatchManager matchManager;
     protected final PlayerManager playerManager;
@@ -23,6 +24,30 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
     protected final L gameLogic;
     protected final Map<String, S> games;  // matchId -> game state
 
+
+    public abstract String gameType();
+
+    // 判断是否能够匹配
+    public boolean canMatch(Player p1, Player p2) { return true; }
+
+    // 游戏开始前初始化
+    public abstract void onMatchStart(Match match);
+
+    // 游戏结束后的清理
+    public void onMatchEnd(Match match) {
+        // 移除游戏数据
+        games.remove(match.getMatchId());
+        // 重置玩家状态
+        playerManager.resetPlayer(match.getPlayer1());
+        playerManager.resetPlayer(match.getPlayer2());
+        // 移除游戏会话
+        matchManager.removeMatch(match.getMatchId());
+    }
+
+    // 游戏输出渲染方法
+    protected abstract String render(S state);
+
+    // ================== 通用方法 ==================
 
     // 发送初始信息方法
     protected void sendInitMessage(Match match, S state){
@@ -55,30 +80,8 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
     }
 
     // 返回游戏结束结果 (自动结束游戏)
-    public GameResult getFinishResult(Long userId, Match match, String info) {
+    protected GameResult getFinishResult(Long userId, Match match, String info) {
         onMatchEnd(match);
         return getGameResult(userId, match, info + "\n\nMatch 已结束：" + match.getMatchId());
     }
-
-    public abstract String gameType();
-
-    // 判断是否能够匹配
-    public boolean canMatch(Player p1, Player p2) { return true; }
-
-    // 游戏开始前初始化
-    public abstract void onMatchStart(Match match);
-
-    // 游戏结束后的清理
-    public void onMatchEnd(Match match) {
-        // 移除游戏数据
-        games.remove(match.getMatchId());
-        // 重置玩家状态
-        playerManager.resetPlayer(match.getPlayer1());
-        playerManager.resetPlayer(match.getPlayer2());
-        // 移除游戏会话
-        matchManager.removeMatch(match.getMatchId());
-    }
-
-    // 游戏输出渲染方法
-    protected abstract String render(S state);
 }
