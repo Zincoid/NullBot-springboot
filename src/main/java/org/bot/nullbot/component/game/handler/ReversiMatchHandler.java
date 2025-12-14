@@ -49,10 +49,13 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
         ReversiGameState state = games.get(match.getMatchId());
         // 黑白棋 奖励逻辑
         if(state.isFinished()){
-            // userService.increaseDrawTimes(match.getPlayer1().getUserId(), 20);
-            // userService.increaseDrawTimes(match.getPlayer1().getUserId(), 20);
+            if (state.getWinnerId() != null)
+                userService.increaseDrawTimes(state.getWinnerId(), 50);
+            else{
+                userService.increaseDrawTimes(state.getBlackPlayerId(), 25);
+                userService.increaseDrawTimes(state.getWhitePlayerId(), 25);
+            }
         }
-
         super.onMatchEnd(match);
     }
 
@@ -145,7 +148,7 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
         }
 
         sb.append("当前回合：")
-                .append(s.getCurrentTurn() == 'B' ? "⚫ 黑棋" : "⚪ 白棋");
+                .append(s.getCurrentTurn() == 'B' ? ("⚫ 黑棋\n" + s.getBlackPlayerId()) : ("⚪ 白棋\n" + s.getWhitePlayerId()));
 
         return sb.toString();
     }
@@ -157,8 +160,14 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
                 if (c == 'B') b++;
                 else if (c == 'W') w++;
 
-        if (b > w) return "🎉 黑棋胜利！(" + b + " : " + w + ")";
-        if (w > b) return "🎉 白棋胜利！(" + w + " : " + b + ")";
-        return "🤝 平局！(" + b + " : " + w + ")";
+        if (b > w) {
+            s.setWinnerId(s.getBlackPlayerId());
+            return "🎉 黑棋胜利！(" + b + " : " + w + ")\n" + s.getBlackPlayerId() + " 获得50抽数！";
+        }
+        if (w > b) {
+            s.setWinnerId(s.getWhitePlayerId());
+            return "🎉 白棋胜利！(" + w + " : " + b + ")\n" + s.getWhitePlayerId() + " 获得50抽数！";
+        }
+        return "🤝 平局！(" + b + " : " + w + ")\n双方分别获得25抽数！";
     }
 }

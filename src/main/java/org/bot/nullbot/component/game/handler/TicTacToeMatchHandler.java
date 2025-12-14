@@ -49,10 +49,13 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
         TicTacToeGameState state = games.get(match.getMatchId());
         // 井字棋 奖励逻辑
         if(state.isFinished()){
-            userService.increaseDrawTimes(match.getPlayer1().getUserId(), 10);
-            userService.increaseDrawTimes(match.getPlayer1().getUserId(), 10);
+            if(state.getWinnerId() != null){
+                userService.increaseDrawTimes(state.getWinnerId(), 30);
+            }else{
+                userService.increaseDrawTimes(state.getPlayerO(), 15);
+                userService.increaseDrawTimes(state.getPlayerX(), 15);
+            }
         }
-
         super.onMatchEnd(match);
     }
 
@@ -94,13 +97,14 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
         Character winner = gameLogic.checkWinner(state);
         if (winner != null) {
             state.setFinished(true);
+            state.setWinnerId(winner == 'X' ? state.getPlayerX() : state.getPlayerO());
             info.append("\n🎉 ")
                     .append(winner == 'X' ? "X" : "O")
-                    .append(" 获胜！\n 完成对局双方均可获得10抽数！");
+                    .append(" 获胜！获得30抽数！");
             return getFinishResult(userId, match, info.toString());
         } else if (gameLogic.isDraw(state)) {
             state.setFinished(true);
-            info.append("\n🤝 平局！\n 完成对局双方均可获得10抽数！");
+            info.append("\n🤝 平局！\n 双方均可获得15抽数！");
             return getFinishResult(userId, match, info.toString());
         }
 
@@ -113,7 +117,7 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
     protected String render(TicTacToeGameState s) {
         return printBoard(s.getBoard())
                 + "\n当前回合："
-                + (s.getCurrentTurn() == 'X' ? "Ｘ" : "Ｏ");
+                + (s.getCurrentTurn() == 'X' ? ("Ｘ\n" + s.getPlayerX()) : ("Ｏ\n" + s.getPlayerO()));
     }
 
     // 文本形式的棋盘

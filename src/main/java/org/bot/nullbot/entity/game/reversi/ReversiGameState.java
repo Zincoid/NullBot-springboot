@@ -16,6 +16,7 @@ public class ReversiGameState  extends GameState
 
     private Long blackPlayerId;
     private Long whitePlayerId;
+    private Long winnerId;
 
     private char currentTurn; // 'B' or 'W'
     private boolean finished = false;

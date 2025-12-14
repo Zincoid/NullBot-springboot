@@ -12,6 +12,7 @@ public class TicTacToeGameState extends GameState
 
     private Long playerX;
     private Long playerO;
+    private Long winnerId;
 
     private char currentTurn = 'X';
     private boolean finished = false;
