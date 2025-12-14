@@ -84,7 +84,7 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
                 && !gameLogic.hasAnyMove(state, 'W')) {
             state.setFinished(true);
             info.append("\n").append(judge(state));
-            onMatchEnd(match);
+            getFinishResult(userId, match, info.toString());
         }
 
         return getGameResult(userId, match, info.toString());

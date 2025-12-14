@@ -109,10 +109,11 @@ public class Matcher
     }
 
     /**
-     * 结束游戏 通过用户ID 暴露给用户可通知方法
+     * 结束对局
      */
-    public MatchResult finishMatchByPlayerId(Long userId) {
+    public MatchResult finishMatch(Long userId) {
         String matchId = playerManager.getPlayer(userId).getInProgressMatchId();
+        if (matchId == null) { return MatchResult.notMatched("没有正在进行的对局"); }
         Match match = matchManager.getMatch(matchId);
         Player p1 = match.getPlayer1();
         Player p2 = match.getPlayer2();
@@ -121,15 +122,6 @@ public class Matcher
             bot.sendGroupMsg(p1.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已被终止", false);
         }
         bot.sendGroupMsg(p2.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已被终止", false);
-        return finishMatch(matchId);
-    }
-
-    /**
-     * 结束游戏 通过对局ID
-     */
-    public MatchResult finishMatch(String matchId) {
-        Match match = matchManager.getMatch(matchId);
-        if (match == null) { return MatchResult.notMatched("Match 不存在"); }
 
         // 执行游戏对局结束流程
         GameMatchHandler handler = handlerMap.get(match.getGameType());

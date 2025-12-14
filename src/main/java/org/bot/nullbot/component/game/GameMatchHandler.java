@@ -54,10 +54,16 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
         return GameResult.success(opponentGroupId, info);
     }
 
+    // 返回游戏结束结果 (自动结束游戏)
+    public GameResult getFinishResult(Long userId, Match match, String info) {
+        onMatchEnd(match);
+        return getGameResult(userId, match, info + "\n\nMatch 已结束：" + match.getMatchId());
+    }
+
     public abstract String gameType();
 
     // 判断是否能够匹配
-    public boolean canMatch(Player p1, Player p2) { return true; };
+    public boolean canMatch(Player p1, Player p2) { return true; }
 
     // 游戏开始前初始化
     public abstract void onMatchStart(Match match);

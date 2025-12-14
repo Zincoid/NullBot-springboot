@@ -2,7 +2,6 @@ package org.bot.nullbot.component.game;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.MatchConfig;
 import org.bot.nullbot.entity.game.basic.Match;
@@ -13,11 +12,13 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class MatchCleanupScheduler
 {
     @Value("${nullbot.bot-id}")
@@ -28,7 +29,27 @@ public class MatchCleanupScheduler
     private final MatchManager matchManager;
     private final PlayerManager playerManager;
     private final MatchConfig matchConfig;
-    private final Matcher matcher;
+
+    // gameType -> match handler
+    private final Map<String, GameMatchHandler> handlerMap = new HashMap<>();
+
+    public MatchCleanupScheduler(
+            BotContainer botContainer,
+            MatchPoolManager poolManager,
+            MatchManager matchManager,
+            PlayerManager playerManager,
+            MatchConfig matchConfig,
+            List<GameMatchHandler> handlers
+    ) {
+        this.botContainer = botContainer;
+        this.poolManager = poolManager;
+        this.matchManager = matchManager;
+        this.playerManager = playerManager;
+        this.matchConfig = matchConfig;
+
+        // 自动注册所有 Handler
+        handlers.forEach(h -> handlerMap.put(h.gameType(), h));
+    }
 
     /**
      * 每 10 秒清理一次超时
@@ -77,7 +98,10 @@ public class MatchCleanupScheduler
                     bot.sendGroupMsg(p1.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已超时", false);
                 }
                 bot.sendGroupMsg(p2.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已超时", false);
-                matcher.finishMatch(match.getMatchId());
+
+                // 执行游戏对局结束流程
+                GameMatchHandler handler = handlerMap.get(match.getGameType());
+                if (handler != null) { handler.onMatchEnd(match); }
             }
         });
     }

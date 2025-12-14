@@ -24,7 +24,7 @@ public class FinishMatchCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             // Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getUserId();
-            MatchResult result = matcher.finishMatchByPlayerId(userId);
+            MatchResult result = matcher.finishMatch(userId);
             // bot.sendGroupMsg(groupId, result.getInfo(), false);
             log.info("\t\t\t\t├─[FinishMatch] 结束对局结果 - {}", result.getInfo().replaceAll("\\R", ""));
         }else

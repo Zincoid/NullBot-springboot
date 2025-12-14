@@ -78,15 +78,17 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
             info.append("\n🎉 ")
                     .append(winner == 'X' ? "X" : "O")
                     .append(" 获胜！");
-            onMatchEnd(match);
+            return getFinishResult(userId, match, info.toString());
         } else if (gameLogic.isDraw(state)) {
             state.setFinished(true);
             info.append("\n🤝 平局！");
-            onMatchEnd(match);
+            return getFinishResult(userId, match, info.toString());
         }
 
         return getGameResult(userId, match, info.toString());
     }
+
+    // ================== 工具方法 ==================
 
     @Override
     protected String render(TicTacToeGameState s) {
