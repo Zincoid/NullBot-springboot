@@ -25,11 +25,8 @@ public class PlayerManager
             return Collections.emptyList();
         }
         return playerMap.values().stream()
-                // 过滤掉 lastActionTime 为 null 的玩家
-                .filter(player -> player.getLastActionTime() != null)
-                // 按最后操作时间降序排序（最近的在前）
+                .filter(player -> player.getLastActionTime() != null)  // 可能冗余
                 .sorted(Comparator.comparing(Player::getLastActionTime).reversed())
-                // 限制返回数量
                 .limit(Math.min(count, playerMap.size()))
                 .collect(Collectors.toList());
     }
