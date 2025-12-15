@@ -29,7 +29,8 @@ INSERT INTO item (name, category, rarity, price, weight, description, image_path
 ('高速固态', 0, 4, 10000, 2, '电脑配件', NULL, TRUE),
 
 -- 红色稀有度物品
-(' 非洲之心', 0, 5, 131452, 1, '世界上最大的钻石，象征永恒的爱', NULL, TRUE),
+('海洋之泪', 0, 5, 202520, 1, '浑然天成，珠圆玉润的巨大天然珍珠', NULL, TRUE),
+('非洲之心', 0, 5, 131452, 1, '世界上最大的钻石，象征永恒的爱', NULL, TRUE),
 
 -- 可以使用的物品
 ('口球', 1, 3, 25, 1, '(可使用物品) 如果Bot是管理员，用了会禁言自己一分钟 {UserBan userId 1}', NULL, TRUE);
