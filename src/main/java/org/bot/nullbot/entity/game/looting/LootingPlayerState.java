@@ -5,6 +5,7 @@ import org.bot.nullbot.entity.po.ItemPO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Data
 public class LootingPlayerState
@@ -13,6 +14,7 @@ public class LootingPlayerState
     private String location;
 
     private int hp = 100;
+    private int atk = 30;
     private boolean alive = true;
     private boolean evacuated = false;
 
@@ -21,5 +23,10 @@ public class LootingPlayerState
     public LootingPlayerState(Long userId, String spawn) {
         this.userId = userId;
         this.location = spawn;
+    }
+
+    public int getAtk() {
+        Random rand = new Random();
+        return atk + rand.nextInt(atk);
     }
 }

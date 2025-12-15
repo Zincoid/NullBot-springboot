@@ -6,7 +6,6 @@ import org.bot.nullbot.component.game.factory.LootingMapFactory;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.looting.*;
 import org.bot.nullbot.entity.po.ItemPO;
-import org.bot.nullbot.util.game.DamageUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -47,6 +46,7 @@ public class LootingGameLogic extends GameLogic
             AiEnemyState ai = new AiEnemyState();
             ai.setName("德穆兰");
             ai.setHp(100);
+            ai.setAtk(20);
             ai.setLocation(nodes.get(R.nextInt(nodes.size())));
             ai.getBackpack().addAll(mapFactory.randItems(true));
             s.getEnemies().add(ai);
@@ -145,7 +145,7 @@ public class LootingGameLogic extends GameLogic
     public String attackAi(LootingGameState s, LootingPlayerState p) {
         for (AiEnemyState ai : s.getEnemies()) {
             if (ai.alive() && ai.getLocation().equals(p.getLocation())) {
-                int dmg = DamageUtil.playerDamage();
+                int dmg = p.getAtk();
                 ai.setHp(Math.max(ai.getHp() - dmg, 0));
 
                 StringBuilder sb = new StringBuilder();
@@ -169,7 +169,7 @@ public class LootingGameLogic extends GameLogic
     public List<String> attackPlayer(LootingGameState s, LootingPlayerState p) {
         for (LootingPlayerState other : s.getPlayers().values()) {
             if (other != p && other.isAlive() && other.getLocation().equals(p.getLocation())) {
-                int dmg = DamageUtil.playerDamage();
+                int dmg = p.getAtk();
                 other.setHp(Math.max(other.getHp() - dmg, 0));
 
                 StringBuilder sb = new StringBuilder();
@@ -200,7 +200,7 @@ public class LootingGameLogic extends GameLogic
                 for (LootingPlayerState p : s.getPlayers().values()) {
                     if (p.isAlive() && p.getLocation().equals(ai.getLocation())) {
                         if(Objects.equals(p.getUserId(), selfId)){
-                            int dmg = DamageUtil.aiDamage();
+                            int dmg = ai.getAtk();
                             p.setHp(p.getHp() - dmg);
                             sb1.append("\n⚔️ ").append(ai.getName()).append("对你造成").append(dmg).append("伤害\n");
                             if (p.getHp() <= 0) {
@@ -210,7 +210,7 @@ public class LootingGameLogic extends GameLogic
                                 sb1.append("\n 💀 你死了");
                             }
                         }else{
-                            int dmg = DamageUtil.aiDamage();
+                            int dmg = ai.getAtk();
                             p.setHp(p.getHp() - dmg);
                             sb2.append("⚔️ ").append(ai.getName()).append("攻击了").append(p.getUserId()).append(",造成").append(dmg).append("伤害！").append("剩余HP: ").append(p.getHp());
                             if (p.getHp() <= 0) {
