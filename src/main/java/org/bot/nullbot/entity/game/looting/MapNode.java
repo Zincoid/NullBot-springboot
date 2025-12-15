@@ -24,7 +24,7 @@ public class MapNode {
     public String print() {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        if (spawn) sb.append("🟢出生点] ");
+        if (spawn) sb.append("\uD83C\uDFC1出生点] ");
         if (highValue) sb.append("💎高价值] ");
         if (evac) sb.append("🚪撤离点] ");
 

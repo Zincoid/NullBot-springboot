@@ -124,7 +124,7 @@ public class LootingGameLogic extends GameLogic
         for (ItemPO i : node.getItems()) {
             p.getBackpack().add(i);
             sb.append("\n- ").append(i.getName())
-                    .append(" (").append(i.getRarity()).append(")");
+                    .append(" (").append(i.getRarity().getDescription()).append(")");
         }
         node.getItems().clear();
         return sb.toString();
@@ -145,7 +145,7 @@ public class LootingGameLogic extends GameLogic
                     sb.append("\n💀 已击败").append(ai.getName()).append(",获得他的战利品:");
                     for (ItemPO i : ai.getBackpack()) {
                         p.getBackpack().add(i);
-                        sb.append("\n🎁 ").append(i.getName()).append(" (").append(i.getRarity()).append(")");
+                        sb.append("\n🎁 ").append(i.getName()).append(" (").append(i.getRarity().getDescription()).append(")");
                     }
                 }
                 return sb.toString();
@@ -170,7 +170,7 @@ public class LootingGameLogic extends GameLogic
                     sb.append("\n💀 已击败").append(other.getUserId()).append(",获得他的战利品:");
                     for (ItemPO i : other.getBackpack()) {
                         p.getBackpack().add(i);
-                        sb.append("\n🎁 ").append(i.getName()).append(" (").append(i.getRarity()).append(")");
+                        sb.append("\n🎁 ").append(i.getName()).append(" (").append(i.getRarity().getDescription()).append(")");
                     }
                 }
                 return List.of(sb.toString(), "⚔️ 玩家攻击了" + other.getUserId() +",造成" + dmg + "伤害！剩余HP: " + other.getHp());
@@ -231,7 +231,7 @@ public class LootingGameLogic extends GameLogic
 
         StringBuilder sb = new StringBuilder("\n🚪 已成功撤离！\n🎒 带出物品: ");
         for (ItemPO i : p.getBackpack()) {
-            sb.append("\n").append(i.getName()).append(" (").append(i.getRarity()).append(")");
+            sb.append("\n").append(i.getName()).append(" (").append(i.getRarity().getDescription()).append(")");
         }
         return sb.toString();
     }
