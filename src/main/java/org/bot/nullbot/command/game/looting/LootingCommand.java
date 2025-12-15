@@ -21,62 +21,62 @@ public class LootingCommand implements Command
     private final LootingMatchHandler lootingMatchHandler;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event)
-    {
-        if (!(event.getEvent() instanceof GroupMessageEvent groupMessageEvent)) {
-            log.info("\t\t\t\t├─[Looting] 非群消息，忽略");
-            return;
-        }
+    public void execute(Bot bot, CommandEvent<?> event) {
+        if ((event.getEvent() instanceof GroupMessageEvent groupMessageEvent)) {
+            Long groupId = groupMessageEvent.getGroupId();
+            Long userId = groupMessageEvent.getUserId();
 
-        Long groupId = groupMessageEvent.getGroupId();
-        Long userId = groupMessageEvent.getUserId();
+            // 无参数 = 侦察
+            String commandText = event.getCommandParameters().isEmpty()
+                    ? "侦察"
+                    : String.join(" ", event.getCommandParameters());
 
-        // 无参数 = 侦察
-        String commandText = event.getCommandParameters().isEmpty()
-                ? "侦察"
-                : String.join(" ", event.getCommandParameters());
+            GameResult result = lootingMatchHandler.action(userId, commandText);
 
-        GameResult result = lootingMatchHandler.action(userId, commandText);
+            // 当前群输出（始终）
+            bot.sendGroupMsg(groupId, result.getInfo(), false);
 
-        // 当前群输出（始终）
-        bot.sendGroupMsg(groupId, result.getInfo(), false);
+            // 跨群同步（同一 tick 世界变化）
+            if (result.getSuccess() && !result.getIsSameGroup()) {
+                bot.sendGroupMsg(
+                        result.getOpponentGroupId(),
+                        result.getInfo(),
+                        false
+                );
+            }
 
-        // 跨群同步（同一 tick 世界变化）
-        if (result.getSuccess() && !result.getIsSameGroup()) {
-            bot.sendGroupMsg(
-                    result.getOpponentGroupId(),
-                    result.getInfo(),
-                    false
+            log.info(
+                    "\t\t\t\t├─[Looting] 玩家 {} 执行指令 [{}]",
+                    userId,
+                    commandText
             );
+        }else{
+            log.info("\t\t\t\t├─[Looting] 未设计 非群消息事件响应方式");
         }
-
-        log.info(
-                "\t\t\t\t├─[Looting] 玩家 {} 执行指令 [{}]",
-                userId,
-                commandText
-        );
     }
 
     @Override
-    public String getHelp()
-    {
+    public String getHelp() {
         return """
                 ◉ Looting（摸金行动）
                 功能：双人 PVPVE 非回合制摸金对抗
                 限权：%s
 
                 基础指令：
-                Looting 查看
+                Looting 侦察
                 Looting 移动 [地点]
                 Looting 搜刮
                 Looting 攻击AI
                 Looting 攻击玩家
                 Looting 撤离
+                
+                中文指令：
+                摸金
 
                 说明：
-                - 任意玩家行动都会推进游戏刻
+                - 任意玩家行动(侦察除外)都会推进游戏刻
                 - AI 会在 Tick 中移动 / 攻击
-                - 超过 25 Tick 全员迷失，掉落全部物品
+                - 25 Tick后未撤离则迷失，掉落全部物品
                 """.formatted(getAccess());
     }
 }

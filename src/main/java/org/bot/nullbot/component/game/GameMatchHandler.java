@@ -54,6 +54,8 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
     // 游戏输出渲染方法
     protected abstract String render(S state);
 
+    // ========= 接入Logic的方法 在子类中添加 =========
+
     // ================== 通用方法 ==================
 
     // 发送初始信息方法
@@ -70,7 +72,7 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
         bot.sendGroupMsg(p2.getGroupId(), info, false);
     }
 
-    // 返回跨群判断结果
+    // 返回附加跨群判断结果 (用于同时回复双方同一内容 根据双方所在群聊判断是否需要额外通知另一个群)
     protected GameResult getGameResult(Long userId, Match match, String info){
         boolean sameGroup =
                 match.getPlayer1().getGroupId()
@@ -86,7 +88,7 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
         return GameResult.success(opponentGroupId, info);
     }
 
-    // 返回游戏结束结果 (自动结束游戏)
+    // 自动结束游戏并返回跨群结束结果 (用于同时回复双方同一内容 根据双方所在群聊判断是否需要额外通知另一个群)
     protected GameResult getFinishResult(Long userId, Match match, String info) {
         GameResult result = getGameResult(userId, match, info + "\n\nMatch 已结束：" + match.getMatchId());
         onMatchEnd(match);
