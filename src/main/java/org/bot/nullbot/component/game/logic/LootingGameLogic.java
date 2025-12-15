@@ -1,6 +1,5 @@
 package org.bot.nullbot.component.game.logic;
 
-import com.mikuac.shiro.core.BotContainer;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.game.GameLogic;
 import org.bot.nullbot.component.game.factory.LootingMapFactory;
@@ -8,7 +7,6 @@ import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.looting.*;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.util.game.DamageUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -20,9 +18,6 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class LootingGameLogic extends GameLogic
 {
-    @Value("${nullbot.bot-id}")
-    Long botId;
-    private final BotContainer botContainer;
     private final LootingMapFactory mapFactory;
     private static final Random R = new Random();
 
@@ -54,12 +49,6 @@ public class LootingGameLogic extends GameLogic
             ai.getBackpack().addAll(mapFactory.randItems());
             s.getEnemies().add(ai);
         }
-    }
-
-    public String tick(LootingGameState s, Long selfId, Long opponentGroupId) {
-        s.setTick(s.getTick() + 1);
-        checkFinished(s);
-        return aiAction(s, selfId, opponentGroupId);
     }
 
     public void checkFinished(LootingGameState s) {
@@ -101,7 +90,13 @@ public class LootingGameLogic extends GameLogic
         return sb.toString();
     }
 
-    // ===== 移动 / 侦察 / 搜刮 / 攻击 / AI 行为 / 撤离 / 下一步 =====
+    public List<String> tick(LootingGameState s, Long selfId) {
+        s.setTick(s.getTick() + 1);
+        checkFinished(s);
+        return aiAction(s, selfId);
+    }
+
+    // ===== 移动 / 侦察 / 搜刮 / 攻击 / AI行为 / 撤离 =====
 
     public String move(LootingGameState s, LootingPlayerState p, String target) {
         MapNode cur = s.getMap().node(p.getLocation());
@@ -160,7 +155,7 @@ public class LootingGameLogic extends GameLogic
         return "\n❌ 当前位置没有 AI 敌人";
     }
 
-    public String attackPlayer(LootingGameState s, LootingPlayerState p, Long opponentGroupId) {
+    public List<String> attackPlayer(LootingGameState s, LootingPlayerState p) {
         for (LootingPlayerState other : s.getPlayers().values()) {
             if (other != p && other.isAlive() && other.getLocation().equals(p.getLocation())) {
                 int dmg = DamageUtil.playerDamage();
@@ -179,14 +174,13 @@ public class LootingGameLogic extends GameLogic
                         sb.append("\n🎁 ").append(i.getName()).append(" (").append(i.getRarity()).append(")");
                     }
                 }
-                botContainer.robots.get(botId).sendGroupMsg(opponentGroupId, "⚔️ 有玩家攻击了" + other.getUserId() +"！剩余HP: " + other.getHp(), false);
-                return sb.toString();
+                return List.of(sb.toString(), "⚔️ 有玩家攻击了" + other.getUserId() +"！剩余HP: " + other.getHp());
             }
         }
-        return "\n❌ 当前位置没有可攻击的玩家";
+        return List.of("\n❌ 当前位置没有可攻击的玩家", "");
     }
 
-    private String aiAction(LootingGameState s, Long selfId, Long opponentGroupId) {
+    private List<String> aiAction(LootingGameState s, Long selfId) {
         StringBuilder sb1 = new StringBuilder();
         StringBuilder sb2 = new StringBuilder();
         for (AiEnemyState ai : s.getEnemies()) {
@@ -227,9 +221,7 @@ public class LootingGameLogic extends GameLogic
                 }
             }
         }
-        if(!sb2.isEmpty())
-            botContainer.robots.get(botId).sendGroupMsg(opponentGroupId, sb2.toString(), false);
-        return sb1.toString();
+        return List.of(sb1.toString(), sb2.toString());
     }
 
     public String evac(LootingGameState s, LootingPlayerState p) {

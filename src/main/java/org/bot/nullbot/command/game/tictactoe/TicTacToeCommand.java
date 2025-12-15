@@ -21,11 +21,11 @@ public class TicTacToeCommand implements Command {
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent e) {
+        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
 
             if (event.getCommandParameters().size() != 2) {
                 bot.sendGroupMsg(
-                        e.getGroupId(),
+                        groupMessageEvent.getGroupId(),
                         "[井字棋] ❌参数数量错误，示例：井字棋 1 1",
                         false
                 );
@@ -37,26 +37,43 @@ public class TicTacToeCommand implements Command {
                 x = Integer.parseInt(event.getCommandParameters().get(0));
                 y = Integer.parseInt(event.getCommandParameters().get(1));
             } catch (NumberFormatException ex) {
-                bot.sendGroupMsg(e.getGroupId(), "[井字棋] ❌参数必须为数字", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[井字棋] ❌参数必须为数字", false);
                 return;
             }
 
-            GameResult result = ticTacToeMatchHandler.move(e.getUserId(), x - 1, y - 1);
+            GameResult result = ticTacToeMatchHandler.move(groupMessageEvent.getUserId(), x - 1, y - 1);
 
-            if (result.getSuccess() && !result.getIsSameGroup()) {
-                bot.sendGroupMsg(result.getOpponentGroupId(), result.getInfo(), false);
+            if(result.getSuccess()){
+                if(result.getIsAsync()){
+                    if(!result.getSelfInfo().isEmpty()){
+                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                    }
+                    if(!result.getOpponentInfo().isEmpty()){
+                        bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
+                    }
+                }else{
+                    if(result.getIsSameGroup()){
+                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                    }else{
+                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                        bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
+                    }
+                }
+            }else{
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getSelfInfo(), false);
             }
-            bot.sendGroupMsg(e.getGroupId(), result.getInfo(), false);
 
+            log.info("\t\t\t\t├─[TicTacToe] 落子 - {} {}", x, y);
         }
     }
 
     @Override
     public String getHelp() {
-        return "◉ TicTacToe 命令\n" +
-                "功能: 匹配成功后发送井字棋落子\n" +
-                "格式: TicTacToe [行] [列]\n" +
-                "示例: TicTacToe 1 1\n" +
-                "中文命令: 井字棋";
+        return """
+                ◉ TicTacToe 命令
+                功能: 匹配成功后发送井字棋落子
+                格式: TicTacToe [行] [列]
+                示例: TicTacToe 1 1
+                中文命令: 井字棋""";
     }
 }

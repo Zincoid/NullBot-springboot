@@ -69,18 +69,18 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
     public GameResult move(Long userId, String pos) {
         Match match = matchManager.getMatchBySelfId(userId);
         if (match == null) {
-            return GameResult.error("[黑白棋] ❌对局不存在");
+            return getErrorResult("[黑白棋] ❌对局不存在");
         }
 
         matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
 
         ReversiGameState state = games.get(match.getMatchId());
         if (state == null) {
-            return GameResult.error("[黑白棋] ❌游戏状态不存在");
+            return getErrorResult("[黑白棋] ❌游戏状态不存在");
         }
 
         if (state.isFinished()) {
-            return GameResult.error("[黑白棋] ❌对局已结束");
+            return getErrorResult("[黑白棋] ❌对局已结束");
         }
 
         char myColor =
@@ -88,14 +88,14 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
                         userId.equals(state.getWhitePlayerId()) ? 'W' : 0;
 
         if (state.getCurrentTurn() != myColor) {
-            return GameResult.error("[黑白棋] ⏳还没轮到你下棋");
+            return getErrorResult("[黑白棋] ⏳还没轮到你下棋");
         }
 
         int col = pos.charAt(0) - 'A';
         int row = pos.charAt(1) - '1';
 
         if (!gameLogic.place(state, row, col)) {
-            return GameResult.error("[黑白棋] ❌非法落子");
+            return getErrorResult("[黑白棋] ❌非法落子");
         }
 
         StringBuilder info = new StringBuilder();
@@ -106,10 +106,10 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
                 && !gameLogic.hasAnyMove(state, 'W')) {
             state.setFinished(true);
             info.append("\n").append(judge(state));
-            return getFinishResult(userId, match, info.toString());
+            return getFinishResult(userId, match, false, info.toString(),  null);
         }
 
-        return getGameResult(userId, match, info.toString());
+        return getSuccessResult(userId, match, false, info.toString(), null);
     }
 
     // ================== 工具方法 ==================

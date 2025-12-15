@@ -45,24 +45,28 @@ public class ReversiCommand implements Command
             }
             // 执行落子
             GameResult result = reversiMatchHandler.move(groupMessageEvent.getUserId(), pos);
-            // 跨群同步对手信息
-            if (result.getSuccess() && !result.getIsSameGroup()) {
-                bot.sendGroupMsg(
-                        result.getOpponentGroupId(),
-                        result.getInfo(),
-                        false
-                );
+
+            if(result.getSuccess()){
+                if(result.getIsAsync()){
+                    if(!result.getSelfInfo().isEmpty()){
+                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                    }
+                    if(!result.getOpponentInfo().isEmpty()){
+                        bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
+                    }
+                }else{
+                    if(result.getIsSameGroup()){
+                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                    }else{
+                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                        bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
+                    }
+                }
+            }else{
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getSelfInfo(), false);
             }
-            // 当前群消息
-            bot.sendGroupMsg(
-                    groupMessageEvent.getGroupId(),
-                    result.getInfo(),
-                    false
-            );
-            log.info(
-                    "\t\t\t\t├─[Reversi] 落子结果 - {}",
-                    result.getInfo().replaceAll("\\R", "")
-            );
+
+            log.info("\t\t\t\t├─[Reversi] 落子 - {}", pos);
         } else {
             log.info("\t\t\t\t├─[Reversi] 未设计 - 非群消息事件响应方式");
         }

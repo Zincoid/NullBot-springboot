@@ -23,7 +23,6 @@ public class LootingCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if ((event.getEvent() instanceof GroupMessageEvent groupMessageEvent)) {
-            Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getUserId();
 
             // 无参数 = 侦察
@@ -33,23 +32,27 @@ public class LootingCommand implements Command
 
             GameResult result = lootingMatchHandler.action(userId, commandText);
 
-            // 当前群输出（始终）
-            bot.sendGroupMsg(groupId, result.getInfo(), false);
-
-            // 跨群同步（同一 tick 世界变化）
-            if (result.getSuccess() && !result.getIsSameGroup()) {
-                bot.sendGroupMsg(
-                        result.getOpponentGroupId(),
-                        result.getInfo(),
-                        false
-                );
+            if(result.getSuccess()){
+                if(result.getIsAsync()){
+                    if(!result.getSelfInfo().isEmpty()){
+                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                    }
+                    if(!result.getOpponentInfo().isEmpty()){
+                        bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
+                    }
+                }else{
+                    if(result.getIsSameGroup()){
+                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                    }else{
+                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                        bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
+                    }
+                }
+            }else{
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getSelfInfo(), false);
             }
 
-            log.info(
-                    "\t\t\t\t├─[Looting] 玩家 {} 执行指令 [{}]",
-                    userId,
-                    commandText
-            );
+            log.info("\t\t\t\t├─[Looting] 玩家 {} 执行指令 [{}]", userId, commandText);
         }else{
             log.info("\t\t\t\t├─[Looting] 未设计 非群消息事件响应方式");
         }

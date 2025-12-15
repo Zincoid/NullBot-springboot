@@ -58,7 +58,7 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
 
     // ================== 通用方法 ==================
 
-    // 发送初始信息方法
+    // 发送初始同步信息方法
     protected void sendInitMessage(Match match, S state){
         Bot bot = botContainer.robots.get(botId);
 
@@ -72,25 +72,19 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
         bot.sendGroupMsg(p2.getGroupId(), info, false);
     }
 
-    // 返回附加跨群判断结果 (用于同时回复双方同一内容 根据双方所在群聊判断是否需要额外通知另一个群)
-    protected GameResult getGameResult(Long userId, Match match, String info){
-        boolean sameGroup =
-                match.getPlayer1().getGroupId()
-                        .equals(match.getPlayer2().getGroupId());
-        if (sameGroup) {
-            return GameResult.success(null, info);
-        }
-        Long opponentGroupId =
-                userId.equals(match.getPlayer1().getUserId())
-                        ? match.getPlayer2().getGroupId()
-                        : match.getPlayer1().getGroupId();
-
-        return GameResult.success(opponentGroupId, info);
+    // 返回分离型消息失败结果
+    protected GameResult getErrorResult(String selfInfo) {
+        return GameResult.error(selfInfo);
     }
 
-    // 自动结束游戏并返回跨群结束结果 (用于同时回复双方同一内容 根据双方所在群聊判断是否需要额外通知另一个群)
-    protected GameResult getFinishResult(Long userId, Match match, String info) {
-        GameResult result = getGameResult(userId, match, info + "\n\nMatch 已结束：" + match.getMatchId());
+    // 返回分离型消息成功结果
+    protected GameResult getSuccessResult(Long userId, Match match, Boolean isSeperated, String selfInfo, String opponentInfo) {
+        return GameResult.success(isSeperated, match.getSelfGroupIdBySelfId(userId), match.getOpponentGroupIdBySelfId(userId), selfInfo, opponentInfo);
+    }
+
+    // 返回分离型消息成功结果 (自动结束游戏)
+    protected GameResult getFinishResult(Long userId, Match match, Boolean isSeperated, String selfInfo, String opponentInfo) {
+        GameResult result = getSuccessResult(userId, match, isSeperated, selfInfo + "\n\nMatch 已结束：" + match.getMatchId(),  opponentInfo + "\n\nMatch 已结束：" + match.getMatchId());
         onMatchEnd(match);
         return result;
     }

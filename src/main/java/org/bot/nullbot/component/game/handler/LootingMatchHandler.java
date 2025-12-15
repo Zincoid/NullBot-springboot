@@ -14,6 +14,7 @@ import org.bot.nullbot.service.InventoryService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -73,40 +74,64 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
     public GameResult action(Long userId, String command)
     {
         Match match = matchManager.getMatchBySelfId(userId);
-        if (match == null) { return GameResult.error("[Looting] ❌ 你当前没有进行中的对局"); }
+        if (match == null) { return getErrorResult("[Looting] ❌ 你当前没有进行中的对局"); }
         LootingGameState state = games.get(match.getMatchId());
-        if (state == null) { return GameResult.error("[Looting] ❌ 游戏状态不存在"); }
+        if (state == null) { return getErrorResult("[Looting] ❌ 游戏状态不存在"); }
         if (state.isFinished()) { return GameResult.error("[Looting] ❌ 对局已结束"); }
 
         LootingPlayerState p = state.getPlayers().get(userId);
-        if (!p.isAlive()) return GameResult.success(null, "💀 你已死亡，无法继续行动");
-        if (p.isEvacuated()) return GameResult.success(null, "🚪 你已撤离，无法继续行动");
+        if (!p.isAlive()) return getSuccessResult(userId, match, false, "💀 你已死亡，无法继续行动", null);
+        if (p.isEvacuated()) return getSuccessResult(userId, match, false, "🚪 你已撤离，无法继续行动", null);
 
         matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
 
-        Long opponentGroupId = match.getOpponentGroupIdBySelfId(userId);
-        StringBuilder result = new StringBuilder();
-        if (command.startsWith("移动")) result.append(gameLogic.move(state, p, command.substring(2).trim())).append("\n").append(gameLogic.tick(state, userId, opponentGroupId)).append(gameLogic.checkEnemies(state, p));
-        else if (command.equals("侦察")) result.append(gameLogic.view(state, p)).append("\n").append(gameLogic.checkEnemies(state, p));
-        else if (command.equals("搜刮")) result.append(gameLogic.loot(state, p)).append("\n").append(gameLogic.tick(state, userId, opponentGroupId)).append(gameLogic.checkEnemies(state, p));
-        else if (command.equals("攻击AI")) result.append(gameLogic.attackAi(state, p)).append("\n").append(gameLogic.tick(state, userId, opponentGroupId)).append(gameLogic.checkEnemies(state, p));
-        else if (command.equals("攻击玩家")) result.append(gameLogic.attackPlayer(state, p, opponentGroupId)).append("\n").append(gameLogic.tick(state, userId, opponentGroupId)).append(gameLogic.checkEnemies(state, p));
-        else if (command.equals("撤离")) result.append(gameLogic.evac(state, p)).append("\n").append(gameLogic.tick(state, userId, opponentGroupId)).append(gameLogic.checkEnemies(state, p));
+        StringBuilder selfOutput = new StringBuilder();
+        StringBuilder opponentOutput = new StringBuilder();
+
+        if (command.startsWith("移动")) {
+            selfOutput.append(gameLogic.move(state, p, command.substring(2).trim())).append("\n");
+        }
+        else if (command.equals("侦察")) {
+            selfOutput.append(gameLogic.view(state, p)).append("\n");
+        }
+        else if (command.equals("搜刮")) {
+            selfOutput.append(gameLogic.loot(state, p)).append("\n").append(gameLogic.tick(state, userId));
+        }
+        else if (command.equals("攻击AI")) {
+            selfOutput.append(gameLogic.attackAi(state, p)).append("\n").append(gameLogic.tick(state, userId));
+        }
+        else if (command.equals("攻击玩家")) {
+            List<String> attackPlayerOutput = gameLogic.attackPlayer(state, p);
+            selfOutput.append(attackPlayerOutput.get(0)).append("\n");
+            opponentOutput.append(attackPlayerOutput.get(1));
+        }
+        else if (command.equals("撤离")) {
+            selfOutput.append(gameLogic.evac(state, p)).append("\n").append(gameLogic.tick(state, userId));
+        }
         else {
-            result.append("❓ 未知指令");
-            return GameResult.success(null, result.toString());
+            selfOutput.append("❓ 未知指令");
+            return getErrorResult(selfOutput.toString());
         }
 
-        String info = "[玩家" + userId + "] HP: " + state.getPlayers().get(userId).getHp() + result.append(nextActions(state, p));
+        if(!command.equals("侦察")){
+            List<String> tickOutput = gameLogic.tick(state, userId);
+            selfOutput.append(tickOutput.get(0));
+            opponentOutput.append(tickOutput.get(1));
+        }
+
+        selfOutput.append(gameLogic.checkEnemies(state, p));
+
+        String selfInfo = "[玩家" + userId + "] HP: " + state.getPlayers().get(userId).getHp() + selfOutput.append(nextActions(state, p));
+        String opponentInfo = opponentOutput.toString();
 
         // 游戏结束（撤离 / 迷失 / 死亡）
         if (state.isFinished()) {
             if (state.getTick() > 25) {
-                return getFinishResult( userId, match, info + "\n⏹ 时间已耗尽！(25 Ticks)");
+                return getFinishResult(userId, match, true, selfInfo + "\n⏹ 时间已耗尽！(25 Ticks)", "⏹ 时间已耗尽！(25 Ticks)");
             }
-            return getFinishResult( userId, match, info + "\n⏹ 对局已结束！");
+            return getFinishResult(userId, match, true, selfInfo + "\n⏹ 对局已结束！", "⏹ 对局已结束");
         }
-        return GameResult.success(null, info);
+        return getSuccessResult(userId, match, true, selfInfo, opponentInfo);
     }
 
     public String nextActions(LootingGameState s, LootingPlayerState p) {

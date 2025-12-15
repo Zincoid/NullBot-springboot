@@ -23,8 +23,13 @@ public class Match {
         CREATED, WAITING, PLAYING, FINISHED
     }
 
-    // 用于因己方动作需单独通知对方时快速获取对方群号
+    // 用于快速获取对方群号
     public Long getOpponentGroupIdBySelfId(Long id) {
-        return Objects.equals(id, player1.getUserId()) ? player2.getGroupId(): player1.getGroupId();
+        return Objects.equals(id, player1.getUserId()) ? player2.getGroupId() : player1.getGroupId();
+    }
+
+    // 用于快速获取自己群号
+    public Long getSelfGroupIdBySelfId(Long id) {
+        return Objects.equals(id, player1.getUserId()) ? player1.getGroupId() : player2.getGroupId();
     }
 }

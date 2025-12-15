@@ -69,14 +69,14 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
     public GameResult move(Long userId, int r, int c) {
         Match match = matchManager.getMatchBySelfId(userId);
         if (match == null) {
-            return GameResult.error("[井字棋] ❌对局不存在");
+            return getErrorResult("[井字棋] ❌对局不存在");
         }
 
         matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
 
         TicTacToeGameState state = games.get(match.getMatchId());
         if (state == null) {
-            return GameResult.error("[井字棋] ❌游戏状态不存在");
+            return getErrorResult("[井字棋] ❌游戏状态不存在");
         }
 
         char my =
@@ -84,15 +84,15 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
                         userId.equals(state.getPlayerO()) ? 'O' : 0;
 
         if (my == 0) {
-            return GameResult.error("[井字棋] ❌你不是该对局玩家");
+            return getErrorResult("[井字棋] ❌你不是该对局玩家");
         }
 
         if (state.getCurrentTurn() != my) {
-            return GameResult.error("[井字棋] ⏳还没轮到你");
+            return getErrorResult("[井字棋] ⏳还没轮到你");
         }
 
         if (!gameLogic.place(state, r, c)) {
-            return GameResult.error("[井字棋] ❌非法落子");
+            return getErrorResult("[井字棋] ❌非法落子");
         }
 
         StringBuilder info = new StringBuilder();
@@ -105,14 +105,13 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
             info.append("\n\n🎉 ")
                     .append(winner == 'X' ? "X" : "O")
                     .append(" 获胜！获得30抽数！");
-            return getFinishResult(userId, match, info.toString());
+            return getFinishResult(userId, match, false, info.toString(), null);
         } else if (gameLogic.isDraw(state)) {
             state.setFinished(true);
             info.append("\n\n🤝 平局！\n 双方均可获得15抽数！");
-            return getFinishResult(userId, match, info.toString());
+            return getFinishResult(userId, match, false, info.toString(), null);
         }
-
-        return getGameResult(userId, match, info.toString());
+        return getSuccessResult(userId, match, false, info.toString(), null);
     }
 
     // ================== 工具方法 ==================
