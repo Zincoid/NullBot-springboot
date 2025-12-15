@@ -56,7 +56,7 @@ public class MatchCleanupScheduler
      */
     @Scheduled(fixedDelay = 10_000)
     public void cleanup() {
-        log.info("[MatchCleanupScheduler] 定时超时清理触发");
+        log.info("[MatchCleanupScheduler] 超时清理触发");
         cleanWaitingPlayers();
         cleanTimeoutMatches();
     }
