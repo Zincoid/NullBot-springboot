@@ -30,22 +30,34 @@ public class LootingGameLogic extends GameLogic
                 .map(MapNode::getName).toList();
 
         s.getPlayers().put(match.getPlayer1().getUserId(),
-                new LootingPlayerState(match.getPlayer1().getUserId(), spawns.get(0)));
+                new LootingPlayerState(match.getPlayer1().getUserId(), spawns.get(R.nextInt(spawns.size()))));
         s.getPlayers().put(match.getPlayer2().getUserId(),
-                new LootingPlayerState(match.getPlayer2().getUserId(), spawns.get(1)));
+                new LootingPlayerState(match.getPlayer2().getUserId(), spawns.get(R.nextInt(spawns.size()))));
 
         initAi(s);
         return s;
     }
 
     private void initAi(LootingGameState s) {
-        int n = 1 + R.nextInt(2);
+        int n = 1 + R.nextInt(3);
         List<String> nodes = new ArrayList<>(s.getMap().getNodes().keySet());
+
+        // 定制 AI
+        if("航天基地".equals(s.getMap().getName())){
+            AiEnemyState ai = new AiEnemyState();
+            ai.setName("德穆兰");
+            ai.setHp(100);
+            ai.setLocation(nodes.get(R.nextInt(nodes.size())));
+            ai.getBackpack().addAll(mapFactory.randItems(true));
+            s.getEnemies().add(ai);
+        }
+
+        // 通用 AI
         for (int i = 0; i < n; i++) {
             AiEnemyState ai = new AiEnemyState();
             ai.setName("AI-" + (i + 1));
             ai.setLocation(nodes.get(R.nextInt(nodes.size())));
-            ai.getBackpack().addAll(mapFactory.randItems());
+            ai.getBackpack().addAll(mapFactory.randItems(false));
             s.getEnemies().add(ai);
         }
     }

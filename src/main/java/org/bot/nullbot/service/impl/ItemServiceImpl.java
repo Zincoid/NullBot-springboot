@@ -45,6 +45,14 @@ public class ItemServiceImpl implements ItemService
 
     @Override
     @Transactional
+    public ItemPO getRandomHighValueItem() {
+        Rarity rarity = Rarity.GOLD;
+        List<ItemPO> itemList = itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getAvailable, true).ge(ItemPO::getRarity, rarity));
+        return DrawUtil.drawItemByLogPrice(itemList);
+    }
+
+    @Override
+    @Transactional
     public ItemPO getAndKeepRandomItem(Long userId) {
         if (userService.decreaseDrawTimes(userId)) {
             Rarity rarity = DrawUtil.drawRarityByProbability();

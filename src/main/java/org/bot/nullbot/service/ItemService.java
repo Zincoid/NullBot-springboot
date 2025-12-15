@@ -8,6 +8,8 @@ public interface ItemService
 
     ItemPO getRandomItem();
 
+    ItemPO getRandomHighValueItem();
+
     ItemPO getAndKeepRandomItem(Long userId);
 
     boolean exist(Integer itemId);
