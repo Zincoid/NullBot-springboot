@@ -79,18 +79,24 @@ public class LootingGameLogic extends GameLogic
         StringBuilder sb = new StringBuilder();
         for (AiEnemyState ai : s.getEnemies()) {
             if (ai.alive() && ai.getLocation().equals(p.getLocation())) {
-                sb.append("\n⚠️ 发现AI敌人: ")
+                sb.append("⚠️ 发现AI敌人: ")
                         .append(ai.getName())
-                        .append(" HP ").append(ai.getHp());
+                        .append(" HP ").append(ai.getHp())
+                        .append("\n");
             }
         }
 
         for (LootingPlayerState other : s.getPlayers().values()) {
             if (other != p && other.isAlive() && other.getLocation().equals(p.getLocation())) {
-                sb.append("\n⚠️ 发现玩家: ")
-                        .append(other.getUserId())
-                        .append(" HP ").append(other.getHp());
+                sb.append("⚠️ 发现玩家: ")
+                        // .append(other.getUserId())
+                        .append("HP ").append(other.getHp())
+                        .append("\n");
             }
+        }
+
+        if(!sb.isEmpty()){
+            return "\n" + sb;
         }
         return sb.toString();
     }
@@ -108,7 +114,7 @@ public class LootingGameLogic extends GameLogic
     }
 
     public String view(LootingGameState s, LootingPlayerState p) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("\n");
         MapNode node = s.getMap().node(p.getLocation());
         sb.append(node.print());
         return sb.toString();
@@ -139,7 +145,7 @@ public class LootingGameLogic extends GameLogic
                 StringBuilder sb = new StringBuilder();
                 sb.append("\n⚔️ 你对").append(ai.getName())
                         .append("造成").append(dmg).append("伤害\n")
-                        .append("对方HP：").append(ai.getHp());
+                        .append("对方剩余HP：").append(ai.getHp());
 
                 if (!ai.alive()) {
                     sb.append("\n💀 已击败").append(ai.getName()).append(",获得他的战利品:");
@@ -163,7 +169,7 @@ public class LootingGameLogic extends GameLogic
                 StringBuilder sb = new StringBuilder();
                 sb.append("\n⚔️ 你对玩家").append(other.getUserId())
                         .append("造成").append(dmg).append("伤害\n")
-                        .append("对方HP: ").append(other.getHp());
+                        .append("对方剩余HP: ").append(other.getHp());
 
                 if (other.getHp() <= 0) {
                     other.setAlive(false);

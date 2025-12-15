@@ -97,14 +97,14 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
             return GameResult.success(null, result.toString());
         }
 
-        String info = "[玩家" + userId + "] HP: " + state.getPlayers().get(userId).getHp() + "\n" + result.append(nextActions(state, p));
+        String info = "[玩家" + userId + "] HP: " + state.getPlayers().get(userId).getHp() + result.append(nextActions(state, p));
 
         // 游戏结束（撤离 / 迷失 / 死亡）
         if (state.isFinished()) {
             if (state.getTick() > 25) {
-                return getFinishResult( userId, match, info + "\n\n⏹ 时间已耗尽！(10 Ticks)");
+                return getFinishResult( userId, match, info + "\n⏹ 时间已耗尽！(25 Ticks)");
             }
-            return getFinishResult( userId, match, info + "\n\n⏹ 对局已结束！");
+            return getFinishResult( userId, match, info + "\n⏹ 对局已结束！");
         }
         return GameResult.success(null, info);
     }
@@ -113,7 +113,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
         if (s.isFinished()) {
             return "";
         }
-        StringBuilder sb = new StringBuilder("\n\n[可执行操作]");
+        StringBuilder sb = new StringBuilder("\n[可执行操作 (格式: /摸金 [动作])]");
         sb.append("\n侦察 / 移动 [地点] / 搜刮");
         if(!gameLogic.checkEnemies(s, p).isEmpty())
             sb.append("\n攻击AI / 攻击玩家");
@@ -127,6 +127,6 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
     protected String render(LootingGameState state)
     {
         // 仅用于初始化或通用展示
-        return state.getMap().printSpawn() + "\n\nTips: 可以先通过\"/摸金 [命令]\"来侦察一下, 侦察不消耗Tick";
+        return state.getMap().printSpawn() + "\n\nTips: 可以先通过\"/摸金\"来侦察一下, 侦察不消耗Tick";
     }
 }

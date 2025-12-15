@@ -29,7 +29,7 @@ public class MapNode {
         if (evac) sb.append(" 🚪撤离点");
 
         sb.append("\n可移动至: \n")
-                .append(neighbors.isEmpty() ? "无" : String.join(" / ", neighbors));
+                .append(neighbors.isEmpty() ? "无" : String.join("/", neighbors));
 
         if (!items.isEmpty()) {
             sb.append("\n地面物品: ");
@@ -51,7 +51,7 @@ public class MapNode {
         if (evac) sb.append(" 🚪撤离点");
 
         sb.append("\n可移动至: \n")
-                .append(neighbors.isEmpty() ? "无" : String.join(" / ", neighbors));
+                .append(neighbors.isEmpty() ? "无" : String.join("/", neighbors));
         return sb.toString();
     }
 }
