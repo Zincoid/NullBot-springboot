@@ -111,8 +111,8 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
 
         selfOutput.append(gameLogic.checkEnemies(state, p));
 
-        String selfInfo = "【玩家" + userId + "】 HP: " + state.getPlayers().get(userId).getHp()
-                + "\n[==== 距迷失还剩 " + (25 - state.getTick()) + " 刻 ====]"
+        String selfInfo = "【玩家" + userId + "】 HP: " + state.getPlayers().get(userId).getHp() + "\uD83D\uDC9F"
+                + "\n[=== \uD83D\uDD52 距迷失还剩 " + (25 - state.getTick()) + " 刻 ===]"
                 + selfOutput.append(nextActions(state, p));
         String opponentInfo = opponentOutput.toString();
 
@@ -131,11 +131,11 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
     public String nextActions(LootingGameState s, LootingPlayerState p) {
         if (s.isFinished()) return "";
         StringBuilder sb = new StringBuilder("\n[可执行操作(格式:/摸金 [动作])]");
-        sb.append("\n侦察 / 移动 [地点] / 搜刮");
-        if(!gameLogic.checkEnemies(s, p).isEmpty())
-            sb.append("\n攻击AI / 攻击玩家");
+        sb.append("\n侦察 - 移动 [地点] - 搜刮");
         if (s.getMap().node(p.getLocation()).isEvac())
-            sb.append(" / 撤离");
+            sb.append(" - 撤离");
+        if(!gameLogic.checkEnemies(s, p).isEmpty())
+            sb.append("\n⚔️ ====== 攻击AI - 攻击玩家");
         return sb.toString();
     }
 

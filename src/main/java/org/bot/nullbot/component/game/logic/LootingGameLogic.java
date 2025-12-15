@@ -103,7 +103,7 @@ public class LootingGameLogic extends GameLogic
             return "\n❌ 无法移动到该位置";
         }
         p.setLocation(target);
-        return "\n🚶 你移动到了 " + target + "\n" +
+        return "\n▶️ 你移动到了 " + target + "\n" +
                 s.getMap().node(target).printWithoutItems();
     }
 
