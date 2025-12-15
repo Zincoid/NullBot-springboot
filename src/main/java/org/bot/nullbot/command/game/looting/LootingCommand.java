@@ -24,27 +24,19 @@ public class LootingCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if ((event.getEvent() instanceof GroupMessageEvent groupMessageEvent)) {
             Long userId = groupMessageEvent.getUserId();
-
-            // 无参数 = 侦察
-            String commandText = event.getCommandParameters().isEmpty()
-                    ? "侦察"
-                    : String.join(" ", event.getCommandParameters());
-
+            String commandText = event.getCommandParameters().isEmpty() ? "侦察" : String.join(" ", event.getCommandParameters());
             GameResult result = lootingMatchHandler.action(userId, commandText);
 
             if(result.getSuccess()){
                 if(result.getIsAsync()){
-                    if(!result.getSelfInfo().isEmpty()){
+                    if(!result.getSelfInfo().isEmpty())
                         bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-                    }
-                    if(!result.getOpponentInfo().isEmpty()){
+                    if(!result.getOpponentInfo().isEmpty())
                         bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
-                    }
                 }else
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[摸金] ❌该模式不发送同步消息", false);
-            }else{
+            }else
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getSelfInfo(), false);
-            }
 
             log.info("\t\t\t\t├─[Looting] 玩家 {} 执行指令 [{}]", userId, commandText);
         }else{

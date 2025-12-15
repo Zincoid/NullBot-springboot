@@ -68,47 +68,33 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
      */
     public GameResult move(Long userId, String pos) {
         Match match = matchManager.getMatchBySelfId(userId);
-        if (match == null) {
-            return getErrorResult("[黑白棋] ❌对局不存在");
-        }
-
-        matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
+        if (match == null) { return getErrorResult("[黑白棋] ❌对局不存在"); }
 
         ReversiGameState state = games.get(match.getMatchId());
-        if (state == null) {
-            return getErrorResult("[黑白棋] ❌游戏状态不存在");
-        }
+        if (state == null) { return getErrorResult("[黑白棋] ❌游戏状态不存在"); }
+        if (state.isFinished()) { return getErrorResult("[黑白棋] ❌对局已结束"); }
 
-        if (state.isFinished()) {
-            return getErrorResult("[黑白棋] ❌对局已结束");
-        }
+        matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
 
         char myColor =
                 userId.equals(state.getBlackPlayerId()) ? 'B' :
                         userId.equals(state.getWhitePlayerId()) ? 'W' : 0;
 
-        if (state.getCurrentTurn() != myColor) {
-            return getErrorResult("[黑白棋] ⏳还没轮到你下棋");
-        }
+        if (state.getCurrentTurn() != myColor) { return getErrorResult("[黑白棋] ⏳还没轮到你下棋"); }
 
         int col = pos.charAt(0) - 'A';
         int row = pos.charAt(1) - '1';
 
-        if (!gameLogic.place(state, row, col)) {
-            return getErrorResult("[黑白棋] ❌非法落子");
-        }
+        if (!gameLogic.place(state, row, col)) { return getErrorResult("[黑白棋] ❌非法落子"); }
 
         StringBuilder info = new StringBuilder();
         info.append(render(state));
 
-        // 判定是否结束
-        if (!gameLogic.hasAnyMove(state, 'B')
-                && !gameLogic.hasAnyMove(state, 'W')) {
+        if (!gameLogic.hasAnyMove(state, 'B') && !gameLogic.hasAnyMove(state, 'W')) {
             state.setFinished(true);
             info.append("\n").append(judge(state));
             return getFinishResult(userId, match, false, info.toString(),  null);
         }
-
         return getSuccessResult(userId, match, false, info.toString(), null);
     }
 

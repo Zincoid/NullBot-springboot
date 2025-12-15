@@ -15,20 +15,16 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TicTacToeCommand implements Command {
-
+public class TicTacToeCommand implements Command
+{
     private final TicTacToeMatchHandler ticTacToeMatchHandler;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-
             if (event.getCommandParameters().size() != 2) {
-                bot.sendGroupMsg(
-                        groupMessageEvent.getGroupId(),
-                        "[井字棋] ❌参数数量错误，示例：井字棋 1 1",
-                        false
-                );
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[井字棋] ❌参数数量错误，示例：井字棋 1 1", false);
+                log.info("\t\t\t\t├─[TicTacToe] 参数数量错误");
                 return;
             }
 
@@ -40,26 +36,21 @@ public class TicTacToeCommand implements Command {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[井字棋] ❌参数必须为数字", false);
                 return;
             }
-
             GameResult result = ticTacToeMatchHandler.move(groupMessageEvent.getUserId(), x - 1, y - 1);
 
             if(result.getSuccess()){
                 if(!result.getIsAsync()){
-                    if(result.getIsSameGroup()){
-                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-                    }else{
-                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                    bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                    if(!result.getIsSameGroup())
                         bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
-                    }
-                }else{
+                }else
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[井字棋] ❌该模式不发送异步消息", false);
-                }
-            }else{
+            }else
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getSelfInfo(), false);
-            }
 
             log.info("\t\t\t\t├─[TicTacToe] 落子 - {} {}", x, y);
-        }
+        }else
+            log.info("\t\t\t\t├─[TicTacToe] 未设计 - 非群消息事件响应方式");
     }
 
     @Override

@@ -22,49 +22,32 @@ public class ReversiCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            // 参数数量校验
             if (event.getCommandParameters().size() != 1) {
-                bot.sendGroupMsg(
-                        groupMessageEvent.getGroupId(),
-                        "[黑白棋] ❌参数数量错误，示例：黑白棋 D3",
-                        false
-                );
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[黑白棋] ❌参数数量错误，示例：黑白棋 D3", false);
                 log.info("\t\t\t\t├─[Reversi] 参数数量错误");
                 return;
             }
             String pos = event.getCommandParameters().getFirst().toUpperCase();
-            // 坐标合法性校验
             if (!pos.matches("^[A-H][1-8]$")) {
-                bot.sendGroupMsg(
-                        groupMessageEvent.getGroupId(),
-                        "[黑白棋] ❌坐标格式错误，应为 A1~H8",
-                        false
-                );
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[黑白棋] ❌坐标格式错误，应为 A1~H8", false);
                 log.info("\t\t\t\t├─[Reversi] 坐标格式错误：{}", pos);
                 return;
             }
-            // 执行落子
             GameResult result = reversiMatchHandler.move(groupMessageEvent.getUserId(), pos);
 
             if(result.getSuccess()){
                 if(!result.getIsAsync()){
-                    if(result.getIsSameGroup()){
-                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-                    }else{
-                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                    bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                    if(!result.getIsSameGroup())
                         bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
-                    }
-                }else{
+                }else
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[黑白棋] ❌该模式不发送异步消息", false);
-                }
-            }else{
+            }else
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getSelfInfo(), false);
-            }
 
             log.info("\t\t\t\t├─[Reversi] 落子 - {}", pos);
-        } else {
+        } else
             log.info("\t\t\t\t├─[Reversi] 未设计 - 非群消息事件响应方式");
-        }
     }
 
     @Override

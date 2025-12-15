@@ -41,7 +41,6 @@ public class LootingGameLogic extends GameLogic
     private void initAi(LootingGameState s) {
         int n = 1 + R.nextInt(2);
         List<String> nodes = new ArrayList<>(s.getMap().getNodes().keySet());
-
         for (int i = 0; i < n; i++) {
             AiEnemyState ai = new AiEnemyState();
             ai.setName("AI-" + (i + 1));
@@ -74,7 +73,6 @@ public class LootingGameLogic extends GameLogic
                         .append("\n");
             }
         }
-
         for (LootingPlayerState other : s.getPlayers().values()) {
             if (other != p && other.isAlive() && other.getLocation().equals(p.getLocation())) {
                 sb.append("⚠️ 发现玩家: ")
@@ -83,7 +81,6 @@ public class LootingGameLogic extends GameLogic
                         .append("\n");
             }
         }
-
         if(!sb.isEmpty()){
             return "\n" + sb;
         }

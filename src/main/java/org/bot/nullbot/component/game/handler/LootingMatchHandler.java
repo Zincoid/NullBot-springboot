@@ -69,7 +69,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
     }
 
     /**
-     * 玩家行为入口 (由 Command 调用)
+     * 玩家行为 (用户调用)
      */
     public GameResult action(Long userId, String command)
     {
@@ -138,7 +138,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
         if (s.isFinished()) {
             return "";
         }
-        StringBuilder sb = new StringBuilder("\n[可执行操作 (格式: /摸金 [动作])]");
+        StringBuilder sb = new StringBuilder("\n[可执行操作(格式:/摸金 [动作])]");
         sb.append("\n侦察 / 移动 [地点] / 搜刮");
         if(!gameLogic.checkEnemies(s, p).isEmpty())
             sb.append("\n攻击AI / 攻击玩家");
