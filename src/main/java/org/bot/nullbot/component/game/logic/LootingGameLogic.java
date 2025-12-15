@@ -55,7 +55,7 @@ public class LootingGameLogic extends GameLogic
         // 通用 AI
         for (int i = 0; i < n; i++) {
             AiEnemyState ai = new AiEnemyState();
-            ai.setName("AI-" + (i + 1));
+            ai.setName("士兵-" + (i + 1));
             ai.setLocation(nodes.get(R.nextInt(nodes.size())));
             ai.getBackpack().addAll(mapFactory.randItems(false));
             s.getEnemies().add(ai);

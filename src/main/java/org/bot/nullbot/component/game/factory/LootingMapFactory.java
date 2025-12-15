@@ -19,7 +19,11 @@ public class LootingMapFactory {
     private static final Random R = new Random();
 
     public LootingMap randomMap() {
-        return R.nextBoolean() ? lab() : spaceport();
+        return switch (R.nextInt(2)) {
+            case 0 -> lab();
+            case 1 -> spaceport();
+            default -> throw new IllegalStateException();
+        };
     }
 
     private LootingMap lab() {
