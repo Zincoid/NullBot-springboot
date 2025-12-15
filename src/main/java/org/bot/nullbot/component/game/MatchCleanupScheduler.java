@@ -71,7 +71,7 @@ public class MatchCleanupScheduler
             long seconds = Duration.between(p.getLastActionTime(), now).getSeconds();
             if (seconds >= matchConfig.getWaitingTimeoutSeconds()) {
                 log.info("清理匹配超时玩家: {}", p.getUserId());
-                bot.sendGroupMsg(p.getGroupId(), p.getUserName() + "(" + p.getUserId() + ") 匹配超时", false);
+                bot.sendGroupMsg(p.getGroupId(), p.getUserName() + "(" + p.getUserId() + ") 匹配超时！", false);
                 playerManager.resetPlayer(p);
                 return true;
             }
@@ -94,7 +94,7 @@ public class MatchCleanupScheduler
                 log.warn("Match {} 超时未响应自动结束", match.getMatchId());
                 Player p1 = match.getPlayer1();
                 Player p2 = match.getPlayer2();
-                String info = p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已超时\nMatch ID: " + match.getMatchId();
+                String info = "对局已超时！玩家:\n" + p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\nMatch ID: " + match.getMatchId();
                 if(!Objects.equals(p1.getGroupId(), p2.getGroupId())){
                     bot.sendGroupMsg(p1.getGroupId(), info, false);
                 }
