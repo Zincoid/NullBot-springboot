@@ -86,7 +86,7 @@ public class LootingGameLogic extends GameLogic
             }
         }
         for (LootingPlayerState other : s.getPlayers().values()) {
-            if (other != p && other.isAlive() && other.getLocation().equals(p.getLocation())) {
+            if (other != p && other.isAlive() && !other.isEvacuated() && other.getLocation().equals(p.getLocation())) {
                 sb.append("⚠️ 发现玩家: ")
                         .append(other.getUserId())
                         // .append("HP ").append(other.getHp())
@@ -168,7 +168,7 @@ public class LootingGameLogic extends GameLogic
 
     public List<String> attackPlayer(LootingGameState s, LootingPlayerState p) {
         for (LootingPlayerState other : s.getPlayers().values()) {
-            if (other != p && other.isAlive() && other.getLocation().equals(p.getLocation())) {
+            if (other != p && other.isAlive() && !other.isEvacuated() && other.getLocation().equals(p.getLocation())) {
                 int dmg = p.getAtk();
                 other.setHp(Math.max(other.getHp() - dmg, 0));
 

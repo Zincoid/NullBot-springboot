@@ -23,10 +23,9 @@ public class MapNode {
 
     public String print() {
         StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        if (spawn) sb.append("\uD83C\uDFC1出生点] ");
-        if (highValue) sb.append("💎高价值] ");
-        if (evac) sb.append("🚪撤离点] ");
+        if (spawn) sb.append("[\uD83C\uDFC1出生点] ");
+        if (highValue) sb.append("[💎高价值] ");
+        if (evac) sb.append("[🚪撤离点] ");
 
         sb.append(name).append("\n◉ 可移动至: \n")
                 .append(neighbors.isEmpty() ? "无" : String.join("/", neighbors));
@@ -35,7 +34,7 @@ public class MapNode {
             sb.append("\n◉ 地面物品: ");
             for (ItemPO i : items) {
                 sb.append("\n- ").append(i.getName())
-                        .append(" (").append(i.getRarity()).append(")");
+                        .append(" (").append(i.getRarity().getDescription()).append(")");
             }
         } else {
             sb.append("\n◉ 地面物品: 无");
@@ -45,10 +44,9 @@ public class MapNode {
 
     public String printWithoutItems() {
         StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        if (spawn) sb.append("\uD83C\uDFC1出生点] ");
-        if (highValue) sb.append("💎高价值] ");
-        if (evac) sb.append("🚪撤离点] ");
+        if (spawn) sb.append("[\uD83C\uDFC1出生点] ");
+        if (highValue) sb.append("[💎高价值] ");
+        if (evac) sb.append("[🚪撤离点] ");
 
         sb.append(name).append("\n◉ 可移动至: \n")
                 .append(neighbors.isEmpty() ? "无" : String.join("/", neighbors));
