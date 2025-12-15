@@ -76,7 +76,7 @@ public class LootingCommand implements Command
                 说明：
                 - 任意玩家行动都会推进游戏刻
                 - AI 会在 Tick 中移动 / 攻击
-                - 超过 50 Tick 全员迷失，掉落全部物品
+                - 超过 25 Tick 全员迷失，掉落全部物品
                 """.formatted(getAccess());
     }
 }

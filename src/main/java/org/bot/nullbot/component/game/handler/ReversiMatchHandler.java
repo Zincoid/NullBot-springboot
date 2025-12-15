@@ -18,14 +18,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, ReversiGameLogic>
 {
+    private final UserService userService;
+
     public ReversiMatchHandler(
             @Value("${nullbot.bot-id}") Long botId,
             BotContainer botContainer,
             MatchManager matchManager,
             PlayerManager playerManager,
             UserService userService,
-            ReversiGameLogic gameLogic) {
-        super(botId, botContainer, matchManager, playerManager, userService, gameLogic, new ConcurrentHashMap<>());
+            ReversiGameLogic gameLogic)
+    {
+        super(botId, botContainer, matchManager, playerManager, gameLogic, new ConcurrentHashMap<>());
+        this.userService = userService;
     }
 
     @Override

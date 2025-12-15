@@ -35,7 +35,7 @@ public class LootingMap
         StringBuilder sb = new StringBuilder("🗺 地图: " + name);
         for (MapNode n : nodes.values()) {
             if(n.isSpawn())
-                sb.append("\n").append(n.print());
+                sb.append("\n").append(n.printWithoutItems());
         }
         return sb.toString();
     }

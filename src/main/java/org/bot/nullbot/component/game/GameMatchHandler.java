@@ -7,7 +7,6 @@ import org.bot.nullbot.entity.game.GameState;
 import org.bot.nullbot.entity.game.basic.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
-import org.bot.nullbot.service.UserService;
 
 import java.util.Map;
 import java.util.Objects;
@@ -21,7 +20,6 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
     protected BotContainer botContainer;
     protected final MatchManager matchManager;
     protected final PlayerManager playerManager;
-    protected final UserService userService;
 
     protected final L gameLogic;
     protected final Map<String, S> games;  // matchId -> game state

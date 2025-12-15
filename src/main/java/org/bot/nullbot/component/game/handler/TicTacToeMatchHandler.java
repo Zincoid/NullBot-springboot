@@ -18,14 +18,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, TicTacToeGameLogic>
 {
+    private final UserService userService;
+
     public TicTacToeMatchHandler(
             @Value("${nullbot.bot-id}") Long botId,
             BotContainer botContainer,
             MatchManager matchManager,
             PlayerManager playerManager,
             UserService userService,
-            TicTacToeGameLogic gameLogic) {
-        super(botId, botContainer, matchManager, playerManager, userService, gameLogic, new ConcurrentHashMap<>());
+            TicTacToeGameLogic gameLogic)
+    {
+        super(botId, botContainer, matchManager, playerManager, gameLogic, new ConcurrentHashMap<>());
+        this.userService = userService;
     }
 
     @Override
