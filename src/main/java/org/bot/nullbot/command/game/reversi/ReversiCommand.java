@@ -47,20 +47,15 @@ public class ReversiCommand implements Command
             GameResult result = reversiMatchHandler.move(groupMessageEvent.getUserId(), pos);
 
             if(result.getSuccess()){
-                if(result.getIsAsync()){
-                    if(!result.getSelfInfo().isEmpty()){
-                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-                    }
-                    if(!result.getOpponentInfo().isEmpty()){
-                        bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
-                    }
-                }else{
+                if(!result.getIsAsync()){
                     if(result.getIsSameGroup()){
                         bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
                     }else{
                         bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
                         bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
                     }
+                }else{
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[黑白棋] ❌该模式不发送异步消息", false);
                 }
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getSelfInfo(), false);

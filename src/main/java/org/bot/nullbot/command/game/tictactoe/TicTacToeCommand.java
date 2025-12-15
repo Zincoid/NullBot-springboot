@@ -44,20 +44,15 @@ public class TicTacToeCommand implements Command {
             GameResult result = ticTacToeMatchHandler.move(groupMessageEvent.getUserId(), x - 1, y - 1);
 
             if(result.getSuccess()){
-                if(result.getIsAsync()){
-                    if(!result.getSelfInfo().isEmpty()){
-                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-                    }
-                    if(!result.getOpponentInfo().isEmpty()){
-                        bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
-                    }
-                }else{
+                if(!result.getIsAsync()){
                     if(result.getIsSameGroup()){
                         bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
                     }else{
                         bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
                         bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
                     }
+                }else{
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[井字棋] ❌该模式不发送异步消息", false);
                 }
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getSelfInfo(), false);
@@ -72,8 +67,9 @@ public class TicTacToeCommand implements Command {
         return """
                 ◉ TicTacToe 命令
                 功能: 匹配成功后发送井字棋落子
+                限权: %s
                 格式: TicTacToe [行] [列]
                 示例: TicTacToe 1 1
-                中文命令: 井字棋""";
+                中文命令: 井字棋""".formatted(getAccess());
     }
 }
