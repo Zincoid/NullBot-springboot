@@ -55,7 +55,7 @@ public class LootingMapFactory {
         m.getNodes().put("蓝室", node("蓝室", false, true, false, List.of("中控桥", "黑室")));
         m.getNodes().put("黑室", node("黑室", false, true, false, List.of("总裁室", "蓝室", "东区吊桥", "停机坪")));
         m.getNodes().put("总裁室", node("总裁室", false, true, false, List.of("浮力室", "黑室")));
-        m.getNodes().put("发射台", node("发射台", false, true, false, List.of("运输通道", "撤离点3")));
+        m.getNodes().put("发射台", node("发射台", false, true, false, List.of("运输通道", "火箭")));
         // ===== 中央通道 =====
         m.getNodes().put("中控室", node("中控室", false, true, false, List.of("宿舍", "工业区", "中控桥")));
         m.getNodes().put("中控桥", node("中控桥", false, false, false, List.of("中控室", "浮力室", "蓝室")));
