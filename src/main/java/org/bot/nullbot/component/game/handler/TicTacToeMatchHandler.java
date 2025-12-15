@@ -68,17 +68,17 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
      */
     public GameResult move(Long userId, int r, int c) {
         Match match = matchManager.getMatchBySelfId(userId);
-        if (match == null) { return getErrorResult("[井字棋] ❌对局不存在"); }
+        if (match == null) return getErrorResult("[井字棋] ❌对局不存在");
         TicTacToeGameState state = games.get(match.getMatchId());
-        if (state == null) { return getErrorResult("[井字棋] ❌游戏状态不存在"); }
+        if (state == null) return getErrorResult("[井字棋] ❌游戏状态不存在");
 
         matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
         char my = userId.equals(state.getPlayerX()) ? 'X' :
                         userId.equals(state.getPlayerO()) ? 'O' : 0;
 
-        if (my == 0) { return getErrorResult("[井字棋] ❌你不是该对局玩家"); }
-        if (state.getCurrentTurn() != my) { return getErrorResult("[井字棋] ⏳还没轮到你"); }
-        if (!gameLogic.place(state, r, c)) { return getErrorResult("[井字棋] ❌非法落子"); }
+        if (my == 0) return getErrorResult("[井字棋] ❌你不是该对局玩家");
+        if (state.getCurrentTurn() != my) return getErrorResult("[井字棋] ⏳还没轮到你");
+        if (!gameLogic.place(state, r, c)) return getErrorResult("[井字棋] ❌非法落子");
 
         StringBuilder info = new StringBuilder();
         info.append(render(state));

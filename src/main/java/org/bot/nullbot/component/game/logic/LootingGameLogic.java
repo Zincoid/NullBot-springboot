@@ -87,6 +87,8 @@ public class LootingGameLogic extends GameLogic
         return sb.toString();
     }
 
+    // ===== 推进游戏刻 =====
+
     public List<String> tick(LootingGameState s, Long selfId) {
         s.setTick(s.getTick() + 1);
         checkFinished(s);
@@ -183,13 +185,12 @@ public class LootingGameLogic extends GameLogic
         for (AiEnemyState ai : s.getEnemies()) {
             if (!ai.alive()) continue;
             if(R.nextBoolean()){
-                // 攻击同节点玩家
                 for (LootingPlayerState p : s.getPlayers().values()) {
                     if (p.isAlive() && p.getLocation().equals(ai.getLocation())) {
                         if(Objects.equals(p.getUserId(), selfId)){
                             int dmg = DamageUtil.aiDamage();
                             p.setHp(p.getHp() - dmg);
-                            sb1.append("\n⚔️ 敌人").append(ai.getName()).append("对你造成").append(dmg).append("伤害\n");
+                            sb1.append("\n⚔️ ").append(ai.getName()).append("对你造成").append(dmg).append("伤害\n");
                             if (p.getHp() <= 0) {
                                 p.setAlive(false);
                                 ai.getBackpack().addAll(p.getBackpack());
