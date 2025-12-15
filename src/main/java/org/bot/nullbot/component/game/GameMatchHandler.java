@@ -72,19 +72,19 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
         bot.sendGroupMsg(p2.getGroupId(), info, false);
     }
 
-    // 返回分离型消息失败结果
+    // 失败消息结果
     protected GameResult getErrorResult(String selfInfo) {
         return GameResult.error(selfInfo);
     }
 
-    // 返回分离型消息成功结果
-    protected GameResult getSuccessResult(Long userId, Match match, Boolean isSeperated, String selfInfo, String opponentInfo) {
-        return GameResult.success(isSeperated, match.getSelfGroupIdBySelfId(userId), match.getOpponentGroupIdBySelfId(userId), selfInfo, opponentInfo);
+    // 成功消息结果
+    protected GameResult getSuccessResult(Long userId, Match match, Boolean isAsync, String selfInfo, String opponentInfo) {
+        return GameResult.success(isAsync, match.getSelfGroupIdBySelfId(userId), match.getOpponentGroupIdBySelfId(userId), selfInfo, opponentInfo);
     }
 
-    // 返回分离型消息成功结果 (自动结束游戏)
-    protected GameResult getFinishResult(Long userId, Match match, Boolean isSeperated, String selfInfo, String opponentInfo) {
-        GameResult result = getSuccessResult(userId, match, isSeperated, selfInfo + "\n\nMatch 已结束：" + match.getMatchId(),  opponentInfo + "\n\nMatch 已结束：" + match.getMatchId());
+    // 成功消息结果 (自动结束游戏)
+    protected GameResult getFinishResult(Long userId, Match match, Boolean isAsync, String selfInfo, String opponentInfo) {
+        GameResult result = getSuccessResult(userId, match, isAsync, selfInfo + "\n\nMatch 已结束：" + match.getMatchId(),  opponentInfo + "\n\nMatch 已结束：" + match.getMatchId());
         onMatchEnd(match);
         return result;
     }

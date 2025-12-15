@@ -74,14 +74,14 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
     public GameResult action(Long userId, String command)
     {
         Match match = matchManager.getMatchBySelfId(userId);
-        if (match == null) { return getErrorResult("[Looting] ❌ 你当前没有进行中的对局"); }
+        if (match == null) { return getErrorResult("[摸金] ❌你当前没有进行中的对局"); }
         LootingGameState state = games.get(match.getMatchId());
-        if (state == null) { return getErrorResult("[Looting] ❌ 游戏状态不存在"); }
-        if (state.isFinished()) { return GameResult.error("[Looting] ❌ 对局已结束"); }
+        if (state == null) { return getErrorResult("[摸金] ❌游戏状态不存在"); }
+        if (state.isFinished()) { return GameResult.error("[摸金] ❌对局已结束"); }
 
         LootingPlayerState p = state.getPlayers().get(userId);
-        if (!p.isAlive()) return getSuccessResult(userId, match, false, "💀 你已死亡，无法继续行动", null);
-        if (p.isEvacuated()) return getSuccessResult(userId, match, false, "🚪 你已撤离，无法继续行动", null);
+        if (!p.isAlive()) return getSuccessResult(userId, match, true, "💀 你已死亡，无法继续行动", "");
+        if (p.isEvacuated()) return getSuccessResult(userId, match, true, "🚪 你已撤离，无法继续行动", "");
 
         matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
 
@@ -95,10 +95,10 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
             selfOutput.append(gameLogic.view(state, p)).append("\n");
         }
         else if (command.equals("搜刮")) {
-            selfOutput.append(gameLogic.loot(state, p)).append("\n").append(gameLogic.tick(state, userId));
+            selfOutput.append(gameLogic.loot(state, p)).append("\n");
         }
         else if (command.equals("攻击AI")) {
-            selfOutput.append(gameLogic.attackAi(state, p)).append("\n").append(gameLogic.tick(state, userId));
+            selfOutput.append(gameLogic.attackAi(state, p)).append("\n");
         }
         else if (command.equals("攻击玩家")) {
             List<String> attackPlayerOutput = gameLogic.attackPlayer(state, p);
@@ -106,7 +106,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
             opponentOutput.append(attackPlayerOutput.get(1));
         }
         else if (command.equals("撤离")) {
-            selfOutput.append(gameLogic.evac(state, p)).append("\n").append(gameLogic.tick(state, userId));
+            selfOutput.append(gameLogic.evac(state, p)).append("\n");
         }
         else {
             selfOutput.append("❓ 未知指令");
@@ -129,7 +129,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
             if (state.getTick() > 25) {
                 return getFinishResult(userId, match, true, selfInfo + "\n⏹ 时间已耗尽！(25 Ticks)", "⏹ 时间已耗尽！(25 Ticks)");
             }
-            return getFinishResult(userId, match, true, selfInfo + "\n⏹ 对局已结束！", "⏹ 对局已结束");
+            return getFinishResult(userId, match, true, selfInfo + "\n⏹ 所有玩家均撤离或死亡！", "⏹ 所有玩家均撤离或死亡！");
         }
         return getSuccessResult(userId, match, true, selfInfo, opponentInfo);
     }

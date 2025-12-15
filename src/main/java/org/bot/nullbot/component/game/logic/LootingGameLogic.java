@@ -70,7 +70,7 @@ public class LootingGameLogic extends GameLogic
             if (ai.alive() && ai.getLocation().equals(p.getLocation())) {
                 sb.append("⚠️ 发现AI敌人: ")
                         .append(ai.getName())
-                        .append(" HP ").append(ai.getHp())
+                        // .append(" HP ").append(ai.getHp())
                         .append("\n");
             }
         }
@@ -78,8 +78,8 @@ public class LootingGameLogic extends GameLogic
         for (LootingPlayerState other : s.getPlayers().values()) {
             if (other != p && other.isAlive() && other.getLocation().equals(p.getLocation())) {
                 sb.append("⚠️ 发现玩家: ")
-                        // .append(other.getUserId())
-                        .append("HP ").append(other.getHp())
+                        .append(other.getUserId())
+                        // .append("HP ").append(other.getHp())
                         .append("\n");
             }
         }
@@ -174,7 +174,7 @@ public class LootingGameLogic extends GameLogic
                         sb.append("\n🎁 ").append(i.getName()).append(" (").append(i.getRarity()).append(")");
                     }
                 }
-                return List.of(sb.toString(), "⚔️ 有玩家攻击了" + other.getUserId() +"！剩余HP: " + other.getHp());
+                return List.of(sb.toString(), "⚔️ 玩家攻击了" + other.getUserId() +",造成" + dmg + "伤害！剩余HP: " + other.getHp());
             }
         }
         return List.of("\n❌ 当前位置没有可攻击的玩家", "");
@@ -202,7 +202,7 @@ public class LootingGameLogic extends GameLogic
                         }else{
                             int dmg = DamageUtil.aiDamage();
                             p.setHp(p.getHp() - dmg);
-                            sb2.append("⚔️ 敌人").append(ai.getName()).append("对玩家").append(p.getUserId()).append("造成").append(dmg).append("伤害\n").append("玩家剩余HP: ").append(p.getHp());
+                            sb2.append("⚔️ ").append(ai.getName()).append("攻击了").append(p.getUserId()).append(",造成").append(dmg).append("伤害！").append("剩余HP: ").append(p.getHp());
                             if (p.getHp() <= 0) {
                                 p.setAlive(false);
                                 ai.getBackpack().addAll(p.getBackpack());
