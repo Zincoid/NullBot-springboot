@@ -1,4 +1,4 @@
-package org.bot.nullbot.util.image;
+package org.bot.nullbot.util.convert;
 
 import org.bot.nullbot.entity.svg.SvgCanvas;
 import org.bot.nullbot.util.ResourceLoader;

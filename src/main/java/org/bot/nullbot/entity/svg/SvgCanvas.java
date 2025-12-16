@@ -1,7 +1,7 @@
 package org.bot.nullbot.entity.svg;
 
 import org.apache.batik.anim.dom.SVGDOMImplementation;
-import org.bot.nullbot.util.image.ResvgRenderer;
+import org.bot.nullbot.util.convert.ResvgRenderer;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

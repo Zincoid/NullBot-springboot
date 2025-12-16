@@ -1,4 +1,4 @@
-package org.bot.nullbot.util.image;
+package org.bot.nullbot.util.convert;
 
 import java.nio.file.Path;
 

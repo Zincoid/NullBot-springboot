@@ -13,7 +13,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.MessageParseUtil;
-import org.bot.nullbot.util.image.ImageConverter;
+import org.bot.nullbot.util.convert.ImageConverter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
