@@ -21,7 +21,7 @@ public class HelpCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             try {
-                String helpBase64 = StaticResourceUtil.loadImageAsBase64("help.jpg");
+                String helpBase64 = StaticResourceUtil.loadImageAsBase64("help/help.jpg");
                 String response = MsgUtils.builder().img("base64://" + helpBase64).build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[Help] 已获取帮助");
