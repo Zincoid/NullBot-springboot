@@ -74,7 +74,8 @@ public class AvatarConvertCommand implements Command
     @Override
     public String getHelp() {
         return "◉ AvatarConvert 命令\n" +
-                "功能: P图!!!\n" +
+                "功能: 头像P图!!!\n" +
+                "方式: RIP/...未开发\n" +
                 "限权: " + getAccess() + "\n" +
                 "格式: ImageConvert [处理方式] [@任何人]\n" +
                 "中文命令: 头像处理";
