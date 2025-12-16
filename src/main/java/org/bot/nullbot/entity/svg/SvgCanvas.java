@@ -76,40 +76,6 @@ public class SvgCanvas
 
     /* ---------------- 图片 ---------------- */
 
-    // public SvgCanvas image(int x, int y, int width, int height, Path imagePath) {
-    //     try {
-    //         byte[] bytes = Files.readAllBytes(imagePath);
-    //         String base64 = Base64.getEncoder().encodeToString(bytes);
-    //
-    //         String mime;
-    //         if (imagePath.toString().endsWith(".png")) {
-    //             mime = "image/png";
-    //         } else if (imagePath.toString().endsWith(".jpg")
-    //                 || imagePath.toString().endsWith(".jpeg")) {
-    //             mime = "image/jpeg";
-    //         } else {
-    //             throw new IllegalArgumentException("Unsupported image type");
-    //         }
-    //
-    //         Element image = document.createElement("image");
-    //         image.setAttribute("x", String.valueOf(x));
-    //         image.setAttribute("y", String.valueOf(y));
-    //         image.setAttribute("width", String.valueOf(width));
-    //         image.setAttribute("height", String.valueOf(height));
-    //
-    //         // SVG2 标准属性
-    //         image.setAttribute(
-    //                 "href",
-    //                 "data:" + mime + ";base64," + base64
-    //         );
-    //
-    //         svg.appendChild(image);
-    //         return this;
-    //     } catch (Exception e) {
-    //         throw new RuntimeException(e);
-    //     }
-    // }
-
     public SvgCanvas image(int x, int y, int width, int height, Path imagePath) {
         return image(x, y, width, height, imagePath, false); // 默认不转换为黑白
     }
