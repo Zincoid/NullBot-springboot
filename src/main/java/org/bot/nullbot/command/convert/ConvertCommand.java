@@ -3,7 +3,10 @@ package org.bot.nullbot.command.convert;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.dto.action.response.GetMsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.enums.MsgTypeEnum;
+import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
@@ -16,14 +19,13 @@ import org.bot.nullbot.util.MessageParseUtil;
 import org.bot.nullbot.util.convert.ImageConverter;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-@CommandMapping({"AvatarConvert", "头像处理"})
+@CommandMapping({"AvatarConvert", "图像处理"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class AvatarConvertCommand implements Command
+public class ConvertCommand implements Command
 {
     private final FileStorageConfig fileStorageConfig;
 
@@ -34,50 +36,61 @@ public class AvatarConvertCommand implements Command
                 String method = event.getCommandParameters().getFirst();
                 if (!List.of("RIP").contains(method)) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ❌方法不存在", false);
-                    log.info("\t\t\t\t├─[Avatar.Convert] 方法不存在");
+                    log.info("\t\t\t\t├─[Convert] 方法不存在");
                     return;
                 }
-                String tempFilePath = fileStorageConfig.getTempPath();
-                List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
-                if (qqNumbers.isEmpty()) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ❌没有@用户", false);
-                    log.info("\t\t\t\t├─[Avatar.Convert] 没有@用户");
+
+                List<String> urls = new ArrayList<>();
+
+                // 引用 收集
+                ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
+                if (reply.getType() == MsgTypeEnum.reply) {
+                    GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+                    Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
+                    urls.addAll(imageMap.values());
                 }
-                for (Long qqNumber : qqNumbers) {
+
+                // AT 收集
+                List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+                for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+
+                // 开始处理
+                String tempFilePath = fileStorageConfig.getTempPath();
+                for (String url : urls) {
                     String tempFileName = UUID.randomUUID().toString();
-                    String avatarUrl = ShiroUtils.getUserAvatar(qqNumber, 5);
-                    String downloadedFileName = DownloadUtil.downloadFile(avatarUrl, tempFilePath, tempFileName);
+                    String downloadedFileName = DownloadUtil.downloadFile(url, tempFilePath, tempFileName);
                     if (downloadedFileName == null) {
-                        log.info("\t\t\t\t├─[Avatar.Convert] 下载头像失败 - {}", qqNumber);
+                        log.info("\t\t\t\t├─[Convert] 下载图像失败 - {}", url);
                         continue;
                     }
-                    log.info("头像 {}", downloadedFileName);
                     try {
                         String base64 = ImageConverter.rip(tempFilePath + "/" + downloadedFileName);
                         String response = MsgUtils.builder().img("base64://" + base64).build();
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+                        log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
                     } catch (Exception e) {
-                        log.info("\t\t\t\t├─[Avatar.Convert] 处理QQ {} 时出错: {}", qqNumber, e.getMessage(), e);
+                        log.info("\t\t\t\t├─[Convert] 处理时出错: {}", e.getMessage());
                     } finally {
                         FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
                     }
                 }
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ✅处理完毕！", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ✅处理完成！", false);
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ❌无方法参数", false);
-                log.info("\t\t\t\t├─[Avatar.Convert] 无方法参数");
+                log.info("\t\t\t\t├─[Convert] 无方法参数");
             }
         }else
-            log.info("\t\t\t\t├─[Avatar.Convert] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Convert] 未设计 非群消息事件响应方式");
     }
 
     @Override
     public String getHelp() {
-        return "◉ AvatarConvert 命令\n" +
-                "功能: 头像P图!!!\n" +
+        return "◉ Convert 命令\n" +
+                "功能: P图!!!\n" +
                 "方式: RIP/...未开发\n" +
                 "限权: " + getAccess() + "\n" +
-                "格式: ImageConvert [处理方式] [@任何人]\n" +
-                "中文命令: 头像处理";
+                "格式: [引用]ImageConvert [处理方式]" +
+                "或 ImageConvert [处理方式] [@任何人]\n" +
+                "中文命令: 图像处理";
     }
 }
