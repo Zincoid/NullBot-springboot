@@ -1,6 +1,7 @@
 package org.bot.nullbot.util.image;
 
 import org.bot.nullbot.entity.svg.SvgCanvas;
+import org.bot.nullbot.util.ResourceLoader;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,10 +11,11 @@ public class ImageConverter
 {
     public static String rip(String userAvatarPath) throws Exception {
         Path tempPngPath = Files.createTempFile("rip_", ".png");
+        Path fontPath = ResourceLoader.getCached("static/fonts/Gilroy-Bold.ttf");
         try {
             // 创建 SVG 画布
             SvgCanvas canvas = SvgCanvas.create(640, 640)
-                    .font("target", Path.of("src/main/resources/static/fonts/Gilroy-Bold.ttf"));
+                    .font("target", fontPath);
             // 添加用户头像
             canvas.image(
                     0, 0, 640, 640,

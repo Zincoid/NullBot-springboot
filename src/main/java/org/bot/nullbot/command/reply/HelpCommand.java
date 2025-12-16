@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.util.StaticResourceUtil;
+import org.bot.nullbot.util.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -21,8 +21,8 @@ public class HelpCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             try {
-                String helpBase64 = StaticResourceUtil.loadImageAsBase64("help/help.jpg");
-                String response = MsgUtils.builder().img("base64://" + helpBase64).build();
+                String helpPath = ResourceLoader.getCached("static/help/help.jpg").toAbsolutePath().toString();
+                String response = MsgUtils.builder().img(helpPath).build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[Help] 已获取帮助");
             } catch (IOException e) {

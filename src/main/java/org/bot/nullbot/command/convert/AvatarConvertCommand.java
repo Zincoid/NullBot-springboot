@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.image;
+package org.bot.nullbot.command.convert;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.ShiroUtils;
@@ -19,11 +19,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
-@CommandMapping({"ImageConvert", "图像处理"})
+@CommandMapping({"AvatarConvert", "头像处理"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class ImageConvertCommand implements Command
+public class AvatarConvertCommand implements Command
 {
     private final FileStorageConfig fileStorageConfig;
 
@@ -34,25 +34,30 @@ public class ImageConvertCommand implements Command
                 String method = event.getCommandParameters().getFirst();
                 if (!List.of("RIP").contains(method)) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ❌方法不存在", false);
-                    log.info("\t\t\t\t├─[Image.Convert] 方法不存在");
+                    log.info("\t\t\t\t├─[Avatar.Convert] 方法不存在");
                     return;
                 }
                 String tempFilePath = fileStorageConfig.getTempPath();
                 List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+                if (qqNumbers.isEmpty()) {
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ❌没有@用户", false);
+                    log.info("\t\t\t\t├─[Avatar.Convert] 没有@用户");
+                }
                 for (Long qqNumber : qqNumbers) {
                     String tempFileName = UUID.randomUUID().toString();
                     String avatarUrl = ShiroUtils.getUserAvatar(qqNumber, 5);
                     String downloadedFileName = DownloadUtil.downloadFile(avatarUrl, tempFilePath, tempFileName);
                     if (downloadedFileName == null) {
-                        log.info("\t\t\t\t├─[Image.Convert] 下载头像失败 - {}", qqNumber);
+                        log.info("\t\t\t\t├─[Avatar.Convert] 下载头像失败 - {}", qqNumber);
                         continue;
                     }
+                    log.info("头像 {}", downloadedFileName);
                     try {
                         String base64 = ImageConverter.rip(tempFilePath + "/" + downloadedFileName);
                         String response = MsgUtils.builder().img("base64://" + base64).build();
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                     } catch (Exception e) {
-                        log.info("\t\t\t\t├─[Image.Convert] 处理QQ {} 时出错: {}", qqNumber, e.getMessage(), e);
+                        log.info("\t\t\t\t├─[Avatar.Convert] 处理QQ {} 时出错: {}", qqNumber, e.getMessage(), e);
                     } finally {
                         FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
                     }
@@ -60,18 +65,18 @@ public class ImageConvertCommand implements Command
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ✅处理完毕！", false);
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ❌无方法参数", false);
-                log.info("\t\t\t\t├─[Image.Convert] 无方法参数");
+                log.info("\t\t\t\t├─[Avatar.Convert] 无方法参数");
             }
         }else
-            log.info("\t\t\t\t├─[Image.Convert] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Avatar.Convert] 未设计 非群消息事件响应方式");
     }
 
     @Override
     public String getHelp() {
-        return "◉ ImageConvert 命令\n" +
+        return "◉ AvatarConvert 命令\n" +
                 "功能: P图!!!\n" +
                 "限权: " + getAccess() + "\n" +
                 "格式: ImageConvert [处理方式] [@任何人]\n" +
-                "中文命令: 图像处理";
+                "中文命令: 头像处理";
     }
 }

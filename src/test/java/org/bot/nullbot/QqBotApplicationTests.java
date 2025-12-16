@@ -8,6 +8,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.svg.SvgCanvas;
 import org.bot.nullbot.util.FileUtil;
+import org.bot.nullbot.util.ResourceLoader;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -73,10 +74,11 @@ class QqBotApplicationTests {
 
     @Test
     void renderTest() throws Exception {
+        Path fontPath = ResourceLoader.getCached("static/fonts/Gilroy-Bold.ttf");
+
         // 创建 SVG 画布
         SvgCanvas canvas = SvgCanvas.create(640, 640)
-                .font("target", Path.of("src/main/resources/static/fonts/Gilroy-Bold.ttf"));
-
+                .font("target", fontPath);
         // 添加用户头像
         canvas.image(
                 0, 0, 640, 640,
