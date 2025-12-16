@@ -17,7 +17,7 @@ public class ImageConverter
             // 添加用户头像
             canvas.image(
                     0, 0, 640, 640,
-                    Path.of("src/test/testOutput/input.jpg"), true
+                    Path.of(userAvatarPath), true
             );
             // 添加 RIP 文字
             canvas.text(200, 550, "R.I.P")

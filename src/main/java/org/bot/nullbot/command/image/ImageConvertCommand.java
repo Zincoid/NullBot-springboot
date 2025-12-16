@@ -58,8 +58,10 @@ public class ImageConvertCommand implements Command
                     }
                 }
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ✅处理完毕！", false);
+            }else{
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ❌无方法参数", false);
+                log.info("\t\t\t\t├─[Image.Convert] 无方法参数");
             }
-            log.info("\t\t\t\t├─[Image.Convert] 已处理");
         }else
             log.info("\t\t\t\t├─[Image.Convert] 未设计 非群消息事件响应方式");
     }
