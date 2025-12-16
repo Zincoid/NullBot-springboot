@@ -73,22 +73,24 @@ class QqBotApplicationTests {
 
     @Test
     void renderTest() throws Exception {
-        SvgCanvas canvas = SvgCanvas.create(800, 600)
+        // 创建 SVG 画布
+        SvgCanvas canvas = SvgCanvas.create(640, 640)
                 .font("target", Path.of("src/main/resources/static/fonts/Gilroy-Bold.ttf"));
 
-        canvas.text(400, 150, "R.I.P")
-                .font("target")
-                .size(18)
-                .color("#000000")
-                .anchorMiddle();
-
+        // 添加用户头像
         canvas.image(
-                300, 200, 200, 200,
+                0, 0, 640, 640,
                 Path.of("src/test/testOutput/input.jpg"), true
         );
+        // 添加 RIP 文字
+        canvas.text(200, 550, "R.I.P")
+                .font("target")
+                .size(100)
+                .color("#000000")
+                .bold()
+                .stroke("#FFFFFF", 3);
 
-        canvas.backgroundColor("#FFFFFF");
-
+        // 使用 resvg 渲染为 PNG
         canvas.renderToImg(Path.of("src/test/testOutput/output.jpg"));
 
         System.out.println("图片已生成：output.png");

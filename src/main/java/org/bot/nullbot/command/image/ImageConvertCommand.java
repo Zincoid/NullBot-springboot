@@ -32,7 +32,7 @@ public class ImageConvertCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             if (!event.getCommandParameters().isEmpty()) {
                 String method = event.getCommandParameters().getFirst();
-                if (!List.of("RIP", "永远怀念").contains(method)) {
+                if (!List.of("RIP").contains(method)) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ❌方法不存在", false);
                     log.info("\t\t\t\t├─[Image.Convert] 方法不存在");
                     return;
@@ -49,8 +49,8 @@ public class ImageConvertCommand implements Command
                     }
                     try {
                         String base64 = ImageConverter.rip(tempFilePath + "/" + downloadedFileName);
-                        String response = MsgUtils.builder().img(downloadedFileName).build();
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "base64://" + base64, false);
+                        String response = MsgUtils.builder().img("base64://" + base64).build();
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                     } catch (Exception e) {
                         log.info("\t\t\t\t├─[Image.Convert] 处理QQ {} 时出错: {}", qqNumber, e.getMessage(), e);
                     } finally {
