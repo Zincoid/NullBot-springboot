@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class QqBotApplicationTests {
@@ -77,7 +76,7 @@ class QqBotApplicationTests {
         SvgCanvas canvas = SvgCanvas.create(800, 600)
                 .font("target", Path.of("src/main/resources/static/fonts/Gilroy-Bold.ttf"));
 
-        canvas.text(400, 150, "NullPointerException!!!")
+        canvas.text(400, 150, "R.I.P")
                 .font("target")
                 .size(18)
                 .color("#000000")
@@ -85,12 +84,12 @@ class QqBotApplicationTests {
 
         canvas.image(
                 300, 200, 200, 200,
-                Path.of("src/test/testOutput/input.jpg")
+                Path.of("src/test/testOutput/input.jpg"), true
         );
 
         canvas.backgroundColor("#FFFFFF");
 
-        canvas.renderToPng(Path.of("src/test/testOutput/output.jpg"));
+        canvas.renderToImg(Path.of("src/test/testOutput/output.jpg"));
 
         System.out.println("图片已生成：output.png");
     }

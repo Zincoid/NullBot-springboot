@@ -63,6 +63,7 @@ nullbot:
       scope: group
   file:
     storage:
+      temp-path: /root/Nullbot/file/temp  # src/main/resources/file/temp
       image-path: /root/Nullbot/file/image  # src/main/resources/file/image
       video-path: /root/Nullbot/file/video  # src/main/resources/file/video
       audio-path: /root/Nullbot/file/audio  # src/main/resources/file/audio

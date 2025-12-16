@@ -5,15 +5,30 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.GetMsgResp;
 import com.mikuac.shiro.model.ArrayMsg;
 
-import java.util.AbstractMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MessageParseUtil
 {
+    public static List<Long> extractAtQQNumbers(String message) {
+        List<Long> qqNumbers = new ArrayList<>();
+        // 正则表达式匹配 [CQ:at,qq=数字]
+        Pattern pattern = Pattern.compile("\\[CQ:at,qq=(\\d+)\\]");
+        Matcher matcher = pattern.matcher(message);
+        while (matcher.find()) {
+            try {
+                long qq = Long.parseLong(matcher.group(1));
+                qqNumbers.add(qq);
+            } catch (NumberFormatException e) {
+                // 忽略格式错误的数字
+                System.err.println("无效的QQ号: " + matcher.group(1));
+            }
+        }
+        return qqNumbers;
+    }
+
     public static String parseGroupArrayMsgForAI(Bot bot, List<ArrayMsg> arrayMsgs) {
         StringBuilder message = new StringBuilder();
         for (ArrayMsg msg : arrayMsgs) {

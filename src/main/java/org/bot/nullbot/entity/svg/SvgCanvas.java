@@ -1,14 +1,18 @@
 package org.bot.nullbot.entity.svg;
 
 import org.apache.batik.anim.dom.SVGDOMImplementation;
-import org.bot.nullbot.util.render.ResvgRenderer;
+import org.bot.nullbot.util.image.ResvgRenderer;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.imageio.ImageIO;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
@@ -72,38 +76,137 @@ public class SvgCanvas
 
     /* ---------------- 图片 ---------------- */
 
-    public SvgCanvas image(int x, int y, int width, int height, Path imagePath) {
-        try {
-            byte[] bytes = Files.readAllBytes(imagePath);
-            String base64 = Base64.getEncoder().encodeToString(bytes);
+    // public SvgCanvas image(int x, int y, int width, int height, Path imagePath) {
+    //     try {
+    //         byte[] bytes = Files.readAllBytes(imagePath);
+    //         String base64 = Base64.getEncoder().encodeToString(bytes);
+    //
+    //         String mime;
+    //         if (imagePath.toString().endsWith(".png")) {
+    //             mime = "image/png";
+    //         } else if (imagePath.toString().endsWith(".jpg")
+    //                 || imagePath.toString().endsWith(".jpeg")) {
+    //             mime = "image/jpeg";
+    //         } else {
+    //             throw new IllegalArgumentException("Unsupported image type");
+    //         }
+    //
+    //         Element image = document.createElement("image");
+    //         image.setAttribute("x", String.valueOf(x));
+    //         image.setAttribute("y", String.valueOf(y));
+    //         image.setAttribute("width", String.valueOf(width));
+    //         image.setAttribute("height", String.valueOf(height));
+    //
+    //         // SVG2 标准属性
+    //         image.setAttribute(
+    //                 "href",
+    //                 "data:" + mime + ";base64," + base64
+    //         );
+    //
+    //         svg.appendChild(image);
+    //         return this;
+    //     } catch (Exception e) {
+    //         throw new RuntimeException(e);
+    //     }
+    // }
 
-            String mime;
-            if (imagePath.toString().endsWith(".png")) {
-                mime = "image/png";
-            } else if (imagePath.toString().endsWith(".jpg")
-                    || imagePath.toString().endsWith(".jpeg")) {
-                mime = "image/jpeg";
-            } else {
-                throw new IllegalArgumentException("Unsupported image type");
+    public SvgCanvas image(int x, int y, int width, int height, Path imagePath) {
+        return image(x, y, width, height, imagePath, false); // 默认不转换为黑白
+    }
+
+    public SvgCanvas image(int x, int y, int width, int height, Path imagePath, boolean convertToGrayscale) {
+        try {
+            // 读取原始图像
+            BufferedImage originalImage = ImageIO.read(imagePath.toFile());
+            if (originalImage == null) {
+                throw new IllegalArgumentException("无法读取图像文件: " + imagePath);
             }
 
+            byte[] imageBytes;
+            String mimeType;
+
+            if (convertToGrayscale) {
+                // 转换为灰度图像
+                BufferedImage grayImage = convertToGrayscale(originalImage);
+
+                // 编码为PNG格式（PNG支持灰度）
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(grayImage, "PNG", baos);
+                imageBytes = baos.toByteArray();
+                mimeType = "image/png";
+            } else {
+                // 保持原样
+                imageBytes = Files.readAllBytes(imagePath);
+
+                // 根据文件扩展名确定MIME类型
+                String fileName = imagePath.toString().toLowerCase();
+                if (fileName.endsWith(".png")) {
+                    mimeType = "image/png";
+                } else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+                    mimeType = "image/jpeg";
+                } else if (fileName.endsWith(".gif")) {
+                    mimeType = "image/gif";
+                } else if (fileName.endsWith(".bmp")) {
+                    mimeType = "image/bmp";
+                } else if (fileName.endsWith(".webp")) {
+                    mimeType = "image/webp";
+                } else {
+                    throw new IllegalArgumentException("不支持的图像格式: " + imagePath);
+                }
+            }
+
+            // Base64编码
+            String base64 = Base64.getEncoder().encodeToString(imageBytes);
+
+            // 创建SVG图像元素
             Element image = document.createElement("image");
             image.setAttribute("x", String.valueOf(x));
             image.setAttribute("y", String.valueOf(y));
             image.setAttribute("width", String.valueOf(width));
             image.setAttribute("height", String.valueOf(height));
 
-            // SVG2 标准属性
+            // 使用SVG2标准的href属性
             image.setAttribute(
                     "href",
-                    "data:" + mime + ";base64," + base64
+                    "data:" + mimeType + ";base64," + base64
+            );
+
+            // 如果需要，也可以添加兼容性属性
+            image.setAttributeNS(
+                    "http://www.w3.org/1999/xlink",
+                    "xlink:href",
+                    "data:" + mimeType + ";base64," + base64
             );
 
             svg.appendChild(image);
             return this;
+
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("添加图像失败: " + imagePath, e);
         }
+    }
+
+    private BufferedImage convertToGrayscale(BufferedImage original) {
+        // 创建灰度图像
+        BufferedImage grayImage = new BufferedImage(
+                original.getWidth(),
+                original.getHeight(),
+                BufferedImage.TYPE_BYTE_GRAY
+        );
+
+        // 绘制并自动转换为灰度
+        Graphics2D g2d = grayImage.createGraphics();
+
+        // 设置渲染质量
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // 绘制图像（会自动转换为灰度）
+        g2d.drawImage(original, 0, 0, null);
+        g2d.dispose();
+
+        return grayImage;
     }
 
     /* ---------------- 背景颜色 ---------------- */
@@ -134,11 +237,11 @@ public class SvgCanvas
         return path;
     }
 
-    public Path renderToPng(Path outputPng) throws Exception {
+    public Path renderToImg(Path output) throws Exception {
         Path svgFile = Files.createTempFile("canvas-", ".svg");
         exportSvg(svgFile);
-        ResvgRenderer.render(svgFile, outputPng);
-        return outputPng;
+        ResvgRenderer.render(svgFile, output);
+        return output;
     }
 }
 
