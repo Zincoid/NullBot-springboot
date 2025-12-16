@@ -10,7 +10,7 @@ import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"FinishMatch", "结束对局"})
+@CommandMapping({"FinishMatch", "终止对局"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -34,7 +34,12 @@ public class FinishMatchCommand implements Command
     }
 
     @Override
+    public Integer getAccess() {
+        return 1;
+    }
+
+    @Override
     public String getHelp() {
-        return "◉ FinishMatch 命令\n功能: 结束自己的对局\n限权: " + getAccess() + "\n格式: FinishMatch\n中文命令: 结束对局";
+        return "◉ FinishMatch 命令\n功能: 强制终止自己正在进行的对局\n限权: " + getAccess() + "\n格式: FinishMatch\n中文命令: 终止对局";
     }
 }
