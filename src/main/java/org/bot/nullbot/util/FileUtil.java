@@ -240,7 +240,7 @@ public class FileUtil
 
             if (Files.isRegularFile(realTarget)) {
                 Files.delete(realTarget);
-                return "已删除: " + fileName;
+                return "已删除！\n" + fileName;
             } else {
                 return "错误: 文件不是普通文件, 无法删除";
             }
@@ -356,7 +356,7 @@ public class FileUtil
             }
 
             if (successCount == 1) {
-                result.append("已删除！\n ").append(String.join(", ", successFiles));
+                result.append("已删除！\n").append(String.join(", ", successFiles));
             } else {
                 result.append("错误: 删除出错");
             }
