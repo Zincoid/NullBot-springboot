@@ -27,12 +27,12 @@ class QqBotApplicationTests {
     @Resource
     TicTacToeGameLogic ticTacToeGameLogic;
 
-    // @Test
+    @Test
     void fileTest() throws IOException {
         System.out.println(FileUtil.getFolderTreeString("C:\\Users\\Zincoid\\IdeaProjects\\NullBot\\src\\main\\resources", 0));
     }
 
-   // @Test
+   @Test
    void commandTest() throws Exception {
        String commandType = "help";
        List<String> commandParameters =  new ArrayList<>();
@@ -47,7 +47,7 @@ class QqBotApplicationTests {
        // }
    }
 
-   // @Test
+   @Test
    void matchTest() {
        System.out.println(matcher.joinMatch(0L, 1L, "A", "reversi"));
        // System.out.println(matchService.joinMatch(0L, 1L, "B", "tictactoe"));
@@ -73,9 +73,9 @@ class QqBotApplicationTests {
        // }
    }
 
-    // @Test
+    @Test
     void renderTest() throws Exception {
-        Path fontPath = ResourceLoader.getCached("static/fonts/Gilroy-Bold.ttf", "/root/Nullbot/file/temp/fonts");
+        Path fontPath = ResourceLoader.getCached("static/fonts/Rubik-Bold.ttf", "/root/Nullbot/file/temp/fonts");
 
         System.out.println("字体路径: " + fontPath.toAbsolutePath());
         System.out.println("字体文件存在: " + Files.exists(fontPath));
@@ -86,23 +86,23 @@ class QqBotApplicationTests {
         // 添加用户头像
         canvas.image(
                 0, 0, 640, 640,
-                Path.of("src/test/testOutput/input.jpg"), true
+                Path.of("src/test/testFile/input.jpg"), true
         );
 
         // 添加 RIP 文字 - 确保使用正确的字体名称
-        canvas.text(160, 550, "R.I.P.")
-                .font("Gilroy")
+        canvas.text(150, 550, "R.I.P.")
+                .font("Rubik")
                 .size(150)
                 .color("#000000")
                 .bold()
                 .stroke("#FFFFFF", 8);
 
         // 使用 resvg 渲染为 PNG
-        Path outputPath = Path.of("src/test/testOutput/output.png");
+        Path outputPath = Path.of("src/test/testFile/output.png");
         canvas.renderToImg(outputPath, "/root/Nullbot/file/temp/fonts");
 
         // 先保存SVG文件查看内容
-        Path svgPath = Path.of("src/test/testOutput/output.svg");
+        Path svgPath = Path.of("src/test/testFile/output.svg");
         canvas.exportSvg(svgPath);
 
         // 读取并打印SVG内容

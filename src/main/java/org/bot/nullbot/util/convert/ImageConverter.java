@@ -12,7 +12,7 @@ public class ImageConverter
     // Command 调用
 
     public static String rip(String userAvatarPath, String tempFontPath) throws Exception {
-        ResourceLoader.getCached("static/fonts/Gilroy-Bold.ttf", tempFontPath);
+        ResourceLoader.getCached("static/fonts/Rubik-Bold.ttf", tempFontPath);
         Path tempPngPath = Files.createTempFile("rip_", ".png");
         try {
             // 创建 SVG 画布
@@ -23,8 +23,8 @@ public class ImageConverter
                     Path.of(userAvatarPath), true
             );
             // 添加 RIP 文字
-            canvas.text(160, 550, "R.I.P.")
-                    .font("Gilroy")
+            canvas.text(150, 550, "R.I.P.")
+                    .font("Rubik")
                     .size(150)
                     .color("#000000")
                     .bold()
