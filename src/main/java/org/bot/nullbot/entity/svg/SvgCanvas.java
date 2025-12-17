@@ -1,7 +1,8 @@
 package org.bot.nullbot.entity.svg;
 
+import lombok.extern.slf4j.Slf4j;
+import me.aloic.ResvgJNI;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
-import org.bot.nullbot.util.convert.ResvgRenderer;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,14 +17,12 @@ import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
+@Slf4j
 public class SvgCanvas
 {
     private final Document document;
     private final Element svg;
-    private final Map<String, String> fontMap = new HashMap<>();
 
     private SvgCanvas(int width, int height) {
         DOMImplementation impl =
@@ -42,24 +41,6 @@ public class SvgCanvas
 
     public static SvgCanvas create(int width, int height) {
         return new SvgCanvas(width, height);
-    }
-
-    /* ---------------- 字体 ---------------- */
-
-    public SvgCanvas font(String name, Path fontFile) {
-        String css = """
-            @font-face {
-              font-family: '%s';
-              src: url('file://%s');
-            }
-            """.formatted(name, fontFile.toAbsolutePath());
-
-        Element style = document.createElement("style");
-        style.setTextContent(css);
-        svg.appendChild(style);
-
-        fontMap.put(name, name);
-        return this;
     }
 
     /* ---------------- 文本 ---------------- */
@@ -203,10 +184,27 @@ public class SvgCanvas
         return path;
     }
 
-    public Path renderToImg(Path output) throws Exception {
+    public Path renderToImg(Path output, String fontDir) throws Exception {
         Path svgFile = Files.createTempFile("canvas-", ".svg");
         exportSvg(svgFile);
-        ResvgRenderer.render(svgFile, output);
+
+        // 工作目录
+        var options = new ResvgJNI.RenderOptions("/tmp/resvg");
+        // 字体目录
+        options.LoadFontsDir(fontDir);
+
+        var renderer = new ResvgJNI.Renderer(options);
+
+        var inputFilePath = svgFile.toAbsolutePath().toString();
+        var outputFilePath = output.toAbsolutePath().toString();
+        var svgData = Files.readString(Path.of(inputFilePath));
+        try {
+            var data = renderer.RenderPng(svgData);
+            Files.write(Path.of(outputFilePath), data);
+        } catch (Exception e) {
+            log.error("Resvg JNI 出错: {}", e.getMessage());
+        }
+
         return output;
     }
 }

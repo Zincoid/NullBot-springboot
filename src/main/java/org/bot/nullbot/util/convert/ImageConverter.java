@@ -9,28 +9,29 @@ import java.util.Base64;
 
 public class ImageConverter
 {
-    public static String rip(String userAvatarPath) throws Exception {
+    // Command 调用
+
+    public static String rip(String userAvatarPath, String tempFontPath) throws Exception {
+        ResourceLoader.getCached("static/fonts/Gilroy-Bold.ttf", tempFontPath);
         Path tempPngPath = Files.createTempFile("rip_", ".png");
-        Path fontPath = ResourceLoader.getCached("static/fonts/Gilroy-Bold.ttf");
         try {
             // 创建 SVG 画布
-            SvgCanvas canvas = SvgCanvas.create(640, 640)
-                    .font("target", fontPath);
+            SvgCanvas canvas = SvgCanvas.create(640, 640);
             // 添加用户头像
             canvas.image(
                     0, 0, 640, 640,
                     Path.of(userAvatarPath), true
             );
             // 添加 RIP 文字
-            canvas.text(200, 550, "R.I.P")
-                    .font("target")
-                    .size(100)
+            canvas.text(160, 550, "R.I.P.")
+                    .font("Gilroy")
+                    .size(150)
                     .color("#000000")
                     .bold()
-                    .stroke("#FFFFFF", 3);
+                    .stroke("#FFFFFF", 8);
 
             // 使用 resvg 渲染为 PNG 并转换为 Base64
-            canvas.renderToImg(tempPngPath);
+            canvas.renderToImg(tempPngPath, tempFontPath);
             byte[] pngBytes = Files.readAllBytes(tempPngPath);
             String base64 = Base64.getEncoder().encodeToString(pngBytes);
             return base64;

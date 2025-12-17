@@ -64,7 +64,7 @@ public class ConvertCommand implements Command
                         continue;
                     }
                     try {
-                        String base64 = ImageConverter.rip(tempFilePath + "/" + downloadedFileName);
+                        String base64 = ImageConverter.rip(tempFilePath + "/" + downloadedFileName, tempFilePath + "/fonts");
                         String response = MsgUtils.builder().img("base64://" + base64).build();
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                         log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);

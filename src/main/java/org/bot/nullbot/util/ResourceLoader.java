@@ -11,18 +11,25 @@ public class ResourceLoader
 {
     private static final Map<String, Path> CACHE = new ConcurrentHashMap<>();
 
-    public static synchronized Path getCached(String resourcePath) throws IOException {
+    public static synchronized Path getCached(String resourcePath, String tempPath) throws IOException {
         // 使用缓存
         return CACHE.computeIfAbsent(resourcePath, key -> {
             try {
-                return loadFromResources(key);
+                return loadFromResources(key, tempPath);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
         });
     }
 
-    public static Path loadFromResources(String resourcePath) throws IOException {
+    public static Path loadFromResources(String resourcePath, String tempPath) throws IOException {
+        Path tempDir = Paths.get(tempPath);
+
+        // 确保目录存在
+        if (!Files.exists(tempDir)) {
+            Files.createDirectories(tempDir);
+        }
+
         // 获取资源流
         InputStream resourceStream = ResourceLoader.class.getClassLoader().getResourceAsStream(resourcePath);
         if (resourceStream == null) {
@@ -31,7 +38,7 @@ public class ResourceLoader
 
         // 创建临时文件
         String fileName = Paths.get(resourcePath).getFileName().toString();
-        Path tempFile = Files.createTempFile("resource-", "-" + fileName);
+        Path tempFile = Files.createTempFile(tempDir, "resource-", "-" + fileName);
 
         // 将资源复制到临时文件
         try (OutputStream out = Files.newOutputStream(tempFile)) {

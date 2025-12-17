@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,29 +73,43 @@ class QqBotApplicationTests {
        // }
    }
 
-    @Test
+    // @Test
     void renderTest() throws Exception {
-        Path fontPath = ResourceLoader.getCached("static/fonts/Gilroy-Bold.ttf");
+        Path fontPath = ResourceLoader.getCached("static/fonts/Gilroy-Bold.ttf", "/root/Nullbot/file/temp/fonts");
+
+        System.out.println("字体路径: " + fontPath.toAbsolutePath());
+        System.out.println("字体文件存在: " + Files.exists(fontPath));
 
         // 创建 SVG 画布
-        SvgCanvas canvas = SvgCanvas.create(640, 640)
-                .font("target", fontPath);
+        SvgCanvas canvas = SvgCanvas.create(640, 640);
+
         // 添加用户头像
         canvas.image(
                 0, 0, 640, 640,
                 Path.of("src/test/testOutput/input.jpg"), true
         );
-        // 添加 RIP 文字
-        canvas.text(200, 550, "R.I.P")
-                .font("target")
-                .size(100)
+
+        // 添加 RIP 文字 - 确保使用正确的字体名称
+        canvas.text(160, 550, "R.I.P.")
+                .font("Gilroy")
+                .size(150)
                 .color("#000000")
                 .bold()
-                .stroke("#FFFFFF", 3);
+                .stroke("#FFFFFF", 8);
 
         // 使用 resvg 渲染为 PNG
-        canvas.renderToImg(Path.of("src/test/testOutput/output.jpg"));
+        Path outputPath = Path.of("src/test/testOutput/output.png");
+        canvas.renderToImg(outputPath, "/root/Nullbot/file/temp/fonts");
 
-        System.out.println("图片已生成：output.png");
+        // 先保存SVG文件查看内容
+        Path svgPath = Path.of("src/test/testOutput/output.svg");
+        canvas.exportSvg(svgPath);
+
+        // 读取并打印SVG内容
+        String svgContent = Files.readString(svgPath);
+        System.out.println("生成的SVG内容:");
+        System.out.println(svgContent.substring(0, Math.min(svgContent.length(), 2000)) + "...");
+
+        System.out.println("图片已生成: " + outputPath.toAbsolutePath());
     }
 }

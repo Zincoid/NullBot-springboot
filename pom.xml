@@ -170,8 +170,14 @@
             <artifactId>batik-xml</artifactId>
             <version>1.16</version>
         </dependency>
-    </dependencies>
 
+        <!-- mvn install:install-file -Dfile=src/main/resources/lib/resvg-jni-0.1.4.jar -DgroupId=io.github.apeuriox -DartifactId=resvg-jni -Dversion=0.1.4 -Dpackaging=jar -DgeneratePom=true -->
+        <dependency>
+            <groupId>io.github.apeuriox</groupId>
+            <artifactId>resvg-jni</artifactId>
+            <version>0.1.4</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
