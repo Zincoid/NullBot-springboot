@@ -133,6 +133,8 @@ public class SvgCanvas
         }
     }
 
+    /* ---------------- 灰度工具 ---------------- */
+
     private BufferedImage convertToGrayscale(BufferedImage original) {
         // 创建灰度图像
         BufferedImage grayImage = new BufferedImage(
@@ -184,12 +186,14 @@ public class SvgCanvas
         return path;
     }
 
+    /* ---------------- 渲染 ---------------- */
+
     public Path render(Path output, String fontDir) throws Exception {
         Path svgFile = Files.createTempFile("canvas-", ".svg");
         exportSvg(svgFile);
 
-        // 工作目录
-        var options = new ResvgJNI.RenderOptions("/tmp/resvg");
+        // 工作目录 建议改成自定义 临时目录
+        var options = new ResvgJNI.RenderOptions("/tmp");
         // 字体目录
         options.LoadFontsDir(fontDir);
 
