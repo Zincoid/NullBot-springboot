@@ -33,7 +33,7 @@ shiro:
     timeout: 20  # 10
     max-binary-message-buffer-size: 5120000
     max-text-message-buffer-size: 512000
-    access-token: mtHOn@THXxr*6cCb
+    access-token:
   limiter:
     enable: true
     rate: 10
@@ -48,7 +48,7 @@ shiro:
 #    thread-name-prefix: "ShiroTaskPool-"
 
 nullbot:
-  self-id:
+  bot-id: 0000000000
   enable-image-collect: false
   enable-message-collect: false  # 使用AI Monitor模式及Recall Detect功能 需启用该项
   enable-keyword-detect: true
@@ -68,7 +68,7 @@ nullbot:
       video-path: /root/Nullbot/file/video  # src/main/resources/file/video
       audio-path: /root/Nullbot/file/audio  # src/main/resources/file/audio
   accesses:
-    2660181154: 2
+    0000000001: 2
 
 ai:
   deepseek:
