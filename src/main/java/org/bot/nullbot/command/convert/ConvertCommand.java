@@ -34,7 +34,7 @@ public class ConvertCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             if (!event.getCommandParameters().isEmpty()) {
                 String method = event.getCommandParameters().getFirst();
-                if (!List.of("RIP").contains(method)) {
+                if (!List.of("RIP", "PRTS").contains(method)) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌方法不存在", false);
                     log.info("\t\t\t\t├─[Convert] 方法不存在");
                     return;
@@ -70,7 +70,11 @@ public class ConvertCommand implements Command
                     }
                     String avatarPath = tempFilePath + "/" + downloadedFileName;
                     try {
-                        String base64 = ImageConverter.rip(avatarPath, tempFilePath + "/fonts");
+                        String base64 = switch (method){
+                            case "RIP" -> ImageConverter.rip(avatarPath, tempFilePath + "/fonts");
+                            case "PRTS" -> ImageConverter.prts(avatarPath, tempFilePath + "/fonts");
+                            default -> throw new IllegalStateException("Unexpected value: " + method);
+                        };
                         String response = MsgUtils.builder().img("base64://" + base64).build();
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                         log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
@@ -93,7 +97,7 @@ public class ConvertCommand implements Command
     public String getHelp() {
         return "◉ Convert 命令\n" +
                 "功能: P图!!!\n" +
-                "方式: RIP/...未开发\n" +
+                "方式: RIP/PRTS...更多开发中\n" +
                 "限权: " + getAccess() + "\n" +
                 "格式: [引用]ImageConvert [处理方式]" +
                 "或 ImageConvert [处理方式] [@任何人]\n" +

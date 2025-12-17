@@ -75,27 +75,37 @@ class QqBotApplicationTests {
 
     @Test
     void renderTest() throws Exception {
-        Path fontPath = ResourceLoader.getCached("static/fonts/Rubik-Bold.ttf", "/root/Nullbot/file/temp/fonts");
+        // Path fontPath = ResourceLoader.getCached("static/fonts/Bernard MT Condensed.ttf", "/root/Nullbot/file/temp/fonts");
+        // // 创建 SVG 画布
+        // SvgCanvas canvas = SvgCanvas.create(640, 640);
+        //
+        // // 添加用户头像
+        // canvas.image(
+        //         0, 0, 640, 640,
+        //         Path.of("src/test/testFile/input.jpg"), true
+        // );
+        //
+        // // 添加 RIP 文字 - 确保使用正确的字体名称
+        // canvas.text(175, 550, "R.I.P.")
+        //         .font("Bernard MT Condensed")
+        //         .size(150)
+        //         .color("#000000")
+        //         // .bold()
+        //         .stroke("#FFFFFF", 6);
 
-        System.out.println("字体路径: " + fontPath.toAbsolutePath());
-        System.out.println("字体文件存在: " + Files.exists(fontPath));
-
+        Path prts = ResourceLoader.getCached("static/image/prts.png", "/root/Nullbot/file/temp/fonts");
         // 创建 SVG 画布
         SvgCanvas canvas = SvgCanvas.create(640, 640);
-
         // 添加用户头像
         canvas.image(
                 0, 0, 640, 640,
-                Path.of("src/test/testFile/input.jpg"), true
+                Path.of("src/test/testFile/input.jpg"), false
         );
-
-        // 添加 RIP 文字 - 确保使用正确的字体名称
-        canvas.text(150, 550, "R.I.P.")
-                .font("Rubik")
-                .size(150)
-                .color("#000000")
-                .bold()
-                .stroke("#FFFFFF", 8);
+        // 添加 PRTS
+        canvas.image(
+                0, 0, 640, 640,
+                prts, false
+        );
 
         // 使用 resvg 渲染为 PNG
         Path outputPath = Path.of("src/test/testFile/output.png");

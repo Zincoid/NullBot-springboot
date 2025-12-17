@@ -194,15 +194,17 @@ public class SvgCanvas
         options.LoadFontsDir(fontDir);
 
         var renderer = new ResvgJNI.Renderer(options);
-
         var inputFilePath = svgFile.toAbsolutePath().toString();
         var outputFilePath = output.toAbsolutePath().toString();
         var svgData = Files.readString(Path.of(inputFilePath));
+
         try {
             var data = renderer.RenderPng(svgData);
             Files.write(Path.of(outputFilePath), data);
         } catch (Exception e) {
             log.error("Resvg JNI 出错: {}", e.getMessage());
+        } finally {
+            Files.deleteIfExists(svgFile);
         }
 
         return output;
