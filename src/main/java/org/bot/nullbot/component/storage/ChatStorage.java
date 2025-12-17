@@ -40,9 +40,9 @@ public class ChatStorage
         if (history == null || history.isEmpty()) return "无对话历史";
         for (ChatMessage msg : history) {
             if("user".equals(msg.getRole()))
-                sb.append("---\n").append(msg.getUserName()).append("(").append(msg.getUserId()).append("): ").append(msg.getContent());
+                sb.append("\n---\n").append(msg.getUserName()).append("(").append(msg.getUserId()).append("): ").append(msg.getContent());
             else
-                sb.append("---\n").append("AI: ").append(msg.getContent());
+                sb.append("\n---\n").append("AI: ").append(msg.getContent());
         }
         return sb.toString();
     }
