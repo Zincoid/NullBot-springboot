@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@CommandMapping({"AvatarConvert", "图像处理"})
+@CommandMapping({"Convert", "图像处理"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -35,12 +35,13 @@ public class ConvertCommand implements Command
             if (!event.getCommandParameters().isEmpty()) {
                 String method = event.getCommandParameters().getFirst();
                 if (!List.of("RIP").contains(method)) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ❌方法不存在", false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌方法不存在", false);
                     log.info("\t\t\t\t├─[Convert] 方法不存在");
                     return;
                 }
 
                 List<String> urls = new ArrayList<>();
+
                 // 引用 收集
                 ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
                 if (reply.getType() == MsgTypeEnum.reply) {
@@ -51,6 +52,12 @@ public class ConvertCommand implements Command
                 // AT 收集
                 List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
                 for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+
+                if (urls.isEmpty()) {
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌无引用图片或At消息", false);
+                    log.info("\t\t\t\t├─[Convert] 无引用图片或At消息");
+                    return;
+                }
 
                 // 开始处理
                 String tempFilePath = fileStorageConfig.getTempPath();
@@ -73,9 +80,9 @@ public class ConvertCommand implements Command
                         FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
                     }
                 }
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ✅处理完成！", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ✅处理完成！", false);
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像转换] ❌无方法参数", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌无方法参数", false);
                 log.info("\t\t\t\t├─[Convert] 无方法参数");
             }
         }else
