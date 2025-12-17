@@ -1,4 +1,4 @@
-package org.bot.nullbot.component;
+package org.bot.nullbot.component.ai;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.config.DeepSeekConfig;
 import org.bot.nullbot.entity.ChatMessage;
 import org.springframework.stereotype.Component;

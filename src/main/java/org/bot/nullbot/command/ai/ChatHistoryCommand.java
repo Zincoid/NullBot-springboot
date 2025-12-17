@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.component.DeepSeekClient;
+import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"ChatHistory", "聊天历史"})

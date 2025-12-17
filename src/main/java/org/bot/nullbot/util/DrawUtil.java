@@ -1,4 +1,4 @@
-package org.bot.nullbot.util.game;
+package org.bot.nullbot.util;
 
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.enums.Rarity;

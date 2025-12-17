@@ -1,7 +1,6 @@
-package org.bot.nullbot.util.convert;
+package org.bot.nullbot.util;
 
 import org.bot.nullbot.entity.svg.SvgCanvas;
-import org.bot.nullbot.util.ResourceLoader;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
