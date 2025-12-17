@@ -75,12 +75,12 @@ public class ConvertCommand implements Command
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                         log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
                     } catch (Exception e) {
-                        log.info("\t\t\t\t├─[Convert] 处理时出错: {}", e.getMessage());
+                        log.info("\t\t\t\t├─[Convert] 处理时出错 - {}", e.getMessage());
                     } finally {
                         FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
                     }
                 }
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ✅处理完成！", false);
+                // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ✅处理完成！", false);
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌无方法参数", false);
                 log.info("\t\t\t\t├─[Convert] 无方法参数");
