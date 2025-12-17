@@ -41,7 +41,6 @@ public class ConvertCommand implements Command
                 }
 
                 List<String> urls = new ArrayList<>();
-
                 // 引用 收集
                 ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
                 if (reply.getType() == MsgTypeEnum.reply) {
@@ -49,7 +48,6 @@ public class ConvertCommand implements Command
                     Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
                     urls.addAll(imageMap.values());
                 }
-
                 // AT 收集
                 List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
                 for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
@@ -63,8 +61,9 @@ public class ConvertCommand implements Command
                         log.info("\t\t\t\t├─[Convert] 下载图像失败 - {}", url);
                         continue;
                     }
+                    String avatarPath = tempFilePath + "/" + downloadedFileName;
                     try {
-                        String base64 = ImageConverter.rip(tempFilePath + "/" + downloadedFileName, tempFilePath + "/fonts");
+                        String base64 = ImageConverter.rip(avatarPath, tempFilePath + "/fonts");
                         String response = MsgUtils.builder().img("base64://" + base64).build();
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                         log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
