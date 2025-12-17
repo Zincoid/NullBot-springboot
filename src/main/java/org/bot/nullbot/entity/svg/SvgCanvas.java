@@ -184,7 +184,7 @@ public class SvgCanvas
         return path;
     }
 
-    public Path renderToImg(Path output, String fontDir) throws Exception {
+    public Path render(Path output, String fontDir) throws Exception {
         Path svgFile = Files.createTempFile("canvas-", ".svg");
         exportSvg(svgFile);
 

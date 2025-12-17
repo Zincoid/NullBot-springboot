@@ -109,7 +109,7 @@ class QqBotApplicationTests {
 
         // 使用 resvg 渲染为 PNG
         Path outputPath = Path.of("src/test/testFile/output.png");
-        canvas.renderToImg(outputPath, "/root/Nullbot/file/temp/fonts");
+        canvas.render(outputPath, "/root/Nullbot/file/temp/fonts");
 
         // 先保存SVG文件查看内容
         Path svgPath = Path.of("src/test/testFile/output.svg");

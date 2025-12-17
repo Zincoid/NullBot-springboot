@@ -30,7 +30,7 @@ public class ImageConverter
                     .stroke("#FFFFFF", 6);
 
             // 使用 resvg 渲染为 PNG 并转换为 Base64
-            canvas.renderToImg(tempPngPath, tempFontPath);
+            canvas.render(tempPngPath, tempFontPath);
             byte[] pngBytes = Files.readAllBytes(tempPngPath);
             String base64 = Base64.getEncoder().encodeToString(pngBytes);
             return base64;
@@ -57,7 +57,7 @@ public class ImageConverter
             );
 
             // 使用 resvg 渲染为 PNG 并转换为 Base64
-            canvas.renderToImg(tempPngPath, tempFontPath);
+            canvas.render(tempPngPath, tempFontPath);
             byte[] pngBytes = Files.readAllBytes(tempPngPath);
             String base64 = Base64.getEncoder().encodeToString(pngBytes);
             return base64;
