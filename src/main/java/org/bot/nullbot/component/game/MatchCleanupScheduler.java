@@ -56,7 +56,7 @@ public class MatchCleanupScheduler
      */
     @Scheduled(fixedDelay = 10_000)
     public void cleanup() {
-        log.info("[MatchCleanupScheduler] 超时清理触发");
+        // log.info("[MatchCleanupScheduler] 超时清理触发");
         cleanWaitingPlayers();
         cleanTimeoutMatches();
     }
@@ -70,7 +70,7 @@ public class MatchCleanupScheduler
         poolManager.getAllPools().forEach((gameType, queue) -> queue.removeIf(p -> {
             long seconds = Duration.between(p.getLastActionTime(), now).getSeconds();
             if (seconds >= matchConfig.getWaitingTimeoutSeconds()) {
-                log.info("清理匹配超时玩家: {}", p.getUserId());
+                log.info("◉ [Match Cleaner] 清理匹配超时玩家 {}", p.getUserId());
                 bot.sendGroupMsg(p.getGroupId(), p.getUserName() + "(" + p.getUserId() + ") 匹配超时！", false);
                 playerManager.resetPlayer(p);
                 return true;
@@ -91,7 +91,7 @@ public class MatchCleanupScheduler
             if (lastActionTime == null) lastActionTime = match.getStartTime();
             long seconds = Duration.between(lastActionTime, now).getSeconds();
             if (seconds >= matchConfig.getPlayingTimeoutSeconds()) {
-                log.warn("Match {} 超时未响应自动结束", match.getMatchId());
+                log.warn("◉ [Match Cleaner] Match {} 超时未响应自动结束", match.getMatchId());
                 Player p1 = match.getPlayer1();
                 Player p2 = match.getPlayer2();
                 String info = "对局已超时！玩家:\n" + p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\nMatch ID: " + match.getMatchId();
