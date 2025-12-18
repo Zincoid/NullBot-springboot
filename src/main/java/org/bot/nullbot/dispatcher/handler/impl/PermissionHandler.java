@@ -31,7 +31,7 @@ public class PermissionHandler implements Handler
                 chain.doHandle(bot, event, command);
             }else{
                 log.info("\t\t├─[PermissionHandler] 群限权不足");
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access Denied] 群限权不足: 需要限权等级" + commandAccess + ", 群限权等级为" + groupAccess, false);
+                // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access Denied] 群限权不足: 需要限权等级" + commandAccess + ", 群限权等级为" + groupAccess, false);
                 return;
             }
             if(event.isAuthRequired()){
@@ -55,7 +55,8 @@ public class PermissionHandler implements Handler
                 chain.doHandle(bot, event, command);
             }else{
                 log.info("\t\t├─[PermissionHandler] 群限权不足");
-                bot.sendGroupMsg(pokeNoticeEvent.getGroupId(), "[Access Denied] 群限权不足: 需要限权等级" + commandAccess + ", 群限权等级为" + groupAccess, false);
+                // bot.sendGroupMsg(pokeNoticeEvent.getGroupId(), "[Access Denied] 群限权不足: 需要限权等级" + commandAccess + ", 群限权等级为" + groupAccess, false);
+                return;
             }
             if(event.isAuthRequired()){
                 int userAccess = accessManager.getUserAccess(pokeNoticeEvent.getUserId());

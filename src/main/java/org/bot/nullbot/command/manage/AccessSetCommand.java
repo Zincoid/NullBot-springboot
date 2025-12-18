@@ -32,8 +32,8 @@ public class AccessSetCommand implements Command
                             int targetAccess = accessManager.getGroupAccess(targetId);
                             int selfAccess = accessManager.getUserAccess(groupMessageEvent.getUserId());
                             if(selfAccess < 2){
-                                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改失败: 仅限权等级2用户可修改群限权 你的限权为" + selfAccess, false);
-                                log.info("\t\t\t\t├─[Access.Set] ❌修改失败: 仅限权等级2用户可修改群限权 用户限权为{}", selfAccess);
+                                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改失败\n仅限权等级2用户可修改群限权 你的限权为" + selfAccess, false);
+                                log.info("\t\t\t\t├─[Access.Set] 修改失败 - 仅限权等级2用户可修改群限权 用户限权为{}", selfAccess);
                             }else{
                                 accessManager.setGroupAccess(targetId, targetNewAccess);
                                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ✅已修改群 " + targetId + " 限权: " + targetAccess + " -> " + targetNewAccess, false);
@@ -45,10 +45,10 @@ public class AccessSetCommand implements Command
                             int targetAccess = accessManager.getUserAccess(targetId);
                             int selfAccess = accessManager.getUserAccess(groupMessageEvent.getUserId());
                             if(targetAccess >= selfAccess){
-                                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改失败: 目标限权等级" + targetAccess + " 高于或等于 自身限权等级" + selfAccess, false);
+                                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改失败\n目标限权等级" + targetAccess + " 高于或等于 自身限权等级" + selfAccess, false);
                                 log.info("\t\t\t\t├─[Access.Set] 修改失败 - 目标限权等级{} 高于或等于 自身限权等级{}", targetAccess, selfAccess);
                             }else if(targetNewAccess >= selfAccess){
-                                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改失败: 新限权等级" + targetNewAccess + " 高于或等于 自身限权等级" + selfAccess, false);
+                                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改失败\n新限权等级" + targetNewAccess + " 高于或等于 自身限权等级" + selfAccess, false);
                                 log.info("\t\t\t\t├─[Access.Set] 修改失败 - 新限权等级{} 高于或等于 自身限权等级{}", targetNewAccess, selfAccess);
                             }else{
                                 accessManager.setUserAccess(targetId, targetNewAccess);
@@ -73,6 +73,11 @@ public class AccessSetCommand implements Command
             }
         }else
             log.info("\t\t\t\t├─[Access.Set] 未设计 - 非群消息事件响应方式");
+    }
+
+    @Override
+    public Integer getAccess() {
+        return -1;
     }
 
     @Override
