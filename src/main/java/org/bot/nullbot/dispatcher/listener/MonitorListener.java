@@ -97,7 +97,7 @@ public class MonitorListener
     @Async("ThreadExecutor")
     public void GroupPokeDetect(Bot bot, PokeNoticeEvent event) throws Exception {
         if(Objects.equals(event.getTargetId(), event.getSelfId())){
-            log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (已限制为戳Bot)", event.getGroupId(), event.getUserId(), event.getTargetId());
+            log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (已限制为戳Bot自己)", event.getGroupId(), event.getUserId(), event.getTargetId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
         }
     }
