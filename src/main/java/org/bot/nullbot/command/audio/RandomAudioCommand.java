@@ -12,7 +12,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"RandomAudio", "audio", "随机音频", "音频"})
+@CommandMapping({"RandomAudio", "aud", "随机音频", "音频"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -40,6 +40,6 @@ public class RandomAudioCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ RandomAudio 或 audio 命令\n功能: 发送保存的随机音频\n限权: " + getAccess() + "\n格式: RandomAudio 或 audio\n中文命令: 随机音频 或 音频";
+        return "◉ RandomAudio 或 aud 命令\n功能: 发送保存的随机音频\n限权: " + getAccess() + "\n格式: RandomAudio 或 aud\n中文命令: 随机音频 或 音频";
     }
 }

@@ -12,7 +12,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"RandomVideo", "video", "随机视频", "视频"})
+@CommandMapping({"RandomVideo", "vid", "随机视频", "视频"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -40,6 +40,6 @@ public class RandomVideoCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ RandomVideo 或 video 命令\n功能: 发送保存的随机视频\n限权: " + getAccess() + "\n格式: RandomVideo 或 video\n中文命令: 随机视频 或 视频";
+        return "◉ RandomVideo 或 vid 命令\n功能: 发送保存的随机视频\n限权: " + getAccess() + "\n格式: RandomVideo 或 vid\n中文命令: 随机视频 或 视频";
     }
 }
