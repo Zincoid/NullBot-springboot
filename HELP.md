@@ -41,8 +41,8 @@ nohup /root/Nullbot/syswatch.sh >/dev/null 2>&1 &
 
 ### Napcat service
 systemctl daemon-reload  
-systemctl enable napcat-qq  
-systemctl start napcat-qq
+systemctl enable napcat
+systemctl start napcat
 
 ### nohup指定输出到指定文件
 nohup java -jar /root/Nullbot/jar/NullBot-0.0.1-SNAPSHOT.jar > output.log 2>&1 &

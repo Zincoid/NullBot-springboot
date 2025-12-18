@@ -34,7 +34,7 @@ public class ConvertCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             if (!event.getCommandParameters().isEmpty()) {
                 String method = event.getCommandParameters().getFirst();
-                if (!List.of("RIP", "PRTS").contains(method)) {
+                if (!List.of("RIP", "PRTS", "InversePRTS").contains(method)) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌方法不存在", false);
                     log.info("\t\t\t\t├─[Convert] 方法不存在");
                     return;
@@ -71,8 +71,9 @@ public class ConvertCommand implements Command
                     String avatarPath = tempFilePath + "/" + downloadedFileName;
                     try {
                         String base64 = switch (method){
-                            case "RIP" -> ImageConverter.rip(avatarPath, tempFilePath + "/fonts");
-                            case "PRTS" -> ImageConverter.prts(avatarPath, tempFilePath + "/fonts");
+                            case "RIP" -> ImageConverter.RIP(avatarPath, tempFilePath + "/fonts");
+                            case "PRTS" -> ImageConverter.PRTS(avatarPath, tempFilePath + "/fonts");
+                            case "InversePRTS" -> ImageConverter.inversePRTS(avatarPath, tempFilePath + "/fonts");
                             default -> throw new IllegalStateException("Unexpected value: " + method);
                         };
                         String response = MsgUtils.builder().img("base64://" + base64).build();

@@ -93,17 +93,17 @@ class QqBotApplicationTests {
         //         // .bold()
         //         .stroke("#FFFFFF", 6);
 
-        Path prts = ResourceLoader.getCached("static/image/prts.png", "/root/Nullbot/file/temp/fonts");
+        Path prts = ResourceLoader.getCached("static/image/inversePRTS.png", "/root/Nullbot/file/temp/fonts");
         // 创建 SVG 画布
         SvgCanvas canvas = SvgCanvas.create(640, 640);
         // 添加用户头像
         canvas.image(
-                0, 0, 640, 640,
+                0, 0, 640, 640, 1,
                 Path.of("src/test/testFile/input.jpg"), false
         );
         // 添加 PRTS
         canvas.image(
-                0, 0, 640, 640,
+                0, 0, 640, 640, 1,
                 prts, false
         );
 

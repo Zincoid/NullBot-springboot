@@ -57,11 +57,7 @@ public class SvgCanvas
 
     /* ---------------- 图片 ---------------- */
 
-    public SvgCanvas image(int x, int y, int width, int height, Path imagePath) {
-        return image(x, y, width, height, imagePath, false); // 默认不转换为黑白
-    }
-
-    public SvgCanvas image(int x, int y, int width, int height, Path imagePath, boolean convertToGrayscale) {
+    public SvgCanvas image(int x, int y, int width, int height, double opacity, Path imagePath, boolean convertToGrayscale) {
         try {
             // 读取原始图像
             BufferedImage originalImage = ImageIO.read(imagePath.toFile());
@@ -111,6 +107,7 @@ public class SvgCanvas
             image.setAttribute("y", String.valueOf(y));
             image.setAttribute("width", String.valueOf(width));
             image.setAttribute("height", String.valueOf(height));
+            image.setAttribute("opacity", String.valueOf(opacity));
 
             // 使用SVG2标准的href属性
             image.setAttribute(
