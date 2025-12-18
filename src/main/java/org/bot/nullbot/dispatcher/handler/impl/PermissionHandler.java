@@ -24,15 +24,26 @@ public class PermissionHandler implements Handler
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         if(event.isAuthRequired()){
             if(event.getEvent() instanceof GroupMessageEvent groupMessageEvent){
-                int userAccess = accessManager.getAccess(groupMessageEvent.getSender().getUserId());
                 int commandAccess = command.getAccess();
-                if (userAccess >= commandAccess) {
-                    log.info("\t\t├─[PermissionHandler] 限权满足");
+                int groupAccess = accessManager.getGroupAccess(groupMessageEvent.getGroupId());
+                if(groupAccess >= commandAccess){
+                    log.info("\t\t├─[PermissionHandler] 群限权满足");
                     chain.doHandle(bot, event, command);
                 }
                 else {
-                    log.info("\t\t├─[PermissionHandler] 限权不足");
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Permission Denied] 限权不足: 需要限权等级" + commandAccess + ", 你的限权等级为" + userAccess, false);
+                    log.info("\t\t├─[PermissionHandler] 群限权不足");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access Denied] 群限权不足: 需要限权等级" + commandAccess + ", 群限权等级为" + groupAccess, false);
+                    return;
+                }
+
+                int userAccess = accessManager.getUserAccess(groupMessageEvent.getSender().getUserId());
+                if (userAccess >= commandAccess) {
+                    log.info("\t\t├─[PermissionHandler] 用户限权满足");
+                    chain.doHandle(bot, event, command);
+                }
+                else {
+                    log.info("\t\t├─[PermissionHandler] 用户限权不足");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access Denied] 用户限权不足: 需要限权等级" + commandAccess + ", 你的限权等级为" + userAccess, false);
                 }
             }else{
                 log.info("\t\t├─[PermissionHandler] 默认通过的事件类型");

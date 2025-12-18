@@ -9,11 +9,17 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class AccessManager
 {
-    private final Map<Long, Integer> accesses;
+    private final Map<Long, Integer> userAccesses;
+    private final Map<Long, Integer> groupAccesses;
 
-    public AccessManager(DefaultConfig defaultConfig) { accesses = new ConcurrentHashMap<>(defaultConfig.getAccesses()); }
+    public AccessManager(DefaultConfig defaultConfig) {
+        userAccesses = new ConcurrentHashMap<>(defaultConfig.getUserAccesses());
+        groupAccesses = new ConcurrentHashMap<>(defaultConfig.getGroupAccesses());
+    }
 
-    public Integer getAccess(Long id) { return accesses.getOrDefault(id, 0); }
+    public Integer getUserAccess(Long id) { return userAccesses.getOrDefault(id, 0); }
+    public void setUserAccess(Long id, Integer access) { userAccesses.put(id, access); }
 
-    public void setAccess(Long id, Integer access) { accesses.put(id, access); }
+    public Integer getGroupAccess(Long id) { return groupAccesses.getOrDefault(id, 2); }
+    public void setGroupAccess(Long id, Integer access) { groupAccesses.put(id, access); }
 }

@@ -16,5 +16,6 @@ public class DefaultConfig
     private Boolean enablePokeDetect;
     private Boolean enableMessageCollect;
     private Boolean enableRecallDetect;
-    private Map<Long, Integer> accesses;
+    private Map<Long, Integer> userAccesses;
+    private Map<Long, Integer> groupAccesses;
 }

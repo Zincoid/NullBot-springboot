@@ -40,7 +40,8 @@ public class VideoSaveCommand implements Command
                         // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
                         //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！\n" + info, false);
                         // }
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！\n" + info, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！", false);
+                        // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！\n" + info, false);
                         log.info("\t\t\t\t├─[Video.Save] 已保存为: {}", info);
                     }
                 }else{

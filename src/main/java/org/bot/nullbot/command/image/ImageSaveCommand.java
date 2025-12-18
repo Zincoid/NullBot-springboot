@@ -42,7 +42,8 @@ public class ImageSaveCommand implements Command
                         // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().getFirst())){
                         //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！\n" + info, false);
                         // }
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！\n" + info, false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！", false);
+                        // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！\n" + info, false);
                         log.info("\t\t\t\t├─[Image.Save] 已保存为: {}", info);
                     }
                 }else{

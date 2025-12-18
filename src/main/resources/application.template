@@ -69,6 +69,8 @@ nullbot:
       audio-path: /root/Nullbot/file/audio  # src/main/resources/file/audio
   accesses:
     0000000001: 2
+  group-black-list:
+    0000000002
 
 ai:
   deepseek:
