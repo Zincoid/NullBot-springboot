@@ -2,7 +2,7 @@ package org.bot.nullbot.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.entity.WebResult;
+import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.po.SayingPO;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.web.bind.annotation.*;

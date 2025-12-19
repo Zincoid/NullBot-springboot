@@ -5,7 +5,7 @@ import org.bot.nullbot.component.game.GameMatchHandler;
 import org.bot.nullbot.component.game.MatchManager;
 import org.bot.nullbot.component.game.PlayerManager;
 import org.bot.nullbot.component.game.logic.LootingGameLogic;
-import org.bot.nullbot.entity.game.basic.GameResult;
+import org.bot.nullbot.entity.result.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.looting.LootingGameState;
 import org.bot.nullbot.entity.game.looting.LootingPlayerState;

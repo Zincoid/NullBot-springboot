@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.entity.WebResult;
+import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.util.JwtUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;

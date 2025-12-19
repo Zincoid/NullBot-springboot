@@ -2,7 +2,7 @@ package org.bot.nullbot.component.game;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
-import org.bot.nullbot.entity.game.basic.MatchResult;
+import org.bot.nullbot.entity.result.MatchResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
 import org.springframework.beans.factory.annotation.Value;

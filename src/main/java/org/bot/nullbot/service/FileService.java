@@ -2,7 +2,7 @@ package org.bot.nullbot.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.bot.nullbot.entity.WebResult;
+import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.page.FilePage;
 import org.springframework.web.multipart.MultipartFile;
 

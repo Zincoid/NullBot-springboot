@@ -6,7 +6,7 @@ import org.bot.nullbot.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.bot.nullbot.component.game.GameMatchHandler;
 import org.bot.nullbot.component.game.MatchManager;
-import org.bot.nullbot.entity.game.basic.GameResult;
+import org.bot.nullbot.entity.result.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.reversi.ReversiGameState;
 import org.bot.nullbot.component.game.logic.ReversiGameLogic;

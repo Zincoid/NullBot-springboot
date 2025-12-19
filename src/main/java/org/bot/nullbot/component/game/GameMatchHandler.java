@@ -4,7 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
 import lombok.AllArgsConstructor;
 import org.bot.nullbot.entity.game.GameState;
-import org.bot.nullbot.entity.game.basic.GameResult;
+import org.bot.nullbot.entity.result.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
 

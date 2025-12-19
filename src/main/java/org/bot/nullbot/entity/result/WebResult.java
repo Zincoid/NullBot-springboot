@@ -1,4 +1,4 @@
-package org.bot.nullbot.entity;
+package org.bot.nullbot.entity.result;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

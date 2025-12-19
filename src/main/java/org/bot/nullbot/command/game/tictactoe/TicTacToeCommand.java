@@ -8,7 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.game.handler.TicTacToeMatchHandler;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.entity.game.basic.GameResult;
+import org.bot.nullbot.entity.result.GameResult;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"TicTacToe", "井字棋"})

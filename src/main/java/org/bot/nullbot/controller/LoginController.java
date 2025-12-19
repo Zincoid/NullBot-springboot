@@ -1,7 +1,7 @@
 package org.bot.nullbot.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.entity.WebResult;
+import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.dto.LoginDTO;
 import org.bot.nullbot.util.JwtUtil;
 import org.springframework.web.bind.annotation.*;
