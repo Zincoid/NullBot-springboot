@@ -16,9 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -30,11 +34,12 @@ public class FileServiceImpl implements FileService
 
     @Override
     public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir) {
+        scanAndSyncFiles();
         String fullDir;
         if(curDir.equals("/")){
-            fullDir = fileStorageConfig.getFileDirectory() + "/";
+            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
         }else{
-            fullDir = fileStorageConfig.getFileDirectory() + curDir + "/";
+            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
         }
         Page<FilePO> page = new Page<>(currentPage, pageSize);
         Page<FilePO> filePage = fileMapper.selectPage(page, new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir));
@@ -47,9 +52,9 @@ public class FileServiceImpl implements FileService
         String newFileName = UUID.randomUUID().toString().replace("-", "") + extention;
         String fullDir;
         if(curDir.equals("/")){
-            fullDir = fileStorageConfig.getFileDirectory() + "/";
+            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
         }else{
-            fullDir = fileStorageConfig.getFileDirectory() + curDir + "/";
+            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
         }
 
         FilePO file = new FilePO();
@@ -99,9 +104,9 @@ public class FileServiceImpl implements FileService
     public WebResult createDir(String curDir, String dirName) {
         String fullDir;
         if(curDir.equals("/")){
-            fullDir = fileStorageConfig.getFileDirectory() + "/";
+            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
         }else{
-            fullDir = fileStorageConfig.getFileDirectory() + curDir + "/";
+            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
         }
 
         FilePO file = new FilePO();
@@ -147,5 +152,127 @@ public class FileServiceImpl implements FileService
             }
         }
         dir.delete();
+    }
+
+    // 系统同步方法
+    public void scanAndSyncFiles() {
+        try {
+            // 1. 获取存储目录
+            String baseDir = normalizePath(fileStorageConfig.getFileDirectory());
+            File baseDirectory = new File(baseDir);
+
+            if (!baseDirectory.exists() || !baseDirectory.isDirectory()) {
+                System.err.println("存储目录不存在: " + baseDir);
+                return;
+            }
+
+            // 2. 扫描文件系统
+            Map<String, FileInfo> fileSystemMap = new HashMap<>();
+            scanDirectory(baseDirectory, fileSystemMap);
+
+            // 3. 获取数据库记录
+            List<FilePO> dbFiles = fileMapper.selectList(null);
+            Map<String, FilePO> dbMap = new HashMap<>();
+            for (FilePO file : dbFiles) {
+                // 统一数据库中的路径格式
+                String normalizedLocation = normalizePath(file.getLocation());
+                file.setLocation(normalizedLocation);
+                file.setDirectory(normalizePath(file.getDirectory()));
+                dbMap.put(normalizedLocation, file);
+            }
+
+            // 4. 同步处理
+            syncFiles(fileSystemMap, dbMap);
+
+            System.out.println("文件同步完成，共处理文件: " + fileSystemMap.size());
+
+        } catch (Exception e) {
+            System.err.println("文件同步失败: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // 路径标准化：统一使用正斜杠
+    private String normalizePath(String path) {
+        if (path == null) return null;
+        // 将Windows的反斜杠替换为正斜杠
+        return path.replace('\\', '/');
+    }
+
+    // 扫描目录
+    private void scanDirectory(File dir, Map<String, FileInfo> resultMap) {
+        if (!dir.exists() || !dir.isDirectory()) {
+            return;
+        }
+
+        File[] files = dir.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
+            // 统一路径格式为Windows反斜杠（根据您存储的格式）
+            String path = normalizePath(file.getAbsolutePath());
+            FileInfo info = new FileInfo();
+            info.path = path;
+            info.size = file.length();
+            info.lastModified = file.lastModified();
+            info.isDirectory = file.isDirectory();
+
+            resultMap.put(path, info);
+
+            // 递归扫描子目录
+            if (file.isDirectory()) {
+                scanDirectory(file, resultMap);
+            }
+        }
+    }
+
+    // 同步文件系统与数据库
+    private void syncFiles(Map<String, FileInfo> fileSystemMap, Map<String, FilePO> dbMap) {
+        // 处理新增和修改的文件
+        for (Map.Entry<String, FileInfo> entry : fileSystemMap.entrySet()) {
+            String path = entry.getKey();
+            FileInfo fileInfo = entry.getValue();
+            File file = new File(path);
+
+            if (dbMap.containsKey(path)) {
+                // // 检查文件是否被修改
+                // FilePO dbFile = dbMap.get(path);
+                // if (dbFile.getFileSize() != fileInfo.size ||
+                //         dbFile.getLastModified() == null ||
+                //         dbFile.getLastModified().getTime() != fileInfo.lastModified) {
+                //     // 更新文件信息
+                //     dbFile.setFileSize(fileInfo.size);
+                //     dbFile.setLastModified(new Date(fileInfo.lastModified));
+                //     fileMapper.updateById(dbFile);
+                // }
+            } else {
+                // 新增文件记录
+                FilePO newFile = new FilePO();
+                newFile.setFileName(file.getName());
+                newFile.setFileSize(fileInfo.size);
+                newFile.setDirectory(normalizePath(file.getParent()));
+                newFile.setLocation(path); // path已经是标准化的
+                newFile.setIsDir(fileInfo.isDirectory ? 1 : 0);
+                // newFile.setLastModified(new Date(fileInfo.lastModified));
+                fileMapper.insert(newFile);
+            }
+        }
+
+        // 处理已删除的文件
+        for (Map.Entry<String, FilePO> entry : dbMap.entrySet()) {
+            String path = entry.getKey();
+            if (!fileSystemMap.containsKey(path)) {
+                // 数据库中有但文件系统中已删除
+                fileMapper.delete(new LambdaQueryWrapper<FilePO>().eq(FilePO::getLocation, path));
+            }
+        }
+    }
+
+    // 文件信息类
+    private static class FileInfo {
+        String path;
+        long size;
+        long lastModified;
+        boolean isDirectory;
     }
 }
