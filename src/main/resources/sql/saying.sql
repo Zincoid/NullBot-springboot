@@ -1,7 +1,7 @@
 # CREATE DATABASE NullBot;
 # USE NullBot;
 
-DROP TABLE saying;
+DROP TABLE IF EXISTS saying;
 
 CREATE TABLE saying (
     id INT PRIMARY KEY AUTO_INCREMENT,

@@ -1,6 +1,10 @@
 spring:
   application:
     name: NullBot
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/NullBot
@@ -8,7 +12,7 @@ spring:
     password:
 
 server:
-  address: 127.0.0.1  # 仅监听本地回环
+#  address: 127.0.0.1  # 仅监听本地回环
   port: 9001
 
 #logging:
@@ -63,6 +67,7 @@ nullbot:
       scope: group
   file:
     storage:
+      file-directory: /root/Nullbot/file  # src/main/resources/file
       temp-path: /root/Nullbot/file/temp  # src/main/resources/file/temp
       image-path: /root/Nullbot/file/image  # src/main/resources/file/image
       video-path: /root/Nullbot/file/video  # src/main/resources/file/video

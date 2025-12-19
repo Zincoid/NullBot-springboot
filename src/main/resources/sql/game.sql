@@ -1,9 +1,9 @@
 # CREATE DATABASE NullBot;
 # USE NullBot;
 
-DROP TABLE user;
-DROP TABLE item;
-DROP TABLE inventory;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS item;
+DROP TABLE IF EXISTS inventory;
 
 CREATE TABLE user (
     id BIGINT PRIMARY KEY,

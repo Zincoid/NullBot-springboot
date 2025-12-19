@@ -8,7 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.entity.game.basic.InventoryPage;
+import org.bot.nullbot.entity.page.InventoryPage;
 import org.bot.nullbot.service.InventoryService;
 import org.springframework.stereotype.Component;
 
