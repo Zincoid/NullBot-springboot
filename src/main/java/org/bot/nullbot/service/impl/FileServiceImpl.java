@@ -149,7 +149,7 @@ public class FileServiceImpl implements FileService
         dir.delete();
     }
 
-    // 系统同步方法
+    // 本地系统文件与数据库同步方法
     public void scanAndSyncFiles() {
         try {
             // 1. 获取存储目录
