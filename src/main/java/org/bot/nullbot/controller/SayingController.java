@@ -21,7 +21,6 @@ public class SayingController
         log.info("[管理系统] 获取随机语录");
         SayingPO saying = sayingService.getRand();
         if(saying != null){
-            //log.info(JSON.toJSONString(u));
             return WebResult.success().addMsg("获取成功.").addData("saying", saying.toString());
         }else{
             return WebResult.fail().addMsg("获取失败.");
