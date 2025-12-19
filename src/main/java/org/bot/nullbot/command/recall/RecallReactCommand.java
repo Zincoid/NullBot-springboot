@@ -36,7 +36,7 @@ public class RecallReactCommand implements Command
             for(ChatMessage chatMessage : chatMessages) {
                 if(Objects.equals(chatMessage.getMessageId(), messageId)) {
                     if (userId.equals(operatorId)) {
-                        bot.sendGroupMsg(groupId, userName + "(" + userId + ") 撤回了一条消息:\n" + chatMessage.getContent(), false);
+                        bot.sendGroupMsg(groupId, userName + "(" + userId + ") 撤回了:\n" + chatMessage.getContent(), false);
                     }else{
                         bot.sendGroupMsg(groupId, operatorName + "(" + operatorId + ") 撤回了 "+ userName + "(" + userId + ") 的一条消息: " + chatMessage.getContent(), false);
                     }
