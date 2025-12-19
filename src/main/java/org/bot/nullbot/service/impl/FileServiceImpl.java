@@ -61,7 +61,7 @@ public class FileServiceImpl implements FileService
         file.setFileName(uploadFile.getOriginalFilename());
         file.setFileSize(uploadFile.getSize());
         file.setDirectory(fullDir);
-        file.setLocation(fullDir + newFileName);
+        file.setLocation(fullDir + "/" + newFileName);
         file.setIsDir(0);
 
         java.io.File file_dir = new java.io.File(fullDir);
@@ -70,7 +70,7 @@ public class FileServiceImpl implements FileService
         }
 
         try {
-            uploadFile.transferTo(new java.io.File(fullDir + newFileName));
+            uploadFile.transferTo(new java.io.File(fullDir + "/" + newFileName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -113,7 +113,7 @@ public class FileServiceImpl implements FileService
         file.setFileName(dirName);
         file.setFileSize(0L);
         file.setDirectory(fullDir);
-        file.setLocation(fullDir + dirName);
+        file.setLocation(fullDir + "/" + dirName);
         file.setIsDir(1);
 
         java.io.File file_dir = new java.io.File(fullDir);
