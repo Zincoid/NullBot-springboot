@@ -45,5 +45,4 @@ public class InventoryPO
         sb.append(" ".repeat(need));
         return sb.toString();
     }
-
 }

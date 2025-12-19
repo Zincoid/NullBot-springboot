@@ -34,7 +34,7 @@ public class ItemPO
         return String.format(
                 """
                         %s【%s】
-                        💎 品质: %s | 💰 价格: %,d | ⚖️ 重量: %d \s
+                        💎品质:%s | 💰价格:%,d | ⚖️重量:%d
                         📋 %s""",
                 rarityIcon,
                 name,

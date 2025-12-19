@@ -28,7 +28,6 @@ public class PermissionHandler implements Handler
             int groupAccess = accessManager.getGroupAccess(groupMessageEvent.getGroupId());
             if(groupAccess >= commandAccess){
                 log.info("\t\t├─[PermissionHandler] 群限权满足");
-                chain.doHandle(bot, event, command);
             }else{
                 log.info("\t\t├─[PermissionHandler] 群限权不足");
                 // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access Denied] 群限权不足: 需要限权等级" + commandAccess + ", 群限权等级为" + groupAccess, false);
@@ -52,7 +51,6 @@ public class PermissionHandler implements Handler
             int groupAccess = accessManager.getGroupAccess(pokeNoticeEvent.getGroupId());
             if(groupAccess >= commandAccess){
                 log.info("\t\t├─[PermissionHandler] 群限权满足");
-                chain.doHandle(bot, event, command);
             }else{
                 log.info("\t\t├─[PermissionHandler] 群限权不足");
                 // bot.sendGroupMsg(pokeNoticeEvent.getGroupId(), "[Access Denied] 群限权不足: 需要限权等级" + commandAccess + ", 群限权等级为" + groupAccess, false);
