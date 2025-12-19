@@ -48,8 +48,7 @@ public class FileServiceImpl implements FileService
 
     @Override
     public WebResult upload(MultipartFile uploadFile, String curDir) {
-        String extention = uploadFile.getOriginalFilename().substring(uploadFile.getOriginalFilename().lastIndexOf("."));
-        String newFileName = UUID.randomUUID().toString().replace("-", "") + extention;
+        String fileName = uploadFile.getOriginalFilename();
         String fullDir;
         if(curDir.equals("/")){
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
@@ -61,7 +60,6 @@ public class FileServiceImpl implements FileService
         file.setFileName(uploadFile.getOriginalFilename());
         file.setFileSize(uploadFile.getSize());
         file.setDirectory(fullDir);
-        file.setLocation(fullDir + "/" + newFileName);
         file.setIsDir(0);
 
         java.io.File file_dir = new java.io.File(fullDir);
@@ -70,12 +68,12 @@ public class FileServiceImpl implements FileService
         }
 
         try {
-            uploadFile.transferTo(new java.io.File(fullDir + "/" + newFileName));
+            uploadFile.transferTo(new java.io.File(fullDir + "/" + fileName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        fileMapper.addFile(file);
+        fileMapper.insert(file);
         return WebResult.success().addMsg("上传成功");
     }
 
@@ -89,7 +87,7 @@ public class FileServiceImpl implements FileService
         String suf = file.getFileName().substring(file.getFileName().lastIndexOf("."));
         FileInputStream fileInputStream = null;
         try {
-            fileInputStream = new FileInputStream(new java.io.File(file.getLocation()));
+            fileInputStream = new FileInputStream(new java.io.File(file.getDirectory() + "/" + fileName));
             response.setContentType(request.getSession().getServletContext().getMimeType(suf));//获取文件的mimetype
             response.setHeader("content-disposition","attachment;fileName="+ URLEncoder.encode(fileName,"UTF-8"));
             ServletOutputStream os = response.getOutputStream();
@@ -113,7 +111,6 @@ public class FileServiceImpl implements FileService
         file.setFileName(dirName);
         file.setFileSize(0L);
         file.setDirectory(fullDir);
-        file.setLocation(fullDir + "/" + dirName);
         file.setIsDir(1);
 
         java.io.File file_dir = new java.io.File(fullDir);
@@ -127,16 +124,15 @@ public class FileServiceImpl implements FileService
             return WebResult.fail().addMsg("目录已存在");
         }
 
-        fileMapper.addFile(file);
+        fileMapper.insert(file);
         return WebResult.success().addMsg("创建成功");
     }
 
     @Override
     public WebResult deleteFile(Integer id) {
         FilePO file = fileMapper.selectById(id);
-        String location = file.getLocation();
-        fileMapper.deleteFile(location);
-        deleteFileByDir(new java.io.File(location));
+        deleteFileByDir(new java.io.File(file.getDirectory() + "/" + file.getFileName()));
+        fileMapper.deleteById(id);
         return WebResult.success().addMsg("删除成功");
     }
 
@@ -175,8 +171,7 @@ public class FileServiceImpl implements FileService
             Map<String, FilePO> dbMap = new HashMap<>();
             for (FilePO file : dbFiles) {
                 // 统一数据库中的路径格式
-                String normalizedLocation = normalizePath(file.getLocation());
-                file.setLocation(normalizedLocation);
+                String normalizedLocation = normalizePath(file.getDirectory() + "/" + file.getFileName());
                 file.setDirectory(normalizePath(file.getDirectory()));
                 dbMap.put(normalizedLocation, file);
             }
@@ -251,7 +246,6 @@ public class FileServiceImpl implements FileService
                 newFile.setFileName(file.getName());
                 newFile.setFileSize(fileInfo.size);
                 newFile.setDirectory(normalizePath(file.getParent()));
-                newFile.setLocation(path); // path已经是标准化的
                 newFile.setIsDir(fileInfo.isDirectory ? 1 : 0);
                 // newFile.setLastModified(new Date(fileInfo.lastModified));
                 fileMapper.insert(newFile);
@@ -263,7 +257,7 @@ public class FileServiceImpl implements FileService
             String path = entry.getKey();
             if (!fileSystemMap.containsKey(path)) {
                 // 数据库中有但文件系统中已删除
-                fileMapper.delete(new LambdaQueryWrapper<FilePO>().eq(FilePO::getLocation, path));
+                fileMapper.delete(new LambdaQueryWrapper<FilePO>().apply("CONCAT(directory, '/', file_name) = {0}", path));
             }
         }
     }

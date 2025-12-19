@@ -18,6 +18,5 @@ public class FilePO
     private String fileName;
     private Long fileSize;
     private String directory;
-    private String location;
     private Integer isDir;
 }
