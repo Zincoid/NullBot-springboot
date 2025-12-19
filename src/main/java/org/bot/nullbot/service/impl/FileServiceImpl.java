@@ -9,13 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.WebResult;
 import org.bot.nullbot.entity.page.FilePage;
-import org.bot.nullbot.entity.page.InventoryPage;
 import org.bot.nullbot.entity.po.FilePO;
-import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.mapper.FileMapper;
 import org.bot.nullbot.service.FileService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.List;
 import java.util.UUID;
 
 @Service

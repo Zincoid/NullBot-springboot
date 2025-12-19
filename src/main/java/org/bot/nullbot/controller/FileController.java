@@ -2,11 +2,11 @@ package org.bot.nullbot.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.WebResult;
 import org.bot.nullbot.entity.page.FilePage;
 import org.bot.nullbot.service.FileService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,11 +15,11 @@ import java.util.Map;
 @CrossOrigin
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/nullbot/file")
-public class FileController {
-
-    @Autowired
-    FileService fileService;
+public class FileController
+{
+    private final FileService fileService;
 
     @GetMapping("/{currentPage}/{pageSize}")
     public WebResult getFileByPage(@PathVariable Integer currentPage,
