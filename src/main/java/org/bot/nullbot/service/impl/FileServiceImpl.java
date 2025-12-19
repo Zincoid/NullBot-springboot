@@ -6,6 +6,7 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.WebResult;
 import org.bot.nullbot.entity.page.FilePage;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FileServiceImpl implements FileService
 {
     private final FileMapper fileMapper;
@@ -35,11 +37,10 @@ public class FileServiceImpl implements FileService
     public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir) {
         scanAndSyncFiles();
         String fullDir;
-        if(curDir.equals("/")){
+        if(curDir.equals("/"))
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
-        }else{
+        else
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
-        }
         Page<FilePO> page = new Page<>(currentPage, pageSize);
         Page<FilePO> filePage = fileMapper.selectPage(page, new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir));
         return new FilePage(filePage.getRecords(), filePage.getCurrent(), filePage.getPages(), filePage.getSize());
@@ -49,29 +50,24 @@ public class FileServiceImpl implements FileService
     public WebResult upload(MultipartFile uploadFile, String curDir) {
         String fileName = uploadFile.getOriginalFilename();
         String fullDir;
-        if(curDir.equals("/")){
+        if(curDir.equals("/"))
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
-        }else{
+        else
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
-        }
-
         FilePO file = new FilePO();
         file.setFileName(uploadFile.getOriginalFilename());
         file.setFileSize(uploadFile.getSize());
         file.setDirectory(fullDir);
         file.setIsDir(0);
-
         java.io.File file_dir = new java.io.File(fullDir);
         if (!file_dir.exists()) {
             return WebResult.fail().addMsg("目录不存在");
         }
-
         try {
             uploadFile.transferTo(new java.io.File(fullDir + "/" + fileName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         fileMapper.insert(file);
         return WebResult.success().addMsg("上传成功");
     }
@@ -79,9 +75,7 @@ public class FileServiceImpl implements FileService
     @Override
     public WebResult download(Integer id, HttpServletRequest request, HttpServletResponse response) {
         FilePO file = fileMapper.selectById(id);
-        if (file == null) {
-            return WebResult.fail().addMsg("文件不存在");
-        }
+        if (file == null) return WebResult.fail().addMsg("文件不存在");
         String fileName = file.getFileName();
         String suf = file.getFileName().substring(file.getFileName().lastIndexOf("."));
         FileInputStream fileInputStream = null;
@@ -100,29 +94,22 @@ public class FileServiceImpl implements FileService
     @Override
     public WebResult createDir(String curDir, String dirName) {
         String fullDir;
-        if(curDir.equals("/")){
+        if(curDir.equals("/"))
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
-        }else{
+        else
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
-        }
-
         FilePO file = new FilePO();
         file.setFileName(dirName);
         file.setFileSize(0L);
         file.setDirectory(fullDir);
         file.setIsDir(1);
-
         java.io.File file_dir = new java.io.File(fullDir);
-        if(!file_dir.exists() || file_dir.isFile())
-            return WebResult.fail().addMsg("curDir不合法");
-
+        if(!file_dir.exists() || file_dir.isFile()) return WebResult.fail().addMsg("curDir不合法");
         java.io.File new_dir = new java.io.File(fullDir + dirName);
-        if (!new_dir.exists()) {
+        if (!new_dir.exists())
             new_dir.mkdir();
-        } else {
+        else
             return WebResult.fail().addMsg("目录已存在");
-        }
-
         fileMapper.insert(file);
         return WebResult.success().addMsg("创建成功");
     }
@@ -149,22 +136,30 @@ public class FileServiceImpl implements FileService
         dir.delete();
     }
 
-    // 本地系统文件与数据库同步方法
+
+    // =================== 本地系统文件与数据库同步工具 ===================
+
+    // 文件信息类
+    private static class FileInfo {
+        String path;
+        long size;
+        long lastModified;
+        boolean isDirectory;
+    }
+
+    // 主同步方法 (用户调用)
     public void scanAndSyncFiles() {
         try {
             // 1. 获取存储目录
             String baseDir = normalizePath(fileStorageConfig.getFileDirectory());
             File baseDirectory = new File(baseDir);
-
             if (!baseDirectory.exists() || !baseDirectory.isDirectory()) {
                 System.err.println("存储目录不存在: " + baseDir);
                 return;
             }
-
             // 2. 扫描文件系统
             Map<String, FileInfo> fileSystemMap = new HashMap<>();
             scanDirectory(baseDirectory, fileSystemMap);
-
             // 3. 获取数据库记录
             List<FilePO> dbFiles = fileMapper.selectList(null);
             Map<String, FilePO> dbMap = new HashMap<>();
@@ -174,14 +169,11 @@ public class FileServiceImpl implements FileService
                 file.setDirectory(normalizePath(file.getDirectory()));
                 dbMap.put(normalizedLocation, file);
             }
-
             // 4. 同步处理
             syncFiles(fileSystemMap, dbMap);
-
-            System.out.println("文件同步完成，共处理文件: " + fileSystemMap.size());
-
+            log.info("[管理系统] 文件同步完成 - 共处理文件: {}", fileSystemMap.size());
         } catch (Exception e) {
-            System.err.println("文件同步失败: " + e.getMessage());
+            log.info("[管理系统] 文件同步失败 - {}", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -193,26 +185,20 @@ public class FileServiceImpl implements FileService
         return path.replace('\\', '/');
     }
 
-    // 扫描目录
+    // 扫描本地文件目录
     private void scanDirectory(File dir, Map<String, FileInfo> resultMap) {
-        if (!dir.exists() || !dir.isDirectory()) {
-            return;
-        }
-
+        if (!dir.exists() || !dir.isDirectory()) return;
         File[] files = dir.listFiles();
         if (files == null) return;
-
         for (File file : files) {
-            // 统一路径格式为Windows反斜杠（根据您存储的格式）
+            // 统一路径格式为Windows反斜杠
             String path = normalizePath(file.getAbsolutePath());
             FileInfo info = new FileInfo();
             info.path = path;
             info.size = file.length();
             info.lastModified = file.lastModified();
             info.isDirectory = file.isDirectory();
-
             resultMap.put(path, info);
-
             // 递归扫描子目录
             if (file.isDirectory()) {
                 scanDirectory(file, resultMap);
@@ -227,7 +213,6 @@ public class FileServiceImpl implements FileService
             String path = entry.getKey();
             FileInfo fileInfo = entry.getValue();
             File file = new File(path);
-
             if (dbMap.containsKey(path)) {
                 // // 检查文件是否被修改
                 // FilePO dbFile = dbMap.get(path);
@@ -250,7 +235,6 @@ public class FileServiceImpl implements FileService
                 fileMapper.insert(newFile);
             }
         }
-
         // 处理已删除的文件
         for (Map.Entry<String, FilePO> entry : dbMap.entrySet()) {
             String path = entry.getKey();
@@ -259,13 +243,5 @@ public class FileServiceImpl implements FileService
                 fileMapper.delete(new LambdaQueryWrapper<FilePO>().apply("CONCAT(directory, '/', file_name) = {0}", path));
             }
         }
-    }
-
-    // 文件信息类
-    private static class FileInfo {
-        String path;
-        long size;
-        long lastModified;
-        boolean isDirectory;
     }
 }
