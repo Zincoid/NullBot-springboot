@@ -32,9 +32,9 @@ public class FileServiceImpl implements FileService
     public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir) {
         String fullDir;
         if(curDir.equals("/")){
-            fullDir = fileStorageConfig.getFileDirectory() + curDir;
+            fullDir = fileStorageConfig.getFileDirectory() + "/";
         }else{
-            fullDir = fileStorageConfig.getFileDirectory() + "/" + curDir;
+            fullDir = fileStorageConfig.getFileDirectory() + curDir + "/";
         }
         Page<FilePO> page = new Page<>(currentPage, pageSize);
         Page<FilePO> filePage = fileMapper.selectPage(page, new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir));
@@ -47,9 +47,9 @@ public class FileServiceImpl implements FileService
         String newFileName = UUID.randomUUID().toString().replace("-", "") + extention;
         String fullDir;
         if(curDir.equals("/")){
-            fullDir = fileStorageConfig.getFileDirectory() + curDir;
+            fullDir = fileStorageConfig.getFileDirectory() + "/";
         }else{
-            fullDir = fileStorageConfig.getFileDirectory() + "/" + curDir;
+            fullDir = fileStorageConfig.getFileDirectory() + curDir + "/";
         }
 
         FilePO file = new FilePO();
@@ -99,9 +99,9 @@ public class FileServiceImpl implements FileService
     public WebResult createDir(String curDir, String dirName) {
         String fullDir;
         if(curDir.equals("/")){
-            fullDir = fileStorageConfig.getFileDirectory() + curDir;
+            fullDir = fileStorageConfig.getFileDirectory() + "/";
         }else{
-            fullDir = fileStorageConfig.getFileDirectory() + "/" + curDir;
+            fullDir = fileStorageConfig.getFileDirectory() + curDir + "/";
         }
 
         FilePO file = new FilePO();
