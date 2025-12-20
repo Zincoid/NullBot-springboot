@@ -10,6 +10,8 @@ public interface FileService
 {
     FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir);
 
+    FilePage searchFile(String key, String curDir);
+
     WebResult upload(MultipartFile uploadFile, String curDir);
 
     WebResult download(Integer id, HttpServletRequest request, HttpServletResponse response);

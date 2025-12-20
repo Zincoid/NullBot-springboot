@@ -29,6 +29,15 @@ public class FileController
         return WebResult.success().addMsg("查询成功.").addData("filePage", filePage);
     }
 
+    @GetMapping("/searchFile")
+    public WebResult searchFile(String key, String curDir){
+        if (key.contains("/") || key.contains("\\")){
+            return WebResult.fail().addMsg("不允许出现斜杠");
+        }
+        FilePage filePage = fileService.searchFile(key, curDir);
+        return WebResult.success().addMsg("查询成功.").addData("filePage", filePage);
+    }
+
     @PostMapping("/upload")
     public WebResult upload(MultipartFile uploadFile, @RequestParam(defaultValue = "/") String curDir){
         return fileService.upload(uploadFile, curDir);

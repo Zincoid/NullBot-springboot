@@ -47,6 +47,18 @@ public class FileServiceImpl implements FileService
     }
 
     @Override
+    public FilePage searchFile(String key, String curDir) {
+        scanAndSyncFiles();
+        String fullDir;
+        if(curDir.equals("/"))
+            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
+        else
+            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
+        List<FilePO> fileList = fileMapper.searchFile(key, fullDir);
+        return new FilePage(fileList, 0L, 0, 0, 0);
+    }
+
+    @Override
     public WebResult upload(MultipartFile uploadFile, String curDir) {
         String fileName = uploadFile.getOriginalFilename();
         String fullDir;
