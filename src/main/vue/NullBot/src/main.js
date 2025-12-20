@@ -9,7 +9,7 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 
 const app = createApp(App)
 
-axios.defaults.baseURL="http://101.200.136.96:9001/nullbot"
+axios.defaults.baseURL="http://123.57.82.189:9001/nullbot"
 
 Object.keys(Icons).forEach(key => {  
    app.component(key, Icons[key]);  
