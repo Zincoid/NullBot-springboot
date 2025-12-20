@@ -37,7 +37,7 @@ public class AdminController
     }
 
     @GetMapping("/info")
-    public WebResult userInfo(@RequestHeader("token") String token){
+    public WebResult info(@RequestHeader("token") String token){
         Claims claims = JwtUtil.parseJWT(token);
         Long id = claims.get("id", Long.class);
         log.info("[管理系统] 获取信息 - ID {}", id);

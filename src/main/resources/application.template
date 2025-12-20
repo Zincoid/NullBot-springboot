@@ -67,15 +67,15 @@ nullbot:
       scope: group
   file:
     storage:
-      file-directory: /root/Nullbot/file  # src/main/resources/file
+      file-directory: /root/Nullbot/file  # ${user.dir}/src/main/resources/upload
       temp-path: /root/Nullbot/file/temp  # src/main/resources/file/temp
       image-path: /root/Nullbot/file/image  # src/main/resources/file/image
       video-path: /root/Nullbot/file/video  # src/main/resources/file/video
       audio-path: /root/Nullbot/file/audio  # src/main/resources/file/audio
-  accesses:
+  user-accesses:
     0000000001: 2
-  group-black-list:
-    0000000002
+  group-accesses:
+    0000000002: -1
 
 ai:
   deepseek:
