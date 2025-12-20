@@ -8,7 +8,7 @@ import * as Icons from '@element-plus/icons-vue';
 
 const app = createApp(App)
 
-axios.defaults.baseURL="http://101.200.136.96:9001/"
+axios.defaults.baseURL="http://101.200.136.96:9001/nullbot"
 
 Object.keys(Icons).forEach(key => {  
    app.component(key, Icons[key]);  

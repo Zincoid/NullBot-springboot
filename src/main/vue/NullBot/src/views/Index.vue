@@ -223,7 +223,7 @@ export default {
 
     methods: {
         getInfo() {
-            this.$axios.get('/nullbot/info', {
+            this.$axios.get('/info', {
                 headers: {
                     token: localStorage.getItem("token")
                 }
@@ -258,7 +258,7 @@ export default {
 
         getPage(currentPage, pageSize) {
             this.$axios({
-                url: '/nullbot/file/' + currentPage + '/' + pageSize,
+                url: '/file/' + currentPage + '/' + pageSize,
                 headers: {
                     'token': localStorage.getItem("token")
                 },
@@ -279,9 +279,9 @@ export default {
             })
         },
 
-        searchFile(key) {
+        searchFile() {
             this.$axios({
-                url: '/nullbot/file/searchFile',
+                url: '/file/searchFile',
                 headers: {
                     'token': localStorage.getItem("token")
                 },
@@ -299,7 +299,7 @@ export default {
         },
 
         deleteFile(file) {
-            this.$axios.delete('/nullbot/file/' + file.id, {
+            this.$axios.delete('/file/' + file.id, {
                 headers: {
                     token: localStorage.getItem("token")
                 }
@@ -352,7 +352,7 @@ export default {
         },
 
         download(file) {
-            this.$axios.get("/nullbot/file/download/" + file.id, {
+            this.$axios.get("/file/download/" + file.id, {
                 responseType: "arraybuffer",
                 headers: {
                     token: localStorage.getItem("token")
@@ -406,7 +406,7 @@ export default {
                         message: '文件名不能为空'
                     });
                 } else {
-                    this.$axios.post('/nullbot/file/createDir', {
+                    this.$axios.post('/file/createDir', {
                         curDir: this.curDir !== '' ? this.curDir : '/',
                         dirName: value
                     }, {

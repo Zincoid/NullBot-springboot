@@ -12,7 +12,6 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm()">登录</el-button>
-        <!-- <el-link type="primary" :underline="false" @click="toRegister">前往注册</el-link> -->
       </el-form-item>
     </el-form>
   </div>
@@ -32,7 +31,7 @@ export default {
 
   methods: {
     submitForm() {
-      this.$axios.post('/nullbot/login', this.LoginForm)
+      this.$axios.post('/login', this.LoginForm)
           .then(res => {
             console.log(res.data)
             if (res.data.code === 200){
@@ -43,10 +42,7 @@ export default {
               this.$message.warning(res.data.message)
             }
           })
-    },
-    // toRegister(){
-    //   this.$router.push('/register')
-    // }
+    }
   },
 
   created() {

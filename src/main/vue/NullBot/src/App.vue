@@ -5,10 +5,6 @@
 </template>
 
 <script>
-// import LoginView from './views/Login.vue'
-// export default {
-//   components: { LoginView }
-// }
 </script>
 
 <style>
