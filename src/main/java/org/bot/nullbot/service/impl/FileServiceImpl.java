@@ -43,7 +43,7 @@ public class FileServiceImpl implements FileService
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
         Page<FilePO> page = new Page<>(currentPage, pageSize);
         Page<FilePO> filePage = fileMapper.selectPage(page, new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir));
-        return new FilePage(filePage.getRecords(), filePage.getCurrent(), filePage.getPages(), filePage.getSize());
+        return new FilePage(filePage.getRecords(), filePage.getCurrent(), filePage.getPages(), filePage.getTotal(), filePage.getSize());
     }
 
     @Override
@@ -105,7 +105,7 @@ public class FileServiceImpl implements FileService
         file.setIsDir(1);
         java.io.File file_dir = new java.io.File(fullDir);
         if(!file_dir.exists() || file_dir.isFile()) return WebResult.fail().addMsg("curDir不合法");
-        java.io.File new_dir = new java.io.File(fullDir + dirName);
+        java.io.File new_dir = new java.io.File(fullDir + "/"  + dirName);
         if (!new_dir.exists())
             new_dir.mkdir();
         else

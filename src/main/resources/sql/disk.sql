@@ -20,3 +20,6 @@ create table admin
     password varchar(255) not null,
     email varchar(255) not null
 );
+
+INSERT INTO admin (id, username, password, email) values
+(2660181154, 'Zincoid', 'KJFHQAUJWDHKIA', '2660181154@qq.com');

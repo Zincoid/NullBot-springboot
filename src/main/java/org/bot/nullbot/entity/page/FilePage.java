@@ -13,5 +13,6 @@ public class FilePage
     private List<FilePO> files;
     private long currentPage;
     private long totalPage;
+    private long total;
     private long pageSize;
 }
