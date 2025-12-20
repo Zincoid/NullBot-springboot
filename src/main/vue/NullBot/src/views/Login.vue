@@ -1,7 +1,7 @@
 <template>
   <div style="width: 500px;margin: auto">
     <div>
-      <h1 align="center">NullBot 管理系统</h1>
+      <h1 align="center">NullBot</h1>
     </div>
     <el-form :model="LoginForm" ref="LoginForm" label-width="100px" class="demo-ruleForm">
       <el-form-item label="账号">
@@ -11,7 +11,7 @@
         <el-input v-model="LoginForm.password" show-password></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm()">登录</el-button>
+        <el-button type="primary" plain @click="submitForm()">登录</el-button>
       </el-form-item>
     </el-form>
   </div>

@@ -1,218 +1,277 @@
 <template>
   <div>
     <el-container>
-      <el-header height="120px">
-        <el-row>
-          <el-col :span="4">
+      <!-- 头部区域 -->
+      <el-header height="auto">
+        <el-menu
+            ref="menu"
+            default-active="1"
+            class="el-menu-1"
+            mode="horizontal"
+            :ellipsis="false"
+            style="min-width: 100%;"
+        >
+          <el-menu-item>
             <h1>NullBot <el-icon size="25">
               <MostlyCloudy />
             </el-icon></h1>
-          </el-col>
-          <el-col :span="14" align="center">
-            <h1 v-show="op === 1">文件管理</h1>
-            <h1 v-show="op === 2">个人中心</h1>
-            <h1 v-show="op === 3">语录管理</h1>
-          </el-col>
-          <el-col :span="2" :offset="2" align="right">
-            <el-icon size="25">
-              <User />
-            </el-icon>
-            <el-text size="large" tag="b">{{ " "+info.username }}</el-text>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8" :offset="4" v-show="op === 1">
-            <el-input placeholder="在此目录中搜索" v-model="searchKey" clearable>
-            </el-input>
-          </el-col>
-          <el-col :span="2" v-show="op === 1">
-            <el-button @click="searchFile"><el-icon size="15">
-              <Search />
-            </el-icon>搜索</el-button>
-          </el-col>
+          </el-menu-item>
 
-          <el-col :span="3" :offset="1" v-show="op === 1">
-            <el-upload ref="upload" class="upload" action="" :file-list="uploadFileList"
-                       :on-change="handleChange" :auto-upload="false">
-              <template #trigger>
-                <el-button type="primary">选择文件</el-button>
-              </template>
-              <el-button class="ml-3" type="success" @click="upload">
-                <el-icon size="18"><UploadFilled /></el-icon>上传到服务器
+          <div class="header-center" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+            <!-- op=1时显示文件管理相关功能 -->
+            <div v-show="op === 1" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
+              <el-input
+                  placeholder="在此目录中搜索"
+                  v-model="searchKey"
+                  clearable
+                  style="width: 600px;"
+              >
+              </el-input>
+
+              <el-button plain @click="searchFile">
+                <el-icon size="15"><Search /></el-icon>搜索
               </el-button>
-            </el-upload>
-          </el-col>
-          <el-col :span="4" :offset="1" v-show="op === 1">
-            <el-button round @click="backDir"><el-icon size="18"><RefreshLeft /></el-icon>返回上级目录</el-button>
-            <el-button round @click="createDir"><el-icon size="18"><FolderAdd /></el-icon>新建目录</el-button>
-          </el-col>
-        </el-row>
+
+              <el-upload
+                  ref="upload"
+                  class="upload"
+                  action=""
+                  :file-list="uploadFileList"
+                  :on-change="handleChange"
+                  :auto-upload="false"
+                  style="display: inline-flex;"
+              >
+                <template #trigger>
+                  <el-button type="primary" plain>选择文件</el-button>
+                </template>
+                <el-button class="ml-1" type="success" plain @click="upload">
+                  <el-icon size="15"><UploadFilled /></el-icon>上传
+                </el-button>
+              </el-upload>
+
+              <el-button round plain @click="backDir">
+                <el-icon size="15"><RefreshLeft /></el-icon>返回上级
+              </el-button>
+
+              <el-button round plain @click="createDir">
+                <el-icon size="15"><FolderAdd /></el-icon>新建目录
+              </el-button>
+            </div>
+
+            <!-- 显示标题 -->
+            <!--<h2 v-show="op === 1">文件管理</h2>-->
+            <!--<h2 v-show="op === 2">个人中心</h2>-->
+            <!--<h2 v-show="op === 3">语录管理</h2>-->
+          </div>
+          <!-- 右侧用户信息 -->
+          <el-menu-item style="margin-left: auto;">
+            <el-icon><User /></el-icon>
+            <el-text size="large" tag="b">{{ " "+info.username }}</el-text>
+          </el-menu-item>
+        </el-menu>
       </el-header>
 
-      <el-main>
-        <el-row v-show="op === 1">
-          <el-col :span="20" :offset="3">
-            <el-icon size="20">
-              <HomeFilled />
-            </el-icon>
-            <el-text size="large">{{ " "+curDir }}</el-text>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="3">
+      <el-container>
+        <!-- 左侧导航区域 -->
+        <el-aside>
+          <el-menu
+              ref="menu"
+              default-active="1"
+              class="el-menu-2"
+              :ellipsis="false"
+              style="min-width: 100%;"
+          >
             <h3 align="center"><el-icon>
               <Promotion />
             </el-icon>导航</h3>
-            <el-menu ref="menu" default-active="1" @open="handleOpen" @close="handleClose">
-              <el-menu-item index="2" @click="shiftUserCenter">
-                                <span><el-icon>
-                                        <User />
-                                    </el-icon>个人中心</span>
-              </el-menu-item>
-              <el-menu-item index="1" @click="shiftFileManage">
-                                <span><el-icon>
-                                        <Files />
-                                    </el-icon>文件管理</span>
-              </el-menu-item>
-              <el-menu-item index="3" @click="shiftSayingManage">
-                                <span><el-icon>
-                                        <Files />
-                                    </el-icon>语录管理</span>
-              </el-menu-item>
-            </el-menu>
-          </el-col>
+            <el-menu-item
+                index="1"
+                @click="shiftFileManage"
+                style="display: flex; justify-content: center; align-items: center;"
+            >
+              <span><el-icon><Files /></el-icon>文件管理</span>
+            </el-menu-item>
+            <el-menu-item
+                index="3"
+                @click="shiftSayingManage"
+                style="display: flex; justify-content: center; align-items: center;"
+            >
+              <span><el-icon><ChatDotSquare /></el-icon>语录管理</span>
+            </el-menu-item>
+            <el-menu-item
+                index="2"
+                @click="shiftUserCenter"
+                style="display: flex; justify-content: center; align-items: center;"
+            >
+              <span><el-icon><User /></el-icon>个人中心</span>
+            </el-menu-item>
+          </el-menu>
+        </el-aside>
 
-          <el-col :span="20" v-show="op === 1">
-            <el-table ref="tableData" :data="tableData" style="width: 100%">
-              <el-table-column type="index" label="序号" width="100"
-                               :index="(pageInfo.current - 1) * pageInfo.size + 1">
-              </el-table-column>
+        <!-- 右侧内容区域 -->
+        <el-container style="height: 100%;">
+          <el-main style="height: 100%; overflow-y: auto; padding: 20px;">
+            <div v-show="op === 1" style="margin-bottom: 15px;">
+              <el-icon size="20">
+                <HomeFilled />
+              </el-icon>
+              <el-text size="large">{{ " "+curDir }}</el-text>
+            </div>
 
-              <el-table-column label="文件名" width="600">
-                <template v-slot="scope">
-                  {{ scope.row.fileName }}
-                </template>
-              </el-table-column>
+            <!-- 文件管理 -->
+            <div v-show="op === 1">
+              <el-table ref="tableData" :data="tableData" style="width: 100%" height="calc(100vh - 250px)">
+                <el-table-column type="index" label="序号" width="100"
+                                 :index="(pageInfo.current - 1) * pageInfo.size + 1">
+                </el-table-column>
 
-              <el-table-column label="文件大小" width="250">
-                <template v-slot="scope">
-                  {{ scope.row.isDir === 1 ? '/' : (scope.row.fileSize / 1024).toFixed(2) + 'KB' }}
-                </template>
-              </el-table-column>
+                <el-table-column label="文件名" width="600">
+                  <template v-slot="scope">
+                    {{ scope.row.fileName }}
+                  </template>
+                </el-table-column>
 
-              <el-table-column label="文件类型" width="250">
-                <template v-slot="scope">
-                  {{ scope.row.isDir === 1 ? '文件夹' : '文件' }}
-                </template>
-              </el-table-column>
+                <el-table-column label="文件大小" width="250">
+                  <template v-slot="scope">
+                    {{ scope.row.isDir === 1 ? '/' : (scope.row.fileSize / 1024).toFixed(2) + 'KB' }}
+                  </template>
+                </el-table-column>
 
-              <el-table-column fixed="right" label="操作" width="400">
-                <template v-slot="scope">
-                  <el-button @click="deleteFile(scope.row)" color="red"><el-icon size="17">
-                    <Delete />
-                  </el-icon>删除</el-button>
-                  <el-button @click="download(scope.row)" color="black"
-                             v-if="scope.row.isDir === 0"><el-icon size="17">
-                    <Download />
-                  </el-icon>下载</el-button>
-                  <el-button @click="enterDir(scope.row)" color="lightgrey"
-                             v-if="scope.row.isDir === 1"><el-icon size="17">
-                    <FolderOpened />
-                  </el-icon>进入文件夹</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-col>
+                <el-table-column label="文件类型" width="250">
+                  <template v-slot="scope">
+                    {{ scope.row.isDir === 1 ? '文件夹' : '文件' }}
+                  </template>
+                </el-table-column>
 
-          <el-col :span="20" v-show="op === 3">
-            <el-table ref="sayingTableData" :data="sayingTableData" style="width: 100%">
-              <el-table-column type="index" label="序号" width="100"
-                               :index="(sayingPageInfo.current - 1) * sayingPageInfo.size + 1">
-              </el-table-column>
+                <el-table-column fixed="right" label="操作" width="400">
+                  <template v-slot="scope">
+                    <el-popconfirm title="确认删除?" @confirm="deleteFile(scope.row)">
+                      <template #reference>
+                        <el-button type="text" size="small"><el-icon size="17">
+                          <Delete />
+                        </el-icon>删除</el-button>
+                      </template>
+                    </el-popconfirm>
+                    <el-button type="text" size="small" @click="download(scope.row)"
+                               v-if="scope.row.isDir === 0"><el-icon size="17">
+                      <Download />
+                    </el-icon>下载</el-button>
+                    <el-button type="text" size="small" @click="enterDir(scope.row)"
+                               v-if="scope.row.isDir === 1"><el-icon size="17">
+                      <FolderOpened />
+                    </el-icon>进入文件夹</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
 
-              <el-table-column label="用户ID" width="150">
-                <template v-slot="scope">
-                  {{ scope.row.userId }}
-                </template>
-              </el-table-column>
+            <!-- 语录管理 -->
+            <div v-show="op === 3">
+              <el-table ref="sayingTableData" :data="sayingTableData" style="width: 100%" height="calc(100vh - 250px)">
+                <el-table-column type="index" label="序号" width="100"
+                                 :index="(sayingPageInfo.current - 1) * sayingPageInfo.size + 1">
+                </el-table-column>
 
-              <el-table-column label="昵称" width="150">
-                <template v-slot="scope">
-                  {{ scope.row.userName }}
-                </template>
-              </el-table-column>
+                <el-table-column label="用户ID" width="150">
+                  <template v-slot="scope">
+                    {{ scope.row.userId }}
+                  </template>
+                </el-table-column>
 
-              <el-table-column label="内容" width="1000">
-                <template v-slot="scope">
-                  {{ scope.row.text }}
-                </template>
-              </el-table-column>
+                <el-table-column label="昵称" width="150">
+                  <template v-slot="scope">
+                    {{ scope.row.userName }}
+                  </template>
+                </el-table-column>
 
-              <el-table-column label="时间" width="200">
-                <template v-slot="scope">
-                  {{ scope.row.time }}
-                </template>
-              </el-table-column>
+                <el-table-column label="内容" width="1000">
+                  <template v-slot="scope">
+                    {{ scope.row.text }}
+                  </template>
+                </el-table-column>
 
-              <el-table-column fixed="right" label="操作" width="150">
-                <template v-slot="scope">
-                  <el-button @click="deleteSaying(scope.row)" color="red"><el-icon size="17">
-                    <Delete />
-                  </el-icon>删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-col>
+                <el-table-column label="时间" width="200">
+                  <template v-slot="scope">
+                    {{ scope.row.time }}
+                  </template>
+                </el-table-column>
 
-          <el-col :span="18" :offset="1" v-show="op === 2">
-            <el-descriptions class="info">
-              <el-descriptions-item label="用户名">
-                <el-tag>{{ info.username }}</el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item label="邮箱">
-                <el-tag>{{ info.email }}</el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item label="Token">
-                <el-tag>{{ token }}</el-tag>
-              </el-descriptions-item>
-            </el-descriptions>
+                <el-table-column fixed="right" label="操作" width="150">
+                  <template v-slot="scope">
+                    <el-popconfirm title="确认删除?" @confirm="deleteSaying(scope.row)">
+                      <template #reference>
+                        <el-button type="text" size="small"><el-icon size="17">
+                          <Delete />
+                        </el-icon>删除</el-button>
+                      </template>
+                    </el-popconfirm>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
 
-            <el-col align :span="4" v-show="op === 2">
-              <el-button round color="blue" @click="logout"><el-icon size="15"><SwitchButton /></el-icon>退出登录</el-button>
-            </el-col>
-          </el-col>
+            <!-- 个人中心 -->
+            <div v-show="op === 2" style="max-width: 1000px;">
+              <el-descriptions class="info" title="用户信息" :column="1" border>
+                <el-descriptions-item label="用户名">
+                  <el-tag>{{ info.username }}</el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="邮箱">
+                  <el-tag>{{ info.email }}</el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="Token">
+                  <el-text copyable>{{ token }}</el-text>
+                </el-descriptions-item>
+              </el-descriptions>
 
-        </el-row>
-      </el-main>
+              <div style="margin-top: 20px;">
+                <el-button round color="red" @click="logout">
+                  <el-icon size="15"><SwitchButton /></el-icon>退出登录
+                </el-button>
+              </div>
+            </div>
+          </el-main>
 
-      <el-footer v-show="op === 1">
-        <el-row>
-          <el-col :span="6" :offset="18">
-            <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                           layout="sizes, prev, pager, next" :page-sizes="[3, 5, 7, 9]" :page-size="pageInfo.size"
-                           :total="pageInfo.total" :current-page="pageInfo.current" :pager-count="4">
-            </el-pagination>
-          </el-col>
-        </el-row>
-      </el-footer>
+          <!-- 分页区域 -->
+          <el-footer height="60px" style="padding: 10px 20px;">
+            <div v-show="op === 1" style="text-align: right;">
+              <el-pagination
+                  background
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                  layout="sizes, prev, pager, next"
+                  :page-sizes="[10, 20, 30, 40]"
+                  :page-size="pageInfo.size"
+                  :total="pageInfo.total"
+                  :current-page="pageInfo.current"
+                  :pager-count="4">
+              </el-pagination>
+            </div>
 
-      <el-footer v-show="op === 3">
-        <el-row>
-          <el-col :span="6" :offset="18">
-            <el-pagination background @size-change="handleSayingSizeChange" @current-change="handleSayingCurrentChange"
-                           layout="sizes, prev, pager, next" :page-sizes="[10, 20, 30, 40]" :page-size="sayingPageInfo.size"
-                           :total="sayingPageInfo.total" :current-page="sayingPageInfo.current" :pager-count="4">
-            </el-pagination>
-          </el-col>
-        </el-row>
-      </el-footer>
+            <div v-show="op === 3" style="text-align: right;">
+              <el-pagination
+                  background
+                  @size-change="handleSayingSizeChange"
+                  @current-change="handleSayingCurrentChange"
+                  layout="sizes, prev, pager, next"
+                  :page-sizes="[10, 20, 30, 40]"
+                  :page-size="sayingPageInfo.size"
+                  :total="sayingPageInfo.total"
+                  :current-page="sayingPageInfo.current"
+                  :pager-count="4">
+              </el-pagination>
+            </div>
+          </el-footer>
+        </el-container>
+      </el-container>
 
-      <el-dialog title="搜索结果" v-model="searchTableVisible">
-        <el-table ref="searchData" :data="searchData">
+      <!-- 搜索对话框 -->
+      <el-dialog title="搜索结果" v-model="searchTableVisible" width="55%">
+        <el-table ref="searchData" :data="searchData" style="width: 100%">
           <el-table-column type="index" label="序号" width="100">
           </el-table-column>
 
-          <el-table-column label="文件名" width="300">
+          <el-table-column label="文件名" width="400">
             <template v-slot="scope">
               {{ scope.row.fileName }}
             </template>
@@ -232,13 +291,16 @@
 
           <el-table-column fixed="right" label="操作" width="200">
             <template v-slot="scope">
-              <el-button @click="deleteFile(scope.row)" color="red"><el-icon size="17">
-                <Delete />
-              </el-icon>删除</el-button>
-              <el-button @click="download(scope.row)" color="black" v-if="scope.row.isDir === 0"><el-icon
-                  size="17">
-                <Download />
-              </el-icon>下载</el-button>
+              <el-popconfirm title="确认删除?" @confirm="deleteFile(scope.row)">
+                <template #reference>
+                  <el-button type="text" size="small"><el-icon size="17">
+                    <Delete />
+                  </el-icon>删除</el-button>
+                </template>
+              </el-popconfirm>
+              <el-button type="text" @click="download(scope.row)" color="black" size="small" v-if="scope.row.isDir === 0">
+                <el-icon size="17"><Download /></el-icon>下载
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -248,7 +310,25 @@
 </template>
 
 <script>
+import {
+  ChatDotSquare,
+  Delete,
+  Download,
+  Files, FolderAdd,
+  FolderOpened,
+  HomeFilled, MostlyCloudy,
+  Promotion, RefreshLeft, Search, SwitchButton, UploadFilled,
+  User
+} from "@element-plus/icons-vue";
+
 export default {
+  components: {
+    FolderAdd,
+    RefreshLeft,
+    UploadFilled,
+    Search,
+    MostlyCloudy,
+    SwitchButton, FolderOpened, Download, Delete, HomeFilled, ChatDotSquare, Files, User, Promotion},
   data() {
     return {
       token: 'null',
@@ -398,7 +478,7 @@ export default {
           let formData = new FormData()
           formData.append("uploadFile", this.uploadFileList[i].raw)
           formData.append("curDir", this.curDir)
-          this.$axios.post("/nullbot/file/upload", formData, {
+          this.$axios.post("/file/upload", formData, {
             headers: {
               "Content-Type": "multipart/form-data;charset=utf-8",
               token: localStorage.getItem("token")
@@ -555,11 +635,15 @@ export default {
       return
     }
     this.getInfo()
-    this.getPage(1, 5)
+    this.getPage(1, 10)
     this.getSayingPage(1, 10)
   },
 }
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.el-menu--horizontal > .el-menu-item:nth-child(1) {
+  margin-right: auto;
+}
+</style>

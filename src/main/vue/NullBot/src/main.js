@@ -5,6 +5,7 @@ import axios from 'axios'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as Icons from '@element-plus/icons-vue';
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
 const app = createApp(App)
 
