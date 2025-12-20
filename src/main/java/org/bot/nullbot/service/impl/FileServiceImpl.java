@@ -14,6 +14,7 @@ import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.mapper.FileMapper;
 import org.bot.nullbot.service.FileService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +35,7 @@ public class FileServiceImpl implements FileService
     private final FileStorageConfig fileStorageConfig;
 
     @Override
+    @Transactional
     public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir) {
         scanAndSyncFiles();
         String fullDir;
@@ -47,6 +49,7 @@ public class FileServiceImpl implements FileService
     }
 
     @Override
+    @Transactional
     public FilePage searchFile(String key, String curDir) {
         scanAndSyncFiles();
         String fullDir;
@@ -59,6 +62,7 @@ public class FileServiceImpl implements FileService
     }
 
     @Override
+    @Transactional
     public WebResult upload(MultipartFile uploadFile, String curDir) {
         String fileName = uploadFile.getOriginalFilename();
         String fullDir;
@@ -85,6 +89,7 @@ public class FileServiceImpl implements FileService
     }
 
     @Override
+    @Transactional
     public WebResult download(Integer id, HttpServletRequest request, HttpServletResponse response) {
         FilePO file = fileMapper.selectById(id);
         if (file == null) return WebResult.fail().addMsg("文件不存在");
@@ -104,6 +109,7 @@ public class FileServiceImpl implements FileService
     }
 
     @Override
+    @Transactional
     public WebResult createDir(String curDir, String dirName) {
         String fullDir;
         if(curDir.equals("/"))
@@ -127,6 +133,7 @@ public class FileServiceImpl implements FileService
     }
 
     @Override
+    @Transactional
     public WebResult deleteFile(Integer id) {
         FilePO file = fileMapper.selectById(id);
         deleteFileByDir(new java.io.File(file.getDirectory() + "/" + file.getFileName()));

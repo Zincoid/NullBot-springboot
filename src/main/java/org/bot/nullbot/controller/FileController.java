@@ -26,7 +26,7 @@ public class FileController
                                 @PathVariable Integer pageSize,
                                 @RequestParam(defaultValue = "/") String curDir){
         FilePage filePage = fileService.getFileByPage(currentPage, pageSize, curDir);
-        return WebResult.success().addMsg("查询成功.").addData("filePage", filePage);
+        return WebResult.success().addMsg("查询成功").addData("filePage", filePage);
     }
 
     @GetMapping("/searchFile")
@@ -35,7 +35,7 @@ public class FileController
             return WebResult.fail().addMsg("不允许出现斜杠");
         }
         FilePage filePage = fileService.searchFile(key, curDir);
-        return WebResult.success().addMsg("查询成功.").addData("filePage", filePage);
+        return WebResult.success().addMsg("查询成功").addData("filePage", filePage);
     }
 
     @PostMapping("/upload")
