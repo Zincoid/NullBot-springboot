@@ -56,7 +56,7 @@ public class PreviewServiceImpl implements PreviewService
 
             // 处理范围请求
             String rangeHeader = request.getHeader(HttpHeaders.RANGE);
-            if (rangeHeader != null && contentType.startsWith("video/")) {
+            if (rangeHeader != null && (contentType.startsWith("video/") || contentType.startsWith("audio/"))) {
                 return handleRangeRequest(filePath, resource, contentType, rangeHeader);
             }
 
@@ -135,6 +135,18 @@ public class PreviewServiceImpl implements PreviewService
                 ".wmv", "video/x-ms-wmv"
         );
 
+        // 常见音频格式
+        Map<String, String> audioTypes = Map.of(
+                ".mp3", "audio/mpeg",
+                ".wav", "audio/wav",
+                ".flac", "audio/flac",
+                ".aac", "audio/aac",
+                ".ogg", "audio/ogg",
+                ".m4a", "audio/mp4",
+                ".wma", "audio/x-ms-wma",
+                ".opus", "audio/opus"
+        );
+
         // 检查文件扩展名
         for (Map.Entry<String, String> entry : imageTypes.entrySet()) {
             if (lowerName.endsWith(entry.getKey())) {
@@ -143,6 +155,12 @@ public class PreviewServiceImpl implements PreviewService
         }
 
         for (Map.Entry<String, String> entry : videoTypes.entrySet()) {
+            if (lowerName.endsWith(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+
+        for (Map.Entry<String, String> entry : audioTypes.entrySet()) {
             if (lowerName.endsWith(entry.getKey())) {
                 return entry.getValue();
             }

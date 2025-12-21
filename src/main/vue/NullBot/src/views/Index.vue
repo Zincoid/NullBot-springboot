@@ -178,10 +178,13 @@
 
                 <el-table-column fixed="right" label="操作" width="220" align="center">
                   <template v-slot="scope">
-                    <div style="display: flex; gap: 8px; justify-content: center;">
+                    <div style="display: flex; gap: 2px; justify-content: center;">
                       <el-button type="info" plain @click="handlePreview(scope.row)"
                                  v-if="isPreviewable(scope.row)" size="small" title="预览">
                         <el-icon size="14"><Picture /></el-icon>
+                      </el-button>
+                      <el-button type="warning" plain size="small" @click="handleRename(scope.row)" title="重命名">
+                        <el-icon size="14"><Edit /></el-icon>
                       </el-button>
                       <el-button type="primary" plain size="small" @click="enterDir(scope.row)"
                                  v-if="scope.row.isDir === 1" title="进入文件夹">
@@ -491,7 +494,7 @@ export default {
       const fileName = file.fileName.toLowerCase();
       const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
       const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
-      const audioExtensions = ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma', '.ape', '.opus'];
+      const audioExtensions = ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma', '.opus'];
       return imageExtensions.some(ext => fileName.endsWith(ext)) ||
           videoExtensions.some(ext => fileName.endsWith(ext)) ||
           audioExtensions.some(ext => fileName.endsWith(ext));
@@ -744,6 +747,55 @@ export default {
           type: 'info',
           message: '取消创建'
         });
+      });
+    },
+
+    handleRename(file) {
+      this.$prompt('请输入新的文件名', '重命名', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputValue: file.fileName,
+        inputPattern: /^[^\\\/:*?"<>|]+$/,
+        inputErrorMessage: '文件名不能包含 \\ / : * ? " < > | 等字符'
+      }).then(({ value }) => {
+        if (!value || value.trim() === '') {
+          this.$message.error('文件名不能为空');
+          return;
+        }
+
+        if (value === file.fileName) {
+          this.$message.warning('文件名未更改');
+          return;
+        }
+
+        this.$axios({
+          url: `/file/rename/${file.id}`,
+          method: 'GET',
+          headers: {
+            'token': localStorage.getItem("token")
+          },
+          params: {
+            newFileName: value
+          }
+        }).then(res => {
+          if (res.data.code === 200) {
+            this.$message.success('重命名成功');
+
+            // 刷新当前视图
+            if (this.op === 1) {
+              this.getPage(this.pageInfo.current, this.pageInfo.size);
+            } else if (this.searchTableVisible) {
+              this.searchFile();
+            }
+          } else {
+            this.$message.error(res.data.message || '重命名失败');
+          }
+        }).catch(error => {
+          console.error('重命名失败:', error);
+          this.$message.error('重命名失败');
+        });
+      }).catch(() => {
+        this.$message.info('已取消重命名');
       });
     },
 
