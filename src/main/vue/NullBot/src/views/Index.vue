@@ -34,7 +34,8 @@
             </div>
             <!-- op=2时显示问候 -->
             <h3 v-show="op === 2" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
-              Ciallo～(∠・ω< )⌒☆
+              <span>Ciallo～(∠・ω< ) <span style="font-weight: bold;">{{ currentTime }}</span> ⌒☆</span>
+
             </h3>
             <!-- op=3时显示语录管理 -->
             <h3 v-show="op === 3" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
@@ -43,10 +44,18 @@
           </div>
 
           <!-- 右侧用户信息 -->
-          <el-menu-item style="margin-left: auto;">
-            <el-icon><User /></el-icon>
-            <el-text size="large" tag="b">{{ " "+info.username }}</el-text>
-          </el-menu-item>
+          <el-sub-menu style="margin-left: auto;">
+            <el-menu-item>
+              <el-button type="danger" plain style="width: 100%; justify-content: center;" @click="logout">
+                <el-icon size="15"><SwitchButton /></el-icon>退出登录
+              </el-button>
+            </el-menu-item>
+            <template #title>
+              <el-icon><User /></el-icon>
+              <el-text size="large" tag="b">{{ " "+info.username }}</el-text>
+            </template>
+          </el-sub-menu>
+
         </el-menu>
       </el-header>
 
@@ -111,7 +120,7 @@
                     style="display: inline-flex;"
                 >
                   <template #trigger>
-                    <el-button type="primary" plain>选择文件</el-button>
+                    <el-button type="primary" plain >选择文件</el-button>
                   </template>
                 </el-upload>
                 <el-button class="ml-1" type="success" plain @click="upload">
@@ -156,7 +165,7 @@
                 <el-table-column label="文件类型" min-width="100">
                   <template v-slot="scope">
                     <el-tag :type="scope.row.isDir === 1 ? 'info' : 'success'">
-                      {{ scope.row.isDir === 1 ? '文件夹' : '文件' }}
+                      {{ scope.row.isDir === 1 ? '文件夹' : getFileExtension(scope.row.fileName) }}
                     </el-tag>
                   </template>
                 </el-table-column>
@@ -167,12 +176,12 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column fixed="right" label="操作" width="200" align="center">
+                <el-table-column fixed="right" label="操作" width="220" align="center">
                   <template v-slot="scope">
                     <div style="display: flex; gap: 8px; justify-content: center;">
                       <el-button type="info" plain @click="handlePreview(scope.row)"
                                  v-if="isPreviewable(scope.row)" size="small" title="预览">
-                        <el-icon size="14"><View /></el-icon>
+                        <el-icon size="14"><Picture /></el-icon>
                       </el-button>
                       <el-button type="primary" plain size="small" @click="enterDir(scope.row)"
                                  v-if="scope.row.isDir === 1" title="进入文件夹">
@@ -226,13 +235,13 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column fixed="right" label="操作" width="100" align="center">
+                <el-table-column fixed="right" label="操作" width="110" align="center">
                   <template v-slot="scope">
-                    <el-popconfirm title="确认删除?" @confirm="deleteSaying(scope.row)">
+                    <el-popconfirm title="确认删除吗?" @confirm="deleteSaying(scope.row)">
                       <template #reference>
-                        <el-button type="text" size="small"><el-icon size="17">
-                          <Delete />
-                        </el-icon>删除</el-button>
+                        <el-button type="danger" plain size="small" title="删除">
+                          <el-icon size="14"><Delete /></el-icon>
+                        </el-button>
                       </template>
                     </el-popconfirm>
                   </template>
@@ -241,7 +250,7 @@
             </div>
 
             <!-- 个人中心 -->
-            <div v-show="op === 2" style="max-width: 1000px;">
+            <div v-show="op === 2" style="margin-right: 20px;">
               <el-descriptions class="info" title="用户信息" :column="1" border>
                 <el-descriptions-item label="用户名">
                   <el-tag>{{ info.username }}</el-tag>
@@ -250,11 +259,11 @@
                   <el-tag>{{ info.email }}</el-tag>
                 </el-descriptions-item>
                 <el-descriptions-item label="Token">
-                  <el-text copyable>{{ token }}</el-text>
+                  <el-tag copyable>{{ token }}</el-tag>
                 </el-descriptions-item>
               </el-descriptions>
 
-              <div style="margin-top: 20px;">
+              <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
                 <el-button type="danger" round plain @click="logout">
                   <el-icon size="15"><SwitchButton /></el-icon>退出登录
                 </el-button>
@@ -321,8 +330,14 @@
             </template>
           </el-table-column>
 
-          <el-table-column fixed="right" label="操作" width="200" align="center">
+          <el-table-column fixed="right" label="操作" width="250" align="center">
             <template v-slot="scope">
+              <el-button type="text" @click="download(scope.row)" size="small" v-if="scope.row.isDir === 0">
+                <el-icon size="17"><Download /></el-icon>下载
+              </el-button>
+              <el-button type="text" @click="handlePreview(scope.row)" size="small" v-if="isPreviewable(scope.row)">
+                <el-icon size="17"><Picture /></el-icon>预览
+              </el-button>
               <el-popconfirm title="确认删除?" @confirm="deleteFile(scope.row)">
                 <template #reference>
                   <el-button type="text" size="small"><el-icon size="17">
@@ -330,16 +345,13 @@
                   </el-icon>删除</el-button>
                 </template>
               </el-popconfirm>
-              <el-button type="text" @click="download(scope.row)" color="black" size="small" v-if="scope.row.isDir === 0">
-                <el-icon size="17"><Download /></el-icon>下载
-              </el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-dialog>
 
       <!-- 图片/视频预览对话框 -->
-      <el-dialog v-model="previewVisible" :title="previewTitle" width="70%" top="5vh" center>
+      <el-dialog v-model="previewVisible" :title="previewTitle" :destroy-on-close="true" width="70%" top="5vh" center>
         <div style="text-align: center; max-height: 70vh; overflow: auto;">
           <!-- 图片预览 -->
           <el-image
@@ -360,7 +372,17 @@
           >
             您的浏览器不支持 video 标签。
           </video>
-          <!-- 如果以后想支持PDF等，可以在这里扩展 -->
+          <audio
+              v-else-if="previewType === 'audio'"
+              ref="videoPlayer"
+              :src="previewUrl"
+              controls
+              autoplay
+              style="max-width: 100%; max-height: 65vh;"
+          >
+            您的浏览器不支持 audio 标签。
+          </audio>
+          <!-- 可以在这里扩展 -->
         </div>
       </el-dialog>
     </el-container>
@@ -374,15 +396,15 @@ import {
   Download,
   Files, Folder, FolderAdd,
   FolderOpened,
-  HomeFilled, MostlyCloudy,
+  HomeFilled, MostlyCloudy, Picture,
   Promotion, RefreshLeft, Search, SwitchButton, UploadFilled,
-  User, View
+  User
 } from "@element-plus/icons-vue";
 import axios from "axios";
 
 export default {
   components: {
-    View,
+    Picture,
     Comment,
     Document,
     Folder,
@@ -395,6 +417,9 @@ export default {
 
   data() {
     return {
+      currentTime: '',
+      timer: null,
+
       token: 'null',
       info: {
         username: 'null',
@@ -435,14 +460,41 @@ export default {
   },
 
   methods: {
+    // 时钟更新
+    updateTime() {
+      const now = new Date()
+      this.currentTime = now.toLocaleTimeString('zh-CN', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      })
+    },
+
+    // 从文件名获取文件扩展名
+    getFileExtension(fileName) {
+      if (!fileName) return '未知类型'
+      // 获取最后一个点之后的部分作为文件扩展名
+      const lastDotIndex = fileName.lastIndexOf('.')
+      if (lastDotIndex === -1 || lastDotIndex === fileName.length - 1) {
+        return '未知类型'
+      }
+      // 获取后缀并转为大写
+      const extension = fileName.substring(lastDotIndex + 1).toUpperCase()
+      // 如果后缀太长，可以截断显示
+      return extension.length > 8 ? extension.substring(0, 8) + '...' : extension
+    },
+
     // 判断文件是否可预览（根据扩展名）
     isPreviewable(file) {
       if (file.isDir === 1) return false; // 文件夹不可预览
       const fileName = file.fileName.toLowerCase();
       const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
       const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
+      const audioExtensions = ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma', '.ape', '.opus'];
       return imageExtensions.some(ext => fileName.endsWith(ext)) ||
-          videoExtensions.some(ext => fileName.endsWith(ext));
+          videoExtensions.some(ext => fileName.endsWith(ext)) ||
+          audioExtensions.some(ext => fileName.endsWith(ext));
     },
 
     // 处理预览点击事件
@@ -454,7 +506,8 @@ export default {
       // 2. 判断文件类型
       const fileName = file.fileName.toLowerCase();
       const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
-      this.previewType = imageExtensions.some(ext => fileName.endsWith(ext)) ? 'image' : 'video';
+      const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
+      this.previewType = imageExtensions.some(ext => fileName.endsWith(ext)) ? 'image' : (videoExtensions.some(ext => fileName.endsWith(ext)) ? 'video' : 'audio');
 
       // 3. 设置对话框标题
       this.previewTitle = `预览 - ${file.fileName}`;
@@ -652,16 +705,16 @@ export default {
     },
 
     createDir() {
-      this.$prompt('请输入文件夹名', '提示', {
+      this.$prompt('请输入目录名', '新建目录', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         inputPattern: /^(?!.*(\/)|(\\))/,
-        inputErrorMessage: "目录中不能包含斜杠"
+        inputErrorMessage: "目录名不能包含斜杠"
       }).then(({ value }) => {
         if (!value) {
           this.$message({
             type: 'error',
-            message: '文件名不能为空'
+            message: '目录名不能为空'
           });
         } else {
           this.$axios.post('/file/createDir', {
@@ -743,12 +796,20 @@ export default {
     this.getPage(1, 10)
     this.getSayingPage(1, 10)
   },
+
+  mounted() {
+    this.updateTime()
+    this.timer = setInterval(this.updateTime, 1000)
+  },
+
+  beforeUnmount() {
+    if (this.timer) {
+      clearInterval(this.timer)
+    }
+  }
 }
 
 </script>
 
 <style scoped>
-.el-menu--horizontal > .el-menu-item:nth-child(1) {
-  margin-right: auto;
-}
 </style>
