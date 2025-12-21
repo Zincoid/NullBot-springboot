@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,6 +30,7 @@ public class PreviewServiceImpl implements PreviewService
     private final FileMapper fileMapper;
 
     @Override
+    @Transactional
     public ResponseEntity<Resource> preview(Integer  id, HttpServletRequest request) {
         try {
             // 查询文件信息

@@ -13,8 +13,6 @@ import org.bot.nullbot.entity.page.FilePage;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.mapper.FileMapper;
 import org.bot.nullbot.service.FileService;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
@@ -99,7 +97,7 @@ public class FileServiceImpl implements FileService
         String suf = file.getFileName().substring(file.getFileName().lastIndexOf("."));
         FileInputStream fileInputStream = null;
         try {
-            fileInputStream = new FileInputStream(new java.io.File(file.getDirectory() + "/" + fileName));
+            fileInputStream = new FileInputStream(file.getDirectory() + "/" + fileName);
             response.setContentType(request.getSession().getServletContext().getMimeType(suf));//获取文件的mimetype
             response.setHeader("content-disposition","attachment;fileName="+ URLEncoder.encode(fileName,"UTF-8"));
             ServletOutputStream os = response.getOutputStream();
@@ -143,7 +141,71 @@ public class FileServiceImpl implements FileService
         return WebResult.success().addMsg("删除成功");
     }
 
-    public static void deleteFileByDir(java.io.File dir){
+    @Override
+    @Transactional
+    public WebResult renameFile(Integer id, String newFileName) {
+        FilePO file = fileMapper.selectById(id);
+        if (file == null) {
+            return WebResult.fail().addMsg("文件不存在");
+        }
+        if (newFileName == null || newFileName.trim().isEmpty()) {
+            return WebResult.fail().addMsg("新文件名不能为空");
+        }
+        newFileName = newFileName.trim();
+        if (newFileName.contains("/") || newFileName.contains("\\") ||
+                newFileName.contains(":") || newFileName.contains("*") ||
+                newFileName.contains("?") || newFileName.contains("\"") ||
+                newFileName.contains("<") || newFileName.contains(">") ||
+                newFileName.contains("|")) {
+            return WebResult.fail().addMsg("文件名包含非法字符");
+        }
+
+        // 检查新文件名是否与同一目录下的其他文件重名
+        LambdaQueryWrapper<FilePO> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(FilePO::getDirectory, file.getDirectory())
+                .eq(FilePO::getFileName, newFileName)
+                .ne(FilePO::getId, id); // 排除当前文件自己
+        Long count = fileMapper.selectCount(queryWrapper);
+        if (count > 0) {
+            return WebResult.fail().addMsg("同一目录下已存在同名文件");
+        }
+
+        String oldFilePath = file.getDirectory() + "/" + file.getFileName();
+        String newFilePath = file.getDirectory() + "/" + newFileName;
+        java.io.File oldFile = new java.io.File(oldFilePath);
+        java.io.File newFile = new java.io.File(newFilePath);
+
+        if (!oldFile.exists()) {
+            return WebResult.fail().addMsg("原文件在磁盘上不存在");
+        }
+        if (newFile.exists()) {
+            return WebResult.fail().addMsg("新文件名在磁盘上已存在");
+        }
+
+        // 重命名文件
+        boolean renameSuccess = oldFile.renameTo(newFile);
+        if (!renameSuccess) {
+            log.error("文件重命名失败: {} -> {}", oldFilePath, newFilePath);
+            return WebResult.fail().addMsg("文件重命名失败");
+        }
+
+        // 如果是目录，需要更新目录下所有文件的路径（如果有子文件和子目录）
+        if (file.getIsDir() == 1) {
+            // 更新该目录下所有文件的路径
+            updateSubFilesPath(oldFilePath, newFilePath, file);
+        }
+
+        // 更新数据库记录
+        file.setFileName(newFileName);
+        fileMapper.updateById(file);
+
+        // log.info("文件重命名成功: {} -> {}", oldFilePath, newFilePath);
+        return WebResult.success().addMsg("重命名成功");
+    }
+
+    // =================== 其他工具 ===================
+
+    private void deleteFileByDir(java.io.File dir){
         java.io.File[] files = dir.listFiles();
         if(files != null && files.length > 0){
             for(java.io.File f : files){
@@ -157,6 +219,26 @@ public class FileServiceImpl implements FileService
         dir.delete();
     }
 
+    /**
+     * 更新子文件的路径（当目录重命名时）
+     * @param oldDirPath 原目录路径
+     * @param newDirPath 新目录路径
+     * @param parentDir 父目录信息
+     */
+    private void updateSubFilesPath(String oldDirPath, String newDirPath, FilePO parentDir) {
+        // 查询所有以原目录路径开头的文件
+        LambdaQueryWrapper<FilePO> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.likeRight(FilePO::getDirectory, oldDirPath + "/");
+
+        List<FilePO> subFiles = fileMapper.selectList(queryWrapper);
+
+        for (FilePO subFile : subFiles) {
+            // 替换目录路径部分
+            String newSubDirPath = subFile.getDirectory().replace(oldDirPath, newDirPath);
+            subFile.setDirectory(newSubDirPath);
+            fileMapper.updateById(subFile);
+        }
+    }
 
     // =================== 本地系统文件与数据库同步工具 ===================
 

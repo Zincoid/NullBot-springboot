@@ -59,4 +59,9 @@ public class FileController
     public WebResult deleteFile(@PathVariable Integer id){
         return fileService.deleteFile(id);
     }
+
+    @GetMapping("/rename/{id}")
+    public WebResult renameFile(@PathVariable Integer id, @RequestParam(defaultValue = "") String newFileName){
+        return fileService.renameFile(id, newFileName);
+    }
 }

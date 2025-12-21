@@ -6,6 +6,7 @@ import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.page.FilePage;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService
@@ -21,4 +22,6 @@ public interface FileService
     WebResult createDir(String curDir, String dirName);
 
     WebResult deleteFile(Integer id);
+
+    WebResult renameFile(Integer id, String newFileName);
 }
