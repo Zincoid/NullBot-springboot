@@ -29,7 +29,7 @@ public class ChatCommand implements Command
             Integer messageId = groupMessageEvent.getMessageId();
             String response = deepSeekClient.chat(messageId, groupId, userId, userName, message);
             bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[AI.Chat] 已回复: {}", response.replaceAll("\\R", ""));
+            log.info("\t\t\t\t├─[AI.Chat] 已回复: {}", response.replaceAll("\\R", " "));
         }else
             log.info("\t\t\t\t├─[AI.Chat] 未设计 - 非群消息事件响应方式");
     }

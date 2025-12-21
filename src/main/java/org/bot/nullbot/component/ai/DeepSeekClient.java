@@ -31,6 +31,7 @@ public class DeepSeekClient
             .build();
 
     private Mode mode = Mode.Group;  // 会话模式
+    private Boolean thinking = false; // 思考模式
 
     public enum Mode {
         Group, Personal, Monitor;
@@ -47,6 +48,15 @@ public class DeepSeekClient
     public String changeMode() {
         mode = mode.next();
         return mode.toString();
+    }
+
+    /**
+     * 切换思考模式
+     * @return 新的模式
+     */
+    public String changeThinking() {
+        thinking = !thinking;
+        return thinking ? "思考模式" : "非思考模式";
     }
 
     /**
@@ -102,13 +112,14 @@ public class DeepSeekClient
      */
     private String sendRequest(List<Map<String, String>> _messages) throws Exception {
         ObjectNode requestBody = objectMapper.createObjectNode();  // 使用ObjectMapper构建JSON, 避免手动转义
-        requestBody.put("model", "deepseek-chat");
+        requestBody.put("model", thinking ? "deepseek-reasoner" : "deepseek-chat");
         requestBody.put("max_tokens", deepSeekConfig.getMaxTokens());
         requestBody.set("messages", objectMapper.valueToTree(_messages));
 
-        // 可选：其他参数
-        // requestBody.put("temperature", 0.9);
-        // requestBody.put("stream", false);
+        // 次要参数
+        requestBody.put("frequency_penalty", 0.5);
+        requestBody.put("presence_penalty", 0);
+        requestBody.put("temperature", 1);
 
         String jsonBody = objectMapper.writeValueAsString(requestBody);
 

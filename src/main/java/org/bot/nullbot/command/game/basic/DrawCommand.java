@@ -27,7 +27,7 @@ public class DrawCommand implements Command
             ItemPO item = itemService.getAndKeepRandomItem(userId);
             if (item != null) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] " + userName + "抽到了...\n" + item, false);
-                log.info("\t\t\t\t├─[Draw] 已抽取 - {} -> {}", userId, item.toString().replaceAll("\\R", ""));
+                log.info("\t\t\t\t├─[Draw] 已抽取 - {} -> {}", userId, item.toString().replaceAll("\\R", " "));
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌" + userName + "抽数已耗尽", false);
                 log.info("\t\t\t\t├─[Draw] - {} -> 抽数已耗尽",  userId);

@@ -24,7 +24,7 @@ public class ShowUserInfoCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             UserPO user = userService.getUser(groupMessageEvent.getUserId());
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), user.toString(), false);
-            log.info("\t\t\t\t├─[User.ShowInfo] 已获取用户信息 - {}", user.toString().replaceAll("\\R", ""));
+            log.info("\t\t\t\t├─[User.ShowInfo] 已获取用户信息 - {}", user.toString().replaceAll("\\R", " "));
         }else
             log.info("\t\t\t\t├─[User.ShowInfo] 未设计 非群消息事件响应方式");
     }

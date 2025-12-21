@@ -34,7 +34,7 @@ public class MatchCommand implements Command
                         bot.sendGroupMsg(result.getOpponentGroupId(), result.getInfo(), false);
                     }
                     bot.sendGroupMsg(groupId, result.getInfo(), false);
-                    log.info("\t\t\t\t├─[Match] 匹配结果 - {}", result.getInfo().replaceAll("\\R", ""));
+                    log.info("\t\t\t\t├─[Match] 匹配结果 - {}", result.getInfo().replaceAll("\\R", " "));
                 }else{
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[匹配] ❌未知错误", false);
                     log.info("\t\t\t\t├─[Match] 未知错误");

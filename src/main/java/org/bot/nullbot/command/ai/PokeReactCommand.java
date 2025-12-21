@@ -29,7 +29,7 @@ public class PokeReactCommand implements Command
             if(Objects.equals(pokeNoticeEvent.getTargetId(), pokeNoticeEvent.getSelfId())){
                 String response = deepSeekClient.chat(null, groupId, userId, userName, "揉了你一下");
                 bot.sendGroupMsg(groupId, response, false);
-                log.info("\t\t\t\t├─[AI.PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", ""));
+                log.info("\t\t\t\t├─[AI.PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", " "));
             }
         }else
             log.info("\t\t\t\t├─[AI.PokeReact] 未设计 - 非戳一戳消息事件响应方式");

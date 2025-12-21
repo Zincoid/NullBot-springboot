@@ -23,7 +23,7 @@ public class ReplyCommand implements Command
             // Long userId = groupMessageEvent.getUserId();
             // Long selfId = bot.getSelfId();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), reply, false);
-            log.info("\t\t\t\t├─[Reply] 已回复 - {}", reply.replaceAll("\\R", ""));
+            log.info("\t\t\t\t├─[Reply] 已回复 - {}", reply.replaceAll("\\R", " "));
         }else
             log.info("\t\t\t\t├─[Reply] 未设计 非群消息事件响应方式");
     }

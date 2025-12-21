@@ -33,7 +33,7 @@ public class RecentPlayerCommand implements Command
                     sb.append("\n").append(player.getUserName()).append("(").append(player.getUserId()).append(") :\n").append(player.getStatus()).append(" ~ ").append(player.getLastActionTime().format(formatter));
                 }
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
-                log.info("\t\t\t\t├─[RecentPlayer] 已获取 - {}", sb.toString().replaceAll("\\R", ""));
+                log.info("\t\t\t\t├─[RecentPlayer] 已获取 - {}", sb.toString().replaceAll("\\R", " "));
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[最近玩家] ❌暂无记录", false);
                 log.info("\t\t\t\t├─[RecentPlayer] 暂无记录");
