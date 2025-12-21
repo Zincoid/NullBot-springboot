@@ -22,6 +22,11 @@ public class LoginInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        if(url.contains("/nullbot/preview")){
+            log.info("[管理系统-JWT验证] 预览放行");
+            return true;
+        }
+
         String jwt = req.getHeader("token");
         if(!StringUtils.hasLength(jwt)){
             log.info("[管理系统-JWT验证] 令牌缺失");

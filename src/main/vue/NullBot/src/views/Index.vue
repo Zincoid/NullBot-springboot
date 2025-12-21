@@ -170,6 +170,10 @@
                 <el-table-column fixed="right" label="操作" width="200" align="center">
                   <template v-slot="scope">
                     <div style="display: flex; gap: 8px; justify-content: center;">
+                      <el-button type="info" plain @click="handlePreview(scope.row)"
+                                 v-if="isPreviewable(scope.row)" size="small" title="预览">
+                        <el-icon size="14"><View /></el-icon>
+                      </el-button>
                       <el-button type="primary" plain size="small" @click="enterDir(scope.row)"
                                  v-if="scope.row.isDir === 1" title="进入文件夹">
                         <el-icon size="14"><FolderOpened /></el-icon>
@@ -333,6 +337,32 @@
           </el-table-column>
         </el-table>
       </el-dialog>
+
+      <!-- 图片/视频预览对话框 -->
+      <el-dialog v-model="previewVisible" :title="previewTitle" width="70%" top="5vh" center>
+        <div style="text-align: center; max-height: 70vh; overflow: auto;">
+          <!-- 图片预览 -->
+          <el-image
+              v-if="previewType === 'image'"
+              :src="previewUrl"
+              :preview-src-list="[previewUrl]"
+              fit="contain"
+              style="max-width: 100%; max-height: 65vh;"
+              :hide-on-click-modal="true"
+          />
+          <!-- 视频预览 -->
+          <video
+              v-else-if="previewType === 'video'"
+              :src="previewUrl"
+              controls
+              autoplay
+              style="max-width: 100%; max-height: 65vh;"
+          >
+            您的浏览器不支持 video 标签。
+          </video>
+          <!-- 如果以后想支持PDF等，可以在这里扩展 -->
+        </div>
+      </el-dialog>
     </el-container>
   </div>
 </template>
@@ -346,11 +376,13 @@ import {
   FolderOpened,
   HomeFilled, MostlyCloudy,
   Promotion, RefreshLeft, Search, SwitchButton, UploadFilled,
-  User
+  User, View
 } from "@element-plus/icons-vue";
+import axios from "axios";
 
 export default {
   components: {
+    View,
     Comment,
     Document,
     Folder,
@@ -393,11 +425,44 @@ export default {
         size: 0,
         current: 0,
         pages: 0
-      }
+      },
+
+      previewVisible: false, // 控制预览对话框显示
+      previewUrl: '', // 预览文件的完整URL
+      previewType: '', // 'image' 或 'video'
+      previewTitle: '' // 预览对话框标题
     }
   },
 
   methods: {
+    // 判断文件是否可预览（根据扩展名）
+    isPreviewable(file) {
+      if (file.isDir === 1) return false; // 文件夹不可预览
+      const fileName = file.fileName.toLowerCase();
+      const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+      const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
+      return imageExtensions.some(ext => fileName.endsWith(ext)) ||
+          videoExtensions.some(ext => fileName.endsWith(ext));
+    },
+
+    // 处理预览点击事件
+    handlePreview(file) {
+      // 1. 构造文件预览URL（需要后端的支持）
+      const baseUrl = axios.defaults.baseURL + '/preview/';
+      this.previewUrl = baseUrl + file.id + '?token=' + localStorage.getItem("token");
+
+      // 2. 判断文件类型
+      const fileName = file.fileName.toLowerCase();
+      const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+      this.previewType = imageExtensions.some(ext => fileName.endsWith(ext)) ? 'image' : 'video';
+
+      // 3. 设置对话框标题
+      this.previewTitle = `预览 - ${file.fileName}`;
+
+      // 4. 打开对话框
+      this.previewVisible = true;
+    },
+
     getInfo() {
       this.$axios.get('/info', {
         headers: {
