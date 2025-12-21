@@ -31,7 +31,7 @@ public class LootingMapFactory {
         m.setName("研究所");
         m.getNodes().put("入口", node("入口", true, false, false, List.of("走廊")));
         m.getNodes().put("密道", node("密道", true, false, false, List.of("走廊")));
-        m.getNodes().put("走廊", node("走廊", false, false, false, List.of("出生点A","出生点B","仓库","实验室")));
+        m.getNodes().put("走廊", node("走廊", false, false, false, List.of("入口","密道","仓库","实验室")));
         m.getNodes().put("仓库", node("仓库", false, false, false, List.of("走廊","停机坪")));
         m.getNodes().put("实验室", node("实验室", false, true, false, List.of("走廊","应急通道")));
         m.getNodes().put("停机坪", node("停机坪", false, false, true, List.of("仓库")));
