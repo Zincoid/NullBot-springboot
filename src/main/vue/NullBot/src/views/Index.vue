@@ -183,19 +183,17 @@
                                  v-if="isPreviewable(scope.row)" size="small" title="预览">
                         <el-icon size="14"><Picture /></el-icon>
                       </el-button>
-                      <el-button type="warning" plain size="small" @click="handleRename(scope.row)" title="重命名">
-                        <el-icon size="14"><Edit /></el-icon>
-                      </el-button>
                       <el-button type="primary" plain size="small" @click="enterDir(scope.row)"
                                  v-if="scope.row.isDir === 1" title="进入文件夹">
                         <el-icon size="14"><FolderOpened /></el-icon>
                       </el-button>
-
                       <el-button type="success" plain size="small" @click="download(scope.row)"
                                  v-if="scope.row.isDir === 0" title="下载">
                         <el-icon size="14"><Download /></el-icon>
                       </el-button>
-
+                      <el-button type="warning" plain size="small" @click="handleRename(scope.row)" title="重命名">
+                        <el-icon size="14"><Edit /></el-icon>
+                      </el-button>
                       <el-popconfirm title="确认删除吗?" @confirm="deleteFile(scope.row)">
                         <template #reference>
                           <el-button type="danger" plain size="small" title="删除">
