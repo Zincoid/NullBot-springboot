@@ -5,18 +5,19 @@
       <el-header height="auto">
         <el-menu
             ref="menu"
-            default-active="1"
             class="el-menu-1"
             mode="horizontal"
             :ellipsis="false"
             style="min-width: 100%;"
         >
+          <!-- 左侧LOGO信息 -->
           <el-menu-item>
             <h1>NullBot <el-icon size="25">
               <MostlyCloudy />
             </el-icon></h1>
           </el-menu-item>
 
+          <!-- 中部功能相关 -->
           <div class="header-center" style="flex: 1; display: flex; align-items: center; justify-content: center;">
             <!-- op=1时显示搜索功能 -->
             <div v-show="op === 1" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
@@ -29,7 +30,7 @@
               </el-input>
 
               <el-button plain @click="searchFile">
-                <el-icon size="15"><Search /></el-icon>搜索
+                <el-icon size="15"><Search /></el-icon>&nbsp;搜索
               </el-button>
             </div>
             <!-- op=2时显示问候 -->
@@ -55,7 +56,6 @@
               <el-text size="large" tag="b">{{ " "+info.username }}</el-text>
             </template>
           </el-sub-menu>
-
         </el-menu>
       </el-header>
 
@@ -98,9 +98,8 @@
 
         <!-- 右侧内容区域 -->
         <el-container style="height: 100%;">
-          <el-main style="height: 100%; overflow-y: auto; padding: 20px;">
             <!-- 文件管理头部 -->
-            <div v-show="op === 1" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+            <el-header v-show="op === 1" height="20px" style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
               <div style="display: flex; align-items: center;">
                 <el-icon size="20">
                   <HomeFilled />
@@ -120,21 +119,29 @@
                     style="display: inline-flex;"
                 >
                   <template #trigger>
-                    <el-button type="primary" plain >选择文件</el-button>
+                    <el-button type="primary" plain >
+                      <el-icon size="15"><DocumentAdd /></el-icon>&nbsp;选择文件
+                    </el-button>
                   </template>
                 </el-upload>
-                <el-button class="ml-1" type="success" plain @click="upload">
-                  <el-icon size="15"><UploadFilled /></el-icon>上传
-                </el-button>
-                <el-button round plain @click="backDir">
-                  <el-icon size="15"><RefreshLeft /></el-icon>返回上级
-                </el-button>
-                <el-button round plain @click="createDir">
-                  <el-icon size="15"><FolderAdd /></el-icon>新建目录
-                </el-button>
-              </div>
-            </div>
 
+                <el-button class="ml-1" type="success" plain @click="upload" :loading="uploading">
+                  <el-icon v-if="!uploading" size="15"><UploadFilled /></el-icon>&nbsp;{{uploading ? uploadFilesTotal + "/" + uploadFileList.length : "上传"}}
+                </el-button>
+
+                <el-button-group style="margin-left: 10px">
+                  <el-button round plain @click="backDir">
+                    <el-icon size="15"><RefreshLeft /></el-icon>&nbsp;返回上级
+                  </el-button>
+                  <el-button round plain @click="createDir">
+                    <el-icon size="15"><FolderAdd /></el-icon>&nbsp;新建目录
+                  </el-button>
+                </el-button-group>
+              </div>
+            </el-header>
+
+          <!-- 右侧主区域 -->
+          <el-main style="height: 100%; overflow-y: auto; padding: 20px;">
             <!-- 文件管理 -->
             <div v-show="op === 1">
               <el-table ref="tableData" :data="tableData" style="width: 100%" height="calc(100vh - 250px)">
@@ -170,13 +177,7 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column label="修改时间" min-width="160" v-if="tableData[0] && tableData[0].modifyTime">
-                  <template v-slot="scope">
-                    {{ scope.row.modifyTime || '-' }}
-                  </template>
-                </el-table-column>
-
-                <el-table-column fixed="right" label="操作" width="220" align="center">
+                <el-table-column fixed="right" label="操作" width="216" align="center">
                   <template v-slot="scope">
                     <div style="display: flex; gap: 2px; justify-content: center;">
                       <el-button type="info" plain @click="handlePreview(scope.row)"
@@ -209,7 +210,7 @@
 
             <!-- 语录管理 -->
             <div v-show="op === 3">
-              <el-table ref="sayingTableData" :data="sayingTableData" style="width: 100%" height="calc(100vh - 250px)">
+              <el-table ref="sayingTableData" :data="sayingTableData" style="width: 100%" height="calc(100vh - 210px)">
                 <el-table-column type="index" label="序号" min-width="80"
                                  :index="(sayingPageInfo.current - 1) * sayingPageInfo.size + 1">
                 </el-table-column>
@@ -266,13 +267,13 @@
 
               <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
                 <el-button type="danger" round plain @click="logout">
-                  <el-icon size="15"><SwitchButton /></el-icon>退出登录
+                  <el-icon size="15"><SwitchButton /></el-icon>&nbsp;退出登录
                 </el-button>
               </div>
             </div>
           </el-main>
 
-          <!-- 分页区域 -->
+          <!-- 右侧分页区域 -->
           <el-footer height="60px" style="padding: 10px 20px;">
             <div v-show="op === 1" style="text-align: right;">
               <el-pagination
@@ -305,7 +306,7 @@
         </el-container>
       </el-container>
 
-      <!-- 搜索对话框 -->
+      <!-- 独立搜索对话框 -->
       <el-dialog title="搜索结果" v-model="searchTableVisible" width="55%">
         <el-table ref="searchData" :data="searchData" style="width: 100%" stripe>
           <el-table-column type="index" label="序号" width="80">
@@ -351,7 +352,7 @@
         </el-table>
       </el-dialog>
 
-      <!-- 图片/视频预览对话框 -->
+      <!-- 独立图片/视频预览对话框 -->
       <el-dialog v-model="previewVisible" :title="previewTitle" :destroy-on-close="true" width="70%" top="5vh" center>
         <div style="text-align: center; max-height: 70vh; overflow: auto;">
           <!-- 图片预览 -->
@@ -373,6 +374,7 @@
           >
             您的浏览器不支持 video 标签。
           </video>
+          <!-- 音频预览 -->
           <audio
               v-else-if="previewType === 'audio'"
               ref="videoPlayer"
@@ -393,18 +395,20 @@
 <script>
 import {
   ChatDotSquare, Comment,
-  Delete, Document,
+  Delete, Document, DocumentAdd,
   Download,
   Files, Folder, FolderAdd,
   FolderOpened,
   HomeFilled, MostlyCloudy, Picture,
-  Promotion, RefreshLeft, Search, SwitchButton, UploadFilled,
+  Promotion, RefreshLeft, Search, SwitchButton, Upload, UploadFilled,
   User
 } from "@element-plus/icons-vue";
 import axios from "axios";
 
 export default {
   components: {
+    DocumentAdd,
+    Upload,
     Picture,
     Comment,
     Document,
@@ -442,6 +446,8 @@ export default {
       op: 1,
 
       uploadFileList: [],
+      uploadFilesTotal: 0,
+      uploading: false,
 
       searchTableVisible: false,
 
@@ -629,34 +635,46 @@ export default {
       })
     },
 
-    upload() {
+    async upload() {
       if (this.uploadFileList.length === 0) {
         this.$message.warning("未选择文件")
-      } else {
-        for (let i = 0; i < this.uploadFileList.length; i++) {
+        return
+      }
+
+      this.uploadFilesTotal = 0
+      this.uploading = true
+      for (let fileObj of this.uploadFileList) {
+        try {
           let formData = new FormData()
-          formData.append("uploadFile", this.uploadFileList[i].raw)
+          formData.append("uploadFile", fileObj.raw)
           formData.append("curDir", this.curDir)
-          this.$axios.post("/file/upload", formData, {
+          // 等待当前文件上传完成
+          const res = await this.$axios.post("/file/upload", formData, {
             headers: {
               "Content-Type": "multipart/form-data;charset=utf-8",
               token: localStorage.getItem("token")
             },
-          }).then(res => {
-            if (res.data.code === 200) {
-              this.$refs.upload.submit()
-              if (this.pageInfo.pages === 0) {
-                this.getPage(1, this.pageInfo.size)
-              } else {
-                this.getPage(this.pageInfo.pages, this.pageInfo.size)
-              }
-              this.$message.success(res.data.message)
-            }
-          }).catch(err => {
-            this.$message.error("文件上传失败")
           })
+          if (res.data.code === 200) {
+            this.$message.success(`${fileObj.name} 上传成功`)
+          }
+        } catch (err) {
+          console.error("上传失败:", err)
+          this.$message.error( `${fileObj.name} 上传失败`)
         }
+        this.uploadFilesTotal++
       }
+
+      // 所有文件上传后清空文件列表
+      this.uploadFileList = []
+      this.$refs.upload.clearFiles()
+      // 刷新页面数据
+      if (this.pageInfo.pages === 0) {
+        this.getPage(1, this.pageInfo.size)
+      } else {
+        this.getPage(this.pageInfo.current, this.pageInfo.size)
+      }
+      this.uploading = false
     },
 
     handleChange(file, fileList) {
@@ -862,4 +880,23 @@ export default {
 </script>
 
 <style scoped>
+/* 悬浮上传列表 */
+::v-deep .upload .el-upload-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 9999;
+  width: 300px;
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 4px;
+  background: #141414;
+  margin-top: 5px;
+}
+
+/* 确保父容器有相对定位 */
+.upload {
+  position: relative;
+  display: inline-block;
+}
 </style>

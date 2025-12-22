@@ -80,12 +80,13 @@ public class MonitorListener
     @FunctionControl(config = "enableKeywordDetect")
     @GroupMessageHandler
     @Async("ThreadExecutor")
-    public void GroupKeywordDetect(Bot bot, GroupMessageEvent event) throws Exception {
-        if (event.getMessage().contains("男娘")) {
+    public void GroupKeywordDetect(Bot bot, GroupMessageEvent event) throws Exception {  // 暂时直接设计针对群聊的规则
+        if (event.getMessage().contains("男娘") && event.getGroupId() != 727599331L) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
-            commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("哪有男娘？"), event, false));
+            bot.sendGroupMsg(event.getGroupId(), "哪有男娘？", false);
+            // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("哪有男娘？"), event, false));
         }
-        if (event.getMessage().contains("受着")) {
+        if (event.getMessage().contains("受着") && event.getGroupId() == 459358160L) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"受着\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
             commandProcessor.processQQ(bot, new CommandEvent<>("UserBan", List.of(event.getSender().getUserId().toString(), "1"), event, false));
             // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("你也受着"), event, false));
