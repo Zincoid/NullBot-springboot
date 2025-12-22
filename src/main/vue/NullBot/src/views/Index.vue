@@ -260,8 +260,14 @@
             </div>
 
             <!-- 数据统计 -->
-            <div v-show="op === 4" style="margin-right: 20px;">
-
+            <div v-if="op === 4" style="margin-right: 20px;">
+              <LineChart
+                  :title="'访问次数统计'"
+                  :data="visitsData"
+                  :xAxis="visitsxAxis"
+                  :height="'300px'"
+                  :width="'100%'"
+              />
             </div>
 
             <!-- 个人中心 -->
@@ -417,9 +423,11 @@ import {
   User
 } from "@element-plus/icons-vue";
 import axios from "axios";
+import LineChart from "@/components/LineChart.vue";
 
 export default {
   components: {
+    LineChart,
     Histogram,
     Edit,
     DocumentAdd,
@@ -477,7 +485,10 @@ export default {
       previewVisible: false, // 控制预览对话框显示
       previewUrl: '', // 预览文件的完整URL
       previewType: '', // 'image' 或 'video'
-      previewTitle: '' // 预览对话框标题
+      previewTitle: '', // 预览对话框标题
+
+      visitsData: [1, 2, 5, 3, 6, 5],
+      visitsxAxis: ['A', 'B', 'C', 'D', 'E', 'F']
     }
   },
 

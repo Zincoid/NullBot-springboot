@@ -14,15 +14,15 @@ import org.bot.nullbot.enums.Rarity;
 public class ItemPO
 {
     @TableId(value = "id", type = IdType.AUTO)
-    Integer id;
-    String name;
-    Rarity rarity;
-    Category category;
-    Integer price;
-    Integer weight;
-    String description;
-    String imagePath;
-    Boolean available;
+    private Integer id;
+    private String name;
+    private Rarity rarity;
+    private Category category;
+    private Integer price;
+    private Integer weight;
+    private String description;
+    private String imagePath;
+    private Boolean available;
 
     @Override
     public String toString() {

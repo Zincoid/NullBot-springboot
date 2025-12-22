@@ -13,13 +13,13 @@ import org.bot.nullbot.enums.Rarity;
 public class InventoryPO
 {
     @TableId(value = "id", type = IdType.AUTO)
-    Integer id;
-    Long ownerId;
-    Integer ItemId;
-    String ItemName;
-    Rarity rarity;
-    Integer price;
-    Integer amount;
+    private Integer id;
+    private Long ownerId;
+    private Integer ItemId;
+    private String ItemName;
+    private Rarity rarity;
+    private Integer price;
+    private Integer amount;
 
     @Override
     public String toString() {

@@ -9,11 +9,11 @@ import lombok.Data;
 @TableName("user")
 public class UserPO
 {
-    Long  id;
-    Integer level;
-    Integer cash;
-    Integer capacity;
-    Integer drawTimes;
+    private Long  id;
+    private Integer level;
+    private Integer cash;
+    private Integer capacity;
+    private Integer drawTimes;
 
     @Override
     public String toString() {
