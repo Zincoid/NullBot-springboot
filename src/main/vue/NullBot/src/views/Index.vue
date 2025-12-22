@@ -556,8 +556,8 @@ export default {
         }
       }).then(res => {
         if (res.data.code === 200) {
-          this.visitsXAxis = res.data.statistic.visitsXAxis
-          this.visitsData = res.data.statistic.visitsData
+          this.visitsXAxis = res.data.data.visitsXAxis
+          this.visitsData = res.data.data.visitsData
           console.log(this.visitsXAxis)
         } else if (res.data.code === 400) {
           this.$message.error(res.data.message)
@@ -898,7 +898,6 @@ export default {
       return
     }
     this.getInfo()
-    this.getStatistic()
     this.getPage(1, 20)
     this.getSayingPage(1, 20)
   },
@@ -911,6 +910,15 @@ export default {
   beforeUnmount() {
     if (this.timer) {
       clearInterval(this.timer)
+    }
+  },
+
+  watch: {
+    // 监听op变化，当op=4时重新查询统计数据
+    op(newVal) {
+      if (newVal === 4) {
+        this.getStatistic()
+      }
     }
   }
 }
