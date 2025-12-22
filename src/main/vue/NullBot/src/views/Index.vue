@@ -262,7 +262,8 @@
             <!-- 数据统计 -->
             <div v-if="op === 4" style="margin-right: 20px;">
               <LineChart
-                  :title="'访问次数统计'"
+                  :title="'日访问统计'"
+                  :y_name="'调用次数'"
                   :data="visitsData"
                   :xAxis="visitsXAxis"
                   :height="'300px'"

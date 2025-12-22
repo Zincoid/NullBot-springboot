@@ -8,6 +8,7 @@ import * as echarts from 'echarts'
 
 const props = defineProps({
   title: String,
+  y_name: String,
   xAxis: {
     type: Array,
     default: () => []
@@ -95,7 +96,7 @@ const initChart = () => {
     },
     series: [
       {
-        name: 'Data',
+        name: props.y_name || 'Data',
         type: 'line',
         smooth: true,
         symbol: 'circle',
