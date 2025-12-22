@@ -23,7 +23,8 @@ public class StatisticController
     public WebResult Statistic(){
         StatisticVO statisticVO = statisticService.getStatistic();
         if(statisticVO != null){
-            return WebResult.success().addMsg("获取成功").addData("statistic", statisticVO.toString());
+            return WebResult.success().addMsg("获取成功").addData("visitsXAxis", statisticVO.getVisitsXAxis())
+                    .addData("visitsData", statisticVO.getVisitsData());
         }else{
             return WebResult.fail().addMsg("获取失败");
         }

@@ -264,7 +264,7 @@
               <LineChart
                   :title="'访问次数统计'"
                   :data="visitsData"
-                  :xAxis="visitsxAxis"
+                  :xAxis="visitsXAxis"
                   :height="'300px'"
                   :width="'100%'"
               />
@@ -292,7 +292,7 @@
             </div>
           </el-main>
 
-          <!-- 右侧分页区域 -->
+          <!-- 下部分页区域 -->
           <el-footer height="60px" style="padding: 10px 20px;">
             <div v-show="op === 1" style="text-align: right;">
               <el-pagination
@@ -487,8 +487,8 @@ export default {
       previewType: '', // 'image' 或 'video'
       previewTitle: '', // 预览对话框标题
 
-      visitsData: [1, 2, 5, 3, 6, 5],
-      visitsxAxis: ['A', 'B', 'C', 'D', 'E', 'F']
+      visitsData: [],
+      visitsXAxis: []
     }
   },
 
@@ -547,6 +547,22 @@ export default {
 
       // 4. 打开对话框
       this.previewVisible = true;
+    },
+
+    getStatistic() {
+      this.$axios.get('/statistic', {
+        headers: {
+          token: localStorage.getItem("token")
+        }
+      }).then(res => {
+        if (res.data.code === 200) {
+          this.visitsXAxis = res.data.statistic.visitsXAxis
+          this.visitsData = res.data.statistic.visitsData
+          console.log(this.visitsXAxis)
+        } else if (res.data.code === 400) {
+          this.$message.error(res.data.message)
+        }
+      })
     },
 
     getInfo() {
@@ -882,6 +898,7 @@ export default {
       return
     }
     this.getInfo()
+    this.getStatistic()
     this.getPage(1, 20)
     this.getSayingPage(1, 20)
   },
