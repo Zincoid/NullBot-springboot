@@ -18,7 +18,7 @@
           </el-menu-item>
 
           <!-- 中部功能相关 -->
-          <div class="header-center" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+          <div class="header-center" style="margin-bottom: 8px; flex: 1; display: flex; align-items: center; justify-content: center;">
             <!-- op=1时显示搜索功能 -->
             <div v-show="op === 1" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
               <el-input
@@ -74,21 +74,28 @@
             </el-icon>导航</h3>
             <el-menu-item
                 index="1"
-                @click="shiftFileManage"
+                @click="shiftMenu(1)"
                 style="display: flex; justify-content: center; align-items: center;"
             >
               <span><el-icon><Files /></el-icon>文件管理</span>
             </el-menu-item>
             <el-menu-item
                 index="3"
-                @click="shiftSayingManage"
+                @click="shiftMenu(3)"
                 style="display: flex; justify-content: center; align-items: center;"
             >
               <span><el-icon><ChatDotSquare /></el-icon>语录管理</span>
             </el-menu-item>
             <el-menu-item
+                index="4"
+                @click="shiftMenu(4)"
+                style="display: flex; justify-content: center; align-items: center;"
+            >
+              <span><el-icon><Histogram /></el-icon>数据统计</span>
+            </el-menu-item>
+            <el-menu-item
                 index="2"
-                @click="shiftUserCenter"
+                @click="shiftMenu(2)"
                 style="display: flex; justify-content: center; align-items: center;"
             >
               <span><el-icon><User /></el-icon>个人中心</span>
@@ -110,6 +117,7 @@
               <!-- 文件操作按钮 -->
               <div style="display: flex; align-items: center;">
                 <el-upload
+                    multiple
                     ref="upload"
                     class="upload"
                     action=""
@@ -119,14 +127,14 @@
                     style="display: inline-flex;"
                 >
                   <template #trigger>
-                    <el-button type="primary" plain >
-                      <el-icon size="15"><DocumentAdd /></el-icon>&nbsp;选择文件
+                    <el-button type="primary" plain :disabled="uploading">
+                      <el-icon size="15"><DocumentAdd /></el-icon>&nbsp;{{uploading ? uploadFilesTotal + "/" + uploadFileList.length : "添加文件"}}
                     </el-button>
                   </template>
                 </el-upload>
 
                 <el-button class="ml-1" type="success" plain @click="upload" :loading="uploading">
-                  <el-icon v-if="!uploading" size="15"><UploadFilled /></el-icon>&nbsp;{{uploading ? uploadFilesTotal + "/" + uploadFileList.length : "上传"}}
+                  <el-icon v-if="!uploading" size="15"><UploadFilled /></el-icon>&nbsp;{{uploading ? "处理中..." : "上传"}}
                 </el-button>
 
                 <el-button-group style="margin-left: 10px">
@@ -251,6 +259,11 @@
               </el-table>
             </div>
 
+            <!-- 数据统计 -->
+            <div v-show="op === 4" style="margin-right: 20px;">
+
+            </div>
+
             <!-- 个人中心 -->
             <div v-show="op === 2" style="margin-right: 20px;">
               <el-descriptions class="info" title="用户信息" :column="1" border>
@@ -285,7 +298,7 @@
                   :page-size="pageInfo.size"
                   :total="pageInfo.total"
                   :current-page="pageInfo.current"
-                  :pager-count="4">
+                  :pager-count="7">
               </el-pagination>
             </div>
 
@@ -299,7 +312,7 @@
                   :page-size="sayingPageInfo.size"
                   :total="sayingPageInfo.total"
                   :current-page="sayingPageInfo.current"
-                  :pager-count="4">
+                  :pager-count="7">
               </el-pagination>
             </div>
           </el-footer>
@@ -396,9 +409,9 @@
 import {
   ChatDotSquare, Comment,
   Delete, Document, DocumentAdd,
-  Download,
+  Download, Edit,
   Files, Folder, FolderAdd,
-  FolderOpened,
+  FolderOpened, Histogram,
   HomeFilled, MostlyCloudy, Picture,
   Promotion, RefreshLeft, Search, SwitchButton, Upload, UploadFilled,
   User
@@ -407,6 +420,8 @@ import axios from "axios";
 
 export default {
   components: {
+    Histogram,
+    Edit,
     DocumentAdd,
     Upload,
     Picture,
@@ -431,8 +446,8 @@ export default {
         email: 'null'
       },
 
-      searchKey: '',
-      searchData: [],
+      curDir: '/',
+      op: 1,
 
       tableData: [],
       pageInfo: {
@@ -442,14 +457,10 @@ export default {
         pages: 0
       },
 
-      curDir: '/',
-      op: 1,
-
+      uploadDir: '',
       uploadFileList: [],
       uploadFilesTotal: 0,
       uploading: false,
-
-      searchTableVisible: false,
 
       sayingTableData: [],
       sayingPageInfo: {
@@ -458,6 +469,10 @@ export default {
         current: 0,
         pages: 0
       },
+
+      searchTableVisible: false,
+      searchKey: '',
+      searchData: [],
 
       previewVisible: false, // 控制预览对话框显示
       previewUrl: '', // 预览文件的完整URL
@@ -554,16 +569,8 @@ export default {
       this.getSayingPage(1, pageSize)
     },
 
-    shiftFileManage() {
-      this.op = 1
-    },
-
-    shiftUserCenter() {
-      this.op = 2
-    },
-
-    shiftSayingManage() {
-      this.op = 3
+    shiftMenu(op) {
+      this.op = op
     },
 
     formatFileSize(bytes) {
@@ -592,8 +599,8 @@ export default {
         this.pageInfo.pages = res.data.data.filePage.totalPage
         // console.log('pageInfo:')
         // console.log(this.pageInfo)
-        console.log('tableData:')
-        console.log(this.tableData)
+        // console.log('tableData:')
+        // console.log(this.tableData)
       })
     },
 
@@ -641,6 +648,7 @@ export default {
         return
       }
 
+      this.uploadDir = this.curDir
       this.uploadFilesTotal = 0
       this.uploading = true
       for (let fileObj of this.uploadFileList) {
@@ -669,10 +677,12 @@ export default {
       this.uploadFileList = []
       this.$refs.upload.clearFiles()
       // 刷新页面数据
-      if (this.pageInfo.pages === 0) {
-        this.getPage(1, this.pageInfo.size)
-      } else {
-        this.getPage(this.pageInfo.current, this.pageInfo.size)
+      if(this.curDir === this.uploadDir){
+        if (this.pageInfo.pages === 0) {
+          this.getPage(1, this.pageInfo.size)
+        } else {
+          this.getPage(this.pageInfo.pages, this.pageInfo.size)
+        }
       }
       this.uploading = false
     },
@@ -861,8 +871,8 @@ export default {
       return
     }
     this.getInfo()
-    this.getPage(1, 10)
-    this.getSayingPage(1, 10)
+    this.getPage(1, 20)
+    this.getSayingPage(1, 20)
   },
 
   mounted() {
@@ -876,7 +886,6 @@ export default {
     }
   }
 }
-
 </script>
 
 <style scoped>

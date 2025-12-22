@@ -44,7 +44,7 @@ public class FileServiceImpl implements FileService
         else
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
         Page<FilePO> page = new Page<>(currentPage, pageSize);
-        Page<FilePO> filePage = fileMapper.selectPage(page, new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).orderByDesc(FilePO::getIsDir));
+        Page<FilePO> filePage = fileMapper.selectPage(page, new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).orderByDesc(FilePO::getIsDir).orderByAsc(FilePO::getId));
         return new FilePage(filePage.getRecords(), filePage.getCurrent(), filePage.getPages(), filePage.getTotal(), filePage.getSize());
     }
 
