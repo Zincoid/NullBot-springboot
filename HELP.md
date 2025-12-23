@@ -20,8 +20,7 @@ xvfb-run -a /root/Napcat/opt/QQ/qq \
 --log-level=3 \
 --disable-gpu \
 --disable-software-rasterizer \
--q 3408240018 \
-> qq.out.log 2>&1
+-q 3408240018 > qq.out.log 2>&1
 
 # 启动命令
 ### NapCat 基础运行命令
