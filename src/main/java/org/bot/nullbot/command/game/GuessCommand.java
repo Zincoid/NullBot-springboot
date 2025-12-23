@@ -69,7 +69,7 @@ public class GuessCommand implements Command
             }else{
                 // 判断对错
                 if("-f".equals(param)){
-                    bot.sendGroupMsg(groupId, "已放弃！\n谜底是" + guessInfo.getName(), false);
+                    bot.sendGroupMsg(groupId, "\uD83D\uDCA6已放弃！答案是...\n" + guessInfo.getName() + "！", false);
                     guessStorage.removeGuess(groupId);
                     log.info("\t\t\t\t├─[Guess] 放弃猜测 - {}", userId);
                     return;
