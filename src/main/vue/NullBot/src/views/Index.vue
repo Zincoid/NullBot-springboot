@@ -261,14 +261,68 @@
 
             <!-- 数据统计 -->
             <div v-if="op === 4" style="margin-right: 20px;">
-              <LineChart
-                  :title="'日访问统计'"
-                  :y_name="'调用次数'"
-                  :data="visitsData"
-                  :xAxis="visitsXAxis"
-                  :height="'300px'"
-                  :width="'100%'"
-              />
+              <el-row>
+                <el-col :xs="12" :sm="6" :md="4">
+                  <div class="statistic-card">
+                    <el-statistic :value="totalVisits">
+                      <template #title>
+                        <div style="display: inline-flex; align-items: center">
+                          总调用次数
+                          <el-tooltip
+                              effect="dark"
+                              content="自 2025/12/23 起的指令使用总次数"
+                              placement="top"
+                          >
+                            <el-icon style="margin-left: 4px" :size="12">
+                              <Warning />
+                            </el-icon>
+                          </el-tooltip>
+                        </div>
+                      </template>
+                    </el-statistic>
+<!--                    <div class="statistic-footer">-->
+<!--                      <div class="footer-item">-->
+<!--                        <span>than yesterday</span>-->
+<!--                        <span class="green">24%<el-icon><CaretTop /></el-icon></span>-->
+<!--                      </div>-->
+<!--                    </div>-->
+                  </div>
+                </el-col>
+                <LineChart
+                    :title="'日访问量 (近十日)'"
+                    :y_name="'调用次数'"
+                    :data="visitsData"
+                    :xAxis="visitsXAxis"
+                    :height="'400px'"
+                    :width="'80%'"
+                />
+              </el-row>
+              <el-scrollbar height="calc(100vh - 625px)">
+                <BarChart
+                    :title="'指令访问量 Top10'"
+                    :y_name="'调用次数'"
+                    :data="topCommandsData"
+                    :xAxis="topCommandsAxis"
+                    :height="'225px'"
+                    :width="'97.5%'"
+                />
+                <BarChart
+                    :title="'用户访问量 Top10'"
+                    :y_name="'调用次数'"
+                    :data="topUsersData"
+                    :xAxis="topUsersAxis"
+                    :height="'225px'"
+                    :width="'97.5%'"
+                />
+                <BarChart
+                    :title="'群聊访问量 Top10'"
+                    :y_name="'调用次数'"
+                    :data="topGroupsData"
+                    :xAxis="topGroupsAxis"
+                    :height="'225px'"
+                    :width="'97.5%'"
+                />
+              </el-scrollbar>
             </div>
 
             <!-- 个人中心 -->
@@ -421,13 +475,16 @@ import {
   FolderOpened, Histogram,
   HomeFilled, MostlyCloudy, Picture,
   Promotion, RefreshLeft, Search, SwitchButton, Upload, UploadFilled,
-  User
+  User, Warning
 } from "@element-plus/icons-vue";
 import axios from "axios";
 import LineChart from "@/components/LineChart.vue";
+import BarChart from "@/components/BarChart.vue";
 
 export default {
   components: {
+    Warning,
+    BarChart,
     LineChart,
     Histogram,
     Edit,
@@ -488,8 +545,15 @@ export default {
       previewType: '', // 'image' 或 'video'
       previewTitle: '', // 预览对话框标题
 
+      totalVisits: 0,
       visitsData: [],
-      visitsXAxis: []
+      visitsXAxis: [],
+      topGroupsData:[],
+      topGroupsAxis: [],
+      topUsersData: [],
+      topUsersAxis: [],
+      topCommandsData: [],
+      topCommandsAxis: []
     }
   },
 
@@ -557,8 +621,15 @@ export default {
         }
       }).then(res => {
         if (res.data.code === 200) {
+          this.totalVisits = res.data.data.totalVisits
           this.visitsXAxis = res.data.data.visitsXAxis
           this.visitsData = res.data.data.visitsData
+          this.topGroupsAxis = res.data.data.topGroupsAxis
+          this.topGroupsData = res.data.data.topGroupsData
+          this.topUsersAxis = res.data.data.topUsersAxis
+          this.topUsersData = res.data.data.topUsersData
+          this.topCommandsAxis = res.data.data.topCommandsAxis
+          this.topCommandsData = res.data.data.topCommandsData
           console.log(this.visitsXAxis)
         } else if (res.data.code === 400) {
           this.$message.error(res.data.message)
@@ -944,5 +1015,52 @@ export default {
 .upload {
   position: relative;
   display: inline-block;
+}
+
+/* el-statistic相关样式 */
+:global(h2#card-usage ~ .example .example-showcase) {
+  background-color: var(--el-fill-color) !important;
+}
+
+.el-statistic {
+  --el-statistic-content-font-size: 28px;
+}
+
+.statistic-card {
+  height: 300px;
+  margin-left: 50px;
+  margin-top: 10px;
+  padding: 25px;
+  border-radius: 6px;
+  background-color: var(--el-bg-color-overlay);
+}
+
+.statistic-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--el-text-color-regular);
+  margin-top: 16px;
+}
+
+.statistic-footer .footer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statistic-footer .footer-item span:last-child {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+}
+
+.green {
+  color: var(--el-color-success);
+}
+.red {
+  color: var(--el-color-error);
 }
 </style>

@@ -81,7 +81,7 @@ public class MonitorListener
     @GroupMessageHandler
     @Async("ThreadExecutor")
     public void GroupKeywordDetect(Bot bot, GroupMessageEvent event) throws Exception {  // 暂时直接设计针对群聊的规则
-        if (event.getMessage().contains("男娘") && event.getGroupId() != 727599331L) {
+        if (event.getMessage().contains("男娘")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
             bot.sendGroupMsg(event.getGroupId(), "哪有男娘？", false);
             // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("哪有男娘？"), event, false));

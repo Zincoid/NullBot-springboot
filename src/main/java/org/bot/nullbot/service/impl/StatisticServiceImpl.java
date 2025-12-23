@@ -56,9 +56,11 @@ public class StatisticServiceImpl implements StatisticService
     @Override
     @Transactional
     public StatisticVO getStatistic() {
+        Long totalVisit = statisticDateMapper.selectTotalVisits();
+
         // 获取当前日期和10天前的日期
         LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusDays(9); // 包括今天，共10天
+        LocalDate startDate = endDate.minusDays(19); // 包括今天，共20天
 
         // 查询最近10天的数据
         List<StatisticDatePO> recentData = statisticDateMapper.selectList(
@@ -91,10 +93,44 @@ public class StatisticServiceImpl implements StatisticService
             currentDate = currentDate.plusDays(1);
         }
 
+        // 查询访问次数最多的group
+        List<Map<String, Object>> topGroups = statisticMapper.selectTopGroups(20);
+        List<String> groupAxis = new ArrayList<>();
+        List<Long> groupData = new ArrayList<>();
+        for (Map<String, Object> map : topGroups) {
+            groupAxis.add(String.valueOf(map.get("group_id")));
+            groupData.add(Long.valueOf(map.get("total_visits").toString()));
+        }
+
+        // 查询访问次数最多的user
+        List<Map<String, Object>> topUsers = statisticMapper.selectTopUsers(20);
+        List<String> userAxis = new ArrayList<>();
+        List<Long> userData = new ArrayList<>();
+        for (Map<String, Object> map : topUsers) {
+            userAxis.add(map.get("user_name") + "\n(" + map.get("user_id") + ")");
+            userData.add(Long.valueOf(map.get("total_visits").toString()));
+        }
+
+        // 查询访问次数最多的command
+        List<Map<String, Object>> topCommands = statisticMapper.selectTopCommands(20);
+        List<String> commandAxis = new ArrayList<>();
+        List<Long> commandData = new ArrayList<>();
+        for (Map<String, Object> map : topCommands) {
+            commandAxis.add(String.valueOf(map.get("command")));
+            commandData.add(Long.valueOf(map.get("total_visits").toString()));
+        }
+
         // 封装为 VO
         StatisticVO vo = new StatisticVO();
+        vo.setTotalVisits(totalVisit);
         vo.setVisitsXAxis(xAxis);
         vo.setVisitsData(data);
+        vo.setTopGroupsAxis(groupAxis);
+        vo.setTopGroupsData(groupData);
+        vo.setTopUsersAxis(userAxis);
+        vo.setTopUsersData(userData);
+        vo.setTopCommandsAxis(commandAxis);
+        vo.setTopCommandsData(commandData);
 
         return vo;
     }

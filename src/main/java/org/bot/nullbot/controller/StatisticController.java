@@ -23,8 +23,16 @@ public class StatisticController
     public WebResult Statistic(){
         StatisticVO statisticVO = statisticService.getStatistic();
         if(statisticVO != null){
-            return WebResult.success().addMsg("获取成功").addData("visitsXAxis", statisticVO.getVisitsXAxis())
-                    .addData("visitsData", statisticVO.getVisitsData());
+            return WebResult.success().addMsg("获取成功")
+                    .addData("totalVisits", statisticVO.getTotalVisits())
+                    .addData("visitsXAxis", statisticVO.getVisitsXAxis())
+                    .addData("visitsData", statisticVO.getVisitsData())
+                    .addData("topGroupsAxis", statisticVO.getTopGroupsAxis())
+                    .addData("topGroupsData", statisticVO.getTopGroupsData())
+                    .addData("topUsersAxis", statisticVO.getTopUsersAxis())
+                    .addData("topUsersData", statisticVO.getTopUsersData())
+                    .addData("topCommandsAxis", statisticVO.getTopCommandsAxis())
+                    .addData("topCommandsData", statisticVO.getTopCommandsData());
         }else{
             return WebResult.fail().addMsg("获取失败");
         }
