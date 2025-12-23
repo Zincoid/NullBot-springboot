@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NullBot.iml" filepath="$PROJECT_DIR$/NullBot.iml" />
       <module fileurl="file://$PROJECT_DIR$/front-end/front-end.iml" filepath="$PROJECT_DIR$/front-end/front-end.iml" />
     </modules>
   </component>

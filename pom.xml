@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.bot</groupId>
-    <artifactId>NullBot</artifactId>
+    <artifactId>NullBot-springboot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>NullBot</name>
     <description>NullBot</description>
