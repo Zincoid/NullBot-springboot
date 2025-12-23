@@ -60,7 +60,7 @@ public class StatisticServiceImpl implements StatisticService
 
         // 获取当前日期和10天前的日期
         LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusDays(19); // 包括今天，共20天
+        LocalDate startDate = endDate.minusDays(29); // 包括今天，共30天
 
         // 查询最近10天的数据
         List<StatisticDatePO> recentData = statisticDateMapper.selectList(

@@ -49,16 +49,16 @@ const initChart = () => {
   const option = {
     title: {
       text: props.title || '',
-      left: '4%',
+      left: '45px',
       textStyle: {
-        fontSize: 15,
-        fontWeight: 'bold',
+        fontSize: 12,
+        fontWeight: 'light',
         color: '#ffffff',
       }
     },
     grid: {
-      left: '3%',
-      right: '3%',
+      left: '30px',
+      right: '30px',
       bottom: '10%',
       top: props.title ? '25%' : '10%',
       containLabel: true
@@ -72,12 +72,20 @@ const initChart = () => {
         }
       },
       axisLabel: {
-        color: '#666'
+        color: '#666',
+        show: true,           // 强制显示
+        interval: 0,          // 不间隔显示
+        inside: false,        // 显示在轴线外侧
+        rotate: 0,            // 不旋转（或设置角度）
+        margin: 8,            // 标签与轴线的距离
+        width: 70,          // 标签宽度
+        overflow: 'truncate', // 超长文本处理方式
+        ellipsis: '...'       // 省略符号
       }
     },
     yAxis: {
       type: 'value',
-      splitNumber: 3,
+      splitNumber: 1,
       axisLine: {
         lineStyle: {
           color: '#3c3c3c'
@@ -97,13 +105,13 @@ const initChart = () => {
       {
         name: props.y_name || 'Data',
         type: 'bar',
-        barWidth: '40%',
+        barWidth: '100%',
         itemStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: gradientColors.barStart },
             { offset: 0.9, color: gradientColors.barEnd }
           ]),
-          borderRadius: [4, 4, 0, 0] // 柱子上方的圆角
+          // borderRadius: [4, 4, 0, 0] // 柱子上方的圆角
         },
         emphasis: {
           focus: 'series',
@@ -119,12 +127,16 @@ const initChart = () => {
     ],
     tooltip: {
       backgroundColor: '#121212',
+      // backgroundColor: '#3f3f3f',
+      // borderColor: '#3f3f3f',
+      borderRadius: 10,
       trigger: 'axis',
       axisPointer: {
         type: 'shadow' // 阴影指示器更适合柱状图
       },
       textStyle: {
-        color: '#fff'
+        color: '#fff',
+        fontSize: 12
       }
     }
   }

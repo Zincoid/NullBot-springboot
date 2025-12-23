@@ -49,16 +49,16 @@ const initChart = () => {
   const option = {
     title: {
       text: props.title || '',
-      left: '4%',
+      left: '45px',
       textStyle: {
-        fontSize: 20,
+        fontSize: 14,
         fontWeight: 'bold',
         color: '#ffffff',
       }
     },
     grid: {
-      left: '3%',
-      right: '3%',
+      left: '30px',
+      right: '18px',
       bottom: '10%',
       top: props.title ? '20%' : '10%',
       containLabel: true
@@ -78,10 +78,10 @@ const initChart = () => {
     },
     yAxis: {
       type: 'value',
-      splitNumber: 3, // 包括底和顶一共4个刻度
+      splitNumber: 2, // 刻度
       axisLine: {
         lineStyle: {
-          color: '#3c3c3c'
+          color: '#3c3c3c',
         }
       },
       axisLabel: {
@@ -100,7 +100,8 @@ const initChart = () => {
         type: 'line',
         smooth: true,
         symbol: 'circle',
-        symbolSize: 8,
+        symbolSize: 6,
+        showSymbol: false,
         lineStyle: {
           width: 2,
           color: gradientColors.line
@@ -115,7 +116,7 @@ const initChart = () => {
           itemStyle: {
             color: '#fff',
             borderColor: '#FF6347',
-            borderWidth: 3,
+            borderWidth: 2,
             shadowColor: 'rgba(0, 0, 0, 0.5)',
             shadowBlur: 10
           },
@@ -131,13 +132,21 @@ const initChart = () => {
       }
     ],
     tooltip: {
-      backgroundColor: '#121212',
+      backgroundColor: '#3f3f3f',
+      borderColor: '#3f3f3f',
+      borderRadius: 10,
       trigger: 'axis',
       axisPointer: {
-        type: 'line'
+        type: 'line',
+        lineStyle: {
+          color: '#3c3c3c',
+          width: 1,
+          type: 'dashed'
+        }
       },
       textStyle: {
-        color: '#fff'
+        color: '#fff',
+        fontSize: 12
       }
     }
   }

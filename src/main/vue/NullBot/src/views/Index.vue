@@ -149,7 +149,7 @@
             </el-header>
 
           <!-- 右侧主区域 -->
-          <el-main style="height: 100%; overflow-y: auto; padding: 20px;">
+          <el-main style="height: 100%; width: 100%; overflow-y: auto; padding: 20px;">
             <!-- 文件管理 -->
             <div v-show="op === 1">
               <el-table ref="tableData" :data="tableData" style="width: 100%" height="calc(100vh - 250px)">
@@ -289,7 +289,7 @@
                   </div>
                 </el-col>
                 <LineChart
-                    :title="'日访问量 (近十日)'"
+                    :title="'每日访问量 (近30日)'"
                     :y_name="'调用次数'"
                     :data="visitsData"
                     :xAxis="visitsXAxis"
@@ -297,29 +297,29 @@
                     :width="'80%'"
                 />
               </el-row>
-              <el-scrollbar height="calc(100vh - 625px)">
+              <el-scrollbar height="calc(100vh - 600px)">
                 <BarChart
-                    :title="'指令访问量 Top10'"
+                    :title="'指令访问量 (Top20)'"
                     :y_name="'调用次数'"
                     :data="topCommandsData"
                     :xAxis="topCommandsAxis"
-                    :height="'225px'"
+                    :height="'235px'"
                     :width="'97.5%'"
                 />
                 <BarChart
-                    :title="'用户访问量 Top10'"
+                    :title="'用户访问量 (Top20)'"
                     :y_name="'调用次数'"
                     :data="topUsersData"
                     :xAxis="topUsersAxis"
-                    :height="'225px'"
+                    :height="'235px'"
                     :width="'97.5%'"
                 />
                 <BarChart
-                    :title="'群聊访问量 Top10'"
+                    :title="'群聊访问量 (Top20)'"
                     :y_name="'调用次数'"
                     :data="topGroupsData"
                     :xAxis="topGroupsAxis"
-                    :height="'225px'"
+                    :height="'235px'"
                     :width="'97.5%'"
                 />
               </el-scrollbar>
@@ -1027,11 +1027,11 @@ export default {
 }
 
 .statistic-card {
-  height: 300px;
+  height: 295px;
   margin-left: 50px;
-  margin-top: 10px;
+  margin-top: 15px;
   padding: 25px;
-  border-radius: 6px;
+  border-radius: 8px;
   background-color: var(--el-bg-color-overlay);
 }
 
