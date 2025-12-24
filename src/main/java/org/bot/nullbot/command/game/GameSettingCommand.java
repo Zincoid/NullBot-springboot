@@ -25,8 +25,6 @@ public class GameSettingCommand implements Command
             if (event.getCommandParameters().isEmpty()){
                 bot.sendGroupMsg(groupId, "[游戏设置] ❌参数不足", false);
             }
-            Long userId = groupMessageEvent.getUserId();
-            String userName = groupMessageEvent.getSender().getNickname();
             String gameType = event.getCommandParameters().getFirst();
             if("Guess".equals(gameType)){
                 if(event.getCommandParameters().size() < 3){

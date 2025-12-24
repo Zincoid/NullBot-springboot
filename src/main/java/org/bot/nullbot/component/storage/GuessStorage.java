@@ -4,7 +4,6 @@ import lombok.Data;
 import org.bot.nullbot.entity.GuessInfo;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
