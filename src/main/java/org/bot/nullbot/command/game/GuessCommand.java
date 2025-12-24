@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Base64;
 
-@CommandMapping({"Guess", "猜角色"})
+@CommandMapping({"Guess", "猜角色", "猜"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -53,7 +53,7 @@ public class GuessCommand implements Command
                         // 获取猜谜图
                         String response = MsgUtils.builder()
                                 .text("本群题目✨是\n")
-                                .img("base64://" + crop(characterPath, 0.2, 100))
+                                .img("base64://" + crop(characterPath, guessStorage.getRatio(), guessStorage.getPadding()))
                                 .build();
                         bot.sendGroupMsg(groupId, response, false);
 
@@ -84,8 +84,14 @@ public class GuessCommand implements Command
                     guessStorage.removeGuess(groupId);
                     log.info("\t\t\t\t├─[Guess] 猜测正确 - {}", userId);
                 }else{
-                    bot.sendGroupMsg(groupId, "猜错啦！", false);
-                    log.info("\t\t\t\t├─[Guess] 猜测错误 - {}", userId);
+                    if(guessInfo.getTimes() >= 10){
+                        bot.sendGroupMsg(groupId, "错了10次啦！答案是...\n" + guessInfo.getName() + "！", false);
+                        guessStorage.removeGuess(groupId);
+                        log.info("\t\t\t\t├─[Guess] 猜测错误 已超过最大尝试次数 - {}", userId);
+                    }else{
+                        bot.sendGroupMsg(groupId, "猜错啦！", false);
+                        log.info("\t\t\t\t├─[Guess] 猜测错误 - {}", userId);
+                    }
                 }
             }
         }else
@@ -93,13 +99,8 @@ public class GuessCommand implements Command
     }
 
     @Override
-    public Integer getAccess() {
-        return 1;
-    }
-
-    @Override
     public String getHelp() {
-        return "◉ Guess 命令\n功能: 猜角色(-f 放弃)\n限权: " + getAccess() + "\n格式: Guess [人物来源|人物名|-f]\n中文命令: 猜角色";
+        return "◉ Guess 命令\n功能: 猜角色(-f 放弃)\n限权: " + getAccess() + "\n格式: Guess [人物来源|人物名|-f]\n中文命令: 猜角色/猜";
     }
 
     // public static String crop(String p, double r) throws Exception {
