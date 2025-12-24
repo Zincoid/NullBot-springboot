@@ -38,7 +38,7 @@ public class GameSettingCommand implements Command
                         int padding = Integer.parseInt(event.getCommandParameters().get(2));
                         guessStorage.setRatio(ratio);
                         guessStorage.setPadding(padding);
-                        bot.sendGroupMsg(groupId, "[游戏设置] ✅已更新" + gameType, false);
+                        bot.sendGroupMsg(groupId, "[游戏设置] ✅参数已更新", false);
                         log.info("\t\t\t\t├─[GameSetting] 已更新 - {}", gameType);
                     } catch (NumberFormatException e) {
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[游戏设置] ❌Guess游戏参数格式错误", false);
