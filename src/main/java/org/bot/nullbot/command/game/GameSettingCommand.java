@@ -46,7 +46,7 @@ public class GameSettingCommand implements Command
                     }
                 }
             }else{
-                bot.sendGroupMsg(groupId, "[游戏设置] ❌该游戏不存在" + gameType, false);
+                bot.sendGroupMsg(groupId, "[游戏设置] ❌该游戏不存在", false);
                 log.info("\t\t\t\t├─[GameSetting] 该游戏不存在 - {}", gameType);
             }
         }else
@@ -60,6 +60,6 @@ public class GameSettingCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ GameSetting 命令\n功能: 设置游戏参数\n限权: " + getAccess() + "\n格式: GameSetting [游戏类型] [多参数]\n游戏类型: \nGuess -> 猜角色\n中文命令: 游戏设置/设置";
+        return "◉ GameSetting 命令\n功能: 设置游戏参数\n限权: " + getAccess() + "\n格式: GameSetting [游戏类型] [多参数]\n游戏参数: \nGuess(猜角色) -> [Ratio] [Padding]\n中文命令: 游戏设置/设置";
     }
 }
