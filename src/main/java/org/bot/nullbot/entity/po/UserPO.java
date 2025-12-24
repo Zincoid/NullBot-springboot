@@ -10,6 +10,7 @@ import lombok.Data;
 public class UserPO
 {
     private Long  id;
+    // private Integer access;
     private Integer level;
     private Integer cash;
     private Integer capacity;
@@ -19,7 +20,7 @@ public class UserPO
     public String toString() {
         return String.format(
                 """
-                        👤 用户信息
+                        ◉ 用户信息
                         ├ ID：%d
                         ├ 等级：%d
                         ├ 现金：%d

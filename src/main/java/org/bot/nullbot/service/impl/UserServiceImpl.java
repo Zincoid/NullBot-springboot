@@ -22,22 +22,15 @@ public class UserServiceImpl implements UserService
     @Transactional
     public void increaseDrawTimes(Long userId, int i) {
         UserPO user = userMapper.selectById(userId);
-        if(user == null){
-            userMapper.insert(new UserPO(userId, 1, 0, 100, 50 + i));
-        }else{
-            user.setDrawTimes(user.getDrawTimes() + i);
-            userMapper.updateById(user);
-        }
+        user.setDrawTimes(user.getDrawTimes() + i);
+        userMapper.updateById(user);
     }
 
     @Override
     @Transactional
     public boolean decreaseDrawTimes(Long userId) {
         UserPO user = userMapper.selectById(userId);
-        if(user == null){
-            userMapper.insert(new UserPO(userId, 1, 0, 100, 49));
-            return true;
-        }else if(user.getDrawTimes() > 0){
+        if(user.getDrawTimes() > 0){
             user.setDrawTimes(user.getDrawTimes() - 1);
             userMapper.updateById(user);
             return true;
@@ -49,5 +42,10 @@ public class UserServiceImpl implements UserService
     @Transactional
     public UserPO getUser(Long userId) {
         return userMapper.selectById(userId);
+    }
+
+    @Override
+    public void addUser(Long userId) {
+        userMapper.insert(new UserPO(userId, 1, 0, 100, 50));
     }
 }

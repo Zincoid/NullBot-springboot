@@ -2,7 +2,6 @@
 # USE NullBot;
 
 drop table if exists file;
-drop table if exists admin;
 
 create table file
 (
@@ -12,14 +11,3 @@ create table file
     directory varchar(255) not null,
     is_dir int default 0 not null
 );
-
-create table admin
-(
-    id bigint auto_increment primary key,
-    username varchar(255) not null,
-    password varchar(255) not null,
-    email varchar(255) not null
-);
-
-INSERT INTO admin (id, username, password, email) values
-(2660181154, 'Zincoid', 'KJFHQAUJWDHKIA', '2660181154@qq.com');

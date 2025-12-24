@@ -1,17 +1,8 @@
 # CREATE DATABASE NullBot;
 # USE NullBot;
 
-DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS item;
 DROP TABLE IF EXISTS inventory;
-
-CREATE TABLE user (
-    id BIGINT PRIMARY KEY,
-    level INT DEFAULT 1,
-    cash INT DEFAULT 0,
-    capacity INT DEFAULT 100,
-    draw_times INT DEFAULT 50
-);
 
 # description 可通过 {} 嵌入指令, 指令不需要前缀
 CREATE TABLE item (

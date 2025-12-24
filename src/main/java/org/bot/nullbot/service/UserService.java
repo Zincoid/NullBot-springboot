@@ -9,4 +9,6 @@ public interface UserService
     boolean decreaseDrawTimes(Long userId);
 
     UserPO getUser(Long userId);
+
+    void addUser(Long userId);
 }
