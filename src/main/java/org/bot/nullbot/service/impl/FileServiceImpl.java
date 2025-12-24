@@ -70,6 +70,9 @@ public class FileServiceImpl implements FileService
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
         else
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
+        if(!fileMapper.selectList(new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).eq(FilePO::getFileName, fileName)).isEmpty()) {
+            return WebResult.fail().addMsg("存在同名冲突");
+        }
         FilePO file = new FilePO();
         file.setFileName(uploadFile.getOriginalFilename());
         file.setFileSize(uploadFile.getSize());
