@@ -21,7 +21,11 @@ public class SayingServiceImpl implements SayingService
     @Override
     @Transactional
     public int insert(Long userId, String userName, String text) {
-        return sayingMapper.insert(userId, userName, text);
+        try {
+            return sayingMapper.insert(userId, userName, text);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     @Override
