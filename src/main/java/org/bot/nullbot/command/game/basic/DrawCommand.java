@@ -61,7 +61,7 @@ public class DrawCommand implements Command
                     }else{
                         StringBuilder sb = new StringBuilder(userName + "抽取了" + items.size() + "个物品...\n");
                         for(ItemPO item : items){
-                            sb.append("[").append(item.getRarity()).append("]").append(item.getName()).append("/");
+                            sb.append("[").append(item.getRarity().getDescription()).append("]").append(item.getName()).append("/");
                         }
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
                         log.info("\t\t\t\t├─[Draw] 已抽取次数 - {} -> {}", userId, times);
