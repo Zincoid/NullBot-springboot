@@ -13,7 +13,7 @@ spring:
 
 server:
 #  address: 127.0.0.1  # 仅监听本地回环
-  port: 9001
+  port: 8080
 
 #logging:
 #  level:
