@@ -39,6 +39,11 @@ public class RandomAudioCommand implements Command
     }
 
     @Override
+    public Integer getAccess() {
+        return -1;
+    }
+
+    @Override
     public String getHelp() {
         return "◉ RandomAudio 或 aud 命令\n功能: 发送保存的随机音频\n限权: " + getAccess() + "\n格式: RandomAudio 或 aud\n中文命令: 随机音频 或 音频";
     }
