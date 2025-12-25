@@ -36,6 +36,11 @@ public class RandomSayingCommand implements Command
     }
 
     @Override
+    public Integer getAccess() {
+        return -1;
+    }
+
+    @Override
     public String getHelp() {
         return "◉ RandomSaying 或 say 命令\n功能: 随机语录\n限权: " + getAccess() + "\n格式: RandomSaying 或 say\n中文命令: 随机语录 或 语录";
     }
