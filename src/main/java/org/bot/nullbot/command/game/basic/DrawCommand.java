@@ -11,6 +11,9 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.ItemService;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @CommandMapping({"Draw", "抽奖"})
 @Component
 @RequiredArgsConstructor
@@ -24,13 +27,49 @@ public class DrawCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long userId = groupMessageEvent.getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            ItemPO item = itemService.getAndKeepRandomItem(userId);
-            if (item != null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] " + userName + "抽到了...\n" + item, false);
-                log.info("\t\t\t\t├─[Draw] 已抽取 - {} -> {}", userId, item.toString().replaceAll("\\R", " "));
+            if(event.getCommandParameters().isEmpty()){
+                ItemPO item = itemService.getAndKeepRandomItem(userId);
+                if (item != null) {
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] " + userName + "抽到了...\n" + item, false);
+                    log.info("\t\t\t\t├─[Draw] 已抽取 - {} -> {}", userId, item.toString().replaceAll("\\R", " "));
+                }else{
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌" + userName + "抽数已耗尽", false);
+                    log.info("\t\t\t\t├─[Draw] - {} -> 抽数已耗尽",  userId);
+                }
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌" + userName + "抽数已耗尽", false);
-                log.info("\t\t\t\t├─[Draw] - {} -> 抽数已耗尽",  userId);
+                try {
+                    int times = Integer.parseInt(event.getCommandParameters().getFirst());
+                    if(times <= 0){
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "想干嘛...", false);
+                        log.info("\t\t\t\t├─[Draw] 抽取次数非正");
+                        return;
+                    }
+                    List<ItemPO> items = new ArrayList<>();
+                    boolean stop = false;
+                    while(times > 0 && !stop){
+                        ItemPO item = itemService.getAndKeepRandomItem(userId);
+                        if (item != null) {
+                            items.add(item);
+                            times--;
+                        }else{
+                            stop = true;
+                        }
+                    }
+                    if (items.isEmpty()) {
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌" + userName + "抽数已耗尽", false);
+                        log.info("\t\t\t\t├─[Draw] - {} -> 抽数已耗尽",  userId);
+                    }else{
+                        StringBuilder sb = new StringBuilder(userName + "抽取了" + items.size() + "个物品...\n");
+                        for(ItemPO item : items){
+                            sb.append("[").append(item.getRarity()).append("]").append(item.getName()).append("/");
+                        }
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
+                        log.info("\t\t\t\t├─[Draw] 已抽取次数 - {} -> {}", userId, times);
+                    }
+                } catch (NumberFormatException e) {
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌参数格式错误", false);
+                    log.info("\t\t\t\t├─[Draw] 参数格式错误");
+                }
             }
         }else
             log.info("\t\t\t\t├─[Draw] 未设计 非群消息事件响应方式");
@@ -38,6 +77,6 @@ public class DrawCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Draw 命令\n功能: 抽奖\n限权: " + getAccess() + "\n格式: Draw\n中文命令: 抽奖";
+        return "◉ Draw 命令\n功能: 抽奖(可指定次数)\n限权: " + getAccess() + "\n格式: Draw [可选: 次数]\n中文命令: 抽奖";
     }
 }
