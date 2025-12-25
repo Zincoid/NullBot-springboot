@@ -49,6 +49,14 @@ public class MatchCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Match 命令\n功能: 按游戏类型匹配\n限权: " + getAccess() + "\n格式: Match [游戏类型]\n游戏类型: 现在只有tictactoe\n中文命令: 匹配";
+        return "◉ Match 命令\n" +
+                "功能: 按游戏类型匹配\n" +
+                "限权: " + getAccess() + "\n" +
+                "格式: Match [游戏类型]\n" +
+                "游戏类型:\n" +
+                "Tictactoe (井字棋)\n" +
+                "Reversi (黑白棋)\n" +
+                "Looting (摸金)\n" +
+                "中文命令: 匹配";
     }
 }
