@@ -67,11 +67,11 @@ nullbot:
       scope: group
   file:
     storage:
-      file-directory: /root/Nullbot/file  # ${user.dir}/src/main/resources/upload
-      temp-path: /root/Nullbot/file/temp  # src/main/resources/file/temp
-      image-path: /root/Nullbot/file/image  # src/main/resources/file/image
-      video-path: /root/Nullbot/file/video  # src/main/resources/file/video
-      audio-path: /root/Nullbot/file/audio  # src/main/resources/file/audio
+      file-directory: /root/Nullbot/file
+      temp-path: /root/Nullbot/file/temp
+      image-path: /root/Nullbot/file/image
+      video-path: /root/Nullbot/file/video
+      audio-path: /root/Nullbot/file/audio
   user-accesses:  # ID: Level
   group-accesses:  # ID: Level
 
