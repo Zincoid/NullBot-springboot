@@ -16,7 +16,8 @@ systemctl enable napcat
 systemctl start napcat
 
 ### 切换Java版本
-sudo alternatives --config java
+sudo alternatives --config java  
+
 ### 指定输出文件 (nohup)
 nohup java -jar /root/Nullbot/jar/NullBot-0.0.1-SNAPSHOT.jar > output.log 2>&1 &
 
