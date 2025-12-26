@@ -1,6 +1,7 @@
 package org.bot.nullbot.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +11,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Slf4j
 @Component
-public class LoginInterceptor implements HandlerInterceptor {
+public class LoginInterceptor implements HandlerInterceptor
+{
+    private static final List<String> GUEST_FORBIDDEN_URLS = Arrays.asList(
+            "/nullbot/file/upload",
+            "/nullbot/file/createDir",
+            "/nullbot/file/delete",
+            "/nullbot/file/rename",
+            "/nullbot/saying/delete"
+    );
+
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
         String url = req.getRequestURL().toString();
         log.info("[管理系统-JWT验证] URL - {}",url);
@@ -21,7 +34,10 @@ public class LoginInterceptor implements HandlerInterceptor {
             log.info("[管理系统-JWT验证] 登录放行");
             return true;
         }
-
+        if(url.contains("/nullbot/guest")){
+            log.info("[管理系统-JWT验证] 访客放行");
+            return true;
+        }
         if(url.contains("/nullbot/preview")){
             log.info("[管理系统-JWT验证] 预览放行");
             return true;
@@ -30,24 +46,42 @@ public class LoginInterceptor implements HandlerInterceptor {
         String jwt = req.getHeader("token");
         if(!StringUtils.hasLength(jwt)){
             log.info("[管理系统-JWT验证] 令牌缺失");
-            WebResult error = WebResult.fail().addMsg("Not Login");
-            String notLogin = JSONObject.toJSONString(error);
-            res.getWriter().write(notLogin);
+            WebResult error = WebResult.fail().addMsg("Invalid Token");
+            String info = JSONObject.toJSONString(error);
+            res.getWriter().write(info);
             return false;
         }
 
+        Claims claims;
+
         try {
-            JwtUtil.parseJWT(jwt);
+            claims = JwtUtil.parseJWT(jwt);
         } catch (Exception e) {
             // e.printStackTrace();
             log.info("[管理系统-JWT验证] 解析失败");
-            WebResult error = WebResult.fail().addMsg("Not Login");
-            String notLogin = JSONObject.toJSONString(error);
-            res.getWriter().write(notLogin);
+            WebResult error = WebResult.fail().addMsg("Invalid Token");
+            String info = JSONObject.toJSONString(error);
+            res.getWriter().write(info);
             return false;
         }
 
-        log.info("[管理系统-JWT验证] 合法放行");
-        return true;
+        if(claims.get("type", Integer.class) == 0){
+            for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
+                if(url.contains(forbiddenUrl)){
+                    log.info("[管理系统-JWT验证] 访客禁止访问 - {}", forbiddenUrl);
+                    WebResult error = WebResult.fail().addMsg("No Access");
+                    String info = JSONObject.toJSONString(error);
+                    res.getWriter().write(info);
+                    return false;
+                }
+            }
+            return true;
+        }else if(claims.get("type", Integer.class) == 1){
+            log.info("[管理系统-JWT验证] 管理员放行");
+            return true;
+        }
+
+        log.info("[管理系统-JWT验证] 用户类型不存在");
+        return false;
     }
 }

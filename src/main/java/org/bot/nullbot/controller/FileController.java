@@ -21,7 +21,7 @@ public class FileController
 {
     private final FileService fileService;
 
-    @GetMapping("/{currentPage}/{pageSize}")
+    @GetMapping("/list/{currentPage}/{pageSize}")
     public WebResult getFileByPage(@PathVariable Integer currentPage,
                                 @PathVariable Integer pageSize,
                                 @RequestParam(defaultValue = "/") String curDir){
@@ -55,7 +55,7 @@ public class FileController
         return fileService.createDir(curDir, dirName);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public WebResult deleteFile(@PathVariable Integer id){
         return fileService.deleteFile(id);
     }

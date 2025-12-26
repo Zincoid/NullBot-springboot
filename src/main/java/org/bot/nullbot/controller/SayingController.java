@@ -28,13 +28,13 @@ public class SayingController
         }
     }
 
-    @GetMapping("/{currentPage}/{pageSize}")
+    @GetMapping("/list/{currentPage}/{pageSize}")
     public WebResult getSayingByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
         SayingPage sayingPage = sayingService.getSayingByPage(currentPage, pageSize);
         return WebResult.success().addMsg("查询成功").addData("sayingPage", sayingPage);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public WebResult deleteSaying(@PathVariable Integer id){
         if(sayingService.deleteById(id)){
             return WebResult.success().addMsg("删除成功");
