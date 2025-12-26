@@ -14,15 +14,15 @@ spring:
 server:
 #  address: 127.0.0.1  # 仅监听本地回环
   port: 8080
-
-#logging:
-#  level:
-#    org.apache.coyote: WARN
-#    org.apache.tomcat: WARN
-#    org.apache.catalina: WARN
-#
-#    org.apache.coyote.http11.Http11Processor: ERROR
-#    org.apache.coyote.http11.Http11InputBuffer: ERROR
+  tomcat:
+    max-swallow-size: -1  # -1表示不限制，默认2MB
+    max-http-form-post-size: 1073741824  # 1GB，单位字节
+    connection-timeout: 300000  # 5分钟
+    max-connections: 10000
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/
+  max-http-request-header-size: 65536
 
 #logging:
 #  level:
@@ -37,7 +37,7 @@ shiro:
     timeout: 20  # 10
     max-binary-message-buffer-size: 5120000
     max-text-message-buffer-size: 512000
-    access-token:
+    access-token: mtHOn@THXxr*6cCb
   limiter:
     enable: true
     rate: 10
@@ -52,7 +52,7 @@ shiro:
 #    thread-name-prefix: "ShiroTaskPool-"
 
 nullbot:
-  bot-id: 0000000000
+  bot-id:
   enable-image-collect: false
   enable-message-collect: false  # 使用AI Monitor模式及Recall Detect功能 需启用该项
   enable-keyword-detect: true
@@ -72,10 +72,8 @@ nullbot:
       image-path: /root/Nullbot/file/image  # src/main/resources/file/image
       video-path: /root/Nullbot/file/video  # src/main/resources/file/video
       audio-path: /root/Nullbot/file/audio  # src/main/resources/file/audio
-  user-accesses:
-    0000000001: 2
-  group-accesses:
-    0000000002: -1
+  user-accesses:  # ID: Level
+  group-accesses:  # ID: Level
 
 ai:
   deepseek:
@@ -85,9 +83,6 @@ ai:
     max-monitor-length: 200
     max-tokens: 500
     system-message:
-      group: "你是一个猫娘，你的名字叫Null，你的主人是Zincoid，他的ID是2660181154。
-              你在一个群聊中，不同用户的消息会带有他们的标识，如[userName(userId)]，请根据标识区分不同用户。
-              你可以回答别人的问题不用经过主人同意，回复消息时不要带以上那种格式化的标识。"
-      personal: "你是一个助手，你的名字叫Null。"
-      monitor: "你是一个猫娘，你的名字叫Null。你在一个群聊中不断监听着所有人的消息。
-              不同用户的消息会带有他们的标识，如[userName(userId)]，请根据标识区分不同用户，回复消息时不要带这种格式化的标识。"
+      group:
+      personal:
+      monitor:
