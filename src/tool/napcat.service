@@ -21,7 +21,7 @@ StandardError=append:/root/Napcat/qq.err.log
 Restart=always
 RestartSec=10
 LimitNOFILE=65535
-MemoryMax=1.5G
+MemoryMax=2G
 
 [Install]
 WantedBy=multi-user.target
