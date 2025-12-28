@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Deprecated
 @Component
-public class AccessManager  // 已持久化至数据库 (弃用)
+public class AccessManager  // 运行时限权存储 - 已持久化至数据库 (弃用)
 {
     private final Map<Long, Integer> userAccesses;
     private final Map<Long, Integer> groupAccesses;
