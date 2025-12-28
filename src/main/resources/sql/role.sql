@@ -28,8 +28,9 @@ create table `admin`
     email varchar(255) not null
 );
 
+
+# 预设置 - 管理级用户
 INSERT INTO `user` (id, access) values
     (2660181154, 2);
-
 INSERT INTO `admin` (id, username, password, email) values
     (2660181154, 'Zincoid', 'KJFHQAUJWDHKIA', '2660181154@qq.com');
