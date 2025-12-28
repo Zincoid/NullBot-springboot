@@ -15,4 +15,6 @@ public interface GroupService
     int getGroupAccess(Long groupId);
 
     void setGroupAccess(Long groupId, int newAccess);
+
+    void updateAllNames();
 }

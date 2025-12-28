@@ -19,4 +19,6 @@ public interface UserService
     int getUserAccess(Long userId);
 
     void setUserAccess(Long userId, int newAccess);
+
+    void updateAllNames();
 }
