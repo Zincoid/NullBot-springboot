@@ -63,7 +63,7 @@ public class RegisterHandler implements Handler
             log.info("\t\t├─[RegisterHandler] 新用户注册完成");
         } else {
             userService.setUserName(userId, userName);
-            log.info("\t\t├─[RegisterHandler] 用户已注册 昵称已更新");
+            log.info("\t\t├─[RegisterHandler] 用户已注册 -> 昵称已更新");
         }
     }
 }
