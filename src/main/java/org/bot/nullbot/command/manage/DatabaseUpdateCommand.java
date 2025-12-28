@@ -25,6 +25,7 @@ public class DatabaseUpdateCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             groupService.updateAllGroupNames();
             userService.updateAllUserNames();
+            log.info("\t\t\t\t├─[DatabaseUpdate] 数据库已更新");
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[DatabaseUpdate] ✅已更新", false);
         }else
             log.info("\t\t\t\t├─[DatabaseUpdate] 未设计 - 非群消息事件响应方式");
