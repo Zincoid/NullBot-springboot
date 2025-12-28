@@ -24,8 +24,8 @@ public class GroupServiceImpl implements GroupService
     }
 
     @Override
-    public boolean existGroup(long targetId) {
-        return groupMapper.selectById(targetId) != null;
+    public boolean existGroup(Long groupId) {
+        return groupMapper.selectById(groupId) != null;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class GroupServiceImpl implements GroupService
     }
 
     @Override
-    public void setGroupAccess(long groupId, int newAccess) {
+    public void setGroupAccess(Long groupId, int newAccess) {
         groupMapper.update(null, new LambdaUpdateWrapper<GroupPO>()
                 .eq(GroupPO::getId, groupId)
                 .set(GroupPO::getAccess, newAccess));

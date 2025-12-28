@@ -32,7 +32,7 @@ public class UseInventoryCommand implements Command
                     if(itemService.isUsable(itemId)){
                         ItemPO item = itemService.getItem(itemId);
                         Long userId = groupMessageEvent.getUserId();
-                        String userName = bot.getStrangerInfo(userId, false).getData().getNickname();
+                        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
                         String command = itemService.getCommandFromItemDesc(itemId);  // 冗余 暂时不想改
                         if(command != null){
                             if (inventoryService.decreaseInventory(groupMessageEvent.getUserId(), itemId)) {

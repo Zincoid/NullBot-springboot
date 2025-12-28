@@ -8,9 +8,9 @@ public interface GroupService
 
     void addGroup(Long groupId);
 
-    boolean existGroup(long targetId);
+    boolean existGroup(Long groupId);
 
     int getGroupAccess(Long groupId);
 
-    void setGroupAccess(long groupId, int newAccess);
+    void setGroupAccess(Long groupId, int newAccess);
 }

@@ -63,7 +63,7 @@ public class WifeCommand implements Command
                     Long wifeId = memberWifeMap.get(userId);
                     String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
                     String response = MsgUtils.builder()
-                            .text("今天已经选过了哦\uD83D\uDCA6...\n你的群友老婆是\n" + bot.getStrangerInfo(wifeId, false).getData().getNickname() + "(" + wifeId + ")")
+                            .text("今天已经选过了哦\uD83D\uDCA6...\n你的群友老婆是\n" + bot.getStrangerInfo(wifeId, true).getData().getNickname() + "(" + wifeId + ")")
                             .img(avatarUrl)
                             .build();
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);

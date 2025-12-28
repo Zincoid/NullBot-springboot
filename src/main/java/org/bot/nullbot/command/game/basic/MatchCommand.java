@@ -26,7 +26,7 @@ public class MatchCommand implements Command
             if(!event.getCommandParameters().isEmpty()){
                 Long groupId = groupMessageEvent.getGroupId();
                 Long userId = groupMessageEvent.getUserId();
-                String userName = bot.getStrangerInfo(userId, false).getData().getNickname();
+                String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
                 String gameType = event.getCommandParameters().getFirst();
                 MatchResult result = matcher.joinMatch(userId, groupId, userName, gameType);
                 if(result != null){

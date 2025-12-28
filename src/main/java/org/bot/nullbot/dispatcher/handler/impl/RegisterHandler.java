@@ -30,15 +30,15 @@ public class RegisterHandler implements Handler
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         if(event.getEvent() instanceof GroupMessageEvent groupMessageEvent){
             registerGroup(groupMessageEvent.getGroupId());
-            registerUser(groupMessageEvent.getUserId());
+            registerUser(groupMessageEvent.getUserId(), groupMessageEvent.getSender().getNickname());
             chain.doHandle(bot, event, command);
         }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
             registerGroup(pokeNoticeEvent.getGroupId());
-            registerUser(pokeNoticeEvent.getUserId());
+            registerUser(pokeNoticeEvent.getUserId(), bot.getStrangerInfo(pokeNoticeEvent.getUserId(), true).getData().getNickname());
             chain.doHandle(bot, event, command);
         }else if(event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
             registerGroup(groupMsgDeleteNoticeEvent.getGroupId());
-            registerUser(groupMsgDeleteNoticeEvent.getUserId());
+            registerUser(groupMsgDeleteNoticeEvent.getUserId(), bot.getStrangerInfo(groupMsgDeleteNoticeEvent.getUserId(), true).getData().getNickname());
             chain.doHandle(bot, event, command);
         }else{
             log.info("\t\t├─[RegisterHandler] 默认不注册的事件");
@@ -56,13 +56,14 @@ public class RegisterHandler implements Handler
         }
     }
 
-    private void registerUser(Long userId) {
+    private void registerUser(Long userId, String userName) {
         UserPO user = userService.getUser(userId);
         if (user == null) {
-            userService.addUser(userId);
+            userService.addUser(userId, userName);
             log.info("\t\t├─[RegisterHandler] 新用户注册完成");
         } else {
-            log.info("\t\t├─[RegisterHandler] 用户已注册");
+            userService.setUserName(userId, userName);
+            log.info("\t\t├─[RegisterHandler] 用户已注册 昵称已更新");
         }
     }
 }

@@ -46,13 +46,20 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public void addUser(Long userId) {
-        userMapper.insert(new UserPO(userId, 0, 1, 0, 100, 50));
+    public void addUser(Long userId, String userName) {
+        userMapper.insert(new UserPO(userId, userName, 0, 1, 0, 100, 50));
     }
 
     @Override
-    public boolean existUser(long targetId) {
-        return userMapper.selectById(targetId) != null;
+    public void setUserName(Long userId, String userName) {
+        userMapper.update(null, new LambdaUpdateWrapper<UserPO>()
+                .eq(UserPO::getId, userId)
+                .set(UserPO::getName, userName));
+    }
+
+    @Override
+    public boolean existUser(Long userId) {
+        return userMapper.selectById(userId) != null;
     }
 
     @Override
@@ -61,7 +68,7 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public void setUserAccess(long userId, int newAccess) {
+    public void setUserAccess(Long userId, int newAccess) {
         userMapper.update(null, new LambdaUpdateWrapper<UserPO>()
                 .eq(UserPO::getId, userId)
                 .set(UserPO::getAccess, newAccess));

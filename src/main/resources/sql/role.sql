@@ -12,6 +12,7 @@ CREATE TABLE `group` (
 
 CREATE TABLE `user` (
     id BIGINT PRIMARY KEY,
+    name varchar(255) not null,
     access INT DEFAULT 0,
 
     level INT DEFAULT 1,
@@ -30,7 +31,7 @@ create table `admin`
 
 
 # 预设置 - 管理级用户
-INSERT INTO `user` (id, access) values
-    (2660181154, 2);
+INSERT INTO `user` (id, name, access) values
+    (2660181154, 'Zincoid', 2);
 INSERT INTO `admin` (id, username, password, email) values
     (2660181154, 'Zincoid', 'KJFHQAUJWDHKIA', '2660181154@qq.com');
