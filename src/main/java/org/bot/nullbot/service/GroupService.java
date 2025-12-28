@@ -8,7 +8,7 @@ public interface GroupService
 
     void addGroup(Long groupId, String groupName);
 
-    void setGroupName(Long groupId, String groupName);
+    void updateGroupName(Long groupId, String groupName);
 
     boolean existGroup(Long groupId);
 
@@ -16,5 +16,5 @@ public interface GroupService
 
     void setGroupAccess(Long groupId, int newAccess);
 
-    void updateAllNames();
+    void updateAllGroupNames();
 }

@@ -32,7 +32,7 @@ public class GroupServiceImpl implements GroupService
     }
 
     @Override
-    public void setGroupName(Long groupId, String groupName) {
+    public void updateGroupName(Long groupId, String groupName) {
         groupMapper.update(null, new LambdaUpdateWrapper<GroupPO>()
                 .eq(GroupPO::getId, groupId)
                 .set(GroupPO::getName, groupName));
@@ -56,7 +56,7 @@ public class GroupServiceImpl implements GroupService
     }
 
     @Override
-    public void updateAllNames() {
+    public void updateAllGroupNames() {
         groupMapper.selectList(null).forEach(group -> {
             Bot bot = botContainer.robots.get(botId);
             group.setName(bot.getGroupInfo(group.getId(), true).getData().getGroupName());

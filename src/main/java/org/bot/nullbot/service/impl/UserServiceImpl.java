@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public void setUserName(Long userId, String userName) {
+    public void updateUserName(Long userId, String userName) {
         userMapper.update(null, new LambdaUpdateWrapper<UserPO>()
                 .eq(UserPO::getId, userId)
                 .set(UserPO::getName, userName));
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public void updateAllNames() {
+    public void updateAllUserNames() {
         userMapper.selectList(null).forEach(user -> {
             Bot bot = botContainer.robots.get(botId);
             user.setName(bot.getStrangerInfo(user.getId(), true).getData().getNickname());

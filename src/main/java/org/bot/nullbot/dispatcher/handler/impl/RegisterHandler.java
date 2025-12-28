@@ -52,7 +52,7 @@ public class RegisterHandler implements Handler
             groupService.addGroup(groupId, groupName);
             log.info("\t\t├─[RegisterHandler] 新群聊注册完成");
         } else {
-            groupService.setGroupName(groupId, groupName);
+            groupService.updateGroupName(groupId, groupName);
             log.info("\t\t├─[RegisterHandler] 群聊已注册 -> 群名已更新");
         }
     }
@@ -63,7 +63,7 @@ public class RegisterHandler implements Handler
             userService.addUser(userId, userName);
             log.info("\t\t├─[RegisterHandler] 新用户注册完成");
         } else {
-            userService.setUserName(userId, userName);
+            userService.updateUserName(userId, userName);
             log.info("\t\t├─[RegisterHandler] 用户已注册 -> 昵称已更新");
         }
     }

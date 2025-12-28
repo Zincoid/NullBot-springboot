@@ -23,8 +23,8 @@ public class DatabaseUpdateCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            groupService.updateAllNames();
-            userService.updateAllNames();
+            groupService.updateAllGroupNames();
+            userService.updateAllUserNames();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[DatabaseUpdate] ✅已更新", false);
         }else
             log.info("\t\t\t\t├─[DatabaseUpdate] 未设计 - 非群消息事件响应方式");

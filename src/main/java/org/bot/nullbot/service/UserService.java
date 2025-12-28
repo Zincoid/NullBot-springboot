@@ -12,7 +12,7 @@ public interface UserService
 
     void addUser(Long userId, String userName);
 
-    void setUserName(Long userId, String userName);
+    void updateUserName(Long userId, String userName);
 
     boolean existUser(Long userId);
 
@@ -20,5 +20,5 @@ public interface UserService
 
     void setUserAccess(Long userId, int newAccess);
 
-    void updateAllNames();
+    void updateAllUserNames();
 }
