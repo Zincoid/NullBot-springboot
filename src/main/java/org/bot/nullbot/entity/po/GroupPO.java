@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@TableName("group")
+@TableName("`group`")
 public class GroupPO
 {
     private Long  id;

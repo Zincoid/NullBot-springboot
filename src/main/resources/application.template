@@ -72,8 +72,8 @@ nullbot:
       image-path: /root/Nullbot/file/image
       video-path: /root/Nullbot/file/video
       audio-path: /root/Nullbot/file/audio
-  user-accesses:  # ID: Level
-  group-accesses:  # ID: Level
+  user-accesses:  # ID: Level 已持久化至数据库 (弃用)
+  group-accesses:  # ID: Level 已持久化至数据库 (弃用)
 
 ai:
   deepseek:

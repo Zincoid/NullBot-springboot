@@ -28,5 +28,8 @@ create table `admin`
     email varchar(255) not null
 );
 
+INSERT INTO `user` (id, access) values
+    (2660181154, 2);
+
 INSERT INTO `admin` (id, username, password, email) values
-(2660181154, 'Zincoid', 'KJFHQAUJWDHKIA', '2660181154@qq.com');
+    (2660181154, 'Zincoid', 'KJFHQAUJWDHKIA', '2660181154@qq.com');

@@ -1,5 +1,6 @@
 package org.bot.nullbot.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.entity.po.GroupPO;
 import org.bot.nullbot.entity.po.UserPO;
@@ -15,6 +16,17 @@ public class AccessServiceImpl implements AccessService
     private final GroupMapper groupMapper;
     private final UserMapper userMapper;
 
+
+    @Override
+    public boolean existGroup(long targetId) {
+        return groupMapper.selectById(targetId) != null;
+    }
+
+    @Override
+    public boolean existUser(long targetId) {
+        return userMapper.selectById(targetId) != null;
+    }
+
     @Override
     public int getGroupAccess(Long groupId) {
         return groupMapper.selectById(groupId).getAccess();
@@ -26,26 +38,16 @@ public class AccessServiceImpl implements AccessService
     }
 
     @Override
-    public boolean setGroupAccess(long groupId, int newAccess) {
-        GroupPO groupPO = groupMapper.selectById(groupId);
-        if(groupPO == null) {
-            return false;
-        } else {
-            groupPO.setAccess(newAccess);
-            groupMapper.updateById(groupPO);
-            return true;
-        }
+    public void setGroupAccess(long groupId, int newAccess) {
+        groupMapper.update(null, new LambdaUpdateWrapper<GroupPO>()
+                .eq(GroupPO::getId, groupId)
+                .set(GroupPO::getAccess, newAccess));
     }
 
     @Override
-    public boolean setUserAccess(long userId, int newAccess) {
-        UserPO userPO = userMapper.selectById(userId);
-        if(userPO == null) {
-            return false;
-        } else {
-            userPO.setAccess(newAccess);
-            userMapper.updateById(userPO);
-            return true;
-        }
+    public void setUserAccess(long userId, int newAccess) {
+        userMapper.update(null, new LambdaUpdateWrapper<UserPO>()
+                .eq(UserPO::getId, userId)
+                .set(UserPO::getAccess, newAccess));
     }
 }

@@ -16,6 +16,9 @@ public class DefaultConfig
     private Boolean enablePokeDetect;
     private Boolean enableMessageCollect;
     private Boolean enableRecallDetect;
-    private Map<Long, Integer> userAccesses;
-    private Map<Long, Integer> groupAccesses;
+
+    @Deprecated
+    private Map<Long, Integer> userAccesses;  // 已持久化至数据库 (弃用)
+    @Deprecated
+    private Map<Long, Integer> groupAccesses;  // 已持久化至数据库 (弃用)
 }
