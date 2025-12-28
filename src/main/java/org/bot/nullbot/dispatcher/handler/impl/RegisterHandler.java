@@ -29,15 +29,15 @@ public class RegisterHandler implements Handler
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         if(event.getEvent() instanceof GroupMessageEvent groupMessageEvent){
-            registerGroup(groupMessageEvent.getGroupId());
+            registerGroup(groupMessageEvent.getGroupId(), bot.getGroupInfo(groupMessageEvent.getGroupId(), true).getData().getGroupName());
             registerUser(groupMessageEvent.getUserId(), groupMessageEvent.getSender().getNickname());
             chain.doHandle(bot, event, command);
         }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            registerGroup(pokeNoticeEvent.getGroupId());
+            registerGroup(pokeNoticeEvent.getGroupId(), bot.getGroupInfo(pokeNoticeEvent.getGroupId(), true).getData().getGroupName());
             registerUser(pokeNoticeEvent.getUserId(), bot.getStrangerInfo(pokeNoticeEvent.getUserId(), true).getData().getNickname());
             chain.doHandle(bot, event, command);
         }else if(event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
-            registerGroup(groupMsgDeleteNoticeEvent.getGroupId());
+            registerGroup(groupMsgDeleteNoticeEvent.getGroupId(), bot.getGroupInfo(groupMsgDeleteNoticeEvent.getGroupId(), true).getData().getGroupName());
             registerUser(groupMsgDeleteNoticeEvent.getUserId(), bot.getStrangerInfo(groupMsgDeleteNoticeEvent.getUserId(), true).getData().getNickname());
             chain.doHandle(bot, event, command);
         }else{
@@ -46,13 +46,14 @@ public class RegisterHandler implements Handler
         }
     }
 
-    private void registerGroup(Long groupId) {
+    private void registerGroup(Long groupId, String groupName) {
         GroupPO group = groupService.getGroup(groupId);
         if (group == null) {
-            groupService.addGroup(groupId);
+            groupService.addGroup(groupId, groupName);
             log.info("\t\t├─[RegisterHandler] 新群聊注册完成");
         } else {
-            log.info("\t\t├─[RegisterHandler] 群聊已注册");
+            groupService.setGroupName(groupId, groupName);
+            log.info("\t\t├─[RegisterHandler] 群聊已注册 -> 群名已更新");
         }
     }
 

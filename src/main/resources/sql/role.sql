@@ -7,6 +7,7 @@ drop table if exists `admin`;
 
 CREATE TABLE `group` (
     id BIGINT PRIMARY KEY,
+    name varchar(255) not null,
     access INT DEFAULT 2
 );
 

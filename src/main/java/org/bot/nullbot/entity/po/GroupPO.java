@@ -10,5 +10,6 @@ import lombok.Data;
 public class GroupPO
 {
     private Long  id;
+    private String name;
     private Integer access;
 }

@@ -19,8 +19,15 @@ public class GroupServiceImpl implements GroupService
     }
 
     @Override
-    public void addGroup(Long groupId) {
-        groupMapper.insert(new GroupPO(groupId, 2));
+    public void addGroup(Long groupId, String groupName) {
+        groupMapper.insert(new GroupPO(groupId, groupName, 2));
+    }
+
+    @Override
+    public void setGroupName(Long groupId, String groupName) {
+        groupMapper.update(null, new LambdaUpdateWrapper<GroupPO>()
+                .eq(GroupPO::getId, groupId)
+                .set(GroupPO::getName, groupName));
     }
 
     @Override

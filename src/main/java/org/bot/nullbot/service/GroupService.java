@@ -6,7 +6,9 @@ public interface GroupService
 {
     GroupPO getGroup(Long groupId);
 
-    void addGroup(Long groupId);
+    void addGroup(Long groupId, String groupName);
+
+    void setGroupName(Long groupId, String groupName);
 
     boolean existGroup(Long groupId);
 
