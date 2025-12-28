@@ -1,5 +1,6 @@
 package org.bot.nullbot.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.entity.po.GroupPO;
 import org.bot.nullbot.mapper.GroupMapper;
@@ -20,5 +21,22 @@ public class GroupServiceImpl implements GroupService
     @Override
     public void addGroup(Long groupId) {
         groupMapper.insert(new GroupPO(groupId, 2));
+    }
+
+    @Override
+    public boolean existGroup(long targetId) {
+        return groupMapper.selectById(targetId) != null;
+    }
+
+    @Override
+    public int getGroupAccess(Long groupId) {
+        return groupMapper.selectById(groupId).getAccess();
+    }
+
+    @Override
+    public void setGroupAccess(long groupId, int newAccess) {
+        groupMapper.update(null, new LambdaUpdateWrapper<GroupPO>()
+                .eq(GroupPO::getId, groupId)
+                .set(GroupPO::getAccess, newAccess));
     }
 }

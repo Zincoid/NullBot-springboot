@@ -1,5 +1,6 @@
 package org.bot.nullbot.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.mapper.InventoryMapper;
 import org.bot.nullbot.mapper.ItemMapper;
@@ -47,5 +48,22 @@ public class UserServiceImpl implements UserService
     @Override
     public void addUser(Long userId) {
         userMapper.insert(new UserPO(userId, 0, 1, 0, 100, 50));
+    }
+
+    @Override
+    public boolean existUser(long targetId) {
+        return userMapper.selectById(targetId) != null;
+    }
+
+    @Override
+    public int getUserAccess(Long userId) {
+        return userMapper.selectById(userId).getAccess();
+    }
+
+    @Override
+    public void setUserAccess(long userId, int newAccess) {
+        userMapper.update(null, new LambdaUpdateWrapper<UserPO>()
+                .eq(UserPO::getId, userId)
+                .set(UserPO::getAccess, newAccess));
     }
 }

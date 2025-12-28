@@ -11,4 +11,10 @@ public interface UserService
     UserPO getUser(Long userId);
 
     void addUser(Long userId);
+
+    boolean existUser(long targetId);
+
+    int getUserAccess(Long userId);
+
+    void setUserAccess(long userId, int newAccess);
 }

@@ -9,7 +9,8 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dispatcher.CommandHandlerChain;
 import org.bot.nullbot.dispatcher.handler.Handler;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.service.AccessService;
+import org.bot.nullbot.service.GroupService;
+import org.bot.nullbot.service.UserService;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -20,13 +21,14 @@ import org.springframework.stereotype.Component;
 public class PermissionHandler implements Handler
 {
     // private final AccessManager accessManager;  # Deprecated
-    private final AccessService accessService;
+    private final GroupService groupService;
+    private final UserService userService;
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         if(event.getEvent() instanceof GroupMessageEvent groupMessageEvent){
             int commandAccess = command.getAccess();
-            int groupAccess = accessService.getGroupAccess(groupMessageEvent.getGroupId());
+            int groupAccess = groupService.getGroupAccess(groupMessageEvent.getGroupId());
             if(groupAccess >= commandAccess){
                 log.info("\t\t├─[PermissionHandler] 群限权满足");
             }else{
@@ -35,7 +37,7 @@ public class PermissionHandler implements Handler
                 return;
             }
             if(event.isAuthRequired()){
-                int userAccess = accessService.getUserAccess(groupMessageEvent.getSender().getUserId());
+                int userAccess = userService.getUserAccess(groupMessageEvent.getSender().getUserId());
                 if (userAccess >= commandAccess) {
                     log.info("\t\t├─[PermissionHandler] 用户限权满足");
                     chain.doHandle(bot, event, command);
@@ -49,7 +51,7 @@ public class PermissionHandler implements Handler
             }
         }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent){
             int commandAccess = command.getAccess();
-            int groupAccess = accessService.getGroupAccess(pokeNoticeEvent.getGroupId());
+            int groupAccess = groupService.getGroupAccess(pokeNoticeEvent.getGroupId());
             if(groupAccess >= commandAccess){
                 log.info("\t\t├─[PermissionHandler] 群限权满足");
             }else{
@@ -58,7 +60,7 @@ public class PermissionHandler implements Handler
                 return;
             }
             if(event.isAuthRequired()){
-                int userAccess = accessService.getUserAccess(pokeNoticeEvent.getUserId());
+                int userAccess = userService.getUserAccess(pokeNoticeEvent.getUserId());
                 if (userAccess >= commandAccess) {
                     log.info("\t\t├─[PermissionHandler] 用户限权满足");
                     chain.doHandle(bot, event, command);
