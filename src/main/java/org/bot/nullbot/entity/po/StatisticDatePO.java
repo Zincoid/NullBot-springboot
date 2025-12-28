@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
-@TableName("statistic_date")
+@TableName("`statistic_date`")
 public class StatisticDatePO
 {
     @TableId(value = "id", type = IdType.AUTO)

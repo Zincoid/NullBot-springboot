@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("file")
+@TableName("`file`")
 public class FilePO
 {
     @TableId(value = "id", type = IdType.AUTO)

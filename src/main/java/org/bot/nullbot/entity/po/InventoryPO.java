@@ -9,7 +9,7 @@ import org.bot.nullbot.enums.Rarity;
 
 @Data
 @AllArgsConstructor
-@TableName("inventory")
+@TableName("`inventory`")
 public class InventoryPO
 {
     @TableId(value = "id", type = IdType.AUTO)

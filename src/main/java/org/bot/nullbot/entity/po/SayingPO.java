@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("saying")
+@TableName("`saying`")
 public class SayingPO
 {
     @TableId(value = "id", type = IdType.AUTO)

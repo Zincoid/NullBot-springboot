@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@TableName("statistic")
+@TableName("`statistic`")
 public class StatisticPO
 {
     @TableId(value = "id", type = IdType.AUTO)

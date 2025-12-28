@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@TableName("user")
+@TableName("`user`")
 public class UserPO
 {
     private Long  id;
