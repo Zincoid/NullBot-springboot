@@ -53,11 +53,12 @@ shiro:
 
 nullbot:
   bot-id:
-  enable-image-collect: false
-  enable-message-collect: false  # 使用AI Monitor模式及Recall Detect功能 需启用该项
-  enable-keyword-detect: true
-  enable-poke-detect: true
-  enable-recall-detect: false
+  # 默认功能启用状态
+  image-collect: false
+  message-collect: false  # 使用AI Monitor模式及Recall Detect功能 需启用该项
+  keyword-detect: true
+  poke-detect: true
+  recall-detect: false
   command:
     prefix: /
     rate-limit:
@@ -67,7 +68,7 @@ nullbot:
       scope: group
   file:
     storage:
-      file-directory: /root/Nullbot/file
+      file-directory: /root/Nullbot/file  # 网页文件管理根目录
       temp-path: /root/Nullbot/file/temp
       image-path: /root/Nullbot/file/image
       video-path: /root/Nullbot/file/video

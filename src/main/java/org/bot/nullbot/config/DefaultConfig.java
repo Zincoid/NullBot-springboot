@@ -11,11 +11,11 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "nullbot")
 public class DefaultConfig
 {
-    private Boolean enableImageCollect;
-    private Boolean enableKeywordDetect;
-    private Boolean enablePokeDetect;
-    private Boolean enableMessageCollect;
-    private Boolean enableRecallDetect;
+    private Boolean imageCollect;
+    private Boolean keywordDetect;
+    private Boolean pokeDetect;
+    private Boolean messageCollect;
+    private Boolean recallDetect;
 
     @Deprecated
     private Map<Long, Integer> userAccesses;  // 已持久化至数据库 (弃用)

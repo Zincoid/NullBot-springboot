@@ -60,7 +60,7 @@ public class FunctionManager
     public String getStatus() {
         StringBuilder status = new StringBuilder();
         for (Map.Entry<String, Boolean> entry : enableFlags.entrySet()) {
-            status.append(entry.getKey()).append(" -> ").append(entry.getValue() ? "ON" : "OFF").append('\n');
+            status.append('\n').append(entry.getKey()).append(" -> ").append(entry.getValue() ? "ON" : "OFF");
         }
         return status.toString();
     }
