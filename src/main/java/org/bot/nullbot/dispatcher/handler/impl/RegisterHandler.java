@@ -2,6 +2,8 @@ package org.bot.nullbot.dispatcher.handler.impl;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
+import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.command.Command;
@@ -39,6 +41,44 @@ public class RegisterHandler implements Handler
             UserPO user = userService.getUser(groupMessageEvent.getUserId());
             if(user == null){
                 userService.addUser(groupMessageEvent.getUserId());
+                log.info("\t\t├─[RegisterHandler] 新用户注册完成");
+            }else{
+                log.info("\t\t├─[RegisterHandler] 用户已注册");
+            }
+
+            chain.doHandle(bot, event, command);
+        }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
+
+            GroupPO group = groupService.getGroup(pokeNoticeEvent.getGroupId());
+            if(group == null){
+                groupService.addGroup(pokeNoticeEvent.getGroupId());
+                log.info("\t\t├─[RegisterHandler] 新群聊注册完成");
+            }else{
+                log.info("\t\t├─[RegisterHandler] 群聊已注册");
+            }
+
+            UserPO user = userService.getUser(pokeNoticeEvent.getUserId());
+            if(user == null){
+                userService.addUser(pokeNoticeEvent.getUserId());
+                log.info("\t\t├─[RegisterHandler] 新用户注册完成");
+            }else{
+                log.info("\t\t├─[RegisterHandler] 用户已注册");
+            }
+
+            chain.doHandle(bot, event, command);
+        }else if(event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
+
+            GroupPO group = groupService.getGroup(groupMsgDeleteNoticeEvent.getGroupId());
+            if(group == null){
+                groupService.addGroup(groupMsgDeleteNoticeEvent.getGroupId());
+                log.info("\t\t├─[RegisterHandler] 新群聊注册完成");
+            }else{
+                log.info("\t\t├─[RegisterHandler] 群聊已注册");
+            }
+
+            UserPO user = userService.getUser(groupMsgDeleteNoticeEvent.getUserId());
+            if(user == null){
+                userService.addUser(groupMsgDeleteNoticeEvent.getUserId());
                 log.info("\t\t├─[RegisterHandler] 新用户注册完成");
             }else{
                 log.info("\t\t├─[RegisterHandler] 用户已注册");
