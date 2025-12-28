@@ -8,6 +8,9 @@ create table file
     id int auto_increment primary key,
     file_name varchar(255) not null,
     file_size bigint not null,
+#     owner_id bigint not null,
+#     owner_name varchar(255) not null,
+#     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     directory varchar(255) not null,
     is_dir int default 0 not null
 );

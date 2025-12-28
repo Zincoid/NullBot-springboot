@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.po.AdminPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.dto.LoginDTO;
-import org.bot.nullbot.service.AdminService;
+import org.bot.nullbot.service.LoginService;
 import org.bot.nullbot.util.JwtUtil;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LoginController
 {
-    private final AdminService adminService;
+    private final LoginService adminService;
 
     @PostMapping("/guest")
     public WebResult guest(){

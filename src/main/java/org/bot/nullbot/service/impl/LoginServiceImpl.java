@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.entity.dto.LoginDTO;
 import org.bot.nullbot.entity.po.AdminPO;
 import org.bot.nullbot.mapper.AdminMapper;
-import org.bot.nullbot.service.AdminService;
+import org.bot.nullbot.service.LoginService;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AdminServiceImpl implements AdminService
+public class LoginServiceImpl implements LoginService
 {
     private final AdminMapper adminMapper;
 

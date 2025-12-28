@@ -3,7 +3,7 @@ package org.bot.nullbot.service;
 import org.bot.nullbot.entity.dto.LoginDTO;
 import org.bot.nullbot.entity.po.AdminPO;
 
-public interface AdminService
+public interface LoginService
 {
     boolean login(LoginDTO loginDTO);
 
