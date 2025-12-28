@@ -30,7 +30,8 @@ public class AccessSetCommand implements Command
                     long targetId = Long.parseLong(event.getCommandParameters().get(1));
                     int targetNewAccess = Integer.parseInt(event.getCommandParameters().get(2));
 
-                    switch (scope){
+                    switch (scope)
+                    {
                         case "GROUP" -> {
                             if(!groupService.existGroup(targetId)){
                                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌群聊未注册", false);
@@ -95,6 +96,14 @@ public class AccessSetCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ AccessSet 命令\n功能: 设置用户限权等级\n限权:\n针对用户: 无法修改高于或等于自身限权用户 设置的限权无法高于或等于自身限权\n针对群组: 仅限权等级2用户可修改\n格式: AccessSet [USER|GROUP] [ID] [限权等级]\n中文命令: 限权设置";
+        return String.format("""
+                ◉ AccessSet 命令
+                功能: 设置用户限权等级
+                限权: %s
+                注意:
+                针对用户 - 无法修改高于或等于自身限权用户, 设置的限权无法高于或等于自身限权
+                针对群组 - 仅限权等级2用户可修改, 群组限权[-2]将拒绝包括此项的所有命令
+                格式: AccessSet [USER|GROUP] [ID] [限权等级]
+                中文命令: 限权设置""", getAccess());
     }
 }

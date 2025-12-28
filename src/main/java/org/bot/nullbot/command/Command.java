@@ -9,5 +9,5 @@ public interface Command
 
     default String getHelp() { return "暂无帮助文档"; }
 
-    default Integer getAccess() { return 0; };
+    default Integer getAccess() { return 0; }
 }

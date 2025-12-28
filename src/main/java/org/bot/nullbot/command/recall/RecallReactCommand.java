@@ -50,5 +50,9 @@ public class RecallReactCommand implements Command
             log.info("\t\t\t\t├─[React.Recall] 未设计 - 非群消息撤回事件响应方式");
     }
 
-    // 限权: 0
+    // 仅校验群限权
+    @Override
+    public Integer getAccess() {
+        return -1;
+    }
 }

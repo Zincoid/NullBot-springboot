@@ -34,6 +34,4 @@ public class PokeReactCommand implements Command
         }else
             log.info("\t\t\t\t├─[AI.PokeReact] 未设计 - 非戳一戳消息事件响应方式");
     }
-
-    // 限权: 0
 }
