@@ -40,7 +40,7 @@ public class MonitorListener
     private final DeepSeekClient deepSeekClient;
     private final FileStorageConfig fileStorageConfig;
 
-    @FunctionControl(config = "enableImageCollect")
+    @FunctionControl(config = "imageCollect")
     @GroupMessageHandler
     @Async("ThreadExecutor")
     public void GroupImageCollect(Bot bot, GroupMessageEvent event) {
@@ -63,7 +63,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "enableMessageCollect")
+    @FunctionControl(config = "messageCollect")
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)
     @Async("ThreadExecutor")
@@ -77,7 +77,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "enableKeywordDetect")
+    @FunctionControl(config = "keywordDetect")
     @GroupMessageHandler
     @Async("ThreadExecutor")
     public void GroupKeywordDetect(Bot bot, GroupMessageEvent event) throws Exception {  // 暂时直接设计针对群聊的规则
@@ -93,7 +93,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "enablePokeDetect")
+    @FunctionControl(config = "pokeDetect")
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void GroupPokeDetect(Bot bot, PokeNoticeEvent event) throws Exception {
@@ -103,7 +103,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "enableRecallDetect")
+    @FunctionControl(config = "recallDetect")
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
     public void GroupRecallDetect(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
