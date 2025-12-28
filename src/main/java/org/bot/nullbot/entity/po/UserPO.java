@@ -10,7 +10,8 @@ import lombok.Data;
 public class UserPO
 {
     private Long  id;
-    // private Integer access;
+    private Integer access;
+
     private Integer level;
     private Integer cash;
     private Integer capacity;

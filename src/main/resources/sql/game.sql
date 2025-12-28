@@ -1,11 +1,11 @@
 # CREATE DATABASE NullBot;
 # USE NullBot;
 
-DROP TABLE IF EXISTS item;
-DROP TABLE IF EXISTS inventory;
+DROP TABLE IF EXISTS `item`;
+DROP TABLE IF EXISTS `inventory`;
 
 # description 可通过 {} 嵌入指令, 指令不需要前缀
-CREATE TABLE item (
+CREATE TABLE `item` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     category INT NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE item (
     available BOOLEAN DEFAULT TRUE
 );
 
-CREATE TABLE inventory (
+CREATE TABLE `inventory` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     owner_id LONG NOT NULL,
     item_id INT NOT NULL,

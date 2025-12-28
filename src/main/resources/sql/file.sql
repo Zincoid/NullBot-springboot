@@ -1,9 +1,9 @@
 # CREATE DATABASE NullBot;
 # USE NullBot;
 
-drop table if exists file;
+drop table if exists `file`;
 
-create table file
+create table `file`
 (
     id int auto_increment primary key,
     file_name varchar(255) not null,

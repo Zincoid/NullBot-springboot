@@ -46,6 +46,6 @@ public class UserServiceImpl implements UserService
 
     @Override
     public void addUser(Long userId) {
-        userMapper.insert(new UserPO(userId, 1, 0, 100, 50));
+        userMapper.insert(new UserPO(userId, 0, 1, 0, 100, 50));
     }
 }
