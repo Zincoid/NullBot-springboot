@@ -38,11 +38,11 @@ public class CommandProcessor
         String commandType = embeddedEvent.getEvent().getCommandType();
         Command command = registry.getCommand(commandType);
         if (command != null) {
-            log.info("  [CommandProcessor-Embed] 正在处理内嵌 {} 命令...", commandType);
+            log.info("\t\t◉ [CommandProcessor-Embed] 正在处理内嵌 {} 命令...", commandType);
             chainProcess(embeddedEvent.getBot(), embeddedEvent.getEvent(), command);
-            log.info("  [CommandProcessor-Embed] 内嵌 {} 命令处理完毕", commandType);
+            log.info("\t\t◉ [CommandProcessor-Embed] 内嵌 {} 命令处理完毕", commandType);
         } else
-            log.info("  [CommandProcessor-Embed] 内嵌命令不存在");
+            log.info("\t\t◉ [CommandProcessor-Embed] 内嵌命令不存在");
     }
 
     @Async("ThreadExecutor")
