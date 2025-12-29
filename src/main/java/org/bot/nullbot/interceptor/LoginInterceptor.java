@@ -23,7 +23,9 @@ public class LoginInterceptor implements HandlerInterceptor
             "/nullbot/file/createDir",
             "/nullbot/file/delete",
             "/nullbot/file/rename",
-            "/nullbot/saying/delete"
+            "/nullbot/saying/delete",
+            "/nullbot/group/updateGroup",
+            "/nullbot/user/updateUser"
     );
 
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
