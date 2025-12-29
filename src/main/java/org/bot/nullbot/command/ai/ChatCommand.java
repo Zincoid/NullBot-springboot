@@ -8,8 +8,13 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
+import org.bot.nullbot.entity.EmbeddedCommandEvent;
 import org.bot.nullbot.util.MessageParseUtil;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @CommandMapping({"Chat", "聊天"})
 @Component
@@ -18,6 +23,7 @@ import org.springframework.stereotype.Component;
 public class ChatCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
@@ -28,8 +34,19 @@ public class ChatCommand implements Command
             Long groupId = groupMessageEvent.getGroupId();
             Integer messageId = groupMessageEvent.getMessageId();
             String response = deepSeekClient.chat(messageId, groupId, userId, userName, message);
-            bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[AI.Chat] 已回复: {}", response.replaceAll("\\R", " "));
+
+            // 内嵌指令执行
+            Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
+            while (m.find()) {
+                String command = m.group(1);  // 提取{}内的内容
+                eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command)));
+            }
+
+            // 删除所有命令明文
+            String processedResponse = response.replaceAll("\\{.*?}", "");
+
+            bot.sendGroupMsg(groupId, processedResponse, false);
+            log.info("\t\t\t\t├─[AI.Chat] 已回复: {}", processedResponse.replaceAll("\\R", " "));
         }else
             log.info("\t\t\t\t├─[AI.Chat] 未设计 - 非群消息事件响应方式");
     }

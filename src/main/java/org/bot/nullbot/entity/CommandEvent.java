@@ -43,6 +43,13 @@ public class CommandEvent<T extends Event>
         commandParameters = information.subList(1, information.size());
     }
 
+    public CommandEvent(T event, String command) {  // 用于AI调用指令时创建事件
+        this.event = event;
+        List<String> information = List.of(command.split(" "));
+        commandType = information.getFirst();
+        commandParameters = information.subList(1, information.size());
+    }
+
     private void parseGroupMessageEvent(GroupMessageEvent event, int i)
     {
         String command = event.getArrayMsg().get(i).getData().get("text").substring(1);
