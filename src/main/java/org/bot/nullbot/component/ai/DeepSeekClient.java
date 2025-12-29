@@ -31,7 +31,7 @@ public class DeepSeekClient
             .build();
 
     private Mode mode = Mode.Group;  // 会话模式
-    private Boolean thinking = false; // 思考模式
+    private boolean thinking = false;  // 思考模式
 
     public enum Mode {
         Group, Personal, Monitor;

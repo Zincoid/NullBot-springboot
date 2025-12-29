@@ -25,6 +25,13 @@ public class ChatCommand implements Command
     private final DeepSeekClient deepSeekClient;
     private final ApplicationEventPublisher eventPublisher;
 
+    private boolean embedding = true;  // 嵌入命令处理模式
+
+    public String changeEmbedding() {
+        embedding = !embedding;
+        return embedding ? "指令嵌入模式" : "非指令嵌入模式";
+    }
+
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
@@ -35,18 +42,19 @@ public class ChatCommand implements Command
             Integer messageId = groupMessageEvent.getMessageId();
             String response = deepSeekClient.chat(messageId, groupId, userId, userName, message);
 
-            // 内嵌指令执行
-            Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
-            while (m.find()) {
-                String command = m.group(1);  // 提取{}内的内容
-                eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command)));
+            if(embedding){
+                // 内嵌指令执行
+                Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
+                while (m.find()) {
+                    String command = m.group(1);  // 提取 {} 中的指令内容
+                    eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command)));
+                }
+                // 删除命令明文
+                response = response.replaceAll("\\{.*?}", "");
             }
 
-            // 删除所有命令明文
-            String processedResponse = response.replaceAll("\\{.*?}", "");
-
-            bot.sendGroupMsg(groupId, processedResponse, false);
-            log.info("\t\t\t\t├─[AI.Chat] 已回复: {}", processedResponse.replaceAll("\\R", " "));
+            bot.sendGroupMsg(groupId, response, false);
+            log.info("\t\t\t\t├─[AI.Chat] 已回复: {}", response.replaceAll("\\R", " "));
         }else
             log.info("\t\t\t\t├─[AI.Chat] 未设计 - 非群消息事件响应方式");
     }

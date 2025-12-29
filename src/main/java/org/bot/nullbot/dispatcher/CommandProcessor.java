@@ -32,7 +32,7 @@ public class CommandProcessor
             log.info("└─[CommandProcessor] 命令不存在");
     }
 
-    // 同步处理嵌入指令
+    // 监听事件 - 同步处理嵌入指令
     @EventListener
     public void processEmbeddedQQ(EmbeddedCommandEvent embeddedEvent) throws Exception {
         String commandType = embeddedEvent.getEvent().getCommandType();
