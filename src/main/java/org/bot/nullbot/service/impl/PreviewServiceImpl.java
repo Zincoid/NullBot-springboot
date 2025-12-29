@@ -29,6 +29,8 @@ public class PreviewServiceImpl implements PreviewService
 {
     private final FileMapper fileMapper;
 
+    // =================== WEB功能相关 ===================
+
     @Override
     @Transactional
     public ResponseEntity<Resource> preview(Integer  id, HttpServletRequest request) {

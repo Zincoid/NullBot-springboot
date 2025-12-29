@@ -1,5 +1,6 @@
 package org.bot.nullbot.service;
 
+import org.bot.nullbot.entity.page.UserPage;
 import org.bot.nullbot.entity.po.UserPO;
 
 public interface UserService
@@ -21,4 +22,8 @@ public interface UserService
     void setUserAccess(Long userId, int newAccess);
 
     void updateAllUserNames();
+
+    UserPage getUserByPage(Integer currentPage, Integer pageSize);
+
+    boolean updateUser(UserPO user);
 }

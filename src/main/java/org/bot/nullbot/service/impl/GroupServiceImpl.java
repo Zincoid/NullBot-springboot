@@ -1,9 +1,12 @@
 package org.bot.nullbot.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
 import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.entity.page.GroupPage;
 import org.bot.nullbot.entity.po.GroupPO;
 import org.bot.nullbot.mapper.GroupMapper;
 import org.bot.nullbot.service.GroupService;
@@ -20,6 +23,8 @@ public class GroupServiceImpl implements GroupService
     private final BotContainer botContainer;
 
     private final GroupMapper groupMapper;
+
+    // =================== 注册功能相关 ===================
 
     @Override
     public GroupPO getGroup(Long groupId) {
@@ -38,6 +43,8 @@ public class GroupServiceImpl implements GroupService
                 .set(GroupPO::getName, groupName));
     }
 
+    // =================== 限权功能相关 ===================
+
     @Override
     public boolean existGroup(Long groupId) {
         return groupMapper.selectById(groupId) != null;
@@ -55,6 +62,8 @@ public class GroupServiceImpl implements GroupService
                 .set(GroupPO::getAccess, newAccess));
     }
 
+    // =================== 数据库功能相关 ===================
+
     @Override
     public void updateAllGroupNames() {
         groupMapper.selectList(null).forEach(group -> {
@@ -62,5 +71,19 @@ public class GroupServiceImpl implements GroupService
             group.setName(bot.getGroupInfo(group.getId(), true).getData().getGroupName());
             groupMapper.updateById(group);
         });
+    }
+
+    // =================== WEB功能相关 ===================
+
+    @Override
+    public GroupPage getGroupByPage(Integer currentPage, Integer pageSize) {
+        Page<GroupPO> page = new Page<>(currentPage, pageSize);
+        Page<GroupPO> groupPage = groupMapper.selectPage(page, new LambdaQueryWrapper<GroupPO>().orderByAsc(GroupPO::getId));
+        return new GroupPage(groupPage.getRecords(), groupPage.getCurrent(), groupPage.getPages(), groupPage.getTotal(), groupPage.getSize());
+    }
+
+    @Override
+    public boolean updateGroup(GroupPO group) {
+        return groupMapper.updateById(group) == 1;
     }
 }

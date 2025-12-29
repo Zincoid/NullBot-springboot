@@ -13,6 +13,8 @@ public class AdminServiceImpl implements AdminService
 {
     private final AdminMapper adminMapper;
 
+    // =================== WEB功能相关 ===================
+
     @Override
     public boolean login(LoginDTO loginDTO) {
         AdminPO admin = adminMapper.selectById(loginDTO.getId());

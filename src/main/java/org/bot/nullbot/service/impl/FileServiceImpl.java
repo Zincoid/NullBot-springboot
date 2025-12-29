@@ -34,6 +34,8 @@ public class FileServiceImpl implements FileService
     private final FileMapper fileMapper;
     private final FileStorageConfig fileStorageConfig;
 
+    // =================== WEB功能相关 ===================
+
     @Override
     @Transactional
     public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir) {

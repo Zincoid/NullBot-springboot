@@ -1,9 +1,12 @@
 package org.bot.nullbot.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
 import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.entity.page.UserPage;
 import org.bot.nullbot.mapper.InventoryMapper;
 import org.bot.nullbot.mapper.ItemMapper;
 import org.bot.nullbot.mapper.UserMapper;
@@ -27,6 +30,8 @@ public class UserServiceImpl implements UserService
     private final ItemMapper itemMapper;
     private final InventoryMapper inventoryMapper;
 
+    // =================== BOT功能相关 ===================
+
     @Override
     @Transactional
     public void increaseDrawTimes(Long userId, int i) {
@@ -47,6 +52,8 @@ public class UserServiceImpl implements UserService
             return false;
     }
 
+    // =================== 注册功能相关 ===================
+
     @Override
     @Transactional
     public UserPO getUser(Long userId) {
@@ -65,6 +72,8 @@ public class UserServiceImpl implements UserService
                 .set(UserPO::getName, userName));
     }
 
+    // =================== 限权功能相关 ===================
+
     @Override
     public boolean existUser(Long userId) {
         return userMapper.selectById(userId) != null;
@@ -82,6 +91,8 @@ public class UserServiceImpl implements UserService
                 .set(UserPO::getAccess, newAccess));
     }
 
+    // =================== 数据库功能相关 ===================
+
     @Override
     public void updateAllUserNames() {
         userMapper.selectList(null).forEach(user -> {
@@ -89,5 +100,19 @@ public class UserServiceImpl implements UserService
             user.setName(bot.getStrangerInfo(user.getId(), true).getData().getNickname());
             userMapper.updateById(user);
         });
+    }
+
+    // =================== WEB功能相关 ===================
+
+    @Override
+    public UserPage getUserByPage(Integer currentPage, Integer pageSize) {
+        Page<UserPO> page = new Page<>(currentPage, pageSize);
+        Page<UserPO> userPage = userMapper.selectPage(page, new LambdaQueryWrapper<UserPO>().orderByAsc(UserPO::getId));
+        return new UserPage(userPage.getRecords(), userPage.getCurrent(), userPage.getPages(), userPage.getTotal(), userPage.getSize());
+    }
+
+    @Override
+    public boolean updateUser(UserPO user) {
+        return userMapper.updateById(user) == 1;
     }
 }

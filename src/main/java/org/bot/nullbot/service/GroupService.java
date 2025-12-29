@@ -1,5 +1,6 @@
 package org.bot.nullbot.service;
 
+import org.bot.nullbot.entity.page.GroupPage;
 import org.bot.nullbot.entity.po.GroupPO;
 
 public interface GroupService
@@ -17,4 +18,8 @@ public interface GroupService
     void setGroupAccess(Long groupId, int newAccess);
 
     void updateAllGroupNames();
+
+    GroupPage getGroupByPage(Integer currentPage, Integer pageSize);
+
+    boolean updateGroup(GroupPO group);
 }

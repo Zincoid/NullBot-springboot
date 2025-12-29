@@ -30,6 +30,8 @@ public class ItemServiceImpl implements ItemService
     private final ItemMapper itemMapper;
     private final InventoryMapper inventoryMapper;
 
+    // =================== BOT功能相关 ===================
+
     @Override
     @Transactional
     public ItemPO getItem(Integer itemId) {

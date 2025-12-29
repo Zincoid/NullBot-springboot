@@ -26,6 +26,8 @@ public class StatisticServiceImpl implements StatisticService
     private final StatisticMapper statisticMapper;
     private final StatisticDateMapper statisticDateMapper;
 
+    // =================== WEB功能相关 ===================
+
     @Override
     @Transactional
     public void increaseOnDate() {

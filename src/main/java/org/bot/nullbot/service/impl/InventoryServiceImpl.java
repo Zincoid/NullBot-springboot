@@ -23,6 +23,8 @@ public class InventoryServiceImpl implements InventoryService
     private final ItemMapper itemMapper;
     private final InventoryMapper inventoryMapper;
 
+    // =================== BOT功能相关 ===================
+
     @Override
     @Transactional
     public List<InventoryPO> getInventories(Long userId) {

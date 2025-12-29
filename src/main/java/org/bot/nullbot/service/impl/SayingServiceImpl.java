@@ -18,6 +18,8 @@ public class SayingServiceImpl implements SayingService
 {
     private final SayingMapper sayingMapper;
 
+    // =================== BOT功能相关 ===================
+
     @Override
     @Transactional
     public int insert(Long userId, String userName, String text) {
@@ -45,6 +47,8 @@ public class SayingServiceImpl implements SayingService
     public SayingPO getRand() {
         return sayingMapper.getRand();
     }
+
+    // =================== WEB功能相关 ===================
 
     @Override
     @Transactional
