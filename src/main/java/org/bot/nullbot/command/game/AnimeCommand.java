@@ -12,7 +12,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"Anime", "二次元"})
+@CommandMapping({"Anime", "二次元", "色图", "涩图"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -46,6 +46,6 @@ public class AnimeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Anime 命令\n功能: 随机二次元图\n限权: " + getAccess() + "\n格式: Anime\n中文命令: 二次元";
+        return "◉ Anime 命令\n功能: 随机二/三次元图\n限权: " + getAccess() + "\n格式: Anime\n中文命令: 二次元/色图/涩图";
     }
 }
