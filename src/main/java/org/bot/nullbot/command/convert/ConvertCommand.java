@@ -52,7 +52,14 @@ public class ConvertCommand implements Command
 
                 //  ID参数收集 或 AT收集
                 if (event.getCommandParameters().size() > 1) {
-                    long qqNumber = Long.parseLong(event.getCommandParameters().get(1));
+                    long qqNumber;
+                    try {
+                        qqNumber = Long.parseLong(event.getCommandParameters().get(1));
+                    } catch (NumberFormatException e) {
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌参数格式错误", false);
+                        log.info("\t\t\t\t├─[Convert] 参数格式错误");
+                        return;
+                    }
                     urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
                 }else{
                     List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());

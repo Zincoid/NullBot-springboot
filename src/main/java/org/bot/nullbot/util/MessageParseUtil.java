@@ -47,7 +47,7 @@ public class MessageParseUtil
                 case at -> {
                     long qq = Long.parseLong(data.get("qq"));
                     String nickname = bot.getStrangerInfo(qq, true).getData().getNickname();
-                    message.append("@").append(nickname);
+                    message.append("@").append(nickname).append("(").append(qq).append(")");
                 }
             }
         }
