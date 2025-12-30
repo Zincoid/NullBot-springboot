@@ -49,6 +49,12 @@ public class ShowInventoryCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ShowInventory 命令\n功能: 通过页码展示库存物品(默认第1页)\n限权: " + getAccess() + "\n格式: ShowInventory [可选: 页码]\n中文命令: 展示库存 或 库存";
+        return String.format("""
+                ◉ ShowInventory 命令
+                功能: 展示库存物品
+                限权: %d
+                格式: ShowInventory [可选: 页码]
+                中文命令: 展示库存/库存""", getAccess()
+        );
     }
 }

@@ -34,6 +34,12 @@ public class VideoListCommand  implements Command
 
     @Override
     public String getHelp() {
-        return "◉ VideoList 命令\n功能: 获取保存视频的列表\n限权: " + getAccess() + "\n格式: VideoList\n中文命令: 视频列表";
+        return String.format("""
+                ◉ VideoList 命令
+                功能: 获取保存视频列表
+                限权: %d
+                格式: VideoList
+                中文命令: 视频列表""", getAccess()
+        );
     }
 }

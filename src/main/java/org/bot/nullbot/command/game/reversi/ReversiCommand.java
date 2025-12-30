@@ -52,11 +52,13 @@ public class ReversiCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Reversi 命令\n" +
-                "功能: 匹配成功后发送黑白棋落子指令\n" +
-                "限权: " + getAccess() + "\n" +
-                "格式: Reversi [坐标]\n" +
-                "示例: Reversi D3\n" +
-                "中文命令: 黑白棋";
+        return String.format("""
+                ◉ Reversi 命令
+                功能: 匹配成功后发送黑白棋落子指令
+                限权: %d
+                格式: Reversi [坐标]
+                示例: Reversi D3
+                中文命令: 黑白棋""", getAccess()
+        );
     }
 }

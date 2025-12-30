@@ -44,6 +44,12 @@ public class SayingDeleteCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ SayingDelete 命令\n功能:  删除语录\n限权: " + getAccess() + "\n格式: SayingDelete [语录ID]\n中文命令: 删除语录";
+        return String.format("""
+                ◉ SayingDelete 命令
+                功能: 删除语录
+                限权: %d
+                格式: SayingDelete [语录ID]
+                中文命令: 删除语录""", getAccess()
+        );
     }
 }

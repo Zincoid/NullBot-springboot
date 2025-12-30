@@ -109,22 +109,26 @@ public class ConvertCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Convert 命令\n" +
-                "功能: P图!!!\n" +
-                "方式: RIP/PRTS/InversePRTS...更多开发中\n" +
-                "限权: " + getAccess() + "\n" +
-                "格式: [引用]Convert [处理方式]" +
-                "或 Convert [处理方式] [@任何人/QQ号]\n" +
-                "中文命令: 图像处理";
+        return String.format("""
+                ◉ Convert 命令
+                功能: P图!!!
+                方式: RIP/PRTS/InversePRTS...更多开发中
+                限权: %d
+                格式: [引用] Convert [处理方式]
+                或 Convert [处理方式] [@任何人/QQ号]
+                中文命令: 图像处理""", getAccess()
+        );
     }
 
     @Override
     public String getHelpForAI() {
-        return "◉ Convert 命令\n" +
-                "功能: P图!!!\n" +
-                "方式: RIP(安息)/PRTS(封锁)/InversePRTS(封锁反色)\n" +
-                "限权: " + getAccess() + "\n" +
-                "格式: Convert [方式] [QQ号]\n" +
-                "例如: Convert RIP 2660181154";
+        return String.format("""
+                ◉ Convert 命令
+                功能: P图!!!
+                方式: RIP(安息)/PRTS(封锁)/InversePRTS(封锁反色)
+                限权: %d
+                格式: Convert [方式] [QQ号]
+                示例: Convert RIP 2660181154""", getAccess()
+        );
     }
 }

@@ -46,6 +46,12 @@ public class CheckInCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ CheckIn 命令\n功能: 每日签到\n限权: " + getAccess() + "\n格式: CheckIn\n中文命令: 签到";
+        return String.format("""
+                ◉ CheckIn 命令
+                功能: 每日签到
+                限权: %d
+                格式: CheckIn
+                中文命令: 签到""", getAccess()
+        );
     }
 }

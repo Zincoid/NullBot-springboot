@@ -35,6 +35,12 @@ public class ThinkingModeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ThinkingMode 命令\n功能: 切换AI思考模式\n限权: " + getAccess() + "\n格式: ThinkingMode\n中文命令: 思考模式";
+        return String.format("""
+                ◉ ThinkingMode 命令
+                功能: 切换AI思考模式
+                限权: %d
+                格式: ThinkingMode
+                中文命令: 思考模式""",  getAccess()
+        );
     }
 }

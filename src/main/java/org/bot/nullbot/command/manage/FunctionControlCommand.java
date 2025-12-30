@@ -46,11 +46,24 @@ public class FunctionControlCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ FunctionControl 命令\n" +
-                "功能: 转换功能启用状态 只有Zincoid可以调用！！！\n" +
-                "限权: " + getAccess() + "\n" +
-                "格式: FunctionControl [功能控制标志]\n" +
-                "标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect\n" +
-                "中文命令: 功能控制";
+        return String.format("""
+                ◉ FunctionControl 命令
+                功能: 转换功能启用状态
+                限权: %d
+                格式: FunctionControl [功能控制标志]
+                标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect
+                中文命令: 功能控制""", getAccess()
+        );
+    }
+
+    @Override
+    public String getHelpForAI() {
+        return String.format("""
+                ◉ FunctionControl 命令
+                功能: 转换功能启用状态 只有Zincoid可以调用！！！
+                限权: %d
+                格式: FunctionControl [功能控制标志]
+                标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect""", getAccess()
+        );
     }
 }

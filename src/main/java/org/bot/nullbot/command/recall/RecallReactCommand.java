@@ -55,4 +55,6 @@ public class RecallReactCommand implements Command
     public Integer getAccess() {
         return -1;
     }
+
+    // 特殊命令 无帮助
 }

@@ -11,7 +11,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"ShowUserInfo", "展示用户信息", "用户信息"})
+@CommandMapping({"ShowUserInfo", "info", "展示用户信息", "用户信息"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -31,6 +31,12 @@ public class ShowUserInfoCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ShowUserInfo 命令\n功能: 展示用户信息\n限权: " + getAccess() + "\n格式: ShowUserInfo\n中文命令: 展示用户信息 或 用户信息";
+        return String.format("""
+                ◉ ShowUserInfo 命令
+                功能: 展示用户信息
+                限权: %d
+                格式: ShowUserInfo 或 info
+                中文命令: 展示用户信息/用户信息""", getAccess()
+        );
     }
 }

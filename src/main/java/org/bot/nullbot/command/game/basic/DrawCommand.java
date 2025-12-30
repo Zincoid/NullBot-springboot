@@ -77,6 +77,12 @@ public class DrawCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Draw 命令\n功能: 抽奖(可指定次数)\n限权: " + getAccess() + "\n格式: Draw [可选: 次数]\n中文命令: 抽奖";
+        return String.format("""
+                ◉ Draw 命令
+                功能: 抽奖(可指定次数)
+                限权: %d
+                格式: Draw [可选: 次数]
+                中文命令: 抽奖""", getAccess()
+        );
     }
 }

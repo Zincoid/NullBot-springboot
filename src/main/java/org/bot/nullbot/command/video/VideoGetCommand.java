@@ -45,6 +45,12 @@ public class VideoGetCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ VideoGet 命令\n功能: 获取保存的视频\n限权: " + getAccess() + "\n格式: VideoGet [文件名]\n中文命令: 获取视频";
+        return String.format("""
+                ◉ VideoGet 命令
+                功能: 获取保存的视频
+                限权: %d
+                格式: VideoGet [文件名]
+                中文命令: 获取视频""", getAccess()
+        );
     }
 }

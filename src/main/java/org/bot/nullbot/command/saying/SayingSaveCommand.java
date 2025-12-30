@@ -55,6 +55,12 @@ public class SayingSaveCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ SayingSave 命令\n功能: 保存语录\n限权: " + getAccess() + "\n格式: [引用文本]SayingSave\n中文命令: 保存语录";
+        return String.format("""
+                ◉ SayingSave 命令
+                功能: 保存语录
+                限权: %d
+                格式: [引用文本] SayingSave
+                中文命令: 保存语录""", getAccess()
+        );
     }
 }

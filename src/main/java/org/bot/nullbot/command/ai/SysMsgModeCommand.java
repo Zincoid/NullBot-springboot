@@ -42,6 +42,12 @@ public class SysMsgModeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ SysMsgMode 命令\n功能: 切换AI系统消息模式(并清空历史)\n限权: " + getAccess() + "\n格式: SysMsgMode\n中文命令: 系统消息模式";
+        return String.format("""
+                ◉ SysMsgMode 命令
+                功能: 切换AI系统消息模式(并清空历史)
+                限权: %d
+                格式: SysMsgMode
+                中文命令: 系统消息模式""", getAccess()
+        );
     }
 }

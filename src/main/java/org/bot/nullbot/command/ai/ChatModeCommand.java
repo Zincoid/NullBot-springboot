@@ -35,6 +35,13 @@ public class ChatModeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ChatMode 命令\n功能: 切换AI聊天模式\n限权: " + getAccess() + "\n格式: ChatMode\nAI模式: Group-群聊会话 Personal-个人会话 Monitor-监听群聊\n中文命令: 聊天模式";
+        return String.format("""
+                ◉ ChatMode 命令
+                功能: 切换AI聊天模式
+                限权: %d
+                格式: ChatMode
+                AI模式: Group-群聊会话 Personal-个人会话 Monitor-监听群聊
+                中文命令: 聊天模式""", getAccess()
+        );
     }
 }

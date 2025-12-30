@@ -14,7 +14,7 @@ import org.bot.nullbot.service.ItemService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"UseInventory", "使用库存"})
+@CommandMapping({"UseInventory", "使用库存", "使用物品"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -89,6 +89,12 @@ public class UseInventoryCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ UseInventory 命令\n功能: 使用库存物品\n限权: " + getAccess() + "\n格式: UseInventory [库存物品ID]\n中文命令: 使用库存";
+        return String.format("""
+                ◉ UseInventory 命令
+                功能: 使用库存的物品
+                限权: %d
+                格式: UseInventory [物品ID]
+                中文命令: 使用库存/使用物品""", getAccess()
+        );
     }
 }

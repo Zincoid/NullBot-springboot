@@ -63,6 +63,12 @@ public class VideoDeleteCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ VideoDel 命令\n功能: 删除保存的视频\n限权: " + getAccess() + "\n格式: VideoDel [文件名] 或 [引用视频]VideoDel\n中文命令: 删除视频";
+        return String.format("""
+                ◉ VideoDel 命令
+                功能: 删除保存的视频
+                限权: %d
+                格式: VideoDel [文件名] 或 [引用视频] VideoDel
+                中文命令: 删除视频""", getAccess()
+        );
     }
 }

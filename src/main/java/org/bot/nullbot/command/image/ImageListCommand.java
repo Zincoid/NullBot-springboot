@@ -35,6 +35,12 @@ public class ImageListCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ImageList 命令\n功能: 获取保存图片的列表\n限权: " + getAccess() + "\n格式: ImageList\n中文命令: 图片列表";
+        return String.format("""
+                ◉ ImageList 命令
+                功能: 获取保存图片列表
+                限权: %d
+                格式: ImageList
+                中文命令: 图片列表""", getAccess()
+        );
     }
 }

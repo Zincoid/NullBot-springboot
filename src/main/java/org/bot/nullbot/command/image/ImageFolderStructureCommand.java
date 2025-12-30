@@ -33,6 +33,12 @@ public class ImageFolderStructureCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ImageFolder 命令\n功能: 获取图片目录树结构\n限权: " + getAccess() + "\n格式: ImageFolder\n中文命令: 图片目录";
+        return String.format("""
+                ◉ ImageFolder 命令
+                功能: 获取图片目录树结构
+                限权: %d
+                格式: ImageFolder
+                中文命令: 图片目录""",  getAccess()
+        );
     }
 }

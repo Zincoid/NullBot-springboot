@@ -48,6 +48,12 @@ public class SysMsgSetCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ SysMsgSet 命令\n功能: 设置AI自定义消息模式下的系统消息(并清空历史)\n限权: " + getAccess() + "\n格式: SysMsgSet [提示词]\n中文命令: 系统消息设置";
+        return String.format("""
+                ◉ SysMsgSet 命令
+                功能: 设置AI自定义消息模式下的系统消息(并清空历史)
+                限权: %d
+                格式: SysMsgSet [提示词]
+                中文命令: 系统消息设置""", getAccess()
+        );
     }
 }

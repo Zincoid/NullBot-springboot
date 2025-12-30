@@ -46,27 +46,25 @@ public class LootingCommand implements Command
 
     @Override
     public String getHelp() {
-        return """
+        return String.format("""
                 ◉ Looting 命令
                 功能: 双人 PVPVE 非回合制摸金对抗
                 限权: %s
-
-                基础指令:
-                Looting 侦察
-                Looting 移动 [地点]
-                Looting 搜刮
-                Looting 攻击AI
-                Looting 攻击玩家
-                Looting 撤离
+                中文指令: 摸金
                 
-                中文指令:
-                摸金
-
+                基础指令:
+                - Looting 侦察
+                - Looting 移动 [地点]
+                - Looting 搜刮
+                - Looting 攻击AI
+                - Looting 攻击玩家
+                - Looting 撤离
+                
                 说明:
                 - 任意玩家行动(侦察除外)都会推进游戏刻
                 - AI 会在 Tick 中移动 / 攻击
-                - 25 Tick后未撤离则迷失，掉落全部物品
-                """.formatted(getAccess());
+                - 25 Tick后未撤离则迷失并掉落全部物品""", getAccess()
+        );
     }
 }
 

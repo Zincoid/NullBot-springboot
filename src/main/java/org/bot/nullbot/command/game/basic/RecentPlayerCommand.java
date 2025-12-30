@@ -25,7 +25,7 @@ public class RecentPlayerCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            List<Player> players = playerManager.getRecentPlayers(6);
+            List<Player> players = playerManager.getRecentPlayers(5);
             if (players != null && !players.isEmpty()) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 StringBuilder sb = new StringBuilder().append("[最近玩家] 当前状态-上次活跃");
@@ -44,6 +44,12 @@ public class RecentPlayerCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ RecentPlayer 命令\n功能: 获取最近活跃的6个玩家\n限权: " + getAccess() + "\n格式: RecentPlayer\n中文命令: 最近玩家";
+        return String.format("""
+                ◉ RecentPlayer 命令
+                功能: 展示最近活跃的5个玩家
+                限权: %d
+                格式: RecentPlayer
+                中文命令: 最近玩家""", getAccess()
+        );
     }
 }

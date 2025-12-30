@@ -40,6 +40,12 @@ public class FinishMatchCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ FinishMatch 命令\n功能: 强制终止自己正在进行的对局\n限权: " + getAccess() + "\n格式: FinishMatch\n中文命令: 终止对局";
+        return String.format("""
+                ◉ FinishMatch 命令
+                功能: 强制终止自身正在进行的对局
+                限权: %d
+                格式: FinishMatch
+                中文命令: 终止对局""", getAccess()
+        );
     }
 }

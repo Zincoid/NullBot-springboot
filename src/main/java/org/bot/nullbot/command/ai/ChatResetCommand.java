@@ -37,6 +37,12 @@ public class ChatResetCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ChatReset 命令\n功能: 重置AI聊天记忆\n限权: " + getAccess() + "\n格式: ChatReset\n中文命令: 重置聊天";
+        return String.format("""
+                ◉ ChatReset 命令
+                功能: 重置AI聊天记忆
+                限权: %d
+                格式: ChatReset
+                中文命令: 重置聊天""", getAccess()
+        );
     }
 }

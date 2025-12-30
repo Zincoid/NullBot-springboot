@@ -121,6 +121,12 @@ public class WifeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Wife 命令\n功能: 今日群友老婆/二次元老婆(每天均可抽一次) 无参数时为群友老婆 带参数时为二次元老婆\n限权: " + getAccess() + "\n格式: Wife [可选: 人物来源]\n中文命令: 今日老婆";
+        return String.format("""
+                ◉ Wife 命令
+                功能: 今日老婆(每天均可抽一次) 无参数时选群友老婆 带参数时选二次元老婆
+                限权: %d
+                格式: Wife [可选: 人物来源]
+                中文命令: 今日老婆""", getAccess()
+        );
     }
 }

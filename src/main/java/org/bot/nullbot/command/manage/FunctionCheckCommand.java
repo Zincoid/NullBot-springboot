@@ -30,6 +30,12 @@ public class FunctionCheckCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ FunctionCheck 命令\n功能: 检查功能启用状态\n限权: " + getAccess() + "\n格式: FunctionCheck\n中文命令: 功能检查";
+        return String.format("""
+                ◉ FunctionCheck 命令
+                功能: 检查功能启用状态
+                限权: %d
+                格式: FunctionCheck
+                中文命令: 功能检查""", getAccess()
+        );
     }
 }

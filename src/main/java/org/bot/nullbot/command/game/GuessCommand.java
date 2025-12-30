@@ -100,21 +100,25 @@ public class GuessCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Guess 命令\n" +
-                "功能: 猜角色(-f 放弃)\n" +
-                "限权: " + getAccess() + "\n" +
-                "格式: Guess [人物来源|人物名|-f]\n" +
-                "中文命令: 猜角色/猜";
+        return String.format("""
+                ◉ Guess 命令
+                功能: 猜角色
+                限权: %d
+                格式: Guess [人物来源|人物名|-f(放弃)]
+                中文命令: 猜角色/猜""", getAccess()
+        );
     }
 
     @Override
     public String getHelpForAI() {
-        return "◉ Guess 命令\n" +
-                "功能: 猜角色(-f 放弃)" +
-                "限权: " + getAccess() + "\n" +
-                "格式: Guess [人物来源|-f]\n" +
-                "人物来源: 明日方舟\n" +
-                "例如: Guess 明日方舟";
+        return String.format("""
+                ◉ Guess 命令
+                功能: 猜角色
+                限权: %d
+                格式: Guess [人物来源|-f(放弃)]
+                人物来源: 明日方舟
+                示例: Guess 明日方舟""", getAccess()
+        );
     }
 
     // public static String crop(String p, double r) throws Exception {

@@ -45,6 +45,12 @@ public class ImageGetCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ImageGet 命令\n功能: 获取保存的图片\n限权: " + getAccess() + "\n格式: ImageGet [文件名]\n中文命令: 获取图片";
+        return String.format("""
+                ◉ ImageGet 命令
+                功能: 获取保存的图片
+                限权: %d
+                格式: ImageGet [文件名]
+                中文命令: 获取图片""", getAccess()
+        );
     }
 }

@@ -58,22 +58,28 @@ public class GameSettingCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ GameSetting 命令\n" +
-                "功能: 设置游戏参数\n" +
-                "限权: " + getAccess() + "\n" +
-                "格式: GameSetting [游戏类型] [多参数]\n" +
-                "游戏参数: \nGuess(猜角色) - [Ratio] [Padding]\n" +
-                "中文命令: 游戏设置/设置";
+        return String.format("""
+                ◉ GameSetting 命令
+                功能: 游戏参数设置
+                限权: %d
+                格式: GameSetting [游戏类型] [参数...]
+                游戏参数:
+                Guess(猜角色) - [Ratio] [Padding]
+                中文命令: 游戏设置/设置""", getAccess()
+        );
     }
 
     @Override
     public String getHelpForAI() {
-        return "◉ GameSetting 命令\n" +
-                "功能: 设置游戏参数\n" +
-                "限权: " + getAccess() + "\n" +
-                "格式: GameSetting [游戏类型] [多参数]\n" +
-                "游戏参数: \nGuess(猜角色) - [Ratio(范围 0.05-0.3)] [Padding(范围 150-300)]" +
-                "例如: GameSetting Guess 0.15 300" +
-                "注: 针对Guess游戏 - Ratio越小越难 Padding越小越难";
+        return String.format("""
+                ◉ GameSetting 命令
+                功能: 设置游戏参数
+                限权: %d
+                格式: GameSetting [游戏类型] [参数...]
+                游戏参数:
+                Guess(猜角色) - [Ratio(范围 0.05-0.3)] [Padding(范围 150-300)]\
+                示例: GameSetting Guess 0.15 300
+                注意: 针对Guess游戏 - Ratio越小越难 Padding越小越难""", getAccess()
+        );
     }
 }

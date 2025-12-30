@@ -38,6 +38,12 @@ public class DatabaseUpdateCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ DatabaseUpdate 命令\n功能: 更新数据库\n限权: " + getAccess() + "\n格式: DatabaseUpdate\n中文命令: 数据库更新";
+        return String.format("""
+                ◉ DatabaseUpdate 命令
+                功能: 更新数据库
+                限权: %d
+                格式: DatabaseUpdate
+                中文命令: 数据库更新""", getAccess()
+        );
     }
 }

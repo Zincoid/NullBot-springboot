@@ -32,6 +32,12 @@ public class DisMatchCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ DisMatch 命令\n功能: 取消当前匹配\n限权: " + getAccess() + "\n格式: DisMatch\n中文命令: 取消匹配";
+        return String.format("""
+                ◉ DisMatch 命令
+                功能: 取消当前匹配
+                限权: %d
+                格式: DisMatch
+                中文命令: 取消匹配""", getAccess()
+        );
     }
 }

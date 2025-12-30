@@ -35,6 +35,12 @@ public class EmbeddingModeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ EmbeddingMode 命令\n功能: 切换AI回复时的嵌入指令处理模式(非自定义提示词模式时生效)\n限权: " + getAccess() + "\n格式: EmbeddingMode\n中文命令: 嵌入模式";
+        return String.format("""
+                ◉ EmbeddingMode 命令
+                功能: 切换AI回复时的嵌入指令处理模式(非自定义提示词模式时生效)
+                限权: %d
+                格式: EmbeddingMode
+                中文命令: 嵌入模式""", getAccess()
+        );
     }
 }

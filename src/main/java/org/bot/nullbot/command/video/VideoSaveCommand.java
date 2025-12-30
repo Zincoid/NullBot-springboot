@@ -58,6 +58,12 @@ public class VideoSaveCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ VideoSave 命令\n功能: 保存视频至本地\n限权: " + getAccess() + "\n格式: [引用视频]VideoSave\n中文命令: 保存视频";
+        return String.format("""
+                ◉ VideoSave 命令
+                功能: 保存视频至视频库
+                限权: %d
+                格式: [引用视频] VideoSave
+                中文命令: 保存视频""", getAccess()
+        );
     }
 }

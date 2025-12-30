@@ -45,6 +45,12 @@ public class RandomVideoCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ RandomVideo 或 vid 命令\n功能: 发送保存的随机视频\n限权: " + getAccess() + "\n格式: RandomVideo 或 vid\n中文命令: 随机视频 或 视频";
+        return String.format("""
+                ◉ RandomVideo 命令
+                功能: 发送保存的随机视频
+                限权: %d
+                格式: RandomVideo 或 vid
+                中文命令: 随机视频/视频""", getAccess()
+        );
     }
 }

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@CommandMapping({"ImageDelete", "删除图片"})
+@CommandMapping({"ImageDel", "删除图片"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -64,6 +64,13 @@ public class ImageDeleteCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ImageDelete 命令\n功能: 删除保存的图片\n限权: " + getAccess() + "\n格式: ImageDelete [文件名] 或 [引用图片]ImageDelete\n中文命令: 删除图片";
+        return String.format("""
+                ◉ ImageDel 命令
+                功能: 删除保存的图片
+                限权: %d
+                格式: ImageDel [文件名]
+                或 [引用图片] ImageDel
+                中文命令: 删除图片""", getAccess()
+        );
     }
 }

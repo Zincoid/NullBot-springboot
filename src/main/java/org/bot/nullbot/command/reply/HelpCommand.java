@@ -40,6 +40,12 @@ public class HelpCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Help 或 help 命令\n功能: 发送帮助菜单\n限权: " + getAccess() + "\n格式: Help 或 help\n中文命令: 帮助";
+        return String.format("""
+                ◉ Help 命令
+                功能: 发送帮助菜单
+                限权: %d
+                格式: Help 或 help
+                中文命令: 帮助""", getAccess()
+        );
     }
 }

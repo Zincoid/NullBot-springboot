@@ -46,6 +46,12 @@ public class RandomImageCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ RandomImage 或 img 命令\n功能: 发送保存的随机图片\n限权: " + getAccess() + "\n格式: RandomImage 或 img\n中文命令: 随机图片 或 图片";
+        return String.format("""
+                ◉ RandomImage 命令
+                功能: 发送保存的随机图片
+                限权: %d
+                格式: RandomImage 或 img
+                中文命令: 随机图片/图片""", getAccess()
+        );
     }
 }

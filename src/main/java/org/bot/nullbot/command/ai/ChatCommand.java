@@ -48,6 +48,12 @@ public class ChatCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Chat 命令\n功能: 与AI对话\n限权: " + getAccess() + "\n格式: Chat [对话内容] 或 @Null [对话内容] 或 戳一戳\n中文命令: 聊天";
+        return String.format("""
+                ◉ Chat 命令
+                功能: 与AI对话
+                限权: %d
+                格式: Chat [对话内容] 或 @Null [对话内容] 或 戳一戳
+                中文命令: 聊天""", getAccess()
+        );
     }
 }

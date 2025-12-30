@@ -46,6 +46,12 @@ public class AnimeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Anime 命令\n功能: 随机二/三次元图\n限权: " + getAccess() + "\n格式: Anime\n中文命令: 二次元/色图/涩图";
+        return String.format("""
+                ◉ Anime 命令
+                功能: 随机二/三次元图
+                限权: %d
+                格式: Anime
+                中文命令: 二次元/色图/涩图""", getAccess()
+        );
     }
 }

@@ -60,6 +60,12 @@ public class ImageSaveCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ ImageSave 命令\n功能: 保存图片至本地\n限权: " + getAccess() + "\n格式: [引用图片]ImageSave\n中文命令: 保存图片";
+        return String.format("""
+                ◉ ImageSave 命令
+                功能: 保存图片至图库
+                限权: %d
+                格式: [引用图片] ImageSave
+                中文命令: 保存图片""", getAccess()
+        );
     }
 }
