@@ -82,7 +82,6 @@ public class UseInventoryCommand implements Command
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ✅" + userName + "已使用" + item.getName() + "！", false);
             log.info("\t\t\t\t├─[Inventory.Use] 已使用");
-
         } else {
             log.info("\t\t\t\t├─[UseItem.Use] 未设计 非群消息事件响应方式");
         }
