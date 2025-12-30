@@ -60,10 +60,11 @@ public class FunctionControlCommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ FunctionControl 命令
-                功能: 转换功能启用状态 只有Zincoid可以调用！！！
+                功能: 转换功能启用状态
                 限权: %d
                 格式: FunctionControl [功能控制标志]
-                标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect""", getAccess()
+                标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect
+                注意: 只有Zincoid可以调用！！！""", getAccess()
         );
     }
 }

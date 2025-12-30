@@ -29,7 +29,7 @@ public class SysMsgModeCommand implements Command
             deepSeekClient.clearHistory(groupId, userId);
             String isCustom = sysMsgStorage.changeCustom();
 
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[系统消息模式] \uD83D\uDD04已切换至: " + isCustom, false);
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[系统消息] \uD83D\uDD04已切换至: " + isCustom, false);
             log.info("\t\t\t\t├─[AI.SysMsgMode] 系统消息模式已更新 - {}", isCustom);
         }else
             log.info("\t\t\t\t├─[AI.SysMsgMode] 未设计 - 非群消息事件响应方式");

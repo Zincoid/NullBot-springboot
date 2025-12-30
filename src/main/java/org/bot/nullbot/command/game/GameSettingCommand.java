@@ -77,7 +77,7 @@ public class GameSettingCommand implements Command
                 限权: %d
                 格式: GameSetting [游戏类型] [参数...]
                 游戏参数:
-                Guess(猜角色) - [Ratio(范围 0.05-0.3)] [Padding(范围 150-300)]\
+                Guess(猜角色) - [Ratio(范围 0.05-0.3)] [Padding(范围 150-300)]
                 示例: GameSetting Guess 0.15 300
                 注意: 针对Guess游戏 - Ratio越小越难 Padding越小越难""", getAccess()
         );
