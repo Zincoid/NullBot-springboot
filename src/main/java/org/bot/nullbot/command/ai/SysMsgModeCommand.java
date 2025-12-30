@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.storage.SysMsgStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.stereotype.Component;
@@ -16,12 +17,18 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class SysMsgModeCommand implements Command
 {
+    private final DeepSeekClient deepSeekClient;
     private final SysMsgStorage sysMsgStorage;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            Long userId = groupMessageEvent.getSender().getUserId();
+            Long groupId = groupMessageEvent.getGroupId();
+
+            deepSeekClient.clearHistory(groupId, userId);
             String isCustom = sysMsgStorage.changeCustom();
+
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[系统消息模式] \uD83D\uDD04已切换至: " + isCustom, false);
             log.info("\t\t\t\t├─[AI.SysMsgMode] 系统消息模式已更新 - {}", isCustom);
         }else
@@ -35,6 +42,6 @@ public class SysMsgModeCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ SysMsgMode 命令\n功能: 切换AI系统消息模式\n限权: " + getAccess() + "\n格式: SysMsgMode\n中文命令: 系统消息模式";
+        return "◉ SysMsgMode 命令\n功能: 切换AI系统消息模式(并清空历史)\n限权: " + getAccess() + "\n格式: SysMsgMode\n中文命令: 系统消息模式";
     }
 }
