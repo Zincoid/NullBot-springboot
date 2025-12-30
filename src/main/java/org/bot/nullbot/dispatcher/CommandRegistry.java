@@ -30,10 +30,10 @@ public class CommandRegistry
         return commandMap.get(commandName);
     }
 
-    public String getCommandHelps(List<String> commandList) {
+    public String getCommandHelps(Set<String> commandSet) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, Command> entry : commandMap.entrySet()) {
-            if(commandList.contains(entry.getKey())){
+            if(commandSet.contains(entry.getKey())){
                 sb.append(entry.getValue().getHelp()).append("\n");
             }
         }
