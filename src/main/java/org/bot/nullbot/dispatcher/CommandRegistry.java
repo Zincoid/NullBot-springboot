@@ -5,13 +5,17 @@ import org.bot.nullbot.command.Command;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class CommandRegistry
 {
     private final Map<String, Command> commandMap = new HashMap<>();
+    private static final List<String> AI_COMMAND_BLACK_LIST = Arrays.asList(
+            "Chat", "聊天",
+            "PokeReact",
+            "RecallReact"
+    );
 
     public CommandRegistry(ApplicationContext context)
     {
@@ -32,8 +36,10 @@ public class CommandRegistry
 
     public String getCommandSysMsg() {
         StringBuilder sb = new StringBuilder();
-        for (Command command : commandMap.values()) {
-            sb.append(command.getHelp()).append("\n");
+        for (Map.Entry<String, Command> entry : commandMap.entrySet()) {
+            if(!AI_COMMAND_BLACK_LIST.contains(entry.getKey())){
+                sb.append(entry.getValue().getHelp()).append("\n");
+            }
         }
         return sb.toString();
     }
