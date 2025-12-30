@@ -23,10 +23,15 @@ public class SysMsgSetCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            if (!sysMsgStorage.isCustom()){
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[自定义系统消息] ❌非自定义模式", false);
+                log.info("\t\t\t\t├─[AI.SysMsgSet] 非自定义模式");
+                return;
+            }
             if(!event.getCommandParameters().isEmpty()){
                 Long userId = groupMessageEvent.getSender().getUserId();
                 Long groupId = groupMessageEvent.getGroupId();
-                String systemMessage = event.getCommandParameters().getFirst();
+                String systemMessage = String.join(" ", event.getCommandParameters());
 
                 deepSeekClient.clearHistory(groupId, userId);
                 sysMsgStorage.setCustomMessage(systemMessage);
@@ -43,6 +48,6 @@ public class SysMsgSetCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ SysMsgSet 命令\n功能: 设置AI自定义消息模式下的系统消息(并清空历史)\n限权: " + getAccess() + "\n格式: SysMsgSet\n中文命令: 系统消息设置";
+        return "◉ SysMsgSet 命令\n功能: 设置AI自定义消息模式下的系统消息(并清空历史)\n限权: " + getAccess() + "\n格式: SysMsgSet [提示词]\n中文命令: 系统消息设置";
     }
 }
