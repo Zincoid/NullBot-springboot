@@ -25,7 +25,7 @@ public class SysMsgStorage
         return defaultMessage;
     }
 
-    public String changeMode() {
+    public String changeCustom() {
         isCustom = !isCustom;
         return isCustom ? "自定义" : "默认";
     }

@@ -130,10 +130,10 @@ public class DeepSeekClient
      */
     private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages) {
         String systemMessage = sysMsgStorage.getSysMsg();
-        if(embedding) {
+        if(!sysMsgStorage.isCustom() && embedding) {
             // 拼接指令提示词
             systemMessage = systemMessage +
-                    "\n你可以通过 {} 嵌入指令(嵌入到回复内容的末尾)，注意回复指令时也要说些什么，而且你说话的内容是在指令执行后发送的，具体指令用法举例如下：" +
+                    "\n你可以通过 {} 嵌入指令(嵌入到回复内容的末尾)，注意回复指令时也要说些什么(你的回复是在指令执行后发送的)，具体指令用法举例如下：" +
                     "\n有人想要看二次元图片或者色图，你可以使用 {Anime} 指令，这样就能自动调用发送图片的指令。" +
                     "\n所有可用指令列表如下：" +
                     "\n" + commandRegistry.getCommandHelps(AI_COMMAND_WHITE_LIST) +
