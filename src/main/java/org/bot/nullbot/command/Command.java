@@ -9,5 +9,7 @@ public interface Command
 
     default String getHelp() { return "暂无帮助文档"; }
 
+    default String getHelpForAI() { return getHelp(); }
+
     default Integer getAccess() { return 0; }
 }

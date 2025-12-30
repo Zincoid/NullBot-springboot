@@ -106,4 +106,14 @@ public class AccessSetCommand implements Command
                 格式: AccessSet [USER|GROUP] [ID] [限权等级]
                 中文命令: 限权设置""", getAccess());
     }
+
+    @Override
+    public String getHelpForAI() {
+        return String.format("""
+                ◉ AccessSet 命令
+                功能: 设置用户限权等级
+                限权: %s
+                格式: AccessSet [USER|GROUP] [ID] [限权等级]
+                例如: AccessSet USER 2660181154 2""", getAccess());
+    }
 }

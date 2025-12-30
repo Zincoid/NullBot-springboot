@@ -15,7 +15,7 @@ public class MessageParseUtil
     public static List<Long> extractAtQQNumbers(String message) {
         List<Long> qqNumbers = new ArrayList<>();
         // 正则表达式匹配 [CQ:at,qq=数字]
-        Pattern pattern = Pattern.compile("\\[CQ:at,qq=(\\d+)\\]");
+        Pattern pattern = Pattern.compile("\\[CQ:at,qq=(\\d+)]");
         Matcher matcher = pattern.matcher(message);
         while (matcher.find()) {
             try {

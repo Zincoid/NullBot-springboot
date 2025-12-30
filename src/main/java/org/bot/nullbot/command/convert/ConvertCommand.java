@@ -100,8 +100,18 @@ public class ConvertCommand implements Command
                 "功能: P图!!!\n" +
                 "方式: RIP/PRTS...更多开发中\n" +
                 "限权: " + getAccess() + "\n" +
-                "格式: [引用]ImageConvert [处理方式]" +
-                "或 ImageConvert [处理方式] [@任何人]\n" +
+                "格式: [引用]Convert [处理方式]" +
+                "或 Convert [处理方式] [@任何人]\n" +
                 "中文命令: 图像处理";
+    }
+
+    @Override
+    public String getHelpForAI() {
+        return "◉ Convert 命令\n" +
+                "功能: P图!!!\n" +
+                "方式: RIP/PRTS\n" +
+                "限权: " + getAccess() + "\n" +
+                "格式: Convert [方式] [CQ:at,qq=?]\n" +
+                "例如: Convert RIP [CQ:at,qq=2660181154]";
     }
 }

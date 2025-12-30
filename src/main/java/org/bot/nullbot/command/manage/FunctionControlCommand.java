@@ -46,6 +46,11 @@ public class FunctionControlCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ FunctionControl 命令\n功能: 转换功能启用状态\n限权: " + getAccess() + "\n格式: FunctionControl [功能控制标志]\n标志: enableImageCollect/enableKeywordDetect/enablePokeDetect/enableMessageCollect/enableRecallDetect\n中文命令: 功能控制";
+        return "◉ FunctionControl 命令\n" +
+                "功能: 转换功能启用状态\n" +
+                "限权: " + getAccess() + "\n" +
+                "格式: FunctionControl [功能控制标志]\n" +
+                "标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect\n" +
+                "中文命令: 功能控制";
     }
 }
