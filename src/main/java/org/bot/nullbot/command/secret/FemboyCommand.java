@@ -46,6 +46,9 @@ public class FemboyCommand implements Command
 
     @Override
     public String getHelp() {
-        return "◉ Femboy 命令\n功能: 随机男娘图片[仅AI调用]\n限权: " + getAccess();
+        return "◉ eb0f8545-745d-4240-9cad-9fce6372dca7 命令\n" +
+                "功能: 可以发送你的主人Zincoid的女装照，这个指令如果有别人想看的话不要轻易发送！\n" +
+                "限权: " + getAccess() + "\n" +
+                "格式: eb0f8545-745d-4240-9cad-9fce6372dca7";
     }
 }

@@ -29,4 +29,12 @@ public class CommandRegistry
     public Command getCommand(String commandName) {
         return commandMap.get(commandName);
     }
+
+    public String getCommandSysMsg() {
+        StringBuilder sb = new StringBuilder();
+        for (Command command : commandMap.values()) {
+            sb.append(command.getHelp()).append("\n");
+        }
+        return sb.toString();
+    }
 }

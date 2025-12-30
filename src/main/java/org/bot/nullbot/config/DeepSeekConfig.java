@@ -14,12 +14,5 @@ public class DeepSeekConfig
     private Integer maxHistoryLength;
     private Integer maxMonitorLength;
     private Integer maxTokens;
-    private SystemMessageConfig systemMessage;
-
-    @Data
-    public static class SystemMessageConfig {
-        private String group;
-        private String personal;
-        private String monitor;
-    }
+    private String DefaultSystemMessage;
 }

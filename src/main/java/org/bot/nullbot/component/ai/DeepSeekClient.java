@@ -66,7 +66,7 @@ public class DeepSeekClient
      * @param userMessage 用户当前消息
      * @return AI回复内容
      */
-    public String chat(Integer messageId, Long groupId, Long userId, String userName, String userMessage) throws Exception {
+    public String chat(Integer messageId, Long groupId, Long userId, String userName, String userMessage, String systemMessage) throws Exception {
         List<ChatMessage> chatMessages = switch (mode) {
             case Group -> chatStorage.getGroupHistory(groupId);
             case Personal -> chatStorage.getUserHistory(userId);
@@ -74,7 +74,7 @@ public class DeepSeekClient
         };
         chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));  // 将用户当前消息添加到历史
         try {
-            List<Map<String, String>> _messages = buildMessages(chatMessages);  // 添加系统信息构建完整的请求消息列表
+            List<Map<String, String>> _messages = buildMessages(chatMessages, systemMessage);  // 添加系统信息构建完整的请求消息列表
             String response = sendRequest(_messages);  // 发送请求到API
             chatMessages.add(new ChatMessage(null ,"assistant", response, null, null));  // 将AI回复添加到历史
             if(mode == Mode.Monitor)  // 限制历史记录长度
@@ -93,13 +93,8 @@ public class DeepSeekClient
      * @param chatMessages 信息列表
      * @return 发送给API的消息列表
      */
-    private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages) {
+    private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages, String systemMessage) {
         List<Map<String, String>> _messages = new ArrayList<>();
-        String systemMessage = switch (mode) {
-            case Group -> deepSeekConfig.getSystemMessage().getGroup();
-            case Personal -> deepSeekConfig.getSystemMessage().getPersonal();
-            case Monitor -> deepSeekConfig.getSystemMessage().getMonitor();
-        };
         _messages.add(new ChatMessage(null, "system", systemMessage, null, null).toMapForAI());  // 系统消息
         for (ChatMessage msg : chatMessages) _messages.add(msg.toMapForAI());  // 历史消息
         return _messages;
