@@ -16,28 +16,25 @@ public class UserBanCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (event.getCommandParameters().size() >= 2){
-                try {
-                    long userId = Long.parseLong(event.getCommandParameters().get(0));
-                    int time = Integer.parseInt(event.getCommandParameters().get(1));
-                    bot.setGroupBan(groupMessageEvent.getGroupId(), userId, time * 60);
-                    log.info("\t\t\t\t├─[User.Ban] 已执行禁言 - {} -> {} min", userId, time);
-                } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[用户禁言] ❌参数格式错误", false);
-                    log.info("\t\t\t\t├─[User.Ban] 参数格式错误");
-                }
-            }else {
+            if (event.getCommandParameters().size() < 2){
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[用户禁言] ❌参数不足", false);
                 log.info("\t\t\t\t├─[User.Ban] 参数不足");
+            }
+            try {
+                long userId = Long.parseLong(event.getCommandParameters().get(0));
+                int time = Integer.parseInt(event.getCommandParameters().get(1));
+                bot.setGroupBan(groupMessageEvent.getGroupId(), userId, time * 60);
+                log.info("\t\t\t\t├─[User.Ban] 已执行禁言 - {} -> {} min", userId, time);
+            } catch (NumberFormatException e) {
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[用户禁言] ❌参数格式错误", false);
+                log.info("\t\t\t\t├─[User.Ban] 参数格式错误");
             }
         }else
             log.info("\t\t\t\t├─[User.Ban] 无 - 非群消息事件响应方式");
     }
 
     @Override
-    public Integer getAccess() {
-        return 1;
-    }
+    public Integer getAccess() { return 1; }
 
     @Override
     public String getHelp() {

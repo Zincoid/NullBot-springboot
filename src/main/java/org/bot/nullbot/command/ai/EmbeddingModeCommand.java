@@ -29,9 +29,7 @@ public class EmbeddingModeCommand implements Command
     }
 
     @Override
-    public Integer getAccess() {
-        return 1;
-    }
+    public Integer getAccess() { return 1; }
 
     @Override
     public String getHelp() {

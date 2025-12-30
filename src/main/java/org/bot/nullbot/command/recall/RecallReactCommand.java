@@ -52,9 +52,7 @@ public class RecallReactCommand implements Command
 
     // 仅校验群限权
     @Override
-    public Integer getAccess() {
-        return -1;
-    }
+    public Integer getAccess() { return -1; }
 
     // 特殊命令 无帮助
 }

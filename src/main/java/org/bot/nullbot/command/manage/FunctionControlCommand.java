@@ -40,9 +40,7 @@ public class FunctionControlCommand implements Command
     }
 
     @Override
-    public Integer getAccess() {
-        return 2;
-    }
+    public Integer getAccess() { return 2; }
 
     @Override
     public String getHelp() {
