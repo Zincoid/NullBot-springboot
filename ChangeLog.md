@@ -133,5 +133,5 @@
 - AI聊天添加嵌入指令控制功能，添加自定义提示词控制功能；
 - 优化 DeepSeekClient 代码；
 - 优化 使用库存功能 代码；
-- 添加 AI专用的部分 GetHelpForAI 方法；
+- 添加 AI专用的部分 getHelpForAI 方法，并优化所有 getHelp 方法；
 - 优化 MessageParseUtil 工具类方法。

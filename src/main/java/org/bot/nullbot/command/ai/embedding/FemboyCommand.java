@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.secret;
+package org.bot.nullbot.command.ai.embedding;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
@@ -12,7 +12,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"eb0f8545-745d-4240-9cad-9fce6372dca7"})
+@CommandMapping({"eb0f8545-745d-4240-9cad-9fce6372dca7"})  // 加密 仅供AI嵌入调用
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -43,6 +43,8 @@ public class FemboyCommand implements Command
         }else
             log.info("\t\t\t\t├─[Femboy] 未设计 非群消息事件响应方式");
     }
+
+    // 加密命令 无用户帮助
 
     @Override
     public String getHelpForAI() {
