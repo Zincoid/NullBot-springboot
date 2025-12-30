@@ -42,20 +42,26 @@ public class ConvertCommand implements Command
 
                 List<String> urls = new ArrayList<>();
 
-                // 引用 收集
+                // 引用收集
                 ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
                 if (reply.getType() == MsgTypeEnum.reply) {
                     GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                     Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
                     urls.addAll(imageMap.values());
                 }
-                // AT 收集
-                List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
-                for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+
+                //  ID参数收集 或 AT收集
+                if (event.getCommandParameters().size() > 1) {
+                    long qqNumber = Long.parseLong(event.getCommandParameters().get(1));
+                    urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+                }else{
+                    List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+                    for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+                }
 
                 if (urls.isEmpty()) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌无引用图片或At消息", false);
-                    log.info("\t\t\t\t├─[Convert] 无引用图片或At消息");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌无引用图片或ID参数或At消息", false);
+                    log.info("\t\t\t\t├─[Convert] 无引用图片或ID参数或At消息");
                     return;
                 }
 
@@ -101,7 +107,7 @@ public class ConvertCommand implements Command
                 "方式: RIP/PRTS...更多开发中\n" +
                 "限权: " + getAccess() + "\n" +
                 "格式: [引用]Convert [处理方式]" +
-                "或 Convert [处理方式] [@任何人]\n" +
+                "或 Convert [处理方式] [@任何人/QQ号]\n" +
                 "中文命令: 图像处理";
     }
 
@@ -111,7 +117,7 @@ public class ConvertCommand implements Command
                 "功能: P图!!!\n" +
                 "方式: RIP/PRTS\n" +
                 "限权: " + getAccess() + "\n" +
-                "格式: Convert [方式] [CQ:at,qq=?]\n" +
-                "例如: Convert RIP [CQ:at,qq=2660181154]";
+                "格式: Convert [方式] [QQ号]\n" +
+                "例如: Convert RIP 2660181154";
     }
 }
