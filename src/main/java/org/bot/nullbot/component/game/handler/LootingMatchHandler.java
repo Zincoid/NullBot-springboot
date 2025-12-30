@@ -64,7 +64,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
         for(LootingPlayerState p : state.getPlayers().values()){
             if(p.isEvacuated())
                 for(ItemPO item : p.getBackpack())
-                    inventoryService.increaseInventory(p.getUserId(), item);
+                    inventoryService.increaseInventory(p.getUserId(), item.getId());
         }
         super.onMatchEnd(match);
     }

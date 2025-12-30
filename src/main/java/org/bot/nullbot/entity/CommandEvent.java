@@ -20,7 +20,7 @@ public class CommandEvent<T extends Event>
     private T event;
     private boolean authRequired = true;
 
-    public CommandEvent(T event) {
+    public CommandEvent(T event) {  // 基础 创建事件
         this.event = event;
         if(event instanceof GroupMessageEvent groupMessageEvent)
             parseGroupMessageEvent(groupMessageEvent, groupMessageEvent.getArrayMsg().getFirst().getType() == MsgTypeEnum.reply ? 1 : 0);
@@ -30,21 +30,15 @@ public class CommandEvent<T extends Event>
             parseGroupMsgDeleteNoticeEvent();
     }
 
-    public CommandEvent(String commandType, T event) {
+    public CommandEvent(String commandType, T event) {  // AT触发聊天 创建事件
         this.event = event;
         this.commandType = commandType;
         commandParameters = new ArrayList<>();
     }
 
-    public CommandEvent(String command) {  // 用于使用库存物品时创建事件
-        event = null;
-        List<String> information = List.of(command.split(" "));
-        commandType = information.getFirst();
-        commandParameters = information.subList(1, information.size());
-    }
-
-    public CommandEvent(T event, String command) {  // 用于AI调用指令时创建事件
+    public CommandEvent(T event, String command, boolean authRequired) {  // 嵌入调用指令 创建事件
         this.event = event;
+        this.authRequired = authRequired;
         List<String> information = List.of(command.split(" "));
         commandType = information.getFirst();
         commandParameters = information.subList(1, information.size());

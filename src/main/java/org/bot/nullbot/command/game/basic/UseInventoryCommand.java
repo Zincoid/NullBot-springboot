@@ -6,11 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.command.manage.UserBanCommand;
+import org.bot.nullbot.entity.EmbeddedCommandEvent;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.ItemService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"UseInventory", "使用库存"})
@@ -21,59 +22,70 @@ public class UseInventoryCommand implements Command
 {
     private final InventoryService inventoryService;
     private final ItemService itemService;
-    private final UserBanCommand userBanCommand;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if(!event.getCommandParameters().isEmpty()){
-                try {
-                    Integer itemId = Integer.valueOf(event.getCommandParameters().getFirst());
-                    if(itemService.isUsable(itemId)){
-                        ItemPO item = itemService.getItem(itemId);
-                        Long userId = groupMessageEvent.getUserId();
-                        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-                        String command = itemService.getCommandFromItemDesc(itemId);  // 冗余 暂时不想改
-                        if(command != null){
-                            if (inventoryService.decreaseInventory(groupMessageEvent.getUserId(), itemId)) {
-
-                                // 根据情况替换参数
-                                command = command.replace("userId", userId.toString());
-                                CommandEvent<GroupMessageEvent> commandEvent = new CommandEvent<>(command);
-
-                                if("UserBan".equals(commandEvent.getCommandType())){
-                                    commandEvent.setEvent(groupMessageEvent);
-                                    userBanCommand.execute(bot, commandEvent);
-                                }else{
-                                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌找不到指令！", false);
-                                    log.info("\t\t\t\t├─[Inventory.Use] 找不到指令");
-                                }
-
-                                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ✅" + userName + "已使用" + item.getName() + "！", false);
-                                log.info("\t\t\t\t├─[Inventory.Use] 已使用");
-                            }else{
-                                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌该物品数量不足", false);
-                                log.info("\t\t\t\t├─[Inventory.Use] 该物品数量不足");
-                            }
-                        }else{
-                            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌该物品暂未设计相关指令", false);
-                            log.info("\t\t\t\t├─[Inventory.Use] 该物品暂未设计相关指令");
-                        }
-                    }else{
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌该物品不可使用", false);
-                        log.info("\t\t\t\t├─[Inventory.Use] 该物品不可使用");
-                    }
-                } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌参数格式错误", false);
-                    log.info("\t\t\t\t├─[Inventory.Use] 参数格式错误");
-                }
-            }else{
+            // 参数检查
+            if (event.getCommandParameters().isEmpty()) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌参数不足", false);
                 log.info("\t\t\t\t├─[Inventory.Use] 参数不足");
+                return;
             }
 
-        }else
+            // 解析物品
+            Integer itemId;
+            try {
+                itemId = Integer.valueOf(event.getCommandParameters().getFirst());
+            } catch (NumberFormatException e) {
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌参数格式错误", false);
+                log.info("\t\t\t\t├─[Inventory.Use] 参数格式错误");
+                return;
+            }
+
+            // 可用检查
+            if (!itemService.isUsable(itemId)) {
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌该物品不可使用", false);
+                log.info("\t\t\t\t├─[Inventory.Use] 该物品不可使用");
+                return;
+            }
+
+            ItemPO item = itemService.getItem(itemId);
+            String command = itemService.getCommandFromItemDesc(itemId);
+
+            // 命令检查
+            if (command == null) {
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌该物品暂未设计相关指令", false);
+                log.info("\t\t\t\t├─[Inventory.Use] 该物品暂未设计相关指令");
+                return;
+            }
+
+            Long userId = groupMessageEvent.getUserId();
+
+            // 库存检查
+            if (!inventoryService.decreaseInventory(userId, itemId)) {
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌该物品数量不足", false);
+                log.info("\t\t\t\t├─[Inventory.Use] 该物品数量不足");
+                return;
+            }
+
+            // 替换参数
+            if ("UserBan".equals(command.split(" ")[0])) {
+                command = command.replace("userId", userId.toString());
+            }
+
+            // 执行命令
+            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, false)));
+
+            // 发送通知
+            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ✅" + userName + "已使用" + item.getName() + "！", false);
+            log.info("\t\t\t\t├─[Inventory.Use] 已使用");
+
+        } else {
             log.info("\t\t\t\t├─[UseItem.Use] 未设计 非群消息事件响应方式");
+        }
     }
 
     @Override

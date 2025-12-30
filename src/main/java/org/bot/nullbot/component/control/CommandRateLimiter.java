@@ -39,7 +39,7 @@ public class CommandRateLimiter
             return true;
         }
         if(commandEvent.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if(isSpam(groupMessageEvent.getGroupId(), 1000)){
+            if(isSpam(groupMessageEvent.getGroupId(), 500)){
                 return false;
             }
             String key = switch (rateLimitConfig.getScope()) {
@@ -51,7 +51,7 @@ public class CommandRateLimiter
             Bucket bucket = resolveBucket(key);
             return bucket.tryConsume(1);
         }else if(commandEvent.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent){
-            if(isSpam(pokeNoticeEvent.getGroupId(), 1000)){
+            if(isSpam(pokeNoticeEvent.getGroupId(), 500)){
                 return false;
             }
             String key = switch (rateLimitConfig.getScope()) {

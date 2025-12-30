@@ -12,7 +12,7 @@ public interface InventoryService
 
     InventoryPage getInventoriesPage(Long userId, long p, long size);
 
-    boolean increaseInventory(Long userId, ItemPO item);
+    boolean increaseInventory(Long userId, Integer itemId);
 
     boolean decreaseInventory(Long userId, Integer itemId);
 }

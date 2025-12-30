@@ -39,6 +39,7 @@ public class CommandProcessor
         Command command = registry.getCommand(commandType);
         if (command != null) {
             log.info("\t\t◉ [CommandProcessor-Embed] 正在处理内嵌 {} 命令...", commandType);
+            Thread.sleep(500);  // 防止触发间隔限制
             chainProcess(embeddedEvent.getBot(), embeddedEvent.getEvent(), command);
             log.info("\t\t◉ [CommandProcessor-Embed] 内嵌 {} 命令处理完毕", commandType);
         } else

@@ -140,7 +140,7 @@ public class DeepSeekClient
                 // 提取执行指令
                 while (m.find()) {
                     String command = m.group(1);
-                    eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command)));
+                    eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, true)));
                 }
                 // 删除命令明文
                 response = response.replaceAll("\\{.*?}", "");
