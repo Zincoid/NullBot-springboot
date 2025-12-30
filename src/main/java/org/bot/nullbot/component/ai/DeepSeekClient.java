@@ -56,6 +56,7 @@ public class DeepSeekClient
     private Scope scope = Scope.Group;  // 会话范围模式
     private boolean thinking = false;  // 深度思考模式
     private boolean embedding = true;  // 嵌入命令模式
+    private boolean embeddingAuth = false;  // 嵌入限权验证
 
     public DeepSeekClient(
             DeepSeekConfig deepSeekConfig,
@@ -138,7 +139,7 @@ public class DeepSeekClient
                 // 提取执行指令
                 while (m.find()) {
                     String command = m.group(1);
-                    eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, true)));
+                    eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, embeddingAuth)));
                 }
                 // 删除命令明文
                 response = response.replaceAll("\\{.*?}", "");

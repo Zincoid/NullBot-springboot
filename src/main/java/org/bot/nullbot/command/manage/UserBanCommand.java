@@ -42,7 +42,7 @@ public class UserBanCommand implements Command
     @Override
     public String getHelp() {
         return "◉ UserBan 命令\n" +
-                "功能: 用户禁言(时长设置为0则解除禁言)\n" +
+                "功能: 用户禁言(时长设置为0则解除禁言) 只有Zincoid可以调用！！！\n" +
                 "限权: " + getAccess() + "\n" +
                 "格式: UserBan [QQ号] [时长(分钟)]\n" +
                 "中文命令: 禁言";
