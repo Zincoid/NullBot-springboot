@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.stereotype.Component;
 
@@ -15,12 +16,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class EmbeddingModeCommand implements Command
 {
-    private final ChatCommand chatCommand;
+    private final DeepSeekClient deepSeekClient;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String embedding = chatCommand.changeEmbedding();
+            String embedding = deepSeekClient.changeEmbedding();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[嵌入模式] \uD83D\uDD04已切换至: " + embedding, false);
             log.info("\t\t\t\t├─[AI.EmbeddingMode] 嵌入模式已切换 - {}", embedding);
         }else

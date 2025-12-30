@@ -20,7 +20,6 @@ import java.util.Objects;
 public class PokeReactCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
-    private final SysMsgStorage sysMsgStorage;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
@@ -29,7 +28,7 @@ public class PokeReactCommand implements Command
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             Long groupId = pokeNoticeEvent.getGroupId();
             if(Objects.equals(pokeNoticeEvent.getTargetId(), pokeNoticeEvent.getSelfId())){
-                String response = deepSeekClient.chat(null, groupId, userId, userName, "揉了你一下", sysMsgStorage.getSysMsg());
+                String response = deepSeekClient.chat(null, groupId, userId, userName, "揉了你一下", bot, event);
                 bot.sendGroupMsg(groupId, response, false);
                 log.info("\t\t\t\t├─[AI.PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", " "));
             }

@@ -21,9 +21,9 @@ public class ChatModeCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String mode = deepSeekClient.changeMode();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[聊天模式] \uD83D\uDD04已切换至: " + mode, false);
-            log.info("\t\t\t\t├─[AI.ChatMode] 聊天模式已切换 - {}", mode);
+            String scope = deepSeekClient.changeScope();
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[聊天模式] \uD83D\uDD04已切换至: " + scope, false);
+            log.info("\t\t\t\t├─[AI.ChatMode] 聊天模式已切换 - {}", scope);
         }else
             log.info("\t\t\t\t├─[AI.ChatMode] 未设计 - 非群消息事件响应方式");
     }
