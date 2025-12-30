@@ -111,7 +111,7 @@ public class ConvertCommand implements Command
     public String getHelp() {
         return "◉ Convert 命令\n" +
                 "功能: P图!!!\n" +
-                "方式: RIP/PRTS...更多开发中\n" +
+                "方式: RIP/PRTS/InversePRTS...更多开发中\n" +
                 "限权: " + getAccess() + "\n" +
                 "格式: [引用]Convert [处理方式]" +
                 "或 Convert [处理方式] [@任何人/QQ号]\n" +
@@ -122,7 +122,7 @@ public class ConvertCommand implements Command
     public String getHelpForAI() {
         return "◉ Convert 命令\n" +
                 "功能: P图!!!\n" +
-                "方式: RIP/PRTS\n" +
+                "方式: RIP(安息)/PRTS(封锁)/InversePRTS(封锁反色)\n" +
                 "限权: " + getAccess() + "\n" +
                 "格式: Convert [方式] [QQ号]\n" +
                 "例如: Convert RIP 2660181154";
