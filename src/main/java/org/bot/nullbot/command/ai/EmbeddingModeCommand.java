@@ -10,7 +10,7 @@ import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"EmbeddingMode", "嵌入模式"})
+@CommandMapping({"EmbeddingMode", "嵌入模式", "指令模式"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -38,7 +38,7 @@ public class EmbeddingModeCommand implements Command
                 功能: 切换AI回复时的嵌入指令处理模式(非自定义提示词模式时生效)
                 限权: %d
                 格式: EmbeddingMode
-                中文命令: 嵌入模式""", getAccess()
+                中文命令: 嵌入模式/指令模式""", getAccess()
         );
     }
 }

@@ -10,7 +10,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"SayingDelete", "删除语录"})
+@CommandMapping({"SayingDel", "删除语录"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
