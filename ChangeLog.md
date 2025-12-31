@@ -141,4 +141,5 @@
 - 优化 AI历史记录和获取方法；
 - 添加 ChatStorage/DeepSeekClient 锁机制，优化AI调用chat方法的并发安全性；
 - 添加 DeepSeekClient 防注入/篡改机制；
+- 添加 AI专用嵌入指令 私信通知指令；
 - 其他代码优化。
