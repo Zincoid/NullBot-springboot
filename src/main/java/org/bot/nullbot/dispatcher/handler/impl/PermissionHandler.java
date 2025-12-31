@@ -76,6 +76,7 @@ public class PermissionHandler implements Handler
             int groupAccess = groupService.getGroupAccess(groupMsgDeleteNoticeEvent.getGroupId());
             if(groupAccess >= commandAccess){
                 log.info("\t\t├─[PermissionHandler] 群限权满足");
+                chain.doHandle(bot, event, command);
             }else{
                 log.info("\t\t├─[PermissionHandler] 群限权不足");
             }
