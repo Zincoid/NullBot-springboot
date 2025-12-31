@@ -136,7 +136,7 @@
 - 添加 AI专用的部分 getHelpForAI 方法；
 - 优化 MessageParseUtil 工具类方法。
 
-## 2025.12.31 - v1.1.0
+### 2025.12.31 - v1.0.4
 - 优化所有 getHelp 方法；
 - 优化 AI历史记录和获取方法；
 - 添加 ChatStorage/DeepSeekClient 锁机制，优化AI调用chat方法的并发安全性；
@@ -144,7 +144,6 @@
 - 添加 AI专用嵌入指令 私信通知指令；
 - 其他代码优化。
 
-### 2026.1.1
+## 2026.1.1 - v1.1.0
 - 修复 CommandListener 检测引用命令时数组越界的漏洞；
 - 改用 Java21 虚拟线程。
-
