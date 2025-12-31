@@ -1,7 +1,6 @@
 package org.bot.nullbot.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,24 +16,22 @@ import java.util.concurrent.Executors;
 @Component
 @EnableAsync
 @Configuration
+@Slf4j
 public class AsyncConfig implements AsyncConfigurer
 {
-    private static final Logger logger = LoggerFactory.getLogger(AsyncConfig.class);
-
-
     @Bean(name = "ThreadExecutor")
     public Executor ThreadExecutor() {
         // Java 21+：使用虚拟线程（正式功能）
-        // logger.info("Java 21+ 环境：使用虚拟线程执行器");
-        // return Executors.newVirtualThreadPerTaskExecutor();
+        log.info("Java 21+ 环境：使用虚拟线程执行器");
+        return Executors.newVirtualThreadPerTaskExecutor();
 
         // Java 19-20：使用虚拟线程（预览功能）
-        // logger.info("Java 19-20 环境：使用虚拟线程执行器（预览功能）");
+        // log.info("Java 19-20 环境：使用虚拟线程执行器（预览功能）");
         // return createVirtualThreadExecutorWithPreview();
 
         // Java 8-18：使用传统线程池
-        logger.info("Java 8-18 环境：使用传统线程池（虚拟线程不可用）");
-        return createTraditionalThreadPool();
+        // log.info("Java 8-18 环境：使用传统线程池（虚拟线程不可用）");
+        // return createTraditionalThreadPool();
     }
 
     /**
@@ -69,7 +66,7 @@ public class AsyncConfig implements AsyncConfigurer
             Method method = Executors.class.getMethod("newVirtualThreadPerTaskExecutor");
             return (Executor) method.invoke(null);
         } catch (Exception e) {
-            logger.warn("使用传统线程池", e);
+            log.warn("使用传统线程池", e);
             return createTraditionalThreadPool();
         }
     }
@@ -77,9 +74,9 @@ public class AsyncConfig implements AsyncConfigurer
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
         return (throwable, method, obj) -> {
-            logger.error("Async method {} threw an exception", method.getName(), throwable);
+            log.error("Async method {} threw an exception", method.getName(), throwable);
             for (Object param : obj) {
-                logger.info("Parameter value - {}", param);
+                log.info("Parameter value - {}", param);
             }
         };
     }
