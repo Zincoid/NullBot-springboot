@@ -110,7 +110,7 @@
 
 # Released
 
-### 2025.12.26 - v1.0.0
+## 2025.12.26 - v1.0.0
 - 使用 Nginx 将 前端Vue工程 部署至服务器；
 - 修复 传输大文件报错413/Network Error的问题：删除前端上传方法中对Content-Type的指定，修改Nginx和Tomcat的文件大小限制，但是发现传JAR文件会报502不知道为什么；
 - 添加 后台管理系统 - 访客登录功能；
@@ -136,8 +136,9 @@
 - 添加 AI专用的部分 getHelpForAI 方法；
 - 优化 MessageParseUtil 工具类方法。
 
-### 2025.12.31 - v1.1.0
+## 2025.12.31 - v1.1.0
 - 优化所有 getHelp 方法；
 - 优化 AI历史记录和获取方法；
 - 添加 ChatStorage/DeepSeekClient 锁机制，优化AI调用chat方法的并发安全性；
+- 添加 DeepSeekClient 防注入/篡改机制；
 - 其他代码优化。
