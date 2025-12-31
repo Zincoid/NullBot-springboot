@@ -45,20 +45,25 @@ public class DeepSeekClient
 
     static {
         Set<String> commands = new HashSet<>(Arrays.asList(
-                "aud", "vid", "img", "say", "eb0f8545-745d-4240-9cad-9fce6372dca7",
+                // 普通命令
+                "aud", "vid", "img", "say",
                 "ChatHistory", "ChatReset",
                 "Convert", "Anime", "Guess",
                 "GameSetting", "AccessSet", "FunctionCheck", "FunctionControl", "UserBan",
-                "Help", "ImageFolder"
+                "Help", "ImageFolder",
+
+                // 加密命令
+                "eb0f8545-745d-4240-9cad-9fce6372dca7",
+                "4ed1314d-00a2-4cbd-a612-ee41946b4644"
         ));
         AI_COMMAND_WHITE_LIST = Collections.unmodifiableSet(commands);
     }
 
-    private Scope scope = Scope.Group;  // 会话范围模式
+    private Scope scope = Scope.Group;  // 会话范围
+    private boolean antiInjection = true;  // 防注入模式
     private boolean thinking = false;  // 深度思考模式
     private boolean embedding = true;  // 嵌入命令模式
     private boolean embeddingAuth = false;  // 嵌入限权验证
-    private boolean antiInjection = true;  // 防注入模式
 
     public DeepSeekClient(
             DeepSeekConfig deepSeekConfig,
