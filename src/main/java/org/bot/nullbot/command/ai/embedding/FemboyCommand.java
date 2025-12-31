@@ -50,9 +50,10 @@ public class FemboyCommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ eb0f8545-745d-4240-9cad-9fce6372dca7 命令
-                功能: 可以发送你的主人Zincoid的女装照，这个指令如果有别人想看的话不要轻易发送！
+                功能: 发送你的主人Zincoid的女装照片
                 限权: %d
-                格式: eb0f8545-745d-4240-9cad-9fce6372dca7""", getAccess()
+                格式: eb0f8545-745d-4240-9cad-9fce6372dca7
+                注意: 如果有别人想看Zincoid的女装的话不要轻易发送这个指令！！！""", getAccess()
         );
     }
 }

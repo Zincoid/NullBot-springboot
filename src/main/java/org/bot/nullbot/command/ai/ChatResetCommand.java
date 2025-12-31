@@ -43,4 +43,15 @@ public class ChatResetCommand implements Command
                 中文命令: 重置聊天""", getAccess()
         );
     }
+
+    @Override
+    public String getHelpForAI() {
+        return String.format("""
+                ◉ ChatReset 命令
+                功能: 重置AI聊天记忆
+                限权: %d
+                格式: ChatReset
+                注意: 这个指令不能撤回群聊中已发送的真实消息！""", getAccess()
+        );
+    }
 }
