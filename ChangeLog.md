@@ -139,4 +139,5 @@
 ### 2025.12.31 - v1.1.0
 - 优化所有 getHelp 方法；
 - 优化 AI历史记录和获取方法；
+- 添加 ChatStorage/DeepSeekClient 锁机制，优化AI调用chat方法的并发安全性；
 - 其他代码优化。

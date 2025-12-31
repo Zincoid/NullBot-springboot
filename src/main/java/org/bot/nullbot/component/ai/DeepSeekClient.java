@@ -6,6 +6,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -111,32 +112,40 @@ public class DeepSeekClient
      * @param event 命令事件实体 (用于执行嵌入命令)
      * @return AI回复内容
      */
-    public String chat(Integer messageId, Long groupId, Long userId, String userName, String userMessage, Bot bot, CommandEvent<?> event) throws Exception {
-        List<ChatMessage> chatMessages = switch (scope) {
-            case Group -> chatStorage.getGroupHistory(groupId);
-            case Personal -> chatStorage.getUserHistory(userId);
-            case Monitor -> chatStorage.getMonitorHistory(groupId);
+    public String chat(Integer messageId, Long groupId, Long userId, String userName,
+                       String userMessage, Bot bot, CommandEvent<?> event) throws Exception
+    {
+        ReentrantLock lock = switch (scope) {
+            case Group, Monitor -> chatStorage.getGroupLock(groupId);
+            case Personal -> chatStorage.getUserLock(userId);
         };
+        lock.lock();  // 锁定历史存储
 
-        // 将用户当前消息添加到历史
-        chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
-
+        List<ChatMessage> chatMessages = List.of();
         try {
+            // 获取历史聊天记录
+            chatMessages = switch (scope) {
+                case Group -> chatStorage.getGroupHistory(groupId);
+                case Personal -> chatStorage.getUserHistory(userId);
+                case Monitor -> chatStorage.getMonitorHistory(groupId);
+            };
+            // 将用户当前消息添加到历史
+            chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
             // 构建完整消息列表
             List<Map<String, String>> _messages = buildMessages(chatMessages);
             // 发送请求到API
             String response = sendRequest(_messages);
             // 记录AI回复至存储
-            chatMessages.add(new ChatMessage(null ,"assistant", response, null, null));
+            chatMessages.add(new ChatMessage(null, "assistant", response, null, null));
 
             // 限制历史记录长度
-            if(scope == Scope.Monitor)
+            if (scope == Scope.Monitor)
                 chatStorage.trimHistory(chatMessages, deepSeekConfig.getMaxMonitorLength());
             else
                 chatStorage.trimHistory(chatMessages, deepSeekConfig.getMaxHistoryLength());
 
             // 内嵌指令执行
-            if(!sysMsgStorage.isCustom() && embedding){
+            if (!sysMsgStorage.isCustom() && embedding) {
                 Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
                 // 提取执行指令
                 while (m.find()) {
@@ -149,8 +158,10 @@ public class DeepSeekClient
 
             return response;
         } catch (Exception e) {
-            chatMessages.removeLast();  // 如果请求失败, 移除刚才添加的用户消息
+            chatMessages.removeLast();  // 如果请求失败移除刚才添加的用户消息
             throw e;
+        } finally {
+            lock.unlock();  // 解锁历史存储
         }
     }
 

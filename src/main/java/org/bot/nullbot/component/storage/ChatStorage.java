@@ -8,14 +8,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Data
 @Component
 public class ChatStorage
 {
+    private final ConcurrentHashMap<Long, ReentrantLock> groupLocks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, ReentrantLock> userLocks = new ConcurrentHashMap<>();
+
     private final Map<Long, List<ChatMessage>> userHistories = new ConcurrentHashMap<>();
     private final Map<Long, List<ChatMessage>> groupHistories = new ConcurrentHashMap<>();
     private final Map<Long, List<ChatMessage>> monitorHistories = new ConcurrentHashMap<>();
+
+    public ReentrantLock getGroupLock(Long groupId) {
+        return groupLocks.computeIfAbsent(groupId, k -> new ReentrantLock(true)); // 群组公平锁
+    }
+
+    public ReentrantLock getUserLock(Long userId) {
+        return userLocks.computeIfAbsent(userId, k -> new ReentrantLock(true)); // 用户公平锁
+    }
 
     public List<ChatMessage> getUserHistory(Long userId) { return userHistories.computeIfAbsent(userId, k -> new ArrayList<>()); }
     public List<ChatMessage> getGroupHistory(Long groupId) { return groupHistories.computeIfAbsent(groupId, k -> new ArrayList<>()); }
