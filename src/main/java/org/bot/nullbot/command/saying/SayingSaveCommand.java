@@ -31,7 +31,7 @@ public class SayingSaveCommand implements Command
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                 long userId = Long.parseLong(replyMsg.getSender().getUserId());
                 String userName = replyMsg.getSender().getNickname();
-                String text = MessageParseUtil.parseRawSaying(replyMsg.getRawMessage());
+                String text = MessageParseUtil.parseRawSaying(bot, replyMsg.getRawMessage());
                 if(text != null) {
                     if(!text.trim().isEmpty()){
                         int inserted = sayingService.insert(userId, userName, text);

@@ -1,5 +1,7 @@
 package org.bot.nullbot;
 
+import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import jakarta.annotation.Resource;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
@@ -8,8 +10,10 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.svg.SvgCanvas;
 import org.bot.nullbot.util.FileUtil;
+import org.bot.nullbot.util.MessageParseUtil;
 import org.bot.nullbot.util.ResourceLoader;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
@@ -20,12 +24,23 @@ import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class QqBotApplicationTests {
+    // @Value("${nullbot.bot-id}")
+    // private Long botId;
+    // @Resource
+    // private BotContainer botContainer;
     @Resource
     private CommandProcessor commandProcessor;
     @Resource
     Matcher matcher;
     @Resource
     TicTacToeGameLogic ticTacToeGameLogic;
+
+    // @Test
+    // void parseTest() throws IOException {
+    //     Bot bot = botContainer.robots.get(botId);
+    //     System.out.println(bot.getStrangerInfo(2660181154L, true).getData().getNickname());
+    //     System.out.println(MessageParseUtil.parseRawSaying(bot, "[CQ:at,qq=2660181154] 你好！"));
+    // }
 
     @Test
     void fileTest() throws IOException {
