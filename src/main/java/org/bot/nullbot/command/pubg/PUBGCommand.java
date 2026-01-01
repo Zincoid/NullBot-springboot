@@ -33,7 +33,7 @@ public class PUBGCommand implements Command
             String map = switch (event.getCommandParameters().getFirst()) {
                 case "艾伦格" -> "Erangel.png";
                 case "米拉玛" -> "Miramar.png";
-                case "维肯迪" -> "Vikendi.png";
+                case "维寒迪" -> "Vikendi.png";
                 case "帝斯顿" -> "Deston.png";
                 case "荣都" -> "Rondo.png";
                 case "泰戈" -> "Tiger.png";
