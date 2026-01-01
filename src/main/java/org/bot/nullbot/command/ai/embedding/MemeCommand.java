@@ -55,11 +55,11 @@ public class MemeCommand implements Command
                 ◉ 65275d24-ada6-49de-8a40-01c05ad279ea 命令
                 功能: 发送表情包图片
                 限权: %d
-                格式: 65275d24-ada6-49de-8a40-01c05ad279ea
-                可使用表情(名称指 图中主体人物_表达的文字内容或情绪.文件扩展名)：
+                格式: 65275d24-ada6-49de-8a40-01c05ad279ea [表情文件名]
+                可使用表情(文件名表示 图中主体人物_表达的文字内容或情绪.文件扩展名)：
                 %s
                 示例: 65275d24-ada6-49de-8a40-01c05ad279ea 猫娘_卖萌.jpg
-                注意: 你可以根据自己的想法发送表情包图片以表达自己的情绪！！！""",
+                注意: 你可以根据自己的想法发送表情包图片以表达自己的情绪！要经常发表情！""",
                 getAccess(),
                 FileUtil.getFileListAsString(deepSeekConfig.getMemePath())
         );
