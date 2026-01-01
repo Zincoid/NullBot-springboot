@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@CommandMapping({"PUBG", "pubg"})
+@CommandMapping({"PUBG", "pubg", "获取PUBG资源地图"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -64,7 +64,8 @@ public class PUBGCommand implements Command
                 功能: 获取PUBG资源地图
                 限权: %d
                 格式: PUBG [地图] 或 pubg [地图]
-                地图: 艾伦格/泰戈/帝斯顿/维寒迪/荣都/米拉玛""", getAccess()
+                地图: 艾伦格/泰戈/帝斯顿/维寒迪/荣都/米拉玛
+                中文命令: 获取PUBG资源地图""", getAccess()
         );
     }
 
