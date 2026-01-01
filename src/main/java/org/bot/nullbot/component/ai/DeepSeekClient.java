@@ -54,7 +54,8 @@ public class DeepSeekClient
 
                 // 加密命令
                 "eb0f8545-745d-4240-9cad-9fce6372dca7",
-                "4ed1314d-00a2-4cbd-a612-ee41946b4644"
+                "4ed1314d-00a2-4cbd-a612-ee41946b4644",
+                "65275d24-ada6-49de-8a40-01c05ad279ea"
         ));
         AI_COMMAND_WHITE_LIST = Collections.unmodifiableSet(commands);
     }

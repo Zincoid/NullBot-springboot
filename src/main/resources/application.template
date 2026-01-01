@@ -37,7 +37,7 @@ shiro:
     timeout: 20  # 10
     max-binary-message-buffer-size: 5120000
     max-text-message-buffer-size: 512000
-    access-token: mtHOn@THXxr*6cCb
+    access-token:
   limiter:
     enable: true
     rate: 10
@@ -74,6 +74,12 @@ nullbot:
       video-path: /root/Nullbot/file/video
       audio-path: /root/Nullbot/file/audio
 
+#      file-directory: ${user.dir}/src/main/resources/upload
+#      temp-path: src/main/resources/file/temp
+#      image-path: src/main/resources/file/image
+#      video-path: src/main/resources/file/video
+#      audio-path: src/main/resources/file/audio
+
 #  user-accesses:  # ID: Level 已持久化至数据库 (弃用)
 #  group-accesses:  # ID: Level 已持久化至数据库 (弃用)
 
@@ -84,7 +90,5 @@ ai:
     max-history-length: 50
     max-monitor-length: 200
     max-tokens: 500
-    system-message:
-      group:
-      personal:
-      monitor:
+    meme-path: /root/Nullbot/file/ai/meme  # 用于AI主动发表情
+    default-system-message:

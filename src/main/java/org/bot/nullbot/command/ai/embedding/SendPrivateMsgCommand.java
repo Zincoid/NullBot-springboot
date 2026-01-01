@@ -36,6 +36,9 @@ public class SendPrivateMsgCommand implements Command
             log.info("\t\t\t\t├─[SendPrivateMsg] 未设计 非群消息事件响应方式");
     }
 
+    @Override
+    public Integer getAccess() { return 2; }
+
     // 加密命令 无用户帮助
 
     @Override
