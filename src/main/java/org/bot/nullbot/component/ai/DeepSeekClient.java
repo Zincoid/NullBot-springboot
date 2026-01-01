@@ -50,7 +50,7 @@ public class DeepSeekClient
                 "ChatHistory", "ChatReset",
                 "Convert", "Anime", "Guess",
                 "GameSetting", "AccessSet", "FunctionCheck", "FunctionControl", "UserBan",
-                "Help", "ImageFolder",
+                "Help", "ImageFolder", "PUBG",
 
                 // 加密命令
                 "eb0f8545-745d-4240-9cad-9fce6372dca7",

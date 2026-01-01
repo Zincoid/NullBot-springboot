@@ -61,10 +61,22 @@ public class PUBGCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ PUBG 命令
-                功能: 获取PUBG相关帮助资源
+                功能: 获取PUBG资源地图
                 限权: %d
-                格式: PUBG [参数] 或 pubg [参数]
-                参数: 艾伦格/泰戈/帝斯顿/维寒迪/荣都/米拉玛""", getAccess()
+                格式: PUBG [地图] 或 pubg [地图]
+                地图: 艾伦格/泰戈/帝斯顿/维寒迪/荣都/米拉玛""", getAccess()
+        );
+    }
+
+    @Override
+    public String getHelpForAI() {
+        return String.format("""
+                ◉ PUBG 命令
+                功能: 获取PUBG资源地图
+                限权: %d
+                格式: PUBG [地图]
+                地图: 艾伦格/泰戈/帝斯顿/维寒迪/荣都/米拉玛
+                示例: PUBG 帝斯顿""", getAccess()
         );
     }
 }
