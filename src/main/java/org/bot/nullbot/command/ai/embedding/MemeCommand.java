@@ -41,7 +41,7 @@ public class MemeCommand implements Command
                 log.info("\t\t\t\t├─[Meme] 表情不存在");
             }
         }else
-            log.info("\t\t\t\t├─[Femboy] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Meme] 未设计 非群消息事件响应方式");
     }
 
     @Override
