@@ -21,4 +21,7 @@ public interface SayingMapper extends BaseMapper<SayingPO>
 
     @Select("SELECT * FROM saying ORDER BY RAND() LIMIT 1")
     SayingPO getRand();
+
+    @Select("SELECT * FROM saying WHERE user_id = #{userId} ORDER BY RAND() LIMIT 1")
+    SayingPO getRandById(Long userId);
 }

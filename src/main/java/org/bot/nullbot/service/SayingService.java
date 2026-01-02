@@ -16,5 +16,7 @@ public interface SayingService
 
     SayingPO getRand();
 
+    SayingPO getRandByUserId(Long userId);
+
     SayingPage getSayingByPage(Integer currentPage, Integer pageSize);
 }

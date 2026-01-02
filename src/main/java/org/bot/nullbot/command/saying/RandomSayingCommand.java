@@ -22,7 +22,19 @@ public class RandomSayingCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            SayingPO saying = sayingService.getRand();
+            SayingPO saying;
+            if(event.getCommandParameters().isEmpty()){
+                saying = sayingService.getRand();
+            }else{
+                try {
+                    long qqNumber = Long.parseLong(event.getCommandParameters().getFirst());
+                    saying = sayingService.getRandByUserId(qqNumber);
+                } catch (NumberFormatException e) {
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[随机语录] ❌参数格式错误", false);
+                    log.info("\t\t\t\t├─[Saying.Random] 参数格式错误");
+                    return;
+                }
+            }
             if (saying != null) {
                 String text = saying.toString();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), text, false);
@@ -42,9 +54,9 @@ public class RandomSayingCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ RandomSaying 命令
-                功能: 随机语录
+                功能: 随机语录(可指定发言人)
                 限权: %d
-                格式: RandomSaying 或 say
+                格式: RandomSaying [可选: QQ号] 或 say [可选: QQ号]
                 中文命令: 随机语录/语录""", getAccess()
         );
     }

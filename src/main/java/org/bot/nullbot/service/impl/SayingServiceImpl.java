@@ -48,6 +48,9 @@ public class SayingServiceImpl implements SayingService
         return sayingMapper.getRand();
     }
 
+    @Override
+    public SayingPO getRandByUserId(Long userId) { return sayingMapper.getRandById(userId); }
+
     // =================== WEB功能相关 ===================
 
     @Override
