@@ -3,6 +3,7 @@ package org.bot.nullbot.command.ai.embedding;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
@@ -22,26 +23,35 @@ public class MemeCommand implements Command
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
+        Long groupId;
+
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if(event.getCommandParameters().isEmpty()) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[表情] ❌参数不足", false);
-                log.info("\t\t\t\t├─[Meme] 参数不足");
-                return;
-            }
-            String memeFolderPath = deepSeekConfig.getMemePath();
-            String memePath = FileUtil.getFilePathByName(memeFolderPath, event.getCommandParameters().getFirst());
-            if (memePath != null) {
-                String response = MsgUtils.builder()
-                        .img(memePath)
-                        .build();
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                log.info("\t\t\t\t├─[Meme] 已发送表情: {}", memePath);
-            }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[表情] ❌无此图片", false);
-                log.info("\t\t\t\t├─[Meme] 表情不存在");
-            }
-        }else
-            log.info("\t\t\t\t├─[Meme] 未设计 非群消息事件响应方式");
+            groupId = groupMessageEvent.getGroupId();
+        }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent){
+            groupId = pokeNoticeEvent.getGroupId();
+        }else{
+            log.info("\t\t\t\t├─[Meme] 未设计 非群消息/戳一戳事件响应方式");
+            return;
+        }
+
+        if(event.getCommandParameters().isEmpty()) {
+            bot.sendGroupMsg(groupId, "[表情] ❌参数不足", false);
+            log.info("\t\t\t\t├─[Meme] 参数不足");
+            return;
+        }
+
+        String memeFolderPath = deepSeekConfig.getMemePath();
+        String memePath = FileUtil.getFilePathByName(memeFolderPath, event.getCommandParameters().getFirst());
+        if (memePath != null) {
+            String response = MsgUtils.builder()
+                    .img(memePath)
+                    .build();
+            bot.sendGroupMsg(groupId, response, false);
+            log.info("\t\t\t\t├─[Meme] 已发送表情: {}", memePath);
+        }else{
+            bot.sendGroupMsg(groupId, "[表情] ❌无此图片", false);
+            log.info("\t\t\t\t├─[Meme] 表情不存在");
+        }
     }
 
     @Override

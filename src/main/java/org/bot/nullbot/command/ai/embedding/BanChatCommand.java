@@ -2,6 +2,7 @@ package org.bot.nullbot.command.ai.embedding;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
@@ -22,28 +23,37 @@ public class BanChatCommand implements Command
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
+        Long groupId;
+
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if(event.getCommandParameters().size() < 2) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[封禁对话] ❌参数不足", false);
-                log.info("\t\t\t\t├─[BanChat] 参数不足");
-                return;
+            groupId = groupMessageEvent.getGroupId();
+        }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent){
+            groupId = pokeNoticeEvent.getGroupId();
+        }else{
+            log.info("\t\t\t\t├─[Meme] 未设计 非群消息/戳一戳事件响应方式");
+            return;
+        }
+
+        if(event.getCommandParameters().size() < 2) {
+            bot.sendGroupMsg(groupId, "[封禁对话] ❌参数不足", false);
+            log.info("\t\t\t\t├─[BanChat] 参数不足");
+            return;
+        }
+
+        try {
+            long userId = Long.parseLong(event.getCommandParameters().get(0));
+            int time = Integer.parseInt(event.getCommandParameters().get(1));
+            if(!userService.existUser(userId)) {
+                bot.sendGroupMsg(groupId, "[封禁对话] ❌用户不存在", false);
+                log.info("\t\t\t\t├─[BanChat] 用户不存在");
             }
-            try {
-                long userId = Long.parseLong(event.getCommandParameters().get(0));
-                int time = Integer.parseInt(event.getCommandParameters().get(1));
-                if(!userService.existUser(userId)) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[封禁对话] ❌用户不存在", false);
-                    log.info("\t\t\t\t├─[BanChat] 用户不存在");
-                }
-                chatStorage.banUser(userId, time);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[封禁对话] ✅已设置！\n" + userId + " -> " + time + " Min", false);
-                log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} min", userId, time);
-            } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[封禁对话] ❌参数格式错误", false);
-                log.info("\t\t\t\t├─[BanChat] 参数格式错误");
-            }
-        }else
-            log.info("\t\t\t\t├─[BanChat] 未设计 非群消息事件响应方式");
+            chatStorage.banUser(userId, time);
+            bot.sendGroupMsg(groupId, "[封禁对话] ✅已设置！\n" + userId + " -> " + time + " Min", false);
+            log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} min", userId, time);
+        } catch (NumberFormatException e) {
+            bot.sendGroupMsg(groupId, "[封禁对话] ❌参数格式错误", false);
+            log.info("\t\t\t\t├─[BanChat] 参数格式错误");
+        }
     }
 
     @Override
