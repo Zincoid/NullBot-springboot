@@ -60,7 +60,7 @@ public class MemeCommand implements Command
                 %s
                 示例: 65275d24-ada6-49de-8a40-01c05ad279ea 猫娘_卖萌.jpg
                 注意: 你可以根据自己的想法发送表情包图片以表达自己的情绪，要经常发表情！
-                (重要！)不要用下划线把不同文件的主体人物和表达内容情绪文本拼接起来使用，这种文件不存在，你只能用提供给你的表情名！""",
+                (重要！)你只能用提供给你的完整表情名！不要用下划线把不同文件名的主体人物和表达内容情绪的文本拼接起来使用，这种文件不存在！""",
                 getAccess(),
                 FileUtil.getFileListAsString(deepSeekConfig.getMemePath())
         );

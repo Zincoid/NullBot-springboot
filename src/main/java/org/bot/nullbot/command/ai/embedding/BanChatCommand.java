@@ -36,7 +36,7 @@ public class BanChatCommand implements Command
                     log.info("\t\t\t\t├─[BanChat] 用户不存在");
                 }
                 chatStorage.banUser(userId, time);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[封禁对话] ✅已封禁用户！\n" + userId + " -> " + time + " Min", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[封禁对话] ✅已设置！\n" + userId + " -> " + time + " Min", false);
                 log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} min", userId, time);
             } catch (NumberFormatException e) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[封禁对话] ❌参数格式错误", false);
