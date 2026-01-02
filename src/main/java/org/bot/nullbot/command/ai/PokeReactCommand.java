@@ -6,11 +6,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.storage.SysMsgStorage;
+import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @CommandMapping({"PokeReact"})
@@ -20,14 +22,25 @@ import java.util.Objects;
 public class PokeReactCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
+    private final ChatStorage chatStorage;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
         if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            Long userId = pokeNoticeEvent.getUserId();
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            Long groupId = pokeNoticeEvent.getGroupId();
             if(Objects.equals(pokeNoticeEvent.getTargetId(), pokeNoticeEvent.getSelfId())){
+                Long userId = pokeNoticeEvent.getUserId();
+                Long groupId = pokeNoticeEvent.getGroupId();
+
+                if(chatStorage.isUserBanned(userId)) {
+                    LocalDateTime until = chatStorage.getUserBannedUntil(userId);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
+                    String formattedUntil = until != null ? until.format(formatter) : "";
+                    bot.sendGroupMsg(groupId, "[封禁中] ⚠️你已被封禁至！\n" + formattedUntil, false);
+                    log.info("\t\t\t\t├─[AI.Chat] 已被封禁至: {}", until);
+                    return;
+                }
+
+                String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
                 String response = deepSeekClient.chat(null, groupId, userId, userName, "揉了你一下", bot, event);
                 bot.sendGroupMsg(groupId, response, false);
                 log.info("\t\t\t\t├─[AI.PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", " "));
