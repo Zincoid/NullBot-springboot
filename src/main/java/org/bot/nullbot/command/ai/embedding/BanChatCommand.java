@@ -55,7 +55,7 @@ public class BanChatCommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ 1e7bd161-0273-4fd0-ae2e-907f25fd8bf3 命令
-                功能: 临时封禁某人与你进行对话的功能
+                功能: 临时封禁某人与你进行对话的功能(时长为0则解除封禁)
                 限权: %d
                 格式: 1e7bd161-0273-4fd0-ae2e-907f25fd8bf3 [QQ号] [时长(分钟)]
                 示例: 1e7bd161-0273-4fd0-ae2e-907f25fd8bf3 1826403984 1
