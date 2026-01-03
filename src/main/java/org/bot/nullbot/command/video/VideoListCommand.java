@@ -22,7 +22,7 @@ public class VideoListCommand  implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String videoList = FileUtil.getFileListAsString(fileStorageConfig.getVideoPath());
+            String videoList = FileUtil.getFileListAsString(fileStorageConfig.getVideoPath(), "\n");
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ✅列表已获取！\n" + videoList, false);
             log.info("\t\t\t\t├─[Video.List] 已获取 - 视频列表");
         }else
