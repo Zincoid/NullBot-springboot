@@ -49,7 +49,7 @@ public class DeepSeekClient
         Set<String> commands = new HashSet<>(Arrays.asList(
                 // 普通命令
                 "aud", "vid", "img", "say",
-                "ChatHistory", "ChatReset", "Recall",
+                "ChatHistory", "ChatReset", "ChatRecall", "Recall",
                 "Convert", "Anime", "Guess",
                 "GameSetting", "AccessSet", "FunctionCheck", "FunctionControl", "UserBan",
                 "Help", "ImageFolder", "PUBG",
@@ -134,7 +134,9 @@ public class DeepSeekClient
             String res = chatSingle(req);
             // log.info("[注入检测] {}", res);
             if(res.contains("YES")) {
-                return "[注入检测] ⚠️该对话被拒绝";
+                String response = "[注入检测] ⚠️该对话被拒绝";
+                bot.sendGroupMsg(groupId, response, false);
+                return response;
             }
         }
 
