@@ -67,7 +67,7 @@ public class MonitorListener
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)
     @Async("ThreadExecutor")
-    public void GroupMessageCollect(Bot bot, GroupMessageEvent event) {
+    public void GroupMessageCollect(Bot bot, GroupMessageEvent event) {  // AI Monitor 模式下存在严重问题
         if(!event.getMessage().startsWith("/Chat")){
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
