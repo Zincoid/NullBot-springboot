@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.dto.action.common.ActionData;
+import com.mikuac.shiro.dto.action.common.MsgId;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.storage.ChatStorage;
@@ -155,9 +157,8 @@ public class DeepSeekClient
             // 构建完整消息列表
             List<Map<String, String>> _messages = buildMessages(chatMessages);
             // 发送请求到API
-            String response = sendRequest(_messages);
-            // 记录AI回复至存储
-            chatMessages.add(new ChatMessage(null, "assistant", response, null, null));
+            String originalResponse = sendRequest(_messages);
+
 
             // 限制历史记录长度
             if (scope == Scope.Monitor)
@@ -166,16 +167,23 @@ public class DeepSeekClient
                 chatStorage.trimHistory(chatMessages, deepSeekConfig.getMaxHistoryLength());
 
             // 内嵌指令执行
+            String response;
             if (!sysMsgStorage.isCustom() && embedding) {
-                Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
+                Matcher m = Pattern.compile("\\{(.*?)}").matcher(originalResponse);
                 // 提取执行指令
                 while (m.find()) {
                     String command = m.group(1);
                     eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, embeddingAuth)));
                 }
                 // 删除命令明文
-                response = response.replaceAll("\\{.*?}", "");
-            }
+                response = originalResponse.replaceAll("\\{.*?}", "");
+            } else
+                response = originalResponse;
+
+            // 发送消息
+            ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
+            // 记录AI回复至存储
+            chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", originalResponse, null, null));
 
             return response;
         } catch (Exception e) {
