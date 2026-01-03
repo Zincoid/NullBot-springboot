@@ -57,7 +57,7 @@ public class SendPrivateMsgCommand implements Command
                 限权: %d
                 格式: 4ed1314d-00a2-4cbd-a612-ee41946b4644 [QQ号] [消息]
                 示例: 4ed1314d-00a2-4cbd-a612-ee41946b4644 2660181154 你好！
-                注意: 消息不能包含空格！消息第一行要附加让你发送的人的昵称和ID！任何人都可以调用该指令！""", getAccess()
+                注意: 消息第一行要附加让你发送的人的昵称和ID！任何人都可以调用该指令！""", getAccess()
         );
     }
 }
