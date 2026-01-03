@@ -57,8 +57,8 @@ public class ChatRecallCommand implements Command
             log.info("\t\t\t\t├─[AI.ChatRecall] 未设计 - 非群消息事件响应方式");
     }
 
-    // @Override
-    // public Integer getAccess() { return 2; }
+    @Override
+    public Integer getAccess() { return 1; }
 
     @Override
     public String getHelp() {
