@@ -174,4 +174,6 @@
 ### 2026.1.3 - v1.1.3
 - 优化 整体撤回功能 - 用户保留纯引用撤回指令，AI的 撤回用户和撤回AI自身消息功能 改成加密指令；
 - 添加 AI防御模式切换指令；
-- 优化 DeepSeekClient 的 response。
+- 优化 DeepSeekClient 的 response；
+- [ 重要！] 修复 同一消息事件并行调用 CommandListener 与 MonitorListener 相关多个监听方法时存在严重冲突的问题 (尤其在 AI Monitor 模式下)。   
+  将 MonitorListener 的 onGroupMessageCollection 监听方法改为在 CommandListener 的 onGroupCommandInteraction 监听方法中的串行调用。

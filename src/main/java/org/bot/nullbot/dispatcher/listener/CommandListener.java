@@ -24,13 +24,17 @@ public class CommandListener
 {
     private final CommandProcessor commandProcessor;
 
+    private final MonitorListener monitorListener;
+
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
 
 
     @GroupMessageHandler
+    @MessageHandlerFilter(at = AtEnum.NOT_NEED)  // onGroupMessageCollection 附加修改
     @Async("ThreadExecutor")
     public void onGroupCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception {
+        monitorListener.onGroupMessageCollection(bot, event);  // 改为串行记录调用
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
             log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage().replaceAll("\\R", " "));
             commandProcessor.processQQ(bot, new CommandEvent<>(event));

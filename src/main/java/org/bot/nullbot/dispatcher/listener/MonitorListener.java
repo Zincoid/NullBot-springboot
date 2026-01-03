@@ -3,13 +3,11 @@ package org.bot.nullbot.dispatcher.listener;
 import com.mikuac.shiro.annotation.GroupMessageHandler;
 import com.mikuac.shiro.annotation.GroupMsgDeleteNoticeHandler;
 import com.mikuac.shiro.annotation.GroupPokeNoticeHandler;
-import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
-import com.mikuac.shiro.enums.AtEnum;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +41,7 @@ public class MonitorListener
     @FunctionControl(config = "imageCollect")
     @GroupMessageHandler
     @Async("ThreadExecutor")
-    public void GroupImageCollect(Bot bot, GroupMessageEvent event) {
+    public void onGroupImageCollection(Bot bot, GroupMessageEvent event) {
         List<Long> groupBypass = List.of(875310845L, 459358160L);
         if(groupBypass.contains(event.getGroupId())){
             boolean hasLogged = false;
@@ -64,10 +62,10 @@ public class MonitorListener
     }
 
     @FunctionControl(config = "messageCollect")
-    @GroupMessageHandler
-    @MessageHandlerFilter(at = AtEnum.NOT_NEED)
-    @Async("ThreadExecutor")
-    public void GroupMessageCollect(Bot bot, GroupMessageEvent event) {  // AI Monitor 模式下存在严重问题
+    // @GroupMessageHandler
+    // @MessageHandlerFilter(at = AtEnum.NOT_NEED)
+    // @Async("ThreadExecutor")
+    public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {  // AI Monitor 模式下并行调用存在严重问题 (已修改用法)
         if(!event.getMessage().startsWith("/Chat")){
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
@@ -80,7 +78,7 @@ public class MonitorListener
     @FunctionControl(config = "keywordDetect")
     @GroupMessageHandler
     @Async("ThreadExecutor")
-    public void GroupKeywordDetect(Bot bot, GroupMessageEvent event) throws Exception {  // 暂时直接设计针对群聊的规则
+    public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {  // 暂时直接设计针对群聊的规则
         if (event.getMessage().contains("男娘")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
             bot.sendGroupMsg(event.getGroupId(), "哪有男娘？", false);
@@ -96,7 +94,7 @@ public class MonitorListener
     @FunctionControl(config = "pokeDetect")
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
-    public void GroupPokeDetect(Bot bot, PokeNoticeEvent event) throws Exception {
+    public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
         if(Objects.equals(event.getTargetId(), event.getSelfId())){
             log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (已限制为戳Bot自己)", event.getGroupId(), event.getUserId(), event.getTargetId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
@@ -106,7 +104,7 @@ public class MonitorListener
     @FunctionControl(config = "recallDetect")
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
-    public void GroupRecallDetect(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
+    public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
         log.info("◉ [GroupMonitor:Recall] 来自群 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));
     }
