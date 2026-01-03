@@ -25,18 +25,9 @@ public class RecallCommand implements Command
                 int messageId = Integer.parseInt(reply.getData().get("id"));
                 bot.deleteMsg(messageId);
                 log.info("\t\t\t\t├─[Recall] 已撤回引用消息 -> Message Id: {}", messageId);
-            }else if(!event.getCommandParameters().isEmpty()){
-                try {
-                    int messageId = Integer.parseInt(event.getCommandParameters().getFirst());
-                    bot.deleteMsg(messageId);
-                    log.info("\t\t\t\t├─[Recall] 已撤回指定消息 -> Message Id: {}", messageId);
-                } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[撤回] ❌参数格式错误", false);
-                    log.info("\t\t\t\t├─[Recall] 参数格式错误");
-                }
-            }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[撤回] ❌无消息ID参数或引用", false);
-                log.info("\t\t\t\t├─[Recall] 无消息ID参数或引用");
+            } else {
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[撤回] ❌无消息引用", false);
+                log.info("\t\t\t\t├─[Recall] 无消息引用");
             }
         }else
             log.info("\t\t\t\t├─[Recall] 未设计 - 非群消息事件响应方式");
@@ -49,22 +40,10 @@ public class RecallCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ Recall 命令
-                功能: 撤回任意消息
+                功能: 撤回任意引用的消息
                 限权: %d
                 格式: [引用消息] Recall 或 [引用消息] rc
                 中文命令: 撤回""", getAccess()
-        );
-    }
-
-    @Override
-    public String getHelpForAI() {
-        return String.format("""
-                ◉ Recall 命令
-                功能: 撤回非AI发送的用户消息
-                限权: %d
-                格式: Recall [Message ID]
-                示例: Recall 965922865
-                注意: 已撤回的消息依然会存在于之后发给你的消息列表里！""", getAccess()
         );
     }
 }

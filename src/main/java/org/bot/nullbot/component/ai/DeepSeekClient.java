@@ -49,7 +49,7 @@ public class DeepSeekClient
         Set<String> commands = new HashSet<>(Arrays.asList(
                 // 普通命令
                 "aud", "vid", "img", "say",
-                "ChatHistory", "ChatReset", "ChatRecall", "Recall",
+                "ChatHistory", "ChatReset",
                 "Convert", "Anime", "Guess",
                 "GameSetting", "AccessSet", "FunctionCheck", "FunctionControl", "UserBan",
                 "Help", "ImageFolder", "PUBG",
@@ -58,7 +58,9 @@ public class DeepSeekClient
                 "eb0f8545-745d-4240-9cad-9fce6372dca7",
                 "4ed1314d-00a2-4cbd-a612-ee41946b4644",
                 "65275d24-ada6-49de-8a40-01c05ad279ea",
-                "1e7bd161-0273-4fd0-ae2e-907f25fd8bf3"
+                "1e7bd161-0273-4fd0-ae2e-907f25fd8bf3",
+                "db3fbe2b-1ea3-4098-82fc-e9fa4d7bff5b",
+                "b6713262-df1f-4627-a3a0-7e7bae50cb14"
         ));
         AI_COMMAND_WHITE_LIST = Collections.unmodifiableSet(commands);
     }

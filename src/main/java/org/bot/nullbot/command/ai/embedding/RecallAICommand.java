@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.ai;
+package org.bot.nullbot.command.ai.embedding;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"ChatRecall", "聊天撤回"})
+@CommandMapping({"db3fbe2b-1ea3-4098-82fc-e9fa4d7bff5b"})  // 加密 仅供AI嵌入调用
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ChatRecallCommand implements Command
+public class RecallAICommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
     private final ChatStorage chatStorage;
@@ -31,13 +31,13 @@ public class ChatRecallCommand implements Command
                 try {
                     n = Integer.parseInt(event.getCommandParameters().getFirst());
                     if(n <= 0){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[聊天撤回] ❌参数非正", false);
-                        log.info("\t\t\t\t├─[AI.ChatRecall] 参数非正");
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[撤回AI消息] ❌参数非正", false);
+                        log.info("\t\t\t\t├─[RecallAI] 参数非正");
                         return;
                     }
                 } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[聊天撤回] ❌参数格式错误", false);
-                    log.info("\t\t\t\t├─[AI.ChatRecall] 参数格式错误");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[撤回AI消息] ❌参数格式错误", false);
+                    log.info("\t\t\t\t├─[RecallAI] 参数格式错误");
                     return;
                 }
             }
@@ -48,33 +48,22 @@ public class ChatRecallCommand implements Command
             List<ChatMessage> messages = chatStorage.getAIMessagesForRecall(deepSeekClient.getScope(), groupId, userId, n);
             for (ChatMessage message : messages) bot.deleteMsg(message.getMessageId());
 
-            log.info("\t\t\t\t├─[AI.ChatRecall] 已撤回 - {}条AI消息", n);
+            log.info("\t\t\t\t├─[RecallAI] 已撤回AI消息 -> {}条", n);
         }else
-            log.info("\t\t\t\t├─[AI.ChatRecall] 未设计 - 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[RecallAI] 未设计 - 非群消息事件响应方式");
     }
 
     @Override
-    public Integer getAccess() { return 1; }
-
-    @Override
-    public String getHelp() {
-        return String.format("""
-                ◉ ChatRecall 命令
-                功能: 撤回AI发送的最近消息(仅文本消息 默认撤回1条)
-                限权: %d
-                格式: ChatRecall [可选: 条数]
-                中文命令: 聊天撤回""", getAccess()
-        );
-    }
+    public Integer getAccess() { return 2; }
 
     @Override
     public String getHelpForAI() {
         return String.format("""
-                ◉ ChatRecall 命令
+                ◉ db3fbe2b-1ea3-4098-82fc-e9fa4d7bff5b 命令
                 功能: 撤回AI发送的最近消息(仅文本消息 默认撤回1条)
                 限权: %d
-                格式: ChatRecall [可选: 条数]
-                示例: ChatRecall 1
+                格式: db3fbe2b-1ea3-4098-82fc-e9fa4d7bff5b [可选: 条数]
+                示例: db3fbe2b-1ea3-4098-82fc-e9fa4d7bff5b 1
                 注意: 已撤回的消息依然会存在于之后发给你的消息列表里！""", getAccess()
         );
     }
