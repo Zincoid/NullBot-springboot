@@ -45,13 +45,9 @@ public class ChatRecallCommand implements Command
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getSender().getUserId();
 
-            List<ChatMessage> messages;
-            if (deepSeekClient.getScope() == DeepSeekClient.Scope.Personal)
-                messages = chatStorage.getAIMessagesForRecall(deepSeekClient.getScope(), userId, n);
-            else
-                messages = chatStorage.getAIMessagesForRecall(deepSeekClient.getScope(), groupId, n);
-
+            List<ChatMessage> messages = chatStorage.getAIMessagesForRecall(deepSeekClient.getScope(), groupId, userId, n);
             for (ChatMessage message : messages) bot.deleteMsg(message.getMessageId());
+
             log.info("\t\t\t\t├─[AI.ChatRecall] 已撤回 - {}条AI消息", n);
         }else
             log.info("\t\t\t\t├─[AI.ChatRecall] 未设计 - 非群消息事件响应方式");

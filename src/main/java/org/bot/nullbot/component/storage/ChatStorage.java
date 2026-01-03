@@ -54,20 +54,30 @@ public class ChatStorage
 
     // =================== 撤回功能相关 ===================
 
-    public List<ChatMessage> getAIMessagesForRecall(DeepSeekClient.Scope scope, Long scopeId, int n) {
-        List<ChatMessage> history = switch (scope) {
-            case Group -> groupHistories.get(scopeId);
-            case Monitor -> monitorHistories.get(scopeId);
-            case Personal -> userHistories.get(scopeId);
+    public List<ChatMessage> getAIMessagesForRecall(DeepSeekClient.Scope scope, Long groupId, Long userId, int n) {
+        ReentrantLock lock = switch (scope) {
+            case Group, Monitor -> getGroupLock(groupId);
+            case Personal -> getUserLock(userId);
         };
-        if (history == null || history.isEmpty()) return new ArrayList<>();
+        lock.lock();  // 锁定历史存储
 
-        List<ChatMessage> filtered = history.stream()
-                .filter(msg -> msg != null && "assistant".equals(msg.getRole()))
-                .collect(Collectors.toList());
+        try {
+            List<ChatMessage> history = switch (scope) {
+                case Group -> groupHistories.get(groupId);
+                case Monitor -> monitorHistories.get(groupId);
+                case Personal -> userHistories.get(userId);
+            };
+            if (history == null || history.isEmpty()) return new ArrayList<>();
 
-        int startIndex = Math.max(0, filtered.size() - n);
-        return filtered.subList(startIndex, filtered.size());
+            List<ChatMessage> filtered = history.stream()
+                    .filter(msg -> msg != null && "assistant".equals(msg.getRole()))
+                    .collect(Collectors.toList());
+
+            int startIndex = Math.max(0, filtered.size() - n);
+            return filtered.subList(startIndex, filtered.size());
+        } finally {
+            lock.unlock();  // 解锁历史存储
+        }
     }
 
     // =================== 历史功能相关 ===================
