@@ -205,6 +205,8 @@ public class DeepSeekClient
         // 拼接指令提示词
         if(!sysMsgStorage.isCustom() && embedding) {
             systemMessage = systemMessage +
+                    "\n你在一个群聊中接收对话，不同用户的消息会带有消息ID和用户标识，格式为[Message ID][Username(UserId)]，你自己的消息只有消息ID，格式为[Message ID]。" +
+                    "\n请根据标识区分不同消息和用户，并且回复消息时不要带以上那种格式化的标识。" +
                     "\n你可以使用 {指令} 在回复中嵌入指令(嵌入到回复内容末尾)。" +
                     "\n指令使用示例如下：" +
                     "\n当有人想要看二次元图片或者色图时，你可以使用 {Anime} 指令，这样就能自动调用图片发送。" +
