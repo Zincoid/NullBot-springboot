@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"ChatRecall", "recall", "聊天撤回", "撤回"})
+@CommandMapping({"ChatRecall", "聊天撤回"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -63,8 +63,7 @@ public class ChatRecallCommand implements Command
                 功能: 撤回AI发送的最近消息(仅文本消息 默认撤回1条)
                 限权: %d
                 格式: ChatRecall [可选: 条数]
-                或 recall [可选: 条数]
-                中文命令: 聊天撤回/撤回""", getAccess()
+                中文命令: 聊天撤回""", getAccess()
         );
     }
 
