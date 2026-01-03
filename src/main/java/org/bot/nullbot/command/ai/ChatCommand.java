@@ -42,7 +42,6 @@ public class ChatCommand implements Command
             String message = MessageParseUtil.parseGroupArrayMsgForAI(bot, groupMessageEvent.getArrayMsg());
             String userName = groupMessageEvent.getSender().getNickname();
             Integer messageId = groupMessageEvent.getMessageId();
-
             String response = deepSeekClient.chat(messageId, groupId, userId, userName, message, bot, event);
 
             // bot.sendGroupMsg(groupId, response, false);
