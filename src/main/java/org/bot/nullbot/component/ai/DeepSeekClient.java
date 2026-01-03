@@ -115,7 +115,7 @@ public class DeepSeekClient
 
     public String changeAntiInjection() {
         antiInjection = !antiInjection;
-        return antiInjection ? "防注入" : "非防注入";
+        return antiInjection ? "防注入" : "无防御";
     }
 
     /**
@@ -184,9 +184,9 @@ public class DeepSeekClient
                     eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, embeddingAuth)));
                 }
                 // 删除命令明文
-                response = originalResponse.replaceAll("\\{.*?}", "");
+                response = originalResponse.replaceAll("\\{.*?}", "").trim();
             } else
-                response = originalResponse;
+                response = originalResponse.trim();
 
             // 发送消息
             ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
