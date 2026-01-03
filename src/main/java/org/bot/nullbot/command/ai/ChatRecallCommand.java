@@ -30,6 +30,11 @@ public class ChatRecallCommand implements Command
             if(!event.getCommandParameters().isEmpty()){
                 try {
                     n = Integer.parseInt(event.getCommandParameters().getFirst());
+                    if(n <= 0){
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[聊天撤回] ❌参数非正", false);
+                        log.info("\t\t\t\t├─[AI.ChatRecall] 参数非正");
+                        return;
+                    }
                 } catch (NumberFormatException e) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[聊天撤回] ❌参数格式错误", false);
                     log.info("\t\t\t\t├─[AI.ChatRecall] 参数格式错误");
