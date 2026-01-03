@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Deprecated
 @CommandMapping({"ChatRecall", "聊天撤回"})
 @Component
 @RequiredArgsConstructor

@@ -21,8 +21,6 @@ public class ChatMessage
         map.put("role", role);
         if ("user".equals(role))
             map.put("content", "[" + messageId + "][" + userName + " (" + userId + ")]: " + content);
-        else if ("assistant".equals(role))
-            map.put("content", "[" + messageId + "]: " + content);
         else
             map.put("content", content);
         return map;

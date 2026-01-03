@@ -49,7 +49,7 @@ public class RecallCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ Recall 命令
-                功能: 撤回消息
+                功能: 撤回任意消息
                 限权: %d
                 格式: [引用消息] Recall 或 [引用消息] rc
                 中文命令: 撤回""", getAccess()
@@ -60,10 +60,11 @@ public class RecallCommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ Recall 命令
-                功能: 撤回消息
+                功能: 撤回非AI发送的用户消息
                 限权: %d
                 格式: Recall [Message ID]
-                示例: Recall 965922865""", getAccess()
+                示例: Recall 965922865
+                注意: 已撤回的消息依然会存在于之后发给你的消息列表里！""", getAccess()
         );
     }
 }

@@ -159,7 +159,6 @@ public class DeepSeekClient
             // 发送请求到API
             String originalResponse = sendRequest(_messages);
 
-
             // 限制历史记录长度
             if (scope == Scope.Monitor)
                 chatStorage.trimHistory(chatMessages, deepSeekConfig.getMaxMonitorLength());
@@ -200,13 +199,13 @@ public class DeepSeekClient
      * @return 发送给API的消息列表
      */
     private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages) {
-        String systemMessage = sysMsgStorage.getSysMsg();
+        String systemMessage = sysMsgStorage.getSysMsg() +
+                "\n你在一个群聊中接收对话，不同用户的消息会带有消息ID和用户标识，格式为[Message ID][Username(UserId)]。" +
+                "\n请根据标识区分不同消息和用户，并且回复消息时不要带以上那种格式化的标识。";
 
         // 拼接指令提示词
         if(!sysMsgStorage.isCustom() && embedding) {
             systemMessage = systemMessage +
-                    "\n你在一个群聊中接收对话，不同用户的消息会带有消息ID和用户标识，格式为[Message ID][Username(UserId)]，你自己的消息只有消息ID，格式为[Message ID]。" +
-                    "\n请根据标识区分不同消息和用户，并且回复消息时不要带以上那种格式化的标识。" +
                     "\n你可以使用 {指令} 在回复中嵌入指令(嵌入到回复内容末尾)。" +
                     "\n指令使用示例如下：" +
                     "\n当有人想要看二次元图片或者色图时，你可以使用 {Anime} 指令，这样就能自动调用图片发送。" +
@@ -217,7 +216,6 @@ public class DeepSeekClient
         // log.info("[系统提示词] {}", systemMessage);
 
         List<Map<String, String>> _messages = new ArrayList<>();
-
         // 系统消息
         _messages.add(new ChatMessage(null, "system", systemMessage, null, null).toMapForAI());
         // 历史消息
