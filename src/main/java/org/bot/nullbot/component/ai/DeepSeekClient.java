@@ -185,7 +185,6 @@ public class DeepSeekClient
             ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
             // 记录AI回复至存储
             chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", originalResponse, null, null));
-
             return response;
         } catch (Exception e) {
             chatMessages.removeLast();  // 如果请求失败移除刚才添加的用户消息
