@@ -1,6 +1,7 @@
 package org.bot.nullbot.component.storage;
 
 import lombok.Data;
+import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.entity.ChatMessage;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 @Data
 @Component
@@ -49,6 +51,24 @@ public class ChatStorage
     }
 
     public LocalDateTime getUserBannedUntil(Long userId) { return banMap.get(userId); }
+
+    // =================== 撤回功能相关 ===================
+
+    public List<ChatMessage> getAIMessagesForRecall(DeepSeekClient.Scope scope, Long scopeId, int n) {
+        List<ChatMessage> history = switch (scope) {
+            case Group -> groupHistories.get(scopeId);
+            case Monitor -> monitorHistories.get(scopeId);
+            case Personal -> userHistories.get(scopeId);
+        };
+        if (history == null || history.isEmpty()) return new ArrayList<>();
+
+        List<ChatMessage> filtered = history.stream()
+                .filter(msg -> msg != null && "assistant".equals(msg.getRole()))
+                .collect(Collectors.toList());
+
+        int startIndex = Math.max(0, filtered.size() - n);
+        return filtered.subList(startIndex, filtered.size());
+    }
 
     // =================== 历史功能相关 ===================
 
