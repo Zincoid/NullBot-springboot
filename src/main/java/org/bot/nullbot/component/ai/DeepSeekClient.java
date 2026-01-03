@@ -49,7 +49,7 @@ public class DeepSeekClient
         Set<String> commands = new HashSet<>(Arrays.asList(
                 // 普通命令
                 "aud", "vid", "img", "say",
-                "ChatHistory", "ChatReset", "ChatRecall",
+                "ChatHistory", "ChatReset", "Recall",
                 "Convert", "Anime", "Guess",
                 "GameSetting", "AccessSet", "FunctionCheck", "FunctionControl", "UserBan",
                 "Help", "ImageFolder", "PUBG",

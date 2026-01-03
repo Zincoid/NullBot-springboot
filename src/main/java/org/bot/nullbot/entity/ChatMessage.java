@@ -20,7 +20,9 @@ public class ChatMessage
         Map<String, String> map = new HashMap<>();
         map.put("role", role);
         if ("user".equals(role))
-            map.put("content", "[" + userName + " (" + userId + ")]: " + content);
+            map.put("content", "[MsgId: " + messageId + "][" + userName + " (" + userId + ")]: " + content);
+        else if ("assistant".equals(role))
+            map.put("content", "[MsgId: " + messageId + "]: " + content);
         else
             map.put("content", content);
         return map;
