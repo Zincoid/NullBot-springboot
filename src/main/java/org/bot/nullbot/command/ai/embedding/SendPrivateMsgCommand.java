@@ -8,6 +8,8 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @CommandMapping({"4ed1314d-00a2-4cbd-a612-ee41946b4644"})  // 加密 仅供AI嵌入调用
 @Component
 @Slf4j
@@ -16,11 +18,12 @@ public class SendPrivateMsgCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if(event.getCommandParameters().size() < 2) {
+            if (event.getCommandParameters().size() < 2) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[私信] ❌参数不足", false);
                 log.info("\t\t\t\t├─[SendPrivateMsg] 参数不足");
                 return;
             }
+
             long qqNumber;
             try {
                 qqNumber = Long.parseLong(event.getCommandParameters().getFirst());
@@ -29,11 +32,16 @@ public class SendPrivateMsgCommand implements Command
                 log.info("\t\t\t\t├─[SendPrivateMsg] 参数格式错误");
                 return;
             }
-            String message =  event.getCommandParameters().get(1);
+
+            // 将第二个及之后的参数用空格拼接起来
+            List<String> params = event.getCommandParameters();
+            String message = String.join(" ", params.subList(1, params.size()));
+
             bot.sendPrivateMsg(qqNumber, message, false);
             log.info("\t\t\t\t├─[SendPrivateMsg] 私信已发送 - {} -> {}", qqNumber, message);
-        }else
-            log.info("\t\t\t\t├─[SendPrivateMsg] 未设计 非群消息事件响应方式");
+        } else {
+            log.info("\t\t\t\t├─[SendPrivateMsg] 未设计非群消息事件响应方式");
+        }
     }
 
     @Override
