@@ -113,6 +113,11 @@ public class DeepSeekClient
         return embedding ? "指令模式" : "非指令模式";
     }
 
+    public String changeAntiInjection() {
+        antiInjection = !antiInjection;
+        return antiInjection ? "防注入模式" : "非防注入模式";
+    }
+
     /**
      * 与DeepSeek进行对话（连续对话）
      * @param messageId 消息ID，在此仅记录用 (用于撤回检测)
