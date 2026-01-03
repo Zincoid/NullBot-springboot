@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 @Data
 @Component
@@ -71,7 +70,7 @@ public class ChatStorage
 
             List<ChatMessage> filtered = history.stream()
                     .filter(msg -> msg != null && "assistant".equals(msg.getRole()))
-                    .collect(Collectors.toList());
+                    .toList();
 
             int startIndex = Math.max(0, filtered.size() - n);
             return filtered.subList(startIndex, filtered.size());
