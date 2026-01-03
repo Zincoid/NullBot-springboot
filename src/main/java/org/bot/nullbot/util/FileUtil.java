@@ -66,7 +66,7 @@ public class FileUtil
                 if (fileNames.isEmpty()) {
                     return "目录中没有文件: " + directoryPath;
                 }
-                return String.join("\n", fileNames);
+                return String.join(", ", fileNames);
             }
         } catch (IOException e) {
             return "读取目录出错: " + e.getMessage();
