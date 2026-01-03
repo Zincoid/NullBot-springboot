@@ -41,15 +41,16 @@ public class MemeCommand implements Command
         }
 
         String memeFolderPath = deepSeekConfig.getMemePath();
-        String memePath = FileUtil.getFilePathByName(memeFolderPath, event.getCommandParameters().getFirst());
+        String memeName = event.getCommandParameters().getFirst();
+        String memePath = FileUtil.getFilePathByName(memeFolderPath, memeName);
         if (memePath != null) {
             String response = MsgUtils.builder()
                     .img(memePath)
                     .build();
             bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[Meme] 已发送表情: {}", memePath);
+            log.info("\t\t\t\t├─[Meme] 已发送表情: {}", memeName);
         }else{
-            bot.sendGroupMsg(groupId, "[表情] ❌无此图片", false);
+            bot.sendGroupMsg(groupId, "[表情] ❌" + memeName + "不存在", false);
             log.info("\t\t\t\t├─[Meme] 表情不存在");
         }
     }

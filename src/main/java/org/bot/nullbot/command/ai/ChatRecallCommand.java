@@ -75,7 +75,8 @@ public class ChatRecallCommand implements Command
                 功能: 撤回AI发送的最近消息(仅文本消息 默认撤回1条)
                 限权: %d
                 格式: ChatRecall [可选: 条数]
-                示例: ChatRecall 2""", getAccess()
+                示例: ChatRecall 2
+                注意: 已撤回的消息依然会存在于之后发给你的消息列表里！""", getAccess()
         );
     }
 }
