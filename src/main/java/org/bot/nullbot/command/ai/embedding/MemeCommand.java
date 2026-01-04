@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.config.DeepSeekConfig;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.util.FileUtil;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 public class MemeCommand implements Command
 {
     private final DeepSeekConfig deepSeekConfig;
+    private final ChatStorage chatStorage;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -50,7 +52,9 @@ public class MemeCommand implements Command
             bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[Meme] 已发送表情: {}", memeName);
         }else{
-            bot.sendGroupMsg(groupId, "[表情] ❌" + memeName + " 不存在", false);
+            String error = "[表情] ❌" + memeName + " 不存在";
+            chatStorage.recordError(error);  // 自动记录表情错误使用
+            bot.sendGroupMsg(groupId, error, false);
             log.info("\t\t\t\t├─[Meme] 表情不存在");
         }
     }

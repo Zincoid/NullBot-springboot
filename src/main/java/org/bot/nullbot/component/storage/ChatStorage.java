@@ -10,20 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Data
 @Component
 public class ChatStorage
 {
-    private final ConcurrentHashMap<Long, ReentrantLock> groupLocks = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Long, ReentrantLock> userLocks = new ConcurrentHashMap<>();
-
-    private final Map<Long, LocalDateTime> banMap = new ConcurrentHashMap<>();
+    private final Map<Long, ReentrantLock> groupLocks = new ConcurrentHashMap<>();
+    private final Map<Long, ReentrantLock> userLocks = new ConcurrentHashMap<>();
 
     private final Map<Long, List<ChatMessage>> userHistories = new ConcurrentHashMap<>();
     private final Map<Long, List<ChatMessage>> groupHistories = new ConcurrentHashMap<>();
     private final Map<Long, List<ChatMessage>> monitorHistories = new ConcurrentHashMap<>();
+
+    private final Map<Long, LocalDateTime> banMap = new ConcurrentHashMap<>();
+
+    private final List<String> errorMessages = new CopyOnWriteArrayList<>();
 
     // =================== 并发功能相关 ===================
 
@@ -119,5 +122,17 @@ public class ChatStorage
         userHistories.clear();
         groupHistories.clear();
         monitorHistories.clear();
+    }
+
+    // =================== 纠错功能相关 ===================
+
+    public void recordError(String error) {
+        if (errorMessages.size() >= 100) errorMessages.removeFirst();
+        errorMessages.add(error);
+    }
+
+    public String getErrors() {
+        if (errorMessages.isEmpty()) return "无Error记录";
+        return String.join("\n", errorMessages);
     }
 }

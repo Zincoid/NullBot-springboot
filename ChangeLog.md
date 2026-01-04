@@ -171,10 +171,12 @@
 - 调整 提示词结构 (我佛了，assistant消息里面附加MsgId会导致聊天输出泄露，只能把撤回用户和撤回AI消息命令分开给AI用了)。
 - 修复 结构调整后防注入消息未发送的漏洞。
 
-### 2026.1.3 - v1.1.3
+### 2026.1.4 - v1.1.3
 - 优化 整体撤回功能 - 用户保留纯引用撤回指令，AI的 撤回用户和撤回AI自身消息功能 改成加密指令；
 - 添加 AI防御模式切换指令；
 - 优化 DeepSeekClient 的 response；
 - [ 重要！] 修复 同一消息事件并行调用 CommandListener 与 MonitorListener 相关多个监听方法时存在严重冲突的问题 (尤其在 AI Monitor 模式下)。   
   将 MonitorListener 的 onGroupMessageCollection 监听方法改为在 CommandListener 的 onGroupCommandInteraction 监听方法中的串行调用。
 - 调整 部分文本。
+- 添加 ChatStorage 错误记录功能 - 用于记录错误(上限100条)并在与AI对话时(指令模式)嵌入提示词；
+- 记录 Meme指令错误调用不存在图片的记录 至 ChatStorage。
