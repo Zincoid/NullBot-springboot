@@ -80,7 +80,8 @@ public class WifeCommand implements Command
                         if(wifePath != null) {
                             String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,
                                     wifePath.lastIndexOf('.') > wifePath.lastIndexOf('/') ?
-                                            wifePath.lastIndexOf('.') : wifePath.length());
+                                            wifePath.lastIndexOf('.') : wifePath.length())
+                                    .split("_")[0];  // 切割后缀
                             acgWifeMap.put(userId, wifePath);
                             acgExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
                             String response = MsgUtils.builder()
@@ -102,7 +103,8 @@ public class WifeCommand implements Command
                         String wifePath = acgWifeMap.get(userId);
                         String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,
                                 wifePath.lastIndexOf('.') > wifePath.lastIndexOf('/') ?
-                                        wifePath.lastIndexOf('.') : wifePath.length());
+                                        wifePath.lastIndexOf('.') : wifePath.length())
+                                .split("_")[0];  // 切割后缀
                         String response = MsgUtils.builder()
                                 .text("今天已经选过了哦\uD83D\uDCA6...\n你的二次元老婆是\n" + wifeName)
                                 .img(wifePath)
