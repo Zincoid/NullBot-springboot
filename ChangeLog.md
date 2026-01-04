@@ -179,4 +179,5 @@
   将 MonitorListener 的 onGroupMessageCollection 监听方法改为在 CommandListener 的 onGroupCommandInteraction 监听方法中的串行调用。
 - 调整 部分文本。
 - 添加 ChatStorage 错误记录功能 - 用于记录错误(上限50条)并在与AI对话时(指令模式)嵌入提示词；
-- 记录 Meme指令错误调用不存在图片的记录 至 ChatStorage。
+- 记录 Meme指令错误调用不存在图片的记录 至 ChatStorage；
+- 优化 MessageParseUtil 的 parseGroupArrayMsgForAI 方法。

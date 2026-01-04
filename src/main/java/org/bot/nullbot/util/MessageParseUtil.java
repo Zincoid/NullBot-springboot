@@ -34,15 +34,19 @@ public class MessageParseUtil
         for (ArrayMsg msg : arrayMsgs) {
             Map<String, String> data = msg.getData();
             switch (msg.getType()) {
+                case image -> message.append("[图片]");
+                case video -> message.append("[视频]");
                 case text -> message.append(data.get("text"));
                 case reply -> {
                     int replyId = Integer.parseInt(data.get("id"));
                     GetMsgResp replyMsg = bot.getMsg(replyId).getData();
                     message.append("[引用 ")
                             .append(replyMsg.getSender().getNickname())
-                            .append(":")
-                            .append(replyMsg.getRawMessage().replaceAll("\\[CQ:at,qq=(\\d+)]", "@$1").replaceAll("\\[CQ:.*?]", ""))
-                            .append("] ");
+                            .append(": ")
+                            .append(replyMsg.getRawMessage()  // 回复消息内的@目前只转换为QQ号
+                                    .replaceAll("\\[CQ:at,qq=(\\d+)]", "@$1")
+                                    .replaceAll("\\[CQ:.*?]", ""))
+                            .append("]");
                 }
                 case at -> {
                     long qq = Long.parseLong(data.get("qq"));

@@ -65,9 +65,9 @@ public class MonitorListener
     // @GroupMessageHandler
     // @MessageHandlerFilter(at = AtEnum.NOT_NEED)
     // @Async("ThreadExecutor")
-    public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {  // AI Monitor 模式下并行调用存在严重问题 (已修改用法)
+    public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {  // AI Monitor 模式下并行调用存在严重问题 (已修改为串行调用)
         if(!event.getMessage().startsWith("/Chat")){
-            log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
+            log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
             chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
             chatStorage.trimHistory(chatMessages, deepSeekClient.getDeepSeekConfig().getMaxMonitorLength());
