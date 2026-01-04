@@ -285,15 +285,15 @@ public class DeepSeekClient
         return switch (scope) {
             case Group -> {
                 chatStorage.clearGroupHistory(groupId);
-                yield "[Group模式] 群聊 " + groupId;
+                yield "(Group模式) 群聊" + groupId;
             }
             case Personal -> {
                 chatStorage.clearUserHistory(userId);
-                yield "[Personal模式] 用户 " + userId;
+                yield "(Personal模式) 用户" + userId;
             }
             case Monitor -> {
                 chatStorage.clearMonitorHistory(groupId);
-                yield "[Monitor模式] 群聊 " + groupId;
+                yield "(Monitor模式) 群聊" + groupId;
             }
         };
     }
