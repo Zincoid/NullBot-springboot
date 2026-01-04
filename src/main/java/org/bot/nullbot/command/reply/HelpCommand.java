@@ -39,6 +39,9 @@ public class HelpCommand implements Command
     }
 
     @Override
+    public Integer getAccess() { return -1; }
+
+    @Override
     public String getHelp() {
         return String.format("""
                 ◉ Help 命令

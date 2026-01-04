@@ -45,7 +45,7 @@ public class MessageParseUtil
                             .append(": ")
                             .append(replyMsg.getRawMessage()  // 回复消息内的@目前只转换为QQ号
                                     .replaceAll("\\[CQ:at,qq=(\\d+)]", "@$1")
-                                    .replaceAll("\\[CQ:.*?]", ""))
+                                    .replaceAll("\\[CQ:.*?]", "(不支持内容)"))
                             .append("]");
                 }
                 case at -> {
@@ -53,6 +53,7 @@ public class MessageParseUtil
                     String nickname = bot.getStrangerInfo(qq, true).getData().getNickname();
                     message.append("@").append(nickname).append("(").append(qq).append(")");
                 }
+                default -> message.append("[不支持内容]");
             }
         }
         return message.toString();
