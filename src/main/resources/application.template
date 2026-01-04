@@ -88,7 +88,7 @@ ai:
     api-key:
     api-url: https://api.deepseek.com/chat/completions
     max-history-length: 50
-    max-monitor-length: 200
+    max-monitor-length: 100
     max-tokens: 500
     meme-path: /root/Nullbot/file/ai/meme  # 用于AI主动发表情
     default-system-message:

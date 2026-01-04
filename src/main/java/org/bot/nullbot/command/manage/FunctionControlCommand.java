@@ -26,7 +26,7 @@ public class FunctionControlCommand implements Command
                 Boolean isEnabled = functionManager.switchEnabled(function);
                 if (isEnabled != null){
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
-                    log.info("\t\t\t\t├─[Function.Control] 已切换功能状态 - {}", isEnabled ? "ON" : "OFF");
+                    log.info("\t\t\t\t├─[Function.Control] 已切换 {} 功能状态 -> {}", function, isEnabled ? "ON" : "OFF");
                 }else{
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] ❌无此功能标志", false);
                     log.info("\t\t\t\t├─[Function.Control] 无此功能标志 - {}", function);
