@@ -127,7 +127,7 @@ public class ChatStorage
     // =================== 纠错功能相关 ===================
 
     public void recordError(String error) {
-        if (errorMessages.size() >= 100) errorMessages.removeFirst();
+        if (errorMessages.size() >= 50) errorMessages.removeFirst();
         errorMessages.add(error);
     }
 
