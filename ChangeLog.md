@@ -177,3 +177,4 @@
 - 优化 DeepSeekClient 的 response；
 - [ 重要！] 修复 同一消息事件并行调用 CommandListener 与 MonitorListener 相关多个监听方法时存在严重冲突的问题 (尤其在 AI Monitor 模式下)。   
   将 MonitorListener 的 onGroupMessageCollection 监听方法改为在 CommandListener 的 onGroupCommandInteraction 监听方法中的串行调用。
+- 调整 部分文本。
