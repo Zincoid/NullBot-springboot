@@ -52,9 +52,8 @@ public class MemeCommand implements Command
             bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[Meme] 已发送表情: {}", memeName);
         }else{
-            String error = "[表情] ❌" + memeName + " 不存在";
-            chatStorage.recordError(error);  // 自动记录表情错误使用
-            bot.sendGroupMsg(groupId, error, false);
+            chatStorage.recordError("表情文件 " + memeName + " 不存在，不要再使用了");  // 自动记录表情错误使用
+            bot.sendGroupMsg(groupId, "[表情] ❌" + memeName + " 不存在", false);
             log.info("\t\t\t\t├─[Meme] 表情不存在");
         }
     }
