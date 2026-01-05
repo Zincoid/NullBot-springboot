@@ -12,7 +12,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"1e7bd161-0273-4fd0-ae2e-907f25fd8bf3"})  // 加密 仅供AI嵌入调用
+@CommandMapping({"1e7bd161"})  // 加密 仅供AI嵌入调用
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -65,11 +65,11 @@ public class BanChatCommand implements Command
     @Override
     public String getHelpForAI() {
         return String.format("""
-                ◉ 1e7bd161-0273-4fd0-ae2e-907f25fd8bf3 命令
+                ◉ 1e7bd161 命令
                 功能: 临时封禁某人与你进行对话的功能(时长为0则解除封禁)
                 限权: %d
-                格式: 1e7bd161-0273-4fd0-ae2e-907f25fd8bf3 [QQ号] [时长(分钟)]
-                示例: 1e7bd161-0273-4fd0-ae2e-907f25fd8bf3 1826403984 1
+                格式: 1e7bd161 [QQ号] [时长(分钟)]
+                示例: 1e7bd161 1826403984 1
                 注意: 当你对某人感到厌烦时可以调用此命令，这样他就不能在你设置的时限内与你对话了！
                 不要太小肚鸡肠，别人只是揉你一两下的话不要立马封禁他们，而且就算封禁也最好只禁1分钟！""", getAccess()
         );

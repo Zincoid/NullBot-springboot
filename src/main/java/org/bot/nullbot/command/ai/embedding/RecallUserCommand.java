@@ -9,7 +9,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"b6713262-df1f-4627-a3a0-7e7bae50cb14"})  // 加密 仅供AI嵌入调用
+@CommandMapping({"b6713262"})  // 加密 仅供AI嵌入调用
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -41,11 +41,11 @@ public class RecallUserCommand implements Command
     @Override
     public String getHelpForAI() {
         return String.format("""
-                ◉ b6713262-df1f-4627-a3a0-7e7bae50cb14 命令
+                ◉ b6713262 命令
                 功能: 撤回非AI发送的用户消息
                 限权: %d
-                格式: b6713262-df1f-4627-a3a0-7e7bae50cb14 [Message ID]
-                示例: b6713262-df1f-4627-a3a0-7e7bae50cb14 965922865
+                格式: b6713262 [Message ID]
+                示例: b6713262 965922865
                 注意: 已撤回的消息依然会存在于之后发给你的消息列表里！
                 撤回用户消息必须用这个，不要用撤回AI消息的那个指令！""", getAccess()
         );

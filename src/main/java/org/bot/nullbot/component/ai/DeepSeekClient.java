@@ -55,12 +55,12 @@ public class DeepSeekClient
                 "Help", "ImageFolder", "PUBG",
 
                 // 加密命令
-                "eb0f8545-745d-4240-9cad-9fce6372dca7",
-                "4ed1314d-00a2-4cbd-a612-ee41946b4644",
-                "65275d24-ada6-49de-8a40-01c05ad279ea",
-                "1e7bd161-0273-4fd0-ae2e-907f25fd8bf3",
-                "db3fbe2b-1ea3-4098-82fc-e9fa4d7bff5b",
-                "b6713262-df1f-4627-a3a0-7e7bae50cb14"
+                "eb0f8545",
+                "4ed1314d",
+                "65275d24",
+                "1e7bd161",
+                "db3fbe2b",
+                "b6713262"
         ));
         AI_COMMAND_WHITE_LIST = Collections.unmodifiableSet(commands);
     }

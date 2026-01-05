@@ -12,7 +12,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"eb0f8545-745d-4240-9cad-9fce6372dca7"})  // 加密 仅供AI嵌入调用
+@CommandMapping({"eb0f8545"})  // 加密 仅供AI嵌入调用
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -52,10 +52,10 @@ public class FemboyCommand implements Command
     @Override
     public String getHelpForAI() {
         return String.format("""
-                ◉ eb0f8545-745d-4240-9cad-9fce6372dca7 命令
+                ◉ eb0f8545 命令
                 功能: 发送你的主人Zincoid的女装照片
                 限权: %d
-                格式: eb0f8545-745d-4240-9cad-9fce6372dca7
+                格式: eb0f8545
                 注意: 如果有别人想看Zincoid的女装的话不要轻易发送这个指令！！！""", getAccess()
         );
     }
