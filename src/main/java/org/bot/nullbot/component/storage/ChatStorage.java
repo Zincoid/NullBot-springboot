@@ -104,7 +104,7 @@ public class ChatStorage
     private String getHistoryStringForAI(Long id, Map<Long, List<ChatMessage>> histories) {
         StringBuilder sb = new StringBuilder();
         List<ChatMessage> history =  histories.get(id);
-        if (history == null || history.isEmpty()) return "无对话历史";
+        if (history == null || history.isEmpty()) return "\n无对话历史";
         for (ChatMessage msg : history) {
             if("user".equals(msg.getRole()))
                 sb.append("\n---\n").append(msg.getUserName()).append("(").append(msg.getUserId()).append("): ").append(msg.getContent());

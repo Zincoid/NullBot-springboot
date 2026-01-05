@@ -183,3 +183,6 @@
 - 优化 MessageParseUtil 的 parseGroupArrayMsgForAI 方法；
 - 调整 Help 功能限权；
 - 添加 Invoke 调用命令 - 用于 DEBUG。
+
+### 2026.1.5
+- 
