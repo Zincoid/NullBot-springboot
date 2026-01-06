@@ -104,6 +104,12 @@ public class BreadCommand implements Command
                 long targetId = qqNumbers.getFirst(); // 只抢第一个人
                 String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
 
+                if(!userService.existUser(targetId)){
+                    bot.sendGroupMsg(groupId, "[抢面包] ❌对象未注册", false);
+                    log.info("\t\t\t\t├─[Bread-Rob] 对象未注册 - {}({})", targetName, targetId);
+                    return;
+                }
+
                 int i = breadService.transferBasicBread(targetId, userId);
                 if (i > 0) {
                     bot.sendGroupMsg(groupId, userName + " 抢了 " + targetName + " " + i + "个面包！", false);
@@ -125,6 +131,12 @@ public class BreadCommand implements Command
 
                 long targetId = qqNumbers.getFirst(); // 只送第一个人
                 String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
+
+                if(!userService.existUser(targetId)){
+                    bot.sendGroupMsg(groupId, "[送面包] ❌对象未注册", false);
+                    log.info("\t\t\t\t├─[Bread-Gift] 对象未注册 - {}({})", targetName, targetId);
+                    return;
+                }
 
                 int i = breadService.transferBasicBread(userId, targetId);
                 if (i > 0) {
