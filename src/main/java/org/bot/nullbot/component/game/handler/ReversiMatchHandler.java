@@ -155,12 +155,12 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
 
         if (b > w) {
             s.setWinnerId(s.getBlackPlayerId());
-            return "🎉 黑棋胜利！(" + b + " : " + w + ")\n" + s.getBlackPlayerId() + " 获得50抽数！";
+            return "🎉 黑棋胜利！(" + b + " : " + w + ")\n" + s.getBlackPlayerId() + " 获得50抽数和200Exp！";
         }
         if (w > b) {
             s.setWinnerId(s.getWhitePlayerId());
-            return "🎉 白棋胜利！(" + w + " : " + b + ")\n" + s.getWhitePlayerId() + " 获得50抽数！";
+            return "🎉 白棋胜利！(" + w + " : " + b + ")\n" + s.getWhitePlayerId() + " 获得50抽数和200Exp！";
         }
-        return "🤝 平局！(" + b + " : " + w + ")\n双方分别获得25抽数！";
+        return "🤝 平局！(" + b + " : " + w + ")\n双方分别获得25抽数和100Exp！";
     }
 }
