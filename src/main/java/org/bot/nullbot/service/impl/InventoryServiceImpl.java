@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.entity.po.UserPO;
+import org.bot.nullbot.enums.Rarity;
 import org.bot.nullbot.mapper.InventoryMapper;
 import org.bot.nullbot.mapper.ItemMapper;
 import org.bot.nullbot.mapper.UserMapper;
@@ -90,5 +91,16 @@ public class InventoryServiceImpl implements InventoryService
             return true;
         }else
             return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean sellInventoryByRarity(Long userId, Rarity rarity) {
+        List<InventoryPO> inventoriesByRarity = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getRarity, rarity));
+        if(inventoriesByRarity == null || inventoriesByRarity.isEmpty()) return false;
+        for(InventoryPO inventory : inventoriesByRarity){
+            sellInventory(userId, inventory.getItemId(), inventory.getAmount());
+        }
+        return true;
     }
 }
