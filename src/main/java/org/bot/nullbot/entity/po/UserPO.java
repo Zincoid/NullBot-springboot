@@ -24,14 +24,19 @@ public class UserPO
         experience += exp;
         while(experience >= getMaxExperience()){
             experience -= getMaxExperience();
-            level++;
+            upgrade();
             upgrade++;
         }
         return upgrade;
     }
 
-    public int getMaxExperience() {
+    private int getMaxExperience() {
         return 100 + (level - 1) * 10;
+    }
+
+    private void upgrade() {
+        level++;
+        capacity += 50;
     }
 
     @Override
@@ -42,11 +47,11 @@ public class UserPO
                         ├ QQ号：%d
                         ├ 昵称：%s
                         ├ 限权：%d 级
-                        ├ 等级：Lv.%d Exp[%d/100]
+                        ├ 等级：Lv.%d Exp[%d/%d]
                         ├ 现金：%d ￥
                         ├ 抽数：%d
                         └ 仓库容量：%d""",
-                id, name, access, level, experience, cash, drawTimes, capacity
+                id, name, access, level, experience, getMaxExperience(), cash, drawTimes, capacity
         );
     }
 }

@@ -43,6 +43,8 @@ public class InventoryServiceImpl implements InventoryService
     @Override
     @Transactional
     public boolean increaseInventory(Long userId, Integer itemId, int i) {
+        UserPO user = userMapper.selectById(userId);
+        inventoryMapper.
         ItemPO item = itemMapper.selectById(itemId);
         if(item == null) return false;
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
