@@ -37,7 +37,12 @@ public class InventoryServiceImpl implements InventoryService
     @Transactional
     public InventoryPage getInventoriesPage(Long userId, long p, long size) {
         Page<InventoryPO> page = new Page<>(p, size);
-        Page<InventoryPO> inventoryPage = inventoryMapper.selectPage(page, new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).orderByDesc(InventoryPO::getRarity));
+        Page<InventoryPO> inventoryPage = inventoryMapper
+                .selectPage(page, new LambdaQueryWrapper<InventoryPO>()
+                .eq(InventoryPO::getOwnerId, userId)
+                .orderByDesc(InventoryPO::getRarity)
+                .orderByDesc(InventoryPO::getPrice)
+                .orderByAsc(InventoryPO::getId));
         return new InventoryPage(inventoryPage.getRecords(), inventoryPage.getCurrent(), inventoryPage.getPages(), inventoryPage.getTotal(), inventoryPage.getSize());
     }
 

@@ -43,7 +43,8 @@ public class SellCommand implements Command
                     try {
                         rarity = Rarity.valueOf(params.get(1));
                         if(inventoryService.sellInventoryByRarity(userId, rarity)){
-                            bot.sendGroupMsg(groupId, "[出售] ✅已出售" + rarity.getDescription() + "色物品！", false);
+                            UserPO user = userService.getUser(userId);
+                            bot.sendGroupMsg(groupId, "[出售] ✅已出售" + rarity.getDescription() + "色物品！\n" + "- 当前余额: " + user.getCash() + " ￥", false);
                             log.info("\t\t\t\t├─[Sell] 按稀有度出售成功 - {}", rarity);
                         }else{
                             bot.sendGroupMsg(groupId, "[出售] ❌无该稀有度物品", false);
