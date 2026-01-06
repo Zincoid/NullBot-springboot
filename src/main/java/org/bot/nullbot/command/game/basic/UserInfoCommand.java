@@ -11,7 +11,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"UserInfo", "info", "个人信息"})
+@CommandMapping({"UserInfo", "Info", "info", "个人信息"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -35,7 +35,7 @@ public class UserInfoCommand implements Command
                 ◉ UserInfo 命令
                 功能: 展示个人信息
                 限权: %d 级
-                格式: UserInfo 或 info
+                格式: UserInfo 或 Info 或 info
                 中文命令: 个人信息""", getAccess()
         );
     }
