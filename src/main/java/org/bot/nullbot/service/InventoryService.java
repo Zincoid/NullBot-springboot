@@ -19,4 +19,6 @@ public interface InventoryService
     boolean sellInventory(Long userId, int itemId, int i);
 
     boolean sellInventoryByRarity(Long userId, Rarity rarity);
+
+    int getTotalAmountByUserId(Long userId);
 }

@@ -9,7 +9,9 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.page.InventoryPage;
+import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.service.InventoryService;
+import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
 
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Component;
 public class InventoryCommand implements Command
 {
     private final InventoryService inventoryService;
+    private final UserService userService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -36,7 +39,12 @@ public class InventoryCommand implements Command
             Long userId = groupMessageEvent.getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             InventoryPage inventoryPage = inventoryService.getInventoriesPage(userId, p, 10);
-            StringBuilder sb = new StringBuilder().append("[库存] ").append(userName).append("(").append(userId).append(")\n").append("[ID -- 名称 -- 品质/单价 - 数量]");
+            UserPO user = userService.getUser(userId);
+            int totalAmount = inventoryService.getTotalAmountByUserId(userId);
+            StringBuilder sb = new StringBuilder()
+                    .append("[库存] ").append(userName).append("(").append(userId).append(")\n")
+                    .append("现金: ").append(user.getCash()).append(" ￥ 仓库容量: ").append(totalAmount).append("/").append(user.getCapacity()).append("\n")
+                    .append("[ID -- 名称 -- 品质/单价 - 数量]");
             for(InventoryPO inventoryPO : inventoryPage.getInventories()) {
                 sb.append("\n").append(inventoryPO.toString());
             }

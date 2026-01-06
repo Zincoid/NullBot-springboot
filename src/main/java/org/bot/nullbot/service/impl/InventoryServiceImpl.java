@@ -108,4 +108,10 @@ public class InventoryServiceImpl implements InventoryService
         }
         return true;
     }
+
+    @Override
+    @Transactional
+    public int getTotalAmountByUserId(Long userId) {
+        return inventoryMapper.sumAmountByUserId(userId);
+    }
 }
