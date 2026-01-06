@@ -7,7 +7,8 @@ import lombok.Getter;
 public enum Category
 {
     COMMON(0, "基本物品"),
-    USABLE(1, "可使用物品");
+    USABLE(1, "可使用物品"),
+    BREAD(2, "面包");
 
     @EnumValue
     private final int category;

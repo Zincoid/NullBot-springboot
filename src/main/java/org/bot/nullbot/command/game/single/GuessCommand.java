@@ -81,7 +81,7 @@ public class GuessCommand implements Command
                     userService.plusExperience(userId, 10);  // 给赢家10Exp
                     userService.increaseDrawTimes(userId, 1);  // 给赢家1抽
                     String response = MsgUtils.builder()
-                            .text(userName + "猜对啦✨是\n" + guessInfo.getName() + "！\n获得 10 Exp！\n一共猜了" + guessInfo.getTimes() + "次！")
+                            .text(userName + "猜对啦✨\n答案是..." + guessInfo.getName() + "！\n- 获得 10 Exp！\n- 一共猜了" + guessInfo.getTimes() + "次！")
                             .img(guessInfo.getPath())
                             .build();
                     bot.sendGroupMsg(groupId, response, false);

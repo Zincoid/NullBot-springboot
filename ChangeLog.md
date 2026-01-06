@@ -182,7 +182,7 @@
 - 记录 Meme指令错误调用不存在图片的记录 至 ChatStorage；
 - 优化 MessageParseUtil 的 parseGroupArrayMsgForAI 方法；
 - 调整 Help 功能限权；
-- 添加 Invoke 调用命令 - 用于 DEBUG。
+- 添加 Invoke 调用命令 - 用于DEBUG时反射调用方法。
 
 ### 2026.1.5 - v1.1.4
 - 调整 部分文本；
