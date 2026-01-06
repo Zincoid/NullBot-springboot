@@ -56,7 +56,7 @@ public class DrawCommand implements Command
                         }
                     }
                     if (items.isEmpty()) {
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌" + userName + "抽数耗尽或仓库已满", false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌抽数耗尽或仓库已满", false);
                         log.info("\t\t\t\t├─[Draw] - {} -> 抽数(多抽)耗尽或仓库已满",  userId);
                     }else{
                         StringBuilder sb = new StringBuilder("[抽奖] " + userName + "抽取了" + items.size() + "个物品...\n");
