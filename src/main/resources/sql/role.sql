@@ -17,6 +17,7 @@ CREATE TABLE `user` (
     access INT DEFAULT 0,
 
     level INT DEFAULT 1,
+    experience INT DEFAULT 0,
     cash INT DEFAULT 0,
     capacity INT DEFAULT 100,
     draw_times INT DEFAULT 50

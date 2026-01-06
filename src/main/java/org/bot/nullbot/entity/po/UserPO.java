@@ -14,6 +14,7 @@ public class UserPO
     private Integer access;
 
     private Integer level;
+    private Integer experience;
     private Integer cash;
     private Integer capacity;
     private Integer drawTimes;
@@ -22,15 +23,15 @@ public class UserPO
     public String toString() {
         return String.format(
                 """
-                        ◉ 用户信息
-                        ├ ID：%d
+                        ◉ 个人信息
+                        ├ QQ号：%d
                         ├ 昵称：%s
-                        ├ 限权：%d
-                        ├ 等级：%d
-                        ├ 现金：%d
+                        ├ 限权：%d 级
+                        ├ 等级：Lv.%d Exp[%d/100]
+                        ├ 现金：%d ￥
                         ├ 抽数：%d
                         └ 仓库容量：%d""",
-                id, name, access, level, cash, drawTimes, capacity
+                id, name, access, level, experience, cash, drawTimes, capacity
         );
     }
 }
