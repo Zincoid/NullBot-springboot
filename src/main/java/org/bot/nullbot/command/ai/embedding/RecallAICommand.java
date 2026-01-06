@@ -60,9 +60,9 @@ public class RecallAICommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ db3fbe2b 命令
-                功能: 撤回AI发送的最近消息(仅文本消息 默认撤回1条)
+                功能: 撤回AI发送的最近消息(仅文本消息)
                 限权: %d
-                格式: db3fbe2b [可选: 条数]
+                格式: db3fbe2b [可选: 条数(默认为1)]
                 示例: db3fbe2b 1
                 注意: 已撤回的消息依然会存在于之后发给你的消息列表里！
                 撤回你自己的消息必须用这个，不要用撤回用户消息的那个指令！""", getAccess()

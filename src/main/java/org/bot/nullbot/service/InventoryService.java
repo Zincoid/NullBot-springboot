@@ -1,7 +1,6 @@
 package org.bot.nullbot.service;
 
 import org.bot.nullbot.entity.po.InventoryPO;
-import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.page.InventoryPage;
 
 import java.util.List;
@@ -12,7 +11,9 @@ public interface InventoryService
 
     InventoryPage getInventoriesPage(Long userId, long p, long size);
 
-    boolean increaseInventory(Long userId, Integer itemId);
+    boolean increaseInventory(Long userId, Integer itemId,  int i);
 
-    boolean decreaseInventory(Long userId, Integer itemId);
+    boolean decreaseInventory(Long userId, Integer itemId,  int i);
+
+    boolean sellInventory(Long userId, int itemId, int i);
 }

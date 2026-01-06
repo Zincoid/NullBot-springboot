@@ -34,10 +34,10 @@ public class CheckInCommand implements Command
             if(expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
                 userService.increaseDrawTimes(userId, 25);
                 checkInExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[系统] ✨" + userName + " 签到成功！\n获得抽奖次数x25", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "✨" + userName + " 签到成功！获得: \n- 抽奖次数 x 25", false);
                 log.info("\t\t\t\t├─[System.CheckIn] 签到成功 - 用户 {}", userId);
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[系统] " + userName + " 今日已签过到！", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), userName + " 今日已签过到！", false);
                 log.info("\t\t\t\t├─[System.CheckIn] 今日已签过到 - 用户 {}", userId);
             }
         }else

@@ -3,6 +3,7 @@ package org.bot.nullbot.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.mapper.InventoryMapper;
 import org.bot.nullbot.mapper.ItemMapper;
 import org.bot.nullbot.mapper.UserMapper;
@@ -41,7 +42,7 @@ public class InventoryServiceImpl implements InventoryService
 
     @Override
     @Transactional
-    public boolean increaseInventory(Long userId, Integer itemId) {
+    public boolean increaseInventory(Long userId, Integer itemId, int i) {
         ItemPO item = itemMapper.selectById(itemId);
         if(item == null) return false;
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
@@ -50,7 +51,7 @@ public class InventoryServiceImpl implements InventoryService
             return true;
         }else if(inventories.size() == 1){
             InventoryPO inventory = inventories.getFirst();
-            inventory.setAmount(inventory.getAmount() + 1);
+            inventory.setAmount(inventory.getAmount() + i);
             inventoryMapper.updateById(inventory);
             return true;
         }else
@@ -59,17 +60,31 @@ public class InventoryServiceImpl implements InventoryService
 
     @Override
     @Transactional
-    public boolean decreaseInventory(Long userId, Integer itemId) {
+    public boolean decreaseInventory(Long userId, Integer itemId, int i) {
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
         if(inventories == null || inventories.isEmpty()){
             return false;
-        }else if(inventories.size() == 1){
+        }else if(inventories.size() == 1 && inventories.getFirst().getAmount() >= i){
             InventoryPO inventory = inventories.getFirst();
-            inventory.setAmount(inventory.getAmount() - 1);
+            inventory.setAmount(inventory.getAmount() - i);
             if (inventory.getAmount() > 0)
                 inventoryMapper.updateById(inventory);
             else
                 inventoryMapper.deleteById(inventory.getId());
+            return true;
+        }else
+            return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean sellInventory(Long userId, int itemId, int i) {
+        ItemPO item = itemMapper.selectById(itemId);
+        if(item == null) return false;
+        if(decreaseInventory(userId, itemId, i)){
+            UserPO user = userMapper.selectById(userId);
+            user.setCash(user.getCash() + item.getPrice() * i);
+            userMapper.updateById(user);
             return true;
         }else
             return false;

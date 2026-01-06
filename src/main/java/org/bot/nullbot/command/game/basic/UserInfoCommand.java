@@ -11,11 +11,11 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"ShowUserInfo", "info", "展示用户信息", "用户信息"})
+@CommandMapping({"UserInfo", "info", "用户信息"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ShowUserInfoCommand implements Command
+public class UserInfoCommand implements Command
 {
     private final UserService userService;
 
@@ -24,19 +24,19 @@ public class ShowUserInfoCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             UserPO user = userService.getUser(groupMessageEvent.getUserId());
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), user.toString(), false);
-            log.info("\t\t\t\t├─[User.ShowInfo] 已获取用户信息 - {}", user.toString().replaceAll("\\R", " "));
+            log.info("\t\t\t\t├─[UserInfo] 已获取用户信息 - {}", user.toString().replaceAll("\\R", " "));
         }else
-            log.info("\t\t\t\t├─[User.ShowInfo] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[UserInfo] 未设计 非群消息事件响应方式");
     }
 
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ ShowUserInfo 命令
+                ◉ UserInfo 命令
                 功能: 展示用户信息
                 限权: %d
-                格式: ShowUserInfo 或 info
-                中文命令: 展示用户信息/用户信息""", getAccess()
+                格式: UserInfo 或 info
+                中文命令: 用户信息""", getAccess()
         );
     }
 }

@@ -14,11 +14,11 @@ import org.bot.nullbot.service.ItemService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"UseInventory", "使用库存", "使用物品"})
+@CommandMapping({"Use", "使用", "使用物品"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class UseInventoryCommand implements Command
+public class UseCommand implements Command
 {
     private final InventoryService inventoryService;
     private final ItemService itemService;
@@ -29,25 +29,25 @@ public class UseInventoryCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             // 参数检查
             if (event.getCommandParameters().isEmpty()) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌参数不足", false);
-                log.info("\t\t\t\t├─[Inventory.Use] 参数不足");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌参数不足", false);
+                log.info("\t\t\t\t├─[Use] 参数不足");
                 return;
             }
 
             // 解析物品
-            Integer itemId;
+            int itemId;
             try {
-                itemId = Integer.valueOf(event.getCommandParameters().getFirst());
+                itemId = Integer.parseInt(event.getCommandParameters().getFirst());
             } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌参数格式错误", false);
-                log.info("\t\t\t\t├─[Inventory.Use] 参数格式错误");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌参数格式错误", false);
+                log.info("\t\t\t\t├─[Use] 参数格式错误");
                 return;
             }
 
             // 可用检查
             if (!itemService.isUsable(itemId)) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌该物品不可使用", false);
-                log.info("\t\t\t\t├─[Inventory.Use] 该物品不可使用");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌该物品不可使用", false);
+                log.info("\t\t\t\t├─[Use] 该物品不可使用");
                 return;
             }
 
@@ -56,17 +56,17 @@ public class UseInventoryCommand implements Command
 
             // 命令检查
             if (command == null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌该物品暂未设计相关指令", false);
-                log.info("\t\t\t\t├─[Inventory.Use] 该物品暂未设计相关指令");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌该物品暂未设计指令", false);
+                log.info("\t\t\t\t├─[Use] 该物品暂未设计指令");
                 return;
             }
 
             Long userId = groupMessageEvent.getUserId();
 
             // 库存检查
-            if (!inventoryService.decreaseInventory(userId, itemId)) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌该物品数量不足", false);
-                log.info("\t\t\t\t├─[Inventory.Use] 该物品数量不足");
+            if (!inventoryService.decreaseInventory(userId, itemId, 1)) {
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌数量不足", false);
+                log.info("\t\t\t\t├─[Use] 数量不足");
                 return;
             }
 
@@ -80,21 +80,21 @@ public class UseInventoryCommand implements Command
 
             // 发送通知
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ✅" + userName + "已使用" + item.getName() + "！", false);
-            log.info("\t\t\t\t├─[Inventory.Use] 已使用");
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ✅" + userName + "已使用 " + item.getName() + "！", false);
+            log.info("\t\t\t\t├─[Use] 已使用");
         } else {
-            log.info("\t\t\t\t├─[UseItem.Use] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Use] 未设计 非群消息事件响应方式");
         }
     }
 
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ UseInventory 命令
+                ◉ Use 命令
                 功能: 使用库存的物品
                 限权: %d
-                格式: UseInventory [物品ID]
-                中文命令: 使用库存/使用物品""", getAccess()
+                格式: Use [物品ID]
+                中文命令: 使用/使用物品""", getAccess()
         );
     }
 }
