@@ -11,6 +11,7 @@ import org.bot.nullbot.entity.game.looting.LootingGameState;
 import org.bot.nullbot.entity.game.looting.LootingPlayerState;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.service.InventoryService;
+import org.bot.nullbot.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LootingMatchHandler extends GameMatchHandler<LootingGameState, LootingGameLogic>
 {
     private final InventoryService inventoryService;
+    private final UserService userService;
 
     public LootingMatchHandler(
             @Value("${nullbot.bot-id}") Long botId,
@@ -29,6 +31,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
             MatchManager matchManager,
             PlayerManager playerManager,
             InventoryService inventoryService,
+            UserService userService,
             LootingGameLogic gameLogic
     ) {
         super(
@@ -40,6 +43,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
                 new ConcurrentHashMap<>()
         );
         this.inventoryService = inventoryService;
+        this.userService = userService;
     }
 
     @Override
@@ -62,9 +66,11 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
         LootingGameState state = games.get(match.getMatchId());
         // 摸金 奖励逻辑
         for(LootingPlayerState p : state.getPlayers().values()){
-            if(p.isEvacuated())
+            if(p.isEvacuated()){
+                userService.plusExperience(p.getUserId(), 200);
                 for(ItemPO item : p.getBackpack())
                     inventoryService.increaseInventory(p.getUserId(), item.getId(), 1);
+            }
         }
         super.onMatchEnd(match);
     }

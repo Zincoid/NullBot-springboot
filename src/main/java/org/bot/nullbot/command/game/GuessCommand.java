@@ -5,12 +5,14 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.GuessStorage;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.GuessInfo;
+import org.bot.nullbot.service.UserService;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,7 @@ public class GuessCommand implements Command
 {
     private final FileStorageConfig fileStorageConfig;
     private final GuessStorage guessStorage;
+    private final UserService userService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -76,8 +79,9 @@ public class GuessCommand implements Command
                 }
                 guessStorage.increaseTimes(groupId);
                 if(guessInfo.getName().equals(param)){
+                    userService.plusExperience(userId, 10);  // 给赢家10Exp
                     String response = MsgUtils.builder()
-                            .text(userName + "猜对啦✨是\n" + guessInfo.getName() + "！\n一共猜了" + guessInfo.getTimes() + "次！")
+                            .text(userName + "猜对啦✨是\n" + guessInfo.getName() + "！\n获得 10 Exp！\n一共猜了" + guessInfo.getTimes() + "次！")
                             .img(guessInfo.getPath())
                             .build();
                     bot.sendGroupMsg(groupId, response, false);

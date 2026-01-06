@@ -54,8 +54,11 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
         // 井字棋 奖励逻辑
         if(state.isFinished()){
             if(state.getWinnerId() != null){
+                userService.plusExperience(state.getWinnerId(), 100);
                 userService.increaseDrawTimes(state.getWinnerId(), 30);
             }else{
+                userService.plusExperience(state.getPlayerO(), 50);
+                userService.plusExperience(state.getPlayerX(), 50);
                 userService.increaseDrawTimes(state.getPlayerO(), 15);
                 userService.increaseDrawTimes(state.getPlayerX(), 15);
             }
