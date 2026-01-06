@@ -37,7 +37,13 @@ INSERT INTO item (name, category, rarity, price, weight, description, image_path
 
 -- 面包游戏物品
 INSERT INTO item (name, category, rarity, price, weight, description, image_path, available) VALUES
-('面包', 2, 2, 10, 1, '朴实无华', NULL, TRUE),
+('黑麦面包', 2, 0, 10, 1, '还行', NULL, TRUE),
+('吐司', 2, 1, 100, 1, '方方正正', NULL, TRUE),
+('面包', 2, 1, 100, 1, '朴实无华', NULL, FALSE),
+('小圆面包', 2, 2, 200, 1, '好吃', NULL, TRUE),
+('可颂', 2, 3, 500, 1, '好多层！', NULL, TRUE),
 ('法棍', 2, 4, 1000, 1, '杀人凶手', NULL, TRUE),
+('馒头', 2, 4, 1000, 1, '中国面包', NULL, TRUE),
 ('菠萝包', 2, 5, 7500, 1, '白咲花最爱！', NULL, TRUE),
-('小面包', 2, 5, 10000, 1, '你会记得自己至今为止吃过...', NULL, TRUE);
+('甜甜圈', 2, 5, 8000, 1, '美式', NULL, TRUE),
+('小面包?', 2, 5, 10000, 1, '你会记得自己至今为止吃过...', NULL, TRUE);

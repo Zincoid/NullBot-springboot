@@ -16,7 +16,9 @@ public interface InventoryService
 
     boolean decreaseInventory(Long userId, Integer itemId,  int i);
 
-    boolean sellInventory(Long userId, int itemId, int i);
+    boolean sellInventory(Long userId, Integer itemId, int i);
+
+    boolean buyInventory(Long userId, Integer itemId, int i);
 
     boolean sellInventoryByRarity(Long userId, Rarity rarity);
 

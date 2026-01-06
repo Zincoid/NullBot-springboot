@@ -86,13 +86,29 @@ public class InventoryServiceImpl implements InventoryService
 
     @Override
     @Transactional
-    public boolean sellInventory(Long userId, int itemId, int i) {
+    public boolean sellInventory(Long userId, Integer itemId, int i) {
         ItemPO item = itemMapper.selectById(itemId);
         if(item == null) return false;
         if(decreaseInventory(userId, itemId, i)){
             UserPO user = userMapper.selectById(userId);
             user.setCash(user.getCash() + item.getPrice() * i);
             userMapper.updateById(user);
+            return true;
+        }else
+            return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean buyInventory(Long userId, Integer itemId, int i) {
+        UserPO user = userMapper.selectById(userId);
+        ItemPO item = itemMapper.selectById(itemId);
+        if(item == null) return false;
+        int totalPrice = item.getPrice() * i;
+        if (user.getCash() >= totalPrice) {
+            user.setCash(user.getCash() - totalPrice);
+            userMapper.updateById(user);
+            increaseInventory(userId, itemId, i);
             return true;
         }else
             return false;
