@@ -40,8 +40,8 @@ public class MatchCommand implements Command
                     log.info("\t\t\t\t├─[Match] 未知错误");
                 }
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[匹配] ❌无游戏类型参数", false);
-                log.info("\t\t\t\t├─[Match] 无游戏类型参数");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[匹配] ❌未指定游戏", false);
+                log.info("\t\t\t\t├─[Match] 未指定游戏");
             }
         }else
             log.info("\t\t\t\t├─[Match] 未设计 非群消息事件响应方式");
