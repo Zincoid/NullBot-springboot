@@ -11,5 +11,9 @@ public interface BreadService
 
     int eatBasicBread(Long userId, int exp);
 
+    boolean eatRottenBread(Long userId);
+
     ItemPO buySpecialBread(Long userId, int cost);
+
+    int transferBasicBread(Long fromId, Long toId);
 }

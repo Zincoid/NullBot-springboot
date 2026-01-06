@@ -38,6 +38,7 @@ public class BreadServiceImpl implements BreadService
     // =================== 面包游戏相关 ===================
 
     @Override
+    @Transactional
     public InventoryPage getBreadPage(Long userId, int p, int size) {
         Page<InventoryPO> page = new Page<>(p, size);
         Page<InventoryPO> inventoryPage = inventoryMapper
@@ -87,6 +88,19 @@ public class BreadServiceImpl implements BreadService
 
     @Override
     @Transactional
+    public boolean eatRottenBread(Long userId) {
+        ItemPO bread = getBasicBread();
+        UserPO user = userMapper.selectById(userId);
+        if(inventoryService.decreaseInventory(userId, bread.getId(), 1)){
+            user.setExperience(0);
+            userMapper.updateById(user);
+            return true;
+        }else
+            return false;
+    }
+
+    @Override
+    @Transactional
     public ItemPO buySpecialBread(Long userId, int cost) {  // 花费 cost 现金购买一个特殊面包
         UserPO user = userMapper.selectById(userId);
         if(user.getCash() >= cost){
@@ -107,6 +121,24 @@ public class BreadServiceImpl implements BreadService
                 return null;
         }else
             return null;
+    }
+
+    @Override
+    @Transactional
+    public int transferBasicBread(Long fromId, Long toId) {
+        ItemPO bread = getBasicBread();
+        InventoryPO userBread = inventoryMapper
+                .selectOne(new LambdaQueryWrapper<InventoryPO>()
+                        .eq(InventoryPO::getOwnerId, fromId)
+                        .eq(InventoryPO::getItemId, bread.getId())
+                );
+        if(userBread == null) return 0;
+        int i = Math.min(random.nextInt(10), userBread.getAmount());
+        if(inventoryService.decreaseInventory(fromId, bread.getId(), i)){
+            inventoryService.increaseInventory(toId, bread.getId(), i);
+            return i;
+        } else
+            return 0;
     }
 
     private ItemPO getBasicBread() {

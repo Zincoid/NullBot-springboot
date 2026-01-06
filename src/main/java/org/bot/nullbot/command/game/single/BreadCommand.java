@@ -14,6 +14,7 @@ import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.service.BreadService;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.UserService;
+import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -50,10 +51,10 @@ public class BreadCommand implements Command
                 if (random.nextInt(100) > 10) {  // 10% 概率获得特殊面包
                     int i = breadService.buyBasicBread(userId, cost);
                     if (i > 0) {
-                        bot.sendGroupMsg(groupId, userName + " 花费" + cost + "￥买了" + i + "个普通面包！", false);
+                        bot.sendGroupMsg(groupId, userName + " 花费" + cost + "￥买了" + i + "个面包！", false);
                         log.info("\t\t\t\t├─[Bread-Buy] 已购买普通面包 - {}({}) -> {}个", userName, userId, i);
                     }else{
-                        bot.sendGroupMsg(groupId, "[买面包] ❌库容或现金不足！", false);
+                        bot.sendGroupMsg(groupId, userName + " 库容或现金不足！", false);
                         log.info("\t\t\t\t├─[Bread-Buy] 库容或现金不足");
                     }
                 }else{
@@ -62,7 +63,7 @@ public class BreadCommand implements Command
                         bot.sendGroupMsg(groupId, userName + " 花费" + cost + "￥买到1个特殊面包！\n" + bread, false);
                         log.info("\t\t\t\t├─[Bread-Buy] 已购买特殊面包 - {}({}) -> {}", userName, userId, bread.getName());
                     }else{
-                        bot.sendGroupMsg(groupId, "[买面包] ❌库容或现金不足！", false);
+                        bot.sendGroupMsg(groupId, userName + " 库容或现金不足！", false);
                         log.info("\t\t\t\t├─[Bread-Buy] 库容或现金不足");
                     }
                 }
@@ -70,27 +71,69 @@ public class BreadCommand implements Command
             }
 
             if("-eat".equals(params.getFirst())){
-                int exp = 1;  // 单个面包经验值
-                int i = breadService.eatBasicBread(userId, exp);
-                if (i > 0) {
-                    bot.sendGroupMsg(groupId, userName + " 吃了" + i + "个普通面包！\n- 获得 " + i * exp + "Exp！", false);
-                    log.info("\t\t\t\t├─[Bread-Eat] 已吃面包 - {}({}) -> {}个", userName, userId, i);
+                int exp = 5;  // 单个面包经验值
+                if (random.nextInt(100) > 2) {  // 2% 概率吃到过期面包
+                    int i = breadService.eatBasicBread(userId, exp);
+                    if (i > 0) {
+                        bot.sendGroupMsg(groupId, userName + " 吃了" + i + "个面包！\n- 获得 " + i * exp + "Exp！", false);
+                        log.info("\t\t\t\t├─[Bread-Eat] 已吃面包 - {}({}) -> {}个", userName, userId, i);
+                    }else{
+                        bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
+                        log.info("\t\t\t\t├─[Bread-Buy] 普通面包不足");
+                    }
                 }else{
-                    bot.sendGroupMsg(groupId, "[吃面包] ❌普通面包没了！", false);
-                    log.info("\t\t\t\t├─[Bread-Buy] 普通面包不足");
+                    if(breadService.eatRottenBread(userId)){
+                        bot.sendGroupMsg(groupId, userName + " 吃到1个烂面包！\n- Exp清空了！", false);
+                        log.info("\t\t\t\t├─[Bread-Eat] 吃到烂面包 - {}({})", userName, userId);
+                    }else{
+                        bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
+                        log.info("\t\t\t\t├─[Bread-Buy] 普通面包不足");
+                    }
                 }
                 return;
             }
 
             if("-rob".equals(params.getFirst())){
-                bot.sendGroupMsg(groupId, "[抢面包] ❌功能未实装", false);
-                log.info("\t\t\t\t├─[Bread-Rob] 功能未实装");
+                List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+                if(qqNumbers.isEmpty()){
+                    bot.sendGroupMsg(groupId, "[抢面包] ❌未指定对象", false);
+                    log.info("\t\t\t\t├─[Bread-Rob] 未指定对象");
+                    return;
+                }
+
+                long targetId = qqNumbers.getFirst(); // 只抢第一个人
+                String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
+
+                int i = breadService.transferBasicBread(targetId, userId);
+                if (i > 0) {
+                    bot.sendGroupMsg(groupId, userName + " 抢了 " + targetName + " " + i + "个面包！", false);
+                    log.info("\t\t\t\t├─[Bread-Rob] 已抢面包 - {}({}) -> {}个", targetName, targetId, i);
+                }else{
+                    bot.sendGroupMsg(groupId, targetName + " 面包没了！", false);
+                    log.info("\t\t\t\t├─[Bread-Rob] 对方无面包 - {}({})", targetName, targetId);
+                }
                 return;
             }
 
             if("-gift".equals(params.getFirst())){
-                bot.sendGroupMsg(groupId, "[送面包] ❌功能未实装", false);
-                log.info("\t\t\t\t├─[Bread-Gift] 功能未实装");
+                List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+                if(qqNumbers.isEmpty()){
+                    bot.sendGroupMsg(groupId, "[送面包] ❌未指定对象", false);
+                    log.info("\t\t\t\t├─[Bread-Gift] 未指定对象");
+                    return;
+                }
+
+                long targetId = qqNumbers.getFirst(); // 只送第一个人
+                String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
+
+                int i = breadService.transferBasicBread(userId, targetId);
+                if (i > 0) {
+                    bot.sendGroupMsg(groupId, userName + " 送了 " + targetName + " " + i + "个面包！", false);
+                    log.info("\t\t\t\t├─[Bread-Gift] 已送面包 - {}({}) -> {}个", targetName, targetId, i);
+                }else{
+                    bot.sendGroupMsg(groupId, userId + " 面包没了！", false);
+                    log.info("\t\t\t\t├─[Bread-Gift] 自身无面包 - {}({})", userName, userId);
+                }
                 return;
             }
 
@@ -134,15 +177,15 @@ public class BreadCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ Bread 命令
-                功能: 面包小游戏
+                功能: 面包小游戏(有特殊事件)
                 限权: %d 级
                 格式: Bread [操作符] [参数]
                 操作:
                 - 查面包 [-look] [可选: 页码]
                 - 买面包 [-buy]
                 - 吃面包 [-eat]
-                - 抢面包 [-rob] @用户 (未实装)
-                - 送面包 [-gift] @用户 (未实装)
+                - 抢面包 [-rob] @用户
+                - 送面包 [-gift] @用户
                 中文命令: 面包""", getAccess()
         );
     }
