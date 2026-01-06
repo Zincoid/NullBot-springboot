@@ -55,7 +55,7 @@ public class InventoryServiceImpl implements InventoryService
         if(item == null) return false;
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
         if(inventories == null || inventories.isEmpty()){
-            inventoryMapper.insert(new InventoryPO(null, userId, item.getId(), item.getName(), item.getCategory(), item.getRarity(), item.getPrice(), 1));
+            inventoryMapper.insert(new InventoryPO(null, userId, item.getId(), item.getName(), item.getCategory(), item.getRarity(), item.getPrice(), i));
             return true;
         }else if(inventories.size() == 1){
             InventoryPO inventory = inventories.getFirst();

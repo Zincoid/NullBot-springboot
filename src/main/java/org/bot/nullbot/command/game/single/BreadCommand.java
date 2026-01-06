@@ -131,7 +131,7 @@ public class BreadCommand implements Command
                     bot.sendGroupMsg(groupId, userName + " 送了 " + targetName + " " + i + "个面包！", false);
                     log.info("\t\t\t\t├─[Bread-Gift] 已送面包 - {}({}) -> {}个", targetName, targetId, i);
                 }else{
-                    bot.sendGroupMsg(groupId, userId + " 面包没了！", false);
+                    bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
                     log.info("\t\t\t\t├─[Bread-Gift] 自身无面包 - {}({})", userName, userId);
                 }
                 return;
