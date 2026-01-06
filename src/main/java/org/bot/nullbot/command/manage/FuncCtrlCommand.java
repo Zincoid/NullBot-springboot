@@ -10,11 +10,11 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.control.FunctionManager;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"FunctionControl", "功能控制"})
+@CommandMapping({"FuncCtrl", "功能控制"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class FunctionControlCommand implements Command
+public class FuncCtrlCommand implements Command
 {
     private final FunctionManager functionManager;
 
@@ -26,17 +26,17 @@ public class FunctionControlCommand implements Command
                 Boolean isEnabled = functionManager.switchEnabled(function);
                 if (isEnabled != null){
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
-                    log.info("\t\t\t\t├─[Function.Control] 已切换 {} 功能状态 -> {}", function, isEnabled ? "ON" : "OFF");
+                    log.info("\t\t\t\t├─[FuncCtrl] 已切换 {} 功能状态 -> {}", function, isEnabled ? "ON" : "OFF");
                 }else{
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] ❌无此功能标志", false);
-                    log.info("\t\t\t\t├─[Function.Control] 无此功能标志 - {}", function);
+                    log.info("\t\t\t\t├─[FuncCtrl] 无此功能标志 - {}", function);
                 }
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] ❌参数不足", false);
-                log.info("\t\t\t\t├─[Function.Control] 参数不足");
+                log.info("\t\t\t\t├─[FuncCtrl] 参数不足");
             }
         }else
-            log.info("\t\t\t\t├─[Function.Control] 未设计 - 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[FuncCtrl] 未设计 - 非群消息事件响应方式");
     }
 
     @Override
@@ -45,10 +45,10 @@ public class FunctionControlCommand implements Command
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ FunctionControl 命令
+                ◉ FuncCtrl 命令
                 功能: 转换功能启用状态
                 限权: %d
-                格式: FunctionControl [功能控制标志]
+                格式: FuncCtrl [功能控制标志]
                 标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect
                 中文命令: 功能控制""", getAccess()
         );
@@ -57,10 +57,10 @@ public class FunctionControlCommand implements Command
     @Override
     public String getHelpForAI() {
         return String.format("""
-                ◉ FunctionControl 命令
+                ◉ FuncCtrl 命令
                 功能: 转换功能启用状态
                 限权: %d
-                格式: FunctionControl [功能控制标志]
+                格式: FuncCtrl [功能控制标志]
                 标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect
                 注意: 只有Zincoid可以调用！！！""", getAccess()
         );

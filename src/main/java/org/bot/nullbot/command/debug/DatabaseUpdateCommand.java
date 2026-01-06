@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.manage;
+package org.bot.nullbot.command.debug;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;

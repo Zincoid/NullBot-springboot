@@ -10,11 +10,11 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.control.FunctionManager;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"FunctionCheck", "功能检查"})
+@CommandMapping({"FuncChk", "功能检查"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class FunctionCheckCommand implements Command
+public class FuncChkCommand implements Command
 {
     private final FunctionManager functionManager;
 
@@ -23,18 +23,18 @@ public class FunctionCheckCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
                 String status = functionManager.getStatus();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能检查] ℹ️已获取功能状态！" + status, false);
-                log.info("\t\t\t\t├─[Function.Check] 已获取 - 功能状态列表");
+                log.info("\t\t\t\t├─[FuncChk] 已获取 - 功能状态列表");
             } else
-                log.info("\t\t\t\t├─[Function.Check] 未设计 - 非群消息事件响应方式");
+                log.info("\t\t\t\t├─[FuncChk] 未设计 - 非群消息事件响应方式");
     }
 
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ FunctionCheck 命令
+                ◉ FuncChk 命令
                 功能: 检查功能启用状态
                 限权: %d
-                格式: FunctionCheck
+                格式: FuncChk
                 中文命令: 功能检查""", getAccess()
         );
     }
