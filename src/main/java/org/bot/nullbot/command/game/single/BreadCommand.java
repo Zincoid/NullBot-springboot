@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Random;
 
-@CommandMapping({"Bread", "面包"})
+@CommandMapping({"Bread", "面包", "\uD83C\uDF5E"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -46,7 +46,7 @@ public class BreadCommand implements Command
                 return;
             }
 
-            if("-buy".equals(params.getFirst())){
+            if("-buy".equals(params.getFirst()) || "b".equals(params.getFirst())){
                 int cost = 100;  // 需支付的现金
                 if (random.nextInt(100) > 10) {  // 10% 概率获得特殊面包
                     int i = breadService.buyBasicBread(userId, cost);
@@ -70,7 +70,7 @@ public class BreadCommand implements Command
                 return;
             }
 
-            if("-eat".equals(params.getFirst())){
+            if("-eat".equals(params.getFirst()) || "e".equals(params.getFirst())){
                 int exp = 5;  // 单个面包经验值
                 if (random.nextInt(100) > 2) {  // 2% 概率吃到过期面包
                     int i = breadService.eatBasicBread(userId, exp);
@@ -93,7 +93,7 @@ public class BreadCommand implements Command
                 return;
             }
 
-            if("-rob".equals(params.getFirst())){
+            if("-rob".equals(params.getFirst()) || "r".equals(params.getFirst())){
                 List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
                 if(qqNumbers.isEmpty()){
                     bot.sendGroupMsg(groupId, "[抢面包] ❌未指定对象", false);
@@ -121,7 +121,7 @@ public class BreadCommand implements Command
                 return;
             }
 
-            if("-gift".equals(params.getFirst())){
+            if("-gift".equals(params.getFirst()) || "g".equals(params.getFirst())){
                 List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
                 if(qqNumbers.isEmpty()){
                     bot.sendGroupMsg(groupId, "[送面包] ❌未指定对象", false);
@@ -149,7 +149,7 @@ public class BreadCommand implements Command
                 return;
             }
 
-            if("-look".equals(params.getFirst())){
+            if("-look".equals(params.getFirst()) || "l".equals(params.getFirst())){
                 int p = 1;
                 if(params.size() > 1)
                     try {
@@ -193,12 +193,12 @@ public class BreadCommand implements Command
                 限权: %d 级
                 格式: Bread [操作符] [参数]
                 操作:
-                - 查面包 [-look] [可选: 页码]
-                - 买面包 [-buy]
-                - 吃面包 [-eat]
-                - 抢面包 [-rob] @用户
-                - 送面包 [-gift] @用户
-                中文命令: 面包""", getAccess()
+                - 查面包 [l|-look] [可选: 页码]
+                - 买面包 [b|-buy]
+                - 吃面包 [e|-eat]
+                - 抢面包 [r|-rob] @用户
+                - 送面包 [g|-gift] @用户
+                中文命令: 面包/\uD83C\uDF5E""", getAccess()
         );
     }
 }
