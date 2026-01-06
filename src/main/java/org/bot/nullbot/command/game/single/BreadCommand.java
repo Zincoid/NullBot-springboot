@@ -50,7 +50,7 @@ public class BreadCommand implements Command
                 if (random.nextInt(100) > 10) {  // 10% 概率获得特殊面包
                     int i = breadService.buyBasicBread(userId, cost);
                     if (i > 0) {
-                        bot.sendGroupMsg(groupId, "[买面包] " + userName + " 花费" + cost + "￥买了" + i + "个普通面包！", false);
+                        bot.sendGroupMsg(groupId, userName + " 花费" + cost + "￥买了" + i + "个普通面包！", false);
                         log.info("\t\t\t\t├─[Bread-Buy] 已购买普通面包 - {}({}) -> {}个", userName, userId, i);
                     }else{
                         bot.sendGroupMsg(groupId, "[买面包] ❌库容或现金不足！", false);
@@ -59,7 +59,7 @@ public class BreadCommand implements Command
                 }else{
                     ItemPO bread = breadService.buySpecialBread(userId, cost);
                     if (bread != null) {
-                        bot.sendGroupMsg(groupId, "[买面包] " + userName + " 花费" + cost + "￥买到1个特殊面包！\n" + bread, false);
+                        bot.sendGroupMsg(groupId, userName + " 花费" + cost + "￥买到1个特殊面包！\n" + bread, false);
                         log.info("\t\t\t\t├─[Bread-Buy] 已购买特殊面包 - {}({}) -> {}", userName, userId, bread.getName());
                     }else{
                         bot.sendGroupMsg(groupId, "[买面包] ❌库容或现金不足！", false);
@@ -73,7 +73,7 @@ public class BreadCommand implements Command
                 int exp = 1;  // 单个面包经验值
                 int i = breadService.eatBasicBread(userId, exp);
                 if (i > 0) {
-                    bot.sendGroupMsg(groupId, "[吃面包] " + userName + " 吃了" + i + "个普通面包！\n- 获得 " + i * exp + "Exp！", false);
+                    bot.sendGroupMsg(groupId, userName + " 吃了" + i + "个普通面包！\n- 获得 " + i * exp + "Exp！", false);
                     log.info("\t\t\t\t├─[Bread-Eat] 已吃面包 - {}({}) -> {}个", userName, userId, i);
                 }else{
                     bot.sendGroupMsg(groupId, "[吃面包] ❌普通面包没了！", false);
@@ -83,14 +83,14 @@ public class BreadCommand implements Command
             }
 
             if("-rob".equals(params.getFirst())){
-                bot.sendGroupMsg(groupId, "[面包] ❌功能未实装", false);
-                log.info("\t\t\t\t├─[Bread] 功能未实装");
+                bot.sendGroupMsg(groupId, "[抢面包] ❌功能未实装", false);
+                log.info("\t\t\t\t├─[Bread-Rob] 功能未实装");
                 return;
             }
 
             if("-gift".equals(params.getFirst())){
-                bot.sendGroupMsg(groupId, "[面包] ❌功能未实装", false);
-                log.info("\t\t\t\t├─[Bread] 功能未实装");
+                bot.sendGroupMsg(groupId, "[送面包] ❌功能未实装", false);
+                log.info("\t\t\t\t├─[Bread-Gift] 功能未实装");
                 return;
             }
 
@@ -138,9 +138,11 @@ public class BreadCommand implements Command
                 限权: %d 级
                 格式: Bread [操作符] [参数]
                 操作:
-                - 面包库存 [-look] [可选: 页码]
+                - 查面包 [-look] [可选: 页码]
                 - 买面包 [-buy]
                 - 吃面包 [-eat]
+                - 抢面包 [-rob] @用户 (未实装)
+                - 送面包 [-gift] @用户 (未实装)
                 中文命令: 面包""", getAccess()
         );
     }
