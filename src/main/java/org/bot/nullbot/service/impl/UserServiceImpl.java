@@ -52,6 +52,15 @@ public class UserServiceImpl implements UserService
             return false;
     }
 
+    @Override
+    @Transactional
+    public int plusExperience(Long userId, int exp) {
+        UserPO user = userMapper.selectById(userId);
+        int upgrade = user.plusExperience(exp);
+        userMapper.updateById(user);
+        return upgrade;
+    }
+
     // =================== 注册功能相关 ===================
 
     @Override
@@ -62,7 +71,7 @@ public class UserServiceImpl implements UserService
 
     @Override
     public void addUser(Long userId, String userName) {
-        userMapper.insert(new UserPO(userId, userName, 0, 1, 0, 100, 50));
+        userMapper.insert(new UserPO(userId, userName, 0, 1, 0, 0, 100, 50));
     }
 
     @Override

@@ -9,6 +9,8 @@ public interface UserService
 
     boolean decreaseDrawTimes(Long userId);
 
+    int plusExperience(Long userId, int exp);
+
     UserPO getUser(Long userId);
 
     void addUser(Long userId, String userName);

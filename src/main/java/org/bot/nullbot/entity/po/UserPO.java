@@ -19,6 +19,21 @@ public class UserPO
     private Integer capacity;
     private Integer drawTimes;
 
+    public int plusExperience(int exp) {
+        int upgrade = 0;
+        experience += exp;
+        while(experience >= getMaxExperience()){
+            experience -= getMaxExperience();
+            level++;
+            upgrade++;
+        }
+        return upgrade;
+    }
+
+    public int getMaxExperience() {
+        return 100 + (level - 1) * 10;
+    }
+
     @Override
     public String toString() {
         return String.format(
