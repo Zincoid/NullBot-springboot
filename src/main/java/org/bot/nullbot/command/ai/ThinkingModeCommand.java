@@ -36,7 +36,7 @@ public class ThinkingModeCommand implements Command
         return String.format("""
                 ◉ ThinkingMode 命令
                 功能: 切换AI思考模式
-                限权: %d
+                限权: %d 级
                 格式: ThinkingMode
                 中文命令: 思考模式""",  getAccess()
         );

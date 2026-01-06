@@ -36,7 +36,7 @@ public class DefenseModeCommand implements Command
         return String.format("""
                 ◉ DefenseMode 命令
                 功能: 切换AI防御模式
-                限权: %d
+                限权: %d 级
                 格式: DefenseMode
                 中文命令: 防御模式/防注入模式""", getAccess()
         );

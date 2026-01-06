@@ -46,7 +46,7 @@ public class RandomAudioCommand implements Command
         return String.format("""
                 ◉ RandomAudio 命令
                 功能: 发送保存的随机音频
-                限权: %d
+                限权: %d 级
                 格式: RandomAudio 或 aud
                 中文命令: 随机音频/音频""", getAccess()
         );

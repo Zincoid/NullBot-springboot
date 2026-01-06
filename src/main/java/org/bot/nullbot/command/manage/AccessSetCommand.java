@@ -97,7 +97,7 @@ public class AccessSetCommand implements Command
         return String.format("""
                 ◉ AccessSet 命令
                 功能: 设置用户限权等级
-                限权: %d
+                限权: %d 级
                 格式: AccessSet [USER|GROUP] [ID] [限权等级]
                 中文命令: 限权设置
                 注意:
@@ -111,7 +111,7 @@ public class AccessSetCommand implements Command
         return String.format("""
                 ◉ AccessSet 命令
                 功能: 设置用户限权等级
-                限权: %d
+                限权: %d 级
                 格式: AccessSet [USER|GROUP] [ID] [限权等级]
                 示例: AccessSet USER 2660181154 2""", getAccess()
         );

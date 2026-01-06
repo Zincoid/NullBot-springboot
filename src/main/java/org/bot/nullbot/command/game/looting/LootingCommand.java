@@ -49,7 +49,7 @@ public class LootingCommand implements Command
         return String.format("""
                 ◉ Looting 命令
                 功能: 双人 PVPVE 非回合制摸金对抗
-                限权: %s
+                限权: %s 级
                 中文指令: 摸金
                 
                 基础指令:

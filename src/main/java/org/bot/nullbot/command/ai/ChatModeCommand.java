@@ -36,7 +36,7 @@ public class ChatModeCommand implements Command
         return String.format("""
                 ◉ ChatMode 命令
                 功能: 切换AI聊天模式
-                限权: %d
+                限权: %d 级
                 格式: ChatMode
                 AI模式: Group-群聊会话 Personal-个人会话 Monitor-监听群聊
                 中文命令: 聊天模式""", getAccess()

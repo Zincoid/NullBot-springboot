@@ -43,7 +43,7 @@ public class SysMsgModeCommand implements Command
         return String.format("""
                 ◉ SysMsgMode 命令
                 功能: 切换AI系统消息模式(并清空历史)
-                限权: %d
+                限权: %d 级
                 格式: SysMsgMode
                 中文命令: 系统消息模式""", getAccess()
         );

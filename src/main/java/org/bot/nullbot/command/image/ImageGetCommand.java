@@ -48,7 +48,7 @@ public class ImageGetCommand implements Command
         return String.format("""
                 ◉ ImageGet 命令
                 功能: 获取保存的图片
-                限权: %d
+                限权: %d 级
                 格式: ImageGet [文件名]
                 中文命令: 获取图片""", getAccess()
         );

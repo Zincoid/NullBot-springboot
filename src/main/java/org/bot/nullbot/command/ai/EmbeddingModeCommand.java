@@ -36,7 +36,7 @@ public class EmbeddingModeCommand implements Command
         return String.format("""
                 ◉ EmbeddingMode 命令
                 功能: 切换AI回复时的嵌入指令处理模式(非自定义提示词模式时生效)
-                限权: %d
+                限权: %d 级
                 格式: EmbeddingMode
                 中文命令: 嵌入模式/指令模式""", getAccess()
         );

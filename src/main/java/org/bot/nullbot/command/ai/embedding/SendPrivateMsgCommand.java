@@ -54,7 +54,7 @@ public class SendPrivateMsgCommand implements Command
         return String.format("""
                 ◉ 4ed1314d 命令
                 功能: 给指定用户发送私聊消息/发送通知
-                限权: %d
+                限权: %d 级
                 格式: 4ed1314d [QQ号] [消息]
                 示例: 4ed1314d 2660181154 你好！
                 注意: 消息第一行要附加让你发送的人的昵称和ID！任何人都可以调用该指令！""", getAccess()

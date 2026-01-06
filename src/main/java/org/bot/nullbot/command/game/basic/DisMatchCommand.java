@@ -35,7 +35,7 @@ public class DisMatchCommand implements Command
         return String.format("""
                 ◉ DisMatch 命令
                 功能: 取消当前匹配
-                限权: %d
+                限权: %d 级
                 格式: DisMatch
                 中文命令: 取消匹配""", getAccess()
         );

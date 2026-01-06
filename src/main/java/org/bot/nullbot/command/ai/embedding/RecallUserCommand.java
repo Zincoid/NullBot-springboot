@@ -43,7 +43,7 @@ public class RecallUserCommand implements Command
         return String.format("""
                 ◉ b6713262 命令
                 功能: 撤回非AI发送的用户消息
-                限权: %d
+                限权: %d 级
                 格式: b6713262 [Message ID]
                 示例: b6713262 965922865
                 注意: 已撤回的消息依然会存在于之后发给你的消息列表里！

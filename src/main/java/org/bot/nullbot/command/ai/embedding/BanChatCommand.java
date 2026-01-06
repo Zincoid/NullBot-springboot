@@ -67,7 +67,7 @@ public class BanChatCommand implements Command
         return String.format("""
                 ◉ 1e7bd161 命令
                 功能: 临时封禁某人与你进行对话的功能(时长为0则解除封禁)
-                限权: %d
+                限权: %d 级
                 格式: 1e7bd161 [QQ号] [时长(分钟)]
                 示例: 1e7bd161 1826403984 1
                 注意: 当你对某人感到厌烦时可以调用此命令，这样他就不能在你设置的时限内与你对话了！

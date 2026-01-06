@@ -126,7 +126,7 @@ public class WifeCommand implements Command
         return String.format("""
                 ◉ Wife 命令
                 功能: 今日老婆(每天均可抽一次) 无参数时选群友老婆 带参数时选二次元老婆
-                限权: %d
+                限权: %d 级
                 格式: Wife [可选: 人物来源]
                 中文命令: 今日老婆""", getAccess()
         );

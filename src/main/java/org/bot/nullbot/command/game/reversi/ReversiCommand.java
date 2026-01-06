@@ -55,7 +55,7 @@ public class ReversiCommand implements Command
         return String.format("""
                 ◉ Reversi 命令
                 功能: 匹配成功后发送黑白棋落子指令
-                限权: %d
+                限权: %d 级
                 格式: Reversi [坐标]
                 示例: Reversi D3
                 中文命令: 黑白棋""", getAccess()

@@ -34,7 +34,7 @@ public class UserInfoCommand implements Command
         return String.format("""
                 ◉ UserInfo 命令
                 功能: 展示个人信息
-                限权: %d
+                限权: %d 级
                 格式: UserInfo 或 info
                 中文命令: 个人信息""", getAccess()
         );

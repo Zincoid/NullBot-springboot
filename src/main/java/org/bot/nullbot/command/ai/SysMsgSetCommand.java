@@ -51,7 +51,7 @@ public class SysMsgSetCommand implements Command
         return String.format("""
                 ◉ SysMsgSet 命令
                 功能: 设置AI自定义消息模式下的系统消息(并清空历史)
-                限权: %d
+                限权: %d 级
                 格式: SysMsgSet [提示词]
                 中文命令: 系统消息设置""", getAccess()
         );

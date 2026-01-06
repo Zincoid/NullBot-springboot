@@ -80,7 +80,7 @@ public class DrawCommand implements Command
         return String.format("""
                 ◉ Draw 命令
                 功能: 抽奖(可指定次数)
-                限权: %d
+                限权: %d 级
                 格式: Draw [可选: 次数]
                 中文命令: 抽奖""", getAccess()
         );

@@ -52,7 +52,7 @@ public class MatchCommand implements Command
         return String.format("""
                 ◉ Match 命令
                 功能: 按游戏类型匹配
-                限权: %d
+                限权: %d 级
                 格式: Match [游戏类型]
                 游戏类型:
                 - Tictactoe 井字棋

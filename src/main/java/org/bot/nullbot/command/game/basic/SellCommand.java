@@ -95,7 +95,7 @@ public class SellCommand implements Command
         return String.format("""
                 ◉ Sell 命令
                 功能: 出售库存物品(可批量出售所有指定稀有度物品)
-                限权: %d
+                限权: %d 级
                 格式: Sell [物品ID] [可选: 数量(默认为1)]
                 或 Sell -r [稀有度]
                 稀有度: RED/GOLD/PURPLE/BLUE/GREEN/WHITE

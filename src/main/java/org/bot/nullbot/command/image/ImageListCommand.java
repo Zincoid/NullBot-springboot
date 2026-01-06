@@ -38,7 +38,7 @@ public class ImageListCommand implements Command
         return String.format("""
                 ◉ ImageList 命令
                 功能: 获取保存图片列表
-                限权: %d
+                限权: %d 级
                 格式: ImageList
                 中文命令: 图片列表""", getAccess()
         );

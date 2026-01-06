@@ -268,7 +268,7 @@ public class InvokeCommand implements Command {
         return String.format("""
                 ◉ Invoke 命令
                 功能: 反射调用方法
-                限权: %d
+                限权: %d 级
                 格式: Invoke [Bean名称] [方法名] [参数...]
                 中文命令: 调用""", getAccess()
         );

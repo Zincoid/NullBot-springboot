@@ -39,7 +39,7 @@ public class DatabaseUpdateCommand implements Command
         return String.format("""
                 ◉ DatabaseUpdate 命令
                 功能: 更新数据库
-                限权: %d
+                限权: %d 级
                 格式: DatabaseUpdate
                 中文命令: 数据库更新""", getAccess()
         );

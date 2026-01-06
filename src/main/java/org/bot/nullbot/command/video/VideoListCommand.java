@@ -37,7 +37,7 @@ public class VideoListCommand  implements Command
         return String.format("""
                 ◉ VideoList 命令
                 功能: 获取保存视频列表
-                限权: %d
+                限权: %d 级
                 格式: VideoList
                 中文命令: 视频列表""", getAccess()
         );

@@ -41,7 +41,7 @@ public class FinishMatchCommand implements Command
         return String.format("""
                 ◉ FinishMatch 命令
                 功能: 强制终止自身正在进行的对局
-                限权: %d
+                限权: %d 级
                 格式: FinishMatch
                 中文命令: 终止对局""", getAccess()
         );

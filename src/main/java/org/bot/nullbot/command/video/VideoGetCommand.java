@@ -48,7 +48,7 @@ public class VideoGetCommand implements Command
         return String.format("""
                 ◉ VideoGet 命令
                 功能: 获取保存的视频
-                限权: %d
+                限权: %d 级
                 格式: VideoGet [文件名]
                 中文命令: 获取视频""", getAccess()
         );

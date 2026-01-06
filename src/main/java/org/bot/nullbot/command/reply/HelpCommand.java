@@ -46,7 +46,7 @@ public class HelpCommand implements Command
         return String.format("""
                 ◉ Help 命令
                 功能: 发送帮助菜单
-                限权: %d
+                限权: %d 级
                 格式: Help 或 help
                 中文命令: 帮助""", getAccess()
         );

@@ -36,7 +36,7 @@ public class ImageFolderCommand implements Command
         return String.format("""
                 ◉ ImageFolder 命令
                 功能: 获取图片目录树结构
-                限权: %d
+                限权: %d 级
                 格式: ImageFolder
                 中文命令: 图片目录""",  getAccess()
         );

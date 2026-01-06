@@ -47,7 +47,7 @@ public class FuncCtrlCommand implements Command
         return String.format("""
                 ◉ FuncCtrl 命令
                 功能: 转换功能启用状态
-                限权: %d
+                限权: %d 级
                 格式: FuncCtrl [功能控制标志]
                 标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect
                 中文命令: 功能控制""", getAccess()
@@ -59,7 +59,7 @@ public class FuncCtrlCommand implements Command
         return String.format("""
                 ◉ FuncCtrl 命令
                 功能: 转换功能启用状态
-                限权: %d
+                限权: %d 级
                 格式: FuncCtrl [功能控制标志]
                 标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect
                 注意: 只有Zincoid可以调用！！！""", getAccess()

@@ -49,7 +49,7 @@ public class CheckInCommand implements Command
         return String.format("""
                 ◉ CheckIn 命令
                 功能: 每日签到
-                限权: %d
+                限权: %d 级
                 格式: CheckIn
                 中文命令: 签到""", getAccess()
         );

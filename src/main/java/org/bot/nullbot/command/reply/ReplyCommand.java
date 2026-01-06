@@ -36,7 +36,7 @@ public class ReplyCommand implements Command
         return String.format("""
                 ◉ Reply 命令
                 功能: 简单回复(废弃)
-                限权: %d
+                限权: %d 级
                 格式: Reply [内容]
                 中文命令: 应答""", getAccess()
         );

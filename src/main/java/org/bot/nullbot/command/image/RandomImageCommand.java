@@ -47,7 +47,7 @@ public class RandomImageCommand implements Command
         return String.format("""
                 ◉ RandomImage 命令
                 功能: 发送保存的随机图片
-                限权: %d
+                限权: %d 级
                 格式: RandomImage 或 img
                 中文命令: 随机图片/图片""", getAccess()
         );

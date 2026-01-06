@@ -62,7 +62,7 @@ public class PUBGCommand implements Command
         return String.format("""
                 ◉ PUBG 命令
                 功能: 获取PUBG资源地图
-                限权: %d
+                限权: %d 级
                 格式: PUBG [地图] 或 pubg [地图]
                 地图: 艾伦格/泰戈/帝斯顿/维寒迪/荣都/米拉玛
                 中文命令: 获取PUBG资源地图""", getAccess()
@@ -74,7 +74,7 @@ public class PUBGCommand implements Command
         return String.format("""
                 ◉ PUBG 命令
                 功能: 获取PUBG资源地图
-                限权: %d
+                限权: %d 级
                 格式: PUBG [地图]
                 地图: 艾伦格/泰戈/帝斯顿/维寒迪/荣都/米拉玛
                 示例: PUBG 帝斯顿""", getAccess()

@@ -41,7 +41,7 @@ public class UserBanCommand implements Command
         return String.format("""
                 ◉ UserBan 命令
                 功能: 用户禁言(时长设置为0则解除禁言)
-                限权: %d
+                限权: %d 级
                 格式: UserBan [QQ号] [时长(分钟)]
                 中文命令: 禁言""", getAccess()
         );
@@ -52,7 +52,7 @@ public class UserBanCommand implements Command
         return String.format("""
                 ◉ UserBan 命令
                 功能: 用户禁言(时长设置为0则解除禁言)
-                限权: %d
+                限权: %d 级
                 格式: UserBan [QQ号] [时长(分钟)]
                 注意: 只有Zincoid可以调用！！！或者你想禁言某人时也可以自己主动调用！！！""", getAccess()
         );

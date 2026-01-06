@@ -41,7 +41,7 @@ public class RecallCommand implements Command
         return String.format("""
                 ◉ Recall 命令
                 功能: 撤回任意引用的消息
-                限权: %d
+                限权: %d 级
                 格式: [引用消息] Recall 或 [引用消息] rc
                 中文命令: 撤回""", getAccess()
         );

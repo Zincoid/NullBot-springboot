@@ -55,7 +55,7 @@ public class RandomSayingCommand implements Command
         return String.format("""
                 ◉ RandomSaying 命令
                 功能: 随机语录(可指定发言人)
-                限权: %d
+                限权: %d 级
                 格式: RandomSaying [可选: QQ号] 或 say [可选: QQ号]
                 中文命令: 随机语录/语录""", getAccess()
         );

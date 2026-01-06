@@ -55,7 +55,7 @@ public class ChatCommand implements Command
         return String.format("""
                 ◉ Chat 命令
                 功能: 与AI对话
-                限权: %d
+                限权: %d 级
                 格式: Chat [对话内容] 或 @Null [对话内容] 或 戳一戳
                 中文命令: 聊天""", getAccess()
         );

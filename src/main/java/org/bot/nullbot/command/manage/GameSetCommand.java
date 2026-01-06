@@ -59,7 +59,7 @@ public class GameSetCommand implements Command
         return String.format("""
                 ◉ GameSet 命令
                 功能: 游戏参数设置
-                限权: %d
+                限权: %d 级
                 格式: GameSet [游戏类型] [参数...]
                 游戏参数:
                 Guess(猜角色) - [Ratio] [Padding]
@@ -72,7 +72,7 @@ public class GameSetCommand implements Command
         return String.format("""
                 ◉ GameSet 命令
                 功能: 设置游戏参数
-                限权: %d
+                限权: %d 级
                 格式: GameSet [游戏类型] [参数...]
                 游戏参数:
                 Guess(猜角色) - [Ratio(范围 0.05-0.3)] [Padding(范围 150-300)]

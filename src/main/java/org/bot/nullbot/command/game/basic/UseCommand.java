@@ -92,7 +92,7 @@ public class UseCommand implements Command
         return String.format("""
                 ◉ Use 命令
                 功能: 使用库存的物品
-                限权: %d
+                限权: %d 级
                 格式: Use [物品ID]
                 中文命令: 使用/使用物品""", getAccess()
         );

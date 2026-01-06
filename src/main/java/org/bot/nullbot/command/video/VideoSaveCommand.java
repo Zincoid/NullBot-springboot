@@ -61,7 +61,7 @@ public class VideoSaveCommand implements Command
         return String.format("""
                 ◉ VideoSave 命令
                 功能: 保存视频至视频库
-                限权: %d
+                限权: %d 级
                 格式: [引用视频] VideoSave
                 中文命令: 保存视频""", getAccess()
         );

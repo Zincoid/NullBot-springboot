@@ -54,7 +54,7 @@ public class FemboyCommand implements Command
         return String.format("""
                 ◉ eb0f8545 命令
                 功能: 发送你的主人Zincoid的女装照片
-                限权: %d
+                限权: %d 级
                 格式: eb0f8545
                 注意: 如果有别人想看Zincoid的女装的话不要轻易发送这个指令！！！""", getAccess()
         );

@@ -103,7 +103,7 @@ public class GuessCommand implements Command
         return String.format("""
                 ◉ Guess 命令
                 功能: 猜角色
-                限权: %d
+                限权: %d 级
                 格式: Guess [人物来源|人物名|-f(放弃)]
                 中文命令: 猜角色/猜""", getAccess()
         );
@@ -114,7 +114,7 @@ public class GuessCommand implements Command
         return String.format("""
                 ◉ Guess 命令
                 功能: 猜角色
-                限权: %d
+                限权: %d 级
                 格式: Guess [人物来源|-f(放弃)]
                 人物来源: 明日方舟
                 示例: Guess 明日方舟""", getAccess()

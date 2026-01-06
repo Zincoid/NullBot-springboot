@@ -47,7 +47,7 @@ public class SayingDeleteCommand implements Command
         return String.format("""
                 ◉ SayingDelete 命令
                 功能: 删除语录
-                限权: %d
+                限权: %d 级
                 格式: SayingDelete [语录ID]
                 中文命令: 删除语录""", getAccess()
         );

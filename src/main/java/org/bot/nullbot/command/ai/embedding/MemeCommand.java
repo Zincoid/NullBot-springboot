@@ -68,7 +68,7 @@ public class MemeCommand implements Command
         return String.format("""
                 ◉ 65275d24 命令
                 功能: 发送表情包图片
-                限权: %d
+                限权: %d 级
                 格式: 65275d24 [表情文件名]
                 可使用表情文件列表(文件名指代为 表情主体人物_表达的文字内容或情绪.文件扩展名)：
                 %s

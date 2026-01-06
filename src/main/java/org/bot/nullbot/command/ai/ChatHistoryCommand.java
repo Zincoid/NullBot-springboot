@@ -35,7 +35,7 @@ public class ChatHistoryCommand implements Command
         return String.format("""
                 ◉ ChatHistory 命令
                 功能: 获取AI聊天历史
-                限权: %d
+                限权: %d 级
                 格式: ChatHistory
                 中文命令: 聊天历史""", getAccess()
         );

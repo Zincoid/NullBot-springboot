@@ -49,7 +49,7 @@ public class AnimeCommand implements Command
         return String.format("""
                 ◉ Anime 命令
                 功能: 随机二/三次元图
-                限权: %d
+                限权: %d 级
                 格式: Anime
                 中文命令: 二次元/色图/涩图""", getAccess()
         );

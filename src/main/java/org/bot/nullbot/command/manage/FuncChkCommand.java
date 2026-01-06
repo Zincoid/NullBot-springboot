@@ -33,7 +33,7 @@ public class FuncChkCommand implements Command
         return String.format("""
                 ◉ FuncChk 命令
                 功能: 检查功能启用状态
-                限权: %d
+                限权: %d 级
                 格式: FuncChk
                 中文命令: 功能检查""", getAccess()
         );
