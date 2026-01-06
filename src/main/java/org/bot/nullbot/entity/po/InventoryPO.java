@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.bot.nullbot.enums.Category;
 import org.bot.nullbot.enums.Rarity;
 
 @Data
@@ -17,6 +18,7 @@ public class InventoryPO
     private Long ownerId;
     private Integer ItemId;
     private String ItemName;
+    private Category category;
     private Rarity rarity;
     private Integer price;
     private Integer amount;

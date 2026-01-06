@@ -35,7 +35,7 @@ public class InventoryServiceImpl implements InventoryService
 
     @Override
     @Transactional
-    public InventoryPage getInventoriesPage(Long userId, long p, long size) {
+    public InventoryPage getInventoriesPage(Long userId, int p, int size) {
         Page<InventoryPO> page = new Page<>(p, size);
         Page<InventoryPO> inventoryPage = inventoryMapper
                 .selectPage(page, new LambdaQueryWrapper<InventoryPO>()
@@ -55,7 +55,7 @@ public class InventoryServiceImpl implements InventoryService
         if(item == null) return false;
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
         if(inventories == null || inventories.isEmpty()){
-            inventoryMapper.insert(new InventoryPO(null, userId, item.getId(), item.getName(), item.getRarity(), item.getPrice(), 1));
+            inventoryMapper.insert(new InventoryPO(null, userId, item.getId(), item.getName(), item.getCategory(), item.getRarity(), item.getPrice(), 1));
             return true;
         }else if(inventories.size() == 1){
             InventoryPO inventory = inventories.getFirst();

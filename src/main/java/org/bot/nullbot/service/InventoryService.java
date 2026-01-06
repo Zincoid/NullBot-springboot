@@ -10,7 +10,7 @@ public interface InventoryService
 {
     List<InventoryPO> getInventories(Long userId);
 
-    InventoryPage getInventoriesPage(Long userId, long p, long size);
+    InventoryPage getInventoriesPage(Long userId, int p, int size);
 
     boolean increaseInventory(Long userId, Integer itemId,  int i);
 

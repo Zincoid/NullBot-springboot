@@ -22,6 +22,7 @@ CREATE TABLE `inventory` (
     owner_id LONG NOT NULL,
     item_id INT NOT NULL,
     item_name VARCHAR(100) NOT NULL,
+    category INT NOT NULL,
     rarity INT NOT NULL,
     price INT NOT NULL,
     amount INT DEFAULT 1

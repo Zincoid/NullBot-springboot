@@ -27,7 +27,7 @@ public class InventoryCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            long p = 1;
+            int p = 1;
             if(!event.getCommandParameters().isEmpty())
                 try {
                     p = Integer.parseInt(event.getCommandParameters().getFirst());

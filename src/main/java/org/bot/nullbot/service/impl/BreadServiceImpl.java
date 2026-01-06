@@ -1,7 +1,9 @@
 package org.bot.nullbot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.entity.page.InventoryPage;
 import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.po.UserPO;
@@ -36,6 +38,19 @@ public class BreadServiceImpl implements BreadService
     // =================== 面包游戏相关 ===================
 
     @Override
+    public InventoryPage getBreadPage(Long userId, int p, int size) {
+        Page<InventoryPO> page = new Page<>(p, size);
+        Page<InventoryPO> inventoryPage = inventoryMapper
+                .selectPage(page, new LambdaQueryWrapper<InventoryPO>()
+                        .eq(InventoryPO::getOwnerId, userId)
+                        .eq(InventoryPO::getCategory, Category.BREAD)
+                        .orderByDesc(InventoryPO::getRarity)
+                        .orderByDesc(InventoryPO::getPrice)
+                        .orderByAsc(InventoryPO::getId));
+        return new InventoryPage(inventoryPage.getRecords(), inventoryPage.getCurrent(), inventoryPage.getPages(), inventoryPage.getTotal(), inventoryPage.getSize());
+    }
+
+    @Override
     @Transactional
     public int buyBasicBread(Long userId) {  // 花费 100 现金购买随机数量普通面包
         UserPO user = userMapper.selectById(userId);
@@ -49,6 +64,24 @@ public class BreadServiceImpl implements BreadService
             }else
                 return 0;
         }else
+            return 0;
+    }
+
+    @Override
+    @Transactional
+    public int eatBasicBread(Long userId) {  // 吃随机 i 个普通面包并获得 i 经验
+        ItemPO bread = getBasicBread();
+        InventoryPO userBread = inventoryMapper
+                .selectOne(new LambdaQueryWrapper<InventoryPO>()
+                        .eq(InventoryPO::getOwnerId, userId)
+                        .eq(InventoryPO::getItemId, bread.getId())
+                );
+        if(userBread == null) return 0;
+        int i = Math.min(random.nextInt(10), userBread.getAmount());
+        if(inventoryService.decreaseInventory(userId, bread.getId(), i)){
+            userService.plusExperience(userId, i);
+            return i;
+        } else
             return 0;
     }
 
@@ -73,24 +106,6 @@ public class BreadServiceImpl implements BreadService
                 return null;
         }else
             return null;
-    }
-
-    @Override
-    @Transactional
-    public int eatBasicBread(Long userId) {  // 吃随机数量普通面包并获得经验
-        ItemPO bread = getBasicBread();
-        InventoryPO userBread = inventoryMapper
-                .selectOne(new LambdaQueryWrapper<InventoryPO>()
-                        .eq(InventoryPO::getOwnerId, userId)
-                        .eq(InventoryPO::getItemId, bread.getId())
-                );
-        if(userBread == null) return 0;
-        int i = Math.min(random.nextInt(10), userBread.getAmount());
-        if(inventoryService.decreaseInventory(userId, bread.getId(), i)){
-            userService.plusExperience(userId, i);
-            return i;
-        } else
-            return 0;
     }
 
     private ItemPO getBasicBread() {
