@@ -80,6 +80,7 @@ public class GuessCommand implements Command
                 guessStorage.increaseTimes(groupId);
                 if(guessInfo.getName().equals(param)){
                     userService.plusExperience(userId, 10);  // 给赢家10Exp
+                    userService.increaseDrawTimes(userId, 1);  // 给赢家1抽
                     String response = MsgUtils.builder()
                             .text(userName + "猜对啦✨是\n" + guessInfo.getName() + "！\n获得 10 Exp！\n一共猜了" + guessInfo.getTimes() + "次！")
                             .img(guessInfo.getPath())
@@ -118,6 +119,7 @@ public class GuessCommand implements Command
         return String.format("""
                 ◉ Guess 命令
                 功能: 猜角色
+                奖励: 1抽数 & 10Exp
                 限权: %d 级
                 格式: Guess [人物来源|-f(放弃)]
                 人物来源: 明日方舟

@@ -58,6 +58,7 @@ public class TicTacToeCommand implements Command
         return String.format("""
                 ◉ TicTacToe 命令
                 功能: 匹配成功后发送井字棋落子
+                奖励: 30抽数 & 100Exp
                 限权: %d 级
                 格式: TicTacToe [行] [列]
                 示例: TicTacToe 1 1
