@@ -52,14 +52,14 @@ public class BreadServiceImpl implements BreadService
 
     @Override
     @Transactional
-    public int buyBasicBread(Long userId) {  // 花费 100 现金购买随机数量普通面包
+    public int buyBasicBread(Long userId, int cost) {  // 花费 cost 现金购买随机数量普通面包
         UserPO user = userMapper.selectById(userId);
-        if(user.getCash() >= 100){
-            user.setCash(user.getCash() - 100);
-            userMapper.updateById(user);
+        if(user.getCash() >= cost){
             ItemPO bread = getBasicBread();
             int i = random.nextInt(10);
             if(inventoryService.increaseInventory(userId, bread.getId(), i)){
+                user.setCash(user.getCash() - cost);
+                userMapper.updateById(user);
                 return i;
             }else
                 return 0;
@@ -69,7 +69,7 @@ public class BreadServiceImpl implements BreadService
 
     @Override
     @Transactional
-    public int eatBasicBread(Long userId) {  // 吃随机 i 个普通面包并获得 i 经验
+    public int eatBasicBread(Long userId, int exp) {  // 吃随机 i 个普通面包并获得 i * exp 经验
         ItemPO bread = getBasicBread();
         InventoryPO userBread = inventoryMapper
                 .selectOne(new LambdaQueryWrapper<InventoryPO>()
@@ -79,7 +79,7 @@ public class BreadServiceImpl implements BreadService
         if(userBread == null) return 0;
         int i = Math.min(random.nextInt(10), userBread.getAmount());
         if(inventoryService.decreaseInventory(userId, bread.getId(), i)){
-            userService.plusExperience(userId, i);
+            userService.plusExperience(userId, i * exp);
             return i;
         } else
             return 0;
@@ -87,11 +87,10 @@ public class BreadServiceImpl implements BreadService
 
     @Override
     @Transactional
-    public ItemPO buySpecialBread(Long userId) {  // 花费 100 现金购买一个特殊面包
+    public ItemPO buySpecialBread(Long userId, int cost) {  // 花费 cost 现金购买一个特殊面包
         UserPO user = userMapper.selectById(userId);
-        if(user.getCash() >= 100){
-            user.setCash(user.getCash() - 100);
-            userMapper.updateById(user);
+        if(user.getCash() >= cost){
+
             Rarity rarity = DrawUtil.drawRarityByProbability();
             List<ItemPO> itemList = itemMapper
                     .selectList(new LambdaQueryWrapper<ItemPO>()
@@ -100,9 +99,11 @@ public class BreadServiceImpl implements BreadService
                             .eq(ItemPO::getRarity, rarity)
                     );
             ItemPO item = DrawUtil.drawItemByLogPrice(itemList);
-            if(inventoryService.increaseInventory(userId, item.getId(), 1))
+            if(inventoryService.increaseInventory(userId, item.getId(), 1)){
+                user.setCash(user.getCash() - cost);
+                userMapper.updateById(user);
                 return item;
-            else
+            } else
                 return null;
         }else
             return null;

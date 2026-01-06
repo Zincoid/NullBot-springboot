@@ -7,9 +7,9 @@ public interface BreadService
 {
     InventoryPage getBreadPage(Long userId, int p, int size);
 
-    int buyBasicBread(Long userId);
+    int buyBasicBread(Long userId, int cost);
 
-    int eatBasicBread(Long userId);
+    int eatBasicBread(Long userId, int exp);
 
-    ItemPO buySpecialBread(Long userId);
+    ItemPO buySpecialBread(Long userId, int cost);
 }

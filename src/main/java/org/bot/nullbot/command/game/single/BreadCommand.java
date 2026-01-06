@@ -7,10 +7,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.entity.page.InventoryPage;
+import org.bot.nullbot.entity.po.InventoryPO;
+import org.bot.nullbot.entity.po.ItemPO;
+import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.service.BreadService;
+import org.bot.nullbot.service.InventoryService;
+import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Random;
 
 @CommandMapping({"Bread", "面包"})
 @Component
@@ -18,30 +25,60 @@ import java.util.List;
 @Slf4j
 public class BreadCommand implements Command
 {
+    private final UserService userService;
+    private final InventoryService inventoryService;
     private final BreadService breadService;
+
+    private final Random random = new Random();
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
             Long userId = groupMessageEvent.getUserId();
+            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             Long groupId = groupMessageEvent.getGroupId();
 
             if (params.isEmpty()) {
-                bot.sendGroupMsg(groupId, "[面包] ❌参数不足", false);
-                log.info("\t\t\t\t├─[Bread] 参数不足");
+                bot.sendGroupMsg(groupId, "[面包] ❌无操作", false);
+                log.info("\t\t\t\t├─[Bread] 无操作");
                 return;
             }
 
             if("-buy".equals(params.getFirst())){
-                bot.sendGroupMsg(groupId, "[面包] ❌功能未实装", false);
-                log.info("\t\t\t\t├─[Bread] 功能未实装");
+                int cost = 100;  // 需支付的现金
+                if (random.nextInt(100) > 10) {  // 10% 概率获得特殊面包
+                    int i = breadService.buyBasicBread(userId, cost);
+                    if (i > 0) {
+                        bot.sendGroupMsg(groupId, "[买面包] " + userName + " 花费" + cost + "￥买了" + i + "个普通面包！", false);
+                        log.info("\t\t\t\t├─[Bread-Buy] 已购买普通面包 - {}({}) -> {}个", userName, userId, i);
+                    }else{
+                        bot.sendGroupMsg(groupId, "[买面包] ❌库容或现金不足！", false);
+                        log.info("\t\t\t\t├─[Bread-Buy] 库容或现金不足");
+                    }
+                }else{
+                    ItemPO bread = breadService.buySpecialBread(userId, cost);
+                    if (bread != null) {
+                        bot.sendGroupMsg(groupId, "[买面包] " + userName + " 花费" + cost + "￥买到1个特殊面包！\n" + bread, false);
+                        log.info("\t\t\t\t├─[Bread-Buy] 已购买特殊面包 - {}({}) -> {}", userName, userId, bread.getName());
+                    }else{
+                        bot.sendGroupMsg(groupId, "[买面包] ❌库容或现金不足！", false);
+                        log.info("\t\t\t\t├─[Bread-Buy] 库容或现金不足");
+                    }
+                }
                 return;
             }
 
             if("-eat".equals(params.getFirst())){
-                bot.sendGroupMsg(groupId, "[面包] ❌功能未实装", false);
-                log.info("\t\t\t\t├─[Bread] 功能未实装");
+                int exp = 1;  // 单个面包经验值
+                int i = breadService.eatBasicBread(userId, exp);
+                if (i > 0) {
+                    bot.sendGroupMsg(groupId, "[吃面包] " + userName + " 吃了" + i + "个普通面包！\n- 获得 " + i * exp + "Exp！", false);
+                    log.info("\t\t\t\t├─[Bread-Eat] 已吃面包 - {}({}) -> {}个", userName, userId, i);
+                }else{
+                    bot.sendGroupMsg(groupId, "[吃面包] ❌普通面包没了！", false);
+                    log.info("\t\t\t\t├─[Bread-Buy] 普通面包不足");
+                }
                 return;
             }
 
@@ -63,16 +100,34 @@ public class BreadCommand implements Command
                     try {
                         p = Integer.parseInt(event.getCommandParameters().getFirst());
                     } catch (NumberFormatException e) {
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[面包-查询] ❌页码格式错误", false);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[查面包] ❌页码格式错误", false);
                         log.info("\t\t\t\t├─[Bread-Look] 页码格式错误");
                         return;
                     }
-                breadService.getBreadPage(userId, p, 10);
-                bot.sendGroupMsg(groupId, "[面包] ❌功能未实装", false);
-                log.info("\t\t\t\t├─[Bread] 功能未实装");
+                InventoryPage inventoryPage = breadService.getBreadPage(userId, p, 10);
+                UserPO user = userService.getUser(userId);
+                int totalAmount = inventoryService.getTotalAmountByUserId(userId);
+                StringBuilder sb = new StringBuilder()
+                        .append("[面包] ").append(userName).append("(").append(userId).append(")\n")
+                        .append("现金: ").append(user.getCash()).append(" ￥ 容量: ").append(totalAmount).append("/").append(user.getCapacity()).append("\n")
+                        .append("[ID -- 名称 -- 品质/单价 - 数量]\n");
+                if(inventoryPage.getTotal() > 0){
+                    for(InventoryPO inventoryPO : inventoryPage.getInventories()) {
+                        sb.append(inventoryPO.toString()).append("\n");
+                    }
+                }else{
+                    sb.append("无面包...").append("\n");
+                }
+                sb.append("[第").append(inventoryPage.getCurrentPage()).append("页").append(" / 共").append(inventoryPage.getTotalPage()).append("页 (每页").append(inventoryPage.getPageSize()).append("条)]");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
+                log.info("\t\t\t\t├─[Bread-Look] 已获取面包库存 - {}({})", userName, userId);
+                return;
             }
+
+            bot.sendGroupMsg(groupId, "[面包] ❌操作不存在", false);
+            log.info("\t\t\t\t├─[Bread] 操作不存在");
         }else
-            log.info("\t\t\t\t├─[Bread] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Bread-Look] 未设计 非群消息事件响应方式");
     }
 
     @Override
@@ -81,7 +136,11 @@ public class BreadCommand implements Command
                 ◉ Bread 命令
                 功能: 面包小游戏
                 限权: %d 级
-                格式: Bread
+                格式: Bread [操作符] [参数]
+                操作:
+                - 面包库存 [-look] [可选: 页码]
+                - 买面包 [-buy]
+                - 吃面包 [-eat]
                 中文命令: 面包""", getAccess()
         );
     }
