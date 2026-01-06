@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.game.looting;
+package org.bot.nullbot.command.game.multi;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;

@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.game;
+package org.bot.nullbot.command.game.single;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.ShiroUtils;

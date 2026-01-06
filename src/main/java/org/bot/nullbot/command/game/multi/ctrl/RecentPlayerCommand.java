@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.game.basic;
+package org.bot.nullbot.command.game.multi.ctrl;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.game.PlayerManager;
+import org.bot.nullbot.component.game.manager.PlayerManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.game.basic.Player;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.game.basic;
+package org.bot.nullbot.command.game.multi.ctrl;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -10,11 +10,11 @@ import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"FinishMatch", "终止对局"})
+@CommandMapping({"DisMatch", "取消匹配"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class FinishMatchCommand implements Command
+public class DisMatchCommand implements Command
 {
     private final Matcher matcher;
 
@@ -23,27 +23,21 @@ public class FinishMatchCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getUserId();
-            String result = matcher.finishMatch(userId);
-            if (result != null) {
-                bot.sendGroupMsg(groupId, result, false);
-                log.info("\t\t\t\t├─[FinishMatch] 结束对局结果 - {}", result);
-            }else
-                log.info("\t\t\t\t├─[FinishMatch] 结束对局结果 - 已响应");
+            String result = matcher.cancelMatch(userId);
+            bot.sendGroupMsg(groupId, result, false);
+            log.info("\t\t\t\t├─[DisMatch] 取消匹配结果 - {}", result);
         }else
-            log.info("\t\t\t\t├─[FinishMatch] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[DisMatch] 未设计 非群消息事件响应方式");
     }
-
-    @Override
-    public Integer getAccess() { return 1; }
 
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ FinishMatch 命令
-                功能: 强制终止自身正在进行的对局
+                ◉ DisMatch 命令
+                功能: 取消当前匹配
                 限权: %d 级
-                格式: FinishMatch
-                中文命令: 终止对局""", getAccess()
+                格式: DisMatch
+                中文命令: 取消匹配""", getAccess()
         );
     }
 }

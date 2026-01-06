@@ -1,4 +1,4 @@
-package org.bot.nullbot.component.game;
+package org.bot.nullbot.component.game.manager;
 
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;

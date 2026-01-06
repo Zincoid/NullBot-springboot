@@ -2,8 +2,8 @@ package org.bot.nullbot.component.game.handler;
 
 import com.mikuac.shiro.core.BotContainer;
 import org.bot.nullbot.component.game.GameMatchHandler;
-import org.bot.nullbot.component.game.MatchManager;
-import org.bot.nullbot.component.game.PlayerManager;
+import org.bot.nullbot.component.game.manager.MatchManager;
+import org.bot.nullbot.component.game.manager.PlayerManager;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
 import org.bot.nullbot.entity.result.GameResult;
 import org.bot.nullbot.entity.game.basic.Match;
