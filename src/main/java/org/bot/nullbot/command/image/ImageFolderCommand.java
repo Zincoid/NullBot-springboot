@@ -17,7 +17,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ImageFolderStructureCommand implements Command
+public class ImageFolderCommand implements Command
 {
     private final FileStorageConfig fileStorageConfig;
 
