@@ -44,7 +44,7 @@ public class UserPO
         return String.format(
                 """
                          ◉ 个人信息
-                        ├ QQ号：%d
+                        ├ QQ：%d
                         ├ 昵称：%s
                         ├ 限权：%d 级
                         ├ 等级：Lv.%d Exp[%d/%d]
