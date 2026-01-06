@@ -28,7 +28,7 @@ public class DrawCommand implements Command
             Long userId = groupMessageEvent.getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             if(event.getCommandParameters().isEmpty()){
-                ItemPO item = itemService.getAndKeepRandomItem(userId);
+                ItemPO item = itemService.drawAndKeepRandomItem(userId);
                 if (item != null) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] " + userName + "抽到了...\n" + item, false);
                     log.info("\t\t\t\t├─[Draw] 已抽取 - {} -> {}", userId, item.toString().replaceAll("\\R", " "));
@@ -47,7 +47,7 @@ public class DrawCommand implements Command
                     List<ItemPO> items = new ArrayList<>();
                     boolean stop = false;
                     while(times > 0 && !stop){
-                        ItemPO item = itemService.getAndKeepRandomItem(userId);
+                        ItemPO item = itemService.drawAndKeepRandomItem(userId);
                         if (item != null) {
                             items.add(item);
                             times--;

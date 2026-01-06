@@ -10,7 +10,7 @@ public interface ItemService
 
     ItemPO getRandomHighValueItem();
 
-    ItemPO getAndKeepRandomItem(Long userId);
+    ItemPO drawAndKeepRandomItem(Long userId);
 
     boolean exist(Integer itemId);
 
