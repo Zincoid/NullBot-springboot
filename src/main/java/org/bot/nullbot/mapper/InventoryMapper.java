@@ -8,6 +8,6 @@ import org.bot.nullbot.entity.po.InventoryPO;
 @Mapper
 public interface InventoryMapper extends BaseMapper<InventoryPO>
 {
-    @Select("SELECT sum(amount) FROM inventory WHERE owner_id = #{userId}")
-    Integer sumAmountByUserId(Long userId);
+    @Select("SELECT coalesce(sum(amount), 0) FROM inventory WHERE owner_id = #{userId}")
+    int sumAmountByUserId(Long userId);
 }

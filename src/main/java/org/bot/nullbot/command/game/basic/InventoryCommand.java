@@ -44,9 +44,13 @@ public class InventoryCommand implements Command
             StringBuilder sb = new StringBuilder()
                     .append("[库存] ").append(userName).append("(").append(userId).append(")\n")
                     .append("现金: ").append(user.getCash()).append(" ￥ 容量: ").append(totalAmount).append("/").append(user.getCapacity()).append("\n")
-                    .append("[ID -- 名称 -- 品质/单价 - 数量]");
-            for(InventoryPO inventoryPO : inventoryPage.getInventories()) {
-                sb.append("\n").append(inventoryPO.toString());
+                    .append("[ID -- 名称 -- 品质/单价 - 数量]\n");
+            if(inventoryPage.getTotal() > 0){
+                for(InventoryPO inventoryPO : inventoryPage.getInventories()) {
+                    sb.append(inventoryPO.toString());
+                }
+            }else{
+                sb.append("无物品...");
             }
             sb.append("\n").append("[第").append(inventoryPage.getCurrentPage()).append("页").append(" / 共").append(inventoryPage.getTotalPage()).append("页 (每页").append(inventoryPage.getPageSize()).append("条)]");
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
