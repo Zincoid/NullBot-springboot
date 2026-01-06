@@ -47,12 +47,12 @@ public class InventoryCommand implements Command
                     .append("[ID -- 名称 -- 品质/单价 - 数量]\n");
             if(inventoryPage.getTotal() > 0){
                 for(InventoryPO inventoryPO : inventoryPage.getInventories()) {
-                    sb.append(inventoryPO.toString());
+                    sb.append(inventoryPO.toString()).append("\n");
                 }
             }else{
-                sb.append("无物品...");
+                sb.append("无物品...").append("\n");
             }
-            sb.append("\n").append("[第").append(inventoryPage.getCurrentPage()).append("页").append(" / 共").append(inventoryPage.getTotalPage()).append("页 (每页").append(inventoryPage.getPageSize()).append("条)]");
+            sb.append("[第").append(inventoryPage.getCurrentPage()).append("页").append(" / 共").append(inventoryPage.getTotalPage()).append("页 (每页").append(inventoryPage.getPageSize()).append("条)]");
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
             log.info("\t\t\t\t├─[Inventory] 已获取库存 - {}({})", userName, userId);
         }else
