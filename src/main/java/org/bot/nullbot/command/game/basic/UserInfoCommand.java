@@ -11,7 +11,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"UserInfo", "info", "用户信息"})
+@CommandMapping({"UserInfo", "info", "个人信息"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -24,7 +24,7 @@ public class UserInfoCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             UserPO user = userService.getUser(groupMessageEvent.getUserId());
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), user.toString(), false);
-            log.info("\t\t\t\t├─[UserInfo] 已获取用户信息 - {}", user.toString().replaceAll("\\R", " "));
+            log.info("\t\t\t\t├─[UserInfo] 已获取个人信息 - {}", user.toString().replaceAll("\\R", " "));
         }else
             log.info("\t\t\t\t├─[UserInfo] 未设计 非群消息事件响应方式");
     }
@@ -33,10 +33,10 @@ public class UserInfoCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ UserInfo 命令
-                功能: 展示用户信息
+                功能: 展示个人信息
                 限权: %d
                 格式: UserInfo 或 info
-                中文命令: 用户信息""", getAccess()
+                中文命令: 个人信息""", getAccess()
         );
     }
 }
