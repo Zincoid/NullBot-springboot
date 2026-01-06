@@ -8,6 +8,6 @@ import org.bot.nullbot.entity.po.InventoryPO;
 @Mapper
 public interface InventoryMapper extends BaseMapper<InventoryPO>
 {
-    @Select("SELECT SUM(amount) FROM inventory WHERE owner_id = #{userId}")
+    @Select("SELECT sum(amount) FROM inventory WHERE owner_id = #{userId}")
     Integer sumAmountByUserId(Long userId);
 }

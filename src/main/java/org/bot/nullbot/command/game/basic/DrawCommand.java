@@ -33,8 +33,8 @@ public class DrawCommand implements Command
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] " + userName + "抽到了...\n" + item, false);
                     log.info("\t\t\t\t├─[Draw] 已抽取 - {} -> {}", userId, item.toString().replaceAll("\\R", " "));
                 }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌" + userName + "抽数已耗尽", false);
-                    log.info("\t\t\t\t├─[Draw] - {} -> 抽数(单抽)已耗尽",  userId);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌" + userName + "抽数耗尽或仓库已满", false);
+                    log.info("\t\t\t\t├─[Draw] - {} -> 抽数(单抽)耗尽或仓库已满",  userId);
                 }
             }else{
                 try {
@@ -56,10 +56,10 @@ public class DrawCommand implements Command
                         }
                     }
                     if (items.isEmpty()) {
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌" + userName + "抽数已耗尽", false);
-                        log.info("\t\t\t\t├─[Draw] - {} -> 抽数(多抽)已耗尽",  userId);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌" + userName + "抽数耗尽或仓库已满", false);
+                        log.info("\t\t\t\t├─[Draw] - {} -> 抽数(多抽)耗尽或仓库已满",  userId);
                     }else{
-                        StringBuilder sb = new StringBuilder(userName + "抽取了" + items.size() + "个物品...\n");
+                        StringBuilder sb = new StringBuilder("[抽奖] " + userName + "抽取了" + items.size() + "个物品...\n");
                         for(ItemPO item : items){
                             sb.append("[").append(item.getRarity().getDescription()).append(":").append(item.getName()).append("]");
                         }
