@@ -8,7 +8,8 @@ public enum Category
 {
     COMMON(0, "基本物品"),
     USABLE(1, "可使用物品"),
-    BREAD(2, "面包");
+    BREAD(2, "面包"),
+    LOOTING(3, "摸金物品");
 
     @EnumValue
     private final int category;
