@@ -44,6 +44,13 @@ public class UseCommand implements Command
                 return;
             }
 
+            // 存在检测
+            if (!itemService.exist(itemId)) {
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌该物品不存在", false);
+                log.info("\t\t\t\t├─[Use] 该物品不存在");
+                return;
+            }
+
             // 可用检查
             if (!itemService.isUsable(itemId)) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌该物品不可使用", false);

@@ -4,6 +4,7 @@
 DROP TABLE IF EXISTS `item`;
 DROP TABLE IF EXISTS `inventory`;
 
+# command 为 null 时 物品不可用
 CREATE TABLE `item` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
