@@ -51,7 +51,7 @@ public class BreadCommand implements Command
                 if (random.nextInt(100) > 10) {  // 10% 概率获得特殊面包
                     int i = breadService.buyBasicBread(userId, cost);
                     if (i > 0) {
-                        bot.sendGroupMsg(groupId, userName + " 花费" + cost + "￥买了" + i + "个面包！", false);
+                        bot.sendGroupMsg(groupId, userName + " 花费￥" + cost + "...\n- 买到" + i + "个面包！", false);
                         log.info("\t\t\t\t├─[Bread-Buy] 已购买普通面包 - {}({}) -> {}个", userName, userId, i);
                     }else{
                         bot.sendGroupMsg(groupId, userName + " 库容或现金不足！", false);
@@ -60,7 +60,7 @@ public class BreadCommand implements Command
                 }else{
                     ItemPO bread = breadService.buySpecialBread(userId, cost);
                     if (bread != null) {
-                        bot.sendGroupMsg(groupId, userName + " 花费" + cost + "￥买到1个特殊面包！\n" + bread, false);
+                        bot.sendGroupMsg(groupId, userName + " 花费￥" + cost + "...\n- 买到1个特殊面包！\n" + bread, false);
                         log.info("\t\t\t\t├─[Bread-Buy] 已购买特殊面包 - {}({}) -> {}", userName, userId, bread.getName());
                     }else{
                         bot.sendGroupMsg(groupId, userName + " 库容或现金不足！", false);
@@ -75,7 +75,7 @@ public class BreadCommand implements Command
                 if (random.nextInt(100) > 2) {  // 2% 概率吃到过期面包
                     int i = breadService.eatBasicBread(userId, exp);
                     if (i > 0) {
-                        bot.sendGroupMsg(groupId, userName + " 吃了" + i + "个面包！\n- 获得 " + i * exp + "Exp！", false);
+                        bot.sendGroupMsg(groupId, userName + " 吃掉" + i + "个面包！\n- 获得 " + i * exp + "Exp！", false);
                         log.info("\t\t\t\t├─[Bread-Eat] 已吃面包 - {}({}) -> {}个", userName, userId, i);
                     }else{
                         bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
