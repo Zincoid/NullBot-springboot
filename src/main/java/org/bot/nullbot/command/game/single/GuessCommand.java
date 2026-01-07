@@ -78,10 +78,10 @@ public class GuessCommand implements Command
                 }
                 guessStorage.increaseTimes(groupId);
                 if(guessInfo.getName().equals(param)){
-                    userService.plusExperience(userId, 10);  // 给赢家10Exp
-                    userService.increaseDrawTimes(userId, 1);  // 给赢家1抽
+                    userService.plusExperience(userId, 20);  // 给赢家20Exp
+                    userService.increaseDrawTimes(userId, 5);  // 给赢家5抽
                     String response = MsgUtils.builder()
-                            .text(userName + "猜对啦✨\n答案是..." + guessInfo.getName() + "！\n- 获得 10 Exp！\n- 一共猜了" + guessInfo.getTimes() + "次！")
+                            .text(userName + "猜对啦✨\n答案是..." + guessInfo.getName() + "！\n- 获得 5抽数 和 20Exp！\n- 一共猜了" + guessInfo.getTimes() + "次！")
                             .img(guessInfo.getPath())
                             .build();
                     bot.sendGroupMsg(groupId, response, false);
