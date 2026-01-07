@@ -7,6 +7,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.AtEnum;
 import com.mikuac.shiro.enums.MsgTypeEnum;
+import com.mikuac.shiro.enums.ReplyEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.dispatcher.CommandProcessor;
@@ -56,12 +57,22 @@ public class CommandListener
     @Async("ThreadExecutor")
     public void onGroupAtInteraction(Bot bot, GroupMessageEvent event) throws Exception
     {
-        // 串行调用
-        monitorListener.onGroupImageCollection(bot, event);
+        monitorListener.onGroupImageCollection(bot, event);  // 串行调用
 
         log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
         commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
     }
+
+    // @GroupMessageHandler
+    // @MessageHandlerFilter(reply = ReplyEnum.REPLY_ME)  // 框架有BUG 回复消息中有@机器人和另一个人时触发不了 AtEnum.NEED 的方法 暂时不知道怎么修
+    // @Async("ThreadExecutor")
+    // public void onGroupReplyMeInteraction(Bot bot, GroupMessageEvent event) throws Exception
+    // {
+    //     monitorListener.onGroupImageCollection(bot, event);  // 串行调用
+    //
+    //     log.info("◉ [GroupAction:ReplyMe] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
+    //     commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
+    // }
 
     // @GroupMessageHandler
     // @Async("ThreadExecutor")
