@@ -1,16 +1,16 @@
 # CREATE DATABASE NullBot;
 # USE NullBot;
 
-drop table if exists `file`;
+DROP TABLE IF EXISTS `file`;
 
-create table `file`
+CREATE TABLE `file`
 (
-    id int auto_increment primary key,
-    file_name varchar(255) not null,
-    file_size bigint not null,
-#     owner_id bigint not null,
-#     owner_name varchar(255) not null,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    file_name VARCHAR(255) NOT NULL,
+    file_size BIGINT NOT NULL,
+#     owner_id BIGINT NOT NULL,
+#     owner_name VARCHAR(255) NOT NULL,
 #     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    directory varchar(255) not null,
-    is_dir int default 0 not null
+    directory VARCHAR(255) NOT NULL,
+    is_dir INT DEFAULT 0 NOT NULL
 );

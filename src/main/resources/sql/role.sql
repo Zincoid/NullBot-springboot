@@ -3,17 +3,17 @@
 
 DROP TABLE IF EXISTS `group`;
 DROP TABLE IF EXISTS `user`;
-drop table if exists `admin`;
+DROP TABLE IF EXISTS `admin`;
 
 CREATE TABLE `group` (
     id BIGINT PRIMARY KEY,
-    name varchar(255) not null,
+    name VARCHAR(255) NOT NULL,
     access INT DEFAULT 2
 );
 
 CREATE TABLE `user` (
     id BIGINT PRIMARY KEY,
-    name varchar(255) not null,
+    name VARCHAR(255) NOT NULL,
     access INT DEFAULT 0,
 
     level INT DEFAULT 1,
@@ -25,15 +25,15 @@ CREATE TABLE `user` (
 
 create table `admin`
 (
-    id bigint auto_increment primary key,
-    username varchar(255) not null,
-    password varchar(255) not null,
-    email varchar(255) not null
+    id BIGINT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL
 );
 
 
 # 预设置 - 管理级用户
-INSERT INTO `user` (id, name, access) values
+INSERT INTO `user` (id, name, access) VALUES
     (2660181154, 'Zincoid', 2);
-INSERT INTO `admin` (id, username, password, email) values
+INSERT INTO `admin` (id, username, password, email) VALUES
     (2660181154, 'Zincoid', 'KJFHQAUJWDHKIA', '2660181154@qq.com');
