@@ -44,7 +44,7 @@ public class MonitorListener
     // @GroupMessageHandler
     // @Async("ThreadExecutor")
     public void onGroupImageCollection(Bot bot, GroupMessageEvent event) {
-        List<Long> groupBypass = List.of(875310845L, 459358160L);
+        List<Long> groupBypass = List.of(875310845L, 459358160L);  // 暂时直接设计针对群聊的规则
         if(groupBypass.contains(event.getGroupId())){
             boolean hasLogged = false;
             for(ArrayMsg msg : event.getArrayMsg()){
