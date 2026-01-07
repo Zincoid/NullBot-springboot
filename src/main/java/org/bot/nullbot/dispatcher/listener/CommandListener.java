@@ -65,14 +65,5 @@ public class CommandListener
         commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
     }
 
-    // @GroupMessageHandler
-    // @MessageHandlerFilter(reply = ReplyEnum.REPLY_ME)  // 框架有BUG 回复消息中有@机器人和另一个人时会被判定为 AtEnum.NOT_NEED 的方法 暂时不知道怎么修
-    // @Async("ThreadExecutor")
-    // public void onGroupReplyMeInteraction(Bot bot, GroupMessageEvent event) throws Exception
-    // {
-    //     monitorListener.onGroupImageCollection(bot, event);  // 串行调用
-    //
-    //     log.info("◉ [GroupAction:ReplyMe] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
-    //     commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
-    // }
+    // 框架有BUG 回复消息中有@机器人和另一个人时会被判定为 AtEnum.NOT_NEED 的方法 暂时不知道怎么修
 }
