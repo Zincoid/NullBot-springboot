@@ -56,7 +56,12 @@ public class ItemServiceImpl implements ItemService
     public ItemPO drawAndKeepRandomItem(Long userId) {
         if (userService.decreaseDrawTimes(userId)) {
             Rarity rarity = DrawUtil.drawRarityByProbability();
-            List<ItemPO> itemList = itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getAvailable, true).eq(ItemPO::getRarity, rarity));
+            List<ItemPO> itemList = itemMapper.selectList(
+                    new LambdaQueryWrapper<ItemPO>()
+                            .ne(ItemPO::getCategory, Category.BREAD)  // 排除的种类
+                            .eq(ItemPO::getAvailable, true)
+                            .eq(ItemPO::getRarity, rarity)
+            );
             ItemPO item = DrawUtil.drawItemByLogPrice(itemList);
             if(inventoryService.increaseInventory(userId, item.getId(), 1))
                 return item;
