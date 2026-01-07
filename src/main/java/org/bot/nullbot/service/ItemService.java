@@ -16,5 +16,5 @@ public interface ItemService
 
     boolean isUsable(Integer itemId);
 
-    String getCommandFromItemDesc(Integer itemId);
+    String getItemCommand(Integer itemId);
 }

@@ -21,6 +21,7 @@ public class ItemPO
     private Integer price;
     private Integer weight;
     private String description;
+    private String command;
     private String imagePath;
     private Boolean available;
 

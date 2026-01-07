@@ -78,16 +78,11 @@ public class ItemServiceImpl implements ItemService
 
     @Override
     public boolean isUsable(Integer itemId) {
-        return !itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, itemId).eq(ItemPO::getCategory, Category.USABLE)).isEmpty();
+        return itemMapper.selectById(itemId).getCommand() != null;
     }
 
     @Override
-    public String getCommandFromItemDesc(Integer itemId) {
-        String description = itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, itemId)).getFirst().getDescription();
-        Matcher m = Pattern.compile("\\{(.*?)}").matcher(description);
-        if (m.find())
-            return m.group(1);
-        else
-            return null;
+    public String getItemCommand(Integer itemId) {
+        return  itemMapper.selectById(itemId).getCommand();
     }
 }

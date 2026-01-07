@@ -4,7 +4,6 @@
 DROP TABLE IF EXISTS `item`;
 DROP TABLE IF EXISTS `inventory`;
 
-# description 可通过 {} 嵌入指令, 指令不需要前缀
 CREATE TABLE `item` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
@@ -13,6 +12,7 @@ CREATE TABLE `item` (
     price INT NOT NULL,
     weight INT NOT NULL,
     description VARCHAR(250),
+    command VARCHAR(250),
     image_path VARCHAR(100),
     available BOOLEAN DEFAULT TRUE
 );

@@ -52,15 +52,7 @@ public class UseCommand implements Command
             }
 
             ItemPO item = itemService.getItem(itemId);
-            String command = itemService.getCommandFromItemDesc(itemId);
-
-            // 命令检查
-            if (command == null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌该物品暂未设计指令", false);
-                log.info("\t\t\t\t├─[Use] 该物品暂未设计指令");
-                return;
-            }
-
+            String command = itemService.getItemCommand(itemId);
             Long userId = groupMessageEvent.getUserId();
 
             // 库存检查
