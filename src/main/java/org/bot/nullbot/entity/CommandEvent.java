@@ -18,7 +18,9 @@ public class CommandEvent<T extends Event>
     private String commandType;
     private List<String> commandParameters;
     private T event;
+
     private boolean authRequired = true;
+    private boolean rateLimit = true;
 
     public CommandEvent(T event) {  // 基础 创建事件
         this.event = event;
@@ -36,9 +38,10 @@ public class CommandEvent<T extends Event>
         commandParameters = new ArrayList<>();
     }
 
-    public CommandEvent(T event, String command, boolean authRequired) {  // 嵌入调用指令 创建事件
+    public CommandEvent(T event, String command, boolean authRequired, boolean rateLimit) {  // 嵌入调用指令 创建事件
         this.event = event;
         this.authRequired = authRequired;
+        this.rateLimit = rateLimit;
         List<String> information = List.of(command.split(" "));
         commandType = information.getFirst();
         commandParameters = information.subList(1, information.size());

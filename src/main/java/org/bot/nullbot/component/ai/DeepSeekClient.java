@@ -70,6 +70,7 @@ public class DeepSeekClient
     private boolean thinking = false;  // 深度思考模式
     private boolean embedding = true;  // 嵌入命令模式
     private boolean embeddingAuth = false;  // 嵌入限权验证
+    private boolean embeddingLimit = false;  // 嵌入速率限制
 
     public DeepSeekClient(
             DeepSeekConfig deepSeekConfig,
@@ -181,7 +182,7 @@ public class DeepSeekClient
                 // 提取执行指令
                 while (m.find()) {
                     String command = m.group(1);
-                    eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, embeddingAuth)));
+                    eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, embeddingAuth, embeddingLimit)));
                 }
                 // 删除命令明文
                 response = originalResponse.replaceAll("\\{.*?}", "").trim();

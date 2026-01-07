@@ -76,11 +76,11 @@ public class UseCommand implements Command
             }
 
             // 执行命令
-            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, false)));
+            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, false, false)));
 
             // 发送通知
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ✅" + userName + "已使用 " + item.getName() + "！", false);
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ✅" + userName + " 已使用 " + item.getName() + "！", false);
             log.info("\t\t\t\t├─[Use] 已使用");
         } else {
             log.info("\t\t\t\t├─[Use] 未设计 非群消息事件响应方式");

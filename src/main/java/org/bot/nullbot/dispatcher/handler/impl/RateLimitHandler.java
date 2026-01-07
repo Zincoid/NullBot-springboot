@@ -24,6 +24,12 @@ public class RateLimitHandler implements Handler
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception
     {
+        if(!event.isRateLimit()) {
+            log.info("\t\t├─[RateLimitHandler] 无速率限制");
+            chain.doHandle(bot, event, command);
+            return;
+        }
+
         if(event.getEvent() instanceof GroupMessageEvent groupMessageEvent){
             if(commandRateLimiter.tryConsume(event)){
                 log.info("\t\t├─[RateLimitHandler] 基本消息未达到速率限制");
