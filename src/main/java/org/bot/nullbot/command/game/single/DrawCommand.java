@@ -12,6 +12,8 @@ import org.bot.nullbot.service.ItemService;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @CommandMapping({"Draw", "抽奖"})
@@ -31,10 +33,10 @@ public class DrawCommand implements Command
                 ItemPO item = itemService.drawAndKeepRandomItem(userId);
                 if (item != null) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] " + userName + "抽到了...\n" + item, false);
-                    log.info("\t\t\t\t├─[Draw] 已抽取 - {} -> {}", userId, item.toString().replaceAll("\\R", " "));
+                    log.info("\t\t\t\t├─[Draw] 已抽取 - {}({}) -> {}", userName, userId, item.getName());
                 }else{
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌抽数耗尽或仓库已满", false);
-                    log.info("\t\t\t\t├─[Draw] - {} -> 抽数(单抽)耗尽或仓库已满",  userId);
+                    log.info("\t\t\t\t├─[Draw] - {}({}) -> 抽数(单抽)耗尽或仓库已满", userName, userId);
                 }
             }else{
                 try {
@@ -57,14 +59,15 @@ public class DrawCommand implements Command
                     }
                     if (items.isEmpty()) {
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌抽数耗尽或仓库已满", false);
-                        log.info("\t\t\t\t├─[Draw] - {} -> 抽数(多抽)耗尽或仓库已满",  userId);
+                        log.info("\t\t\t\t├─[Draw] - {}({}) -> 抽数(多抽)耗尽或仓库已满", userName, userId);
                     }else{
+                        items.sort(Comparator.comparing(ItemPO::getRarity).reversed());
                         StringBuilder sb = new StringBuilder("[抽奖] " + userName + "抽取了" + items.size() + "个物品...\n");
                         for(ItemPO item : items){
                             sb.append("[").append(item.getRarity().getDescription()).append(":").append(item.getName()).append("]");
                         }
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
-                        log.info("\t\t\t\t├─[Draw] 已抽取次数 - {} -> {}", userId, times);
+                        log.info("\t\t\t\t├─[Draw] 已抽取次数 - {}({}) -> {}", userName, userId, items.size());
                     }
                 } catch (NumberFormatException e) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌参数格式错误", false);
