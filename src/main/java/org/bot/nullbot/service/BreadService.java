@@ -9,7 +9,7 @@ public interface BreadService
 
     int buyBasicBread(Long userId, int cost);
 
-    int eatBasicBread(Long userId, int exp);
+    int[] eatBasicBread(Long userId, int exp);
 
     boolean eatRottenBread(Long userId);
 

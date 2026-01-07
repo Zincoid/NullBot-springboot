@@ -56,7 +56,7 @@ public class BreadServiceImpl implements BreadService
         UserPO user = userMapper.selectById(userId);
         if(user.getCash() >= cost){
             ItemPO bread = getBasicBread();
-            int i = random.nextInt(10);
+            int i = random.nextInt(10) + 1;
             if(inventoryService.increaseInventory(userId, bread.getId(), i)){
                 user.setCash(user.getCash() - cost);
                 userMapper.updateById(user);
@@ -69,20 +69,20 @@ public class BreadServiceImpl implements BreadService
 
     @Override
     @Transactional
-    public int eatBasicBread(Long userId, int exp) {  // 吃随机 i 个普通面包并获得 i * exp 经验
+    public int[] eatBasicBread(Long userId, int exp) {  // 吃随机 i 个普通面包并获得 i * exp 经验
         ItemPO bread = getBasicBread();
         InventoryPO userBread = inventoryMapper
                 .selectOne(new LambdaQueryWrapper<InventoryPO>()
                         .eq(InventoryPO::getOwnerId, userId)
                         .eq(InventoryPO::getItemId, bread.getId())
                 );
-        if(userBread == null) return 0;
-        int i = Math.min(random.nextInt(10), userBread.getAmount());
+        if(userBread == null) return new int[]{0, 0};
+        int i = Math.min(random.nextInt(10) + 1, userBread.getAmount());
         if(inventoryService.decreaseInventory(userId, bread.getId(), i)){
-            userService.plusExperience(userId, i * exp);
-            return i;
+            int j = userService.plusExperience(userId, i * exp);
+            return new int[]{i, j};  // 返回: 实际吃掉个数 和 升级级数
         } else
-            return 0;
+            return new int[]{0, 0};
     }
 
     @Override
@@ -132,7 +132,7 @@ public class BreadServiceImpl implements BreadService
                         .eq(InventoryPO::getItemId, bread.getId())
                 );
         if(userBread == null) return 0;
-        int i = Math.min(random.nextInt(10), userBread.getAmount());
+        int i = Math.min(random.nextInt(10) + 1, userBread.getAmount());
         if(inventoryService.decreaseInventory(fromId, bread.getId(), i)){
             inventoryService.increaseInventory(toId, bread.getId(), i);
             return i;

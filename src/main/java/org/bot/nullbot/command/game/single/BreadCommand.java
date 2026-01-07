@@ -73,9 +73,16 @@ public class BreadCommand implements Command
             if("-eat".equals(params.getFirst()) || "e".equals(params.getFirst())){
                 int exp = 5;  // 单个面包经验值
                 if (random.nextInt(100) > 2) {  // 2% 概率吃到过期面包
-                    int i = breadService.eatBasicBread(userId, exp);
+                    int[] res = breadService.eatBasicBread(userId, exp);
+                    int i = res[0];
                     if (i > 0) {
-                        bot.sendGroupMsg(groupId, userName + " 吃掉" + i + "个面包！\n- 获得 " + i * exp + "Exp！", false);
+                        int j = res[1];
+                        StringBuilder sb = new StringBuilder(userName + " 吃掉" + i + "个面包！\n- 获得 " + i * exp + "Exp！");
+                        while (j > 0) {
+                            sb.append("\n- LEVEL UP！");
+                            j--;
+                        }
+                        bot.sendGroupMsg(groupId, sb.toString(), false);
                         log.info("\t\t\t\t├─[Bread-Eat] 已吃面包 - {}({}) -> {}个", userName, userId, i);
                     }else{
                         bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
