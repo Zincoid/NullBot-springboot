@@ -40,14 +40,22 @@ public class ItemServiceImpl implements ItemService
     @Override
     public ItemPO getRandomItem() {
         Rarity rarity = DrawUtil.drawRarityByProbability();
-        List<ItemPO> itemList = itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getAvailable, true).eq(ItemPO::getRarity, rarity));
+        List<ItemPO> itemList = itemMapper.selectList(
+                new LambdaQueryWrapper<ItemPO>()
+                        .ne(ItemPO::getCategory, Category.BREAD)  // 排除的种类
+                        .eq(ItemPO::getAvailable, true)
+                        .eq(ItemPO::getRarity, rarity));
         return DrawUtil.drawItemByLogPrice(itemList);
     }
 
     @Override
     public ItemPO getRandomHighValueItem() {
         Rarity rarity = Rarity.GOLD;
-        List<ItemPO> itemList = itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getAvailable, true).ge(ItemPO::getRarity, rarity));
+        List<ItemPO> itemList = itemMapper.selectList(
+                new LambdaQueryWrapper<ItemPO>()
+                        .ne(ItemPO::getCategory, Category.BREAD)  // 排除的种类
+                        .eq(ItemPO::getAvailable, true)
+                        .ge(ItemPO::getRarity, rarity));
         return DrawUtil.drawItemByLogPrice(itemList);
     }
 
