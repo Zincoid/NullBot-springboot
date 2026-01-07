@@ -29,13 +29,11 @@ public class InventoryServiceImpl implements InventoryService
     // =================== BOT功能相关 ===================
 
     @Override
-    @Transactional
     public List<InventoryPO> getInventories(Long userId) {
         return inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).orderByDesc(InventoryPO::getRarity));
     }
 
     @Override
-    @Transactional
     public InventoryPage getInventoriesPage(Long userId, int p, int size) {
         Page<InventoryPO> page = new Page<>(p, size);
         Page<InventoryPO> inventoryPage = inventoryMapper
@@ -45,6 +43,11 @@ public class InventoryServiceImpl implements InventoryService
                 .orderByDesc(InventoryPO::getPrice)
                 .orderByAsc(InventoryPO::getId));
         return new InventoryPage(inventoryPage.getRecords(), inventoryPage.getCurrent(), inventoryPage.getPages(), inventoryPage.getTotal(), inventoryPage.getSize());
+    }
+
+    @Override
+    public int getTotalAmountByUserId(Long userId) {
+        return inventoryMapper.sumAmountByUserId(userId);
     }
 
     @Override
@@ -124,11 +127,5 @@ public class InventoryServiceImpl implements InventoryService
             sellInventory(userId, inventory.getItemId(), inventory.getAmount());
         }
         return true;
-    }
-
-    @Override
-    @Transactional
-    public int getTotalAmountByUserId(Long userId) {
-        return inventoryMapper.sumAmountByUserId(userId);
     }
 }

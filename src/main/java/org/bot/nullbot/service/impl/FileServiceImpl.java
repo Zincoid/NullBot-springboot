@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,6 @@ public class FileServiceImpl implements FileService
     // =================== WEB功能相关 ===================
 
     @Override
-    @Transactional
     public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir) {
         scanAndSyncFiles();
         String fullDir;
@@ -51,7 +51,6 @@ public class FileServiceImpl implements FileService
     }
 
     @Override
-    @Transactional
     public FilePage searchFile(String key, String curDir) {
         scanAndSyncFiles();
         String fullDir;
@@ -100,11 +99,11 @@ public class FileServiceImpl implements FileService
         if (file == null) return WebResult.fail().addMsg("文件不存在");
         String fileName = file.getFileName();
         String suf = file.getFileName().substring(file.getFileName().lastIndexOf("."));
-        FileInputStream fileInputStream = null;
+        FileInputStream fileInputStream;
         try {
             fileInputStream = new FileInputStream(file.getDirectory() + "/" + fileName);
             response.setContentType(request.getSession().getServletContext().getMimeType(suf));//获取文件的mimetype
-            response.setHeader("content-disposition","attachment;fileName="+ URLEncoder.encode(fileName,"UTF-8"));
+            response.setHeader("content-disposition","attachment;fileName="+ URLEncoder.encode(fileName, StandardCharsets.UTF_8));
             ServletOutputStream os = response.getOutputStream();
             FileCopyUtils.copy(fileInputStream,os);
         } catch (IOException e) {
@@ -197,7 +196,7 @@ public class FileServiceImpl implements FileService
         // 如果是目录，需要更新目录下所有文件的路径（如果有子文件和子目录）
         if (file.getIsDir() == 1) {
             // 更新该目录下所有文件的路径
-            updateSubFilesPath(oldFilePath, newFilePath, file);
+            updateSubFilesPath(oldFilePath, newFilePath);
         }
 
         // 更新数据库记录
@@ -212,7 +211,7 @@ public class FileServiceImpl implements FileService
 
     private void deleteFileByDir(java.io.File dir){
         java.io.File[] files = dir.listFiles();
-        if(files != null && files.length > 0){
+        if(files != null){
             for(java.io.File f : files){
                 if(f.isFile()){
                     f.delete();
@@ -228,9 +227,8 @@ public class FileServiceImpl implements FileService
      * 更新子文件的路径（当目录重命名时）
      * @param oldDirPath 原目录路径
      * @param newDirPath 新目录路径
-     * @param parentDir 父目录信息
      */
-    private void updateSubFilesPath(String oldDirPath, String newDirPath, FilePO parentDir) {
+    private void updateSubFilesPath(String oldDirPath, String newDirPath) {
         // 查询所有以原目录路径开头的文件
         LambdaQueryWrapper<FilePO> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.likeRight(FilePO::getDirectory, oldDirPath + "/");
@@ -282,7 +280,7 @@ public class FileServiceImpl implements FileService
             log.info("[管理系统] 文件同步完成 - 共处理文件: {}", fileSystemMap.size());
         } catch (Exception e) {
             log.info("[管理系统] 文件同步失败 - {}", e.getMessage());
-            e.printStackTrace();
+            throw e;
         }
     }
 

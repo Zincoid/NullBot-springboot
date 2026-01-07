@@ -12,6 +12,8 @@ public interface InventoryService
 
     InventoryPage getInventoriesPage(Long userId, int p, int size);
 
+    int getTotalAmountByUserId(Long userId);
+
     boolean increaseInventory(Long userId, Integer itemId,  int i);
 
     boolean decreaseInventory(Long userId, Integer itemId,  int i);
@@ -21,6 +23,4 @@ public interface InventoryService
     boolean buyInventory(Long userId, Integer itemId, int i);
 
     boolean sellInventoryByRarity(Long userId, Rarity rarity);
-
-    int getTotalAmountByUserId(Long userId);
 }

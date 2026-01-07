@@ -64,7 +64,6 @@ public class UserServiceImpl implements UserService
     // =================== 注册功能相关 ===================
 
     @Override
-    @Transactional
     public UserPO getUser(Long userId) {
         return userMapper.selectById(userId);
     }

@@ -6,13 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.HttpRangeResource;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.mapper.FileMapper;
-import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.service.PreviewService;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,7 +30,6 @@ public class PreviewServiceImpl implements PreviewService
     // =================== WEB功能相关 ===================
 
     @Override
-    @Transactional
     public ResponseEntity<Resource> preview(Integer  id, HttpServletRequest request) {
         try {
             // 查询文件信息

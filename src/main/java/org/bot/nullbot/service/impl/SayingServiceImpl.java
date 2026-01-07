@@ -21,7 +21,6 @@ public class SayingServiceImpl implements SayingService
     // =================== BOT功能相关 ===================
 
     @Override
-    @Transactional
     public int insert(Long userId, String userName, String text) {
         try {
             return sayingMapper.insert(userId, userName, text);
@@ -31,19 +30,16 @@ public class SayingServiceImpl implements SayingService
     }
 
     @Override
-    @Transactional
     public boolean deleteById(Integer id) {
         return sayingMapper.deleteById(id);
     }
 
     @Override
-    @Transactional
     public List<SayingPO> getList() {
         return sayingMapper.getList();
     }
 
     @Override
-    @Transactional
     public SayingPO getRand() {
         return sayingMapper.getRand();
     }
@@ -54,7 +50,6 @@ public class SayingServiceImpl implements SayingService
     // =================== WEB功能相关 ===================
 
     @Override
-    @Transactional
     public SayingPage getSayingByPage(Integer currentPage, Integer pageSize) {
         Page<SayingPO> page = new Page<>(currentPage, pageSize);
         Page<SayingPO> sayingPage = sayingMapper.selectPage(page, new LambdaQueryWrapper<SayingPO>().orderByDesc(SayingPO::getTime));

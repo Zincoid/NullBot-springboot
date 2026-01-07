@@ -33,7 +33,6 @@ public class ItemServiceImpl implements ItemService
     // =================== BOT功能相关 ===================
 
     @Override
-    @Transactional
     public ItemPO getItem(Integer itemId) {
         return itemMapper.selectById(itemId);
     }
@@ -46,7 +45,6 @@ public class ItemServiceImpl implements ItemService
     }
 
     @Override
-    @Transactional
     public ItemPO getRandomHighValueItem() {
         Rarity rarity = Rarity.GOLD;
         List<ItemPO> itemList = itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getAvailable, true).ge(ItemPO::getRarity, rarity));
@@ -69,19 +67,16 @@ public class ItemServiceImpl implements ItemService
     }
 
     @Override
-    @Transactional
     public boolean exist(Integer itemId) {
         return !itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, itemId)).isEmpty();
     }
 
     @Override
-    @Transactional
     public boolean isUsable(Integer itemId) {
         return !itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, itemId).eq(ItemPO::getCategory, Category.USABLE)).isEmpty();
     }
 
     @Override
-    @Transactional
     public String getCommandFromItemDesc(Integer itemId) {
         String description = itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, itemId)).getFirst().getDescription();
         Matcher m = Pattern.compile("\\{(.*?)}").matcher(description);
