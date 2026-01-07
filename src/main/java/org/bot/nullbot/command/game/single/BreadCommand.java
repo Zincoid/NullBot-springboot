@@ -47,7 +47,7 @@ public class BreadCommand implements Command
             }
 
             if("-buy".equals(params.getFirst()) || "b".equals(params.getFirst())){
-                int cost = 100;  // 需支付的现金
+                int cost = 500;  // 需支付的现金
                 if (random.nextInt(100) > 10) {  // 10% 概率获得特殊面包
                     int i = breadService.buyBasicBread(userId, cost);
                     if (i > 0) {
@@ -164,7 +164,7 @@ public class BreadCommand implements Command
                 int totalAmount = inventoryService.getTotalAmountByUserId(userId);
                 StringBuilder sb = new StringBuilder()
                         .append("[面包] ").append(userName).append("(").append(userId).append(")\n")
-                        .append("现金: ").append(user.getCash()).append(" ￥ 容量: ").append(totalAmount).append("/").append(user.getCapacity()).append("\n")
+                        .append("现金: ￥").append(user.getCash()).append(" 容量: ").append(totalAmount).append("/").append(user.getCapacity()).append("\n")
                         .append("[ID -- 名称 -- 品质/单价 - 数量]\n");
                 if(inventoryPage.getTotal() > 0){
                     for(InventoryPO inventoryPO : inventoryPage.getInventories()) {

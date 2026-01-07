@@ -45,8 +45,8 @@ public class UserPO
                 """
                         ◆%s(%d)
                         [限权] %d 级
-                        [等级] Lv.%d Exp[%d/%d]
-                        [现金] %d ￥
+                        [等级] Lv.%d (Exp:%d/%d)
+                        [现金] ￥%d
                         [抽数] %d
                         [库容] %d""",
                 name, id, access, level, experience, getMaxExperience(), cash, drawTimes, capacity
