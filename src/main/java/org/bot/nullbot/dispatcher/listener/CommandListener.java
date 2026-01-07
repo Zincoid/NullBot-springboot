@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 public class CommandListener
 {
     private final CommandProcessor commandProcessor;
-
     private final MonitorListener monitorListener;
 
     @Value("${nullbot.command.prefix}")
@@ -52,6 +51,18 @@ public class CommandListener
         }
     }
 
+    @GroupMessageHandler
+    @MessageHandlerFilter(at = AtEnum.NEED)
+    @Async("ThreadExecutor")
+    public void onGroupAtInteraction(Bot bot, GroupMessageEvent event) throws Exception
+    {
+        // 串行调用
+        monitorListener.onGroupImageCollection(bot, event);
+
+        log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
+        commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
+    }
+
     // @GroupMessageHandler
     // @Async("ThreadExecutor")
     // public void onGroupBasicCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception {
@@ -71,16 +82,4 @@ public class CommandListener
     //         commandProcessor.processQQ(bot, new CommandEvent<>(event));
     //     }
     // }
-
-    @GroupMessageHandler
-    @MessageHandlerFilter(at = AtEnum.NEED)
-    @Async("ThreadExecutor")
-    public void onGroupAtInteraction(Bot bot, GroupMessageEvent event) throws Exception
-    {
-        // 串行调用
-        monitorListener.onGroupImageCollection(bot, event);
-
-        log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
-        commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
-    }
 }

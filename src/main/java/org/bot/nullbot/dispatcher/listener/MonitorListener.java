@@ -38,6 +38,8 @@ public class MonitorListener
     private final DeepSeekClient deepSeekClient;
     private final FileStorageConfig fileStorageConfig;
 
+    // =================== 提供监听方法 ===================
+
     @FunctionControl(config = "imageCollect")
     // @GroupMessageHandler
     // @Async("ThreadExecutor")
@@ -90,6 +92,8 @@ public class MonitorListener
             // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("你也受着"), event, false));
         }
     }
+
+    // =================== 独占监听方法 ===================
 
     @FunctionControl(config = "pokeDetect")
     @GroupPokeNoticeHandler
