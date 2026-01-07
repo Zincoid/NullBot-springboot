@@ -43,15 +43,13 @@ public class UserPO
     public String toString() {
         return String.format(
                 """
-                         ◉ 个人信息
-                        ├ QQ：%d
-                        ├ 昵称：%s
-                        ├ 限权：%d 级
-                        ├ 等级：Lv.%d Exp[%d/%d]
-                        ├ 现金：%d ￥
-                        ├ 抽数：%d
-                        └ 库容：%d""",
-                id, name, access, level, experience, getMaxExperience(), cash, drawTimes, capacity
+                        ◆%s(%d)
+                        [限权] %d 级
+                        [等级] Lv.%d Exp[%d/%d]
+                        [现金] %d ￥
+                        [抽数] %d
+                        [库容] %d""",
+                name, id, access, level, experience, getMaxExperience(), cash, drawTimes, capacity
         );
     }
 }

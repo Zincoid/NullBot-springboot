@@ -11,11 +11,11 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"UserInfo", "Info", "info", "个人信息"})
+@CommandMapping({"Me", "me", "个人信息"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class UserInfoCommand implements Command
+public class MeCommand implements Command
 {
     private final UserService userService;
 
@@ -24,18 +24,18 @@ public class UserInfoCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             UserPO user = userService.getUser(groupMessageEvent.getUserId());
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), user.toString(), false);
-            log.info("\t\t\t\t├─[UserInfo] 已获取个人信息 - {}({})", user.getName(), user.getId());
+            log.info("\t\t\t\t├─[Me] 已获取个人信息 - {}({})", user.getName(), user.getId());
         }else
-            log.info("\t\t\t\t├─[UserInfo] 未设计 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[Me] 未设计 非群消息事件响应方式");
     }
 
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ UserInfo 命令
+                ◉ Me 命令
                 功能: 展示个人信息
                 限权: %d 级
-                格式: UserInfo 或 Info 或 info
+                格式: Me 或 me
                 中文命令: 个人信息""", getAccess()
         );
     }
