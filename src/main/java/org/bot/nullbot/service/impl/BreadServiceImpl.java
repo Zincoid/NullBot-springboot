@@ -38,7 +38,6 @@ public class BreadServiceImpl implements BreadService
     // =================== 面包游戏相关 ===================
 
     @Override
-    @Transactional
     public InventoryPage getBreadPage(Long userId, int p, int size) {
         Page<InventoryPO> page = new Page<>(p, size);
         Page<InventoryPO> inventoryPage = inventoryMapper

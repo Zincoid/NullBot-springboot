@@ -13,6 +13,7 @@ import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.page.InventoryPage;
 import org.bot.nullbot.service.InventoryService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class InventoryServiceImpl implements InventoryService
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean increaseInventory(Long userId, Integer itemId, int i) {
         UserPO user = userMapper.selectById(userId);
         if(inventoryMapper.sumAmountByUserId(userId) >= user.getCapacity()) return false;
@@ -67,7 +68,7 @@ public class InventoryServiceImpl implements InventoryService
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean decreaseInventory(Long userId, Integer itemId, int i) {
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
         if(inventories == null || inventories.isEmpty()){
