@@ -12,6 +12,7 @@ import org.bot.nullbot.mapper.GroupMapper;
 import org.bot.nullbot.service.GroupService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +66,7 @@ public class GroupServiceImpl implements GroupService
     // =================== 数据库功能相关 ===================
 
     @Override
+    @Transactional
     public void updateAllGroupNames() {
         groupMapper.selectList(null).forEach(group -> {
             Bot bot = botContainer.robots.get(botId);

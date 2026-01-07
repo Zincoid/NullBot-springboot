@@ -102,6 +102,7 @@ public class UserServiceImpl implements UserService
     // =================== 数据库功能相关 ===================
 
     @Override
+    @Transactional
     public void updateAllUserNames() {
         userMapper.selectList(null).forEach(user -> {
             Bot bot = botContainer.robots.get(botId);
