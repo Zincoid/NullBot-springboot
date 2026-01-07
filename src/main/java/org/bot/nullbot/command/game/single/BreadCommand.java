@@ -68,20 +68,18 @@ public class BreadCommand implements Command
             if (i > 0) {
                 bot.sendGroupMsg(groupId, userName + " 花费￥" + cost + "...\n- 买到" + i + "个面包！", false);
                 log.info("\t\t\t\t├─[Bread-Buy] 已购买普通面包 - {}({}) -> {}个", userName, userId, i);
-            }else{
-                bot.sendGroupMsg(groupId, userName + " 库容或现金不足！", false);
-                log.info("\t\t\t\t├─[Bread-Buy] 库容或现金不足");
+                return;
             }
         }else{
             ItemPO bread = breadService.buySpecialBread(userId, cost);
             if (bread != null) {
                 bot.sendGroupMsg(groupId, userName + " 花费￥" + cost + "...\n- 买到1个特殊面包！\n" + bread, false);
                 log.info("\t\t\t\t├─[Bread-Buy] 已购买特殊面包 - {}({}) -> {}", userName, userId, bread.getName());
-            }else{
-                bot.sendGroupMsg(groupId, userName + " 库容或现金不足！", false);
-                log.info("\t\t\t\t├─[Bread-Buy] 库容或现金不足");
+                return;
             }
         }
+        bot.sendGroupMsg(groupId, userName + " 库容或现金不足！", false);
+        log.info("\t\t\t\t├─[Bread-Buy] 库容或现金不足");
     }
 
     private void eat(Bot bot, Long userId, String userName, Long groupId) {
@@ -98,19 +96,17 @@ public class BreadCommand implements Command
                 }
                 bot.sendGroupMsg(groupId, sb.toString(), false);
                 log.info("\t\t\t\t├─[Bread-Eat] 已吃面包 - {}({}) -> {}个", userName, userId, i);
-            }else{
-                bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
-                log.info("\t\t\t\t├─[Bread-Buy] 普通面包不足");
+                return;
             }
         }else{
             if(breadService.eatRottenBread(userId)){
                 bot.sendGroupMsg(groupId, userName + " 吃到1个烂面包！\n- Exp清空了！", false);
                 log.info("\t\t\t\t├─[Bread-Eat] 吃到烂面包 - {}({})", userName, userId);
-            }else{
-                bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
-                log.info("\t\t\t\t├─[Bread-Buy] 普通面包不足");
+                return;
             }
         }
+        bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
+        log.info("\t\t\t\t├─[Bread-Buy] 普通面包不足");
     }
 
     private void rob(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
