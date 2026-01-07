@@ -31,11 +31,11 @@ public class CommandListener
 
 
     @GroupMessageHandler
-    @MessageHandlerFilter(at = AtEnum.NOT_NEED)  // onGroupMessageCollection 附加修改
+    @MessageHandlerFilter(at = AtEnum.NOT_NEED)  // 串行调用添加
     @Async("ThreadExecutor")
     public void onGroupCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception
     {
-        // 串行调用
+        // 串行调用 消息预处理
         monitorListener.onGroupImageCollection(bot, event);
         monitorListener.onGroupMessageCollection(bot, event);
         monitorListener.onGroupKeywordDetection(bot, event);
@@ -57,7 +57,10 @@ public class CommandListener
     @Async("ThreadExecutor")
     public void onGroupAtInteraction(Bot bot, GroupMessageEvent event) throws Exception
     {
-        monitorListener.onGroupImageCollection(bot, event);  // 串行调用
+        // 串行调用 消息预处理
+        monitorListener.onGroupImageCollection(bot, event);
+        // monitorListener.onGroupMessageCollection(bot, event);  // 无需调用 AI自动记录
+        // monitorListener.onGroupKeywordDetection(bot, event);  // 禁用 关键词检测
 
         log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
         commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
