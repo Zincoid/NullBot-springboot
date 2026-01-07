@@ -39,8 +39,8 @@ public class MonitorListener
     private final FileStorageConfig fileStorageConfig;
 
     @FunctionControl(config = "imageCollect")
-    @GroupMessageHandler
-    @Async("ThreadExecutor")
+    // @GroupMessageHandler
+    // @Async("ThreadExecutor")
     public void onGroupImageCollection(Bot bot, GroupMessageEvent event) {
         List<Long> groupBypass = List.of(875310845L, 459358160L);
         if(groupBypass.contains(event.getGroupId())){
@@ -76,8 +76,8 @@ public class MonitorListener
     }
 
     @FunctionControl(config = "keywordDetect")
-    @GroupMessageHandler
-    @Async("ThreadExecutor")
+    // @GroupMessageHandler
+    // @Async("ThreadExecutor")
     public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {  // 暂时直接设计针对群聊的规则
         if (event.getMessage().contains("男娘")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());

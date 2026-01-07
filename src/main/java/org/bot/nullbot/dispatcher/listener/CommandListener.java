@@ -33,8 +33,13 @@ public class CommandListener
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)  // onGroupMessageCollection 附加修改
     @Async("ThreadExecutor")
-    public void onGroupCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception {
-        monitorListener.onGroupMessageCollection(bot, event);  // 改为串行记录调用
+    public void onGroupCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception
+    {
+        // 串行调用
+        monitorListener.onGroupImageCollection(bot, event);
+        monitorListener.onGroupMessageCollection(bot, event);
+        monitorListener.onGroupKeywordDetection(bot, event);
+
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
             log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage().replaceAll("\\R", " "));
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
@@ -70,7 +75,11 @@ public class CommandListener
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NEED)
     @Async("ThreadExecutor")
-    public void onGroupAtInteraction(Bot bot, GroupMessageEvent event) throws Exception {
+    public void onGroupAtInteraction(Bot bot, GroupMessageEvent event) throws Exception
+    {
+        // 串行调用
+        monitorListener.onGroupImageCollection(bot, event);
+
         log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
         commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
     }
