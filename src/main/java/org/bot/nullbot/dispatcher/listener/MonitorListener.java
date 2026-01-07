@@ -38,37 +38,34 @@ public class MonitorListener
     private final DeepSeekClient deepSeekClient;
     private final FileStorageConfig fileStorageConfig;
 
-    // =================== 提供监听方法 ===================
+    // =================== 串行监听方法 ===================
 
     @FunctionControl(config = "imageCollect")
-    // @GroupMessageHandler
-    // @Async("ThreadExecutor")
     public void onGroupImageCollection(Bot bot, GroupMessageEvent event) {
         List<Long> groupBypass = List.of(875310845L, 459358160L);  // 暂时直接设计针对群聊的规则
-        if(groupBypass.contains(event.getGroupId())){
-            boolean hasLogged = false;
-            for(ArrayMsg msg : event.getArrayMsg()){
-                if(msg.getType() == MsgTypeEnum.image){
-                    if (!hasLogged){
-                        log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
-                        hasLogged = true;
-                    }
-                    String originName =msg.getData().get("file");
-                    String url = msg.getData().get("url");
-                    String fileName = originName.substring(0, originName.lastIndexOf("."));
-                    String info = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/monitor", fileName);
-                    log.info("└─[Saved] {}", info);
+        if(!groupBypass.contains(event.getGroupId())){
+            return;
+        }
+
+        boolean hasLogged = false;
+        for(ArrayMsg msg : event.getArrayMsg()){
+            if(msg.getType() == MsgTypeEnum.image){
+                if (!hasLogged){
+                    log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
+                    hasLogged = true;
                 }
+                String originName =msg.getData().get("file");
+                String url = msg.getData().get("url");
+                String fileName = originName.substring(0, originName.lastIndexOf("."));
+                String info = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/monitor", fileName);
+                log.info("└─[Saved] {}", info);
             }
         }
     }
 
     @FunctionControl(config = "messageCollect")
-    // @GroupMessageHandler
-    // @MessageHandlerFilter(at = AtEnum.NOT_NEED)
-    // @Async("ThreadExecutor")
-    public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {  // AI Monitor 模式下并行调用存在严重问题 (已修改为串行调用)
-        if(!event.getMessage().startsWith("/Chat")){  // Chat 会自动记录
+    public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
+        if(!(event.getMessage().startsWith("/Chat") || event.getMessage().startsWith("/聊天"))){  // Chat 命令会自动记录消息 跳过
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
             chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
@@ -78,8 +75,6 @@ public class MonitorListener
     }
 
     @FunctionControl(config = "keywordDetect")
-    // @GroupMessageHandler
-    // @Async("ThreadExecutor")
     public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {  // 暂时直接设计针对群聊的规则
         if (event.getMessage().contains("男娘")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());

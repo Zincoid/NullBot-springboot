@@ -31,7 +31,7 @@ public class CommandListener
 
 
     @GroupMessageHandler
-    @MessageHandlerFilter(at = AtEnum.NOT_NEED)  // 串行调用添加
+    @MessageHandlerFilter(at = AtEnum.NOT_NEED)
     @Async("ThreadExecutor")
     public void onGroupCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception
     {
