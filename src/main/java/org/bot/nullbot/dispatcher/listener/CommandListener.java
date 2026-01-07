@@ -66,7 +66,7 @@ public class CommandListener
     }
 
     // @GroupMessageHandler
-    // @MessageHandlerFilter(reply = ReplyEnum.REPLY_ME)  // 框架有BUG 回复消息中有@机器人和另一个人时触发不了 AtEnum.NEED 的方法 暂时不知道怎么修
+    // @MessageHandlerFilter(reply = ReplyEnum.REPLY_ME)  // 框架有BUG 回复消息中有@机器人和另一个人时会被判定为 AtEnum.NOT_NEED 的方法 暂时不知道怎么修
     // @Async("ThreadExecutor")
     // public void onGroupReplyMeInteraction(Bot bot, GroupMessageEvent event) throws Exception
     // {
