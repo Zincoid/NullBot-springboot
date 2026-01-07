@@ -33,10 +33,11 @@ public class ItemPO
         String rarityIcon = getRarityEmoji();
         return String.format(
                 """
-                        [%s%s]
+                        [%sID:%d - %s]
                         品质:%s | 价格:%,d | 重量:%d
                         📋 %s""",
                 rarityIcon,
+                id,
                 name,
                 getRarityDisplay(),
                 price,
