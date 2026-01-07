@@ -51,7 +51,7 @@ class QqBotApplicationTests {
    void commandTest() throws Exception {
        String commandType = "help";
        List<String> commandParameters =  new ArrayList<>();
-       commandProcessor.processTest(new CommandEvent<>(commandType, commandParameters, new GroupMessageEvent(), false));
+       commandProcessor.processTest(new CommandEvent<>(commandType, commandParameters, new GroupMessageEvent(), false, true));
 
        // while (true)
        // {

@@ -38,7 +38,7 @@ public class CommandEvent<T extends Event>
         commandParameters = new ArrayList<>();
     }
 
-    public CommandEvent(T event, String command, boolean authRequired, boolean rateLimit) {  // 嵌入调用指令 创建事件
+    public CommandEvent(T event, String command, boolean authRequired, boolean rateLimit) {  // 嵌入调用指令或关键词检测时 创建事件
         this.event = event;
         this.authRequired = authRequired;
         this.rateLimit = rateLimit;
