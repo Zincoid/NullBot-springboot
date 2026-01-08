@@ -18,7 +18,7 @@ public class InventoryController
 
     @GetMapping("/list")
     public WebResult getInventoryList(Long userId){
-        return WebResult.success().addMsg("查询成功").addData("items", inventoryService.getInventories(userId));
+        return WebResult.success().addMsg("查询成功").addData("inventories", inventoryService.getInventories(userId));
     }
 
     @DeleteMapping("/delete/{id}")
