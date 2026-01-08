@@ -67,7 +67,7 @@ public class ItemController
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
         List<ItemPO> items = itemService.getItemList();
-        CsvExportUtil.exportToCsv(response, "ITEMS_" + LocalDateTime.now(), items, ItemPO.class);
+        CsvExportUtil.exportToCsv(response, "Items_" + LocalDateTime.now(), items, ItemPO.class);
     }
 
     @PostMapping("/importCsv")

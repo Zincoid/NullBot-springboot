@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bot.nullbot.enums.Category;
 import org.bot.nullbot.enums.Rarity;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @TableName("`item`")
 public class ItemPO
 {
