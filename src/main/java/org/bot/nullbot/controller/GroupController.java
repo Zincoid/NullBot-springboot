@@ -23,8 +23,8 @@ public class GroupController
         return WebResult.success().addMsg("查询成功").addData("groupPage", groupPage);
     }
 
-    @PutMapping("/updateGroup")
-    public WebResult updateGroup(@RequestBody GroupPO group){
+    @PutMapping("/update")
+    public WebResult update(@RequestBody GroupPO group){
         if(groupService.updateGroup(group))
             return WebResult.success().addMsg("更新成功");
         else

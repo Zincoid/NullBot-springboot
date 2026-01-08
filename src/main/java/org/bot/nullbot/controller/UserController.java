@@ -23,8 +23,8 @@ public class UserController
         return WebResult.success().addMsg("查询成功").addData("userPage", userPage);
     }
 
-    @PutMapping("/updateUser")
-    public WebResult updateUser(@RequestBody UserPO user){
+    @PutMapping("/update")
+    public WebResult update(@RequestBody UserPO user){
         if(userService.updateUser(user))
             return WebResult.success().addMsg("更新成功");
         else
