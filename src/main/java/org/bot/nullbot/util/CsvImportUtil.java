@@ -112,16 +112,16 @@ public class CsvImportUtil
                     T entity = convertRecordToEntity(record, clazz, fieldMapping, rowNum);
                     if (entity != null) {
                         resultList.add(entity);
-                        log.debug("[ImportCsv-{}] 成功导入第{}行数据",
+                        log.info("[ImportCsv-{}] 成功导入第{}行数据",
                                 clazz.getSimpleName(), rowNum);
                     }
                 } catch (ImportException e) {
                     errors.add(new ImportError(rowNum, e.getMessage(), record.toString()));
-                    log.warn("[ImportCsv-{}] 第{}行数据导入失败: {}",
+                    log.info("[ImportCsv-{}] 第{}行数据导入失败: {}",
                             clazz.getSimpleName(), rowNum, e.getMessage());
                 } catch (Exception e) {
                     errors.add(new ImportError(rowNum, "系统错误: " + e.getMessage(), record.toString()));
-                    log.error("[ImportCsv-{}] 第{}行数据导入时发生系统错误",
+                    log.info("[ImportCsv-{}] 第{}行数据导入时发生系统错误",
                             clazz.getSimpleName(), rowNum, e);
                 }
             }
@@ -195,7 +195,7 @@ public class CsvImportUtil
                     resultList.add(entity);
                 }
             } catch (ImportException e) {
-                log.warn("第{}行数据导入失败: {}", rowNum, e.getMessage());
+                log.info("第{}行数据导入失败: {}", rowNum, e.getMessage());
                 // 可以根据需要决定是否继续处理
             }
         }
@@ -257,7 +257,7 @@ public class CsvImportUtil
                     mapping.put(i, new FieldMapping(field, fieldName));
                 } catch (NoSuchFieldException e) {
                     // 如果实体类没有这个字段，记录警告但不中断
-                    log.warn("[ImportCsv-{}] CSV列'{}'在实体类中没有对应的字段'{}'",
+                    log.info("[ImportCsv-{}] CSV列'{}'在实体类中没有对应的字段'{}'",
                             clazz.getSimpleName(), csvColumn, fieldName);
                 }
             }
@@ -482,19 +482,19 @@ public class CsvImportUtil
     private static void logImportResult(Class<?> clazz, int successCount,
                                         List<ImportError> errors, long totalRows) {
         if (errors.isEmpty()) {
-            log.info("[ImportCsv-{}] 导入成功: 总共{}行，全部导入成功",
+            log.info("[ImportCsv-{}] 全部导入完成 - 总计 {} 条数据",
                     clazz.getSimpleName(), totalRows);
         } else {
-            log.warn("[ImportCsv-{}] 导入完成: 总共{}行，成功{}行，失败{}行",
+            log.warn("[ImportCsv-{}] 导入完成 - 总计 {} 条, 成功 {} 条, 失败 {} 条",
                     clazz.getSimpleName(), totalRows, successCount, errors.size());
 
             // 记录前10个错误
             errors.stream().limit(10).forEach(error ->
-                    log.warn("[ImportCsv-{}] 第{}行导入失败: {}",
+                    log.warn("[ImportCsv-{}] 第 {} 条导入失败: {}",
                             clazz.getSimpleName(), error.getRowNum(), error.getMessage()));
 
             if (errors.size() > 10) {
-                log.warn("[ImportCsv-{}] ... 还有{}个错误未显示",
+                log.warn("[ImportCsv-{}] ... 还有 {} 个错误未显示",
                         clazz.getSimpleName(), errors.size() - 10);
             }
         }
