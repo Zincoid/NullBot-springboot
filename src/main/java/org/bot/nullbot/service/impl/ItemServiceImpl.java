@@ -110,6 +110,10 @@ public class ItemServiceImpl implements ItemService
     //     }
     //     return new ItemPage(itemPage.getRecords(), itemPage.getCurrent(), itemPage.getPages(), itemPage.getTotal(), itemPage.getSize());
     // }
+    @Override
+    public boolean addItem(ItemPO item) {
+        return itemMapper.insert(item) == 1;
+    }
 
     @Override
     public boolean updateItem(ItemPO item) {
@@ -118,6 +122,6 @@ public class ItemServiceImpl implements ItemService
 
     @Override
     public boolean deleteById(Integer id) {
-        return false;
+        return itemMapper.deleteById(id) == 1;
     }
 }

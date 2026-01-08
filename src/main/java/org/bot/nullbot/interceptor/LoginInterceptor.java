@@ -26,6 +26,8 @@ public class LoginInterceptor implements HandlerInterceptor
             "/nullbot/saying/delete",
             "/nullbot/group/update",
             "/nullbot/user/update",
+            "/nullbot/item/add",
+            "/nullbot/item/delete",
             "/nullbot/item/update"
     );
 

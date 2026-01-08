@@ -27,6 +27,14 @@ public class ItemController
     //     return WebResult.success().addMsg("查询成功").addData("itemPage", itemPage);
     // }
 
+    @PostMapping("/add")
+    public WebResult add(@RequestBody ItemPO item){
+        if(itemService.addItem(item))
+            return WebResult.success().addMsg("新增成功");
+        else
+            return WebResult.fail().addMsg("新增出错");
+    }
+
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
         if(itemService.deleteById(id)){
