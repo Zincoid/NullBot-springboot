@@ -10,7 +10,9 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 @CommandMapping({"Invoke", "调用"})
@@ -41,10 +43,10 @@ public class InvokeCommand implements Command {
             try {
                 Object result = invokeSpringMethod(applicationContext, beanName, methodName, args);
                 String res = result != null ? result.toString() : "null";
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), res, false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[反射] ✅调用成功\n" + res, false);
                 log.info("\t\t\t\t├─[Invoke] 调用结果 -> {}", res);
             } catch (Exception e) {
-                String errorMsg = "[反射] ❌调用出错:\n" + e.getMessage();
+                String errorMsg = "[反射] ❌调用失败\n" + e.getMessage();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), errorMsg, false);
                 log.info("\t\t\t\t├─[Invoke] 调用失败", e);
             }
@@ -59,6 +61,7 @@ public class InvokeCommand implements Command {
         Object bean = context.getBean(beanName);
         Method[] methods = bean.getClass().getMethods();
 
+        List<String> errors = new ArrayList<>();
         for (Method method : methods) {
             if (!method.getName().equals(methodName)) continue;
             if (method.getParameterCount() != args.length) continue;
@@ -66,13 +69,21 @@ public class InvokeCommand implements Command {
             if (args.length == 0) return method.invoke(bean);
             // 处理有参数方法
             Class<?>[] paramTypes = method.getParameterTypes();
-            for (int i = 0; i < args.length; i++)
-                args[i] = convertFromString((String) args[i], paramTypes[i]);
-            return method.invoke(bean, args);
+            try {
+                for (int i = 0; i < args.length; i++)
+                    args[i] = convertFromString((String) args[i], paramTypes[i]);
+                return method.invoke(bean, args);
+            } catch (RuntimeException e) {
+                errors.add(e.getMessage());
+            }
         }
 
-        throw new NoSuchMethodException(
-                String.format("Method '%s' not found with %d args", methodName, args.length));
+        if (errors.isEmpty())
+            throw new NoSuchMethodException(
+                    String.format("Method '%s' not found with %d args", methodName, args.length));
+        else
+            throw new NoSuchMethodException(
+                    String.format("All %d method(s) failed:\n%s", errors.size(), String.join(";\n", errors)));
     }
 
     private Object convertFromString(String value, Class<?> targetType) {
@@ -106,6 +117,11 @@ public class InvokeCommand implements Command {
     public Integer getAccess() {
         return 2;
     }
+
+    // public String test() { return "test-non"; }
+    // public String test(int a) { return "test-int " + a; }
+    // public String test(int a, int b) { return "test-int-plus " + (a + b); }
+    // public String test(double a, double b) { return "test-double-plus" + (a + b); }
 
     @Override
     public String getHelp() {
