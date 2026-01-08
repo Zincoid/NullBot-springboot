@@ -1,7 +1,9 @@
 package org.bot.nullbot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.entity.page.ItemPage;
 import org.bot.nullbot.mapper.InventoryMapper;
 import org.bot.nullbot.mapper.ItemMapper;
 import org.bot.nullbot.mapper.UserMapper;
@@ -16,8 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -92,5 +92,24 @@ public class ItemServiceImpl implements ItemService
     @Override
     public String getItemCommand(Integer itemId) {
         return  itemMapper.selectById(itemId).getCommand();
+    }
+
+    // =================== WEB功能相关 ===================
+
+    @Override
+    public ItemPage getItemByPage(Integer currentPage, Integer pageSize, Category category) {
+        Page<ItemPO> page = new Page<>(currentPage, pageSize);
+        Page<ItemPO> itemPage;
+        if (category != null) {
+            itemPage = itemMapper.selectPage(page, new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getCategory, category).orderByAsc(ItemPO::getId));
+        }else{
+            itemPage = itemMapper.selectPage(page, new LambdaQueryWrapper<ItemPO>().orderByAsc(ItemPO::getId));
+        }
+        return new ItemPage(itemPage.getRecords(), itemPage.getCurrent(), itemPage.getPages(), itemPage.getTotal(), itemPage.getSize());
+    }
+
+    @Override
+    public boolean updateItem(ItemPO item) {
+        return itemMapper.updateById(item) == 1;
     }
 }
