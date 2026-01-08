@@ -11,8 +11,6 @@ public interface InventoryService
 {
     void updateAllInventories();
 
-    List<InventoryPO> getInventories(Long userId);
-
     InventoryPage getInventoriesPage(Long userId, int p, int size);
 
     int getTotalAmountByUserId(Long userId);
@@ -26,4 +24,10 @@ public interface InventoryService
     boolean buyInventory(Long userId, Integer itemId, int i);
 
     boolean sellInventoryByRarity(Long userId, Rarity rarity);
+
+    List<InventoryPO> getInventories(Long userId);
+
+    boolean deleteById(Integer id);
+
+    boolean updateInventory(InventoryPO inventory);
 }
