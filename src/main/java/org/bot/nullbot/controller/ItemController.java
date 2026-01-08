@@ -1,11 +1,17 @@
 package org.bot.nullbot.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.ItemService;
+import org.bot.nullbot.util.CsvExportUtil;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -35,7 +41,7 @@ public class ItemController
             else
                 return WebResult.fail().addMsg("新增失败");
         } catch (Exception e) {
-            return WebResult.fail().addMsg("新增出错");
+            return WebResult.fail().addMsg("新增出错: " + e.getMessage());
         }
     }
 
@@ -54,5 +60,11 @@ public class ItemController
             return WebResult.success().addMsg("更新成功");
         else
             return WebResult.fail().addMsg("更新失败");
+    }
+
+    @GetMapping("/exportCsv")
+    public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
+        List<ItemPO> items = itemService.getItemList();
+        CsvExportUtil.exportToCsv(response, "ITEMS_" + LocalDateTime.now(), items, ItemPO.class);
     }
 }
