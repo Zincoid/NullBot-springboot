@@ -29,10 +29,14 @@ public class ItemController
 
     @PostMapping("/add")
     public WebResult add(@RequestBody ItemPO item){
-        if(itemService.addItem(item))
-            return WebResult.success().addMsg("新增成功");
-        else
+        try {
+            if(itemService.addItem(item))
+                return WebResult.success().addMsg("新增成功");
+            else
+                return WebResult.fail().addMsg("新增失败");
+        } catch (Exception e) {
             return WebResult.fail().addMsg("新增出错");
+        }
     }
 
     @DeleteMapping("/delete/{id}")
@@ -49,6 +53,6 @@ public class ItemController
         if(itemService.updateItem(item))
             return WebResult.success().addMsg("更新成功");
         else
-            return WebResult.fail().addMsg("更新出错");
+            return WebResult.fail().addMsg("更新失败");
     }
 }
