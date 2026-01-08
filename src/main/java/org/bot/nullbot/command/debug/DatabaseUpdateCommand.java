@@ -8,6 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.GroupService;
+import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +20,15 @@ public class DatabaseUpdateCommand implements Command
 {
     private final GroupService groupService;
     private final UserService userService;
+    private final InventoryService inventoryService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             groupService.updateAllGroupNames();
             userService.updateAllUserNames();
+            inventoryService.updateAllInventories();
+
             log.info("\t\t\t\t├─[DatabaseUpdate] 数据库已更新");
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[DatabaseUpdate] ✅已更新", false);
         }else

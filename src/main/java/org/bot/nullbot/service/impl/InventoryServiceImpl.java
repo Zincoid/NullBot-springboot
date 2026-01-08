@@ -2,6 +2,7 @@ package org.bot.nullbot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mikuac.shiro.core.Bot;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.enums.Rarity;
@@ -25,6 +26,25 @@ public class InventoryServiceImpl implements InventoryService
     private final UserMapper userMapper;
     private final ItemMapper itemMapper;
     private final InventoryMapper inventoryMapper;
+
+    // =================== 数据库功能相关 ===================
+
+    @Transactional
+    @Override
+    public void updateAllInventories() {
+        inventoryMapper.selectList(null).forEach(inventory -> {
+            ItemPO item = itemMapper.selectById(inventory.getItemId());
+            if(item != null){
+                inventory.setItemName(item.getName());
+                inventory.setPrice(item.getPrice());
+                inventory.setCategory(item.getCategory());
+                inventory.setRarity(item.getRarity());
+                inventoryMapper.updateById(inventory);
+            }else{
+                inventoryMapper.deleteById(inventory.getId());
+            }
+        });
+    }
 
     // =================== BOT功能相关 ===================
 
