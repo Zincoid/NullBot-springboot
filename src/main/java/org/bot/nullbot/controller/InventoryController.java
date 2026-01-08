@@ -21,6 +21,14 @@ public class InventoryController
         return WebResult.success().addMsg("查询成功").addData("inventories", inventoryService.getInventories(userId));
     }
 
+    @PostMapping("/add")
+    public WebResult add(Long userId, Integer itemId){
+        if(inventoryService.increaseInventory(userId, itemId, 1))
+            return WebResult.success().addMsg("增加成功");
+        else
+            return WebResult.fail().addMsg("增加失败");
+    }
+
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
         if(inventoryService.deleteById(id)){
