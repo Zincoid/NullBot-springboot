@@ -71,7 +71,7 @@ public class ItemController
     }
 
     @PostMapping("/importCsv")
-    public void importCsv(MultipartFile csvFile) throws IOException {
+    public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<ItemPO> items =  CsvImportUtil.importFromCsv(csvFile, ItemPO.class);
         itemService.addItems(items);
     }
