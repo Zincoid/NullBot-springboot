@@ -38,6 +38,7 @@ public class LoginInterceptor implements HandlerInterceptor
             "/nullbot/item/exportCsv",
             "/nullbot/item/importCsv",
 
+            "/nullbot/inventory/add",
             "/nullbot/inventory/delete",
             "/nullbot/inventory/update"
     );
