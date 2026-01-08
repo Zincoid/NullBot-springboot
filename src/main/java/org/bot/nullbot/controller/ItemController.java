@@ -7,7 +7,9 @@ import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.ItemService;
 import org.bot.nullbot.util.CsvExportUtil;
+import org.bot.nullbot.util.CsvImportUtil;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -66,5 +68,11 @@ public class ItemController
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
         List<ItemPO> items = itemService.getItemList();
         CsvExportUtil.exportToCsv(response, "ITEMS_" + LocalDateTime.now(), items, ItemPO.class);
+    }
+
+    @PostMapping("/importCsv")
+    public void importCsv(MultipartFile csvFile) throws IOException {
+        List<ItemPO> items =  CsvImportUtil.importFromCsv(csvFile, ItemPO.class);
+        itemService.addItems(items);
     }
 }
