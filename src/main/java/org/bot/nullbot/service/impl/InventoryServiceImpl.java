@@ -2,7 +2,6 @@ package org.bot.nullbot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.mikuac.shiro.core.Bot;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.enums.Rarity;

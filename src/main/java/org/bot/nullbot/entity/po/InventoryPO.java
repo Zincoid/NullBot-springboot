@@ -16,8 +16,8 @@ public class InventoryPO
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private Long ownerId;
-    private Integer ItemId;
-    private String ItemName;
+    private Integer itemId;
+    private String itemName;
     private Category category;
     private Rarity rarity;
     private Integer price;
@@ -25,8 +25,8 @@ public class InventoryPO
 
     @Override
     public String toString() {
-        return padRight(String.valueOf(ItemId), 7) +
-                padRight(ItemName, 19) +
+        return padRight(String.valueOf(itemId), 7) +
+                padRight(itemName, 19) +
                 padRight(rarity.getDescription(), 5) +
                 padRight(String.valueOf(price), 12) +
                 padRight(String.valueOf(amount), 0);
