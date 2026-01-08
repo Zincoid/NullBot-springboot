@@ -27,12 +27,13 @@ public class ItemController
     //     return WebResult.success().addMsg("查询成功").addData("itemPage", itemPage);
     // }
 
-    @PutMapping("/delete")
-    public WebResult delete(@RequestBody ItemPO item){
-        if(itemService.updateItem(item))
-            return WebResult.success().addMsg("更新成功");
-        else
-            return WebResult.fail().addMsg("更新出错");
+    @DeleteMapping("/delete/{id}")
+    public WebResult delete(@PathVariable Integer id){
+        if(itemService.deleteById(id)){
+            return WebResult.success().addMsg("删除成功");
+        }else{
+            return WebResult.fail().addMsg("删除失败");
+        }
     }
 
     @PutMapping("/update")

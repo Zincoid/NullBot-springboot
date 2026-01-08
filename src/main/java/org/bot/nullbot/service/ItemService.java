@@ -27,4 +27,6 @@ public interface ItemService
     // ItemPage getItemByPage(Integer currentPage, Integer pageSize, Category category);
 
     boolean updateItem(ItemPO item);
+
+    boolean deleteById(Integer id);
 }

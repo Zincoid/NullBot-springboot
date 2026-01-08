@@ -115,4 +115,9 @@ public class ItemServiceImpl implements ItemService
     public boolean updateItem(ItemPO item) {
         return itemMapper.updateById(item) == 1;
     }
+
+    @Override
+    public boolean deleteById(Integer id) {
+        return false;
+    }
 }

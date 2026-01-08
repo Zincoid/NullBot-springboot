@@ -17,8 +17,14 @@ public class SayingController
 {
     private final SayingService sayingService;
 
-    @GetMapping("/randomSaying")
-    public WebResult RandomSaying(){
+    @GetMapping("/list/{currentPage}/{pageSize}")
+    public WebResult getSayingByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
+        SayingPage sayingPage = sayingService.getSayingByPage(currentPage, pageSize);
+        return WebResult.success().addMsg("查询成功").addData("sayingPage", sayingPage);
+    }
+
+    @GetMapping("/random")
+    public WebResult random(){
         log.info("[管理系统] 获取随机语录");
         SayingPO saying = sayingService.getRand();
         if(saying != null){
@@ -28,14 +34,8 @@ public class SayingController
         }
     }
 
-    @GetMapping("/list/{currentPage}/{pageSize}")
-    public WebResult getSayingByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
-        SayingPage sayingPage = sayingService.getSayingByPage(currentPage, pageSize);
-        return WebResult.success().addMsg("查询成功").addData("sayingPage", sayingPage);
-    }
-
     @DeleteMapping("/delete/{id}")
-    public WebResult deleteSaying(@PathVariable Integer id){
+    public WebResult delete(@PathVariable Integer id){
         if(sayingService.deleteById(id)){
             return WebResult.success().addMsg("删除成功");
         }else{
