@@ -18,8 +18,8 @@ CREATE TABLE `item` (
 
 -- 特殊物品
 INSERT INTO item (name, category, rarity, price, weight, description, command, image_path, available) VALUES
-('口球', 1, 3, 25, 1, '(可使用物品) 若Bot有管理权限，使用会禁言自身1分钟', 'UserBan userId 1', NULL, TRUE),
-('神秘图片', 1, 4, 9999, 1, '(可使用物品) 使用后发送1张开发者女装照', 'eb0f8545', NULL, TRUE);
+('口球', 1, 3, 25, 1, '(可使用) 若Bot有管理权限，使用会禁言自身1分钟', 'UserBan userId 1', NULL, TRUE),
+('神秘图片', 1, 4, 9999, 1, '(可使用) 使用后发送1张开发者女装照', 'eb0f8545', NULL, TRUE);
 
 -- 面包游戏物品
 INSERT INTO item (name, category, rarity, price, weight, description, command, image_path, available) VALUES

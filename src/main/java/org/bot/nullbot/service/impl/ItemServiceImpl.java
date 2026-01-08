@@ -1,9 +1,7 @@
 package org.bot.nullbot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.entity.page.ItemPage;
 import org.bot.nullbot.mapper.InventoryMapper;
 import org.bot.nullbot.mapper.ItemMapper;
 import org.bot.nullbot.mapper.UserMapper;
@@ -97,16 +95,21 @@ public class ItemServiceImpl implements ItemService
     // =================== WEB功能相关 ===================
 
     @Override
-    public ItemPage getItemByPage(Integer currentPage, Integer pageSize, Category category) {
-        Page<ItemPO> page = new Page<>(currentPage, pageSize);
-        Page<ItemPO> itemPage;
-        if (category != null) {
-            itemPage = itemMapper.selectPage(page, new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getCategory, category).orderByAsc(ItemPO::getId));
-        }else{
-            itemPage = itemMapper.selectPage(page, new LambdaQueryWrapper<ItemPO>().orderByAsc(ItemPO::getId));
-        }
-        return new ItemPage(itemPage.getRecords(), itemPage.getCurrent(), itemPage.getPages(), itemPage.getTotal(), itemPage.getSize());
+    public List<ItemPO> getItemList() {
+        return itemMapper.selectList(null);
     }
+
+    // @Override
+    // public ItemPage getItemByPage(Integer currentPage, Integer pageSize, Category category) {
+    //     Page<ItemPO> page = new Page<>(currentPage, pageSize);
+    //     Page<ItemPO> itemPage;
+    //     if (category != null) {
+    //         itemPage = itemMapper.selectPage(page, new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getCategory, category).orderByAsc(ItemPO::getId));
+    //     }else{
+    //         itemPage = itemMapper.selectPage(page, new LambdaQueryWrapper<ItemPO>().orderByAsc(ItemPO::getId));
+    //     }
+    //     return new ItemPage(itemPage.getRecords(), itemPage.getCurrent(), itemPage.getPages(), itemPage.getTotal(), itemPage.getSize());
+    // }
 
     @Override
     public boolean updateItem(ItemPO item) {

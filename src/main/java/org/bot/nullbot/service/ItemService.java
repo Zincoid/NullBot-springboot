@@ -4,6 +4,8 @@ import org.bot.nullbot.entity.page.ItemPage;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.enums.Category;
 
+import java.util.List;
+
 public interface ItemService
 {
     ItemPO getItem(Integer itemId);
@@ -20,7 +22,9 @@ public interface ItemService
 
     String getItemCommand(Integer itemId);
 
-    ItemPage getItemByPage(Integer currentPage, Integer pageSize, Category category);
+    List<ItemPO> getItemList();
+
+    // ItemPage getItemByPage(Integer currentPage, Integer pageSize, Category category);
 
     boolean updateItem(ItemPO item);
 }
