@@ -16,8 +16,8 @@ public class InventoryController
 {
     private final InventoryService inventoryService;
 
-    @GetMapping("/inventories")
-    public WebResult getInventories(Long userId){
+    @GetMapping("/list")
+    public WebResult getInventoryList(Long userId){
         return WebResult.success().addMsg("查询成功").addData("items", inventoryService.getInventories(userId));
     }
 
