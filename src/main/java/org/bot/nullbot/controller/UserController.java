@@ -23,6 +23,15 @@ public class UserController
         return WebResult.success().addMsg("查询成功").addData("userPage", userPage);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public WebResult delete(@PathVariable Integer id){
+        if(userService.deleteById(id)){
+            return WebResult.success().addMsg("删除成功");
+        }else{
+            return WebResult.fail().addMsg("删除失败");
+        }
+    }
+
     @PutMapping("/update")
     public WebResult update(@RequestBody UserPO user){
         if(userService.updateUser(user))

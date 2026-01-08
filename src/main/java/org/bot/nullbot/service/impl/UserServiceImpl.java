@@ -121,6 +121,9 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
+    public boolean deleteById(Integer id) { return userMapper.deleteById(id) == 1; }
+
+    @Override
     public boolean updateUser(UserPO user) {
         return userMapper.updateById(user) == 1;
     }

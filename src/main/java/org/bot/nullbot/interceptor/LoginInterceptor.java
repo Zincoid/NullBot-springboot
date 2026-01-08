@@ -23,9 +23,15 @@ public class LoginInterceptor implements HandlerInterceptor
             "/nullbot/file/createDir",
             "/nullbot/file/delete",
             "/nullbot/file/rename",
+
             "/nullbot/saying/delete",
+
+            "/nullbot/group/delete",
             "/nullbot/group/update",
+
+            "/nullbot/user/delete",
             "/nullbot/user/update",
+
             "/nullbot/item/add",
             "/nullbot/item/delete",
             "/nullbot/item/update",

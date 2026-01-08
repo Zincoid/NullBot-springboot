@@ -21,5 +21,7 @@ public interface GroupService
 
     GroupPage getGroupByPage(Integer currentPage, Integer pageSize);
 
+    boolean deleteById(Integer id);
+
     boolean updateGroup(GroupPO group);
 }

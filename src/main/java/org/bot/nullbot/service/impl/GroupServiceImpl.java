@@ -85,6 +85,9 @@ public class GroupServiceImpl implements GroupService
     }
 
     @Override
+    public boolean deleteById(Integer id) { return groupMapper.deleteById(id) == 1; }
+
+    @Override
     public boolean updateGroup(GroupPO group) {
         return groupMapper.updateById(group) == 1;
     }

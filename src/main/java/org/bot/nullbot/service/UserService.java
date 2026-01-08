@@ -27,5 +27,7 @@ public interface UserService
 
     UserPage getUserByPage(Integer currentPage, Integer pageSize);
 
+    boolean deleteById(Integer id);
+
     boolean updateUser(UserPO user);
 }

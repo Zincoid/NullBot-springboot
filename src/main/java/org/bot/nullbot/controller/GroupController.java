@@ -23,6 +23,15 @@ public class GroupController
         return WebResult.success().addMsg("查询成功").addData("groupPage", groupPage);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public WebResult delete(@PathVariable Integer id){
+        if(groupService.deleteById(id)){
+            return WebResult.success().addMsg("删除成功");
+        }else{
+            return WebResult.fail().addMsg("删除失败");
+        }
+    }
+
     @PutMapping("/update")
     public WebResult update(@RequestBody GroupPO group){
         if(groupService.updateGroup(group))
