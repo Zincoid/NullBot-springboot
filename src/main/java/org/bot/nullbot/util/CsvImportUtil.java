@@ -485,16 +485,16 @@ public class CsvImportUtil
             log.info("[ImportCsv-{}] 全部导入完成 - 总计 {} 条数据",
                     clazz.getSimpleName(), totalRows);
         } else {
-            log.warn("[ImportCsv-{}] 导入完成 - 总计 {} 条, 成功 {} 条, 失败 {} 条",
+            log.info("[ImportCsv-{}] 导入完成 - 总计 {} 条, 成功 {} 条, 失败 {} 条",
                     clazz.getSimpleName(), totalRows, successCount, errors.size());
 
             // 记录前10个错误
             errors.stream().limit(10).forEach(error ->
-                    log.warn("[ImportCsv-{}] 第 {} 条导入失败: {}",
+                    log.info("[ImportCsv-{}] 第 {} 条导入失败: {}",
                             clazz.getSimpleName(), error.getRowNum(), error.getMessage()));
 
             if (errors.size() > 10) {
-                log.warn("[ImportCsv-{}] ... 还有 {} 个错误未显示",
+                log.info("[ImportCsv-{}] ... 还有 {} 个错误未显示",
                         clazz.getSimpleName(), errors.size() - 10);
             }
         }

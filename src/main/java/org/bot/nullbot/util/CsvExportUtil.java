@@ -46,7 +46,7 @@ public class CsvExportUtil
             log.info("[ExportCsv-{}] 已写入CSV文件", clazz.getSimpleName());
 
         } catch (Exception e) {
-            log.error("[ExportCsv-{}] 导出CSV文件失败: {}", clazz.getSimpleName(), e.getMessage());
+            log.info("[ExportCsv-{}] 导出CSV文件失败: {}", clazz.getSimpleName(), e.getMessage());
             throw e;
         }
     }
@@ -103,7 +103,7 @@ public class CsvExportUtil
             csvPrinter.close();
 
         } catch (Exception e) {
-            log.error("分页导出CSV文件失败", e);
+            log.info("分页导出CSV文件失败", e);
             throw new RuntimeException("导出失败：" + e.getMessage());
         }
     }
