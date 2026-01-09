@@ -29,28 +29,35 @@ public class VideoSaveCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if (reply.getType() == MsgTypeEnum.reply) {
-                GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
-                Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());  // 可优化为单个键值对
-                if(!videoMap.isEmpty()){
-                    for (Map.Entry<String, String> entry : videoMap.entrySet()) {
-                        String fileName = entry.getKey();
-                        String url = entry.getValue();
-                        String info = DownloadUtil.downloadFile(url, fileStorageConfig.getVideoPath(), fileName);
-                        // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
-                        //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！\n" + info, false);
-                        // }
-                        // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！", false);
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！\n(INFO) " + info, false);
-                        log.info("\t\t\t\t├─[Video.Save] 已保存为: {}", info);
-                    }
-                }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌未包含可保存视频", false);
-                    log.info("\t\t\t\t├─[Video.Save] 未包含可保存图片");
-                }
-            }else{
+            if (reply.getType() != MsgTypeEnum.reply) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌需回复要保存的视频", false);
                 log.info("\t\t\t\t├─[Video.Save] 未指定消息");
+                return;
+            }
+
+            GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+            Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());  // 可优化为单个键值对
+            if(videoMap.isEmpty()){
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌未包含可保存视频", false);
+                log.info("\t\t\t\t├─[Video.Save] 未包含可保存图片");
+                return;
+            }
+
+            for (Map.Entry<String, String> entry : videoMap.entrySet()) {
+                String fileName = entry.getKey();
+                String url = entry.getValue();
+                try {
+                    String info = DownloadUtil.downloadFile(url, fileStorageConfig.getVideoPath(), fileName);
+                    // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
+                    //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！\n" + info, false);
+                    // }
+                    // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！", false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！", false);
+                    log.info("\t\t\t\t├─[Video.Save] 已保存为: {}", info);
+                } catch (Exception e) {
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌保存失败:\n" + e.getMessage(), false);
+                    log.info("\t\t\t\t├─[Video.Save] 保存失败", e);
+                }
             }
         }else
             log.info("\t\t\t\t├─[Video.Save] 未设计 - 非群消息事件响应方式");

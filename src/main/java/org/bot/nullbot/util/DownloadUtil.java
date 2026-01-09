@@ -35,7 +35,7 @@ public class DownloadUtil
             int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
                 drainStream(connection.getErrorStream());
-                return "Failed: HTTP error code " + responseCode;
+                throw new RuntimeException("Failed: HTTP error code " + responseCode);
             }
 
             String contentType = connection.getContentType();
@@ -44,7 +44,7 @@ public class DownloadUtil
             final long MAX_FILE_SIZE = 500L * 1024 * 1024;
             if (contentLength > MAX_FILE_SIZE) {
                 log.warn("\t\t\t\t├─ File too large: {} > {}", formatFileSize(contentLength), formatFileSize(MAX_FILE_SIZE));
-                return "Failed: File too large";
+                throw new RuntimeException("Failed: File too large");
             }
 
             log.info("\t\t\t\t├─ Downloading from url...");
@@ -68,7 +68,7 @@ public class DownloadUtil
                     if (Thread.currentThread().isInterrupted()) {
                         log.warn("\t\t\t\t├─ Download interrupted by thread");
                         Files.deleteIfExists(saveFilePath);
-                        return "Failed: Download interrupted";
+                        throw new RuntimeException("Failed: Download interrupted");
                     }
 
                     outputStream.write(buffer, 0, bytesRead);
@@ -86,10 +86,10 @@ public class DownloadUtil
 
         } catch (IOException e) {
             log.error("\t\t\t\t├─ Download failed: {}", e.getMessage(), e);
-            return "Failed: " + e.getMessage();
+            throw new RuntimeException("Failed: " + e.getMessage());
         } catch (Exception e) {
             log.error("\t\t\t\t├─ Unexpected error: {}", e.getMessage(), e);
-            return "Failed: Unexpected error";
+            throw new RuntimeException("Failed: Unexpected error");
         } finally {
             closeConnection(connection);
         }
