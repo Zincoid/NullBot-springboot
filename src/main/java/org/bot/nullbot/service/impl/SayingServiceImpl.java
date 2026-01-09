@@ -50,9 +50,7 @@ public class SayingServiceImpl implements SayingService
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<SayingPO> getSayingList() {
-        return sayingMapper.selectList(null);
-    }
+    public List<SayingPO> getSayingList() { return sayingMapper.selectList(null); }
 
     @Override
     public SayingPage getSayingByPage(Integer currentPage, Integer pageSize) {

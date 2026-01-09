@@ -1,12 +1,21 @@
 package org.bot.nullbot.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.page.UserPage;
+import org.bot.nullbot.entity.po.SayingPO;
 import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.UserService;
+import org.bot.nullbot.util.CsvExportUtil;
+import org.bot.nullbot.util.CsvImportUtil;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -17,7 +26,12 @@ public class UserController
 {
     private final UserService userService;
 
-    @GetMapping("/list/{currentPage}/{pageSize}")
+    @GetMapping("/list")
+    public WebResult getUserList(){
+        return WebResult.success().addMsg("查询成功").addData("users", userService.getUserList());
+    }
+
+    @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getUserByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
         UserPage userPage = userService.getUserByPage(currentPage, pageSize);
         return WebResult.success().addMsg("查询成功").addData("userPage", userPage);
@@ -38,5 +52,17 @@ public class UserController
             return WebResult.success().addMsg("更新成功");
         else
             return WebResult.fail().addMsg("更新出错");
+    }
+
+    @GetMapping("/exportCsv")
+    public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
+        List<UserPO> users = userService.getUserList();
+        CsvExportUtil.exportToCsv(response, "Users_" + LocalDateTime.now(), users, UserPO.class);
+    }
+
+    @PostMapping("/importCsv")
+    public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
+        List<UserPO> users =  CsvImportUtil.importFromCsv(csvFile, UserPO.class);
+        userService.addUsers(users);
     }
 }

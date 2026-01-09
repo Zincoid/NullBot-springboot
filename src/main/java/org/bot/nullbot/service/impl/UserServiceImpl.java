@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -114,11 +116,20 @@ public class UserServiceImpl implements UserService
     // =================== WEB功能相关 ===================
 
     @Override
+    public List<UserPO> getUserList() {
+        return userMapper.selectList(null);
+    }
+
+
+    @Override
     public UserPage getUserByPage(Integer currentPage, Integer pageSize) {
         Page<UserPO> page = new Page<>(currentPage, pageSize);
         Page<UserPO> userPage = userMapper.selectPage(page, new LambdaQueryWrapper<UserPO>().orderByAsc(UserPO::getId));
         return new UserPage(userPage.getRecords(), userPage.getCurrent(), userPage.getPages(), userPage.getTotal(), userPage.getSize());
     }
+
+    @Override
+    public void addUsers(List<UserPO> users) { userMapper.insert(users); }
 
     @Override
     public boolean deleteById(Integer id) { return userMapper.deleteById(id) == 1; }
