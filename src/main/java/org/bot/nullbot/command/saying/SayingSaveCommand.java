@@ -34,7 +34,7 @@ public class SayingSaveCommand implements Command
                 String text = MessageParseUtil.parseRawSaying(bot, replyMsg.getRawMessage());
                 if(text != null) {
                     if(!text.trim().isEmpty()){
-                        int inserted = sayingService.insert(userId, userName, text);
+                        int inserted = sayingService.addSaying(userId, userName, text);
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] " + (inserted == 1 ? "\uD83D\uDCBE已记录！" : "❌出错"), false);
                         log.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", (inserted == 1 ? "已记录 -> " : "出错 -> ") + text);
                     }else{

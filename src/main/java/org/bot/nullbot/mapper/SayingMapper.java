@@ -10,12 +10,6 @@ import java.util.List;
 @Mapper
 public interface SayingMapper extends BaseMapper<SayingPO>
 {
-    @Delete("DELETE FROM saying WHERE id = #{id}")
-    boolean deleteById(Integer id);
-
-    @Insert("INSERT INTO saying(user_id, user_name, text) VALUES(#{userId}, #{userName}, #{text})")
-    int insert(Long userId, String userName, String text);
-
     @Select("SELECT * FROM saying ORDER BY RAND() LIMIT 1")
     SayingPO getRand();
 

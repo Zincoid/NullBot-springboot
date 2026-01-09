@@ -9,6 +9,7 @@ import org.bot.nullbot.entity.po.SayingPO;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,9 +21,14 @@ public class SayingServiceImpl implements SayingService
     // =================== BOT功能相关 ===================
 
     @Override
-    public int insert(Long userId, String userName, String text) {
+    public int addSaying(Long userId, String userName, String text) {
         try {
-            return sayingMapper.insert(userId, userName, text);
+            SayingPO saying = new SayingPO();
+            saying.setUserId(userId);
+            saying.setUserName(userName);
+            saying.setText(text);
+            saying.setTime(LocalDateTime.now());
+            return sayingMapper.insert(saying);
         } catch (Exception e) {
             return 0;
         }
@@ -30,7 +36,7 @@ public class SayingServiceImpl implements SayingService
 
     @Override
     public boolean deleteById(Integer id) {
-        return sayingMapper.deleteById(id);
+        return sayingMapper.deleteById(id) == 1;
     }
 
     @Override
