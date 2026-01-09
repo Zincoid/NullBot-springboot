@@ -155,6 +155,14 @@ public class InventoryServiceImpl implements InventoryService
     }
 
     @Override
+    public List<InventoryPO> getInventoryList() {
+        return inventoryMapper.selectList(null);
+    }
+
+    @Override
+    public void addInventories(List<InventoryPO> inventories) { inventoryMapper.insert(inventories); }
+
+    @Override
     public boolean deleteById(Integer id) {
         return inventoryMapper.deleteById(id) == 1;
     }

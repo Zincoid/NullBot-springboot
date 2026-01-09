@@ -2,6 +2,7 @@ package org.bot.nullbot.service;
 
 import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.page.InventoryPage;
+import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.enums.Rarity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,10 @@ public interface InventoryService
     boolean sellInventoryByRarity(Long userId, Rarity rarity);
 
     List<InventoryPO> getInventories(Long userId);
+
+    List<InventoryPO> getInventoryList();
+
+    void addInventories(List<InventoryPO> inventories);
 
     boolean deleteById(Integer id);
 
