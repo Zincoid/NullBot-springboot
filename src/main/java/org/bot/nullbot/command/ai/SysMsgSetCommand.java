@@ -36,7 +36,7 @@ public class SysMsgSetCommand implements Command
                 deepSeekClient.clearHistory(groupId, userId);
                 sysMsgStorage.setCustomMessage(systemMessage);
 
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[自定义系统消息] ✅已设置！", false);
+                bot.sendGroupMsg(groupId, "[自定义系统消息] ✅已设置！", false);
                 log.info("\t\t\t\t├─[AI.SysMsgSet] 自定义系统消息已设置 - {}", systemMessage);
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[自定义系统消息] ❌无参数", false);

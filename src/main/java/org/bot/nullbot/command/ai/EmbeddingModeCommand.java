@@ -21,8 +21,13 @@ public class EmbeddingModeCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            Long userId = groupMessageEvent.getSender().getUserId();
+            Long groupId = groupMessageEvent.getGroupId();
+
+            deepSeekClient.clearHistory(groupId, userId);
             String embedding = deepSeekClient.changeEmbedding();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[嵌入模式] \uD83D\uDD04已切换至: " + embedding, false);
+
+            bot.sendGroupMsg(groupId, "[嵌入模式] \uD83D\uDD04已切换至: " + embedding, false);
             log.info("\t\t\t\t├─[AI.EmbeddingMode] 嵌入模式已切换 - {}", embedding);
         }else
             log.info("\t\t\t\t├─[AI.EmbeddingMode] 未设计 - 非群消息事件响应方式");
