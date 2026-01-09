@@ -10,9 +10,6 @@ import java.util.List;
 @Mapper
 public interface SayingMapper extends BaseMapper<SayingPO>
 {
-    @Select("SELECT * FROM saying")
-    List<SayingPO> getList();
-
     @Delete("DELETE FROM saying WHERE id = #{id}")
     boolean deleteById(Integer id);
 

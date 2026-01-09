@@ -2,7 +2,6 @@ package org.bot.nullbot.service;
 
 import org.bot.nullbot.entity.page.SayingPage;
 import org.bot.nullbot.entity.po.SayingPO;
-import org.bot.nullbot.entity.result.WebResult;
 
 import java.util.List;
 
@@ -12,11 +11,13 @@ public interface SayingService
 
     boolean deleteById(Integer id);
 
-    List<SayingPO> getList();
-
     SayingPO getRand();
 
     SayingPO getRandByUserId(Long userId);
 
+    List<SayingPO> getSayingList();
+
     SayingPage getSayingByPage(Integer currentPage, Integer pageSize);
+
+    void addSayings(List<SayingPO> sayings);
 }

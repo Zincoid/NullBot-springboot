@@ -3,6 +3,7 @@ package org.bot.nullbot.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.entity.page.ItemPage;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.ItemService;
@@ -29,11 +30,11 @@ public class ItemController
         return WebResult.success().addMsg("查询成功").addData("items", itemService.getItemList());
     }
 
-    // @GetMapping("/list/{currentPage}/{pageSize}")
-    // public WebResult getItemByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
-    //     ItemPage itemPage = itemService.getItemByPage(currentPage, pageSize, null);
-    //     return WebResult.success().addMsg("查询成功").addData("itemPage", itemPage);
-    // }
+    @GetMapping("/page/{currentPage}/{pageSize}")
+    public WebResult getItemByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
+        ItemPage itemPage = itemService.getItemByPage(currentPage, pageSize);
+        return WebResult.success().addMsg("查询成功").addData("itemPage", itemPage);
+    }
 
     @PostMapping("/add")
     public WebResult add(@RequestBody ItemPO item){

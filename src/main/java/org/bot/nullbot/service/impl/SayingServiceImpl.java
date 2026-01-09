@@ -8,7 +8,6 @@ import org.bot.nullbot.mapper.SayingMapper;
 import org.bot.nullbot.entity.po.SayingPO;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,11 +34,6 @@ public class SayingServiceImpl implements SayingService
     }
 
     @Override
-    public List<SayingPO> getList() {
-        return sayingMapper.getList();
-    }
-
-    @Override
     public SayingPO getRand() {
         return sayingMapper.getRand();
     }
@@ -50,9 +44,17 @@ public class SayingServiceImpl implements SayingService
     // =================== WEB功能相关 ===================
 
     @Override
+    public List<SayingPO> getSayingList() {
+        return sayingMapper.selectList(null);
+    }
+
+    @Override
     public SayingPage getSayingByPage(Integer currentPage, Integer pageSize) {
         Page<SayingPO> page = new Page<>(currentPage, pageSize);
         Page<SayingPO> sayingPage = sayingMapper.selectPage(page, new LambdaQueryWrapper<SayingPO>().orderByDesc(SayingPO::getTime));
         return new SayingPage(sayingPage.getRecords(), sayingPage.getCurrent(), sayingPage.getPages(), sayingPage.getTotal(), sayingPage.getSize());
     }
+
+    @Override
+    public void addSayings(List<SayingPO> sayings) { sayingMapper.insert(sayings); }
 }
