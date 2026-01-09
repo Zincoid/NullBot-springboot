@@ -30,29 +30,36 @@ public class ImageSaveCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if (reply.getType() == MsgTypeEnum.reply) {
-                GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
-                Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
-                if(!imageMap.isEmpty()){
-                    for (Map.Entry<String, String> entry : imageMap.entrySet()) {
-                        String originName = entry.getKey();
-                        String url = entry.getValue();
-                        String fileName = originName.substring(0, originName.lastIndexOf("."));
-                        String info = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/collect", fileName);
-                        // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().getFirst())){
-                        //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！\n" + info, false);
-                        // }
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！", false);
-                        // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！\n" + info, false);
-                        log.info("\t\t\t\t├─[Image.Save] 已保存为: {}", info);
-                    }
-                }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌未包含可保存图片", false);
-                    log.info("\t\t\t\t├─[Image.Save] 未包含可保存图片");
-                }
-            }else{
+            if (reply.getType() != MsgTypeEnum.reply) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌需回复要保存的图片", false);
                 log.info("\t\t\t\t├─[Image.Save] 未指定消息");
+                return;
+            }
+
+            GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+            Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
+            if(imageMap.isEmpty()){
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌未包含可保存图片", false);
+                log.info("\t\t\t\t├─[Image.Save] 未包含可保存图片");
+                return;
+            }
+
+            for (Map.Entry<String, String> entry : imageMap.entrySet()) {
+                String originName = entry.getKey();
+                String url = entry.getValue();
+                String fileName = originName.substring(0, originName.lastIndexOf("."));  // QQ给的扩展名是错的 让下载方法判断
+                try {
+                    String info = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/collect", fileName);
+                    // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().getFirst())){
+                    //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！\n" + info, false);
+                    // }
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！", false);
+                    // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！\n" + info, false);
+                    log.info("\t\t\t\t├─[Image.Save] 已保存为: {}", info);
+                } catch (Exception e) {
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌保存失败:\n" + e.getMessage(), false);
+                    log.info("\t\t\t\t├─[Image.Save] 保存失败", e);
+                }
             }
         }else
             log.info("\t\t\t\t├─[Image.Save] 未设计 - 非群消息事件响应方式");

@@ -32,77 +32,84 @@ public class ConvertCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (!event.getCommandParameters().isEmpty()) {
-                String method = event.getCommandParameters().getFirst();
-                if (!List.of("RIP", "PRTS", "InversePRTS").contains(method)) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌方法不存在", false);
-                    log.info("\t\t\t\t├─[Convert] 方法不存在");
-                    return;
-                }
+            Long groupId = groupMessageEvent.getGroupId();
 
-                List<String> urls = new ArrayList<>();
-
-                // 引用收集
-                ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-                if (reply.getType() == MsgTypeEnum.reply) {
-                    GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
-                    Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
-                    urls.addAll(imageMap.values());
-                }
-
-                //  ID参数收集 或 AT收集
-                if (event.getCommandParameters().size() > 1) {
-                    long qqNumber;
-                    try {
-                        qqNumber = Long.parseLong(event.getCommandParameters().get(1));
-                    } catch (NumberFormatException e) {
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌参数格式错误", false);
-                        log.info("\t\t\t\t├─[Convert] 参数格式错误");
-                        return;
-                    }
-                    urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
-                }else{
-                    List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
-                    for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
-                }
-
-                if (urls.isEmpty()) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌无引用图片或ID参数或At消息", false);
-                    log.info("\t\t\t\t├─[Convert] 无引用图片或ID参数或At消息");
-                    return;
-                }
-
-                // 开始处理
-                String tempFilePath = fileStorageConfig.getTempPath();
-                for (String url : urls) {
-                    String tempFileName = UUID.randomUUID().toString();
-                    String downloadedFileName = DownloadUtil.downloadFile(url, tempFilePath, tempFileName);
-                    if (downloadedFileName == null) {
-                        log.info("\t\t\t\t├─[Convert] 下载图像失败 - {}", url);
-                        continue;
-                    }
-                    String avatarPath = tempFilePath + "/" + downloadedFileName;
-                    try {
-                        String base64 = switch (method){
-                            case "RIP" -> ImageConverter.RIP(avatarPath, tempFilePath + "/fonts");
-                            case "PRTS" -> ImageConverter.PRTS(avatarPath, tempFilePath + "/fonts");
-                            case "InversePRTS" -> ImageConverter.inversePRTS(avatarPath, tempFilePath + "/fonts");
-                            default -> throw new IllegalStateException("Unexpected value: " + method);
-                        };
-                        String response = MsgUtils.builder().img("base64://" + base64).build();
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                        log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
-                    } catch (Exception e) {
-                        log.info("\t\t\t\t├─[Convert] 处理时出错 - {}", e.getMessage());
-                    } finally {
-                        FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
-                    }
-                }
-                // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ✅处理完成！", false);
-            }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ❌无方法参数", false);
+            if (event.getCommandParameters().isEmpty()) {
+                bot.sendGroupMsg(groupId, "[图像处理] ❌无方法参数", false);
                 log.info("\t\t\t\t├─[Convert] 无方法参数");
+                return;
             }
+
+            String method = event.getCommandParameters().getFirst();
+            if (!List.of("RIP", "PRTS", "InversePRTS").contains(method)) {
+                bot.sendGroupMsg(groupId, "[图像处理] ❌方法不存在", false);
+                log.info("\t\t\t\t├─[Convert] 方法不存在");
+                return;
+            }
+
+            List<String> urls = new ArrayList<>();
+
+            // 引用收集
+            ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
+            if (reply.getType() == MsgTypeEnum.reply) {
+                GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+                Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
+                urls.addAll(imageMap.values());
+            }
+
+            //  ID参数收集 或 AT收集
+            if (event.getCommandParameters().size() > 1) {
+                long qqNumber;
+                try {
+                    qqNumber = Long.parseLong(event.getCommandParameters().get(1));
+                } catch (NumberFormatException e) {
+                    bot.sendGroupMsg(groupId, "[图像处理] ❌参数格式错误", false);
+                    log.info("\t\t\t\t├─[Convert] 参数格式错误");
+                    return;
+                }
+                urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+            }else{
+                List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+                for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+            }
+
+            if (urls.isEmpty()) {
+                bot.sendGroupMsg(groupId, "[图像处理] ❌无引用图片或ID参数或At消息", false);
+                log.info("\t\t\t\t├─[Convert] 无引用图片或ID参数或At消息");
+                return;
+            }
+
+            // 开始处理
+            String tempFilePath = fileStorageConfig.getTempPath();
+            for (String url : urls) {
+                String tempFileName = UUID.randomUUID().toString();
+                String downloadedFileName;
+                try {
+                    downloadedFileName = DownloadUtil.downloadFile(url, tempFilePath, tempFileName);
+                } catch (Exception e) {
+                    bot.sendGroupMsg(groupId, "[图像处理] ❌下载图像失败", false);
+                    log.info("\t\t\t\t├─[Convert] 下载图像失败 - {}", url);
+                    continue;
+                }
+                String avatarPath = tempFilePath + "/" + downloadedFileName;
+                try {
+                    String base64 = switch (method){
+                        case "RIP" -> ImageConverter.RIP(avatarPath, tempFilePath + "/fonts");
+                        case "PRTS" -> ImageConverter.PRTS(avatarPath, tempFilePath + "/fonts");
+                        case "InversePRTS" -> ImageConverter.inversePRTS(avatarPath, tempFilePath + "/fonts");
+                        default -> throw new IllegalStateException("Unexpected value: " + method);
+                    };
+                    String response = MsgUtils.builder().img("base64://" + base64).build();
+                    bot.sendGroupMsg(groupId, response, false);
+                    log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
+                } catch (Exception e) {
+                    bot.sendGroupMsg(groupId, "[图像处理] ❌处理时出错", false);
+                    log.info("\t\t\t\t├─[Convert] 处理时出错 - {}", e.getMessage());
+                } finally {
+                    FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
+                }
+            }
+            // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ✅全部处理完成！", false);
         }else
             log.info("\t\t\t\t├─[Convert] 未设计 非群消息事件响应方式");
     }

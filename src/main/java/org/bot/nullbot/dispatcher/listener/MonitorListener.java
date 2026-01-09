@@ -1,6 +1,5 @@
 package org.bot.nullbot.dispatcher.listener;
 
-import com.mikuac.shiro.annotation.GroupMessageHandler;
 import com.mikuac.shiro.annotation.GroupMsgDeleteNoticeHandler;
 import com.mikuac.shiro.annotation.GroupPokeNoticeHandler;
 import com.mikuac.shiro.annotation.common.Shiro;
@@ -57,8 +56,13 @@ public class MonitorListener
                 String originName =msg.getData().get("file");
                 String url = msg.getData().get("url");
                 String fileName = originName.substring(0, originName.lastIndexOf("."));
-                String info = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/monitor", fileName);
-                log.info("└─[Saved] {}", info);
+                try {
+                    String info = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/monitor", fileName);
+                    log.info("└─[Saved] {}", info);
+                } catch (Exception e) {
+                    log.info("└─[Error] {}", e.getMessage());
+                    throw e;
+                }
             }
         }
     }
