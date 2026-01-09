@@ -54,14 +54,14 @@ public class LoginController
         if(claims.get("type", Integer.class) == 0){
             AdminPO admin = new AdminPO(null, "Guest", "看访客密码？", "访客无此信息");
             log.info("[管理系统] 获取访客信息");
-            return WebResult.success().addMsg("获取访客信息成功").addData("info", admin);
+            return WebResult.success().addMsg("获取访客信息成功").addData("info", admin).addData("userType", 0);
         }else if(claims.get("type", Integer.class) == 1){
             Long id = claims.get("id", Long.class);
             log.info("[管理系统] 获取管理员信息 - ID {}", id);
             AdminPO admin = adminService.info(id);
             if(admin != null){
                 admin.setPassword("不能给你看");  // 安全
-                return WebResult.success().addMsg("获取管理员信息成功").addData("info", admin);
+                return WebResult.success().addMsg("获取管理员信息成功").addData("info", admin).addData("userType", 1);
             }else{
                 return WebResult.fail().addMsg("获取管理员信息失败");
             }
