@@ -3,9 +3,11 @@ package org.bot.nullbot.entity.po;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @TableName("`group`")
 public class GroupPO
 {
