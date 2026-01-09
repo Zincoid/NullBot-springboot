@@ -3,6 +3,8 @@ package org.bot.nullbot.service;
 import org.bot.nullbot.entity.page.GroupPage;
 import org.bot.nullbot.entity.po.GroupPO;
 
+import java.util.List;
+
 public interface GroupService
 {
     GroupPO getGroup(Long groupId);
@@ -19,7 +21,11 @@ public interface GroupService
 
     void updateAllGroupNames();
 
+    List<GroupPO> getGroupList();
+
     GroupPage getGroupByPage(Integer currentPage, Integer pageSize);
+
+    void addGroups(List<GroupPO> groups);
 
     boolean deleteById(Integer id);
 

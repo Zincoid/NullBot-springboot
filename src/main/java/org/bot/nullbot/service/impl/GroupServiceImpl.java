@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class GroupServiceImpl implements GroupService
@@ -78,11 +80,19 @@ public class GroupServiceImpl implements GroupService
     // =================== WEB功能相关 ===================
 
     @Override
+    public List<GroupPO> getGroupList() {
+        return groupMapper.selectList(null);
+    }
+
+    @Override
     public GroupPage getGroupByPage(Integer currentPage, Integer pageSize) {
         Page<GroupPO> page = new Page<>(currentPage, pageSize);
         Page<GroupPO> groupPage = groupMapper.selectPage(page, new LambdaQueryWrapper<GroupPO>().orderByAsc(GroupPO::getId));
         return new GroupPage(groupPage.getRecords(), groupPage.getCurrent(), groupPage.getPages(), groupPage.getTotal(), groupPage.getSize());
     }
+
+    @Override
+    public void addGroups(List<GroupPO> groups) { groupMapper.insert(groups); }
 
     @Override
     public boolean deleteById(Integer id) { return groupMapper.deleteById(id) == 1; }
