@@ -51,7 +51,7 @@ public class VideoSaveCommand implements Command
                 try {
                     DownloadUtil.DownloadInfo downloadInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getVideoPath(), fileName);
                     if(!fileService.addFileRecordForBot(
-                            fileStorageConfig.getVideoPath() + "/collect",
+                            fileStorageConfig.getVideoPath(),
                             downloadInfo.getFileName(),
                             downloadInfo.getFileSize())
                     ) {
