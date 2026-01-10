@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -489,14 +490,14 @@ public class FileServiceImpl implements FileService
             FileInfo fileInfo = entry.getValue();
             File file = new File(path);
             if (dbMap.containsKey(path)) {
-                // // 检查文件是否被修改
+                // // 检查文件是否被修改 (性能损耗大 暂时去掉)
                 // FilePO dbFile = dbMap.get(path);
                 // if (dbFile.getFileSize() != fileInfo.size ||
                 //         dbFile.getLastModified() == null ||
-                //         dbFile.getLastModified().getTime() != fileInfo.lastModified) {
+                //         dbFile.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() != fileInfo.lastModified) {
                 //     // 更新文件信息
                 //     dbFile.setFileSize(fileInfo.size);
-                //     dbFile.setLastModified(new Date(fileInfo.lastModified));
+                //     dbFile.setLastModified(Instant.ofEpochMilli(fileInfo.lastModified).atZone(ZoneId.systemDefault()).toLocalDateTime());
                 //     fileMapper.updateById(dbFile);
                 // }
             } else {
@@ -506,7 +507,7 @@ public class FileServiceImpl implements FileService
                 newFile.setFileSize(fileInfo.size);
                 newFile.setDirectory(normalizePath(file.getParent()));
                 newFile.setIsDir(fileInfo.isDirectory ? 1 : 0);
-                // newFile.setLastModified(new Date(fileInfo.lastModified));
+                newFile.setLastModified(Instant.ofEpochMilli(fileInfo.lastModified).atZone(ZoneId.systemDefault()).toLocalDateTime());
                 fileMapper.insert(newFile);
             }
         }
