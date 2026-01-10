@@ -25,6 +25,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -39,13 +40,14 @@ public class FileServiceImpl implements FileService
     // =================== BOT功能相关 ===================
 
     @Override
-    public Boolean addFileRecordForBot(String directory, String fileName, Long fileSize) {
-        // 覆盖已存在文件信息
+    public Boolean addFileRecordForBot(String directory, String fileName, Long fileSize, LocalDateTime lastModified) {
+        // 覆盖已存在文件
         FilePO existFile = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, directory)
                 .eq(FilePO::getFileName, fileName));
         if(existFile != null) {
             existFile.setFileSize(fileSize);
+            existFile.setLastModified(lastModified);
             fileMapper.updateById(existFile);
             return true;
         }
@@ -67,6 +69,7 @@ public class FileServiceImpl implements FileService
         file.setFileSize(fileSize);
         file.setIsDir(0);
         file.setVisible(dir.getVisible());
+        file.setLastModified(lastModified);
 
         return fileMapper.insert(file) == 1;
     }

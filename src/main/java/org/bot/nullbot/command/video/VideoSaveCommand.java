@@ -53,7 +53,8 @@ public class VideoSaveCommand implements Command
                     if(!fileService.addFileRecordForBot(
                             fileStorageConfig.getVideoPath(),
                             downloadInfo.getFileName(),
-                            downloadInfo.getFileSize())
+                            downloadInfo.getFileSize(),
+                            downloadInfo.getLastModified())
                     ) {
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌数据库更新失败", false);
                         log.info("\t\t\t\t├─[Video.Save] 数据库更新失败");

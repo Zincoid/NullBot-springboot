@@ -6,9 +6,11 @@ import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.page.FilePage;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+
 public interface FileService
 {
-    Boolean addFileRecordForBot(String directory, String fileName, Long fileSize);
+    Boolean addFileRecordForBot(String directory, String fileName, Long fileSize, LocalDateTime lastModified);
 
     FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden);
 

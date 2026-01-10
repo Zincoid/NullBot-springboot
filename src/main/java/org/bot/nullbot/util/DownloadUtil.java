@@ -13,6 +13,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.regex.Pattern;
 
 
@@ -25,6 +28,7 @@ public class DownloadUtil
     {
         private String fileName;
         private Long fileSize;
+        LocalDateTime lastModified;
     }
 
     /**
@@ -91,7 +95,14 @@ public class DownloadUtil
 
                 long downloadedSize = Files.size(saveFilePath);
                 log.info("\t\t\t\t├─ Download completed: {} ({})", finalFileName, formatFileSize(downloadedSize));
-                return new DownloadInfo(finalFileName, downloadedSize);
+
+                LocalDateTime lastModified = Files
+                        .getLastModifiedTime(saveFilePath)
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDateTime();
+
+                return new DownloadInfo(finalFileName, downloadedSize, lastModified);
             }
 
         } catch (IOException e) {

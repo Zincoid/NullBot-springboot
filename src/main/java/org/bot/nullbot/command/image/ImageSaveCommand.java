@@ -55,7 +55,8 @@ public class ImageSaveCommand implements Command
                     if(!fileService.addFileRecordForBot(
                             fileStorageConfig.getImagePath() + "/collect",
                             downloadInfo.getFileName(),
-                            downloadInfo.getFileSize())
+                            downloadInfo.getFileSize(),
+                            downloadInfo.getLastModified())
                     ) {
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌数据库更新失败", false);
                         log.info("\t\t\t\t├─[Image.Save] 数据库更新失败");

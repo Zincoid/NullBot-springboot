@@ -8,10 +8,10 @@ CREATE TABLE `file`
     id INT PRIMARY KEY AUTO_INCREMENT,
     file_name VARCHAR(255) NOT NULL,
     file_size BIGINT NOT NULL,
-#     owner_id BIGINT NOT NULL,
-#     owner_name VARCHAR(255) NOT NULL,
-#     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     directory VARCHAR(255) NOT NULL,
     is_dir INT DEFAULT 0 NOT NULL,
-    visible BOOLEAN NOT NULL DEFAULT TRUE
+    visible BOOLEAN NOT NULL DEFAULT TRUE,
+    owner_id BIGINT,
+    owner_name VARCHAR(255),
+    last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
