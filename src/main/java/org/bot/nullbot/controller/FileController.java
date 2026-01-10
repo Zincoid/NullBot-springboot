@@ -23,7 +23,16 @@ public class FileController
 {
     private final FileService fileService;
 
-    @GetMapping("/list/{currentPage}/{pageSize}")
+    @GetMapping("/init")
+    public WebResult initRootFile(){
+        if(fileService.initRootFile()){
+            return WebResult.success().addMsg("RootFile 初始化已完成");
+        }else{
+            return WebResult.fail().addMsg("RootFile 已初始化过");
+        }
+    }
+
+    @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getFileByPage(@PathVariable Integer currentPage,
                                 @PathVariable Integer pageSize,
                                 @RequestParam(defaultValue = "/") String curDir){

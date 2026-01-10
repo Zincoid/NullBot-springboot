@@ -45,6 +45,7 @@ public class FileServiceImpl implements FileService
     // =================== BOT功能相关 ===================
 
     @Override
+    @Transactional
     public Boolean addFileRecordForBot(String directory, String fileName, Long fileSize,
                                        LocalDateTime lastModified, Long ownerId, String ownerName)
     {
@@ -88,6 +89,32 @@ public class FileServiceImpl implements FileService
     // =================== WEB功能相关 ===================
 
     @Override
+    @Transactional
+    public Boolean initRootFile() {
+        Path rootPath = Path.of(fileStorageConfig.getFileDirectory());
+        String rootParentPath = rootPath.getParent().toString();
+        String rootFileName = rootPath.getFileName().toString();
+
+        if(fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
+                .eq(FilePO::getDirectory, rootParentPath)
+                .eq(FilePO::getFileName, rootFileName)) != null
+        ) {
+            return false;
+        }
+
+        FilePO rootFile =  new FilePO();
+        rootFile.setDirectory(rootParentPath);
+        rootFile.setFileName(rootFileName);
+        rootFile.setFileSize(0L);
+        rootFile.setIsDir(1);
+        rootFile.setVisible(true);
+        rootFile.setLastModified(LocalDateTime.now());
+        rootFile.setOwnerId(0L);
+        rootFile.setOwnerName("root");
+        return fileMapper.insert(rootFile) == 1;
+    }
+
+    @Override
     public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden) {
         scanAndSyncFiles();
         String fullDir;
@@ -126,6 +153,7 @@ public class FileServiceImpl implements FileService
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
         else
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
+
         if(!fileMapper.selectList(new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).eq(FilePO::getFileName, fileName)).isEmpty()) {
             return WebResult.fail().addMsg("存在同名冲突");
         }
