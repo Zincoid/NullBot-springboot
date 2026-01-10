@@ -69,7 +69,7 @@ nullbot:
   file:
     storage:
       file-directory: /root/Nullbot/file  # 网页文件管理根目录
-      temp-path: /root/Nullbot/file/temp
+      temp-path: /root/Nullbot/file/temp  # 建议选择根下子目录
       image-path: /root/Nullbot/file/image
       video-path: /root/Nullbot/file/video
       audio-path: /root/Nullbot/file/audio

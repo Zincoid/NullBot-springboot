@@ -258,4 +258,6 @@
 - 优化 前端表现；
 
 ## 2026.1.10 - v1.2.0
+- 优化 ResourceUtil 工具类 改进为 ResourceLoader Spring组件 - 便于调用 FileService 插入文件信息 修改关联代码；
+- 优化 ImageConverter 工具类 改进为 Spring组件 - 修改关联代码；
 - 优化 文本。

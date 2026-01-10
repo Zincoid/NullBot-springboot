@@ -1,7 +1,5 @@
 package org.bot.nullbot;
 
-import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import jakarta.annotation.Resource;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
@@ -10,10 +8,8 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.svg.SvgCanvas;
 import org.bot.nullbot.util.FileUtil;
-import org.bot.nullbot.util.MessageParseUtil;
-import org.bot.nullbot.util.ResourceLoader;
+import org.bot.nullbot.util.ResourceUtil;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
@@ -90,7 +86,7 @@ class QqBotApplicationTests {
 
     @Test
     void renderTest() throws Exception {
-        // Path fontPath = ResourceLoader.getCached("static/fonts/Bernard MT Condensed.ttf", "/root/Nullbot/file/temp/fonts");
+        // Path fontPath = ResourceUtil.getCached("static/fonts/Bernard MT Condensed.ttf", "/root/Nullbot/file/temp/fonts");
         // // 创建 SVG 画布
         // SvgCanvas canvas = SvgCanvas.create(640, 640);
         //
@@ -108,7 +104,7 @@ class QqBotApplicationTests {
         //         // .bold()
         //         .stroke("#FFFFFF", 6);
 
-        Path prts = ResourceLoader.getCached("static/image/inversePRTS.png", "/root/Nullbot/file/temp/fonts");
+        Path prts = ResourceUtil.getCached("static/image/inversePRTS.png", "/root/Nullbot/file/temp/fonts");
         // 创建 SVG 画布
         SvgCanvas canvas = SvgCanvas.create(640, 640);
         // 添加用户头像

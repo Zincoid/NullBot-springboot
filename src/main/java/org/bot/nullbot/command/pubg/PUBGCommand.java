@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.util.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -21,6 +21,7 @@ import java.io.IOException;
 public class PUBGCommand implements Command
 {
     private final FileStorageConfig fileStorageConfig;
+    private final ResourceLoader resourceLoader;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -45,7 +46,7 @@ public class PUBGCommand implements Command
                 return;
             }
             try {
-                String helpPath = ResourceLoader.getCached("static/pubg/" + map, fileStorageConfig.getTempPath()).toAbsolutePath().toString();
+                String helpPath = resourceLoader.getCached("static/pubg/" + map, fileStorageConfig.getTempPath()).toAbsolutePath().toString();
                 String response = MsgUtils.builder().img(helpPath).build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[PUBG] 已获取资源");

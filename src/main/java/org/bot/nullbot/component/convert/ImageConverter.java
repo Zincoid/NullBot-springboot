@@ -1,17 +1,22 @@
-package org.bot.nullbot.util;
+package org.bot.nullbot.component.convert;
 
+import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.entity.svg.SvgCanvas;
+import org.springframework.stereotype.Component;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
 
+@Component
+@RequiredArgsConstructor
 public class ImageConverter
 {
-    // Command 调用
+    private final ResourceLoader resourceLoader;
 
-    public static String RIP(String userAvatarPath, String tempFontPath) throws Exception {
-        ResourceLoader.getCached("static/fonts/Bernard MT Condensed.ttf", tempFontPath);
+    public String RIP(String userAvatarPath, String tempFontPath) throws Exception {
+        resourceLoader.getCached("static/fonts/Bernard MT Condensed.ttf", tempFontPath);
         Path tempPngPath = Files.createTempFile("RIP_", ".png");
         try {
             // 创建 SVG 画布
@@ -39,8 +44,8 @@ public class ImageConverter
         }
     }
 
-    public static String PRTS(String userAvatarPath, String tempFontPath) throws Exception {
-        Path prts = ResourceLoader.getCached("static/image/PRTS.png", tempFontPath);
+    public String PRTS(String userAvatarPath, String tempFontPath) throws Exception {
+        Path prts = resourceLoader.getCached("static/image/PRTS.png", tempFontPath);
         Path tempPngPath = Files.createTempFile("PRTS_", ".png");
         try {
             // 创建 SVG 画布
@@ -66,8 +71,8 @@ public class ImageConverter
         }
     }
 
-    public static String inversePRTS(String userAvatarPath, String tempFontPath) throws Exception {
-        Path prts = ResourceLoader.getCached("static/image/InversePRTS.png", tempFontPath);
+    public String inversePRTS(String userAvatarPath, String tempFontPath) throws Exception {
+        Path prts = resourceLoader.getCached("static/image/InversePRTS.png", tempFontPath);
         Path tempPngPath = Files.createTempFile("InversePRTS_", ".png");
         try {
             // 创建 SVG 画布

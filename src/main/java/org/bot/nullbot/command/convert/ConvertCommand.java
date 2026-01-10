@@ -16,7 +16,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.MessageParseUtil;
-import org.bot.nullbot.util.ImageConverter;
+import org.bot.nullbot.component.convert.ImageConverter;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -28,6 +28,7 @@ import java.util.*;
 public class ConvertCommand implements Command
 {
     private final FileStorageConfig fileStorageConfig;
+    private final ImageConverter imageConverter;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -95,9 +96,9 @@ public class ConvertCommand implements Command
                 String avatarPath = tempFilePath + "/" + downloadedFileName;
                 try {
                     String base64 = switch (method){
-                        case "RIP" -> ImageConverter.RIP(avatarPath, tempFilePath + "/fonts");
-                        case "PRTS" -> ImageConverter.PRTS(avatarPath, tempFilePath + "/fonts");
-                        case "InversePRTS" -> ImageConverter.inversePRTS(avatarPath, tempFilePath + "/fonts");
+                        case "RIP" -> imageConverter.RIP(avatarPath, tempFilePath + "/fonts");
+                        case "PRTS" -> imageConverter.PRTS(avatarPath, tempFilePath + "/fonts");
+                        case "InversePRTS" -> imageConverter.inversePRTS(avatarPath, tempFilePath + "/fonts");
                         default -> throw new IllegalStateException("Unexpected value: " + method);
                     };
                     String response = MsgUtils.builder().img("base64://" + base64).build();

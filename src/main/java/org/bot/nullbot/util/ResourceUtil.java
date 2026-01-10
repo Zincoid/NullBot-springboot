@@ -7,7 +7,8 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ResourceLoader
+@Deprecated
+public class ResourceUtil  // 改用 Spring组件 ResourceLoader
 {
     private static final Map<String, Path> CACHE = new ConcurrentHashMap<>();
 
@@ -31,7 +32,7 @@ public class ResourceLoader
         }
 
         // 获取资源流
-        InputStream resourceStream = ResourceLoader.class.getClassLoader().getResourceAsStream(resourcePath);
+        InputStream resourceStream = ResourceUtil.class.getClassLoader().getResourceAsStream(resourcePath);
         if (resourceStream == null) {
             throw new FileNotFoundException("资源未找到: " + resourcePath);
         }
