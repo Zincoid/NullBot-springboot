@@ -45,6 +45,10 @@ public class VideoSaveCommand implements Command
                 return;
             }
 
+            Long userId = groupMessageEvent.getSender().getUserId();
+            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+            Long groupId = groupMessageEvent.getGroupId();
+
             for (Map.Entry<String, String> entry : videoMap.entrySet()) {
                 String fileName = entry.getKey();
                 String url = entry.getValue();
@@ -54,20 +58,21 @@ public class VideoSaveCommand implements Command
                             fileStorageConfig.getVideoPath(),
                             downloadInfo.getFileName(),
                             downloadInfo.getFileSize(),
-                            downloadInfo.getLastModified())
+                            downloadInfo.getLastModified(),
+                            userId, userName)
                     ) {
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌数据库更新失败", false);
+                        bot.sendGroupMsg(groupId, "[视频] ❌数据库更新失败", false);
                         log.info("\t\t\t\t├─[Video.Save] 数据库更新失败");
                         return;
                     }
                     // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
-                    //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！\n" + info, false);
+                    //     bot.sendGroupMsg(groupId, "[视频] \uD83D\uDCBE已保存！\n" + info, false);
                     // }
-                    // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！", false);
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！", false);
+                    // bot.sendGroupMsg(groupId, "[视频] \uD83D\uDCBE已保存！", false);
+                    bot.sendGroupMsg(groupId, "[视频] \uD83D\uDCBE已保存！", false);
                     log.info("\t\t\t\t├─[Video.Save] 已保存为: {}", downloadInfo.getFileName());
                 } catch (Exception e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌保存失败:\n" + e.getMessage(), false);
+                    bot.sendGroupMsg(groupId, "[视频] ❌保存失败:\n" + e.getMessage(), false);
                     log.info("\t\t\t\t├─[Video.Save] 保存失败", e);
                 }
             }

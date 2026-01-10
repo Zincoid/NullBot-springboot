@@ -11,8 +11,10 @@ import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.page.FilePage;
 import org.bot.nullbot.entity.po.FilePO;
+import org.bot.nullbot.mapper.AdminMapper;
 import org.bot.nullbot.mapper.FileMapper;
 import org.bot.nullbot.service.FileService;
+import org.bot.nullbot.util.WebUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
@@ -23,9 +25,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -34,13 +38,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Slf4j
 public class FileServiceImpl implements FileService
 {
+    private final AdminMapper adminMapper;
     private final FileMapper fileMapper;
     private final FileStorageConfig fileStorageConfig;
 
     // =================== BOT功能相关 ===================
 
     @Override
-    public Boolean addFileRecordForBot(String directory, String fileName, Long fileSize, LocalDateTime lastModified) {
+    public Boolean addFileRecordForBot(String directory, String fileName, Long fileSize,
+                                       LocalDateTime lastModified, Long ownerId, String ownerName)
+    {
         // 覆盖已存在文件
         FilePO existFile = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, directory)
@@ -48,6 +55,8 @@ public class FileServiceImpl implements FileService
         if(existFile != null) {
             existFile.setFileSize(fileSize);
             existFile.setLastModified(lastModified);
+            existFile.setOwnerId(ownerId);
+            existFile.setOwnerName(ownerName);
             fileMapper.updateById(existFile);
             return true;
         }
@@ -70,6 +79,8 @@ public class FileServiceImpl implements FileService
         file.setIsDir(0);
         file.setVisible(dir.getVisible());
         file.setLastModified(lastModified);
+        file.setOwnerId(ownerId);
+        file.setOwnerName(ownerName);
 
         return fileMapper.insert(file) == 1;
     }
@@ -108,7 +119,7 @@ public class FileServiceImpl implements FileService
 
     @Override
     @Transactional
-    public WebResult upload(MultipartFile uploadFile, String curDir) {
+    public WebResult upload(MultipartFile uploadFile, String curDir) throws IOException {
         String fileName = uploadFile.getOriginalFilename();
         String fullDir;
         if(curDir.equals("/"))
@@ -130,22 +141,36 @@ public class FileServiceImpl implements FileService
             return WebResult.fail().addMsg("数据库父目录不存在");
         }
 
+        java.io.File file_dir = new java.io.File(fullDir);
+        if (!file_dir.exists()) return WebResult.fail().addMsg("实际父目录不存在");
+
+        String filePath = fullDir + "/" + fileName;
+
+        try {
+            uploadFile.transferTo(new java.io.File(filePath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Long ownerId = WebUtil.getLoginId();
+        String ownerName = adminMapper.selectById(ownerId).getUsername();
+        LocalDateTime lastModified = Files
+                .getLastModifiedTime(Path.of(filePath))
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+
         FilePO file = new FilePO();
         file.setFileName(uploadFile.getOriginalFilename());
         file.setFileSize(uploadFile.getSize());
         file.setDirectory(fullDir);
         file.setIsDir(0);
         file.setVisible(dir.getVisible());
-        java.io.File file_dir = new java.io.File(fullDir);
-        if (!file_dir.exists()) {
-            return WebResult.fail().addMsg("实际父目录不存在");
-        }
-        try {
-            uploadFile.transferTo(new java.io.File(fullDir + "/" + fileName));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        file.setOwnerId(ownerId);
+        file.setOwnerName(ownerName);
+        file.setLastModified(lastModified);
         fileMapper.insert(file);
+
         return WebResult.success().addMsg("上传成功");
     }
 
@@ -171,7 +196,7 @@ public class FileServiceImpl implements FileService
 
     @Override
     @Transactional
-    public WebResult createDir(String curDir, String dirName) {
+    public WebResult createDir(String curDir, String dirName) throws IOException {
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
@@ -189,19 +214,35 @@ public class FileServiceImpl implements FileService
             return WebResult.fail().addMsg("数据库父目录不存在");
         }
 
+        java.io.File file_dir = new java.io.File(fullDir);
+        if(!file_dir.exists() || file_dir.isFile()) return WebResult.fail().addMsg("实际父目录不存在");
+
+        String dirPath = fullDir + "/" + dirName;
+
+        java.io.File new_dir = new java.io.File(dirPath);
+        if (!new_dir.exists()){
+            if(!new_dir.mkdir())
+                return WebResult.fail().addMsg("创建失败");
+        } else
+            return WebResult.fail().addMsg("目录已存在");
+
+        Long ownerId = WebUtil.getLoginId();
+        String ownerName = adminMapper.selectById(ownerId).getUsername();
+        LocalDateTime lastModified = Files
+                .getLastModifiedTime(Path.of(dirPath))
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+
         FilePO file = new FilePO();
         file.setFileName(dirName);
         file.setFileSize(0L);
         file.setDirectory(fullDir);
         file.setIsDir(1);
         file.setVisible(dir.getVisible());
-        java.io.File file_dir = new java.io.File(fullDir);
-        if(!file_dir.exists() || file_dir.isFile()) return WebResult.fail().addMsg("curDir不合法");
-        java.io.File new_dir = new java.io.File(fullDir + "/"  + dirName);
-        if (!new_dir.exists())
-            new_dir.mkdir();
-        else
-            return WebResult.fail().addMsg("目录已存在");
+        file.setOwnerId(ownerId);
+        file.setOwnerName(ownerName);
+        file.setLastModified(lastModified);
         fileMapper.insert(file);
         return WebResult.success().addMsg("创建成功");
     }
