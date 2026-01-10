@@ -19,4 +19,5 @@ public class FilePO
     private Long fileSize;
     private String directory;
     private Integer isDir;
+    private Boolean visible;
 }

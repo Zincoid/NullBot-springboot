@@ -25,7 +25,7 @@ public class FileController
     public WebResult getFileByPage(@PathVariable Integer currentPage,
                                 @PathVariable Integer pageSize,
                                 @RequestParam(defaultValue = "/") String curDir){
-        FilePage filePage = fileService.getFileByPage(currentPage, pageSize, curDir);
+        FilePage filePage = fileService.getFileByPage(currentPage, pageSize, curDir, true);
         return WebResult.success().addMsg("查询成功").addData("filePage", filePage);
     }
 
@@ -34,7 +34,7 @@ public class FileController
         if (key.contains("/") || key.contains("\\")){
             return WebResult.fail().addMsg("不允许出现斜杠");
         }
-        FilePage filePage = fileService.searchFile(key, curDir);
+        FilePage filePage = fileService.searchFile(key, curDir, true);
         return WebResult.success().addMsg("查询成功").addData("filePage", filePage);
     }
 
@@ -63,5 +63,10 @@ public class FileController
     @GetMapping("/rename/{id}")
     public WebResult renameFile(@PathVariable Integer id, @RequestParam(defaultValue = "") String newFileName){
         return fileService.renameFile(id, newFileName);
+    }
+
+    @GetMapping("/setVisible/{id}")
+    public WebResult setVisible(@PathVariable Integer id, @RequestParam Boolean visible){
+        return fileService.setVisible(id, visible);
     }
 }

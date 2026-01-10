@@ -12,4 +12,7 @@ public interface FileMapper extends BaseMapper<FilePO>
 {
     @Select("select * from file where file_name like concat('%',#{key},'%') and locate(#{fullDir}, directory) != 0")
     List<FilePO> searchFile(String key, String fullDir);
+
+    @Select("select * from file where file_name like concat('%',#{key},'%') and locate(#{fullDir}, directory) != 0 and visible = true")
+    List<FilePO> searchFileVisible(String key, String fullDir);
 }

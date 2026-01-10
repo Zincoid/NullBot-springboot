@@ -23,9 +23,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service
 @RequiredArgsConstructor
@@ -38,27 +37,32 @@ public class FileServiceImpl implements FileService
     // =================== WEB功能相关 ===================
 
     @Override
-    public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir) {
+    public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden) {
         scanAndSyncFiles();
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
         else
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
+        LambdaQueryWrapper<FilePO> wrapper = new LambdaQueryWrapper<FilePO>()
+                .eq(FilePO::getDirectory, fullDir)
+                .orderByDesc(FilePO::getIsDir)
+                .orderByAsc(FilePO::getId);
+        if(hidden) wrapper.eq(FilePO::getVisible, true);
         Page<FilePO> page = new Page<>(currentPage, pageSize);
-        Page<FilePO> filePage = fileMapper.selectPage(page, new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).orderByDesc(FilePO::getIsDir).orderByAsc(FilePO::getId));
+        Page<FilePO> filePage = fileMapper.selectPage(page, wrapper);
         return new FilePage(filePage.getRecords(), filePage.getCurrent(), filePage.getPages(), filePage.getTotal(), filePage.getSize());
     }
 
     @Override
-    public FilePage searchFile(String key, String curDir) {
+    public FilePage searchFile(String key, String curDir, Boolean hidden) {
         scanAndSyncFiles();
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
         else
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
-        List<FilePO> fileList = fileMapper.searchFile(key, fullDir);
+        List<FilePO> fileList = hidden ? fileMapper.searchFileVisible(key, fullDir) : fileMapper.searchFile(key, fullDir);
         return new FilePage(fileList, 0L, 0, 0, 0);
     }
 
@@ -205,6 +209,35 @@ public class FileServiceImpl implements FileService
 
         // log.info("文件重命名成功: {} -> {}", oldFilePath, newFilePath);
         return WebResult.success().addMsg("重命名成功");
+    }
+
+    @Override
+    @Transactional
+    public WebResult setVisible(Integer id, Boolean visible) {
+        FilePO file = fileMapper.selectById(id);
+        if (file == null) {
+            return WebResult.fail().addMsg("文件不存在");
+        }
+        if (file.getIsDir() == 1) {
+            Queue<FilePO> queue = new ConcurrentLinkedQueue<>();
+            queue.offer(file);
+            while (!queue.isEmpty()) {
+                FilePO curFile = queue.poll();
+                curFile.setVisible(visible);
+                fileMapper.updateById(curFile);
+                if (curFile.getIsDir() == 1) {
+                    List<FilePO> files = fileMapper.selectList(
+                            new LambdaQueryWrapper<FilePO>()
+                                    .likeRight(FilePO::getDirectory, curFile.getDirectory() + "/" + file.getFileName())
+                    );
+                    queue.addAll(files);
+                }
+            }
+        } else {
+            file.setVisible(visible);
+            fileMapper.updateById(file);
+        }
+        return WebResult.success().addMsg("访客可见性设置成功");
     }
 
     // =================== 其他工具 ===================

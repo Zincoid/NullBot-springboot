@@ -12,5 +12,6 @@ CREATE TABLE `file`
 #     owner_name VARCHAR(255) NOT NULL,
 #     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     directory VARCHAR(255) NOT NULL,
-    is_dir INT DEFAULT 0 NOT NULL
+    is_dir INT DEFAULT 0 NOT NULL,
+    visible BOOLEAN NOT NULL DEFAULT TRUE
 );
