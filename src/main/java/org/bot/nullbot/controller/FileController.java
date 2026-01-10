@@ -11,6 +11,7 @@ import org.bot.nullbot.util.WebUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 @CrossOrigin
@@ -40,8 +41,12 @@ public class FileController
     }
 
     @PostMapping("/upload")
-    public WebResult upload(MultipartFile uploadFile, @RequestParam(defaultValue = "/") String curDir){
-        return fileService.upload(uploadFile, curDir);
+    public WebResult upload(MultipartFile uploadFile, @RequestParam(defaultValue = "/") String curDir) {
+        try {
+            return fileService.upload(uploadFile, curDir);
+        } catch (IOException e) {
+            return WebResult.fail().addMsg("抛出异常");
+        }
     }
 
     @GetMapping("/download/{id}")
@@ -50,10 +55,14 @@ public class FileController
     }
 
     @PostMapping("/createDir")
-    public WebResult createDir(@RequestBody Map<String, String> map){
+    public WebResult createDir(@RequestBody Map<String, String> map) {
         String curDir = map.get("curDir");
         String dirName = map.get("dirName");
-        return fileService.createDir(curDir, dirName);
+        try {
+            return fileService.createDir(curDir, dirName);
+        } catch (IOException e) {
+            return WebResult.fail().addMsg("抛出异常");
+        }
     }
 
     @DeleteMapping("/delete/{id}")
