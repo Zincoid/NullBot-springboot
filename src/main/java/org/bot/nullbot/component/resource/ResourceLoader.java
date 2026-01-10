@@ -67,8 +67,6 @@ public class ResourceLoader
             resourceStream.transferTo(out);
         }
         resourceStream.close();
-        // JVM退出时删除
-        tempFile.toFile().deleteOnExit();
         // 添加至文件系统
         LocalDateTime lastModified = Files
                 .getLastModifiedTime(tempFile)
@@ -76,9 +74,11 @@ public class ResourceLoader
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
         fileService.addFileRecordForBot(
-                tempPath, fileName, Files.size(tempFile),
+                tempPath, tempFile.getFileName().toString(), Files.size(tempFile),
                 lastModified, null, null
         );
+        // JVM退出时删除
+        tempFile.toFile().deleteOnExit();
         return tempFile;
     }
 

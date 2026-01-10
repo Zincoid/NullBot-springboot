@@ -36,7 +36,7 @@ public class FileController
     public WebResult syncFilesToDatabase(){
         try {
             fileService.syncFilesToDatabase();
-            return WebResult.success().addMsg("本地文件与数据库 已同步");
+            return WebResult.success().addMsg("本地与数据库 已同步");
         } catch (Exception e) {
             return WebResult.fail().addMsg("同步失败");
         }
