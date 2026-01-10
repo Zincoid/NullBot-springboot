@@ -11,6 +11,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class VideoSaveCommand implements Command
 {
     private final FileStorageConfig fileStorageConfig;
+    private final FileService fileService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -48,13 +50,21 @@ public class VideoSaveCommand implements Command
                 String url = entry.getValue();
                 try {
                     DownloadUtil.DownloadInfo downloadInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getVideoPath(), fileName);
-                    String info = downloadInfo.getFileName();
+                    if(!fileService.addFileRecordForBot(
+                            fileStorageConfig.getVideoPath() + "/collect",
+                            downloadInfo.getFileName(),
+                            downloadInfo.getFileSize())
+                    ) {
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌数据库更新失败", false);
+                        log.info("\t\t\t\t├─[Video.Save] 数据库更新失败");
+                        return;
+                    }
                     // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
                     //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！\n" + info, false);
                     // }
                     // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！", false);
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！", false);
-                    log.info("\t\t\t\t├─[Video.Save] 已保存为: {}", info);
+                    log.info("\t\t\t\t├─[Video.Save] 已保存为: {}", downloadInfo.getFileName());
                 } catch (Exception e) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌保存失败:\n" + e.getMessage(), false);
                     log.info("\t\t\t\t├─[Video.Save] 保存失败", e);
