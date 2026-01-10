@@ -15,6 +15,8 @@ public interface FileService
 
     Boolean initRootFile();
 
+    void syncFilesToDatabase();
+
     FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden);
 
     FilePage searchFile(String key, String curDir, Boolean hidden);

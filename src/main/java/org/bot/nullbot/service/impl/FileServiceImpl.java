@@ -116,8 +116,12 @@ public class FileServiceImpl implements FileService
     }
 
     @Override
-    public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden) {
+    public void syncFilesToDatabase() {
         scanAndSyncFiles();
+    }
+
+    @Override
+    public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden) {
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
@@ -135,7 +139,6 @@ public class FileServiceImpl implements FileService
 
     @Override
     public FilePage searchFile(String key, String curDir, Boolean hidden) {
-        scanAndSyncFiles();
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");

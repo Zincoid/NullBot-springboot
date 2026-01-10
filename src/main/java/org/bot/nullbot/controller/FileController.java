@@ -32,6 +32,16 @@ public class FileController
         }
     }
 
+    @GetMapping("/sync")
+    public WebResult syncFilesToDatabase(){
+        try {
+            fileService.syncFilesToDatabase();
+            return WebResult.success().addMsg("本地文件已同步至数据库");
+        } catch (Exception e) {
+            return WebResult.fail().addMsg("同步失败");
+        }
+    }
+
     @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getFileByPage(@PathVariable Integer currentPage,
                                 @PathVariable Integer pageSize,
