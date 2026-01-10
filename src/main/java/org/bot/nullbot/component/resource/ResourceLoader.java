@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,6 +20,28 @@ public class ResourceLoader
     private final Map<String, Path> CACHE = new ConcurrentHashMap<>();
 
     public Path getCached(String resourcePath, String tempPath) throws IOException {
+        // 尝试获取缓存
+        Path cachedPath = getCachedOrigin(resourcePath, tempPath);
+        // 检查文件存在
+        if (cachedPath != null && Files.exists(cachedPath)) return cachedPath;
+        // 重载更新缓存
+        synchronized (CACHE) {
+            // 再次检查 (双重检查锁定)
+            Path currentPath = CACHE.get(resourcePath);
+            if (currentPath != null && Files.exists(currentPath)) return currentPath;
+            try {
+                Path newPath = loadFromResources(resourcePath, tempPath);
+                CACHE.put(resourcePath, newPath);
+                return newPath;
+            } catch (IOException e) {
+                // 重载失败 清除缓存
+                CACHE.remove(resourcePath);
+                throw e;
+            }
+        }
+    }
+
+    public Path getCachedOrigin(String resourcePath, String tempPath) {
         // 使用缓存
         return CACHE.computeIfAbsent(resourcePath, key -> {
             try {
@@ -47,9 +70,14 @@ public class ResourceLoader
         // JVM退出时删除
         tempFile.toFile().deleteOnExit();
         // 添加至文件系统
+        LocalDateTime lastModified = Files
+                .getLastModifiedTime(tempFile)
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
         fileService.addFileRecordForBot(
                 tempPath, fileName, Files.size(tempFile),
-                LocalDateTime.now(), null, null
+                lastModified, null, null
         );
         return tempFile;
     }

@@ -259,5 +259,6 @@
 
 ## 2026.1.11 - v1.2.0
 - 优化 ResourceUtil 工具类 改进为 ResourceLoader Spring组件 - 便于调用 FileService 插入文件信息 修改关联代码；
+- 增强 ResourceLoader - 针对临时文件可能被删除的问题增强缓存方法；
 - 优化 ImageConverter 工具类 改进为 Spring组件 - 修改关联代码；
 - 优化 文本。
