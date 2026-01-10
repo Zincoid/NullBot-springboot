@@ -40,6 +40,16 @@ public class FileServiceImpl implements FileService
 
     @Override
     public Boolean addFileRecordForBot(String directory, String fileName, Long fileSize) {
+        // 覆盖已存在文件信息
+        FilePO existFile = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
+                .eq(FilePO::getDirectory, directory)
+                .eq(FilePO::getFileName, fileName));
+        if(existFile != null) {
+            existFile.setFileSize(fileSize);
+            fileMapper.updateById(existFile);
+            return true;
+        }
+
         // 查询父文件夹
         Path path = Paths.get(directory);
         FilePO dir = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
@@ -56,7 +66,6 @@ public class FileServiceImpl implements FileService
         file.setFileName(fileName);
         file.setFileSize(fileSize);
         file.setIsDir(0);
-
         file.setVisible(dir.getVisible());
 
         return fileMapper.insert(file) == 1;
