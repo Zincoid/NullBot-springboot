@@ -1,5 +1,7 @@
 package org.bot.nullbot.util;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -17,10 +19,18 @@ import java.util.regex.Pattern;
 @Slf4j
 public class DownloadUtil
 {
+    @AllArgsConstructor
+    @Data
+    public static class DownloadInfo
+    {
+        private String fileName;
+        private Long fileSize;
+    }
+
     /**
      * 主下载方法
      */
-    public static String downloadFile(String fileUrl, String savePath, String fileName) {
+    public static DownloadInfo downloadFile(String fileUrl, String savePath, String fileName) {
         HttpURLConnection connection = null;
 
         try {
@@ -81,7 +91,7 @@ public class DownloadUtil
 
                 long downloadedSize = Files.size(saveFilePath);
                 log.info("\t\t\t\t├─ Download completed: {} ({})", finalFileName, formatFileSize(downloadedSize));
-                return finalFileName;
+                return new DownloadInfo(finalFileName, downloadedSize);
             }
 
         } catch (IOException e) {

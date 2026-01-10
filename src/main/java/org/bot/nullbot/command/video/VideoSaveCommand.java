@@ -47,7 +47,8 @@ public class VideoSaveCommand implements Command
                 String fileName = entry.getKey();
                 String url = entry.getValue();
                 try {
-                    String info = DownloadUtil.downloadFile(url, fileStorageConfig.getVideoPath(), fileName);
+                    DownloadUtil.DownloadInfo downloadInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getVideoPath(), fileName);
+                    String info = downloadInfo.getFileName();
                     // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
                     //     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDCBE已保存！\n" + info, false);
                     // }

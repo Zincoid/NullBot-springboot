@@ -36,6 +36,31 @@ public class FileServiceImpl implements FileService
     private final FileMapper fileMapper;
     private final FileStorageConfig fileStorageConfig;
 
+    // =================== BOT功能相关 ===================
+
+    @Override
+    public Boolean addFileRecordForBot(String directory, String fileName, Long fileSize) {
+        // 查询父文件夹
+        Path path = Paths.get(directory);
+        FilePO dir = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
+                .eq(FilePO::getDirectory, path.getParent().toString())
+                .eq(FilePO::getFileName, path.getFileName().toString())
+                .eq(FilePO::getIsDir, 1)
+        );
+        if(dir == null) {
+            return false;
+        }
+
+        FilePO file = new FilePO();
+        file.setFileName(fileName);
+        file.setDirectory(directory);
+        file.setIsDir(0);
+        file.setVisible(dir.getVisible());
+        file.set
+
+        return fileMapper.insert(file) == 1;
+    }
+
     // =================== WEB功能相关 ===================
 
     @Override

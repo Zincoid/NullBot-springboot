@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService
 {
+    Boolean addFileRecordForBot(String directory, String fileName, Long fileSize);
+
     FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden);
 
     FilePage searchFile(String key, String curDir, Boolean hidden);

@@ -85,7 +85,8 @@ public class ConvertCommand implements Command
                 String tempFileName = UUID.randomUUID().toString();
                 String downloadedFileName;
                 try {
-                    downloadedFileName = DownloadUtil.downloadFile(url, tempFilePath, tempFileName);
+                    DownloadUtil.DownloadInfo downloadInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName);
+                    downloadedFileName = downloadInfo.getFileName();
                 } catch (Exception e) {
                     bot.sendGroupMsg(groupId, "[图像处理] ❌下载图像失败", false);
                     log.info("\t\t\t\t├─[Convert] 下载图像失败 - {}", url);
