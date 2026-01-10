@@ -8,6 +8,7 @@ import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.dto.LoginDTO;
 import org.bot.nullbot.service.AdminService;
 import org.bot.nullbot.util.JwtUtil;
+import org.bot.nullbot.util.WebUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -49,14 +50,14 @@ public class LoginController
     }
 
     @GetMapping("/info")
-    public WebResult info(@RequestHeader("token") String token){
-        Claims claims = JwtUtil.parseJWT(token);
-        if(claims.get("type", Integer.class) == 0){
+    public WebResult info(){
+        Integer type = WebUtil.getLoginType();
+        if(type == 0){
             AdminPO admin = new AdminPO(null, "Guest", "看访客密码？", "访客无此信息");
             log.info("[管理系统] 获取访客信息");
             return WebResult.success().addMsg("获取访客信息成功").addData("info", admin).addData("userType", 0);
-        }else if(claims.get("type", Integer.class) == 1){
-            Long id = claims.get("id", Long.class);
+        }else if(type == 1){
+            Long id = WebUtil.getLoginId();
             log.info("[管理系统] 获取管理员信息 - ID {}", id);
             AdminPO admin = adminService.info(id);
             if(admin != null){
