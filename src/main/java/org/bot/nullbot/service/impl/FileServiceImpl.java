@@ -23,6 +23,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -78,14 +80,27 @@ public class FileServiceImpl implements FileService
         if(!fileMapper.selectList(new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).eq(FilePO::getFileName, fileName)).isEmpty()) {
             return WebResult.fail().addMsg("存在同名冲突");
         }
+
+        // 查询父文件夹
+        Path path = Paths.get(fullDir);
+        FilePO dir = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
+                .eq(FilePO::getDirectory, path.getParent().toString())
+                .eq(FilePO::getFileName, path.getFileName().toString())
+                .eq(FilePO::getIsDir, 1)
+        );
+        if(dir == null) {
+            return WebResult.fail().addMsg("数据库目录不存在");
+        }
+
         FilePO file = new FilePO();
         file.setFileName(uploadFile.getOriginalFilename());
         file.setFileSize(uploadFile.getSize());
         file.setDirectory(fullDir);
         file.setIsDir(0);
+        file.setVisible(dir.getVisible());
         java.io.File file_dir = new java.io.File(fullDir);
         if (!file_dir.exists()) {
-            return WebResult.fail().addMsg("目录不存在");
+            return WebResult.fail().addMsg("实际目录不存在");
         }
         try {
             uploadFile.transferTo(new java.io.File(fullDir + "/" + fileName));
