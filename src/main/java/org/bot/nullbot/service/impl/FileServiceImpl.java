@@ -493,16 +493,16 @@ public class FileServiceImpl implements FileService
             FileInfo fileInfo = entry.getValue();
             File file = new File(path);
             if (dbMap.containsKey(path)) {
-                // // 检查文件是否被修改 (性能损耗大 暂时去掉)
-                // FilePO dbFile = dbMap.get(path);
-                // if (dbFile.getFileSize() != fileInfo.size ||
-                //         dbFile.getLastModified() == null ||
-                //         dbFile.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() != fileInfo.lastModified) {
-                //     // 更新文件信息
-                //     dbFile.setFileSize(fileInfo.size);
-                //     dbFile.setLastModified(Instant.ofEpochMilli(fileInfo.lastModified).atZone(ZoneId.systemDefault()).toLocalDateTime());
-                //     fileMapper.updateById(dbFile);
-                // }
+                // 检查文件是否被修改 (性能损耗大)
+                FilePO dbFile = dbMap.get(path);
+                if (dbFile.getFileSize() != fileInfo.size ||
+                        dbFile.getLastModified() == null ||
+                        dbFile.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() != fileInfo.lastModified) {
+                    // 更新文件信息
+                    dbFile.setFileSize(fileInfo.size);
+                    dbFile.setLastModified(Instant.ofEpochMilli(fileInfo.lastModified).atZone(ZoneId.systemDefault()).toLocalDateTime());
+                    fileMapper.updateById(dbFile);
+                }
             } else {
                 // 新增文件记录
                 FilePO newFile = new FilePO();
