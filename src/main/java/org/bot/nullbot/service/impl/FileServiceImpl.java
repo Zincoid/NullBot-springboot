@@ -445,6 +445,7 @@ public class FileServiceImpl implements FileService
             }
             // 4. 同步处理
             syncFiles(fileSystemMap, dbMap);
+
             log.info("[管理系统] 文件同步完成 - 共处理文件: {}", fileSystemMap.size());
         } catch (Exception e) {
             log.info("[管理系统] 文件同步失败 - {}", e.getMessage());
@@ -510,7 +511,14 @@ public class FileServiceImpl implements FileService
             }
         }
         // 处理已删除的文件
+        Path rootPath = Path.of(fileStorageConfig.getFileDirectory());
+        String rootParentPath = rootPath.getParent().toString();
+        String rootFileName = rootPath.getFileName().toString();
+
         for (Map.Entry<String, FilePO> entry : dbMap.entrySet()) {
+            if (entry.getValue().getDirectory().equals(rootParentPath) && entry.getValue().getFileName().equals(rootFileName)) {
+                continue;  // 跳过根文件
+            }
             String path = entry.getKey();
             if (!fileSystemMap.containsKey(path)) {
                 // 数据库中有但文件系统中已删除
