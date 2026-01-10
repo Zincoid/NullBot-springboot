@@ -19,6 +19,7 @@ import java.util.List;
 public class LoginInterceptor implements HandlerInterceptor
 {
     private static final List<String> GUEST_FORBIDDEN_URLS = Arrays.asList(
+            "/nullbot/file/init",
             "/nullbot/file/upload",
             "/nullbot/file/createDir",
             "/nullbot/file/delete",
