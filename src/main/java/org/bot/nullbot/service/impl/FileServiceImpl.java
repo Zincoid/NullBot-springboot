@@ -89,7 +89,7 @@ public class FileServiceImpl implements FileService
                 .eq(FilePO::getIsDir, 1)
         );
         if(dir == null) {
-            return WebResult.fail().addMsg("数据库目录不存在");
+            return WebResult.fail().addMsg("数据库父目录不存在");
         }
 
         FilePO file = new FilePO();
@@ -100,7 +100,7 @@ public class FileServiceImpl implements FileService
         file.setVisible(dir.getVisible());
         java.io.File file_dir = new java.io.File(fullDir);
         if (!file_dir.exists()) {
-            return WebResult.fail().addMsg("实际目录不存在");
+            return WebResult.fail().addMsg("实际父目录不存在");
         }
         try {
             uploadFile.transferTo(new java.io.File(fullDir + "/" + fileName));
@@ -139,11 +139,24 @@ public class FileServiceImpl implements FileService
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
         else
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
+
+        // 查询父文件夹
+        Path path = Paths.get(fullDir);
+        FilePO dir = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
+                .eq(FilePO::getDirectory, path.getParent().toString())
+                .eq(FilePO::getFileName, path.getFileName().toString())
+                .eq(FilePO::getIsDir, 1)
+        );
+        if(dir == null) {
+            return WebResult.fail().addMsg("数据库父目录不存在");
+        }
+
         FilePO file = new FilePO();
         file.setFileName(dirName);
         file.setFileSize(0L);
         file.setDirectory(fullDir);
         file.setIsDir(1);
+        file.setVisible(dir.getVisible());
         java.io.File file_dir = new java.io.File(fullDir);
         if(!file_dir.exists() || file_dir.isFile()) return WebResult.fail().addMsg("curDir不合法");
         java.io.File new_dir = new java.io.File(fullDir + "/"  + dirName);
