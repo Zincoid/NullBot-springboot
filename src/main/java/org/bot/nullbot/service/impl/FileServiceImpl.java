@@ -52,11 +52,12 @@ public class FileServiceImpl implements FileService
         }
 
         FilePO file = new FilePO();
-        file.setFileName(fileName);
         file.setDirectory(directory);
+        file.setFileName(fileName);
+        file.setFileSize(fileSize);
         file.setIsDir(0);
+
         file.setVisible(dir.getVisible());
-        file.set
 
         return fileMapper.insert(file) == 1;
     }

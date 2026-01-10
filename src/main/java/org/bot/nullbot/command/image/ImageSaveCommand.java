@@ -66,7 +66,7 @@ public class ImageSaveCommand implements Command
                     // }
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！", false);
                     // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDCBE已保存！\n" + info, false);
-                    log.info("\t\t\t\t├─[Image.Save] 已保存为: {}", info);
+                    log.info("\t\t\t\t├─[Image.Save] 已保存为: {}", downloadInfo.getFileName());
                 } catch (Exception e) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌保存失败:\n" + e.getMessage(), false);
                     log.info("\t\t\t\t├─[Image.Save] 保存失败", e);
