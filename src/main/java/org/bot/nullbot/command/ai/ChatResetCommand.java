@@ -25,7 +25,7 @@ public class ChatResetCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long userId = groupMessageEvent.getSender().getUserId();
             Long groupId = groupMessageEvent.getGroupId();
-            String target = deepSeekClient.clearHistory(groupId, userId, settingManager.getScope(groupId));
+            String target = deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
             bot.sendGroupMsg(groupId, "[聊天历史] ♻️" + target + " 聊天已重置！", false);
             log.info("\t\t\t\t├─[AI.ChatReset] 已清除 - {} 历史聊天记录", target);
         }else

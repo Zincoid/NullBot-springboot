@@ -160,9 +160,9 @@ public class DeepSeekClient
             // 将用户当前消息添加到历史
             chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
             // 构建完整消息列表
-            List<Map<String, String>> _messages = buildMessages(chatMessages, option.isEmbedding());
+            List<Map<String, String>> _messages = buildMessages(chatMessages, option, groupId);
             // 发送请求到API
-            String originalResponse = sendRequest(_messages, option.isThinking());
+            String originalResponse = sendRequest(_messages, option);
 
             // 限制历史记录长度
             if (option.getScope() == Scope.Monitor)
@@ -202,13 +202,19 @@ public class DeepSeekClient
      * @param chatMessages 信息列表
      * @return 发送给API的消息列表
      */
-    private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages, boolean embedding) {
-        String systemMessage = sysMsgStorage.getSysMsg() +
+    private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages, ChatOption option, Long groupId) {
+        String systemMessage;
+        if (option.isCustom())
+            systemMessage = sysMsgStorage.getCustomMessage(groupId);
+        else
+            systemMessage = sysMsgStorage.getDefaultMessage();
+
+        systemMessage = systemMessage +
                 "\n你在一个群聊中接收对话，不同用户的消息会带有消息ID和用户标识，格式为[Message ID][Username(UserId)]。" +
                 "\n请根据标识区分不同消息和用户，并且回复消息时不要带以上那种格式化的标识。";
 
         // 添加 指令模式提示词
-        if(!sysMsgStorage.isCustom() && embedding) {
+        if(!option.isCustom() && option.isEmbedding()) {
             systemMessage = systemMessage +
                     "\n你可以使用 {指令} 在回复中嵌入指令(嵌入到回复内容末尾)。" +
                     "\n指令使用示例如下：" +
@@ -238,10 +244,10 @@ public class DeepSeekClient
      * @param _messages 请求消息列表（包括历史）
      * @return AI回复内容
      */
-    private String sendRequest(List<Map<String, String>> _messages, boolean thinking) throws Exception {
+    private String sendRequest(List<Map<String, String>> _messages, ChatOption option) throws Exception {
         // 构建JSON
         ObjectNode requestBody = objectMapper.createObjectNode();
-        requestBody.put("model", thinking ? "deepseek-reasoner" : "deepseek-chat");
+        requestBody.put("model", option.isThinking() ? "deepseek-reasoner" : "deepseek-chat");
         requestBody.put("max_tokens", deepSeekConfig.getMaxTokens());
         requestBody.set("messages", objectMapper.valueToTree(_messages));
 
@@ -280,8 +286,8 @@ public class DeepSeekClient
      * @param userId 用户ID
      * @return 清除目标
      */
-    public String clearHistory(Long groupId, Long userId, Scope scope) {
-        return switch (scope) {
+    public String clearHistory(Long groupId, Long userId, ChatOption option) {
+        return switch (option.getScope()) {
             case Group -> {
                 chatStorage.clearGroupHistory(groupId);
                 yield "(Group模式) 群聊" + groupId;
@@ -303,13 +309,13 @@ public class DeepSeekClient
      *  @param userId 用户ID
      *  @return 历史记录
      */
-    public String getHistoryAsString(Long groupId, Long userId, Scope scope, boolean embedding) {
-        String history = switch (scope) {
+    public String getHistoryAsString(Long groupId, Long userId, ChatOption option) {
+        String history = switch (option.getScope()) {
             case Group -> chatStorage.getGroupHistoryAsString(groupId);
             case Personal -> chatStorage.getUserHistoryAsString(userId);
             case Monitor -> chatStorage.getMonitorHistoryAsString(groupId);
         };
-        if(!sysMsgStorage.isCustom() && embedding){
+        if(!option.isCustom() && option.isEmbedding()) {
             history = history.replaceAll("\\{.*?}", "");
         }
         return history;
