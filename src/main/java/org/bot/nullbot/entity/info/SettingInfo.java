@@ -11,21 +11,28 @@ public class SettingInfo
     private Long groupId;
 
     private Scope scope;
+    private boolean antiInjection;
+    private boolean thinking;
+    private boolean embedding;
+    private boolean embeddingAuth;
 
+    private boolean imageCollect;
+    private boolean messageCollect;
+    private boolean keywordDetect;
+    private boolean pokeDetect;
+    private boolean recallDetect;
 
-    private Boolean imageCollect;
-    private Boolean messageCollect;
-    private Boolean keywordDetect;
-    private Boolean pokeDetect;
-    private Boolean recallDetect;
-
-    private Double guessRatio;
-    private Integer guessPadding;
+    private double guessRatio;
+    private int guessPadding;
 
     public SettingInfo(Long groupId, DefaultConfig config) {
         this.groupId = groupId;
 
-
+        this.scope = config.getScope();
+        this.antiInjection = config.isAntiInjection();
+        this.thinking = config.isThinking();
+        this.embedding = config.isEmbedding();
+        this.embeddingAuth = config.isEmbeddingAuth();
 
         this.imageCollect = config.getImageCollect();
         this.messageCollect = config.getMessageCollect();
@@ -37,11 +44,17 @@ public class SettingInfo
         this.guessPadding = config.getGuessPadding();
     }
 
-    public boolean switchImageCollect() { return this.imageCollect = !imageCollect; }
-    public boolean switchMessageCollect() { return this.messageCollect = !messageCollect; }
-    public boolean switchKeywordDetect() { return this.keywordDetect = !keywordDetect; }
-    public boolean switchPokeDetect() { return this.pokeDetect = !pokeDetect; }
-    public boolean switchRecallDetect() { return this.recallDetect = !recallDetect; }
+    public Scope switchScope() { return scope = scope.next(); }
+    public boolean switchAntiInjection() { return antiInjection = !antiInjection; }
+    public boolean switchThinking() { return thinking = !thinking; }
+    public boolean switchEmbedding() { return embedding = !embeddingAuth; }
+    public boolean switchEmbeddingAuth() { return embeddingAuth = !embeddingAuth; }
+
+    public boolean switchImageCollect() { return imageCollect = !imageCollect; }
+    public boolean switchMessageCollect() { return messageCollect = !messageCollect; }
+    public boolean switchKeywordDetect() { return keywordDetect = !keywordDetect; }
+    public boolean switchPokeDetect() { return pokeDetect = !pokeDetect; }
+    public boolean switchRecallDetect() { return recallDetect = !recallDetect; }
 
     @Override
     public String toString() {

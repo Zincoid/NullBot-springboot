@@ -44,7 +44,7 @@ public class MonitorListener
 
     @FunctionControl(config = "imageCollect")
     public void onGroupImageCollection(Bot bot, GroupMessageEvent event) {
-        if(!settingManager.getSetting(event.getGroupId()).getImageCollect()) return;
+        if(!settingManager.getImageCollect(event.getGroupId())) return;
         boolean hasLogged = false;
         for(ArrayMsg msg : event.getArrayMsg()){
             if(msg.getType() == MsgTypeEnum.image){
@@ -68,7 +68,7 @@ public class MonitorListener
 
     @FunctionControl(config = "messageCollect")
     public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
-        if(!settingManager.getSetting(event.getGroupId()).getMessageCollect()) return;
+        if(!settingManager.getMessageCollect(event.getGroupId())) return;
         if(!(event.getMessage().startsWith("/Chat") || event.getMessage().startsWith("/聊天"))){  // Chat 命令会自动记录消息 跳过
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
@@ -80,7 +80,7 @@ public class MonitorListener
 
     @FunctionControl(config = "keywordDetect")
     public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {
-        if(!settingManager.getSetting(event.getGroupId()).getKeywordDetect()) return;
+        if(!settingManager.getKeywordDetect(event.getGroupId())) return;
         if (event.getMessage().contains("男娘")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
             bot.sendGroupMsg(event.getGroupId(), "哪有男娘？", false);
@@ -99,7 +99,7 @@ public class MonitorListener
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
-        if(!settingManager.getSetting(event.getGroupId()).getPokeDetect()) return;
+        if(!settingManager.getPokeDetect(event.getGroupId())) return;
         if(Objects.equals(event.getTargetId(), event.getSelfId())){
             log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (已限制为戳Bot自己)", event.getGroupId(), event.getUserId(), event.getTargetId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
@@ -110,7 +110,7 @@ public class MonitorListener
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
-        if(!settingManager.getSetting(event.getGroupId()).getRecallDetect()) return;
+        if(!settingManager.getRecallDetect(event.getGroupId())) return;
         log.info("◉ [GroupMonitor:Recall] 来自群 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));
     }

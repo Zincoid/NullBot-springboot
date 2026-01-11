@@ -9,6 +9,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.SettingInfo;
+import org.bot.nullbot.enums.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -36,7 +37,28 @@ public class GroupSetCommand implements Command
                     log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
                     return;
                 }
+                if ("-ai".equals(option)) {
+                    if (params.size() < 2) throw new IllegalArgumentException("参数不足");
+                    String setting = params.get(1);
+                    if ("scp".equals(setting)) {
+                        Scope scope = settingManager.switchScope(groupId);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[AI] \uD83D\uDD04已切换: " + scope, false);
+                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, scope);
+                        return;
+                    }
+                    boolean isEnabled = switch (setting) {
+                        case "ati" -> settingManager.switchAntiInjection(groupId);
+                        case "tkn" -> settingManager.switchThinking(groupId);
+                        case "ebd" -> settingManager.switchEmbedding(groupId);
+                        case "eau" -> settingManager.switchEmbeddingAuth(groupId);
+                        default -> throw new NoSuchMethodException("无此AI设置");
+                    };
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[AI] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
+                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, isEnabled ? "ON" : "OFF");
+                    return;
+                }
                 if ("-monitor".equals(option)) {
+                    if (params.size() < 2) throw new IllegalArgumentException("参数不足");
                     String setting = params.get(1);
                     boolean isEnabled = switch (setting) {
                         case "img" -> settingManager.switchImageCollect(groupId);
@@ -46,7 +68,7 @@ public class GroupSetCommand implements Command
                         case "rcl" -> settingManager.switchRecallDetect(groupId);
                         default -> throw new NoSuchMethodException("无此监听设置");
                     };
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[群设置] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[监听] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
                     log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, isEnabled ? "ON" : "OFF");
                     return;
                 }
@@ -55,8 +77,8 @@ public class GroupSetCommand implements Command
                     double ratio = Double.parseDouble(event.getCommandParameters().get(1));
                     int padding = Integer.parseInt(event.getCommandParameters().get(2));
                     if(settingManager.setGuessParams(groupId, ratio, padding)) {
-                        bot.sendGroupMsg(groupId, "[游戏设置] ✅参数已更新", false);
-                        log.info("\t\t\t\t├─[GameSet] 已更群 {} 设置 -> Guess游戏参数", groupId);
+                        bot.sendGroupMsg(groupId, "[游戏] ✅参数已更新", false);
+                        log.info("\t\t\t\t├─[GroupSet] 已更群 {} 设置 -> Guess游戏参数", groupId);
                         return;
                     }
                     throw new Exception("Guess游戏参数更新失败");
@@ -64,8 +86,8 @@ public class GroupSetCommand implements Command
 
                 throw new NoSuchMethodException("无此操作类型");
             } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupId, "[游戏设置] ❌Guess游戏参数格式错误", false);
-                log.info("\t\t\t\t├─[GameSet] 群设置出错 - Guess游戏参数格式错误");
+                bot.sendGroupMsg(groupId, "[游戏] ❌Guess游戏参数格式错误", false);
+                log.info("\t\t\t\t├─[GroupSet] 群设置出错 - Guess游戏参数格式错误");
             } catch (Exception e) {
                 bot.sendGroupMsg(groupId, "[群设置] ❌" + e.getMessage(), false);
                 log.info("\t\t\t\t├─[GroupSet]群 {} 设置出错 - {}", groupId, e.getMessage());
@@ -86,6 +108,7 @@ public class GroupSetCommand implements Command
                 格式: GroupSet [操作类型] [可选: 参数...]
                 操作类型和参数:
                 - [-view] 获取群设置
+                - [-ai] [scp(聊天模式)|ati(防注入模式)|tkn(思考模式)|ebd(指令模式)|eau(指令验证)]
                 - [-monitor] [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
                 - [-guess] [切割比例] [内边距] 设置Guess游戏难度
                 中文命令: 群设置""", getAccess()
@@ -101,6 +124,7 @@ public class GroupSetCommand implements Command
                 格式: GroupSet [操作类型] [可选: 参数...]
                 操作类型和参数:
                 - [-view] 获取群设置
+                - [-ai] [scp(聊天模式)|ati(防注入模式)|tkn(思考模式)|ebd(指令模式)|eau(指令验证)]
                 - [-monitor] [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
                 - [-guess] [切割比例(范围 0.05-0.3)] [内边距(范围 150-300)] 设置Guess游戏难度
                 示例:
