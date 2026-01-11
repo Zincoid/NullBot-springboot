@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.SettingManager;
+import org.bot.nullbot.component.storage.GuessStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import java.util.List;
 public class GroupSetCommand implements Command
 {
     private final SettingManager settingManager;
+    private final GuessStorage guessStorage;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -47,14 +49,26 @@ public class GroupSetCommand implements Command
                         default -> throw new NoSuchMethodException("无此监听设置");
                     };
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[群设置] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
-                    log.info("\t\t\t\t├─[GroupSet] 已更改群设置 {} -> {}", setting, isEnabled ? "ON" : "OFF");
+                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, isEnabled ? "ON" : "OFF");
                     return;
+                }
+                if ("-guess".equals(option)) {
+                    if(params.size() < 3) throw new IllegalArgumentException("Guess游戏参数不足");
+                    double ratio = Double.parseDouble(event.getCommandParameters().get(1));
+                    int padding = Integer.parseInt(event.getCommandParameters().get(2));
+                    guessStorage.setRatio(ratio);
+                    guessStorage.setPadding(padding);
+                    bot.sendGroupMsg(groupId, "[游戏设置] ✅参数已更新", false);
+                    log.info("\t\t\t\t├─[GameSet] 已更群 {} 设置 -> Guess游戏参数", groupId);
                 }
 
                 throw new NoSuchMethodException("无此操作类型");
+            } catch (NumberFormatException e) {
+                bot.sendGroupMsg(groupId, "[游戏设置] ❌Guess游戏参数格式错误", false);
+                log.info("\t\t\t\t├─[GameSet] 群设置出错 - Guess游戏参数格式错误");
             } catch (Exception e) {
                 bot.sendGroupMsg(groupId, "[群设置] ❌" + e.getMessage(), false);
-                log.info("\t\t\t\t├─[GroupSet] 群设置出错 - {}", e.getMessage());
+                log.info("\t\t\t\t├─[GroupSet]群 {} 设置出错 - {}", groupId, e.getMessage());
             }
         }else
             log.info("\t\t\t\t├─[GroupSet] 未设计 - 非群消息事件响应方式");
