@@ -24,4 +24,14 @@ public class SettingManager
     public boolean switchKeywordDetect(Long groupId) { return getSetting(groupId).switchKeywordDetect(); }
     public boolean switchPokeDetect(Long groupId) { return getSetting(groupId).switchPokeDetect(); }
     public boolean switchRecallDetect(Long groupId) { return getSetting(groupId).switchRecallDetect(); }
+
+    public boolean setGuessParams(Long groupId, double ratio, int padding) {
+        SettingInfo setting = getSetting(groupId);
+        setting.setGuessRatio(ratio);
+        setting.setGuessPadding(padding);
+        return true;
+    }
+
+    public double getGuessRatio(Long groupId) { return getSetting(groupId).getGuessRatio(); }
+    public int getGuessPadding(Long groupId) {return getSetting(groupId).getGuessPadding(); }
 }

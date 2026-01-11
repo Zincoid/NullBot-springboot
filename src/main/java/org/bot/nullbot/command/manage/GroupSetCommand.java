@@ -52,15 +52,14 @@ public class GroupSetCommand implements Command
                 }
                 if ("-guess".equals(option)) {
                     if(params.size() < 3) throw new IllegalArgumentException("Guess游戏参数不足");
-
                     double ratio = Double.parseDouble(event.getCommandParameters().get(1));
                     int padding = Integer.parseInt(event.getCommandParameters().get(2));
-                    guessStorage.setRatio(ratio);
-                    guessStorage.setPadding(padding);
-
-                    bot.sendGroupMsg(groupId, "[游戏设置] ✅参数已更新", false);
-                    log.info("\t\t\t\t├─[GameSet] 已更群 {} 设置 -> Guess游戏参数", groupId);
-                    return;
+                    if(settingManager.setGuessParams(groupId, ratio, padding)) {
+                        bot.sendGroupMsg(groupId, "[游戏设置] ✅参数已更新", false);
+                        log.info("\t\t\t\t├─[GameSet] 已更群 {} 设置 -> Guess游戏参数", groupId);
+                        return;
+                    }
+                    throw new Exception("Guess游戏参数更新失败");
                 }
 
                 throw new NoSuchMethodException("无此操作类型");
@@ -88,6 +87,7 @@ public class GroupSetCommand implements Command
                 操作类型和参数:
                 - [-view] 获取群设置
                 - [-monitor] [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
+                - [-guess] [切割比例] [内边距]
                 中文命令: 群设置""", getAccess()
         );
     }
@@ -102,8 +102,14 @@ public class GroupSetCommand implements Command
                 操作类型和参数:
                 - [-view] 获取群设置
                 - [-monitor] [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
-                示例: GroupSet -monitor img
-                注意: 只有Zincoid可以调用！！！""", getAccess()
+                - [-guess] [切割比例(范围 0.05-0.3)] [内边距(范围 150-300)]
+                示例:
+                GroupSet -view
+                GroupSet -monitor img
+                GroupSet -guess 0.1 250
+                注意:
+                只有Zincoid可以调用！！！
+                针对Guess游戏 - 切割比例越小越难 内边距越小越难""", getAccess()
         );
     }
 }

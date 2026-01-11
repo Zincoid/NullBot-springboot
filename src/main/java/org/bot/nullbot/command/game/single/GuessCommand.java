@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.component.storage.GuessStorage;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
@@ -28,6 +29,7 @@ import java.util.Base64;
 public class GuessCommand implements Command
 {
     private final FileStorageConfig fileStorageConfig;
+    private final SettingManager settingManager;
     private final GuessStorage guessStorage;
     private final UserService userService;
 
@@ -55,7 +57,7 @@ public class GuessCommand implements Command
                         // 获取猜谜图
                         String response = MsgUtils.builder()
                                 .text("本群题目✨是\n")
-                                .img("base64://" + crop(characterPath, guessStorage.getRatio(), guessStorage.getPadding()))
+                                .img("base64://" + crop(characterPath, settingManager.getGuessRatio(groupId), settingManager.getGuessPadding(groupId)))
                                 .build();
                         bot.sendGroupMsg(groupId, response, false);
 
