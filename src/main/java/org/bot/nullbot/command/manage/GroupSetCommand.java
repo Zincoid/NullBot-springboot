@@ -30,6 +30,7 @@ public class GroupSetCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
             Long groupId = groupMessageEvent.getGroupId();
+            Long userId = groupMessageEvent.getUserId();
             try {
                 if (params.isEmpty()) throw new IllegalArgumentException("参数不足");
                 String option = params.get(0);
@@ -53,7 +54,7 @@ public class GroupSetCommand implements Command
                         case "ati" -> settingManager.switchAntiInjection(groupId);
                         case "tkn" -> settingManager.switchThinking(groupId);
                         case "ebd" -> {
-                            deepSeekClient.clearHistory(groupId)
+                            deepSeekClient.clearHistory(groupId, userId, settingManager.getScope(groupId));
                             yield settingManager.switchEmbedding(groupId);
                         }
                         case "eau" -> settingManager.switchEmbeddingAuth(groupId);
