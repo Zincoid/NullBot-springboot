@@ -32,7 +32,7 @@ public class FuncSetCommand implements Command
                 if ("-view".equals(option)) {
                     String status = functionManager.getStatus();
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[全局设置] ℹ️已获取！\n" + status, false);
-                    log.info("\t\t\t\t├─[FuncSet] 已获取全局设置 - {}", groupId);
+                    log.info("\t\t\t\t├─[FuncSet] 已获取全局设置");
                     return;
                 }
                 if ("-set".equals(option)) {
