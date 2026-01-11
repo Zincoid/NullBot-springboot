@@ -98,17 +98,17 @@ public class DeepSeekClient
     //     scope = scope.next();
     //     return scope.toString();
     // }
-    //
+
     // public String changeThinking() {
     //     thinking = !thinking;
     //     return thinking ? "思考" : "非思考";
     // }
-    //
+
     // public String changeEmbedding() {
     //     embedding = !embedding;
     //     return embedding ? "指令" : "非指令";
     // }
-    //
+
     // public String changeAntiInjection() {
     //     antiInjection = !antiInjection;
     //     return antiInjection ? "防注入" : "无防御";
