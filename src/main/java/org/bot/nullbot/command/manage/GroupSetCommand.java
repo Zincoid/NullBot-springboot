@@ -54,12 +54,12 @@ public class GroupSetCommand implements Command
                         case "ati" -> settingManager.switchAntiInjection(groupId);
                         case "tkn" -> settingManager.switchThinking(groupId);
                         case "ebd" -> {
-                            deepSeekClient.clearHistory(groupId, userId, settingManager.getScope(groupId));
+                            deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
                             yield settingManager.switchEmbedding(groupId);
                         }
                         case "eau" -> settingManager.switchEmbeddingAuth(groupId);
                         case "cus" -> {
-                            deepSeekClient.clearHistory(groupId, userId, settingManager.getScope(groupId));
+                            deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
                             yield settingManager.switchCustom(groupId);
                         }
                         default -> throw new NoSuchMethodException("无此AI设置");
