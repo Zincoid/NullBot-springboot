@@ -16,6 +16,7 @@ import org.bot.nullbot.mapper.FileMapper;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.WebUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -103,19 +104,30 @@ public class FileServiceImpl implements FileService
             return false;
         }
 
-        FilePO rootFile =  new FilePO();
-        rootFile.setDirectory(rootParentPath);
-        rootFile.setFileName(rootFileName);
-        rootFile.setFileSize(0L);
-        rootFile.setIsDir(1);
-        rootFile.setVisible(true);
-        rootFile.setLastModified(LocalDateTime.now());
-        rootFile.setOwnerId(0L);
-        rootFile.setOwnerName("root");
-        return fileMapper.insert(rootFile) == 1;
+        FilePO newRoot =  new FilePO();
+        newRoot.setDirectory(rootParentPath);
+        newRoot.setFileName(rootFileName);
+        newRoot.setFileSize(0L);
+        newRoot.setIsDir(1);
+        newRoot.setVisible(true);
+        newRoot.setLastModified(LocalDateTime.now());
+        newRoot.setOwnerId(0L);
+        newRoot.setOwnerName("root");
+
+        FilePO existRoot = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
+                .eq(FilePO::getOwnerId, 0L)
+                .eq(FilePO::getOwnerName, "root")
+        );
+
+        if(existRoot != null) {
+            newRoot.setId(existRoot.getId());
+            return fileMapper.updateById(newRoot) == 1;
+        }
+        return fileMapper.insert(newRoot) == 1;
     }
 
     @Override
+    @Transactional
     public void syncFilesToDatabase() {
         scanAndSyncFiles();
     }

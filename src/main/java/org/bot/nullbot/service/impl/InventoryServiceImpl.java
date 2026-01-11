@@ -67,19 +67,20 @@ public class InventoryServiceImpl implements InventoryService
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean increaseInventory(Long userId, Integer itemId, int i) {
-        UserPO user = userMapper.selectById(userId);
-        if(inventoryMapper.sumAmountByUserId(userId) >= user.getCapacity()) return false;
         ItemPO item = itemMapper.selectById(itemId);
         if(item == null) return false;
+        UserPO user = userMapper.selectById(userId);
+        if(inventoryMapper.sumAmountByUserId(userId) >= user.getCapacity()) return false;
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
         if(inventories == null || inventories.isEmpty()){
-            inventoryMapper.insert(new InventoryPO(null, userId, item.getId(), item.getName(), item.getCategory(), item.getRarity(), item.getPrice(), i));
-            return true;
+            return inventoryMapper.insert(
+                    new InventoryPO(null, userId,
+                            item.getId(), item.getName(), item.getCategory(), item.getRarity(), item.getPrice(), i)
+            ) == 1;
         }else if(inventories.size() == 1){
             InventoryPO inventory = inventories.getFirst();
             inventory.setAmount(inventory.getAmount() + i);
-            inventoryMapper.updateById(inventory);
-            return true;
+            return inventoryMapper.updateById(inventory) == 1;
         }else
             return false;
     }
@@ -88,18 +89,14 @@ public class InventoryServiceImpl implements InventoryService
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean decreaseInventory(Long userId, Integer itemId, int i) {
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
-        if(inventories == null || inventories.isEmpty()){
-            return false;
-        }else if(inventories.size() == 1 && inventories.getFirst().getAmount() >= i){
-            InventoryPO inventory = inventories.getFirst();
-            inventory.setAmount(inventory.getAmount() - i);
-            if (inventory.getAmount() > 0)
-                inventoryMapper.updateById(inventory);
-            else
-                inventoryMapper.deleteById(inventory.getId());
-            return true;
-        }else
-            return false;
+        if(inventories == null || inventories.size() != 1) return false;
+        InventoryPO inventory = inventories.getFirst();
+        if(inventory.getAmount() < i) return false;
+        inventory.setAmount(inventory.getAmount() - i);
+        if (inventory.getAmount() > 0)
+            return inventoryMapper.updateById(inventory) == 1;
+        else
+            return inventoryMapper.deleteById(inventory) == 1;
     }
 
     @Override
@@ -110,8 +107,7 @@ public class InventoryServiceImpl implements InventoryService
         if(decreaseInventory(userId, itemId, i)){
             UserPO user = userMapper.selectById(userId);
             user.setCash(user.getCash() + item.getPrice() * i);
-            userMapper.updateById(user);
-            return true;
+            return userMapper.updateById(user) == 1;
         }else
             return false;
     }
@@ -119,15 +115,13 @@ public class InventoryServiceImpl implements InventoryService
     @Override
     @Transactional
     public boolean buyInventory(Long userId, Integer itemId, int i) {
-        UserPO user = userMapper.selectById(userId);
         ItemPO item = itemMapper.selectById(itemId);
         if(item == null) return false;
+        UserPO user = userMapper.selectById(userId);
         int totalPrice = item.getPrice() * i;
         if (user.getCash() >= totalPrice) {
             user.setCash(user.getCash() - totalPrice);
-            userMapper.updateById(user);
-            increaseInventory(userId, itemId, i);
-            return true;
+            return userMapper.updateById(user) == 1 && increaseInventory(userId, itemId, i);
         }else
             return false;
     }
@@ -155,20 +149,14 @@ public class InventoryServiceImpl implements InventoryService
     }
 
     @Override
-    public List<InventoryPO> getInventoryList() {
-        return inventoryMapper.selectList(null);
-    }
+    public List<InventoryPO> getInventoryList() { return inventoryMapper.selectList(null); }
 
     @Override
     public void addInventories(List<InventoryPO> inventories) { inventoryMapper.insert(inventories); }
 
     @Override
-    public boolean deleteById(Integer id) {
-        return inventoryMapper.deleteById(id) == 1;
-    }
+    public boolean deleteById(Integer id) { return inventoryMapper.deleteById(id) == 1; }
 
     @Override
-    public boolean updateInventory(InventoryPO inventory) {
-        return inventoryMapper.updateById(inventory) == 1;
-    }
+    public boolean updateInventory(InventoryPO inventory) { return inventoryMapper.updateById(inventory) == 1; }
 }
