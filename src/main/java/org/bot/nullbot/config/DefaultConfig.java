@@ -11,16 +11,11 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "nullbot.default")
 public class DefaultConfig
 {
-    private Boolean imageCollect;
-    private Boolean keywordDetect;
-    private Boolean pokeDetect;
-    private Boolean messageCollect;
-    private Boolean recallDetect;
-    private Double guessRatio;
-    private Integer guessPadding;
-
-    @Deprecated
-    private Map<Long, Integer> userAccesses;  // 已持久化至数据库 (弃用)
-    @Deprecated
-    private Map<Long, Integer> groupAccesses;  // 已持久化至数据库 (弃用)
+    private boolean imageCollect;
+    private boolean keywordDetect;
+    private boolean pokeDetect;
+    private boolean messageCollect;
+    private boolean recallDetect;
+    private double guessRatio;
+    private int guessPadding;
 }
