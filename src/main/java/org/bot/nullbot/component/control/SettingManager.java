@@ -26,16 +26,18 @@ public class SettingManager
     public boolean switchThinking(Long groupId) { return getSetting(groupId).switchThinking(); }
     public boolean switchEmbedding(Long groupId) { return getSetting(groupId).switchEmbedding(); }
     public boolean switchEmbeddingAuth(Long groupId) { return getSetting(groupId).switchEmbeddingAuth(); }
+    public boolean switchCustom(Long groupId) { return getSetting(groupId).switchCustom(); }
 
     public ChatOption getChatOption(Long groupId) {
         SettingInfo setting = getSetting(groupId);
-        return new ChatOption(setting.getScope(), setting.isAntiInjection(), setting.isThinking(), setting.isEmbedding(), setting.isEmbeddingAuth());
+        return new ChatOption(setting.getScope(), setting.isAntiInjection(), setting.isThinking(), setting.isEmbedding(), setting.isEmbeddingAuth(), setting.isCustom());
     }
     public Scope getScope(Long groupId) { return getSetting(groupId).getScope(); }
     public boolean isAntiInjection(Long groupId) { return getSetting(groupId).isAntiInjection(); }
     public boolean isThinking(Long groupId) { return getSetting(groupId).isThinking(); }
     public boolean isEmbedding(Long groupId) { return getSetting(groupId).isEmbedding(); }
     public boolean isEmbeddingAuth(Long groupId) { return getSetting(groupId).isEmbeddingAuth(); }
+    public boolean isCustom(Long groupId) { return getSetting(groupId).isCustom(); }
 
     public boolean switchImageCollect(Long groupId) { return getSetting(groupId).switchImageCollect(); }
     public boolean switchMessageCollect(Long groupId) { return getSetting(groupId).switchMessageCollect(); }

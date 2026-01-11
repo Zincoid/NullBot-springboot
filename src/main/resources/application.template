@@ -53,21 +53,28 @@ shiro:
 
 nullbot:
   bot-id:
+
   default:  # 默认群设置
+    # AI
     scope: group
     anti-injection: true
     thinking: false
     embedding: true
     embedding-auth: false
+    custom: false
+    custom-message: "你是一个AI助手。"
 
+    # Monitor
     image-collect: false
     message-collect: false  # 使用AI Monitor模式及Recall Detect功能 需启用该项
     keyword-detect: true
     poke-detect: true
     recall-detect: false
 
+    # Guess
     guess-ratio: 0.1
     guess-padding: 250
+
   command:
     prefix: /
     rate-limit:
@@ -75,6 +82,7 @@ nullbot:
       capacity: 25
       refill: 10
       scope: group
+
   file:
     storage:
       file-directory: /root/Nullbot/file  # 网页文件管理根目录

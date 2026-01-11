@@ -1,7 +1,6 @@
 package org.bot.nullbot.entity.info;
 
 import lombok.Data;
-import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.config.DefaultConfig;
 import org.bot.nullbot.enums.Scope;
 
@@ -15,6 +14,7 @@ public class SettingInfo
     private boolean thinking;
     private boolean embedding;
     private boolean embeddingAuth;
+    private boolean custom;
 
     private boolean imageCollect;
     private boolean messageCollect;
@@ -33,6 +33,7 @@ public class SettingInfo
         this.thinking = config.isThinking();
         this.embedding = config.isEmbedding();
         this.embeddingAuth = config.isEmbeddingAuth();
+        this.custom = config.isCustom();
 
         this.imageCollect = config.getImageCollect();
         this.messageCollect = config.getMessageCollect();
@@ -49,6 +50,7 @@ public class SettingInfo
     public boolean switchThinking() { return thinking = !thinking; }
     public boolean switchEmbedding() { return embedding = !embeddingAuth; }
     public boolean switchEmbeddingAuth() { return embeddingAuth = !embeddingAuth; }
+    public boolean switchCustom() { return custom = !custom; }
 
     public boolean switchImageCollect() { return imageCollect = !imageCollect; }
     public boolean switchMessageCollect() { return messageCollect = !messageCollect; }

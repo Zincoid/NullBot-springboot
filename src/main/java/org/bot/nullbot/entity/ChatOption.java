@@ -13,4 +13,5 @@ public class ChatOption
     private boolean thinking;
     private boolean embedding;
     private boolean embeddingAuth;
+    private boolean custom;
 }
