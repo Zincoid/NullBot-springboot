@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.SettingManager;
+import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.enums.Scope;
@@ -20,6 +22,7 @@ import java.util.List;
 @Slf4j
 public class GroupSetCommand implements Command
 {
+    private final DeepSeekClient deepSeekClient;
     private final SettingManager settingManager;
 
     @Override
@@ -49,7 +52,10 @@ public class GroupSetCommand implements Command
                     boolean isEnabled = switch (setting) {
                         case "ati" -> settingManager.switchAntiInjection(groupId);
                         case "tkn" -> settingManager.switchThinking(groupId);
-                        case "ebd" -> settingManager.switchEmbedding(groupId);
+                        case "ebd" -> {
+                            deepSeekClient.clearHistory(groupId)
+                            yield settingManager.switchEmbedding(groupId);
+                        }
                         case "eau" -> settingManager.switchEmbeddingAuth(groupId);
                         default -> throw new NoSuchMethodException("无此AI设置");
                     };
