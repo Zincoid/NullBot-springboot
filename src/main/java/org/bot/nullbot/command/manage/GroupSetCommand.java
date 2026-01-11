@@ -54,12 +54,15 @@ public class GroupSetCommand implements Command
                 }
                 if ("-guess".equals(option)) {
                     if(params.size() < 3) throw new IllegalArgumentException("Guess游戏参数不足");
+
                     double ratio = Double.parseDouble(event.getCommandParameters().get(1));
                     int padding = Integer.parseInt(event.getCommandParameters().get(2));
                     guessStorage.setRatio(ratio);
                     guessStorage.setPadding(padding);
+
                     bot.sendGroupMsg(groupId, "[游戏设置] ✅参数已更新", false);
                     log.info("\t\t\t\t├─[GameSet] 已更群 {} 设置 -> Guess游戏参数", groupId);
+                    return;
                 }
 
                 throw new NoSuchMethodException("无此操作类型");
