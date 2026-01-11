@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class FunctionManager
+public class FunctionManager  // 全局控制
 {
     private final DefaultConfig defaultConfig;
     private final Map<String, Boolean> enableFlags = new ConcurrentHashMap<>();
