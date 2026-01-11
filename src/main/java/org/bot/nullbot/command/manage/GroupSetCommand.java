@@ -79,6 +79,7 @@ public class GroupSetCommand implements Command
                 格式: GroupSet [类型] [参数...]
                 类型和参数:
                 -monitor [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
+                示例: GroupSet -monitor img
                 注意: 只有Zincoid可以调用！！！""", getAccess()
         );
     }
