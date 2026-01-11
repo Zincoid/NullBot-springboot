@@ -8,6 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.entity.info.SettingInfo;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,9 +27,16 @@ public class GroupSetCommand implements Command
             List<String> params = event.getCommandParameters();
             Long groupId = groupMessageEvent.getGroupId();
             try {
-                if (params.size() < 2) throw new IllegalArgumentException("参数不足");
-
+                if (params.isEmpty()) throw new IllegalArgumentException("参数不足");
                 String option = params.get(0);
+
+                if ("-view".equals(option)) {
+                    SettingInfo setting = settingManager.getSetting(groupId);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[群设置] ℹ️已获取群设置！\n" + setting, false);
+                    log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
+                    return;
+                }
+
                 if ("-monitor".equals(option)) {
                     String setting = params.get(1);
                     boolean isEnabled = switch (setting) {
@@ -63,8 +71,9 @@ public class GroupSetCommand implements Command
                 ◉ GroupSet 命令
                 功能: 设置群功能
                 限权: %d 级
-                格式: GroupSet [类型] [参数...]
+                格式: GroupSet [类型] [可选: 参数...]
                 类型和参数:
+                -view (获取群设置)
                 -monitor [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
                 中文命令: 群设置""", getAccess()
         );
@@ -76,8 +85,9 @@ public class GroupSetCommand implements Command
                 ◉ GroupSet 命令
                 功能: 设置群功能
                 限权: %d 级
-                格式: GroupSet [类型] [参数...]
+                格式: GroupSet [类型] [可选: 参数...]
                 类型和参数:
+                -view (获取群设置)
                 -monitor [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
                 示例: GroupSet -monitor img
                 注意: 只有Zincoid可以调用！！！""", getAccess()
