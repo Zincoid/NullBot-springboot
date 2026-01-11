@@ -45,7 +45,7 @@ public class FuncSetCommand implements Command
                     return;
                 }
 
-                throw new NoSuchMethodException("无此设置");
+                throw new NoSuchMethodException("无此全局设置");
             } catch (Exception e) {
                 bot.sendGroupMsg(groupId, "[全局设置] ❌" + e.getMessage(), false);
                 log.info("\t\t\t\t├─[FuncSet] 全局设置出错 - {}", e.getMessage());
