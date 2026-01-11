@@ -37,8 +37,7 @@ public class ImageConverter
             // 使用 resvg 渲染为 PNG 并转换为 Base64
             canvas.render(tempPngPath, tempFontPath);
             byte[] pngBytes = Files.readAllBytes(tempPngPath);
-            String base64 = Base64.getEncoder().encodeToString(pngBytes);
-            return base64;
+            return Base64.getEncoder().encodeToString(pngBytes);
         } finally {
             Files.deleteIfExists(tempPngPath);
         }
@@ -64,8 +63,7 @@ public class ImageConverter
             // 使用 resvg 渲染为 PNG 并转换为 Base64
             canvas.render(tempPngPath, tempFontPath);
             byte[] pngBytes = Files.readAllBytes(tempPngPath);
-            String base64 = Base64.getEncoder().encodeToString(pngBytes);
-            return base64;
+            return Base64.getEncoder().encodeToString(pngBytes);
         } finally {
             Files.deleteIfExists(tempPngPath);
         }
@@ -91,8 +89,7 @@ public class ImageConverter
             // 使用 resvg 渲染为 PNG 并转换为 Base64
             canvas.render(tempPngPath, tempFontPath);
             byte[] pngBytes = Files.readAllBytes(tempPngPath);
-            String base64 = Base64.getEncoder().encodeToString(pngBytes);
-            return base64;
+            return Base64.getEncoder().encodeToString(pngBytes);
         } finally {
             Files.deleteIfExists(tempPngPath);
         }
