@@ -15,12 +15,13 @@ public class SysMsgStorage
     private final String defaultMessage;
 
     public SysMsgStorage(DeepSeekConfig config) {
-        this.defaultMessage = config.getDefaultSystemMessage();
         customMessages = new ConcurrentHashMap<>();
+        this.defaultMessage = config.getDefaultSystemMessage();
     }
 
     public String getCustomMessage(Long groupId) {
         return customMessages.computeIfAbsent(groupId, k -> "你是一个AI助手。");
     }
+
     public void setCustomMessage(Long groupId, String message) { customMessages.put(groupId, message); }
 }
