@@ -39,13 +39,13 @@ public class FuncSetCommand implements Command
                     if (params.size() < 2) throw new IllegalArgumentException("参数不足");
                     String func = params.get(1);
                     Boolean isEnabled = functionManager.switchEnabled(func);
-                    if (isEnabled == null) throw new IllegalArgumentException("功能不存在");
+                    if (isEnabled == null) throw new IllegalArgumentException("无此全局设置");
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[全局设置] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
                     log.info("\t\t\t\t├─[FuncSet] 已更改全局设置 {} -> {}", func, isEnabled ? "ON" : "OFF");
                     return;
                 }
 
-                throw new NoSuchMethodException("无此全局设置");
+                throw new NoSuchMethodException("无此操作类型");
             } catch (Exception e) {
                 bot.sendGroupMsg(groupId, "[全局设置] ❌" + e.getMessage(), false);
                 log.info("\t\t\t\t├─[FuncSet] 全局设置出错 - {}", e.getMessage());

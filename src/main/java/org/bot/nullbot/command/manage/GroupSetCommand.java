@@ -51,7 +51,7 @@ public class GroupSetCommand implements Command
                     return;
                 }
 
-                throw new NoSuchMethodException("无此设置");
+                throw new NoSuchMethodException("无此操作类型");
             } catch (Exception e) {
                 bot.sendGroupMsg(groupId, "[群设置] ❌" + e.getMessage(), false);
                 log.info("\t\t\t\t├─[GroupSet] 群设置出错 - {}", e.getMessage());
