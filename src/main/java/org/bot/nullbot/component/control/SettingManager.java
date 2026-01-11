@@ -32,10 +32,10 @@ public class SettingManager
         return new ChatOption(setting.getScope(), setting.isAntiInjection(), setting.isThinking(), setting.isEmbedding(), setting.isEmbeddingAuth());
     }
     public Scope getScope(Long groupId) { return getSetting(groupId).getScope(); }
-    public boolean getAntiInjection(Long groupId) { return getSetting(groupId).isAntiInjection(); }
-    public boolean getThinking(Long groupId) { return getSetting(groupId).isThinking(); }
-    public boolean getEmbedding(Long groupId) { return getSetting(groupId).isEmbedding(); }
-    public boolean getEmbeddingAuth(Long groupId) { return getSetting(groupId).isEmbeddingAuth(); }
+    public boolean isAntiInjection(Long groupId) { return getSetting(groupId).isAntiInjection(); }
+    public boolean isThinking(Long groupId) { return getSetting(groupId).isThinking(); }
+    public boolean isEmbedding(Long groupId) { return getSetting(groupId).isEmbedding(); }
+    public boolean isEmbeddingAuth(Long groupId) { return getSetting(groupId).isEmbeddingAuth(); }
 
     public boolean switchImageCollect(Long groupId) { return getSetting(groupId).switchImageCollect(); }
     public boolean switchMessageCollect(Long groupId) { return getSetting(groupId).switchMessageCollect(); }
@@ -43,11 +43,11 @@ public class SettingManager
     public boolean switchPokeDetect(Long groupId) { return getSetting(groupId).switchPokeDetect(); }
     public boolean switchRecallDetect(Long groupId) { return getSetting(groupId).switchRecallDetect(); }
 
-    public boolean getImageCollect(Long groupId) { return getSetting(groupId).isImageCollect(); }
-    public boolean getMessageCollect(Long groupId) { return getSetting(groupId).isMessageCollect(); }
-    public boolean getKeywordDetect(Long groupId) { return getSetting(groupId).isKeywordDetect(); }
-    public boolean getPokeDetect(Long groupId) { return getSetting(groupId).isPokeDetect(); }
-    public boolean getRecallDetect(Long groupId) { return getSetting(groupId).isRecallDetect(); }
+    public boolean isImageCollect(Long groupId) { return getSetting(groupId).isImageCollect(); }
+    public boolean isMessageCollect(Long groupId) { return getSetting(groupId).isMessageCollect(); }
+    public boolean isKeywordDetect(Long groupId) { return getSetting(groupId).isKeywordDetect(); }
+    public boolean isPokeDetect(Long groupId) { return getSetting(groupId).isPokeDetect(); }
+    public boolean isRecallDetect(Long groupId) { return getSetting(groupId).isRecallDetect(); }
 
     public boolean setGuessParams(Long groupId, double ratio, int padding) {
         SettingInfo setting = getSetting(groupId);
