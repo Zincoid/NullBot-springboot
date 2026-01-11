@@ -1,8 +1,7 @@
 package org.bot.nullbot.util;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.entity.info.FileInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +12,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.regex.Pattern;
@@ -22,19 +20,10 @@ import java.util.regex.Pattern;
 @Slf4j
 public class DownloadUtil
 {
-    @AllArgsConstructor
-    @Data
-    public static class DownloadInfo
-    {
-        private String fileName;
-        private Long fileSize;
-        LocalDateTime lastModified;
-    }
-
     /**
      * 主下载方法
      */
-    public static DownloadInfo downloadFile(String fileUrl, String savePath, String fileName) {
+    public static FileInfo downloadFile(String fileUrl, String savePath, String fileName) {
         HttpURLConnection connection = null;
 
         try {
@@ -102,7 +91,7 @@ public class DownloadUtil
                         .atZone(ZoneId.systemDefault())
                         .toLocalDateTime();
 
-                return new DownloadInfo(finalFileName, downloadedSize, lastModified);
+                return new FileInfo(finalFileName, downloadedSize, lastModified);
             }
 
         } catch (IOException e) {

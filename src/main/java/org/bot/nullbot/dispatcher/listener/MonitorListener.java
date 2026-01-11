@@ -18,6 +18,7 @@ import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.component.ai.DeepSeekClient;
+import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.scheduling.annotation.Async;
@@ -57,8 +58,8 @@ public class MonitorListener
                 String url = msg.getData().get("url");
                 String fileName = originName.substring(0, originName.lastIndexOf("."));
                 try {
-                    DownloadUtil.DownloadInfo downloadInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/monitor", fileName);
-                    log.info("└─[Saved] {}", downloadInfo.getFileName());
+                    FileInfo fileInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/monitor", fileName);
+                    log.info("└─[Saved] {}", fileInfo.getFileName());
                 } catch (Exception e) {
                     log.info("└─[Error] {}", e.getMessage());
                     throw e;

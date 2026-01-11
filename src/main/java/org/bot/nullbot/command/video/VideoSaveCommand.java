@@ -11,6 +11,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.MessageParseUtil;
@@ -53,12 +54,12 @@ public class VideoSaveCommand implements Command
                 String fileName = entry.getKey();
                 String url = entry.getValue();
                 try {
-                    DownloadUtil.DownloadInfo downloadInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getVideoPath(), fileName);
+                    FileInfo fileInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getVideoPath(), fileName);
                     if(!fileService.addFileRecordForBot(
                             fileStorageConfig.getVideoPath(),
-                            downloadInfo.getFileName(),
-                            downloadInfo.getFileSize(),
-                            downloadInfo.getLastModified(),
+                            fileInfo.getFileName(),
+                            fileInfo.getFileSize(),
+                            fileInfo.getLastModified(),
                             userId, userName)
                     ) {
                         bot.sendGroupMsg(groupId, "[视频] ❌数据库更新失败", false);
@@ -70,7 +71,7 @@ public class VideoSaveCommand implements Command
                     // }
                     // bot.sendGroupMsg(groupId, "[视频] \uD83D\uDCBE已保存！", false);
                     bot.sendGroupMsg(groupId, "[视频] \uD83D\uDCBE已保存！", false);
-                    log.info("\t\t\t\t├─[Video.Save] 已保存为: {}", downloadInfo.getFileName());
+                    log.info("\t\t\t\t├─[Video.Save] 已保存为: {}", fileInfo.getFileName());
                 } catch (Exception e) {
                     bot.sendGroupMsg(groupId, "[视频] ❌保存失败:\n" + e.getMessage(), false);
                     log.info("\t\t\t\t├─[Video.Save] 保存失败", e);

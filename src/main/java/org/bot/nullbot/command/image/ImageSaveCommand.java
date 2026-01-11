@@ -11,6 +11,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.MessageParseUtil;
@@ -55,12 +56,12 @@ public class ImageSaveCommand implements Command
                 String url = entry.getValue();
                 String fileName = originName.substring(0, originName.lastIndexOf("."));  // QQ给的扩展名是错的 让下载方法判断
                 try {
-                    DownloadUtil.DownloadInfo downloadInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/collect", fileName);
+                    FileInfo fileInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/collect", fileName);
                     if(!fileService.addFileRecordForBot(
                             fileStorageConfig.getImagePath() + "/collect",
-                            downloadInfo.getFileName(),
-                            downloadInfo.getFileSize(),
-                            downloadInfo.getLastModified(),
+                            fileInfo.getFileName(),
+                            fileInfo.getFileSize(),
+                            fileInfo.getLastModified(),
                             userId, userName)
                     ) {
                         bot.sendGroupMsg(groupId, "[图片] ❌数据库更新失败", false);
@@ -72,7 +73,7 @@ public class ImageSaveCommand implements Command
                     // }
                     bot.sendGroupMsg(groupId, "[图片] \uD83D\uDCBE已保存！", false);
                     // bot.sendGroupMsg(groupId, "[图片] \uD83D\uDCBE已保存！\n" + info, false);
-                    log.info("\t\t\t\t├─[Image.Save] 已保存为: {}", downloadInfo.getFileName());
+                    log.info("\t\t\t\t├─[Image.Save] 已保存为: {}", fileInfo.getFileName());
                 } catch (Exception e) {
                     bot.sendGroupMsg(groupId, "[图片] ❌保存失败:\n" + e.getMessage(), false);
                     log.info("\t\t\t\t├─[Image.Save] 保存失败", e);

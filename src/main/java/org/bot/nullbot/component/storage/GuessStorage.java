@@ -1,7 +1,7 @@
 package org.bot.nullbot.component.storage;
 
 import lombok.Data;
-import org.bot.nullbot.entity.GuessInfo;
+import org.bot.nullbot.entity.info.GuessInfo;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

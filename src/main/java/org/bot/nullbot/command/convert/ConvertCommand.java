@@ -13,6 +13,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.MessageParseUtil;
@@ -86,8 +87,8 @@ public class ConvertCommand implements Command
                 String tempFileName = UUID.randomUUID().toString();
                 String downloadedFileName;
                 try {
-                    DownloadUtil.DownloadInfo downloadInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName);
-                    downloadedFileName = downloadInfo.getFileName();
+                    FileInfo fileInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName);
+                    downloadedFileName = fileInfo.getFileName();
                 } catch (Exception e) {
                     bot.sendGroupMsg(groupId, "[图像处理] ❌下载图像失败", false);
                     log.info("\t\t\t\t├─[Convert] 下载图像失败 - {}", url);

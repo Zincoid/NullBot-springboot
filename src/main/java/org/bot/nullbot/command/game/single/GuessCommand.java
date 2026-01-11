@@ -10,7 +10,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.GuessStorage;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.entity.GuessInfo;
+import org.bot.nullbot.entity.info.GuessInfo;
 import org.bot.nullbot.service.UserService;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
