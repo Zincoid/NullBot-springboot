@@ -58,7 +58,10 @@ public class GroupSetCommand implements Command
                             yield settingManager.switchEmbedding(groupId);
                         }
                         case "eau" -> settingManager.switchEmbeddingAuth(groupId);
-                        case "cus" -> settingManager.switchCustom(groupId);
+                        case "cus" -> {
+                            deepSeekClient.clearHistory(groupId, userId, settingManager.getScope(groupId));
+                            yield settingManager.switchCustom(groupId);
+                        }
                         default -> throw new NoSuchMethodException("无此AI设置");
                     };
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[AI] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
