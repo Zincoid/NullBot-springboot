@@ -2,6 +2,7 @@ package org.bot.nullbot.component.control;
 
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.config.DefaultConfig;
+import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.enums.Scope;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,10 @@ public class SettingManager
     public boolean switchEmbedding(Long groupId) { return getSetting(groupId).switchEmbedding(); }
     public boolean switchEmbeddingAuth(Long groupId) { return getSetting(groupId).switchEmbeddingAuth(); }
 
+    public ChatOption getChatOption(Long groupId) {
+        SettingInfo setting = getSetting(groupId);
+        return new ChatOption(setting.getScope(), setting.isAntiInjection(), setting.isThinking(), setting.isEmbedding(), setting.isEmbeddingAuth());
+    }
     public Scope getScope(Long groupId) { return getSetting(groupId).getScope(); }
     public boolean isAntiInjection(Long groupId) { return getSetting(groupId).isAntiInjection(); }
     public boolean isThinking(Long groupId) { return getSetting(groupId).isThinking(); }
@@ -50,6 +55,7 @@ public class SettingManager
         setting.setGuessPadding(padding);
         return true;
     }
+
     public double getGuessRatio(Long groupId) { return getSetting(groupId).getGuessRatio(); }
     public int getGuessPadding(Long groupId) {return getSetting(groupId).getGuessPadding(); }
 }

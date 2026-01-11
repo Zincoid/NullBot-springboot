@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
@@ -23,6 +24,7 @@ public class ChatCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
     private final ChatStorage chatStorage;
+    private final SettingManager settingManager;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
@@ -42,7 +44,8 @@ public class ChatCommand implements Command
             String message = MessageParseUtil.parseGroupArrayMsgForAI(bot, groupMessageEvent.getArrayMsg());
             String userName = groupMessageEvent.getSender().getNickname();
             Integer messageId = groupMessageEvent.getMessageId();
-            String response = deepSeekClient.chat(messageId, groupId, userId, userName, message, bot, event);
+
+            String response = deepSeekClient.chat(messageId, groupId, userId, userName, message, bot, event, settingManager.getChatOption(groupId));
 
             // bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[AI.Chat] 已回复: {}", response.replaceAll("\\R", " "));
