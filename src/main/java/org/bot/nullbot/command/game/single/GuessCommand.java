@@ -128,6 +128,17 @@ public class GuessCommand implements Command
         );
     }
 
+    // public static String crop(String p, double r) throws Exception {
+    //     BufferedImage i = ImageIO.read(new File(p));
+    //     int w=(int)(i.getWidth()*r), h=(int)(i.getHeight()*r);
+    //     int x=i.getWidth()>w?(int)(Math.random()*(i.getWidth()-w)):0;
+    //     int y=i.getHeight()>h?(int)(Math.random()*(i.getHeight()-h)):0;
+    //     BufferedImage c=i.getSubimage(x,y,w,h);
+    //     ByteArrayOutputStream b=new ByteArrayOutputStream();
+    //     ImageIO.write(c,"png",b);
+    //     return Base64.getEncoder().encodeToString(b.toByteArray());
+    // }
+
     public static String crop(String p, double r, int pad) throws Exception {
         BufferedImage img = ImageIO.read(new File(p));
 
