@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface FunctionControl {  // Aspect
+public @interface FunctionControl  // Aspect
+{
     String config();
 }

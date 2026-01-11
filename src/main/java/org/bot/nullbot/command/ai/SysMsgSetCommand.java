@@ -31,19 +31,20 @@ public class SysMsgSetCommand implements Command
                 log.info("\t\t\t\t├─[AI.SysMsgSet] 非Custom模式");
                 return;
             }
-            if(!event.getCommandParameters().isEmpty()){
-                Long userId = groupMessageEvent.getSender().getUserId();
-                String systemMessage = String.join(" ", event.getCommandParameters());
-
-                deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
-                sysMsgStorage.setCustomMessage(groupId, systemMessage);
-
-                bot.sendGroupMsg(groupId, "[自定义提示词] ✅已设置！", false);
-                log.info("\t\t\t\t├─[AI.SysMsgSet] 自定义系统消息已设置 - {}", systemMessage);
-            }else{
+            if(event.getCommandParameters().isEmpty()){
                 bot.sendGroupMsg(groupId, "[自定义提示词] ❌无参数", false);
                 log.info("\t\t\t\t├─[AI.SysMsgSet] 无参数");
+                return;
             }
+
+            Long userId = groupMessageEvent.getSender().getUserId();
+            String systemMessage = String.join(" ", event.getCommandParameters());
+
+            deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
+            sysMsgStorage.setCustomMessage(groupId, systemMessage);
+
+            bot.sendGroupMsg(groupId, "[自定义提示词] ✅已设置！", false);
+            log.info("\t\t\t\t├─[AI.SysMsgSet] 自定义提示词已设置 - {}", systemMessage);
         }else
             log.info("\t\t\t\t├─[AI.SysMsgSet] 未设计 - 非群消息事件响应方式");
     }

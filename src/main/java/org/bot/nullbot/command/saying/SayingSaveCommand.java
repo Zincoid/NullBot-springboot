@@ -27,28 +27,28 @@ public class SayingSaveCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if (reply.getType() == MsgTypeEnum.reply) {
-                GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
-                long userId = Long.parseLong(replyMsg.getSender().getUserId());
-                String userName = replyMsg.getSender().getNickname();
-                String text = MessageParseUtil.parseRawSaying(bot, replyMsg.getRawMessage());
-                if(text != null) {
-                    if(!text.trim().isEmpty()){
-                        int inserted = sayingService.addSaying(userId, userName, text);
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] " + (inserted == 1 ? "\uD83D\uDCBE已记录！" : "❌出错"), false);
-                        log.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", (inserted == 1 ? "已记录 -> " : "出错 -> ") + text);
-                    }else{
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌保存文本为空", false);
-                        log.info("\t\t\t\t├─[Saying.Save] 保存文本为空");
-                    }
-                }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] \uD83D\uDE2D禁止套娃！", false);
-                    log.info("\t\t\t\t├─[Saying.Save] 试图保存已输出的语录 -> 已忽略");
-                }
-            }else{
+            if (reply.getType() != MsgTypeEnum.reply) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌需回复要保存的文本", false);
                 log.info("\t\t\t\t├─[Saying.Save] 未指定消息");
+                return;
             }
+            GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+            long userId = Long.parseLong(replyMsg.getSender().getUserId());
+            String userName = replyMsg.getSender().getNickname();
+            String text = MessageParseUtil.parseRawSaying(bot, replyMsg.getRawMessage());
+            if(text == null) {
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] \uD83D\uDE2D禁止套娃！", false);
+                log.info("\t\t\t\t├─[Saying.Save] 试图保存已输出的语录 -> 已忽略");
+                return;
+            }
+            if(text.trim().isEmpty()){
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌保存文本为空", false);
+                log.info("\t\t\t\t├─[Saying.Save] 保存文本为空");
+                return;
+            }
+            int inserted = sayingService.addSaying(userId, userName, text);
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] " + (inserted == 1 ? "\uD83D\uDCBE已记录！" : "❌出错"), false);
+            log.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", (inserted == 1 ? "已记录 -> " : "出错 -> ") + text);
         }else
             log.info("\t\t\t\t├─[Saying.Save] 未设计 - 非群消息事件响应方式");
     }

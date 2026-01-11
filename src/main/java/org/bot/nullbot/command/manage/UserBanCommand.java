@@ -19,6 +19,7 @@ public class UserBanCommand implements Command
             if (event.getCommandParameters().size() < 2){
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[用户禁言] ❌参数不足", false);
                 log.info("\t\t\t\t├─[User.Ban] 参数不足");
+                return;
             }
             try {
                 long userId = Long.parseLong(event.getCommandParameters().get(0));

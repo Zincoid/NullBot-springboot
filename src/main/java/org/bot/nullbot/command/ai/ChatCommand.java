@@ -45,7 +45,10 @@ public class ChatCommand implements Command
             String userName = groupMessageEvent.getSender().getNickname();
             Integer messageId = groupMessageEvent.getMessageId();
 
-            String response = deepSeekClient.chat(messageId, groupId, userId, userName, message, bot, event, settingManager.getChatOption(groupId));
+            String response = deepSeekClient.chat(
+                    messageId, groupId, userId, userName, message, bot, event,
+                    settingManager.getChatOption(groupId)
+            );
 
             // bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[AI.Chat] 已回复: {}", response.replaceAll("\\R", " "));
