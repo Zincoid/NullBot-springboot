@@ -60,8 +60,8 @@ public class FunctionManager  // 全局控制
     public String getStatus() {
         StringBuilder status = new StringBuilder();
         for (Map.Entry<String, Boolean> entry : enableFlags.entrySet()) {
-            status.append('\n').append(entry.getKey()).append(" -> ").append(entry.getValue() ? "ON" : "OFF");
+            status.append('\n').append(entry.getKey()).append(" - ").append(entry.getValue() ? "ON" : "OFF");
         }
-        return status.toString();
+        return status.toString().trim();
     }
 }
