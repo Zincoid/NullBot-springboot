@@ -100,7 +100,7 @@ public class ConvertCommand implements Command
                         case "RIP" -> imageConverter.RIP(avatarPath, tempFilePath + "/fonts");
                         case "PRTS" -> imageConverter.PRTS(avatarPath, tempFilePath + "/fonts");
                         case "InversePRTS" -> imageConverter.inversePRTS(avatarPath, tempFilePath + "/fonts");
-                        default -> throw new IllegalStateException("Unexpected value: " + method);
+                        default -> throw new NoSuchMethodException("方法不存在: " + method);
                     };
                     String response = MsgUtils.builder().img("base64://" + base64).build();
                     bot.sendGroupMsg(groupId, response, false);

@@ -18,4 +18,10 @@ public class SettingManager
     public SettingInfo getSetting(Long groupId) {
         return settings.computeIfAbsent(groupId, k -> new SettingInfo(groupId, defaultConfig));
     }
+
+    public boolean switchImageCollect(Long groupId) { return getSetting(groupId).switchImageCollect(); }
+    public boolean switchMessageCollect(Long groupId) { return getSetting(groupId).switchMessageCollect(); }
+    public boolean switchKeywordDetect(Long groupId) { return getSetting(groupId).switchKeywordDetect(); }
+    public boolean switchPokeDetect(Long groupId) { return getSetting(groupId).switchPokeDetect(); }
+    public boolean switchRecallDetect(Long groupId) { return getSetting(groupId).switchRecallDetect(); }
 }

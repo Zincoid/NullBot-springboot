@@ -3,8 +3,6 @@ package org.bot.nullbot.entity.info;
 import lombok.Data;
 import org.bot.nullbot.config.DefaultConfig;
 
-import java.util.Map;
-
 @Data
 public class SettingInfo
 {
@@ -25,6 +23,12 @@ public class SettingInfo
         this.messageCollect = config.getMessageCollect();
         this.recallDetect = config.getRecallDetect();
     }
+
+    public boolean switchImageCollect() { return this.imageCollect = !imageCollect; }
+    public boolean switchKeywordDetect() { return this.keywordDetect = !keywordDetect; }
+    public boolean switchPokeDetect() { return this.pokeDetect = !pokeDetect; }
+    public boolean switchMessageCollect() { return this.messageCollect = !messageCollect; }
+    public boolean switchRecallDetect() { return this.recallDetect = !recallDetect; }
 
     @Override
     public String toString() {
