@@ -25,7 +25,6 @@ public class FuncSetCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
             Long groupId = groupMessageEvent.getGroupId();
-
             try {
                 if (params.isEmpty()) throw new IllegalArgumentException("参数不足");
                 String option = params.get(0);
@@ -36,11 +35,11 @@ public class FuncSetCommand implements Command
                     log.info("\t\t\t\t├─[FuncSet] 已获取全局设置 - {}", groupId);
                     return;
                 }
-
                 if ("-set".equals(option)) {
-                    if (params.size() < 2) {}
+                    if (params.size() < 2) throw new IllegalArgumentException("参数不足");
                     String func = params.get(1);
                     Boolean isEnabled = functionManager.switchEnabled(func);
+                    if (isEnabled == null) throw new IllegalArgumentException("功能不存在");
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[全局设置] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
                     log.info("\t\t\t\t├─[FuncSet] 已更改全局设置 {} -> {}", func, isEnabled ? "ON" : "OFF");
                     return;

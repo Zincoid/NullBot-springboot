@@ -36,7 +36,6 @@ public class GroupSetCommand implements Command
                     log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
                     return;
                 }
-
                 if ("-monitor".equals(option)) {
                     String setting = params.get(1);
                     boolean isEnabled = switch (setting) {
