@@ -26,9 +26,9 @@ public class FileController
     @GetMapping("/init")
     public WebResult initRootFile(){
         if(fileService.initRootFile()){
-            return WebResult.success().addMsg("RootFile 初始化已完成");
+            return WebResult.success().addMsg("Root 文件 初始化完成");
         }else{
-            return WebResult.fail().addMsg("RootFile 已初始化过");
+            return WebResult.fail().addMsg("Root 文件 已初始化过");
         }
     }
 
@@ -38,7 +38,7 @@ public class FileController
             fileService.syncFilesToDatabase();
             return WebResult.success().addMsg("本地与数据库 已同步");
         } catch (Exception e) {
-            return WebResult.fail().addMsg("同步失败");
+            return WebResult.fail().addMsg("本地与数据库 同步失败");
         }
     }
 
