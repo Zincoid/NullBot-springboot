@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.SettingManager;
-import org.bot.nullbot.component.storage.GuessStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,6 @@ import java.util.List;
 public class GroupSetCommand implements Command
 {
     private final SettingManager settingManager;
-    private final GuessStorage guessStorage;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {

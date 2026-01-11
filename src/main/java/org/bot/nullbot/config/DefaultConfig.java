@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "nullbot")
+@ConfigurationProperties(prefix = "nullbot.default")
 public class DefaultConfig
 {
     private Boolean imageCollect;
@@ -16,6 +16,8 @@ public class DefaultConfig
     private Boolean pokeDetect;
     private Boolean messageCollect;
     private Boolean recallDetect;
+    private Double guessRatio;
+    private Integer guessPadding;
 
     @Deprecated
     private Map<Long, Integer> userAccesses;  // 已持久化至数据库 (弃用)

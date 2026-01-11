@@ -14,6 +14,9 @@ public class SettingInfo
     private Boolean pokeDetect;
     private Boolean recallDetect;
 
+    private Double guessRatio;
+    private Integer guessPadding;
+
     public SettingInfo(Long groupId, DefaultConfig config) {
         this.groupId = groupId;
 
@@ -22,6 +25,9 @@ public class SettingInfo
         this.keywordDetect = config.getKeywordDetect();
         this.pokeDetect = config.getPokeDetect();
         this.recallDetect = config.getRecallDetect();
+
+        this.guessRatio = 0.1;
+        guessPadding = 250;
     }
 
     public boolean switchImageCollect() { return this.imageCollect = !imageCollect; }

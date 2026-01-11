@@ -53,12 +53,14 @@ shiro:
 
 nullbot:
   bot-id:
-  # 默认功能启用状态
-  image-collect: false
-  message-collect: false  # 使用AI Monitor模式及Recall Detect功能 需启用该项
-  keyword-detect: true
-  poke-detect: true
-  recall-detect: false
+  default:  # 默认群设置
+    image-collect: false
+    message-collect: false  # 使用AI Monitor模式及Recall Detect功能 需启用该项
+    keyword-detect: true
+    poke-detect: true
+    recall-detect: false
+    guess-ratio: 0.1
+    guess-padding: 250
   command:
     prefix: /
     rate-limit:
@@ -69,19 +71,10 @@ nullbot:
   file:
     storage:
       file-directory: /root/Nullbot/file  # 网页文件管理根目录
-      temp-path: /root/Nullbot/file/temp  # 建议选择根下子目录
+      temp-path: /root/Nullbot/file/temp  # 选择根下子目录
       image-path: /root/Nullbot/file/image
       video-path: /root/Nullbot/file/video
       audio-path: /root/Nullbot/file/audio
-
-#      file-directory: ${user.dir}/src/main/resources/upload
-#      temp-path: src/main/resources/file/temp
-#      image-path: src/main/resources/file/image
-#      video-path: src/main/resources/file/video
-#      audio-path: src/main/resources/file/audio
-
-#  user-accesses:  # ID: Level 已持久化至数据库 (弃用)
-#  group-accesses:  # ID: Level 已持久化至数据库 (弃用)
 
 ai:
   deepseek:
