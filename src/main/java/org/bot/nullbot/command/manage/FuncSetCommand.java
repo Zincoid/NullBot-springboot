@@ -38,6 +38,7 @@ public class FuncSetCommand implements Command
                 }
 
                 if ("-set".equals(option)) {
+                    if (params.size() < 2) {}
                     String func = params.get(1);
                     Boolean isEnabled = functionManager.switchEnabled(func);
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[全局设置] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
