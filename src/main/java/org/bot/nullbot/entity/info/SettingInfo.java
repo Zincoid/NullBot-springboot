@@ -54,7 +54,7 @@ public class SettingInfo
                 keywordDetect ? "ON" : "OFF",
                 pokeDetect ? "ON" : "OFF",
                 recallDetect ? "ON" : "OFF",
-                guessPadding, guessRatio
+                guessRatio, guessPadding
         );
     }
 }
