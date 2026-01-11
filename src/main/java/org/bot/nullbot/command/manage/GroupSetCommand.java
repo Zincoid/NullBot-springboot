@@ -87,7 +87,7 @@ public class GroupSetCommand implements Command
                 操作类型和参数:
                 - [-view] 获取群设置
                 - [-monitor] [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
-                - [-guess] [切割比例] [内边距]
+                - [-guess] [切割比例] [内边距] 设置Guess游戏难度
                 中文命令: 群设置""", getAccess()
         );
     }
@@ -102,7 +102,7 @@ public class GroupSetCommand implements Command
                 操作类型和参数:
                 - [-view] 获取群设置
                 - [-monitor] [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
-                - [-guess] [切割比例(范围 0.05-0.3)] [内边距(范围 150-300)]
+                - [-guess] [切割比例(范围 0.05-0.3)] [内边距(范围 150-300)] 设置Guess游戏难度
                 示例:
                 GroupSet -view
                 GroupSet -monitor img
