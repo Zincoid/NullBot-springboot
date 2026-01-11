@@ -32,7 +32,7 @@ public class GroupSetCommand implements Command
 
                 if ("-view".equals(option)) {
                     SettingInfo setting = settingManager.getSetting(groupId);
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[群设置] ℹ️已获取群设置！\n" + setting, false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[群设置] ℹ️已获取！\n" + setting, false);
                     log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
                     return;
                 }
