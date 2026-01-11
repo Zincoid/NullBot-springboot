@@ -23,22 +23,22 @@ public class ImageGetCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if(!event.getCommandParameters().isEmpty()){
-                String imagePath = FileUtil.getFilePathByName(fileStorageConfig.getImagePath() + "/collect", event.getCommandParameters().getFirst());
-                if (imagePath != null) {
-                    String response = MsgUtils.builder()
-                            .img(imagePath)
-                            .build();
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                    log.info("\t\t\t\t├─[Image.Get] 已获取图片: {}", imagePath);
-                }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌未找到该图片", false);
-                    log.info("\t\t\t\t├─[Image.Get] 未找到该图片");
-                }
-            }else{
+            if(event.getCommandParameters().isEmpty()){
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌无文件名参数", false);
                 log.info("\t\t\t\t├─[Image.Get] 无文件名参数");
+                return;
             }
+            String imagePath = FileUtil.getFilePathByName(fileStorageConfig.getImagePath() + "/collect", event.getCommandParameters().getFirst());
+            if (imagePath == null) {
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌未找到该图片", false);
+                log.info("\t\t\t\t├─[Image.Get] 未找到该图片");
+                return;
+            }
+            String response = MsgUtils.builder()
+                    .img(imagePath)
+                    .build();
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+            log.info("\t\t\t\t├─[Image.Get] 已获取图片: {}", imagePath);
         }else
             log.info("\t\t\t\t├─[Image.Get] 未设计 - 非群消息事件响应方式");
     }

@@ -203,8 +203,8 @@ public class BreadCommand implements Command
                 - 查面包 [l|-look] [可选: 页码]
                 - 买面包 [b|-buy]
                 - 吃面包 [e|-eat]
-                - 抢面包 [r|-rob] @用户
-                - 送面包 [g|-gift] @用户
+                - 抢面包 [r|-rob] [@用户]
+                - 送面包 [g|-gift] [@用户]
                 中文命令: 面包/\uD83C\uDF5E""", getAccess()
         );
     }

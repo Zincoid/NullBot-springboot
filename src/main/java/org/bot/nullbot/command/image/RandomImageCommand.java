@@ -25,16 +25,16 @@ public class RandomImageCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String imagePath = FileUtil.getRandomFile(fileStorageConfig.getImagePath() + "/collect");
-            if (imagePath != null) {
-                String response = MsgUtils.builder()
-                        .img(imagePath)
-                        .build();
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                log.info("\t\t\t\t├─[Image.Random] 已发送图片: {}", imagePath);
-            }else{
+            if (imagePath == null) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌暂无图片", false);
                 log.info("\t\t\t\t├─[Image.Random] 暂无图片");
+                return;
             }
+            String response = MsgUtils.builder()
+                    .img(imagePath)
+                    .build();
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+            log.info("\t\t\t\t├─[Image.Random] 已发送图片: {}", imagePath);
         }else
             log.info("\t\t\t\t├─[Image.Random] 未设计 - 非群消息事件响应方式");
     }

@@ -24,16 +24,16 @@ public class RandomAudioCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String audioPath = FileUtil.getRandomFile(fileStorageConfig.getAudioPath());
-            if (audioPath != null) {
-                String response = MsgUtils.builder()
-                        .voice(audioPath)
-                        .build();
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                log.info("\t\t\t\t├─[Audio.Random] 已发送音频: {}", audioPath);
-            }else{
+            if (audioPath == null) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌暂无音频", false);
                 log.info("\t\t\t\t├─[Audio.Random] 暂无音频");
+                return;
             }
+            String response = MsgUtils.builder()
+                    .voice(audioPath)
+                    .build();
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+            log.info("\t\t\t\t├─[Audio.Random] 已发送音频: {}", audioPath);
         }else
             log.info("\t\t\t\t├─[Audio.Random] 未设计 - 非群消息事件响应方式");
     }

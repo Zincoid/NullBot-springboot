@@ -38,20 +38,21 @@ public class PlusExpCommand implements Command
                 return;
             }
 
-            if (userService.existUser(userId)) {
-                int i = userService.plusExperience(userId, exp);
-                String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-                StringBuilder sb = new StringBuilder(userName + " 获得 " + exp + "Exp！");
-                while (i > 0) {
-                    sb.append("\n- LEVEL UP！");
-                    i--;
-                }
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
-                log.info("\t\t\t\t├─[PlusExp] 已给予经验 - {} -> {} Exp", userId, exp);
-            } else {
+            if (!userService.existUser(userId)) {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[加经验] ❌用户不存在", false);
                 log.info("\t\t\t\t├─[PlusExp] 用户不存在");
+                return;
             }
+
+            int i = userService.plusExperience(userId, exp);
+            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+            StringBuilder sb = new StringBuilder(userName + " 获得 " + exp + "Exp！");
+            while (i > 0) {
+                sb.append("\n- LEVEL UP！");
+                i--;
+            }
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
+            log.info("\t\t\t\t├─[PlusExp] 已给予经验 - {} -> {} Exp", userId, exp);
         }else
             log.info("\t\t\t\t├─[PlusExp] 未设计 - 非群消息事件响应方式");
     }
