@@ -127,7 +127,7 @@ public class FileServiceImpl implements FileService
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void syncFilesToDatabase() {
         scanAndSyncFiles();
     }
