@@ -22,6 +22,5 @@ public class SysMsgStorage
     public String getCustomMessage(Long groupId) {
         return customMessages.computeIfAbsent(groupId, k -> "你是一个AI助手。");
     }
-
     public void setCustomMessage(Long groupId, String message) { customMessages.put(groupId, message); }
 }

@@ -61,6 +61,13 @@ public class SettingInfo
     @Override
     public String toString() {
         return String.format("""
+                 ◉ AI 设置
+                ├ 作用域 - %s
+                ├ 防注入模式 - %s
+                ├ 思考模式 - %s
+                ├ 指令模式 - %s
+                ├ 指令校验 - %s
+                └ 自定义模式 - %s
                  ◉ Monitor 设置
                 ├ 图片收集 - %s
                 ├ 消息收集 - %s
@@ -70,7 +77,12 @@ public class SettingInfo
                  ◉ Guess 设置
                 ├ 切割比例 - %s
                 └ 内边距 - %s""",
-
+                scope,
+                antiInjection ? "ON" : "OFF",
+                thinking ? "ON" : "OFF",
+                embedding ? "ON" : "OFF",
+                embeddingAuth ? "ON" : "OFF",
+                custom ? "ON" : "OFF",
                 imageCollect ? "ON" : "OFF",
                 messageCollect ? "ON" : "OFF",
                 keywordDetect ? "ON" : "OFF",
