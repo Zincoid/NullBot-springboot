@@ -4,6 +4,7 @@ import org.bot.nullbot.config.DefaultConfig;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -58,10 +59,17 @@ public class FunctionManager  // 全局控制
     }
 
     public String getStatus() {
-        StringBuilder status = new StringBuilder();
-        for (Map.Entry<String, Boolean> entry : enableFlags.entrySet()) {
-            status.append('\n').append(entry.getKey()).append(" - ").append(entry.getValue() ? "ON" : "OFF");
+        StringBuilder status = new StringBuilder(" ◉ Global 设置");
+        Iterator<Map.Entry<String, Boolean>> iterator = enableFlags.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Boolean> entry = iterator.next();
+            char prefix = iterator.hasNext() ? '├' : '└';
+            status.append(prefix).append(' ').append(entry.getKey()).append(" - ")
+                    .append(entry.getValue() ? "ON" : "OFF");
+            if (iterator.hasNext()) {
+                status.append('\n');
+            }
         }
-        return status.toString().trim();
+        return status.toString();
     }
 }
