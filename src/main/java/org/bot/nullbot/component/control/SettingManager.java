@@ -32,10 +32,10 @@ public class SettingManager
         return new ChatOption(setting.getScope(), setting.isAntiInjection(), setting.isThinking(), setting.isEmbedding(), setting.isEmbeddingAuth());
     }
     public Scope getScope(Long groupId) { return getSetting(groupId).getScope(); }
-    public boolean isAntiInjection(Long groupId) { return getSetting(groupId).isAntiInjection(); }
-    public boolean isThinking(Long groupId) { return getSetting(groupId).isThinking(); }
-    public boolean isEmbedding(Long groupId) { return getSetting(groupId).isEmbedding(); }
-    public boolean isEmbeddingAuth(Long groupId) { return getSetting(groupId).isEmbeddingAuth(); }
+    public boolean getAntiInjection(Long groupId) { return getSetting(groupId).isAntiInjection(); }
+    public boolean getThinking(Long groupId) { return getSetting(groupId).isThinking(); }
+    public boolean getEmbedding(Long groupId) { return getSetting(groupId).isEmbedding(); }
+    public boolean getEmbeddingAuth(Long groupId) { return getSetting(groupId).isEmbeddingAuth(); }
 
     public boolean switchImageCollect(Long groupId) { return getSetting(groupId).switchImageCollect(); }
     public boolean switchMessageCollect(Long groupId) { return getSetting(groupId).switchMessageCollect(); }

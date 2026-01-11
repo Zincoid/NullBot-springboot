@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
+import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
@@ -22,6 +23,7 @@ public class RecallAICommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
     private final ChatStorage chatStorage;
+    private final SettingManager settingManager;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -45,7 +47,7 @@ public class RecallAICommand implements Command
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getSender().getUserId();
 
-            List<ChatMessage> messages = chatStorage.getAIMessagesForRecall(deepSeekClient.getScope(), groupId, userId, n);
+            List<ChatMessage> messages = chatStorage.getAIMessagesForRecall(settingManager.getScope(groupId), groupId, userId, n);
             for (ChatMessage message : messages) bot.deleteMsg(message.getMessageId());
 
             log.info("\t\t\t\t├─[RecallAI] 已撤回AI消息 -> {}条", n);
