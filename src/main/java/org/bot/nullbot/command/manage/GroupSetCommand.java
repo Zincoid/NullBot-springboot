@@ -32,11 +32,11 @@ public class GroupSetCommand implements Command
                 if ("-monitor".equals(option)) {
                     String setting = params.get(1);
                     boolean isEnabled = switch (setting) {
-                        case "imgCollect" -> settingManager.switchImageCollect(groupId);
-                        case "msgCollect" -> settingManager.switchMessageCollect(groupId);
-                        case "keywordDetect" -> settingManager.switchKeywordDetect(groupId);
-                        case "pokeDetect" -> settingManager.switchPokeDetect(groupId);
-                        case "recallDetect" -> settingManager.switchRecallDetect(groupId);
+                        case "img" -> settingManager.switchImageCollect(groupId);
+                        case "msg" -> settingManager.switchMessageCollect(groupId);
+                        case "key" -> settingManager.switchKeywordDetect(groupId);
+                        case "pok" -> settingManager.switchPokeDetect(groupId);
+                        case "rcl" -> settingManager.switchRecallDetect(groupId);
                         default -> throw new NoSuchMethodException("无此监听设置");
                     };
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[群设置] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
@@ -61,11 +61,12 @@ public class GroupSetCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ GroupSet 命令
-                功能: 转换功能启用状态(全局)
+                功能: 设置群功能
                 限权: %d 级
-                格式: GroupSet [功能控制标志]
-                标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect
-                中文命令: 功能控制""", getAccess()
+                格式: GroupSet [类型] [参数...]
+                类型和参数:
+                -monitor [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
+                中文命令: 群设置""", getAccess()
         );
     }
 
@@ -73,10 +74,11 @@ public class GroupSetCommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ GroupSet 命令
-                功能: 转换功能启用状态
+                功能: 设置群功能
                 限权: %d 级
-                格式: GroupSet [功能控制标志]
-                标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect
+                格式: GroupSet [类型] [参数...]
+                类型和参数:
+                -monitor [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
                 注意: 只有Zincoid可以调用！！！""", getAccess()
         );
     }
