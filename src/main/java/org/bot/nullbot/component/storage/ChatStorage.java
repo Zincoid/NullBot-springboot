@@ -1,8 +1,8 @@
 package org.bot.nullbot.component.storage;
 
 import lombok.Data;
-import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.entity.ChatMessage;
+import org.bot.nullbot.enums.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -56,7 +56,7 @@ public class ChatStorage
 
     // =================== 撤回功能相关 ===================
 
-    public List<ChatMessage> getAIMessagesForRecall(DeepSeekClient.Scope scope, Long groupId, Long userId, int n) {
+    public List<ChatMessage> getAIMessagesForRecall(Scope scope, Long groupId, Long userId, int n) {
         ReentrantLock lock = switch (scope) {
             case Group, Monitor -> getGroupLock(groupId);
             case Personal -> getUserLock(userId);

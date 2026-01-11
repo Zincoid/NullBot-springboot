@@ -1,12 +1,17 @@
 package org.bot.nullbot.entity.info;
 
 import lombok.Data;
+import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.config.DefaultConfig;
+import org.bot.nullbot.enums.Scope;
 
 @Data
 public class SettingInfo
 {
     private Long groupId;
+
+    private Scope scope;
+
 
     private Boolean imageCollect;
     private Boolean messageCollect;
@@ -19,6 +24,8 @@ public class SettingInfo
 
     public SettingInfo(Long groupId, DefaultConfig config) {
         this.groupId = groupId;
+
+
 
         this.imageCollect = config.getImageCollect();
         this.messageCollect = config.getMessageCollect();

@@ -54,11 +54,18 @@ shiro:
 nullbot:
   bot-id:
   default:  # 默认群设置
+    scope: group
+    anti-injection: true
+    thinking: false
+    embedding: true
+    embedding-auth: false
+
     image-collect: false
     message-collect: false  # 使用AI Monitor模式及Recall Detect功能 需启用该项
     keyword-detect: true
     poke-detect: true
     recall-detect: false
+
     guess-ratio: 0.1
     guess-padding: 250
   command:

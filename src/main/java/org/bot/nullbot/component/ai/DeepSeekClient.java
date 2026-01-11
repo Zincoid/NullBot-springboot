@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.component.storage.SysMsgStorage;
 import org.bot.nullbot.config.DeepSeekConfig;
+import org.bot.nullbot.enums.Scope;
 import org.bot.nullbot.dispatcher.CommandRegistry;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
@@ -70,7 +71,8 @@ public class DeepSeekClient
     private boolean thinking = false;  // 深度思考模式
     private boolean embedding = true;  // 嵌入命令模式
     private boolean embeddingAuth = false;  // 嵌入限权验证
-    private boolean embeddingLimit = false;  // 嵌入速率限制
+
+    private boolean embeddingLimit = false;  // 嵌入速率限制 只能 FALSE
 
     public DeepSeekClient(
             DeepSeekConfig deepSeekConfig,
@@ -89,14 +91,6 @@ public class DeepSeekClient
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(30))
                 .build();
-    }
-
-    public enum Scope {
-        Group, Personal, Monitor;
-        public Scope next() {
-            int nextOrdinal = (this.ordinal() + 1) % values().length;
-            return values()[nextOrdinal];
-        }
     }
 
     public String changeScope() {
