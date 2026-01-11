@@ -58,6 +58,7 @@ public class GroupSetCommand implements Command
                             yield settingManager.switchEmbedding(groupId);
                         }
                         case "eau" -> settingManager.switchEmbeddingAuth(groupId);
+                        case "cus" -> settingManager.switchCustom(groupId);
                         default -> throw new NoSuchMethodException("无此AI设置");
                     };
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[AI] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
@@ -115,7 +116,7 @@ public class GroupSetCommand implements Command
                 格式: GroupSet [操作类型] [可选: 参数...]
                 操作类型和参数:
                 - [-view] 获取群设置
-                - [-ai] [scp(聊天模式)|ati(防注入模式)|tkn(思考模式)|ebd(指令模式)|eau(指令验证)]
+                - [-ai] [scp(聊天模式)|ati(防注入模式)|tkn(思考模式)|ebd(指令模式)|eau(指令验证)|cus(自定义提示词模式)]
                 - [-monitor] [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
                 - [-guess] [切割比例] [内边距] 设置Guess游戏难度
                 中文命令: 群设置""", getAccess()
@@ -132,7 +133,7 @@ public class GroupSetCommand implements Command
                 操作类型和参数:
                 - [-view] 获取群设置
                 - [-ai] [scp(聊天模式)|ati(防注入模式)|tkn(思考模式)|ebd(指令模式)|eau(指令验证)]
-                - [-monitor] [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
+                - [-monitor] [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)|cus(自定义提示词模式)]
                 - [-guess] [切割比例(范围 0.05-0.3)] [内边距(范围 150-300)] 设置Guess游戏难度
                 示例:
                 GroupSet -view

@@ -18,7 +18,6 @@ public class DefaultConfig
     private boolean embedding;  // 嵌入命令模式
     private boolean embeddingAuth;  // 嵌入限权验证
     private boolean custom;  // 自定义提示词模式
-    private String customMessage;  // 自定义提示词
 
     private Boolean imageCollect;  // 图片收集
     private Boolean messageCollect;  // 消息收集
