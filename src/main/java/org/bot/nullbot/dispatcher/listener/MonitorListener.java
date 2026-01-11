@@ -12,6 +12,7 @@ import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.FunctionControl;
+import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.ChatMessage;
@@ -37,16 +38,13 @@ public class MonitorListener
     private final ChatStorage chatStorage;
     private final DeepSeekClient deepSeekClient;
     private final FileStorageConfig fileStorageConfig;
+    private final SettingManager settingManager;
 
     // =================== 串行监听方法 ===================
 
     @FunctionControl(config = "imageCollect")
     public void onGroupImageCollection(Bot bot, GroupMessageEvent event) {
-        List<Long> groupBypass = List.of(875310845L, 459358160L);  // 暂时直接设计针对群聊的规则
-        if(!groupBypass.contains(event.getGroupId())){
-            return;
-        }
-
+        if(!settingManager.getSetting(event.getGroupId()).getImageCollect()) return;
         boolean hasLogged = false;
         for(ArrayMsg msg : event.getArrayMsg()){
             if(msg.getType() == MsgTypeEnum.image){
@@ -70,6 +68,7 @@ public class MonitorListener
 
     @FunctionControl(config = "messageCollect")
     public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
+        if(!settingManager.getSetting(event.getGroupId()).getMessageCollect()) return;
         if(!(event.getMessage().startsWith("/Chat") || event.getMessage().startsWith("/聊天"))){  // Chat 命令会自动记录消息 跳过
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
@@ -80,13 +79,14 @@ public class MonitorListener
     }
 
     @FunctionControl(config = "keywordDetect")
-    public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {  // 暂时直接设计针对群聊的规则
+    public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {
+        if(!settingManager.getSetting(event.getGroupId()).getKeywordDetect()) return;
         if (event.getMessage().contains("男娘")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
             bot.sendGroupMsg(event.getGroupId(), "哪有男娘？", false);
             // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("哪有男娘？"), event, false, false));
         }
-        if (event.getMessage().contains("受着") && event.getGroupId() == 459358160L) {
+        if (event.getMessage().contains("受着")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"受着\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
             commandProcessor.processQQ(bot, new CommandEvent<>("UserBan", List.of(event.getSender().getUserId().toString(), "1"), event, false, false));
             // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("你也受着"), event, false, false));
@@ -99,6 +99,7 @@ public class MonitorListener
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
+        if(!settingManager.getSetting(event.getGroupId()).getPokeDetect()) return;
         if(Objects.equals(event.getTargetId(), event.getSelfId())){
             log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (已限制为戳Bot自己)", event.getGroupId(), event.getUserId(), event.getTargetId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
@@ -109,6 +110,7 @@ public class MonitorListener
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
+        if(!settingManager.getSetting(event.getGroupId()).getRecallDetect()) return;
         log.info("◉ [GroupMonitor:Recall] 来自群 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));
     }

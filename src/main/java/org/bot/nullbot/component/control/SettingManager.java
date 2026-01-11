@@ -16,6 +16,6 @@ public class SettingManager
     private final Map<Long, SettingInfo> settings = new ConcurrentHashMap<>();
 
     public SettingInfo getSetting(Long groupId) {
-        return settings.computeIfAbsent(groupId, k -> new SettingInfo(defaultConfig));
+        return settings.computeIfAbsent(groupId, k -> new SettingInfo(groupId, defaultConfig));
     }
 }

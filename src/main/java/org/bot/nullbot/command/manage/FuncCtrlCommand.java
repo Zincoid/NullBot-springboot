@@ -46,7 +46,7 @@ public class FuncCtrlCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ FuncCtrl 命令
-                功能: 转换功能启用状态
+                功能: 转换功能启用状态(全局)
                 限权: %d 级
                 格式: FuncCtrl [功能控制标志]
                 标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect

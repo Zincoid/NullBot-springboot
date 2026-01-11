@@ -26,12 +26,12 @@ public class FunctionManager  // 全局控制
             for (Field field : fields) {
                 field.setAccessible(true);
                 // 只处理布尔类型的字段
-                if (field.getType().equals(boolean.class) ||
-                        field.getType().equals(Boolean.class)) {
+                if (field.getType().equals(boolean.class) || field.getType().equals(Boolean.class)) {
                     String fieldName = field.getName();
                     Boolean value = (Boolean) field.get(defaultConfig);
                     if (value != null) {
-                        enableFlags.put(fieldName, value);
+                        // enableFlags.put(fieldName, value);
+                        enableFlags.put(fieldName, true);  // 全局管理 默认修改为全部启用
                     }
                 }
             }

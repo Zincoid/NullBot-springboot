@@ -8,13 +8,17 @@ import java.util.Map;
 @Data
 public class SettingInfo
 {
+    private Long groupId;
+
     private Boolean imageCollect;
     private Boolean keywordDetect;
     private Boolean pokeDetect;
     private Boolean messageCollect;
     private Boolean recallDetect;
 
-    public SettingInfo(DefaultConfig config) {
+    public SettingInfo(Long groupId, DefaultConfig config) {
+        this.groupId = groupId;
+
         this.imageCollect = config.getImageCollect();
         this.keywordDetect = config.getKeywordDetect();
         this.pokeDetect = config.getPokeDetect();
