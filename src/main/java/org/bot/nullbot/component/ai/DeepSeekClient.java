@@ -172,7 +172,7 @@ public class DeepSeekClient
 
             // 内嵌指令执行
             String response;
-            if (option.isCustom() && option.isEmbedding()) {
+            if (!option.isCustom() && option.isEmbedding()) {
                 Matcher m = Pattern.compile("\\{(.*?)}").matcher(originalResponse);
                 // 提取执行指令
                 while (m.find()) {
