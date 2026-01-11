@@ -59,7 +59,7 @@ public class FunctionManager  // 全局控制
     }
 
     public String getStatus() {
-        StringBuilder status = new StringBuilder(" ◉ Global 设置");
+        StringBuilder status = new StringBuilder(" ◉ Global 设置\n");
         Iterator<Map.Entry<String, Boolean>> iterator = enableFlags.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, Boolean> entry = iterator.next();
