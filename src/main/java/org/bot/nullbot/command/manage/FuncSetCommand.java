@@ -10,33 +10,48 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.control.FunctionManager;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"FuncCtrl", "功能控制"})
+import java.util.List;
+
+@CommandMapping({"FuncSet", "全局设置"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class FuncCtrlCommand implements Command
+public class FuncSetCommand implements Command
 {
     private final FunctionManager functionManager;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (!event.getCommandParameters().isEmpty()){
-                String function = event.getCommandParameters().getFirst();
-                Boolean isEnabled = functionManager.switchEnabled(function);
-                if (isEnabled != null){
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
-                    log.info("\t\t\t\t├─[FuncCtrl] 已切换 {} 功能状态 -> {}", function, isEnabled ? "ON" : "OFF");
-                }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] ❌无此功能标志", false);
-                    log.info("\t\t\t\t├─[FuncCtrl] 无此功能标志 - {}", function);
+            List<String> params = event.getCommandParameters();
+            Long groupId = groupMessageEvent.getGroupId();
+
+            try {
+                if (params.isEmpty()) throw new IllegalArgumentException("参数不足");
+                String option = params.get(0);
+
+                if ("-view".equals(option)) {
+                    String status = functionManager.getStatus();
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[全局设置] ℹ️已获取！\n" + status, false);
+                    log.info("\t\t\t\t├─[FuncSet] 已获取全局设置 - {}", groupId);
+                    return;
                 }
-            }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[功能控制] ❌参数不足", false);
-                log.info("\t\t\t\t├─[FuncCtrl] 参数不足");
+
+                if ("-set".equals(option)) {
+                    String func = params.get(1);
+                    Boolean isEnabled = functionManager.switchEnabled(func);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[全局设置] \uD83D\uDD04状态已切换: " + (isEnabled ? "ON" : "OFF"), false);
+                    log.info("\t\t\t\t├─[FuncSet] 已更改全局设置 {} -> {}", func, isEnabled ? "ON" : "OFF");
+                    return;
+                }
+
+                throw new NoSuchMethodException("无此设置");
+            } catch (Exception e) {
+                bot.sendGroupMsg(groupId, "[全局设置] ❌" + e.getMessage(), false);
+                log.info("\t\t\t\t├─[FuncSet] 全局设置出错 - {}", e.getMessage());
             }
         }else
-            log.info("\t\t\t\t├─[FuncCtrl] 未设计 - 非群消息事件响应方式");
+            log.info("\t\t\t\t├─[FuncSet] 未设计 - 非群消息事件响应方式");
     }
 
     @Override
