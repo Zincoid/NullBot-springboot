@@ -12,7 +12,7 @@ import org.bot.nullbot.component.storage.SysMsgStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"SysMsgSet", "系统消息设置"})
+@CommandMapping({"SysMsgSet", "自定义提示词"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -27,8 +27,8 @@ public class SysMsgSetCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long groupId = groupMessageEvent.getGroupId();
             if (!settingManager.getChatOption(groupId).isCustom()) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[自定义系统消息] ❌非自定义模式", false);
-                log.info("\t\t\t\t├─[AI.SysMsgSet] 非自定义模式");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[自定义提示词] ❌非Custom模式", false);
+                log.info("\t\t\t\t├─[AI.SysMsgSet] 非Custom模式");
                 return;
             }
             if(!event.getCommandParameters().isEmpty()){
@@ -38,10 +38,10 @@ public class SysMsgSetCommand implements Command
                 deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
                 sysMsgStorage.setCustomMessage(groupId, systemMessage);
 
-                bot.sendGroupMsg(groupId, "[自定义系统消息] ✅已设置！", false);
+                bot.sendGroupMsg(groupId, "[自定义提示词] ✅已设置！", false);
                 log.info("\t\t\t\t├─[AI.SysMsgSet] 自定义系统消息已设置 - {}", systemMessage);
             }else{
-                bot.sendGroupMsg(groupId, "[自定义系统消息] ❌无参数", false);
+                bot.sendGroupMsg(groupId, "[自定义提示词] ❌无参数", false);
                 log.info("\t\t\t\t├─[AI.SysMsgSet] 无参数");
             }
         }else
@@ -52,10 +52,10 @@ public class SysMsgSetCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ SysMsgSet 命令
-                功能: 设置AI自定义消息模式下的系统消息(并清空历史)
+                功能: 设置AI自定义消息模式下的系统提示词(并清空历史)
                 限权: %d 级
                 格式: SysMsgSet [提示词]
-                中文命令: 系统消息设置""", getAccess()
+                中文命令: 自定义提示词""", getAccess()
         );
     }
 }
