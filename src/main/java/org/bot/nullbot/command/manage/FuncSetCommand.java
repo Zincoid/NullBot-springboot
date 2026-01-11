@@ -60,10 +60,13 @@ public class FuncSetCommand implements Command
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ FuncCtrl 命令
-                功能: 转换全局功能启用状态
+                ◉ FuncSet 命令
+                功能: 设置全局功能
                 限权: %d 级
-                格式: FuncCtrl [功能控制标志]
+                格式: FuncSet [操作类型] [可选: 参数]
+                操作类型和参数:
+                -view 获取全局设置
+                -set [功能控制标志] 转换全局启用状态
                 标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect
                 中文命令: 功能控制""", getAccess()
         );
@@ -72,10 +75,13 @@ public class FuncSetCommand implements Command
     @Override
     public String getHelpForAI() {
         return String.format("""
-                ◉ FuncCtrl 命令
-                功能: 转换全局功能启用状态
+                ◉ FuncSet 命令
+                功能: 设置全局功能
                 限权: %d 级
-                格式: FuncCtrl [功能控制标志]
+                格式: FuncSet [操作类型] [可选: 参数]
+                操作类型和参数:
+                -view 获取全局设置
+                -set [功能控制标志] 转换全局启用状态
                 标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect
                 注意: 只有Zincoid可以调用！！！""", getAccess()
         );

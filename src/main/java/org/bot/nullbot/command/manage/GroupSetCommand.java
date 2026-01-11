@@ -69,8 +69,8 @@ public class GroupSetCommand implements Command
                 ◉ GroupSet 命令
                 功能: 设置群功能
                 限权: %d 级
-                格式: GroupSet [类型] [可选: 参数...]
-                类型和参数:
+                格式: GroupSet [操作类型] [可选: 参数...]
+                操作类型和参数:
                 -view (获取群设置)
                 -monitor [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
                 中文命令: 群设置""", getAccess()
@@ -83,8 +83,8 @@ public class GroupSetCommand implements Command
                 ◉ GroupSet 命令
                 功能: 设置群功能
                 限权: %d 级
-                格式: GroupSet [类型] [可选: 参数...]
-                类型和参数:
+                格式: GroupSet [操作类型] [可选: 参数...]
+                操作类型和参数:
                 -view (获取群设置)
                 -monitor [img(图片收集)|msg(消息收集)|key(关键词检测)|pok(戳一戳检测)|rcl(撤回检测)]
                 示例: GroupSet -monitor img
