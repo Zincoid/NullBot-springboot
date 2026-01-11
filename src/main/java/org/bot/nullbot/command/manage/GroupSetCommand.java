@@ -115,32 +115,33 @@ public class GroupSetCommand implements Command
                 ◉ GroupSet 命令
                 功能: 设置群功能
                 限权: %d 级
-                格式: GroupSet [操作] [可选: 参数]
-                中文命令: 群设置
+                格式: GroupSet [操作] [参数]
                 
                 操作与参数:
                 • [-view]
-                  获取群设置
+                   获取群设置
                 
                 • [-ai] [模式选项]
-                  模式选项:
-                  scp - 聊天模式
-                  ati - 防注入模式
-                  tkn - 思考模式
-                  ebd - 指令模式
-                  eau - 指令验证
-                  cus - 自定义提示词模式
+                   模式选项:
+                   scp - 作用域切换
+                   ati - 防注入模式
+                   tkn - 思考模式
+                   ebd - 指令模式
+                   eau - 指令验证
+                   cus - 自定义提示词模式
                 
                 • [-monitor] [监测类型]
-                  监测类型:
-                  img - 图片收集
-                  msg - 消息收集
-                  key - 关键词检测
-                  pok - 戳一戳检测
-                  rcl - 撤回检测
+                   监测类型:
+                   img - 图片收集
+                   msg - 消息收集
+                   key - 关键词检测
+                   pok - 戳一戳检测
+                   rcl - 撤回检测
                 
                 • [-guess] [切割比例] [内边距]
-                  设置 Guess 游戏难度""", getAccess()
+                   设置 Guess 游戏难度
+                
+                中文命令: 群设置""", getAccess()
         );
     }
 
@@ -151,22 +152,21 @@ public class GroupSetCommand implements Command
                 功能: 设置群功能
                 限权: %d 级
                 格式: GroupSet [操作] [可选: 参数]
-                中文命令: 群设置
                 
                 操作与参数:
                 • [-view]
-                  获取群设置
+                   获取群设置
                 
                 • [-monitor] [监测类型]
-                  监测类型:
-                  img - 图片收集
-                  msg - 消息收集
-                  key - 关键词检测
-                  pok - 戳一戳检测
-                  rcl - 撤回检测
+                   监测类型:
+                   img - 图片收集
+                   msg - 消息收集
+                   key - 关键词检测
+                   pok - 戳一戳检测
+                   rcl - 撤回检测
                 
-                • [-guess] [切割比例(范围 0.05-0.3)] [内边距(范围 150-300)]
-                  设置 Guess 游戏难度
+                • [-guess] [切割比例] [内边距]
+                   设置 Guess 游戏难度
                 
                 示例:
                 GroupSet -view
