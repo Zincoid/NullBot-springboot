@@ -65,7 +65,8 @@ public class DeepSeekClient
                 "4ed1314d",
                 "65275d24",
                 "1e7bd161",
-                "b6713262"
+                "b6713262",
+                "db3fbe2b"
         ));
         AI_COMMAND_WHITE_LIST = Collections.unmodifiableSet(commands);
     }
