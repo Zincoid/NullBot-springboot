@@ -73,7 +73,7 @@ public class ChatStorage
             if (history == null || history.isEmpty()) return new ArrayList<>();
 
             List<ChatMessage> filtered = history.stream()
-                    .filter(msg -> msg != null && "assistant".equals(msg.getRole()))
+                    .filter(msg -> msg != null && msg.getMessageId() != null && "assistant".equals(msg.getRole()))
                     .toList();
 
             int startIndex = Math.max(0, filtered.size() - n);
