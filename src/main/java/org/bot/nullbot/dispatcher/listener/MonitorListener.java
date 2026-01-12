@@ -20,6 +20,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.entity.info.FileInfo;
+import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.scheduling.annotation.Async;
@@ -39,6 +40,7 @@ public class MonitorListener
     private final DeepSeekClient deepSeekClient;
     private final FileStorageConfig fileStorageConfig;
     private final SettingManager settingManager;
+    private final FileService fileService;
 
     // =================== 串行监听方法 ===================
 
@@ -57,6 +59,19 @@ public class MonitorListener
                 String fileName = originName.substring(0, originName.lastIndexOf("."));
                 try {
                     FileInfo fileInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/monitor", fileName);
+
+                    Long userId = event.getSender().getUserId();
+                    String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+                    if(!fileService.addFileRecordForBot(
+                            fileStorageConfig.getImagePath() + "/collect",
+                            fileInfo.getFileName(),
+                            fileInfo.getFileSize(),
+                            fileInfo.getLastModified(),
+                            userId, userName)
+                    ) {
+                        log.info("└─[Error] DbSave Failed");
+                    }
+
                     log.info("└─[Saved] {}", fileInfo.getFileName());
                 } catch (Exception e) {
                     log.info("└─[Error] {}", e.getMessage());
