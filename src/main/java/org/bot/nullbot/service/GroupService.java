@@ -27,7 +27,7 @@ public interface GroupService
 
     void addGroups(List<GroupPO> groups);
 
-    boolean deleteById(Integer id);
+    boolean deleteById(Long groupId);
 
     boolean updateGroup(GroupPO group);
 }

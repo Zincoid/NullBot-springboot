@@ -95,7 +95,7 @@ public class GroupServiceImpl implements GroupService
     public void addGroups(List<GroupPO> groups) { groupMapper.insert(groups); }
 
     @Override
-    public boolean deleteById(Integer id) { return groupMapper.deleteById(id) == 1; }
+    public boolean deleteById(Long groupId) { return groupMapper.deleteById(groupId) == 1; }
 
     @Override
     public boolean updateGroup(GroupPO group) {
