@@ -279,4 +279,5 @@
 - [ 重要！] 大幅改动 DeepSeekClient 和 所有相关架构；
 - 优化 FunctionManager 的 初始化方法；
 - 优化 大部分指令结构；
+- 改动 AI 可执行命令；
 - 优化 文本。
