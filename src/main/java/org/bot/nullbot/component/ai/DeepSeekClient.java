@@ -27,6 +27,7 @@ import org.bot.nullbot.dispatcher.CommandRegistry;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.EmbeddedCommandEvent;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class DeepSeekClient
 {
+    @Value("${nullbot.bot-id}")
+    private Long botId;
+
     private final DeepSeekConfig deepSeekConfig;
     private final ChatStorage chatStorage;
     private final SysMsgStorage sysMsgStorage;
@@ -61,7 +65,6 @@ public class DeepSeekClient
                 "4ed1314d",
                 "65275d24",
                 "1e7bd161",
-                "db3fbe2b",
                 "b6713262"
         ));
         AI_COMMAND_WHITE_LIST = Collections.unmodifiableSet(commands);
@@ -207,6 +210,14 @@ public class DeepSeekClient
                             new CommandEvent<>(event.getEvent(), command,
                                     option.isEmbeddingAuth(), embeddingLimit)
                     ));
+                    // 记录指令到存储
+                    chatMessages.add(new ChatMessage(
+                            null,
+                            "assistant",
+                            segment,  // 只存储当前片段
+                            botId,
+                            "Null"
+                    ));
                 }
             } else {
                 // 发送消息（非空文本）
@@ -218,8 +229,8 @@ public class DeepSeekClient
                             msgIdActionData.getData().getMessageId(),
                             "assistant",
                             text,  // 只存储当前片段
-                            null,
-                            null
+                            botId,
+                            "Null"
                     ));
                 }
             }
@@ -245,7 +256,7 @@ public class DeepSeekClient
         // 发送消息
         ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
         // 记录AI回复至存储
-        chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", originalResponse, null, null));
+        chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", originalResponse, botId, "Null"));
 
         return response;
     }
@@ -264,7 +275,7 @@ public class DeepSeekClient
 
         systemMessage = systemMessage +
                 "\n你在一个群聊中接收对话，不同用户的消息会带有消息ID和用户标识，格式为[Message ID][Username(UserId)]。" +
-                "\n请根据标识区分不同消息和用户，并且回复消息时不要带以上那种格式化的标识。";
+                "\n请根据标识区分不同消息和用户，回复消息时不要带以上那种格式化的标识。";
 
         // 添加 指令模式提示词
         if(!option.isCustom() && option.isEmbedding()) {
@@ -363,15 +374,11 @@ public class DeepSeekClient
      *  @return 历史记录
      */
     public String getHistoryAsString(Long groupId, Long userId, ChatOption option) {
-        String history = switch (option.getScope()) {
-            case Group -> chatStorage.getGroupHistoryAsString(groupId);
-            case Personal -> chatStorage.getUserHistoryAsString(userId);
-            case Monitor -> chatStorage.getMonitorHistoryAsString(groupId);
+        return switch (option.getScope()) {
+            case Group -> chatStorage.getGroupHistoryAsString(groupId, option);
+            case Personal -> chatStorage.getUserHistoryAsString(userId, option);
+            case Monitor -> chatStorage.getMonitorHistoryAsString(groupId, option);
         };
-        if(!option.isCustom() && option.isEmbedding()) {
-            history = history.replaceAll("\\{.*?}", "");
-        }
-        return history;
     }
 
     /**
