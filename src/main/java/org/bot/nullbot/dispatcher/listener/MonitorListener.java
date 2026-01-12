@@ -42,7 +42,7 @@ public class MonitorListener
 
     // =================== 串行监听方法 ===================
 
-    @FunctionControl(config = "imageCollect")
+    @FunctionControl(config = "imgCollect")
     public void onGroupImageCollection(Bot bot, GroupMessageEvent event) {
         if(!settingManager.isImageCollect(event.getGroupId())) return;
         boolean hasLogged = false;
@@ -66,7 +66,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "messageCollect")
+    @FunctionControl(config = "msgCollect")
     public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
         if(!settingManager.isMessageCollect(event.getGroupId())) return;
         if(!(event.getMessage().startsWith("/Chat") || event.getMessage().startsWith("/聊天"))){  // Chat 命令会自动记录消息 跳过
@@ -78,7 +78,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "keywordDetect")
+    @FunctionControl(config = "keyDetect")
     public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {
         if(!settingManager.isKeywordDetect(event.getGroupId())) return;
         if (event.getMessage().contains("男娘")) {

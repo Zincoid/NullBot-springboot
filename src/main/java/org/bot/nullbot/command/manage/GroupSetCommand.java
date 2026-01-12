@@ -124,18 +124,18 @@ public class GroupSetCommand implements Command
                 • [-ai] [模式选项]
                    模式选项:
                    scp - 作用域切换
-                   ati - 防注入模式
+                   ati - 防注模式
                    tkn - 思考模式
                    ebd - 指令模式
                    eau - 指令验证
-                   cus - 自定义提示词模式
+                   cus - 自定模式
                 
                 • [-monitor] [监测类型]
                    监测类型:
                    img - 图片收集
                    msg - 消息收集
-                   key - 关键词检测
-                   pok - 戳一戳检测
+                   key - 词语检测
+                   pok - 戳戳检测
                    rcl - 撤回检测
                 
                 • [-guess] [切割比例] [内边距]
@@ -164,8 +164,8 @@ public class GroupSetCommand implements Command
                    监测类型:
                    img - 图片收集
                    msg - 消息收集
-                   key - 关键词检测
-                   pok - 戳一戳检测
+                   key - 词语检测
+                   pok - 戳戳检测
                    rcl - 撤回检测
                 
                 • [-guess] [切割比例] [内边距]
