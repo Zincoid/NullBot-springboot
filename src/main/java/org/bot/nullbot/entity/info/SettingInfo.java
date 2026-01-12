@@ -1,10 +1,14 @@
 package org.bot.nullbot.entity.info;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bot.nullbot.config.DefaultConfig;
 import org.bot.nullbot.enums.Scope;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SettingInfo
 {
     private Long groupId;
