@@ -67,7 +67,8 @@ public class RecallAICommand implements Command
                 格式: db3fbe2b [可选: 条数(默认为1)]
                 示例: db3fbe2b 1
                 注意: 已撤回的消息依然会存在于之后发给你的消息列表里！
-                撤回你自己的消息必须用这个，不要用撤回用户消息的那个指令！""", getAccess()
+                撤回你自己的消息必须用这个，不要用撤回用户消息的那个指令！
+                该指令使用时必须置于回复的开头！""", getAccess()
         );
     }
 }
