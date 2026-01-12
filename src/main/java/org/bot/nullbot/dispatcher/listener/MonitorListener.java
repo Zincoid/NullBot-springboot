@@ -63,7 +63,7 @@ public class MonitorListener
                     Long userId = event.getSender().getUserId();
                     String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
                     if(!fileService.addFileRecordForBot(
-                            fileStorageConfig.getImagePath() + "/collect",
+                            fileStorageConfig.getImagePath() + "/monitor",
                             fileInfo.getFileName(),
                             fileInfo.getFileSize(),
                             fileInfo.getLastModified(),
