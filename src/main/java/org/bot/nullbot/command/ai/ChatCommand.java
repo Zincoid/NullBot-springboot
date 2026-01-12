@@ -50,7 +50,6 @@ public class ChatCommand implements Command
                     settingManager.getChatOption(groupId)
             );
 
-            // bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[AI.Chat] 已回复: {}", response.replaceAll("\\R", " "));
         }else
             log.info("\t\t\t\t├─[AI.Chat] 未设计 - 非群消息事件响应方式");

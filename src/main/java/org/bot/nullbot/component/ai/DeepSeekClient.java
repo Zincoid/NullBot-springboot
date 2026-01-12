@@ -190,7 +190,7 @@ public class DeepSeekClient
             chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", originalResponse, null, null));
             return response;
         } catch (Exception e) {
-            chatMessages.removeLast();  // 如果请求失败移除刚才添加的用户消息
+            // chatMessages.removeLast();  // 如果请求失败移除刚才添加的用户消息
             throw e;
         } finally {
             lock.unlock();  // 解锁历史存储

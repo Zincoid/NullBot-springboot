@@ -48,7 +48,6 @@ public class PokeReactCommand implements Command
                         settingManager.getChatOption(groupId)
                 );
 
-                // bot.sendGroupMsg(groupId, response, false);
                 log.info("\t\t\t\t├─[AI.PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", " "));
             }
         }else
