@@ -157,6 +157,9 @@ public class GroupSetCommand implements Command
                 • [-view]
                    获取群设置
                 
+                • [-ai] [模式选项]
+                   你不可修改该项
+                
                 • [-monitor] [监测类型]
                    监测类型:
                    img - 图片收集
