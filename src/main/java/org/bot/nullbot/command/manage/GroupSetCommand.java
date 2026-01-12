@@ -158,7 +158,7 @@ public class GroupSetCommand implements Command
                    获取群设置
                 
                 • [-ai] [模式选项]
-                   你不可修改该项
+                   禁止修改
                 
                 • [-monitor] [监测类型]
                    监测类型:
@@ -177,6 +177,7 @@ public class GroupSetCommand implements Command
                 GroupSet -guess 0.1 250
                 
                 注意:
+                你不可执行 [-ai] 相关设置指令！
                 针对Guess游戏 - 切割比例越小越难 内边距越小越难""", getAccess()
         );
     }
