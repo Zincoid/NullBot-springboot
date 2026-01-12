@@ -19,7 +19,7 @@ public class FileUtil
         }
         sb.append(root.getFileName().toString()).append("\n");
         buildTreeString(root, "", true, sb, maxDepth, 0);
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     private static void buildTreeString(Path directory, String prefix, boolean isLast,

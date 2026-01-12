@@ -1,26 +1,33 @@
 package org.bot.nullbot.component.control;
 
+import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.annotation.FunctionControl;
 import org.bot.nullbot.config.DefaultConfig;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
-import java.util.Iterator;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class FunctionManager  // 全局控制
 {
+    private final ApplicationContext applicationContext;
+
     private final DefaultConfig defaultConfig;
     private final Map<String, Boolean> enableFlags = new ConcurrentHashMap<>();
 
-    public FunctionManager(DefaultConfig defaultConfig) {
+    public FunctionManager(ApplicationContext applicationContext, DefaultConfig defaultConfig) {
+        this.applicationContext = applicationContext;
         this.defaultConfig = defaultConfig;
-        // 使用反射获取所有字段
-        loadConfigViaReflection();
+        // loadConfigViaDefaultConfig();
+        loadConfigViaAnnotation();
     }
 
-    private void loadConfigViaReflection() {
+    private void loadConfigViaDefaultConfig() {
         try {
             // 获取DefaultConfig的所有字段
             Field[] fields = defaultConfig.getClass().getDeclaredFields();
@@ -38,6 +45,31 @@ public class FunctionManager  // 全局控制
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void loadConfigViaAnnotation() {
+        List<String> configs = new ArrayList<>();
+        // 扫描类级别的注解
+        String[] beanNames = applicationContext.getBeanDefinitionNames();
+        for (String beanName : beanNames) {
+            Object bean = applicationContext.getBean(beanName);
+            Class<?> beanClass = bean.getClass();
+            // 获取类上的注解
+            FunctionControl classAnnotation = AnnotationUtils.findAnnotation(
+                    beanClass, FunctionControl.class);
+            if (classAnnotation != null) {
+                enableFlags.put(classAnnotation.config(), true);
+            }
+            // 扫描方法级别的注解
+            Arrays.stream(beanClass.getDeclaredMethods())
+                    .forEach(method -> {
+                        FunctionControl methodAnnotation = AnnotationUtils.findAnnotation(
+                                method, FunctionControl.class);
+                        if (methodAnnotation != null) {
+                            enableFlags.put(methodAnnotation.config(), true);
+                        }
+                    });
         }
     }
 
