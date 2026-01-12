@@ -269,7 +269,7 @@ public class DeepSeekClient
         // 添加 指令模式提示词
         if(!option.isCustom() && option.isEmbedding()) {
             systemMessage = systemMessage +
-                    "\n你可以使用 {指令} 在回复中嵌入指令来进行各种操作。" +
+                    "\n你可以使用 {指令} 在回复中嵌入指令来进行各种操作，如果你想要分开发送消息也可以使用空指令 {} 来分割。" +
                     "\n指令使用示例如下：" +
                     "\n当有人想要看二次元图片或者色图时，你可以使用 {Anime} 指令，这样就能自动调用图片发送。" +
                     "\n所有可用指令列表如下：" +
