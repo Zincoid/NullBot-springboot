@@ -71,22 +71,4 @@ public class FuncSetCommand implements Command
                 中文命令: 功能控制""", getAccess()
         );
     }
-
-    @Override
-    public String getHelpForAI() {
-        return String.format("""
-                ◉ FuncSet 命令
-                功能: 设置全局功能
-                限权: %d 级
-                格式: FuncSet [操作类型] [可选: 参数]
-                操作类型和参数:
-                - [-view] 获取全局设置
-                - [-monitor] [功能标志] 更改启用状态
-                标志: imageCollect/keywordDetect/pokeDetect/messageCollect/recallDetect
-                示例:
-                FuncSet -view
-                FuncSet -monitor imageCollect
-                注意: 只有Zincoid可以调用！！！""", getAccess()
-        );
-    }
 }

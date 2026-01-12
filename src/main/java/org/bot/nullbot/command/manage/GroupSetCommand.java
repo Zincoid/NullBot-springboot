@@ -174,7 +174,6 @@ public class GroupSetCommand implements Command
                 GroupSet -guess 0.1 250
                 
                 注意:
-                只有Zincoid可以调用！！！
                 针对Guess游戏 - 切割比例越小越难 内边距越小越难""", getAccess()
         );
     }

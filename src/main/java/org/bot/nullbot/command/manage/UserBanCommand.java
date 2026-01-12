@@ -55,7 +55,7 @@ public class UserBanCommand implements Command
                 功能: 用户禁言(时长设置为0则解除禁言)
                 限权: %d 级
                 格式: UserBan [QQ号] [时长(分钟)]
-                注意: 只有Zincoid可以调用！！！或者你想禁言某人时也可以自己主动调用！！！""", getAccess()
+                注意: 你想禁言某人时可以自己主动调用！""", getAccess()
         );
     }
 }

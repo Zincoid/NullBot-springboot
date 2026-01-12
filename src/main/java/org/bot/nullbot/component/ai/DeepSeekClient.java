@@ -57,7 +57,7 @@ public class DeepSeekClient
                 "aud", "vid", "img", "say",
                 "ChatHistory", "ChatReset",
                 "Convert", "Anime", "Guess",
-                "AccessSet", "GroupSet", "FuncSet", "UserBan",
+                "AccessSet", "GroupSet", "UserBan",
                 "Help", "ImageFolder", "PUBG",
 
                 // 加密命令
