@@ -47,7 +47,7 @@ public class RecallUserCommand implements Command
                 格式: b6713262 [Message ID]
                 示例: b6713262 965922865
                 注意: 已撤回的消息依然会存在于之后发给你的消息列表里！
-                撤回用户消息必须用这个，不要用撤回AI消息的那个指令！""", getAccess()
+                撤回其他人的消息用这个，撤回你自己的消息不要用这个！""", getAccess()
         );
     }
 }
