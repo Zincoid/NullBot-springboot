@@ -344,7 +344,7 @@ public class FileServiceImpl implements FileService
         // 重命名文件
         boolean renameSuccess = oldFile.renameTo(newFile);
         if (!renameSuccess) {
-            log.error("文件重命名失败: {} -> {}", oldFilePath, newFilePath);
+            // log.info("文件重命名失败: {} -> {}", oldFilePath, newFilePath);
             return WebResult.fail().addMsg("文件重命名失败");
         }
 
@@ -360,6 +360,94 @@ public class FileServiceImpl implements FileService
 
         // log.info("文件重命名成功: {} -> {}", oldFilePath, newFilePath);
         return WebResult.success().addMsg("重命名成功");
+    }
+
+    @Override
+    @Transactional
+    public WebResult moveFile(Integer id, String newDir) {
+        // 获取源文件信息
+        FilePO sourceFile = fileMapper.selectById(id);
+        if (sourceFile == null) {
+            return WebResult.fail().addMsg("文件不存在");
+        }
+
+        // 构建目标目录的完整路径
+        String targetFullDir;
+        String fileStorageDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
+        if (newDir.equals("/"))
+            targetFullDir = fileStorageDir;
+        else
+            targetFullDir = fileStorageDir + newDir;
+
+        // 检查源文件和目标目录是否相同
+        if (sourceFile.getDirectory().equals(targetFullDir)) {
+            return WebResult.fail().addMsg("目标目录与当前位置相同");
+        }
+
+        // 检查目标目录是否存在（数据库和文件系统）
+        // 数据库检查
+        Path targetPath = Paths.get(targetFullDir);
+        FilePO targetDir = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
+                .eq(FilePO::getDirectory, targetPath.getParent().toString())
+                .eq(FilePO::getFileName, targetPath.getFileName().toString())
+                .eq(FilePO::getIsDir, 1));
+        if (targetDir == null) {
+            return WebResult.fail().addMsg("目标目录在数据库中不存在");
+        }
+        // 文件系统检查
+        File targetDirFile = new File(targetFullDir);
+        if (!targetDirFile.exists() || !targetDirFile.isDirectory()) {
+            return WebResult.fail().addMsg("目标目录在文件系统中不存在");
+        }
+
+        // 检查目标目录下是否已存在同名文件
+        LambdaQueryWrapper<FilePO> conflictCheck = new LambdaQueryWrapper<>();
+        conflictCheck.eq(FilePO::getDirectory, targetFullDir)
+                .eq(FilePO::getFileName, sourceFile.getFileName());
+
+        if (fileMapper.selectCount(conflictCheck) > 0) {
+            return WebResult.fail().addMsg("目标目录下已存在同名文件");
+        }
+
+        // 检查文件系统是否存在冲突
+        String sourcePath = sourceFile.getDirectory() + "/" + sourceFile.getFileName();
+        String targetPathStr = targetFullDir + "/" + sourceFile.getFileName();
+        File sourceFileSystem = new File(sourcePath);
+        File targetFileSystem = new File(targetPathStr);
+        if (!sourceFileSystem.exists()) {
+            return WebResult.fail().addMsg("源文件在文件系统中不存在");
+        }
+        if (targetFileSystem.exists()) {
+            return WebResult.fail().addMsg("目标目录下已存在同名文件（文件系统）");
+        }
+
+        // 执行移动操作（文件系统）
+        try {
+            boolean moveSuccess = sourceFileSystem.renameTo(targetFileSystem);
+            if (!moveSuccess) {
+                // log.info("文件移动失败: {} -> {}", sourcePath, targetPathStr);
+                return WebResult.fail().addMsg("文件移动失败");
+            }
+        } catch (SecurityException e) {
+            // log.info("移动文件时发生安全异常: {}", e.getMessage());
+            return WebResult.fail().addMsg("权限不足 无法移动文件");
+        }
+
+        // 如果是目录，更新所有子文件的路径
+        if (sourceFile.getIsDir() == 1) {
+            updateSubFilesPathForMove(sourceFile.getDirectory() + "/" + sourceFile.getFileName(),
+                    targetFullDir + "/" + sourceFile.getFileName());
+        }
+
+        // 更新数据库记录
+        // 保存源文件的 visible 状态 或者 继承目标目录的 visible (根据需求选择)
+        // 选择继承目标目录的 visible
+        sourceFile.setVisible(targetDir.getVisible());
+        sourceFile.setDirectory(targetFullDir);
+        fileMapper.updateById(sourceFile);
+
+        // log.info("文件移动成功: {} -> {}", sourcePath, targetPathStr);
+        return WebResult.success().addMsg("移动成功");
     }
 
     @Override
@@ -392,6 +480,19 @@ public class FileServiceImpl implements FileService
     }
 
     // =================== 其他工具 ===================
+
+    private void updateSubFilesPathForMove(String oldDirPath, String newDirPath) {
+        // 查询所有以原目录路径开头的文件
+        LambdaQueryWrapper<FilePO> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.likeRight(FilePO::getDirectory, oldDirPath + "/");
+        List<FilePO> subFiles = fileMapper.selectList(queryWrapper);
+        for (FilePO subFile : subFiles) {
+            // 替换目录路径部分
+            String newSubDirPath = subFile.getDirectory().replace(oldDirPath, newDirPath);
+            subFile.setDirectory(newSubDirPath);
+            fileMapper.updateById(subFile);
+        }
+    }
 
     private void deleteFileByDir(java.io.File dir){
         java.io.File[] files = dir.listFiles();

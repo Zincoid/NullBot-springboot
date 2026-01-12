@@ -31,5 +31,7 @@ public interface FileService
 
     WebResult renameFile(Integer id, String newFileName);
 
+    WebResult moveFile(Integer id, String newDir);
+
     WebResult setVisible(Integer id, Boolean visible);
 }
