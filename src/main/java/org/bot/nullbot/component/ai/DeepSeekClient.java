@@ -179,7 +179,7 @@ public class DeepSeekClient
             if (!option.isCustom() && option.isEmbedding()) {
                 response = executeEmbeddingChain(originalResponse, chatMessages, groupId, bot, event, option);
             } else
-                response = originalResponse.trim();
+                response = executeBasic(originalResponse, chatMessages, groupId, bot);
             return response;
         } catch (Exception e) {
             if(option.getScope() != Scope.Monitor)
@@ -191,8 +191,20 @@ public class DeepSeekClient
     }
 
     /**
+     * 执行非嵌入模式处理逻辑
+     * @return 处理过的消息
+     */
+    String executeBasic(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot) {
+        String response = originalResponse.trim();
+        // 发送消息
+        ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
+        // 记录AI回复至存储
+        chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", response, botId, "Null"));
+        return originalResponse;
+    }
+
+    /**
      * 执行嵌入模式处理逻辑 (链式)
-     * @param originalResponse 原始消息
      * @return 去除指令的消息
      */
     String executeEmbeddingChain(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot, CommandEvent<?> event, ChatOption option) throws Exception {
@@ -241,7 +253,6 @@ public class DeepSeekClient
 
     /**
      * 执行嵌入模式处理逻辑
-     * @param originalResponse 原始消息
      * @return 去除指令的消息
      */
     @Deprecated
