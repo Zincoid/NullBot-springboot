@@ -368,7 +368,7 @@ public class FileServiceImpl implements FileService
         // 获取源文件信息
         FilePO sourceFile = fileMapper.selectById(id);
         if (sourceFile == null) {
-            return WebResult.fail().addMsg("文件不存在");
+            return WebResult.fail().addMsg("数据库 - 文件不存在");
         }
 
         // 构建目标目录的完整路径
@@ -381,7 +381,7 @@ public class FileServiceImpl implements FileService
 
         // 检查源文件和目标目录是否相同
         if (sourceFile.getDirectory().equals(targetFullDir)) {
-            return WebResult.fail().addMsg("目标目录与当前位置相同");
+            return WebResult.fail().addMsg("数据库 - 路径未修改");
         }
 
         // 检查目标目录是否存在（数据库和文件系统）
@@ -392,12 +392,12 @@ public class FileServiceImpl implements FileService
                 .eq(FilePO::getFileName, targetPath.getFileName().toString())
                 .eq(FilePO::getIsDir, 1));
         if (targetDir == null) {
-            return WebResult.fail().addMsg("目标目录在数据库中不存在");
+            return WebResult.fail().addMsg("数据库 - 目标路径不存在");
         }
         // 文件系统检查
         File targetDirFile = new File(targetFullDir);
         if (!targetDirFile.exists() || !targetDirFile.isDirectory()) {
-            return WebResult.fail().addMsg("目标目录在文件系统中不存在");
+            return WebResult.fail().addMsg("文件系统 - 目标路径不存在");
         }
 
         // 检查目标目录下是否已存在同名文件
@@ -406,7 +406,7 @@ public class FileServiceImpl implements FileService
                 .eq(FilePO::getFileName, sourceFile.getFileName());
 
         if (fileMapper.selectCount(conflictCheck) > 0) {
-            return WebResult.fail().addMsg("目标目录下已存在同名文件");
+            return WebResult.fail().addMsg("数据库 - 路径下存在同名文件");
         }
 
         // 检查文件系统是否存在冲突
@@ -415,10 +415,10 @@ public class FileServiceImpl implements FileService
         File sourceFileSystem = new File(sourcePath);
         File targetFileSystem = new File(targetPathStr);
         if (!sourceFileSystem.exists()) {
-            return WebResult.fail().addMsg("源文件在文件系统中不存在");
+            return WebResult.fail().addMsg("文件系统 - 源文件不存在");
         }
         if (targetFileSystem.exists()) {
-            return WebResult.fail().addMsg("目标目录下已存在同名文件（文件系统）");
+            return WebResult.fail().addMsg("文件系统 - 路径下存在同名文件");
         }
 
         // 执行移动操作（文件系统）
@@ -426,11 +426,11 @@ public class FileServiceImpl implements FileService
             boolean moveSuccess = sourceFileSystem.renameTo(targetFileSystem);
             if (!moveSuccess) {
                 // log.info("文件移动失败: {} -> {}", sourcePath, targetPathStr);
-                return WebResult.fail().addMsg("文件移动失败");
+                return WebResult.fail().addMsg("文件系统 - 文件移动失败");
             }
         } catch (SecurityException e) {
             // log.info("移动文件时发生安全异常: {}", e.getMessage());
-            return WebResult.fail().addMsg("权限不足 无法移动文件");
+            return WebResult.fail().addMsg("文件系统 - 权限不足无法移动");
         }
 
         // 如果是目录，更新所有子文件的路径
@@ -441,8 +441,7 @@ public class FileServiceImpl implements FileService
 
         // 更新数据库记录
         // 保存源文件的 visible 状态 或者 继承目标目录的 visible (根据需求选择)
-        // 选择继承目标目录的 visible
-        sourceFile.setVisible(targetDir.getVisible());
+        // sourceFile.setVisible(targetDir.getVisible());
         sourceFile.setDirectory(targetFullDir);
         fileMapper.updateById(sourceFile);
 
@@ -484,7 +483,7 @@ public class FileServiceImpl implements FileService
     private void updateSubFilesPathForMove(String oldDirPath, String newDirPath) {
         // 查询所有以原目录路径开头的文件
         LambdaQueryWrapper<FilePO> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.likeRight(FilePO::getDirectory, oldDirPath + "/");
+        queryWrapper.likeRight(FilePO::getDirectory, oldDirPath);
         List<FilePO> subFiles = fileMapper.selectList(queryWrapper);
         for (FilePO subFile : subFiles) {
             // 替换目录路径部分
