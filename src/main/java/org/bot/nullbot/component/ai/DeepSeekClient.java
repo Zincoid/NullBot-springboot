@@ -207,7 +207,7 @@ public class DeepSeekClient
      * 执行嵌入模式处理逻辑 (链式)
      * @return 去除指令的消息
      */
-    String executeEmbeddingChain(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot, CommandEvent<?> event, ChatOption option) throws Exception {
+    String executeEmbeddingChain(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot, CommandEvent<?> event, ChatOption option) {
         String response = originalResponse.trim();
         // 使用正则匹配所有{指令}和文本部分
         Pattern pattern = Pattern.compile("(\\{.*?}|[^{]+)");
