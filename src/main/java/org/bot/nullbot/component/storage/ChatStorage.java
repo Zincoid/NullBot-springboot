@@ -98,19 +98,24 @@ public class ChatStorage
         }
     }
 
-    public String getUserHistoryAsString(Long userId) { return getHistoryStringForAI(userId, userHistories); }
-    public String getGroupHistoryAsString(Long groupId) { return getHistoryStringForAI(groupId, groupHistories); }
-    public String getMonitorHistoryAsString(Long groupId) { return getHistoryStringForAI(groupId, monitorHistories); }
+    public String getUserHistoryAsString(Long userId, ChatOption option) { return getHistoryStringForAI(userId, userHistories, option); }
+    public String getGroupHistoryAsString(Long groupId, ChatOption option) { return getHistoryStringForAI(groupId, groupHistories, option); }
+    public String getMonitorHistoryAsString(Long groupId, ChatOption option) { return getHistoryStringForAI(groupId, monitorHistories, option); }
 
-    private String getHistoryStringForAI(Long id, Map<Long, List<ChatMessage>> histories) {
+    private String getHistoryStringForAI(Long id, Map<Long, List<ChatMessage>> histories, ChatOption option) {
         StringBuilder sb = new StringBuilder();
         List<ChatMessage> history =  histories.get(id);
         if (history == null || history.isEmpty()) return "\n无对话历史";
         for (ChatMessage msg : history) {
             if("user".equals(msg.getRole()))
                 sb.append("\n---\n").append(msg.getUserName()).append("(").append(msg.getUserId()).append("): ").append(msg.getContent());
-            else
-                sb.append("\n---\n").append("AI: ").append(msg.getContent());
+            else{
+                String content = msg.getContent();
+                if(!option.isCustom() && option.isEmbedding())
+                    if(content.startsWith("{") && content.endsWith("}")) continue;
+                sb.append("\n---\n").append("AI: ").append(content);
+            }
+
         }
         return sb.toString();
     }
