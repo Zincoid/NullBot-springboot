@@ -94,6 +94,11 @@ public class FileController
         return fileService.renameFile(id, newFileName);
     }
 
+    @GetMapping("/move/{id}")
+    public WebResult moveFile(@PathVariable Integer id, @RequestParam(defaultValue = "") String newDir){
+        return fileService.moveFile(id, newDir);
+    }
+
     @GetMapping("/setVisible/{id}")
     public WebResult setVisible(@PathVariable Integer id, @RequestParam Boolean visible){
         return fileService.setVisible(id, visible);
