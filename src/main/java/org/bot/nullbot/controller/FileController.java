@@ -95,7 +95,7 @@ public class FileController
     }
 
     @GetMapping("/move/{id}")
-    public WebResult moveFile(@PathVariable Integer id, @RequestParam(defaultValue = "") String newDir){
+    public WebResult moveFile(@PathVariable Integer id, @RequestParam String newDir){
         return fileService.moveFile(id, newDir);
     }
 
