@@ -27,9 +27,13 @@ public class SettingController
 
     @PutMapping("/update")
     public WebResult updateSetting(@RequestBody SettingInfo setting){
-        if(settingService.updateSetting(setting))
-            return WebResult.success().addMsg("更新成功");
-        else
+        try {
+            if(settingService.updateSetting(setting))
+                return WebResult.success().addMsg("更新成功");
+            else
+                return WebResult.fail().addMsg("更新失败");
+        } catch (Exception e) {
             return WebResult.fail().addMsg("更新出错");
+        }
     }
 }
