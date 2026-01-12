@@ -3,7 +3,6 @@ package org.bot.nullbot.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.entity.page.GroupPage;
 import org.bot.nullbot.entity.po.GroupPO;
 import org.bot.nullbot.entity.result.WebResult;
@@ -26,7 +25,6 @@ import java.util.List;
 public class GroupController
 {
     private final GroupService groupService;
-    private final SettingService settingService;
 
     @GetMapping("/list")
     public WebResult getGroupList(){
@@ -66,22 +64,5 @@ public class GroupController
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<GroupPO> groups =  CsvImportUtil.importFromCsv(csvFile, GroupPO.class);
         groupService.addGroups(groups);
-    }
-
-    @GetMapping("/setting/{id}")
-    public WebResult getSetting(@PathVariable Long id) {
-        SettingInfo setting = settingService.getSetting(id);
-        if(setting != null)
-            return WebResult.success().addMsg("获取成功").addData("setting", setting);
-        else
-            return WebResult.fail().addMsg("获取失败");
-    }
-
-    @PutMapping("/updateSetting")
-    public WebResult updateSetting(@RequestBody SettingInfo setting){
-        if(settingService.updateSetting(setting))
-            return WebResult.success().addMsg("更新成功");
-        else
-            return WebResult.fail().addMsg("更新出错");
     }
 }
