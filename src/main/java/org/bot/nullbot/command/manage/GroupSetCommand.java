@@ -123,7 +123,7 @@ public class GroupSetCommand implements Command
                 
                 • [-ai] [模式选项]
                    模式选项:
-                   scp - 作用域切换
+                   scp - 会话范围
                    ati - 防注模式
                    tkn - 思考模式
                    ebd - 指令模式

@@ -42,7 +42,7 @@ public class MonitorListener
 
     // =================== 串行监听方法 ===================
 
-    @FunctionControl(config = "imgCollect")
+    @FunctionControl(config = "ImgCollect")
     public void onGroupImageCollection(Bot bot, GroupMessageEvent event) {
         if(!settingManager.isImageCollect(event.getGroupId())) return;
         boolean hasLogged = false;
@@ -66,7 +66,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "msgCollect")
+    @FunctionControl(config = "MsgCollect")
     public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
         if(!settingManager.isMessageCollect(event.getGroupId())) return;
         if(!(event.getMessage().startsWith("/Chat") || event.getMessage().startsWith("/聊天"))){  // Chat 命令会自动记录消息 跳过
@@ -78,7 +78,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "keyDetect")
+    @FunctionControl(config = "KeyDetect")
     public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {
         if(!settingManager.isKeywordDetect(event.getGroupId())) return;
         if (event.getMessage().contains("男娘")) {
@@ -95,7 +95,7 @@ public class MonitorListener
 
     // =================== 独占监听方法 ===================
 
-    @FunctionControl(config = "pokeDetect")
+    @FunctionControl(config = "PokeDetect")
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
@@ -106,7 +106,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "recallDetect")
+    @FunctionControl(config = "RecallDetect")
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {

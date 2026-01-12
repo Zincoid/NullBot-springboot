@@ -66,7 +66,7 @@ public class SettingInfo
     public String toString() {
         return String.format("""
                  ◉ AI 设置
-                ├ 作用域 - %s
+                ├ 会话范围 - %s
                 ├ 防注模式 - %s
                 ├ 思考模式 - %s
                 ├ 指令模式 - %s
@@ -80,7 +80,7 @@ public class SettingInfo
                 └ 撤回检测 - %s
                  ◉ Guess 设置
                 ├ 切割比例 - %s
-                └ 内边距 - %s""",
+                └ 切割边距 - %s""",
                 scope,
                 antiInjection ? "ON" : "OFF",
                 thinking ? "ON" : "OFF",

@@ -96,7 +96,7 @@ public class FunctionManager {
             Map.Entry<String, Boolean> entry = iterator.next();
             char prefix = iterator.hasNext() ? '├' : '└';
             status.append(prefix).append(' ').append(entry.getKey()).append(" - ")
-                    .append(entry.getValue() ? "Enabled" : "disabled");
+                    .append(entry.getValue() ? "ON" : "OFF");
             if (iterator.hasNext()) {
                 status.append('\n');
             }
