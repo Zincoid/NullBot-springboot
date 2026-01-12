@@ -379,6 +379,9 @@ public class FileServiceImpl implements FileService
         else
             targetFullDir = fileStorageDir + newDir;
 
+        Path targetPath = Paths.get(targetFullDir);
+        targetPath = targetPath.toAbsolutePath();  // 去除结尾冗余
+
         // 检查源文件和目标目录是否相同
         if (sourceFile.getDirectory().equals(targetFullDir)) {
             return WebResult.fail().addMsg("数据库 - 路径未修改");
@@ -386,7 +389,6 @@ public class FileServiceImpl implements FileService
 
         // 检查目标目录是否存在（数据库和文件系统）
         // 数据库检查
-        Path targetPath = Paths.get(targetFullDir);
         FilePO targetDir = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, targetPath.getParent().toString())
                 .eq(FilePO::getFileName, targetPath.getFileName().toString())
