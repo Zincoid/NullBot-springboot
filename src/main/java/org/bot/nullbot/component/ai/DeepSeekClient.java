@@ -173,28 +173,81 @@ public class DeepSeekClient
             // 内嵌指令执行
             String response;
             if (!option.isCustom() && option.isEmbedding()) {
-                Matcher m = Pattern.compile("\\{(.*?)}").matcher(originalResponse);
-                // 提取执行指令
-                while (m.find()) {
-                    String command = m.group(1);
-                    eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, option.isEmbeddingAuth(), embeddingLimit)));
-                }
-                // 删除命令明文
-                response = originalResponse.replaceAll("\\{.*?}", "").trim();
+                response = executeEmbeddingChain(originalResponse, chatMessages, groupId, bot, event, option);
             } else
                 response = originalResponse.trim();
-
-            // 发送消息
-            ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
-            // 记录AI回复至存储
-            chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", originalResponse, null, null));
             return response;
         } catch (Exception e) {
-            // chatMessages.removeLast();  // 如果请求失败移除刚才添加的用户消息
+            if(option.getScope() != Scope.Monitor)
+                chatMessages.removeLast();  // 非监听模式请求失败移除新增的用户消息
             throw e;
         } finally {
             lock.unlock();  // 解锁历史存储
         }
+    }
+
+    /**
+     * 执行嵌入模式处理逻辑 (链式)
+     * @param originalResponse 原始消息
+     * @return 去除指令的消息
+     */
+    String executeEmbeddingChain(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot, CommandEvent<?> event, ChatOption option) throws Exception {
+        String response = originalResponse.trim();
+        // 使用正则匹配所有{指令}和文本部分
+        Pattern pattern = Pattern.compile("(\\{.*?}|[^{]+)");
+        Matcher matcher = pattern.matcher(response);
+        while (matcher.find()) {
+            String segment = matcher.group(1);
+            if (segment.startsWith("{") && segment.endsWith("}")) {
+                // 执行指令
+                String command = segment.substring(1, segment.length() - 1).trim();
+                if (!command.isEmpty()) {
+                    eventPublisher.publishEvent(new EmbeddedCommandEvent(
+                            bot,
+                            new CommandEvent<>(event.getEvent(), command,
+                                    option.isEmbeddingAuth(), embeddingLimit)
+                    ));
+                }
+            } else {
+                // 发送消息（非空文本）
+                String text = segment.trim();
+                if (!text.isEmpty()) {
+                    ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, text, false);
+                    // 记录消息到存储
+                    chatMessages.add(new ChatMessage(
+                            msgIdActionData.getData().getMessageId(),
+                            "assistant",
+                            text,  // 只存储当前片段
+                            null,
+                            null
+                    ));
+                }
+            }
+        }
+        return response.replaceAll("\\{.*?}", "").trim();
+    }
+
+    /**
+     * 执行嵌入模式处理逻辑
+     * @param originalResponse 原始消息
+     * @return 去除指令的消息
+     */
+    @Deprecated
+    String executeEmbedding(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot, CommandEvent<?> event, ChatOption option) throws Exception {
+        Matcher m = Pattern.compile("\\{(.*?)}").matcher(originalResponse);
+        // 提取执行指令
+        while (m.find()) {
+            String command = m.group(1);
+            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, option.isEmbeddingAuth(), embeddingLimit)));
+        }
+        // 删除命令明文
+        String response = originalResponse.replaceAll("\\{.*?}", "").trim();
+        // 发送消息
+        ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
+        // 记录AI回复至存储
+        chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", originalResponse, null, null));
+
+        return response;
     }
 
     /**
@@ -216,7 +269,7 @@ public class DeepSeekClient
         // 添加 指令模式提示词
         if(!option.isCustom() && option.isEmbedding()) {
             systemMessage = systemMessage +
-                    "\n你可以使用 {指令} 在回复中嵌入指令(嵌入到回复内容末尾)。" +
+                    "\n你可以使用 {指令} 在回复中嵌入指令来进行各种操作。" +
                     "\n指令使用示例如下：" +
                     "\n当有人想要看二次元图片或者色图时，你可以使用 {Anime} 指令，这样就能自动调用图片发送。" +
                     "\n所有可用指令列表如下：" +
