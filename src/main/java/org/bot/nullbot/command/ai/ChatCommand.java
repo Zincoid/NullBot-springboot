@@ -37,7 +37,7 @@ public class ChatCommand implements Command
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
                 String formattedUntil = until != null ? until.format(formatter) : "";
                 bot.sendGroupMsg(groupId, "[封禁中] ⚠️你已被封禁至！\n" + formattedUntil, false);
-                log.info("\t\t\t\t├─[AI.Chat] 已被封禁至: {}", until);
+                log.info("\t\t\t\t├─[AI.Chat] 已被封禁至 - {}", until);
                 return;
             }
 
