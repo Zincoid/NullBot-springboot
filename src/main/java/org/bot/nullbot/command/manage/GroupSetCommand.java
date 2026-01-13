@@ -41,7 +41,7 @@ public class GroupSetCommand implements Command
                     return;
                 }
                 if ("-ai".equals(option)) {
-                    if (params.size() < 2) throw new IllegalArgumentException("参数不足");
+                    if (params.size() < 2) throw new IllegalArgumentException("AI设置参数不足");
                     String setting = params.get(1);
                     if ("scp".equals(setting)) {
                         Scope scope = settingManager.switchScope(groupId);
@@ -61,14 +61,25 @@ public class GroupSetCommand implements Command
                             deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
                             yield settingManager.switchCustom(groupId);
                         }
+                        case "aur" -> settingManager.switchAutoReply(groupId);
                         default -> throw new NoSuchMethodException("无此AI设置");
                     };
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[AI] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
                     log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, isEnabled ? "ON" : "OFF");
                     return;
                 }
+                if ("-aifrq".equals(option)) {
+                    if(params.size() < 2) throw new IllegalArgumentException("AI设置参数不足");
+                    double freq = Double.parseDouble(event.getCommandParameters().get(1));
+                    if(settingManager.setReplyFrequency(groupId, freq)) {
+                        bot.sendGroupMsg(groupId, "[AI] ✅参数已更新", false);
+                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} AI自动发言频率 -> {}", groupId, freq);
+                        return;
+                    }
+                    throw new Exception("AI参数更新失败");
+                }
                 if ("-monitor".equals(option)) {
-                    if (params.size() < 2) throw new IllegalArgumentException("参数不足");
+                    if (params.size() < 2) throw new IllegalArgumentException("监听设置参数不足");
                     String setting = params.get(1);
                     boolean isEnabled = switch (setting) {
                         case "img" -> settingManager.switchImageCollect(groupId);
@@ -83,12 +94,12 @@ public class GroupSetCommand implements Command
                     return;
                 }
                 if ("-guess".equals(option)) {
-                    if(params.size() < 3) throw new IllegalArgumentException("Guess游戏参数不足");
+                    if(params.size() < 3) throw new IllegalArgumentException("游戏设置参数不足");
                     double ratio = Double.parseDouble(event.getCommandParameters().get(1));
                     int padding = Integer.parseInt(event.getCommandParameters().get(2));
                     if(settingManager.setGuessParams(groupId, ratio, padding)) {
                         bot.sendGroupMsg(groupId, "[游戏] ✅参数已更新", false);
-                        log.info("\t\t\t\t├─[GroupSet] 已更群 {} 设置 -> Guess游戏参数", groupId);
+                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 -> Guess游戏参数", groupId);
                         return;
                     }
                     throw new Exception("Guess游戏参数更新失败");
@@ -100,7 +111,7 @@ public class GroupSetCommand implements Command
                 log.info("\t\t\t\t├─[GroupSet] 群设置出错 - Guess游戏参数格式错误");
             } catch (Exception e) {
                 bot.sendGroupMsg(groupId, "[群设置] ❌" + e.getMessage(), false);
-                log.info("\t\t\t\t├─[GroupSet]群 {} 设置出错 - {}", groupId, e.getMessage());
+                log.info("\t\t\t\t├─[GroupSet] 群 {} 设置出错 - {}", groupId, e.getMessage());
             }
         }else
             log.info("\t\t\t\t├─[GroupSet] 未设计 - 非群消息事件响应方式");
@@ -129,6 +140,10 @@ public class GroupSetCommand implements Command
                    ebd - 指令模式
                    eau - 指令验证
                    cus - 自定模式
+                   aur - 自动回复
+                
+                • [-aifrq] [频率]
+                   设置AI自动发言频率(0~1)
                 
                 • [-monitor] [监测类型]
                    监测类型:
@@ -157,9 +172,6 @@ public class GroupSetCommand implements Command
                 • [-view]
                    获取群设置
                 
-                • [-ai] [模式选项]
-                   禁止修改
-                
                 • [-monitor] [监测类型]
                    监测类型:
                    img - 图片收集
@@ -177,7 +189,7 @@ public class GroupSetCommand implements Command
                 GroupSet -guess 0.1 250
                 
                 注意:
-                你不可执行 [-ai] 相关设置指令！
+                你不可执行 [-ai][-aifrq] 相关设置指令！
                 针对Guess游戏 - 切割比例越小越难 内边距越小越难""", getAccess()
         );
     }
