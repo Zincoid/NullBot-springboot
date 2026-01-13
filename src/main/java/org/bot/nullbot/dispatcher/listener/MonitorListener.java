@@ -57,13 +57,16 @@ public class MonitorListener
                 String originName =msg.getData().get("file");
                 String url = msg.getData().get("url");
                 String fileName = originName.substring(0, originName.lastIndexOf("."));
-                try {
-                    FileInfo fileInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/monitor", fileName);
 
-                    Long userId = event.getSender().getUserId();
-                    String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+                Long groupId = event.getGroupId();
+                Long userId = event.getSender().getUserId();
+                String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+
+                String savePath = fileStorageConfig.getImagePath() + "/monitor/" + groupId;
+                try {
+                    FileInfo fileInfo = DownloadUtil.downloadFile(url, savePath, fileName);
                     if(!fileService.addFileRecordForBot(
-                            fileStorageConfig.getImagePath() + "/monitor",
+                            savePath,
                             fileInfo.getFileName(),
                             fileInfo.getFileSize(),
                             fileInfo.getLastModified(),
@@ -71,7 +74,6 @@ public class MonitorListener
                     ) {
                         log.info("└─[Error] DbSave Failed");
                     }
-
                     log.info("└─[Saved] {}", fileInfo.getFileName());
                 } catch (Exception e) {
                     log.info("└─[Error] {}", e.getMessage());
