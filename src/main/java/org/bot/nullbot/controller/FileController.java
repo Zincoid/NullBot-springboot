@@ -79,7 +79,6 @@ public class FileController
             fileService.download(id, request, response);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.setHeader("Download-Error-Message", URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8));
         }
     }
 
