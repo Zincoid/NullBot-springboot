@@ -35,11 +35,11 @@ public class ExecutorHandler implements Handler
                 groupId = groupMsgDeleteNoticeEvent.getGroupId();
             if (groupId != 0L) {
                 bot.sendGroupMsg(groupId, e.getMessage(), false);
-                log.info("\t\t  [ExecutorHandler] 指令出错: {}", e.getMessage());
+                log.info("\t\t  [ExecutorHandler] 指令错误: {}", e.getMessage());
             } else
                 log.info("\t\t  [ExecutorHandler] 群信息获取失败");
         } catch (NullBotLogException e) {
-            log.info("\t\t  [ExecutorHandler] 指令出错: {}", e.getMessage());
+            log.info("\t\t  [ExecutorHandler] 指令错误: {}", e.getMessage());
         } catch (Exception e) {
             log.info("\t\t  [ExecutorHandler] Exception: {}", e.getMessage());
             throw e;
