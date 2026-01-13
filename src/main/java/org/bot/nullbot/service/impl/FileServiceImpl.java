@@ -435,7 +435,7 @@ public class FileServiceImpl implements FileService
 
         // 如果是目录，更新所有子文件的路径
         if (sourceFile.getIsDir() == 1) {
-            updateSubFilesPathForMove(sourceFile.getDirectory() + "/" + sourceFile.getFileName(),
+            updateSubFilesPath(sourceFile.getDirectory() + "/" + sourceFile.getFileName(),
                     targetFullDir + "/" + sourceFile.getFileName());
         }
 
@@ -480,7 +480,12 @@ public class FileServiceImpl implements FileService
 
     // =================== 其他工具 ===================
 
-    private void updateSubFilesPathForMove(String oldDirPath, String newDirPath) {
+    /**
+     * 更新子文件的路径
+     * @param oldDirPath 原目录路径
+     * @param newDirPath 新目录路径
+     */
+    private void updateSubFilesPath(String oldDirPath, String newDirPath) {
         // 查询所有以原目录路径开头的文件
         LambdaQueryWrapper<FilePO> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.likeRight(FilePO::getDirectory, oldDirPath);
@@ -505,26 +510,6 @@ public class FileServiceImpl implements FileService
             }
         }
         dir.delete();
-    }
-
-    /**
-     * 更新子文件的路径（当目录重命名时）
-     * @param oldDirPath 原目录路径
-     * @param newDirPath 新目录路径
-     */
-    private void updateSubFilesPath(String oldDirPath, String newDirPath) {
-        // 查询所有以原目录路径开头的文件
-        LambdaQueryWrapper<FilePO> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.likeRight(FilePO::getDirectory, oldDirPath + "/");
-
-        List<FilePO> subFiles = fileMapper.selectList(queryWrapper);
-
-        for (FilePO subFile : subFiles) {
-            // 替换目录路径部分
-            String newSubDirPath = subFile.getDirectory().replace(oldDirPath, newDirPath);
-            subFile.setDirectory(newSubDirPath);
-            fileMapper.updateById(subFile);
-        }
     }
 
     // =================== 本地系统文件与数据库同步工具 ===================
