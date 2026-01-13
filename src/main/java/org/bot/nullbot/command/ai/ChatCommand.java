@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@CommandMapping({"Chat", "聊天"})
+@CommandMapping({"Chat", "对话"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -36,8 +36,8 @@ public class ChatCommand implements Command
                 LocalDateTime until = chatStorage.getUserBannedUntil(userId);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
                 String formattedUntil = until != null ? until.format(formatter) : "";
-                bot.sendGroupMsg(groupId, "[封禁中] ⚠️你已被封禁至！\n" + formattedUntil, false);
-                log.info("\t\t\t\t├─[AI.Chat] 已被封禁至 - {}", until);
+                bot.sendGroupMsg(groupId, "[AI] ⚠️你已被停用至！\n" + formattedUntil, false);
+                log.info("\t\t\t\t├─[AI.Chat] 已被停用至 - {}", until);
                 return;
             }
 
@@ -62,7 +62,7 @@ public class ChatCommand implements Command
                 功能: 与AI对话
                 限权: %d 级
                 格式: Chat [内容] 或 @Null [内容] 或 戳一戳
-                中文命令: 聊天""", getAccess()
+                中文命令: 对话""", getAccess()
         );
     }
 }

@@ -59,7 +59,7 @@ public class CommandListener
     {
         // 串行调用 消息预处理
         // monitorListener.onGroupKeywordDetection(bot, event);  // 禁用 关键词检测
-        // if(!monitorListener.onGroupAIAutoReply(bot, event))  // 无需调用 AI自动回复
+        // if(!monitorListener.onGroupAIAutoReply(bot, event))  // 无需调用 AI即将回复
         //     monitorListener.onGroupMessageCollection(bot, event);  // 无需调用 AI自动记录
         monitorListener.onGroupImageCollection(bot, event);
 

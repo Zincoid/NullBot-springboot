@@ -105,7 +105,7 @@ public class MonitorListener
     @FunctionControl(config = "MsgCollect")
     public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
         if(!settingManager.isMessageCollect(event.getGroupId())) return;
-        if(!(event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "聊天"))){  // Chat 命令会自动记录消息 跳过
+        if(!(event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话"))){  // Chat 命令会自动记录消息 跳过
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
             chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
