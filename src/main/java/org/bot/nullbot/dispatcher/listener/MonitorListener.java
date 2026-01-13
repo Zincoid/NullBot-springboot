@@ -24,6 +24,7 @@ import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.MessageParseUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -43,12 +44,15 @@ public class MonitorListener
     private final SettingManager settingManager;
     private final FileService fileService;
 
+    @Value("${nullbot.command.prefix}")
+    private String commandPrefix;
+
     // =================== 串行监听方法 ===================
 
     @FunctionControl(config = "AIAutoReply")
     public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
         if(!settingManager.isAutoReply(event.getGroupId())) return false;
-        if(event.getMessage().startsWith("/")) return false;
+        if(event.getMessage().startsWith(commandPrefix)) return false;
 
         double freq = settingManager.getReplyFrequency(event.getGroupId());
         if (freq > Math.random()) {
@@ -101,7 +105,7 @@ public class MonitorListener
     @FunctionControl(config = "MsgCollect")
     public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
         if(!settingManager.isMessageCollect(event.getGroupId())) return;
-        if(!(event.getMessage().startsWith("/Chat") || event.getMessage().startsWith("/聊天"))){  // Chat 命令会自动记录消息 跳过
+        if(!(event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "聊天"))){  // Chat 命令会自动记录消息 跳过
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
             chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
