@@ -37,7 +37,7 @@ public class GroupSetCommand implements Command
 
                 if ("-view".equals(option)) {
                     SettingInfo setting = settingManager.getSetting(groupId);
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[群设置] ℹ️已获取！\n" + setting, false);
+                    bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);
                     log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
                     return;
                 }
@@ -47,7 +47,7 @@ public class GroupSetCommand implements Command
                     String setting = params.get(1);
                     if ("scp".equals(setting)) {
                         Scope scope = settingManager.switchScope(groupId);
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[AI] \uD83D\uDD04已切换: " + scope, false);
+                        bot.sendGroupMsg(groupId, "[AI] \uD83D\uDD04已切换: " + scope, false);
                         log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, scope);
                         return;
                     }
