@@ -35,10 +35,10 @@ public class CommandListener
     public void onGroupMessageInteraction(Bot bot, GroupMessageEvent event) throws Exception
     {
         // 串行调用 消息预处理
-        monitorListener.onGroupImageCollection(bot, event);
-        if(!monitorListener.onGroupAIAutoReply(bot, event))
-            monitorListener.onGroupMessageCollection(bot, event);
         monitorListener.onGroupKeywordDetection(bot, event);
+        if(!monitorListener.onGroupAIAutoReply(bot, event))  // 触发自动发言会记录当前消息 忽略消息收集
+            monitorListener.onGroupMessageCollection(bot, event);
+        monitorListener.onGroupImageCollection(bot, event);
 
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
             log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage().replaceAll("\\R", " "));
@@ -58,10 +58,10 @@ public class CommandListener
     public void onGroupAtInteraction(Bot bot, GroupMessageEvent event) throws Exception
     {
         // 串行调用 消息预处理
-        monitorListener.onGroupImageCollection(bot, event);
-        // monitorListener.onGroupMessageCollection(bot, event);  // 无需调用 AI自动记录
         // monitorListener.onGroupKeywordDetection(bot, event);  // 禁用 关键词检测
-        // monitorListener.onGroupAIAutoReply(bot, event);  // 禁用 AI自动回复
+        // if(!monitorListener.onGroupAIAutoReply(bot, event))  // 无需调用 AI自动回复
+        //     monitorListener.onGroupMessageCollection(bot, event);  // 无需调用 AI自动记录
+        monitorListener.onGroupImageCollection(bot, event);
 
         log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
         commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
