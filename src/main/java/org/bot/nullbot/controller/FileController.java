@@ -62,9 +62,12 @@ public class FileController
     @PostMapping("/upload")
     public WebResult upload(MultipartFile uploadFile, @RequestParam(defaultValue = "/") String curDir) {
         try {
-            return fileService.upload(uploadFile, curDir);
-        } catch (IOException e) {
-            return WebResult.fail().addMsg("抛出异常");
+            if(fileService.upload(uploadFile, curDir))
+                return WebResult.success().addMsg("上传成功");
+            else
+                return WebResult.fail().addMsg("上传失败: 未知错误");
+        } catch (Exception e) {
+            return WebResult.fail().addMsg("上传失败: " + e.getMessage());
         }
     }
 

@@ -162,7 +162,7 @@ public class FileServiceImpl implements FileService
 
     @Override
     @Transactional
-    public WebResult upload(MultipartFile uploadFile, String curDir) throws IOException {
+    public Boolean upload(MultipartFile uploadFile, String curDir) throws IOException {
         String fileName = uploadFile.getOriginalFilename();
         String fullDir;
         if(curDir.equals("/"))
@@ -171,7 +171,7 @@ public class FileServiceImpl implements FileService
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
 
         if(!fileMapper.selectList(new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).eq(FilePO::getFileName, fileName)).isEmpty()) {
-            return WebResult.fail().addMsg("存在同名冲突");
+            throw new IllegalArgumentException("存在同名冲突");
         }
 
         // 查询父文件夹
@@ -181,20 +181,14 @@ public class FileServiceImpl implements FileService
                 .eq(FilePO::getFileName, path.getFileName().toString())
                 .eq(FilePO::getIsDir, 1)
         );
-        if(dir == null) {
-            return WebResult.fail().addMsg("数据库父目录不存在");
-        }
-
+        if(dir == null)
+            throw new IllegalArgumentException("数据库父目录不存在");
         java.io.File file_dir = new java.io.File(fullDir);
-        if (!file_dir.exists()) return WebResult.fail().addMsg("实际父目录不存在");
+        if (!file_dir.exists())
+            throw new IllegalArgumentException("文件系统父目录不存在");
 
         String filePath = fullDir + "/" + fileName;
-
-        try {
-            uploadFile.transferTo(new java.io.File(filePath));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        uploadFile.transferTo(new java.io.File(filePath));
 
         Long ownerId = WebUtil.getLoginId();
         String ownerName = adminMapper.selectById(ownerId).getUsername();
@@ -215,14 +209,14 @@ public class FileServiceImpl implements FileService
         file.setLastModified(lastModified);
         fileMapper.insert(file);
 
-        return WebResult.success().addMsg("上传成功");
+        return true;
     }
 
     @Override
     @Transactional
-    public WebResult download(Integer id, HttpServletRequest request, HttpServletResponse response) {
+    public Boolean download(Integer id, HttpServletRequest request, HttpServletResponse response) {
         FilePO file = fileMapper.selectById(id);
-        if (file == null) return WebResult.fail().addMsg("文件不存在");
+        if (file == null) throw new IllegalArgumentException("数据库文件不存在");
         String fileName = file.getFileName();
         String suf = file.getFileName().substring(file.getFileName().lastIndexOf("."));
         FileInputStream fileInputStream;
@@ -235,7 +229,7 @@ public class FileServiceImpl implements FileService
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return WebResult.success().addMsg("下载成功");
+        return true;
     }
 
     @Override

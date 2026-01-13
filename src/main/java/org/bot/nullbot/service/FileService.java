@@ -21,9 +21,9 @@ public interface FileService
 
     FilePage searchFile(String key, String curDir, Boolean hidden);
 
-    WebResult upload(MultipartFile uploadFile, String curDir) throws IOException;
+    Boolean upload(MultipartFile uploadFile, String curDir) throws IOException;
 
-    WebResult download(Integer id, HttpServletRequest request, HttpServletResponse response);
+    Boolean download(Integer id, HttpServletRequest request, HttpServletResponse response);
 
     WebResult createDir(String curDir, String dirName) throws IOException;
 
