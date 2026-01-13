@@ -25,6 +25,7 @@ public class ExecutorHandler implements Handler
         try {
             command.execute(bot, event);
         }
+
         catch (NullBotRuntimeException e) {
             Long groupId = 0L;
             if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent)
@@ -35,9 +36,13 @@ public class ExecutorHandler implements Handler
                 groupId = groupMsgDeleteNoticeEvent.getGroupId();
             if (groupId != 0L) {
                 bot.sendGroupMsg(groupId, e.getMessage(), false);
-                log.info("\t\t  [ExecutorHandler] 出错: {}", e.getMessage());
+                log.info("\t\t  [ExecutorHandler] 指令出错: {}", e.getMessage());
             } else
                 log.info("\t\t  [ExecutorHandler] 群信息获取失败");
+        }
+
+        catch (Exception e) {
+            log.info("\t\t  [ExecutorHandler] Exception: ", e);
         }
 
         log.info("\t\t┌─[ExecutorHandler] 执行结束");

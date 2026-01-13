@@ -11,6 +11,7 @@ import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.enums.Scope;
+import org.bot.nullbot.exception.NullBotRuntimeException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class GroupSetCommand implements Command
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getUserId();
             try {
-                if (params.isEmpty()) throw new IllegalArgumentException("参数不足");
+                if (params.isEmpty()) throw new NullBotRuntimeException("[群设置] ❌参数不足");
                 String option = params.get(0);
 
                 if ("-view".equals(option)) {
@@ -40,8 +41,9 @@ public class GroupSetCommand implements Command
                     log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
                     return;
                 }
+
                 if ("-ai".equals(option)) {
-                    if (params.size() < 2) throw new IllegalArgumentException("AI设置参数不足");
+                    if (params.size() < 2) throw new NullBotRuntimeException("[群设置] ❌AI设置参数不足");
                     String setting = params.get(1);
                     if ("scp".equals(setting)) {
                         Scope scope = settingManager.switchScope(groupId);
@@ -50,7 +52,7 @@ public class GroupSetCommand implements Command
                         return;
                     }
                     if ("frq".equals(setting)) {
-                        if(params.size() < 3) throw new IllegalArgumentException("AI设置参数不足");
+                        if(params.size() < 3) throw new NullBotRuntimeException("[群设置] ❌AI设置参数不足");
                         double freq = Double.parseDouble(event.getCommandParameters().get(2));
                         settingManager.setReplyFrequency(groupId, freq);
                         bot.sendGroupMsg(groupId, "[AI] ✅发言频率已更新", false);
@@ -70,14 +72,15 @@ public class GroupSetCommand implements Command
                             yield settingManager.switchCustom(groupId);
                         }
                         case "aur" -> settingManager.switchAutoReply(groupId);
-                        default -> throw new NoSuchMethodException("无此AI设置");
+                        default -> throw new NullBotRuntimeException("[群设置] ❌无此AI设置");
                     };
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[AI] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
                     log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, isEnabled ? "ON" : "OFF");
                     return;
                 }
+
                 if ("-monitor".equals(option)) {
-                    if (params.size() < 2) throw new IllegalArgumentException("监听设置参数不足");
+                    if (params.size() < 2) throw new NullBotRuntimeException("[群设置] ❌监听设置参数不足");
                     String setting = params.get(1);
                     boolean isEnabled = switch (setting) {
                         case "img" -> settingManager.switchImageCollect(groupId);
@@ -85,14 +88,15 @@ public class GroupSetCommand implements Command
                         case "key" -> settingManager.switchKeywordDetect(groupId);
                         case "pok" -> settingManager.switchPokeDetect(groupId);
                         case "rcl" -> settingManager.switchRecallDetect(groupId);
-                        default -> throw new NoSuchMethodException("无此监听设置");
+                        default -> throw new NullBotRuntimeException("[群设置] ❌无此监听设置");
                     };
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[监听] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
                     log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, isEnabled ? "ON" : "OFF");
                     return;
                 }
+
                 if ("-guess".equals(option)) {
-                    if(params.size() < 3) throw new IllegalArgumentException("游戏设置参数不足");
+                    if(params.size() < 3) throw new NullBotRuntimeException("[群设置] ❌Guess设置参数不足");
                     double ratio = Double.parseDouble(event.getCommandParameters().get(1));
                     int padding = Integer.parseInt(event.getCommandParameters().get(2));
                     if(settingManager.setGuessParams(groupId, ratio, padding)) {
@@ -100,16 +104,12 @@ public class GroupSetCommand implements Command
                         log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 -> Guess游戏参数", groupId);
                         return;
                     }
-                    throw new Exception("Guess游戏参数更新失败");
+                    throw new NullBotRuntimeException("[群设置] ❌Guess参数更新失败");
                 }
 
-                throw new NoSuchMethodException("无此操作类型");
+                throw new NullBotRuntimeException("[群设置] ❌无此操作类型");
             } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupId, "[群设置] ❌参数格式错误", false);
-                log.info("\t\t\t\t├─[GroupSet] 群 {} 设置出错 - 参数格式错误", groupId);
-            } catch (Exception e) {
-                bot.sendGroupMsg(groupId, "[群设置] ❌" + e.getMessage(), false);
-                log.info("\t\t\t\t├─[GroupSet] 群 {} 设置出错 - {}", groupId, e.getMessage());
+                throw new NullBotRuntimeException("[群设置] ❌参数格式错误");
             }
         }else
             log.info("\t\t\t\t├─[GroupSet] 未设计 - 非群消息事件响应方式");
