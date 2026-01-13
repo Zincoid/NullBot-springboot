@@ -51,18 +51,16 @@ public class MonitorListener
 
         double freq = settingManager.getReplyFrequency(event.getGroupId());
         if (freq > Math.random()) {
+            log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至 群 {}", event.getGroupId());
             Long userId = event.getSender().getUserId();
             Long groupId = event.getGroupId();
             String message = MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg());
             String userName = event.getSender().getNickname();
             Integer messageId = event.getMessageId();
-
             String response = deepSeekClient.chat(
                     messageId, groupId, userId, userName, message, bot, new CommandEvent<>("Chat", event),
                     settingManager.getChatOption(groupId), false
             );
-
-            log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至 群 {}", event.getGroupId());
             log.info("└─[Content] {}", response.replaceAll("\\R", " "));
         }
     }
