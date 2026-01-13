@@ -22,7 +22,7 @@ public interface FileService
 
     Boolean upload(MultipartFile uploadFile, String curDir) throws IOException;
 
-    Boolean download(Integer id, HttpServletRequest request, HttpServletResponse response);
+    void download(Integer id, HttpServletRequest request, HttpServletResponse response);
 
     Boolean createDir(String curDir, String dirName) throws IOException;
 

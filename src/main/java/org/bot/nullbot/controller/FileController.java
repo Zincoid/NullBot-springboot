@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @CrossOrigin
@@ -72,14 +74,12 @@ public class FileController
     }
 
     @GetMapping("/download/{id}")
-    public WebResult download(@PathVariable Integer id, HttpServletRequest request, HttpServletResponse response){
+    public void download(@PathVariable Integer id, HttpServletRequest request, HttpServletResponse response){
         try {
-            if(fileService.download(id, request, response))
-                return WebResult.success().addMsg("下载成功");
-            else
-                return WebResult.fail().addMsg("下载失败: 未知错误");
+            fileService.download(id, request, response);
         } catch (Exception e) {
-            return WebResult.fail().addMsg("下载失败: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setHeader("Download-Error-Message", URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8));
         }
     }
 

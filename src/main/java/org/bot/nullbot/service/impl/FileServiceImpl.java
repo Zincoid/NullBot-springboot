@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.FileStorageConfig;
-import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.page.FilePage;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.mapper.AdminMapper;
@@ -214,7 +213,7 @@ public class FileServiceImpl implements FileService
 
     @Override
     @Transactional
-    public Boolean download(Integer id, HttpServletRequest request, HttpServletResponse response) {
+    public void download(Integer id, HttpServletRequest request, HttpServletResponse response) {
         FilePO file = fileMapper.selectById(id);
         if (file == null) throw new IllegalArgumentException("数据库文件不存在");
         String fileName = file.getFileName();
@@ -227,9 +226,8 @@ public class FileServiceImpl implements FileService
             ServletOutputStream os = response.getOutputStream();
             FileCopyUtils.copy(fileInputStream,os);
         } catch (IOException e) {
-            throw new RuntimeException("从磁盘获取文件时出错");
+            throw new RuntimeException("从磁盘下载文件时出错");
         }
-        return true;
     }
 
     @Override
