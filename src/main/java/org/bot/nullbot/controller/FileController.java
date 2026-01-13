@@ -73,7 +73,14 @@ public class FileController
 
     @GetMapping("/download/{id}")
     public WebResult download(@PathVariable Integer id, HttpServletRequest request, HttpServletResponse response){
-        return fileService.download(id, request, response);
+        try {
+            if(fileService.download(id, request, response))
+                return WebResult.success().addMsg("下载成功");
+            else
+                return WebResult.fail().addMsg("下载失败: 未知错误");
+        } catch (Exception e) {
+            return WebResult.fail().addMsg("下载失败: " + e.getMessage());
+        }
     }
 
     @PostMapping("/createDir")

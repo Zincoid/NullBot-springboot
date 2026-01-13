@@ -222,12 +222,12 @@ public class FileServiceImpl implements FileService
         FileInputStream fileInputStream;
         try {
             fileInputStream = new FileInputStream(file.getDirectory() + "/" + fileName);
-            response.setContentType(request.getSession().getServletContext().getMimeType(suf));//获取文件的mimetype
+            response.setContentType(request.getSession().getServletContext().getMimeType(suf));  // 获取文件 MimeType
             response.setHeader("content-disposition","attachment;fileName="+ URLEncoder.encode(fileName, StandardCharsets.UTF_8));
             ServletOutputStream os = response.getOutputStream();
             FileCopyUtils.copy(fileInputStream,os);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("文件系统获取时出错");
         }
         return true;
     }
