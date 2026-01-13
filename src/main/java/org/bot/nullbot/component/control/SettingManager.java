@@ -41,6 +41,8 @@ public class SettingManager
     // public boolean isEmbeddingAuth(Long groupId) { return getSetting(groupId).isEmbeddingAuth(); }
     // public boolean isCustom(Long groupId) { return getSetting(groupId).isCustom(); }
 
+    public boolean switchAutoReply(Long groupId) { return getSetting(groupId).switchAutoReply(); }
+
     public boolean switchImageCollect(Long groupId) { return getSetting(groupId).switchImageCollect(); }
     public boolean switchMessageCollect(Long groupId) { return getSetting(groupId).switchMessageCollect(); }
     public boolean switchKeywordDetect(Long groupId) { return getSetting(groupId).switchKeywordDetect(); }

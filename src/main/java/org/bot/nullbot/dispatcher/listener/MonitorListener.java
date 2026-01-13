@@ -44,6 +44,14 @@ public class MonitorListener
 
     // =================== 串行监听方法 ===================
 
+    @FunctionControl(config = "AIAutoReply")
+    public void onGroupAIAutoReply(Bot bot, GroupMessageEvent event) {
+        if(!settingManager.isAutoReply(event.getGroupId())) return;
+        if(!event.getMessage().startsWith("/")){
+
+        }
+    }
+
     @FunctionControl(config = "ImgCollect")
     public void onGroupImageCollection(Bot bot, GroupMessageEvent event) {  // 群目录不存在时数据库无法插入详情文件条目 需手动SYNC
         if(!settingManager.isImageCollect(event.getGroupId())) return;

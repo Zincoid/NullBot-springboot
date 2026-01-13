@@ -20,6 +20,9 @@ public class SettingInfo
     private boolean embeddingAuth;
     private boolean custom;
 
+    private boolean autoReply;
+    private double replyFrequency;
+
     private boolean imageCollect;
     private boolean messageCollect;
     private boolean keywordDetect;
@@ -39,11 +42,14 @@ public class SettingInfo
         this.embeddingAuth = config.isEmbeddingAuth();
         this.custom = config.isCustom();
 
-        this.imageCollect = config.getImageCollect();
-        this.messageCollect = config.getMessageCollect();
-        this.keywordDetect = config.getKeywordDetect();
-        this.pokeDetect = config.getPokeDetect();
-        this.recallDetect = config.getRecallDetect();
+        this.autoReply = config.isAutoReply();
+        this.replyFrequency = config.getReplyFrequency();
+
+        this.imageCollect = config.isImageCollect();
+        this.messageCollect = config.isMessageCollect();
+        this.keywordDetect = config.isKeywordDetect();
+        this.pokeDetect = config.isPokeDetect();
+        this.recallDetect = config.isRecallDetect();
 
         this.guessRatio = config.getGuessRatio();
         this.guessPadding = config.getGuessPadding();
@@ -55,6 +61,8 @@ public class SettingInfo
     public boolean switchEmbedding() { return embedding = !embeddingAuth; }
     public boolean switchEmbeddingAuth() { return embeddingAuth = !embeddingAuth; }
     public boolean switchCustom() { return custom = !custom; }
+
+    public boolean switchAutoReply() { return autoReply = !autoReply; }
 
     public boolean switchImageCollect() { return imageCollect = !imageCollect; }
     public boolean switchMessageCollect() { return messageCollect = !messageCollect; }
@@ -72,6 +80,8 @@ public class SettingInfo
                 ├ 指令模式 - %s
                 ├ 指令校验 - %s
                 └ 自定模式 - %s
+                
+                └ 回复频率 - %s
                  ◉ Monitor 设置
                 ├ 图片收集 - %s
                 ├ 消息收集 - %s

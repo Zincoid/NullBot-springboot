@@ -18,13 +18,16 @@ public class DefaultConfig
     private boolean embedding;  // 嵌入命令模式
     private boolean embeddingAuth;  // 嵌入限权验证
     private boolean custom;  // 自定义提示词模式
+    private boolean autoReply;  // 自动回复模式
+    private double replyFrequency;  // 猜 切割比例
 
-    private Boolean imageCollect;  // 图片收集
-    private Boolean messageCollect;  // 消息收集
-    private Boolean keywordDetect;  // 关键词检测
-    private Boolean pokeDetect;  // 戳一戳检测
-    private Boolean recallDetect;  // 防撤回
 
-    private Double guessRatio;  // 猜 切割比例
-    private Integer guessPadding;  // 猜 内边距
+    private boolean imageCollect;  // 图片收集
+    private boolean messageCollect;  // 消息收集
+    private boolean keywordDetect;  // 关键词检测
+    private boolean pokeDetect;  // 戳一戳检测
+    private boolean recallDetect;  // 防撤回
+
+    private double guessRatio;  // 猜 切割比例
+    private int guessPadding;  // 猜 内边距
 }

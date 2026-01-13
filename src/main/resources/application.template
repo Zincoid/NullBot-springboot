@@ -62,7 +62,9 @@ nullbot:
     embedding: true
     embedding-auth: false
     custom: false
-    custom-message: "你是一个AI助手。"
+
+    auto-reply: false
+    reply-frequency: 0.01
 
     # Monitor
     image-collect: false
