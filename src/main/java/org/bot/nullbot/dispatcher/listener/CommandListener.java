@@ -38,6 +38,7 @@ public class CommandListener
         monitorListener.onGroupImageCollection(bot, event);
         monitorListener.onGroupMessageCollection(bot, event);
         monitorListener.onGroupKeywordDetection(bot, event);
+        monitorListener.onGroupAIAutoReply(bot, event);
 
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
             log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage().replaceAll("\\R", " "));
@@ -60,6 +61,7 @@ public class CommandListener
         monitorListener.onGroupImageCollection(bot, event);
         // monitorListener.onGroupMessageCollection(bot, event);  // 无需调用 AI自动记录
         // monitorListener.onGroupKeywordDetection(bot, event);  // 禁用 关键词检测
+        // monitorListener.onGroupAIAutoReply(bot, event);  // 禁用 AI自动回复
 
         log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
         commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
