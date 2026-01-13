@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.FunctionControl;
 import org.bot.nullbot.component.control.SettingManager;
+import org.bot.nullbot.config.DeepSeekConfig;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.ChatMessage;
@@ -37,7 +38,7 @@ public class MonitorListener
 {
     private final CommandProcessor commandProcessor;
     private final ChatStorage chatStorage;
-    private final DeepSeekClient deepSeekClient;
+    private final DeepSeekConfig deepSeekConfig;
     private final FileStorageConfig fileStorageConfig;
     private final SettingManager settingManager;
     private final FileService fileService;
@@ -104,7 +105,7 @@ public class MonitorListener
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
             chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
-            chatStorage.trimHistory(chatMessages, deepSeekClient.getDeepSeekConfig().getMaxMonitorLength());
+            chatStorage.trimHistory(chatMessages, deepSeekConfig.getMaxMonitorLength());
             log.info("└─[Record] {} item(s)", chatMessages.size());
         }
     }
