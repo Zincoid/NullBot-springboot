@@ -292,3 +292,5 @@
 - 修复 FileService - 重命名文件夹错误更新子文件路径的漏洞；
 - 优化 LoginInterceptor 提示消息；
 - 大幅优化 FileService - 以异常形式传递错误信息 将 WebResult 的返回提取到控制器 并优化 Download 方法响应方式；
+- 增强 AI - 添加自动发言功能 并 修改优化相关代码和设置组件；
+- 优化 文本。
