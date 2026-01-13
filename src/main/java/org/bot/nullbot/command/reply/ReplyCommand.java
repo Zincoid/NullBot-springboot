@@ -6,7 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"Reply", "应答"})
 @Component
@@ -16,13 +20,13 @@ public class ReplyCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String reply = "无内容";
-            if (!event.getCommandParameters().isEmpty())
-                reply = event.getCommandParameters().getFirst();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), reply, false);
-            log.info("\t\t\t\t├─[Reply] 已回复 - {}", reply.replaceAll("\\R", " "));
+            List<String> params = event.getCommandParameters();
+            if (params.isEmpty()) throw new NullBotMsgException("[应答] ❌无参数");
+            String message = String.join(" ", params.subList(1, params.size()));
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), message, false);
+            log.info("\t\t\t\t├─[Reply] 已回复 - {}", message.replaceAll("\\R", " "));
         }else
-            log.info("\t\t\t\t├─[Reply] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[应答] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

@@ -40,13 +40,13 @@ public class ImageDeleteCommand implements Command
                     // QQ获取文件名后缀全是jpg只能模式匹配...
                     String fileName = originName.substring(0, originName.lastIndexOf("."));
                     String response = FileUtil.deleteFilesByPattern(fileStorageConfig.getImagePath() + "/collect", fileName + ".*");
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1️" + response, false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️️" + response, false);
                     log.info("\t\t\t\t├─[ImageDelete] {}", response);
                 }
             } else if (!event.getCommandParameters().isEmpty()) {
                 String fileName = event.getCommandParameters().getFirst();
                 String response = FileUtil.deleteFileByName(fileStorageConfig.getImagePath() + "/collect", fileName);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1️" + response, false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️️" + response, false);
                 log.info("\t\t\t\t├─[ImageDelete] {}", response);
             } else
                 throw new NullBotMsgException("[删除图片] ❌无文件名或引用");

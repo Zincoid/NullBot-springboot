@@ -11,6 +11,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
@@ -31,29 +33,25 @@ public class VideoDeleteCommand implements Command
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
             if(reply.getType() == MsgTypeEnum.reply){
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
-                Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());  // 可优化为单个键值对
-                if(!videoMap.isEmpty()) {
-                    for (Map.Entry<String, String> entry : videoMap.entrySet()) {
-                        String fileName = entry.getKey();
-                        String response = FileUtil.deleteFileByName(fileStorageConfig.getVideoPath(), fileName);
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDDD1️" + response, false);
-                        log.info("\t\t\t\t├─[Video.Delete] {}", response);
-                    }
-                }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌未包含可删除视频", false);
-                    log.info("\t\t\t\t├─[Video.Delete] 未包含可删除视频");
+                // 可优化为单个键值对?
+                Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());
+                if(videoMap.isEmpty()) throw new NullBotMsgException("[删除视频] ❌未引用视频");
+                for (Map.Entry<String, String> entry : videoMap.entrySet()) {
+                    String fileName = entry.getKey();
+                    String response = FileUtil.deleteFileByName(fileStorageConfig.getVideoPath(), fileName);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️️" + response, false);
+                    log.info("\t\t\t\t├─[VideoDelete] {}", response);
                 }
             }else if(!event.getCommandParameters().isEmpty()){
                 String fileName = event.getCommandParameters().getFirst();
                     String response = FileUtil.deleteFileByName(fileStorageConfig.getVideoPath(), fileName);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] \uD83D\uDDD1️" + response, false);
-                log.info("\t\t\t\t├─[Video.Delete] {}", response);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️️" + response, false);
+                log.info("\t\t\t\t├─[VideoDelete] {}", response);
             }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌无删除参数或引用", false);
-                log.info("\t\t\t\t├─[Video.Delete] 无删除参数或引用");
+                throw new NullBotMsgException("[删除视频] ❌无文件名或引用");
             }
         }else
-            log.info("\t\t\t\t├─[Video.Delete] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[删除视频] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

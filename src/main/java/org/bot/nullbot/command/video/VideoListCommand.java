@@ -8,6 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +24,10 @@ public class VideoListCommand  implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String videoList = FileUtil.getFileListAsString(fileStorageConfig.getVideoPath(), "\n");
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ✅列表已获取！\n" + videoList, false);
-            log.info("\t\t\t\t├─[Video.List] 已获取 - 视频列表");
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频列表] ✅已获取！\n" + videoList, false);
+            log.info("\t\t\t\t├─[VideoList] 已获取 - 视频列表");
         }else
-            log.info("\t\t\t\t├─[Video.List] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[视频列表] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

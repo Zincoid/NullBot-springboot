@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Component;
 
@@ -21,22 +23,18 @@ public class SayingDeleteCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (event.getCommandParameters().isEmpty()){
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌删除参数不足", false);
-                log.info("\t\t\t\t├─[Saying.Delete] 删除参数不足");
-                return;
-            }
+            if (event.getCommandParameters().isEmpty())
+                throw new NullBotMsgException("[删除语录] ❌参数不足");
             try {
                 int id = Integer.parseInt(event.getCommandParameters().getFirst());
                 boolean deleted = sayingService.deleteById(id);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] \uD83D\uDDD1 No." + id + " -> " + (deleted ? "已删除！" : "无记录"), false);
-                log.info("\t\t\t\t├─[Saying.Delete] 执行语录删除 - No.{} -> {}", id, deleted ? "已删除" : "无记录");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除语录] ⚠️No." + id + (deleted ? " 已删除！" : " 无记录"), false);
+                log.info("\t\t\t\t├─[SayingDelete] 执行语录删除 - No.{} -> {}", id, deleted ? "已删除" : "无记录");
             } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌删除参数格式错误", false);
-                log.info("\t\t\t\t├─[Saying.Delete] 删除参数格式错误");
+                throw new NullBotMsgException("[删除语录] ❌参数格式错误");
             }
         }else
-            log.info("\t\t\t\t├─[Saying.Delete] 无 - 非群消息事件响应方式");
+            throw new NullBotLogException("[删除语录] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

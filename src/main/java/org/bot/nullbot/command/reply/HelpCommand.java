@@ -10,6 +10,8 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -32,11 +34,10 @@ public class HelpCommand implements Command
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[Help] 已获取帮助");
             } catch (IOException e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Help] ❌帮助资源缺失", false);
-                log.info("\t\t\t\t├─[Help] 帮助资源缺失");
+                throw new NullBotMsgException("[帮助] ❌资源缺失");
             }
         }else
-            log.info("\t\t\t\t├─[Help] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[帮助] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

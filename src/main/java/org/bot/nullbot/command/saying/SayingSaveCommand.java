@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Component;
@@ -27,30 +29,21 @@ public class SayingSaveCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if (reply.getType() != MsgTypeEnum.reply) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌需回复要保存的文本", false);
-                log.info("\t\t\t\t├─[Saying.Save] 未指定消息");
-                return;
-            }
+            if (reply.getType() != MsgTypeEnum.reply)
+                throw new NullBotMsgException("[保存语录] ❌需引用文本");
             GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
             long userId = Long.parseLong(replyMsg.getSender().getUserId());
             String userName = replyMsg.getSender().getNickname();
             String text = MessageParseUtil.parseRawSaying(bot, replyMsg.getRawMessage());
-            if(text == null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] \uD83D\uDE2D禁止套娃！", false);
-                log.info("\t\t\t\t├─[Saying.Save] 试图保存已输出的语录 -> 已忽略");
-                return;
-            }
-            if(text.trim().isEmpty()){
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌保存文本为空", false);
-                log.info("\t\t\t\t├─[Saying.Save] 保存文本为空");
-                return;
-            }
+            if(text == null)
+                throw new NullBotMsgException("[保存语录] \uD83D\uDE21禁止套娃！");
+            if(text.trim().isEmpty())
+                throw new NullBotMsgException("[保存语录] ❌禁止空文本");
             int inserted = sayingService.addSaying(userId, userName, text);
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] " + (inserted == 1 ? "\uD83D\uDCBE已记录！" : "❌出错"), false);
-            log.info("\t\t\t\t├─[Saying.Save] 语录保存 - {}", (inserted == 1 ? "已记录 -> " : "出错 -> ") + text);
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), inserted == 1 ? "\uD83D\uDCBE 已记录！" : "[保存语录] ❌出错", false);
+            log.info("\t\t\t\t├─[SayingSave] 语录保存 - {} -> {}", text, inserted == 1 ? "已记录" : "出错");
         }else
-            log.info("\t\t\t\t├─[Saying.Save] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[保存语录] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

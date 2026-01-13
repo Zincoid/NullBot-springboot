@@ -11,6 +11,7 @@ import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.enums.Scope;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -112,7 +113,7 @@ public class GroupSetCommand implements Command
                 throw new NullBotMsgException("[群设置] ❌参数格式错误");
             }
         }else
-            log.info("\t\t\t\t├─[GroupSet] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[群设置] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"UserBan", "禁言"})
@@ -16,22 +18,18 @@ public class UserBanCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (event.getCommandParameters().size() < 2){
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[用户禁言] ❌参数不足", false);
-                log.info("\t\t\t\t├─[User.Ban] 参数不足");
-                return;
-            }
+            if (event.getCommandParameters().size() < 2)
+                throw new NullBotMsgException("[用户禁言] ❌参数不足");
             try {
                 long userId = Long.parseLong(event.getCommandParameters().get(0));
                 int time = Integer.parseInt(event.getCommandParameters().get(1));
                 bot.setGroupBan(groupMessageEvent.getGroupId(), userId, time * 60);
-                log.info("\t\t\t\t├─[User.Ban] 已执行禁言 - {} -> {} min", userId, time);
+                log.info("\t\t\t\t├─[UserBan] 已执行禁言 - {} -> {} min", userId, time);
             } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[用户禁言] ❌参数格式错误", false);
-                log.info("\t\t\t\t├─[User.Ban] 参数格式错误");
+                throw new NullBotMsgException("[用户禁言] ❌参数格式错误");
             }
         }else
-            log.info("\t\t\t\t├─[User.Ban] 无 - 非群消息事件响应方式");
+            throw new NullBotLogException("[用户禁言] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

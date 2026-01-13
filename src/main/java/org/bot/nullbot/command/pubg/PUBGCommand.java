@@ -10,6 +10,8 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -26,11 +28,8 @@ public class PUBGCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if(event.getCommandParameters().isEmpty()) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[PUBG] ❌未指定地图", false);
-                log.info("\t\t\t\t├─[PUBG] 未指定地图");
-                return;
-            }
+            if(event.getCommandParameters().isEmpty())
+                throw new NullBotMsgException("[PUBG] ❌未指定地图");
             String map = switch (event.getCommandParameters().getFirst()) {
                 case "艾伦格" -> "Erangel.png";
                 case "米拉玛" -> "Miramar.png";
@@ -40,22 +39,18 @@ public class PUBGCommand implements Command
                 case "泰戈" -> "Tiger.png";
                 default -> null;
             };
-            if (map == null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[PUBG] ❌不支持此地图", false);
-                log.info("\t\t\t\t├─[PUBG] 不支持此地图");
-                return;
-            }
+            if (map == null)
+                throw new NullBotMsgException("[PUBG] ❌不支持此地图");
             try {
                 String helpPath = resourceLoader.getCached("static/pubg/" + map, fileStorageConfig.getTempPath()).toAbsolutePath().toString();
                 String response = MsgUtils.builder().img(helpPath).build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[PUBG] 已获取资源");
             } catch (IOException e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Help] ❌资源缺失", false);
-                log.info("\t\t\t\t├─[PUBG] 资源缺失");
+                throw new NullBotMsgException("[PUBG] ❌资源缺失");
             }
         }else
-            log.info("\t\t\t\t├─[PUBG] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[PUBG] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

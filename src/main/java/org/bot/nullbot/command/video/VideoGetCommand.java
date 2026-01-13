@@ -9,8 +9,12 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"VideoGet", "获取视频"})
 @Component
@@ -23,24 +27,18 @@ public class VideoGetCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if(event.getCommandParameters().isEmpty()){
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌无文件名参数", false);
-                log.info("\t\t\t\t├─[Video.Get] 无文件名参数");
-                return;
-            }
-            String videoPath = FileUtil.getFilePathByName(fileStorageConfig.getVideoPath(), event.getCommandParameters().getFirst());
-            if (videoPath == null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌未找到该视频", false);
-                log.info("\t\t\t\t├─[Video.Get] 未找到该视频");
-                return;
-            }
+            List<String> params = event.getCommandParameters();
+            if(params.isEmpty()) throw new NullBotMsgException("[获取视频] ❌无文件名参数");
+            String videoPath = FileUtil.getFilePathByName(fileStorageConfig.getVideoPath(), params.getFirst());
+            if (videoPath == null) throw new NullBotMsgException("[获取视频] ❌未找到该视频");
+
             String response = MsgUtils.builder()
                     .video(videoPath, "")
                     .build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[Video.Get] 已获取视频: {}", videoPath);
+            log.info("\t\t\t\t├─[VideoGet] 已获取视频 - {}", videoPath);
         }else
-            log.info("\t\t\t\t├─[Video.Get] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[获取视频] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

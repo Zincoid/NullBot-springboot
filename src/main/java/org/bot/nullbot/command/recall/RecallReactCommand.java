@@ -9,6 +9,8 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.storage.ChatStorage;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -38,16 +40,15 @@ public class RecallReactCommand implements Command
                     if (userId.equals(operatorId)) {
                         bot.sendGroupMsg(groupId, userName + "(" + userId + ") 撤回了:\n" + chatMessage.getContent(), false);
                     }else{
-                        bot.sendGroupMsg(groupId, operatorName + "(" + operatorId + ") 撤回了 "+ userName + "(" + userId + ") 的一条消息: " + chatMessage.getContent(), false);
+                        bot.sendGroupMsg(groupId, operatorName + "(" + operatorId + ") 撤回了 "+ userName + "(" + userId + ") 的消息:\n" + chatMessage.getContent(), false);
                     }
-                    log.info("\t\t\t\t├─[React.Recall] 已重发撤回的消息 - {}", bot.getMsg(messageId).getData().getRawMessage());
+                    log.info("\t\t\t\t├─[RecallReact] 已重发撤回消息 - {}", bot.getMsg(messageId).getData().getRawMessage());
                     return;
                 }
             }
-            bot.sendGroupMsg(groupId, "[撤回记录] ❌该消息已被清理", false);
-            log.info("\t\t\t\t├─[React.Recall] 该消息已被清理 - MessageId -> {}", messageId);
+            throw new NullBotMsgException("[撤回反馈] ❌该消息已清理");
         }else
-            log.info("\t\t\t\t├─[React.Recall] 未设计 - 非群消息撤回事件响应方式");
+            throw new NullBotLogException("[撤回反馈] ❌未设计 - 非群撤回事件响应方式");
     }
 
     // 仅校验群限权

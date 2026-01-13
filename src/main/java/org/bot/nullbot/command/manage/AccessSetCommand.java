@@ -7,9 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.GroupService;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"AccessSet", "限权设置"})
 @Component
@@ -17,79 +21,62 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class AccessSetCommand implements Command
 {
-    // private final AccessManager accessManager;
     private final GroupService groupService;
     private final UserService userService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (event.getCommandParameters().size() < 3){
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌参数不足", false);
-                log.info("\t\t\t\t├─[Access.Set] 参数不足");
-                return;
-            }
+            List<String> params = event.getCommandParameters();
+            if (params.size() < 3)
+                throw new NullBotMsgException("[限权设置] ❌参数不足");
 
             long targetId;
             int targetNewAccess;
             try {
-                targetId = Long.parseLong(event.getCommandParameters().get(1));
-                targetNewAccess = Integer.parseInt(event.getCommandParameters().get(2));
+                targetId = Long.parseLong(params.get(1));
+                targetNewAccess = Integer.parseInt(params.get(2));
             } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌参数格式错误", false);
-                log.info("\t\t\t\t├─[Access.Set] 参数格式错误");
-                return;
+                throw new NullBotMsgException("[限权设置] ❌参数格式错误");
             }
 
-            switch (event.getCommandParameters().get(0))
+            switch (params.get(0))
             {
                 case "GROUP" -> {
-                    if(!groupService.existGroup(targetId)){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌群聊未注册", false);
-                        log.info("\t\t\t\t├─[Access.Set] 群聊未注册 - {}", targetId);
-                        return;
-                    }
+                    if(!groupService.existGroup(targetId)) throw new NullBotMsgException("[限权设置] ❌群聊未注册");
                     int targetAccess = groupService.getGroupAccess(targetId);
                     int selfAccess = userService.getUserAccess(groupMessageEvent.getUserId());
                     if(selfAccess < 2){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改失败\n仅限权等级2用户可修改群限权 你的限权为" + selfAccess, false);
-                        log.info("\t\t\t\t├─[Access.Set] 修改失败 - 仅限权等级2用户可修改群限权 用户限权为{}", selfAccess);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] \uD83D\uDEAB修改失败\n仅限权等级II用户可修改群限权\n你的限权等级: " + selfAccess, false);
+                        log.info("\t\t\t\t├─[AccessSet] 修改失败 - 仅限权等级2用户可修改群限权 用户限权为{}", selfAccess);
                     }else{
                         groupService.setGroupAccess(targetId, targetNewAccess);
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ✅已修改群 " + targetId + " 限权: " + targetAccess + " -> " + targetNewAccess, false);
-                        log.info("\t\t\t\t├─[Access.Set] 已修改群 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ✅已修改群聊 " + targetId + " 限权等级:\n" + targetAccess + " -> " + targetNewAccess, false);
+                        log.info("\t\t\t\t├─[AccessSet] 已修改群聊 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
                     }
                 }
 
                 case "USER" -> {
-                    if(!userService.existUser(targetId)){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌用户未注册", false);
-                        log.info("\t\t\t\t├─[Access.Set] 用户未注册 - {}", targetId);
-                        return;
-                    }
+                    if(!userService.existUser(targetId)) throw new NullBotMsgException("[限权设置] ❌用户未注册");
                     int targetAccess = userService.getUserAccess(targetId);
                     int selfAccess = userService.getUserAccess(groupMessageEvent.getUserId());
                     if(targetAccess >= selfAccess){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改失败\n目标限权等级" + targetAccess + " 高于或等于 自身限权等级" + selfAccess, false);
-                        log.info("\t\t\t\t├─[Access.Set] 修改失败 - 目标限权等级{} 高于或等于 自身限权等级{}", targetAccess, selfAccess);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] \uD83D\uDEAB修改失败\n目标限权等级: " + targetAccess + "\n高于或等于\n你的限权等级: " + selfAccess, false);
+                        log.info("\t\t\t\t├─[AccessSet] 修改失败 - 目标限权等级{} 高于或等于 自身限权等级{}", targetAccess, selfAccess);
                     }else if(targetNewAccess >= selfAccess){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改失败\n新限权等级" + targetNewAccess + " 高于或等于 自身限权等级" + selfAccess, false);
-                        log.info("\t\t\t\t├─[Access.Set] 修改失败 - 新限权等级{} 高于或等于 自身限权等级{}", targetNewAccess, selfAccess);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] \uD83D\uDEAB修改失败\n新的限权等级: " + targetNewAccess + "\n高于或等于\n你的限权等级: " + selfAccess, false);
+                        log.info("\t\t\t\t├─[AccessSet] 修改失败 - 新限权等级{} 高于或等于 自身限权等级{}", targetNewAccess, selfAccess);
                     }else{
                         userService.setUserAccess(targetId, targetNewAccess);
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ✅已修改用户 " + targetId + " 限权: " + targetAccess + " -> " + targetNewAccess, false);
-                        log.info("\t\t\t\t├─[Access.Set] 已修改用户 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ✅已修改用户 " + targetId + " 限权等级:\n" + targetAccess + " -> " + targetNewAccess, false);
+                        log.info("\t\t\t\t├─[AccessSet] 已修改用户 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
                     }
                 }
 
-                default -> {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[限权设置] ❌修改选项不存在", false);
-                    log.info("\t\t\t\t├─[Access.Set] 修改选项不存在");
-                }
+                default -> throw new NullBotMsgException("[限权设置] ❌修改选项不存在");
             }
-
         }else
-            log.info("\t\t\t\t├─[Access.Set] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[限权设置] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

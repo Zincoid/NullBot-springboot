@@ -63,11 +63,10 @@ public class ImageSaveCommand implements Command
                     ) {
                         throw new NullBotMsgException("[保存图片] ❌数据库更新失败");
                     }
-                    bot.sendGroupMsg(groupId, "\uD83D\uDCBE 已保存！", false);
+                    bot.sendGroupMsg(groupId, "\uD83D\uDCBD 已保存！", false);
                     log.info("\t\t\t\t├─[ImageSave] 已保存 - {}", fileInfo.getFileName());
                 } catch (Exception e) {
-                    bot.sendGroupMsg(groupId, "[保存图片] ❌出错:\n" + e.getMessage(), false);
-                    log.info("\t\t\t\t├─[ImageSave] 保存失败", e);
+                    throw new NullBotMsgException("[保存图片] ❌出错: " + e.getMessage());
                 }
             }
         }else

@@ -8,6 +8,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.po.SayingPO;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Component;
 
@@ -30,21 +32,15 @@ public class RandomSayingCommand implements Command
                     long qqNumber = Long.parseLong(event.getCommandParameters().getFirst());
                     saying = sayingService.getRandByUserId(qqNumber);
                 } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[随机语录] ❌参数格式错误", false);
-                    log.info("\t\t\t\t├─[Saying.Random] 参数格式错误");
-                    return;
+                    throw new NullBotMsgException("[随机语录] ❌参数格式错误");
                 }
             }
-            if (saying != null) {
-                String text = saying.toString();
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), text, false);
-                log.info("\t\t\t\t├─[Saying.Random] 已发送语录 - {}", text.replaceAll("\\R", " "));
-            }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语录] ❌暂无语录", false);
-                log.info("\t\t\t\t├─[Saying.Random] 暂无语录");
-            }
+            if (saying == null) throw new NullBotMsgException("[随机语录] ❌暂无用户记录");
+            String text = saying.toString();
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), text, false);
+            log.info("\t\t\t\t├─[RandomSaying] 已发送语录 - {}", text.replaceAll("\\R", " "));
         }else
-            log.info("\t\t\t\t├─[Saying.Random] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[随机语录] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

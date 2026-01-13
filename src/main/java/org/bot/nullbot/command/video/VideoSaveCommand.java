@@ -12,6 +12,8 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.FileInfo;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.MessageParseUtil;
@@ -32,19 +34,14 @@ public class VideoSaveCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if (reply.getType() != MsgTypeEnum.reply) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌需回复要保存的视频", false);
-                log.info("\t\t\t\t├─[Video.Save] 未指定消息");
-                return;
-            }
+            if (reply.getType() != MsgTypeEnum.reply)
+                throw new NullBotMsgException("[保存视频] ❌需引用视频");
 
             GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
-            Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());  // 可优化为单个键值对
-            if(videoMap.isEmpty()){
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌未包含可保存视频", false);
-                log.info("\t\t\t\t├─[Video.Save] 未包含可保存图片");
-                return;
-            }
+            // 可优化为单个键值对?
+            Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());
+            if(videoMap.isEmpty())
+                throw new NullBotMsgException("[保存视频] ❌未包含视频");
 
             Long userId = groupMessageEvent.getSender().getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
@@ -62,23 +59,16 @@ public class VideoSaveCommand implements Command
                             fileInfo.getLastModified(),
                             userId, userName)
                     ) {
-                        bot.sendGroupMsg(groupId, "[视频] ❌数据库更新失败", false);
-                        log.info("\t\t\t\t├─[Video.Save] 数据库更新失败");
-                        return;
+                        throw new NullBotMsgException("[保存视频] ❌数据库更新失败");
                     }
-                    // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().get(0))){
-                    //     bot.sendGroupMsg(groupId, "[视频] \uD83D\uDCBE已保存！\n" + info, false);
-                    // }
-                    // bot.sendGroupMsg(groupId, "[视频] \uD83D\uDCBE已保存！", false);
-                    bot.sendGroupMsg(groupId, "[视频] \uD83D\uDCBE已保存！", false);
-                    log.info("\t\t\t\t├─[Video.Save] 已保存为: {}", fileInfo.getFileName());
+                    bot.sendGroupMsg(groupId, "\uD83C\uDFA5 已保存！", false);
+                    log.info("\t\t\t\t├─[VideoSave] 已保存 - {}", fileInfo.getFileName());
                 } catch (Exception e) {
-                    bot.sendGroupMsg(groupId, "[视频] ❌保存失败:\n" + e.getMessage(), false);
-                    log.info("\t\t\t\t├─[Video.Save] 保存失败", e);
+                    throw new NullBotMsgException("[保存视频] ❌出错: " + e.getMessage());
                 }
             }
         }else
-            log.info("\t\t\t\t├─[Video.Save] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[保存视频] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

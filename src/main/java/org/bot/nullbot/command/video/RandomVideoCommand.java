@@ -9,6 +9,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -23,19 +25,22 @@ public class RandomVideoCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String videoPath = FileUtil.getRandomFile(fileStorageConfig.getVideoPath());
-            if (videoPath == null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频] ❌暂无视频", false);
-                log.info("\t\t\t\t├─[Video.Random] 暂无视频");
-                return;
+            String videoPath;
+            try {
+                videoPath = FileUtil.getRandomFile(fileStorageConfig.getVideoPath());
+            } catch (Exception e) {
+                throw new NullBotMsgException("[随机视频] ❌目录异常");
             }
+            if (videoPath == null)
+                throw new NullBotMsgException("[随机视频] ❌暂无视频");
+
             String response = MsgUtils.builder()
                     .video(videoPath, "")
                     .build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[Video.Random] 已发送视频: {}", videoPath);
+            log.info("\t\t\t\t├─[RandomVideo] 已发送视频 - {}", videoPath);
         }else
-            log.info("\t\t\t\t├─[Video.Random] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[随机视频] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override
