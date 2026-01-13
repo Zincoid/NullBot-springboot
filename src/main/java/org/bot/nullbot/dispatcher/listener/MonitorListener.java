@@ -59,7 +59,7 @@ public class MonitorListener
 
             String response = deepSeekClient.chat(
                     messageId, groupId, userId, userName, message, bot, new CommandEvent<>("Chat", event),
-                    settingManager.getChatOption(groupId)
+                    settingManager.getChatOption(groupId), false
             );
 
             log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至 群 {}", event.getGroupId());

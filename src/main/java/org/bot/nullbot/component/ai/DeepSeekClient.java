@@ -130,7 +130,7 @@ public class DeepSeekClient
      * @return AI回复内容
      */
     public String chat(Integer messageId, Long groupId, Long userId, String userName,
-                       String userMessage, Bot bot, CommandEvent<?> event, ChatOption option) throws Exception
+                       String userMessage, Bot bot, CommandEvent<?> event, ChatOption option, Boolean saveCurMsg) throws Exception
     {
         if(option.isAntiInjection()) {
             String req = """
@@ -162,7 +162,7 @@ public class DeepSeekClient
                 case Monitor -> chatStorage.getMonitorHistory(groupId);
             };
             // 将用户当前消息添加到历史
-            chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
+            if (saveCurMsg) chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
             // 构建完整消息列表
             List<Map<String, String>> _messages = buildMessages(chatMessages, option, groupId);
             // 发送请求到API
