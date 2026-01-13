@@ -47,7 +47,7 @@ public class ChatCommand implements Command
 
             String response = deepSeekClient.chat(
                     messageId, groupId, userId, userName, message, bot, event,
-                    settingManager.getChatOption(groupId), true
+                    settingManager.getChatOption(groupId)
             );
 
             log.info("\t\t\t\t├─[AI.Chat] 已回复: {}", response.replaceAll("\\R", " "));

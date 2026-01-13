@@ -45,24 +45,17 @@ public class MonitorListener
     // =================== 串行监听方法 ===================
 
     @FunctionControl(config = "AIAutoReply")
-    public void onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
-        if(!settingManager.isAutoReply(event.getGroupId())) return;
-        if(event.getMessage().startsWith("/")) return;
+    public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
+        if(!settingManager.isAutoReply(event.getGroupId())) return false;
+        if(event.getMessage().startsWith("/")) return false;
 
         double freq = settingManager.getReplyFrequency(event.getGroupId());
         if (freq > Math.random()) {
             log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至 群 {}", event.getGroupId());
-            Long userId = event.getSender().getUserId();
-            Long groupId = event.getGroupId();
-            String message = MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg());
-            String userName = event.getSender().getNickname();
-            Integer messageId = event.getMessageId();
-            String response = deepSeekClient.chat(
-                    messageId, groupId, userId, userName, message, bot, new CommandEvent<>("Chat", event),
-                    settingManager.getChatOption(groupId), false
-            );
-            log.info("└─[Content] {}", response.replaceAll("\\R", " "));
-        }
+            commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
+            return true;
+        } else
+            return false;
     }
 
     @FunctionControl(config = "ImgCollect")

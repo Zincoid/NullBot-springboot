@@ -36,9 +36,9 @@ public class CommandListener
     {
         // 串行调用 消息预处理
         monitorListener.onGroupImageCollection(bot, event);
-        monitorListener.onGroupMessageCollection(bot, event);
+        if(!monitorListener.onGroupAIAutoReply(bot, event))
+            monitorListener.onGroupMessageCollection(bot, event);
         monitorListener.onGroupKeywordDetection(bot, event);
-        monitorListener.onGroupAIAutoReply(bot, event);
 
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
             log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage().replaceAll("\\R", " "));

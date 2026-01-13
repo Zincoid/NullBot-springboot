@@ -45,7 +45,7 @@ public class PokeReactCommand implements Command
                 String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
                 String response = deepSeekClient.chat(
                         null, groupId, userId, userName, "揉了你一下", bot, event,
-                        settingManager.getChatOption(groupId), true
+                        settingManager.getChatOption(groupId)
                 );
 
                 log.info("\t\t\t\t├─[AI.PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", " "));
