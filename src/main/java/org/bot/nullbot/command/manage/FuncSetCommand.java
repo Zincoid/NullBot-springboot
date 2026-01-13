@@ -35,7 +35,7 @@ public class FuncSetCommand implements Command
                     log.info("\t\t\t\t├─[FuncSet] 已获取全局设置");
                     return;
                 }
-                if ("-monitor".equals(option)) {
+                if ("-change".equals(option)) {
                     if (params.size() < 2) throw new IllegalArgumentException("参数不足");
                     String func = params.get(1);
                     Boolean isEnabled = functionManager.switchEnabled(func);
@@ -66,7 +66,7 @@ public class FuncSetCommand implements Command
                 格式: FuncSet [操作类型] [可选: 参数]
                 操作类型和参数:
                 - [-view] 获取全局设置
-                - [-monitor] [功能标志] 更改启用状态
+                - [-change] [功能标志] 更改启用状态
                 标志: AIAutoReply/ImgCollect/MsgCollect/KeyDetect/PokeDetect/RecallDetect
                 中文命令: 功能控制""", getAccess()
         );
