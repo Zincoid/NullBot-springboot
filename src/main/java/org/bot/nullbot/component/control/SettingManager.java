@@ -48,6 +48,7 @@ public class SettingManager
         setting.setReplyFrequency(frequency);
         return true;
     }
+    public double getReplyFrequency(Long groupId) { return getSetting(groupId).getReplyFrequency(); }
 
     public boolean switchImageCollect(Long groupId) { return getSetting(groupId).switchImageCollect(); }
     public boolean switchMessageCollect(Long groupId) { return getSetting(groupId).switchMessageCollect(); }
