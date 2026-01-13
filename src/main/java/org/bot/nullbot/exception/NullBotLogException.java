@@ -1,6 +1,6 @@
 package org.bot.nullbot.exception;
 
-public class NullBotLogException extends RuntimeException
+public class NullBotLogException extends RuntimeException  // 仅发送 控制台LOG
 {
     public NullBotLogException(String message) { super(message); }
 
