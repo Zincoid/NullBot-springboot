@@ -224,7 +224,7 @@ public class FileServiceImpl implements FileService
             response.setContentType(request.getSession().getServletContext().getMimeType(suf));  // 获取文件 MimeType
             response.setHeader("content-disposition","attachment;fileName="+ URLEncoder.encode(fileName, StandardCharsets.UTF_8));
             ServletOutputStream os = response.getOutputStream();
-            FileCopyUtils.copy(fileInputStream,os);
+            FileCopyUtils.copy(fileInputStream, os);
         } catch (IOException e) {
             throw new RuntimeException("从磁盘下载文件时出错");
         }
