@@ -6,6 +6,8 @@ import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SettingServiceImpl implements SettingService
@@ -21,4 +23,12 @@ public class SettingServiceImpl implements SettingService
     public boolean updateSetting(SettingInfo setting) {
         return settingManager.setSetting(setting);
     }
+
+    @Override
+    public List<SettingInfo> getSettingList() {
+        return settingManager.getSettingList();
+    }
+
+    @Override
+    public void addSettings(List<SettingInfo> settings) { settingManager.setSettings(settings); }
 }

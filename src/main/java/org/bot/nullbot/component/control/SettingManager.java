@@ -7,6 +7,8 @@ import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.enums.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +18,13 @@ public class SettingManager
 {
     private final DefaultConfig defaultConfig;
     private final Map<Long, SettingInfo> settings = new ConcurrentHashMap<>();
+
+    public List<SettingInfo> getSettingList() {
+        return new ArrayList<>(settings.values());
+    }
+    public void setSettings(List<SettingInfo> newSettings) {
+        for (SettingInfo setting : newSettings) settings.put(setting.getGroupId(), setting);
+    }
 
     public SettingInfo getSetting(Long groupId) {
         return settings.computeIfAbsent(groupId, k -> new SettingInfo(groupId, defaultConfig));
