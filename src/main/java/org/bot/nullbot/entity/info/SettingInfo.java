@@ -80,7 +80,7 @@ public class SettingInfo
                 ├ 指令模式 - %s
                 ├ 指令校验 - %s
                 └ 自定模式 - %s
-                
+                ┌ 自动回复 - %s
                 └ 回复频率 - %s
                  ◉ Monitor 设置
                 ├ 图片收集 - %s
@@ -97,6 +97,8 @@ public class SettingInfo
                 embedding ? "ON" : "OFF",
                 embeddingAuth ? "ON" : "OFF",
                 custom ? "ON" : "OFF",
+                autoReply ? "ON" : "OFF",
+                replyFrequency,
                 imageCollect ? "ON" : "OFF",
                 messageCollect ? "ON" : "OFF",
                 keywordDetect ? "ON" : "OFF",

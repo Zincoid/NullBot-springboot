@@ -32,7 +32,7 @@ public class CommandListener
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)
     @Async("ThreadExecutor")
-    public void onGroupCommandInteraction(Bot bot, GroupMessageEvent event) throws Exception
+    public void onGroupMessageInteraction(Bot bot, GroupMessageEvent event) throws Exception
     {
         // 串行调用 消息预处理
         monitorListener.onGroupImageCollection(bot, event);

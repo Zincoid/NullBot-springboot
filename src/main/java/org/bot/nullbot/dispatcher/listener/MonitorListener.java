@@ -47,9 +47,9 @@ public class MonitorListener
     @FunctionControl(config = "AIAutoReply")
     public void onGroupAIAutoReply(Bot bot, GroupMessageEvent event) {
         if(!settingManager.isAutoReply(event.getGroupId())) return;
-        if(!event.getMessage().startsWith("/")){
+        if(event.getMessage().startsWith("/")) return;
 
-        }
+
     }
 
     @FunctionControl(config = "ImgCollect")

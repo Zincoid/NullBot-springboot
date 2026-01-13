@@ -42,6 +42,12 @@ public class SettingManager
     // public boolean isCustom(Long groupId) { return getSetting(groupId).isCustom(); }
 
     public boolean switchAutoReply(Long groupId) { return getSetting(groupId).switchAutoReply(); }
+    public boolean isAutoReply(Long groupId) { return getSetting(groupId).isAutoReply(); }
+    public boolean setReplyFrequency(Long groupId, double frequency) {
+        SettingInfo setting = getSetting(groupId);
+        setting.setReplyFrequency(frequency);
+        return true;
+    }
 
     public boolean switchImageCollect(Long groupId) { return getSetting(groupId).switchImageCollect(); }
     public boolean switchMessageCollect(Long groupId) { return getSetting(groupId).switchMessageCollect(); }
