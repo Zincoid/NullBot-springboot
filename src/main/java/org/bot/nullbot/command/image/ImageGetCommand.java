@@ -9,8 +9,12 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"ImageGet", "获取图片"})
 @Component
@@ -23,24 +27,18 @@ public class ImageGetCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if(event.getCommandParameters().isEmpty()){
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌无文件名参数", false);
-                log.info("\t\t\t\t├─[Image.Get] 无文件名参数");
-                return;
-            }
-            String imagePath = FileUtil.getFilePathByName(fileStorageConfig.getImagePath() + "/collect", event.getCommandParameters().getFirst());
-            if (imagePath == null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌未找到该图片", false);
-                log.info("\t\t\t\t├─[Image.Get] 未找到该图片");
-                return;
-            }
+            List<String> params = event.getCommandParameters();
+            if(params.isEmpty()) throw new NullBotMsgException("[获取图片] ❌无文件名参数");
+            String imagePath = FileUtil.getFilePathByName(fileStorageConfig.getImagePath() + "/collect", params.getFirst());
+            if (imagePath == null) throw new NullBotMsgException("[获取图片] ❌未找到该图片");
+
             String response = MsgUtils.builder()
                     .img(imagePath)
                     .build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[Image.Get] 已获取图片: {}", imagePath);
+            log.info("\t\t\t\t├─[ImageGet] 已获取图片 - {}", imagePath);
         }else
-            log.info("\t\t\t\t├─[Image.Get] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[获取图片] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

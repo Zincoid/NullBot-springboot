@@ -11,6 +11,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
@@ -29,32 +31,27 @@ public class ImageDeleteCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if(reply.getType() == MsgTypeEnum.reply){
+            if (reply.getType() == MsgTypeEnum.reply) {
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                 Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
-                if(!imageMap.isEmpty()) {
-                    for (Map.Entry<String, String> entry : imageMap.entrySet()) {
-                        String originName = entry.getKey();
-                        String fileName = originName.substring(0, originName.lastIndexOf("."));
-                        String response = FileUtil.deleteFilesByPattern(fileStorageConfig.getImagePath() + "/collect", fileName + ".*");  // 因为QQ获取文件名后缀全是jpg所以模式匹配...
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1️" + response, false);
-                        log.info("\t\t\t\t├─[Image.Delete] {}", response);
-                    }
-                }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌未包含可删除图片", false);
-                    log.info("\t\t\t\t├─[Image.Delete] 未包含可删除图片");
+                if (imageMap.isEmpty()) throw new NullBotMsgException("[删除图片] ❌未引用图片");
+                for (Map.Entry<String, String> entry : imageMap.entrySet()) {
+                    String originName = entry.getKey();
+                    // QQ获取文件名后缀全是jpg只能模式匹配...
+                    String fileName = originName.substring(0, originName.lastIndexOf("."));
+                    String response = FileUtil.deleteFilesByPattern(fileStorageConfig.getImagePath() + "/collect", fileName + ".*");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1️" + response, false);
+                    log.info("\t\t\t\t├─[ImageDelete] {}", response);
                 }
-            }else if(!event.getCommandParameters().isEmpty()){
+            } else if (!event.getCommandParameters().isEmpty()) {
                 String fileName = event.getCommandParameters().getFirst();
                 String response = FileUtil.deleteFileByName(fileStorageConfig.getImagePath() + "/collect", fileName);
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] \uD83D\uDDD1️" + response, false);
-                log.info("\t\t\t\t├─[Image.Delete] {}", response);
-            }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌无删除参数或引用", false);
-                log.info("\t\t\t\t├─[Image.Delete] 无删除参数或引用");
-            }
-        }else
-            log.info("\t\t\t\t├─[Image.Delete] 未设计 - 非群消息事件响应方式");
+                log.info("\t\t\t\t├─[ImageDelete] {}", response);
+            } else
+                throw new NullBotMsgException("[删除图片] ❌无文件名或引用");
+        } else
+            throw new NullBotLogException("[删除图片] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

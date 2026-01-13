@@ -8,6 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -26,9 +27,9 @@ public class ImageFolderCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String structure = FileUtil.getFolderTreeString(fileStorageConfig.getImagePath(), 0);
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片目录] \uD83D\uDCC1已获取！\n" + structure, false);
-            log.info("\t\t\t\t├─[Image.Folder] 已输出 - 图片目录结构");
+            log.info("\t\t\t\t├─[ImageFolder] 已输出 - 图片目录结构");
         } else
-            log.info("\t\t\t\t├─[Image.Folder] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[图片目录] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

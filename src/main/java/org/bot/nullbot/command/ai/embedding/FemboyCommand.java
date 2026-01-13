@@ -26,17 +26,21 @@ public class FemboyCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String acgPath = fileStorageConfig.getImagePath() + "/femboy";
+
+            String femboyPath;
             try {
-                String femboyPath = FileUtil.getRandomFile(acgPath);
-                if(femboyPath == null) throw new NullBotMsgException("[男娘] ❌暂无图片");
-                String response = MsgUtils.builder()
-                        .img(femboyPath)
-                        .build();
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                log.info("\t\t\t\t├─[Femboy] 获取男娘图片");
+                femboyPath = FileUtil.getRandomFile(acgPath);
             } catch (Exception e) {
-                throw new NullBotMsgException("[男娘] ❌未配置文件夹");
+                throw new NullBotMsgException("[男娘] ❌目录异常");
             }
+            if(femboyPath == null)
+                throw new NullBotMsgException("[男娘] ❌暂无图片");
+
+            String response = MsgUtils.builder()
+                    .img(femboyPath)
+                    .build();
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+            log.info("\t\t\t\t├─[Femboy] 获取男娘图片");
         }else
             throw new NullBotLogException("[男娘] ❌未设计 - 非群消息事件响应方式");
     }

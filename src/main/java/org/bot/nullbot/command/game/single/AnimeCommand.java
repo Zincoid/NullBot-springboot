@@ -9,6 +9,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -24,24 +26,23 @@ public class AnimeCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String acgPath = fileStorageConfig.getImagePath() + "/acg/二次元";
+
+            String animePath;
             try {
-                String animePath = FileUtil.getRandomFile(acgPath);
-                if(animePath != null) {
-                    String response = MsgUtils.builder()
-                            .img(animePath)
-                            .build();
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                    log.info("\t\t\t\t├─[Anime] 获取二次元图片");
-                }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[二次元] ❌暂无图片", false);
-                    log.info("\t\t\t\t├─[Anime] 暂无图片");
-                }
+                animePath = FileUtil.getRandomFile(acgPath);
             } catch (Exception e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[二次元] ❌未配置文件夹", false);
-                log.info("\t\t\t\t├─[Anime] 未配置文件夹");
+                throw new NullBotMsgException("[二次元] ❌目录异常");
             }
+            if(animePath == null)
+                throw new NullBotMsgException("[二次元] ❌暂无图片");
+
+            String response = MsgUtils.builder()
+                    .img(animePath)
+                    .build();
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+            log.info("\t\t\t\t├─[Anime] 获取二次元图片");
         }else
-            log.info("\t\t\t\t├─[Anime] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[二次元] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

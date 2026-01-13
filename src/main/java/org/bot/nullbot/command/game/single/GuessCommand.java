@@ -12,6 +12,8 @@ import org.bot.nullbot.component.storage.GuessStorage;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.GuessInfo;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.UserService;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
@@ -34,12 +36,12 @@ public class GuessCommand implements Command
     private final UserService userService;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
+    public void execute(Bot bot, CommandEvent<?> event) throws Exception {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            if (event.getCommandParameters().isEmpty())
+                throw new NullBotMsgException("[猜角色] ❌参数不足");
+
             Long groupId = groupMessageEvent.getGroupId();
-            if (event.getCommandParameters().isEmpty()){
-                bot.sendGroupMsg(groupId, "[猜角色] ❌参数不足", false);
-            }
             Long userId = groupMessageEvent.getUserId();
             String userName = groupMessageEvent.getSender().getNickname();
             String param = event.getCommandParameters().getFirst();
@@ -48,28 +50,30 @@ public class GuessCommand implements Command
             if (guessInfo == null){
                 // 初始化猜迷
                 String acgPath = fileStorageConfig.getImagePath() + "/acg/" + param;
+
+                String characterPath;
                 try {
-                    String characterPath = FileUtil.getRandomFile(acgPath);
-                    if(characterPath != null) {
-                        String characterName = characterPath.split("/")[characterPath.split("/").length-1].split("_")[0];
-                        guessStorage.initGuessInfo(groupId, characterName, characterPath);
-
-                        // 获取猜谜图
-                        String response = MsgUtils.builder()
-                                .text("本群题目✨是\n")
-                                .img("base64://" + crop(characterPath, settingManager.getGuessRatio(groupId), settingManager.getGuessPadding(groupId)))
-                                .build();
-                        bot.sendGroupMsg(groupId, response, false);
-
-                        log.info("\t\t\t\t├─[Guess] 初始化群猜谜 - {} -> {}", groupId, characterName);
-                    }else{
-                        bot.sendGroupMsg(groupId, "[猜角色] ❌该类别下暂无角色", false);
-                        log.info("\t\t\t\t├─[Guess] 该类别下暂无角色 - {}", param);
-                    }
+                    characterPath = FileUtil.getRandomFile(acgPath);
                 } catch (Exception e) {
-                    bot.sendGroupMsg(groupId, "[猜角色] ❌不存在该类别", false);
-                    log.info("\t\t\t\t├─[Guess] 不存在该类别 - {}", param);
+                    throw new NullBotMsgException("[猜角色] ❌不存在该类别");  // 目录异常
                 }
+                if(characterPath == null)
+                    throw new NullBotMsgException("[猜角色] ❌该类别下暂无角色");
+
+                String characterName = characterPath
+                        .split("/")[characterPath.split("/").length-1]
+                        .split("_")[0];
+                guessStorage.initGuessInfo(groupId, characterName, characterPath);
+
+                // 获取猜谜图
+                String response = MsgUtils.builder()
+                        .text("本群题目✨是\n")
+                        .img("base64://" + crop(characterPath,
+                                settingManager.getGuessRatio(groupId),
+                                settingManager.getGuessPadding(groupId)))
+                        .build();
+                bot.sendGroupMsg(groupId, response, false);
+                log.info("\t\t\t\t├─[Guess] 初始化群猜谜 - {} -> {}", groupId, characterName);
             }else{
                 // 判断对错
                 if("-f".equals(param)){
@@ -101,7 +105,7 @@ public class GuessCommand implements Command
                 }
             }
         }else
-            log.info("\t\t\t\t├─[Guess] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[猜] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

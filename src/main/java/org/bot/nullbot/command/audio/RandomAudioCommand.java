@@ -25,13 +25,20 @@ public class RandomAudioCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String audioPath = FileUtil.getRandomFile(fileStorageConfig.getAudioPath());
-            if (audioPath == null) throw new NullBotMsgException("[随机音频] ❌暂无音频文件");
+            String audioPath;
+            try {
+                audioPath = FileUtil.getRandomFile(fileStorageConfig.getAudioPath());
+            } catch (Exception e) {
+                throw new NullBotMsgException("[随机音频] ❌目录异常");
+            }
+            if (audioPath == null)
+                throw new NullBotMsgException("[随机音频] ❌暂无音频");
+
             String response = MsgUtils.builder()
                     .voice(audioPath)
                     .build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[RandomAudio] 已发送音频: {}", audioPath);
+            log.info("\t\t\t\t├─[RandomAudio] 已发送音频 - {}", audioPath);
         }else
             throw new NullBotLogException("[随机音频] ❌未设计 - 非群消息事件响应方式");
     }

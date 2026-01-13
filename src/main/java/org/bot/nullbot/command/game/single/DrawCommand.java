@@ -8,6 +8,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.ItemService;
 import org.springframework.stereotype.Component;
 
@@ -41,11 +43,8 @@ public class DrawCommand implements Command
             }else{
                 try {
                     int times = Integer.parseInt(event.getCommandParameters().getFirst());
-                    if(times <= 0){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "想干嘛...", false);
-                        log.info("\t\t\t\t├─[Draw] 抽取次数非正");
-                        return;
-                    }
+                    if(times <= 0) throw new NullBotMsgException("[抽奖] ❌抽取次数非正");
+
                     List<ItemPO> items = new ArrayList<>();
                     boolean stop = false;
                     while(times > 0 && !stop){
@@ -57,10 +56,7 @@ public class DrawCommand implements Command
                             stop = true;
                         }
                     }
-                    if (items.isEmpty()) {
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌抽数耗尽或仓库已满", false);
-                        log.info("\t\t\t\t├─[Draw] - {}({}) -> 抽数(多抽)耗尽或仓库已满", userName, userId);
-                    }else{
+                    if (!items.isEmpty()) {
                         items.sort(Comparator.comparing(ItemPO::getRarity).reversed());
                         StringBuilder sb = new StringBuilder("[抽奖] " + userName + "抽取了" + items.size() + "个物品...\n");
                         for(ItemPO item : items){
@@ -68,6 +64,9 @@ public class DrawCommand implements Command
                         }
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
                         log.info("\t\t\t\t├─[Draw] 已抽取次数 - {}({}) -> {}", userName, userId, items.size());
+                    }else{
+                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌抽数耗尽或仓库已满", false);
+                        log.info("\t\t\t\t├─[Draw] - {}({}) -> 抽数(多抽)耗尽或仓库已满", userName, userId);
                     }
                 } catch (NumberFormatException e) {
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[抽奖] ❌参数格式错误", false);
@@ -75,7 +74,7 @@ public class DrawCommand implements Command
                 }
             }
         }else
-            log.info("\t\t\t\t├─[Draw] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[抽奖] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

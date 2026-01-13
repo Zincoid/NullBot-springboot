@@ -11,6 +11,8 @@ import org.bot.nullbot.entity.page.InventoryPage;
 import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.po.UserPO;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.BreadService;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.UserService;
@@ -40,11 +42,7 @@ public class BreadCommand implements Command
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             Long groupId = groupMessageEvent.getGroupId();
 
-            if (params.isEmpty()) {
-                bot.sendGroupMsg(groupId, "[面包] ❌无操作", false);
-                log.info("\t\t\t\t├─[Bread] 无操作");
-                return;
-            }
+            if (params.isEmpty()) throw new NullBotMsgException("[面包] ❌无操作");
 
             switch (params.getFirst()) {
                 case "-buy", "b" -> buy(bot, userId, groupId, userName);
@@ -52,13 +50,10 @@ public class BreadCommand implements Command
                 case "-rob", "r" -> rob(bot, groupMessageEvent, groupId, userId, userName);
                 case "-gift", "g" -> gift(bot, groupMessageEvent, groupId, userId, userName);
                 case "-look", "l" -> look(bot, params, groupId, userId, userName);
-                default -> {
-                    bot.sendGroupMsg(groupId, "[面包] ❌操作不存在", false);
-                    log.info("\t\t\t\t├─[Bread] 操作不存在");
-                }
+                default -> throw new NullBotMsgException("[面包] ❌操作不存在");
             }
         }else
-            log.info("\t\t\t\t├─[Bread-Look] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[面包] ❌未设计 - 非群消息事件响应方式");
     }
 
     private void buy(Bot bot, Long userId, Long groupId, String userName) {

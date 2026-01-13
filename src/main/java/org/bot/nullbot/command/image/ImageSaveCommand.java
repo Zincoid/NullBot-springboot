@@ -12,6 +12,8 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.FileInfo;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.MessageParseUtil;
@@ -33,19 +35,13 @@ public class ImageSaveCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if (reply.getType() != MsgTypeEnum.reply) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌需回复要保存的图片", false);
-                log.info("\t\t\t\t├─[Image.Save] 未指定消息");
-                return;
-            }
+            if (reply.getType() != MsgTypeEnum.reply)
+                throw new NullBotMsgException("[保存图片] ❌需引用图片");
 
             GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
             Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
-            if(imageMap.isEmpty()){
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌未包含可保存图片", false);
-                log.info("\t\t\t\t├─[Image.Save] 未包含可保存图片");
-                return;
-            }
+            if(imageMap.isEmpty())
+                throw new NullBotMsgException("[保存图片] ❌未包含图片");
 
             Long userId = groupMessageEvent.getSender().getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
@@ -54,7 +50,8 @@ public class ImageSaveCommand implements Command
             for (Map.Entry<String, String> entry : imageMap.entrySet()) {
                 String originName = entry.getKey();
                 String url = entry.getValue();
-                String fileName = originName.substring(0, originName.lastIndexOf("."));  // QQ给的扩展名是错的 让下载方法判断
+                // QQ给的扩展名是错的 让下载方法判断文件类型
+                String fileName = originName.substring(0, originName.lastIndexOf("."));
                 try {
                     FileInfo fileInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/collect", fileName);
                     if(!fileService.addFileRecordForBot(
@@ -64,23 +61,17 @@ public class ImageSaveCommand implements Command
                             fileInfo.getLastModified(),
                             userId, userName)
                     ) {
-                        bot.sendGroupMsg(groupId, "[图片] ❌数据库更新失败", false);
-                        log.info("\t\t\t\t├─[Image.Save] 数据库更新失败");
-                        return;
+                        throw new NullBotMsgException("[保存图片] ❌数据库更新失败");
                     }
-                    // if(event.getCommandParameters().isEmpty() || !"-noInfo".equals(event.getCommandParameters().getFirst())){
-                    //     bot.sendGroupMsg(groupId, "[图片] \uD83D\uDCBE已保存！\n" + info, false);
-                    // }
-                    bot.sendGroupMsg(groupId, "[图片] \uD83D\uDCBE已保存！", false);
-                    // bot.sendGroupMsg(groupId, "[图片] \uD83D\uDCBE已保存！\n" + info, false);
-                    log.info("\t\t\t\t├─[Image.Save] 已保存为: {}", fileInfo.getFileName());
+                    bot.sendGroupMsg(groupId, "\uD83D\uDCBE 已保存！", false);
+                    log.info("\t\t\t\t├─[ImageSave] 已保存 - {}", fileInfo.getFileName());
                 } catch (Exception e) {
-                    bot.sendGroupMsg(groupId, "[图片] ❌保存失败:\n" + e.getMessage(), false);
-                    log.info("\t\t\t\t├─[Image.Save] 保存失败", e);
+                    bot.sendGroupMsg(groupId, "[保存图片] ❌出错:\n" + e.getMessage(), false);
+                    log.info("\t\t\t\t├─[ImageSave] 保存失败", e);
                 }
             }
         }else
-            log.info("\t\t\t\t├─[Image.Save] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[保存图片] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

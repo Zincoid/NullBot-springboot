@@ -9,6 +9,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -24,19 +26,22 @@ public class RandomImageCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String imagePath = FileUtil.getRandomFile(fileStorageConfig.getImagePath() + "/collect");
-            if (imagePath == null) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ❌暂无图片", false);
-                log.info("\t\t\t\t├─[Image.Random] 暂无图片");
-                return;
+            String imagePath;
+            try {
+                imagePath = FileUtil.getRandomFile(fileStorageConfig.getImagePath() + "/collect");
+            } catch (Exception e) {
+                throw new NullBotMsgException("[随机图片] ❌目录异常");
             }
+            if (imagePath == null)
+                throw new NullBotMsgException("[随机图片] ❌暂无图片");
+
             String response = MsgUtils.builder()
                     .img(imagePath)
                     .build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[Image.Random] 已发送图片: {}", imagePath);
+            log.info("\t\t\t\t├─[RandomImage] 已发送图片 - {}", imagePath);
         }else
-            log.info("\t\t\t\t├─[Image.Random] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[随机图片] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

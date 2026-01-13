@@ -11,6 +11,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -75,29 +77,28 @@ public class WifeCommand implements Command
                 if(expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
                     String category = event.getCommandParameters().getFirst();
                     String acgPath = fileStorageConfig.getImagePath() + "/acg/" + category;
+
+                    String wifePath;
                     try {
-                        String wifePath = FileUtil.getRandomFile(acgPath);
-                        if(wifePath != null) {
-                            String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,
+                        wifePath = FileUtil.getRandomFile(acgPath);
+                    } catch (Exception e) {
+                        throw new NullBotMsgException("[今日老婆] ❌不存在该类别"); // 目录异常
+                    }
+                    if(wifePath == null)
+                        throw new NullBotMsgException("[今日老婆] ❌该类别下暂无角色");
+
+                    String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,
                                     wifePath.lastIndexOf('.') > wifePath.lastIndexOf('/') ?
                                             wifePath.lastIndexOf('.') : wifePath.length())
-                                    .split("_")[0];  // 切割后缀
-                            acgWifeMap.put(userId, wifePath);
-                            acgExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
-                            String response = MsgUtils.builder()
-                                    .text("你的今日二次元老婆✨是\n" + category + " - " + wifeName)
-                                    .img(wifePath)
-                                    .build();
-                            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                            log.info("\t\t\t\t├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
-                        }else{
-                            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[今日老婆] ❌该类别下暂无角色", false);
-                            log.info("\t\t\t\t├─[Wife] 该类别下暂无角色 - {}", category);
-                        }
-                    } catch (Exception e) {
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[今日老婆] ❌不存在该类别", false);
-                        log.info("\t\t\t\t├─[Wife] 不存在该类别 - {}", category);
-                    }
+                            .split("_")[0];  // 切割后缀
+                    acgWifeMap.put(userId, wifePath);
+                    acgExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
+                    String response = MsgUtils.builder()
+                            .text("你的今日二次元老婆✨是\n" + category + " - " + wifeName)
+                            .img(wifePath)
+                            .build();
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+                    log.info("\t\t\t\t├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
                 }else{
                     try {
                         String wifePath = acgWifeMap.get(userId);
@@ -112,13 +113,12 @@ public class WifeCommand implements Command
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                         log.info("\t\t\t\t├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);
                     } catch (Exception e) {
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[今日老婆] ❌文件已被修改", false);
-                        log.info("\t\t\t\t├─[Wife] 文件已被修改");
+                        throw new NullBotMsgException("[今日老婆] ❌文件已被修改");
                     }
                 }
             }
         }else
-            log.info("\t\t\t\t├─[Wife] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[今日老婆] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

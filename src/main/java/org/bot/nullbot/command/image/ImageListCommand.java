@@ -8,6 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -24,10 +25,10 @@ public class ImageListCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String imageList = FileUtil.getFileListAsString(fileStorageConfig.getImagePath() + "/collect", "\n");
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ✅列表已获取！\n" + imageList, false);
-            log.info("\t\t\t\t├─[Image.List] 已获取 - 图片列表");
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片列表] ✅已获取！\n" + imageList, false);
+            log.info("\t\t\t\t├─[ImageList] 已获取 - 图片列表");
         }else
-            log.info("\t\t\t\t├─[Image.List] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[图片列表] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override
