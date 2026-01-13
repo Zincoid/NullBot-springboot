@@ -299,6 +299,6 @@
 - 优化 文本。
 
 ### 2026.1.14 - v1.2.3
-- 增强 ExecutorHandler - 添加自定义异常类并在该Handler中处理；
+- 增强 ExecutorHandler - 添加自定义异常类并在该 Handler 中处理；
 - 大幅优化 - 全部指令的错误提示方式 抛出异常在 ExecutorHandler 中捕获后通过 Bot 发送；
 - 优化 文本。
