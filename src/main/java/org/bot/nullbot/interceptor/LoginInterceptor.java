@@ -57,24 +57,23 @@ public class LoginInterceptor implements HandlerInterceptor
 
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
         String url = req.getRequestURL().toString();
-        log.info("[管理系统-JWT验证] URL - {}",url);
 
         if(url.contains("/nullbot/login")){
-            log.info("[管理系统-JWT验证] 登录放行");
+            log.info("[管理系统-JWT验证] 登录放行 - {}", url);
             return true;
         }
         if(url.contains("/nullbot/guest")){
-            log.info("[管理系统-JWT验证] 访客放行");
+            log.info("[管理系统-JWT验证] 访客放行 - {}", url);
             return true;
         }
         if(url.contains("/nullbot/preview")){
-            log.info("[管理系统-JWT验证] 预览放行");
+            log.info("[管理系统-JWT验证] 预览放行 - {}", url);
             return true;
         }
 
         String jwt = req.getHeader("token");
         if(!StringUtils.hasLength(jwt)){
-            log.info("[管理系统-JWT验证] 令牌缺失");
+            log.info("[管理系统-JWT验证] 令牌缺失 - {}", url);
             WebResult error = WebResult.fail().addMsg("Invalid Token");
             String info = JSONObject.toJSONString(error);
             res.getWriter().write(info);
@@ -87,7 +86,7 @@ public class LoginInterceptor implements HandlerInterceptor
             claims = JwtUtil.parseJWT(jwt);
         } catch (Exception e) {
             // e.printStackTrace();
-            log.info("[管理系统-JWT验证] 解析失败");
+            log.info("[管理系统-JWT验证] 解析失败 - {}", url);
             WebResult error = WebResult.fail().addMsg("Invalid Token");
             String info = JSONObject.toJSONString(error);
             res.getWriter().write(info);
@@ -97,7 +96,7 @@ public class LoginInterceptor implements HandlerInterceptor
         if(claims.get("type", Integer.class) == 0){
             for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
                 if(url.contains(forbiddenUrl)){
-                    log.info("[管理系统-JWT验证] 访客禁止访问 - {}", forbiddenUrl);
+                    log.info("[管理系统-JWT验证] 访客禁止访问 - {}", url);
                     WebResult error = WebResult.fail().addMsg("No Access");
                     String info = JSONObject.toJSONString(error);
                     res.getWriter().write(info);
@@ -106,11 +105,11 @@ public class LoginInterceptor implements HandlerInterceptor
             }
             return true;
         }else if(claims.get("type", Integer.class) == 1){
-            log.info("[管理系统-JWT验证] 管理员放行");
+            log.info("[管理系统-JWT验证] 管理员放行 - {}", url);
             return true;
         }
 
-        log.info("[管理系统-JWT验证] 用户类型不存在");
+        log.info("[管理系统-JWT验证] 用户类型不存在 - {}", url);
         return false;
     }
 }
