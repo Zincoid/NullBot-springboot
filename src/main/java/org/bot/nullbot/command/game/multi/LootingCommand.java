@@ -9,6 +9,8 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.game.handler.LootingMatchHandler;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.result.GameResult;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 
@@ -28,20 +30,17 @@ public class LootingCommand implements Command
             GameResult result = lootingMatchHandler.action(userId, commandText);
 
             if(result.getSuccess()){
-                if(result.getIsAsync()){
-                    if(!result.getSelfInfo().isEmpty())
-                        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-                    if(!result.getOpponentInfo().isEmpty())
-                        bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
-                }else
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[摸金] ❌该模式不发送同步消息", false);
+                if(!result.getIsAsync()) throw new NullBotMsgException("[摸金] ❌该模式不发送同步消息");
+                if(!result.getSelfInfo().isEmpty())
+                    bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+                if(!result.getOpponentInfo().isEmpty())
+                    bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
             }else
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getSelfInfo(), false);
 
             log.info("\t\t\t\t├─[Looting] 玩家 {} 执行指令 [{}]", userId, commandText);
-        }else{
-            log.info("\t\t\t\t├─[Looting] 未设计 非群消息事件响应方式");
-        }
+        } else
+            throw new NullBotLogException("[摸金] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

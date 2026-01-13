@@ -8,6 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"FinishMatch", "终止对局"})
@@ -26,11 +27,11 @@ public class FinishMatchCommand implements Command
             String result = matcher.finishMatch(userId);
             if (result != null) {
                 bot.sendGroupMsg(groupId, result, false);
-                log.info("\t\t\t\t├─[FinishMatch] 结束对局结果 - {}", result);
-            }else
-                log.info("\t\t\t\t├─[FinishMatch] 结束对局结果 - 已响应");
-        }else
-            log.info("\t\t\t\t├─[FinishMatch] 未设计 非群消息事件响应方式");
+                log.info("\t\t\t\t├─[FinishMatch] 终止对局结果 - {}", result);
+            } else
+                log.info("\t\t\t\t├─[FinishMatch] 终止对局结果 - 已响应");
+        } else
+            throw new NullBotLogException("[终止对局] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

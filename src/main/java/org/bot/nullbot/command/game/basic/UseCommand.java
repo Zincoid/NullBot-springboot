@@ -9,6 +9,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.EmbeddedCommandEvent;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.ItemService;
@@ -31,57 +32,39 @@ public class UseCommand implements Command
             // 参数检查
             if (event.getCommandParameters().isEmpty())
                 throw new NullBotMsgException("[使用] ❌参数不足");
-
             // 解析物品
             int itemId;
             try {
                 itemId = Integer.parseInt(event.getCommandParameters().getFirst());
             } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌参数格式错误", false);
-                log.info("\t\t\t\t├─[Use] 参数格式错误");
-                return;
+                throw new NullBotMsgException("[使用] ❌参数格式错误");
             }
-
             // 存在检测
-            if (!itemService.exist(itemId)) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌该物品不存在", false);
-                log.info("\t\t\t\t├─[Use] 该物品不存在");
-                return;
-            }
-
+            if (!itemService.exist(itemId))
+                throw new NullBotMsgException("[使用] ❌该物品不存在");
             // 可用检查
-            if (!itemService.isUsable(itemId)) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌该物品不可使用", false);
-                log.info("\t\t\t\t├─[Use] 该物品不可使用");
-                return;
-            }
-
-            ItemPO item = itemService.getItem(itemId);
-            String command = itemService.getItemCommand(itemId);
-            Long userId = groupMessageEvent.getUserId();
-
+            if (!itemService.isUsable(itemId))
+                throw new NullBotMsgException("[使用] ❌该物品不可使用");
             // 库存检查
-            if (!inventoryService.decreaseInventory(userId, itemId, 1)) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌数量不足", false);
-                log.info("\t\t\t\t├─[Use] 数量不足");
-                return;
-            }
+            Long userId = groupMessageEvent.getUserId();
+            if (!inventoryService.decreaseInventory(userId, itemId, 1))
+                throw new NullBotMsgException("[使用] ❌该物品数量不足");
 
             // 替换参数
-            if ("UserBan".equals(command.split(" ")[0])) {
+            String command = itemService.getItemCommand(itemId);
+            if ("UserBan".equals(command.split(" ")[0]))
                 command = command.replace("userId", userId.toString());
-            }
 
             // 执行命令
             eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, false, false)));
 
             // 发送通知
+            String itemName = itemService.getItem(itemId).getName();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ✅" + userName + " 已使用 " + item.getName() + "！", false);
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ✅" + userName + " 已使用 " + itemName + "！", false);
             log.info("\t\t\t\t├─[Use] 已使用");
-        } else {
-            log.info("\t\t\t\t├─[Use] 未设计 非群消息事件响应方式");
-        }
+        } else
+            throw new NullBotLogException("[使用] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override
