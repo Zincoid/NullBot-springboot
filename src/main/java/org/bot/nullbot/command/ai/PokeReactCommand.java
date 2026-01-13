@@ -10,6 +10,7 @@ import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -29,29 +30,29 @@ public class PokeReactCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
         if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            if(Objects.equals(pokeNoticeEvent.getTargetId(), pokeNoticeEvent.getSelfId())){
-                Long userId = pokeNoticeEvent.getUserId();
-                Long groupId = pokeNoticeEvent.getGroupId();
+            if(!Objects.equals(pokeNoticeEvent.getTargetId(), pokeNoticeEvent.getSelfId())) return;  // 仅检测戳Bot
 
-                if(chatStorage.isUserBanned(userId)) {
-                    LocalDateTime until = chatStorage.getUserBannedUntil(userId);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
-                    String formattedUntil = until != null ? until.format(formatter) : "";
-                    bot.sendGroupMsg(groupId, "[AI] ⚠️你已被停用至！\n" + formattedUntil, false);
-                    log.info("\t\t\t\t├─[AI.Chat] 已被停用至 - {}", until);
-                    return;
-                }
+            Long userId = pokeNoticeEvent.getUserId();
+            Long groupId = pokeNoticeEvent.getGroupId();
 
-                String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-                String response = deepSeekClient.chat(
-                        null, groupId, userId, userName, "揉了你一下", bot, event,
-                        settingManager.getChatOption(groupId)
-                );
-
-                log.info("\t\t\t\t├─[AI.PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", " "));
+            if(chatStorage.isUserBanned(userId)) {
+                LocalDateTime until = chatStorage.getUserBannedUntil(userId);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
+                String formattedUntil = until != null ? until.format(formatter) : "";
+                bot.sendGroupMsg(groupId, "[AI] ⚠️你已被停用至！\n" + formattedUntil, false);
+                log.info("\t\t\t\t├─[PokeReact] 已被停用至 - {}", until);
+                return;
             }
+
+            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+            String response = deepSeekClient.chat(
+                    null, groupId, userId, userName, "揉了你一下", bot, event,
+                    settingManager.getChatOption(groupId)
+            );
+
+            log.info("\t\t\t\t├─[PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", " "));
         }else
-            log.info("\t\t\t\t├─[AI.PokeReact] 未设计 - 非戳一戳消息事件响应方式");
+            throw new NullBotLogException("[戳戳反馈] ❌未设计 - 非戳一戳事件响应方式");
     }
 
     // 特殊命令 无帮助

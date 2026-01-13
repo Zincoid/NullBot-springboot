@@ -9,6 +9,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.EmbeddedCommandEvent;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.ItemService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -28,11 +29,8 @@ public class UseCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             // 参数检查
-            if (event.getCommandParameters().isEmpty()) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ❌参数不足", false);
-                log.info("\t\t\t\t├─[Use] 参数不足");
-                return;
-            }
+            if (event.getCommandParameters().isEmpty())
+                throw new NullBotMsgException("[使用] ❌参数不足");
 
             // 解析物品
             int itemId;

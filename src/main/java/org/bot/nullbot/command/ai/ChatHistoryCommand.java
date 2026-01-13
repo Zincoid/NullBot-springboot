@@ -9,6 +9,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"ChatHistory", "聊天历史"})
@@ -27,9 +28,9 @@ public class ChatHistoryCommand implements Command
             Long groupId = groupMessageEvent.getGroupId();
             String history = deepSeekClient.getHistoryAsString(groupId, userId, settingManager.getChatOption(groupId));
             bot.sendGroupMsg(groupId, "[聊天历史] ✅已获取！" + history, false);
-            log.info("\t\t\t\t├─[AI.ChatHistory] 已获取 - 历史聊天记录");
+            log.info("\t\t\t\t├─[ChatHistory] 已获取 - 历史聊天记录");
         }else
-            log.info("\t\t\t\t├─[AI.ChatHistory] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[聊天历史] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

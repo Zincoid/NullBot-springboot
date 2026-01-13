@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.service.GroupService;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.UserService;
@@ -32,7 +33,7 @@ public class DatabaseUpdateCommand implements Command
             log.info("\t\t\t\t├─[DatabaseUpdate] 数据库已更新");
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[DatabaseUpdate] ✅已更新", false);
         }else
-            log.info("\t\t\t\t├─[DatabaseUpdate] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[数据库更新] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

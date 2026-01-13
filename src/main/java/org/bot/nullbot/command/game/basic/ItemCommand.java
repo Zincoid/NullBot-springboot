@@ -8,6 +8,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.po.ItemPO;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.ItemService;
 import org.springframework.stereotype.Component;
 
@@ -22,32 +24,24 @@ public class ItemCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (event.getCommandParameters().isEmpty()) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[物品] ❌参数不足", false);
-                log.info("\t\t\t\t├─[Item] 参数不足");
-                return;
-            }
+            if (event.getCommandParameters().isEmpty())
+                throw new NullBotMsgException("[查询物品] ❌参数不足");
 
             int itemId;
             try {
                 itemId = Integer.parseInt(event.getCommandParameters().getFirst());
             } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[物品] ❌参数格式错误", false);
-                log.info("\t\t\t\t├─[Item] 参数格式错误");
-                return;
+                throw new NullBotMsgException("[查询物品] ❌参数格式错误");
             }
 
-            if (!itemService.exist(itemId)) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[物品] ❌该物品不存在", false);
-                log.info("\t\t\t\t├─[Item] 该物品不存在");
-                return;
-            }
+            if (!itemService.exist(itemId))
+                throw new NullBotMsgException("[查询物品] ❌该物品不存在");
 
             ItemPO item = itemService.getItem(itemId);
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), item.toString(), false);
             log.info("\t\t\t\t├─[Item] 已获取物品详情 - {}", item.getName());
         }else
-            log.info("\t\t\t\t├─[Item] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[查询物品] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

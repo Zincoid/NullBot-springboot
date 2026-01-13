@@ -9,7 +9,8 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dispatcher.CommandHandlerChain;
 import org.bot.nullbot.dispatcher.handler.Handler;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotRuntimeException;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ public class ExecutorHandler implements Handler
 
         try {
             command.execute(bot, event);
-        } catch (NullBotRuntimeException e) {
+        } catch (NullBotMsgException e) {
             Long groupId = 0L;
             if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent)
                 groupId = groupMessageEvent.getGroupId();
@@ -37,6 +38,8 @@ public class ExecutorHandler implements Handler
                 log.info("\t\t  [ExecutorHandler] 指令出错: {}", e.getMessage());
             } else
                 log.info("\t\t  [ExecutorHandler] 群信息获取失败");
+        } catch (NullBotLogException e) {
+            log.info("\t\t  [ExecutorHandler] 指令出错: {}", e.getMessage());
         } catch (Exception e) {
             log.info("\t\t  [ExecutorHandler] Exception: {}", e.getMessage());
             throw e;

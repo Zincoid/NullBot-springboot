@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
@@ -21,11 +23,8 @@ public class PlusExpCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (event.getCommandParameters().size() < 2) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[加经验] ❌参数不足", false);
-                log.info("\t\t\t\t├─[PlusExp] 参数不足");
-                return;
-            }
+            if (event.getCommandParameters().size() < 2)
+                throw new NullBotMsgException("[加经验] ❌参数不足");
 
             long userId;
             int exp;
@@ -33,16 +32,11 @@ public class PlusExpCommand implements Command
                 userId = Long.parseLong(event.getCommandParameters().get(0));
                 exp = Integer.parseInt(event.getCommandParameters().get(1));
             } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[加经验] ❌参数格式错误", false);
-                log.info("\t\t\t\t├─[PlusExp] 参数格式错误");
-                return;
+                throw new NullBotMsgException("[加经验] ❌参数格式错误");
             }
 
-            if (!userService.existUser(userId)) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[加经验] ❌用户不存在", false);
-                log.info("\t\t\t\t├─[PlusExp] 用户不存在");
-                return;
-            }
+            if (!userService.existUser(userId))
+                throw new NullBotMsgException("[加经验] ❌用户不存在");
 
             int i = userService.plusExperience(userId, exp);
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
@@ -54,7 +48,7 @@ public class PlusExpCommand implements Command
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
             log.info("\t\t\t\t├─[PlusExp] 已给予经验 - {} -> {} Exp", userId, exp);
         }else
-            log.info("\t\t\t\t├─[PlusExp] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[加经验] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

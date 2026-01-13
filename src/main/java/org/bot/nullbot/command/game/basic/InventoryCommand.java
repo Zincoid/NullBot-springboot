@@ -10,6 +10,8 @@ import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.page.InventoryPage;
 import org.bot.nullbot.entity.po.UserPO;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
@@ -32,9 +34,7 @@ public class InventoryCommand implements Command
                 try {
                     p = Integer.parseInt(event.getCommandParameters().getFirst());
                 } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[库存] ❌页码格式错误", false);
-                    log.info("\t\t\t\t├─[Inventory] 页码格式错误");
-                    return;
+                    throw new NullBotMsgException("[库存] ❌页码格式错误");
                 }
             Long userId = groupMessageEvent.getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
@@ -56,7 +56,7 @@ public class InventoryCommand implements Command
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), sb.toString(), false);
             log.info("\t\t\t\t├─[Inventory] 已获取库存 - {}({})", userName, userId);
         }else
-            log.info("\t\t\t\t├─[Inventory] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[库存] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

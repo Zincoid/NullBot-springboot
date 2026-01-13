@@ -14,6 +14,8 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.FileInfo;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.MessageParseUtil;
@@ -36,18 +38,12 @@ public class ConvertCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long groupId = groupMessageEvent.getGroupId();
 
-            if (event.getCommandParameters().isEmpty()) {
-                bot.sendGroupMsg(groupId, "[图像处理] ❌无方法参数", false);
-                log.info("\t\t\t\t├─[Convert] 无方法参数");
-                return;
-            }
+            if (event.getCommandParameters().isEmpty())
+                throw new NullBotMsgException("[图像处理] ❌无方法参数");
 
             String method = event.getCommandParameters().getFirst();
-            if (!List.of("RIP", "PRTS", "InversePRTS").contains(method)) {
-                bot.sendGroupMsg(groupId, "[图像处理] ❌方法不存在", false);
-                log.info("\t\t\t\t├─[Convert] 方法不存在");
-                return;
-            }
+            if (!List.of("RIP", "PRTS", "InversePRTS").contains(method))
+                throw new NullBotMsgException("[图像处理] ❌方法不存在");
 
             List<String> urls = new ArrayList<>();
 
@@ -65,9 +61,7 @@ public class ConvertCommand implements Command
                 try {
                     qqNumber = Long.parseLong(event.getCommandParameters().get(1));
                 } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupId, "[图像处理] ❌参数格式错误", false);
-                    log.info("\t\t\t\t├─[Convert] 参数格式错误");
-                    return;
+                    throw new NullBotMsgException("[图像处理] ❌参数格式错误");
                 }
                 urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
             }else{
@@ -75,11 +69,8 @@ public class ConvertCommand implements Command
                 for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
             }
 
-            if (urls.isEmpty()) {
-                bot.sendGroupMsg(groupId, "[图像处理] ❌无引用图片或ID参数或At消息", false);
-                log.info("\t\t\t\t├─[Convert] 无引用图片或ID参数或At消息");
-                return;
-            }
+            if (urls.isEmpty())
+                throw new NullBotMsgException("[图像处理] ❌无引用图片或ID参数或At消息");
 
             // 开始处理
             String tempFilePath = fileStorageConfig.getTempPath();
@@ -90,9 +81,7 @@ public class ConvertCommand implements Command
                     FileInfo fileInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName);
                     downloadedFileName = fileInfo.getFileName();
                 } catch (Exception e) {
-                    bot.sendGroupMsg(groupId, "[图像处理] ❌下载图像失败", false);
-                    log.info("\t\t\t\t├─[Convert] 下载图像失败 - {}", url);
-                    continue;
+                    throw new NullBotMsgException("[图像处理] ❌下载图像失败");
                 }
                 String avatarPath = tempFilePath + "/" + downloadedFileName;
                 try {
@@ -100,21 +89,20 @@ public class ConvertCommand implements Command
                         case "RIP" -> imageConverter.RIP(avatarPath, tempFilePath + "/fonts");
                         case "PRTS" -> imageConverter.PRTS(avatarPath, tempFilePath + "/fonts");
                         case "InversePRTS" -> imageConverter.inversePRTS(avatarPath, tempFilePath + "/fonts");
-                        default -> throw new NoSuchMethodException("方法不存在: " + method);
+                        default -> throw new NullBotMsgException("[图像处理] ❌方法不存在");
                     };
                     String response = MsgUtils.builder().img("base64://" + base64).build();
                     bot.sendGroupMsg(groupId, response, false);
                     log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
                 } catch (Exception e) {
-                    bot.sendGroupMsg(groupId, "[图像处理] ❌处理时出错", false);
-                    log.info("\t\t\t\t├─[Convert] 处理时出错 - {}", e.getMessage());
+                    throw new NullBotMsgException("[图像处理] ❌处理时出错");
                 } finally {
                     FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
                 }
             }
             // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ✅全部处理完成！", false);
         }else
-            log.info("\t\t\t\t├─[Convert] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[图像处理] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

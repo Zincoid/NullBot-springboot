@@ -9,6 +9,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.FileStorageConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -26,22 +28,17 @@ public class FemboyCommand implements Command
             String acgPath = fileStorageConfig.getImagePath() + "/femboy";
             try {
                 String femboyPath = FileUtil.getRandomFile(acgPath);
-                if(femboyPath != null) {
-                    String response = MsgUtils.builder()
-                            .img(femboyPath)
-                            .build();
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                    log.info("\t\t\t\t├─[Femboy] 获取男娘图片");
-                }else{
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[男娘] ❌暂无图片", false);
-                    log.info("\t\t\t\t├─[Femboy] 暂无图片");
-                }
+                if(femboyPath == null) throw new NullBotMsgException("[男娘] ❌暂无图片");
+                String response = MsgUtils.builder()
+                        .img(femboyPath)
+                        .build();
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
+                log.info("\t\t\t\t├─[Femboy] 获取男娘图片");
             } catch (Exception e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[男娘] ❌未配置文件夹", false);
-                log.info("\t\t\t\t├─[Femboy] 未配置文件夹");
+                throw new NullBotMsgException("[男娘] ❌未配置文件夹");
             }
         }else
-            log.info("\t\t\t\t├─[Femboy] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[男娘] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

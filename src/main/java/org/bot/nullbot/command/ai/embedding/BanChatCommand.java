@@ -9,6 +9,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
@@ -25,35 +27,25 @@ public class BanChatCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         Long groupId;
 
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent)
             groupId = groupMessageEvent.getGroupId();
-        }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent){
+        else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent)
             groupId = pokeNoticeEvent.getGroupId();
-        }else{
-            log.info("\t\t\t\t├─[BanChat] 未设计 非群消息/戳一戳事件响应方式");
-            return;
-        }
+        else
+            throw new NullBotLogException("[停用AI] ❌未设计 - 非群消息/戳一戳事件响应方式");
 
-        if(event.getCommandParameters().size() < 2) {
-            bot.sendGroupMsg(groupId, "[停用AI] ❌参数不足", false);
-            log.info("\t\t\t\t├─[BanChat] 参数不足");
-            return;
-        }
+        if(event.getCommandParameters().size() < 2) throw new NullBotMsgException("[停用AI] ❌参数不足");
 
         try {
             long userId = Long.parseLong(event.getCommandParameters().get(0));
             int time = Integer.parseInt(event.getCommandParameters().get(1));
-            if(!userService.existUser(userId)) {
-                bot.sendGroupMsg(groupId, "[停用AI] ❌用户不存在", false);
-                log.info("\t\t\t\t├─[BanChat] 用户不存在");
-            }
+            if(!userService.existUser(userId)) throw new NullBotMsgException("[停用AI] ❌用户不存在");
             chatStorage.banUser(userId, time);
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             bot.sendGroupMsg(groupId, "[停用AI] ✅已设置！\n" + userName + " -> " + time + " Min", false);
             log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} min", userId, time);
         } catch (NumberFormatException e) {
-            bot.sendGroupMsg(groupId, "[停用AI] ❌参数格式错误", false);
-            log.info("\t\t\t\t├─[BanChat] 参数格式错误");
+            throw new NullBotMsgException("[停用AI] ❌参数格式错误");
         }
     }
 

@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"b6713262"})  // 加密 仅供AI嵌入调用
@@ -18,21 +20,16 @@ public class RecallUserCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (event.getCommandParameters().isEmpty()) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[撤回用户消息] ❌参数不足", false);
-                log.info("\t\t\t\t├─[RecallUser] 参数不足");
-                return;
-            }
+            if (event.getCommandParameters().isEmpty()) throw new NullBotMsgException("[撤回用户消息] ❌参数不足");
             try {
                 int messageId = Integer.parseInt(event.getCommandParameters().getFirst());
                 bot.deleteMsg(messageId);
                 log.info("\t\t\t\t├─[RecallUser] 已撤回用户消息 -> Message Id: {}", messageId);
             } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[撤回用户消息] ❌参数格式错误", false);
-                log.info("\t\t\t\t├─[RecallUser] 参数格式错误");
+                throw new NullBotMsgException("[撤回用户消息] ❌参数格式错误");
             }
         }else
-            log.info("\t\t\t\t├─[RecallUser] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[撤回用户消息] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

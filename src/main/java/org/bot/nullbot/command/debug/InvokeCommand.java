@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -26,18 +28,12 @@ public class InvokeCommand implements Command {
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
-            if (params.size() < 2) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[反射] ❌未指定Bean和方法", false);
-                log.info("\t\t\t\t├─[Invoke] 未指定Bean和方法");
-                return;
-            }
+            if (params.size() < 2) throw new NullBotMsgException("[反射] ❌未指定Bean和方法");
 
             String beanName = params.get(0);
             String methodName = params.get(1);
             Object[] args = new Object[0];
-            if (params.size() > 2) {
-                args = params.subList(2, params.size()).toArray();
-            }
+            if (params.size() > 2) args = params.subList(2, params.size()).toArray();
 
             try {
                 Object result = invokeSpringMethod(applicationContext, beanName, methodName, args);
@@ -45,13 +41,10 @@ public class InvokeCommand implements Command {
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[反射] ✅调用成功\n" + res, false);
                 log.info("\t\t\t\t├─[Invoke] 调用结果 -> {}", res);
             } catch (Exception e) {
-                String errorMsg = "[反射] ❌调用失败\n" + e.getMessage();
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), errorMsg, false);
-                log.info("\t\t\t\t├─[Invoke] 调用失败", e);
+                throw new NullBotMsgException("[反射] ❌调用失败\n" + e.getMessage());
             }
-        } else {
-            log.info("\t\t\t\t├─[Invoke] 未设计 非群消息事件响应方式");
-        }
+        } else
+            throw new NullBotLogException("[反射] ❌未设计 - 非群消息事件响应方式");
     }
 
     public Object invokeSpringMethod(ApplicationContext context, String beanName,

@@ -11,6 +11,8 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.config.DeepSeekConfig;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -27,35 +29,29 @@ public class MemeCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         Long groupId;
 
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent)
             groupId = groupMessageEvent.getGroupId();
-        }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent){
+        else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent)
             groupId = pokeNoticeEvent.getGroupId();
-        }else{
-            log.info("\t\t\t\t├─[Meme] 未设计 非群消息/戳一戳事件响应方式");
-            return;
-        }
+        else
+            throw new NullBotLogException("[表情] ❌未设计 - 非群消息/戳一戳事件响应方式");
 
-        if(event.getCommandParameters().isEmpty()) {
-            bot.sendGroupMsg(groupId, "[表情] ❌参数不足", false);
-            log.info("\t\t\t\t├─[Meme] 参数不足");
-            return;
-        }
+        if(event.getCommandParameters().isEmpty()) throw new NullBotMsgException("[表情] ❌参数不足");
 
         String memeFolderPath = deepSeekConfig.getMemePath();
         String memeName = event.getCommandParameters().getFirst();
         String memePath = FileUtil.getFilePathByName(memeFolderPath, memeName);
-        if (memePath != null) {
-            String response = MsgUtils.builder()
-                    .img(memePath)
-                    .build();
-            bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[Meme] 已发送表情: {}", memeName);
-        }else{
+
+        if (memePath == null) {
             chatStorage.recordError("表情文件 " + memeName + " 不存在，不要再使用了");  // 自动记录表情错误使用
-            // bot.sendGroupMsg(groupId, "[表情] ❌" + memeName + " 不存在", false);
-            log.info("\t\t\t\t├─[Meme] 表情不存在 - {}", memeName);
+            throw new NullBotLogException("[表情] ❌" + memeName + " 不存在");
         }
+
+        String response = MsgUtils.builder()
+                .img(memePath)
+                .build();
+        bot.sendGroupMsg(groupId, response, false);
+        log.info("\t\t\t\t├─[Meme] 已发送表情: {}", memeName);
     }
 
     @Override

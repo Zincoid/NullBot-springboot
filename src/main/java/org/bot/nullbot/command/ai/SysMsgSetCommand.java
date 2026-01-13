@@ -10,6 +10,8 @@ import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.component.storage.SysMsgStorage;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"SysMsgSet", "自定义提示词"})
@@ -26,16 +28,8 @@ public class SysMsgSetCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long groupId = groupMessageEvent.getGroupId();
-            if (!settingManager.getChatOption(groupId).isCustom()) {
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[自定义提示词] ❌非Custom模式", false);
-                log.info("\t\t\t\t├─[AI.SysMsgSet] 非Custom模式");
-                return;
-            }
-            if(event.getCommandParameters().isEmpty()){
-                bot.sendGroupMsg(groupId, "[自定义提示词] ❌无参数", false);
-                log.info("\t\t\t\t├─[AI.SysMsgSet] 无参数");
-                return;
-            }
+            if (!settingManager.getChatOption(groupId).isCustom()) throw new NullBotMsgException("[自定义提示词] ❌非Custom模式");
+            if(event.getCommandParameters().isEmpty()) throw new NullBotMsgException("[自定义提示词] ❌无参数");
 
             Long userId = groupMessageEvent.getSender().getUserId();
             String systemMessage = String.join(" ", event.getCommandParameters());
@@ -44,9 +38,9 @@ public class SysMsgSetCommand implements Command
             sysMsgStorage.setCustomMessage(groupId, systemMessage);
 
             bot.sendGroupMsg(groupId, "[自定义提示词] ✅已设置！", false);
-            log.info("\t\t\t\t├─[AI.SysMsgSet] 自定义提示词已设置 - {}", systemMessage);
+            log.info("\t\t\t\t├─[SysMsgSet] 自定义提示词已设置 - {}", systemMessage);
         }else
-            log.info("\t\t\t\t├─[AI.SysMsgSet] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[自定义提示词] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

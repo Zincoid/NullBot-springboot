@@ -9,6 +9,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"ChatReset", "重置聊天"})
@@ -26,10 +27,10 @@ public class ChatResetCommand implements Command
             Long userId = groupMessageEvent.getSender().getUserId();
             Long groupId = groupMessageEvent.getGroupId();
             String target = deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
-            bot.sendGroupMsg(groupId, "[聊天历史] ♻️" + target + " 聊天已重置！", false);
-            log.info("\t\t\t\t├─[AI.ChatReset] 已清除 - {} 历史聊天记录", target);
+            bot.sendGroupMsg(groupId, "[重置聊天] ♻️" + target + " 聊天已重置！", false);
+            log.info("\t\t\t\t├─[ChatReset] 已清除 - {} 历史聊天记录", target);
         }else
-            log.info("\t\t\t\t├─[AI.ChatReset] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[重置聊天] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

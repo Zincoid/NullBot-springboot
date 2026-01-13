@@ -6,11 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,7 +22,6 @@ import java.util.List;
 @Slf4j
 public class RecallAICommand implements Command
 {
-    private final DeepSeekClient deepSeekClient;
     private final ChatStorage chatStorage;
     private final SettingManager settingManager;
 
@@ -32,15 +32,9 @@ public class RecallAICommand implements Command
             if(!event.getCommandParameters().isEmpty()){
                 try {
                     n = Integer.parseInt(event.getCommandParameters().getFirst());
-                    if(n <= 0){
-                        bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[撤回AI消息] ❌参数非正", false);
-                        log.info("\t\t\t\t├─[RecallAI] 参数非正");
-                        return;
-                    }
+                    if(n <= 0) throw new NullBotMsgException("[撤回AI消息] ❌参数非正");
                 } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[撤回AI消息] ❌参数格式错误", false);
-                    log.info("\t\t\t\t├─[RecallAI] 参数格式错误");
-                    return;
+                    throw new NullBotMsgException("[撤回AI消息] ❌参数格式错误");
                 }
             }
 
@@ -52,7 +46,7 @@ public class RecallAICommand implements Command
 
             log.info("\t\t\t\t├─[RecallAI] 已撤回AI消息 -> {}条", n);
         }else
-            log.info("\t\t\t\t├─[RecallAI] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[撤回AI消息] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +38,7 @@ public class ChatCommand implements Command
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
                 String formattedUntil = until != null ? until.format(formatter) : "";
                 bot.sendGroupMsg(groupId, "[AI] ⚠️你已被停用至！\n" + formattedUntil, false);
-                log.info("\t\t\t\t├─[AI.Chat] 已被停用至 - {}", until);
+                log.info("\t\t\t\t├─[Chat] 已被停用至 - {}", until);
                 return;
             }
 
@@ -50,9 +51,9 @@ public class ChatCommand implements Command
                     settingManager.getChatOption(groupId)
             );
 
-            log.info("\t\t\t\t├─[AI.Chat] 已回复: {}", response.replaceAll("\\R", " "));
+            log.info("\t\t\t\t├─[Chat] 已回复: {}", response.replaceAll("\\R", " "));
         }else
-            log.info("\t\t\t\t├─[AI.Chat] 未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[对话] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

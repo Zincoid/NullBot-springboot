@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
@@ -35,13 +36,13 @@ public class CheckInCommand implements Command
                 userService.increaseDrawTimes(userId, 25);
                 checkInExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "✨" + userName + " 签到成功！获得: \n- 抽奖次数 x 25", false);
-                log.info("\t\t\t\t├─[System.CheckIn] 签到成功 - 用户 {}", userId);
+                log.info("\t\t\t\t├─[CheckIn] 签到成功 - 用户 {}", userId);
             }else{
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), userName + " 今日已签过到！", false);
-                log.info("\t\t\t\t├─[System.CheckIn] 今日已签过到 - 用户 {}", userId);
+                log.info("\t\t\t\t├─[CheckIn] 今日已签过到 - 用户 {}", userId);
             }
         }else
-            log.info("\t\t\t\t├─[System.CheckIn] 未设计 非群消息事件响应方式");
+            throw new NullBotLogException("[签到] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override
