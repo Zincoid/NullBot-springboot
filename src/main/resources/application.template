@@ -64,11 +64,11 @@ nullbot:
     custom: false
 
     auto-reply: false
-    reply-frequency: 0.01
+    reply-frequency: 0.02
 
     # Monitor
     image-collect: false
-    message-collect: false  # 使用AI Monitor模式及Recall Detect功能 需启用该项
+    message-collect: true  # 使用 AI Monitor 模式及 Recall Detect 功能 需启用该项
     keyword-detect: true
     poke-detect: true
     recall-detect: false
@@ -101,4 +101,4 @@ ai:
     max-monitor-length: 100
     max-tokens: 500
     meme-path: /root/Nullbot/file/ai/meme  # 用于AI主动发表情
-    default-system-message:
+    default-system-message: ""
