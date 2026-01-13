@@ -291,4 +291,4 @@
 - 网页Bot管理系统 前端添加 文件移动相关组件；
 - 修复 FileService - 重命名文件夹错误更新子文件路径的漏洞；
 - 优化 LoginInterceptor 提示消息；
-- 大幅优化 FileService - 将 WebResult 返回提取到 FileController 并优化 Download 方法响应方式；
+- 大幅优化 FileService - 以异常形式传递错误信息 将 WebResult 的返回提取到控制器 并优化 Download 方法响应方式；
