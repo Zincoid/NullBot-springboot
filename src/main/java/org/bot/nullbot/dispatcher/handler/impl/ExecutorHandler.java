@@ -24,9 +24,7 @@ public class ExecutorHandler implements Handler
 
         try {
             command.execute(bot, event);
-        }
-
-        catch (NullBotRuntimeException e) {
+        } catch (NullBotRuntimeException e) {
             Long groupId = 0L;
             if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent)
                 groupId = groupMessageEvent.getGroupId();
@@ -39,10 +37,9 @@ public class ExecutorHandler implements Handler
                 log.info("\t\t  [ExecutorHandler] 指令出错: {}", e.getMessage());
             } else
                 log.info("\t\t  [ExecutorHandler] 群信息获取失败");
-        }
-
-        catch (Exception e) {
-            log.info("\t\t  [ExecutorHandler] Exception: ", e);
+        } catch (Exception e) {
+            log.info("\t\t  [ExecutorHandler] Exception: {}", e.getMessage());
+            throw e;
         }
 
         log.info("\t\t┌─[ExecutorHandler] 执行结束");
