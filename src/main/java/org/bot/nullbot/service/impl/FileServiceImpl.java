@@ -171,7 +171,7 @@ public class FileServiceImpl implements FileService
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
 
         if(!fileMapper.selectList(new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).eq(FilePO::getFileName, fileName)).isEmpty()) {
-            throw new IllegalArgumentException("存在同名冲突");
+            throw new IllegalArgumentException("数据库存在同名冲突");
         }
 
         // 查询父文件夹
@@ -185,7 +185,7 @@ public class FileServiceImpl implements FileService
             throw new IllegalArgumentException("数据库父目录不存在");
         java.io.File file_dir = new java.io.File(fullDir);
         if (!file_dir.exists())
-            throw new IllegalArgumentException("文件系统父目录不存在");
+            throw new IllegalArgumentException("磁盘父目录不存在");
 
         String filePath = fullDir + "/" + fileName;
         uploadFile.transferTo(new java.io.File(filePath));
@@ -227,14 +227,14 @@ public class FileServiceImpl implements FileService
             ServletOutputStream os = response.getOutputStream();
             FileCopyUtils.copy(fileInputStream,os);
         } catch (IOException e) {
-            throw new RuntimeException("文件系统获取时出错");
+            throw new RuntimeException("从磁盘获取文件时出错");
         }
         return true;
     }
 
     @Override
     @Transactional
-    public WebResult createDir(String curDir, String dirName) throws IOException {
+    public Boolean createDir(String curDir, String dirName) throws IOException {
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
@@ -248,21 +248,20 @@ public class FileServiceImpl implements FileService
                 .eq(FilePO::getFileName, path.getFileName().toString())
                 .eq(FilePO::getIsDir, 1)
         );
-        if(dir == null) {
-            return WebResult.fail().addMsg("数据库父目录不存在");
-        }
-
+        if(dir == null)
+            throw new IllegalArgumentException("数据库父目录不存在");
         java.io.File file_dir = new java.io.File(fullDir);
-        if(!file_dir.exists() || file_dir.isFile()) return WebResult.fail().addMsg("实际父目录不存在");
+        if(!file_dir.exists() || file_dir.isFile())
+            throw new IllegalArgumentException("磁盘父目录不存在");
 
         String dirPath = fullDir + "/" + dirName;
 
         java.io.File new_dir = new java.io.File(dirPath);
         if (!new_dir.exists()){
             if(!new_dir.mkdir())
-                return WebResult.fail().addMsg("创建失败");
+                throw new RuntimeException("磁盘目录创建失败");
         } else
-            return WebResult.fail().addMsg("目录已存在");
+            throw new IllegalArgumentException("磁盘目录已存在");
 
         Long ownerId = WebUtil.getLoginId();
         String ownerName = adminMapper.selectById(ownerId).getUsername();
@@ -282,27 +281,28 @@ public class FileServiceImpl implements FileService
         file.setOwnerName(ownerName);
         file.setLastModified(lastModified);
         fileMapper.insert(file);
-        return WebResult.success().addMsg("创建成功");
+
+        return true;
     }
 
     @Override
     @Transactional
-    public WebResult deleteFile(Integer id) {
+    public Boolean deleteFile(Integer id) {
         FilePO file = fileMapper.selectById(id);
         deleteFileByDir(new java.io.File(file.getDirectory() + "/" + file.getFileName()));
         fileMapper.deleteById(id);
-        return WebResult.success().addMsg("删除成功");
+        return true;
     }
 
     @Override
     @Transactional
-    public WebResult renameFile(Integer id, String newFileName) {
+    public Boolean renameFile(Integer id, String newFileName) {
         FilePO file = fileMapper.selectById(id);
         if (file == null) {
-            return WebResult.fail().addMsg("文件不存在");
+            throw new IllegalArgumentException("数据库文件不存在");
         }
         if (newFileName == null || newFileName.trim().isEmpty()) {
-            return WebResult.fail().addMsg("新文件名不能为空");
+            throw new IllegalArgumentException("新文件名不能为空");
         }
         newFileName = newFileName.trim();
         if (newFileName.contains("/") || newFileName.contains("\\") ||
@@ -310,7 +310,7 @@ public class FileServiceImpl implements FileService
                 newFileName.contains("?") || newFileName.contains("\"") ||
                 newFileName.contains("<") || newFileName.contains(">") ||
                 newFileName.contains("|")) {
-            return WebResult.fail().addMsg("文件名包含非法字符");
+            throw new IllegalArgumentException("新文件名包含非法字符");
         }
 
         // 检查新文件名是否与同一目录下的其他文件重名
@@ -320,7 +320,7 @@ public class FileServiceImpl implements FileService
                 .ne(FilePO::getId, id); // 排除当前文件自己
         Long count = fileMapper.selectCount(queryWrapper);
         if (count > 0) {
-            return WebResult.fail().addMsg("同一目录下已存在同名文件");
+            throw new IllegalArgumentException("数据库目录存在同名文件");
         }
 
         String oldFilePath = file.getDirectory() + "/" + file.getFileName();
@@ -329,17 +329,17 @@ public class FileServiceImpl implements FileService
         java.io.File newFile = new java.io.File(newFilePath);
 
         if (!oldFile.exists()) {
-            return WebResult.fail().addMsg("原文件在磁盘上不存在");
+            throw new IllegalArgumentException("磁盘原文件不存在");
         }
         if (newFile.exists()) {
-            return WebResult.fail().addMsg("新文件名在磁盘上已存在");
+            throw new IllegalArgumentException("磁盘新文件已存在");
         }
 
         // 重命名文件
         boolean renameSuccess = oldFile.renameTo(newFile);
         if (!renameSuccess) {
             // log.info("文件重命名失败: {} -> {}", oldFilePath, newFilePath);
-            return WebResult.fail().addMsg("文件重命名失败");
+            throw new RuntimeException("磁盘文件重命名失败");
         }
 
         // 如果是目录，需要更新目录下所有文件的路径（如果有子文件和子目录）
@@ -353,16 +353,16 @@ public class FileServiceImpl implements FileService
         fileMapper.updateById(file);
 
         // log.info("文件重命名成功: {} -> {}", oldFilePath, newFilePath);
-        return WebResult.success().addMsg("重命名成功");
+        return true;
     }
 
     @Override
     @Transactional
-    public WebResult moveFile(Integer id, String newDir) {
+    public Boolean moveFile(Integer id, String newDir) {
         // 获取源文件信息
         FilePO sourceFile = fileMapper.selectById(id);
         if (sourceFile == null) {
-            return WebResult.fail().addMsg("数据库 - 文件不存在");
+            throw new IllegalArgumentException("数据库文件不存在");
         }
 
         // 构建目标目录的完整路径
@@ -375,7 +375,7 @@ public class FileServiceImpl implements FileService
 
         // 检查源文件和目标目录是否相同
         if (sourceFile.getDirectory().equals(targetFullDir)) {
-            return WebResult.fail().addMsg("数据库 - 路径未修改");
+            throw new IllegalArgumentException("数据库路径未修改");
         }
 
         // 检查目标目录是否存在（数据库和文件系统）
@@ -386,12 +386,12 @@ public class FileServiceImpl implements FileService
                 .eq(FilePO::getFileName, targetPath.getFileName().toString())
                 .eq(FilePO::getIsDir, 1));
         if (targetDir == null) {
-            return WebResult.fail().addMsg("数据库 - 目标路径不存在");
+            throw new IllegalArgumentException("数据库目标路径不存在");
         }
         // 文件系统检查
         File targetDirFile = new File(targetFullDir);
         if (!targetDirFile.exists() || !targetDirFile.isDirectory()) {
-            return WebResult.fail().addMsg("文件系统 - 目标路径不存在");
+            throw new IllegalArgumentException("磁盘目标路径不存在");
         }
 
         // 检查目标目录下是否已存在同名文件
@@ -400,7 +400,7 @@ public class FileServiceImpl implements FileService
                 .eq(FilePO::getFileName, sourceFile.getFileName());
 
         if (fileMapper.selectCount(conflictCheck) > 0) {
-            return WebResult.fail().addMsg("数据库 - 路径下存在同名文件");
+            throw new IllegalArgumentException("数据库路径下存在同名文件");
         }
 
         // 检查文件系统是否存在冲突
@@ -409,10 +409,10 @@ public class FileServiceImpl implements FileService
         File sourceFileSystem = new File(sourcePath);
         File targetFileSystem = new File(targetPathStr);
         if (!sourceFileSystem.exists()) {
-            return WebResult.fail().addMsg("文件系统 - 源文件不存在");
+            throw new IllegalArgumentException("磁盘源文件不存在");
         }
         if (targetFileSystem.exists()) {
-            return WebResult.fail().addMsg("文件系统 - 路径下存在同名文件");
+            throw new IllegalArgumentException("磁盘目标路径存在同名文件");
         }
 
         // 执行移动操作（文件系统）
@@ -420,11 +420,11 @@ public class FileServiceImpl implements FileService
             boolean moveSuccess = sourceFileSystem.renameTo(targetFileSystem);
             if (!moveSuccess) {
                 // log.info("文件移动失败: {} -> {}", sourcePath, targetPathStr);
-                return WebResult.fail().addMsg("文件系统 - 文件移动失败");
+                throw new RuntimeException("磁盘文件移动失败");
             }
         } catch (SecurityException e) {
             // log.info("移动文件时发生安全异常: {}", e.getMessage());
-            return WebResult.fail().addMsg("文件系统 - 权限不足无法移动");
+            throw new RuntimeException("磁盘权限不足无法移动");
         }
 
         // 如果是目录，更新所有子文件的路径
@@ -440,15 +440,15 @@ public class FileServiceImpl implements FileService
         fileMapper.updateById(sourceFile);
 
         // log.info("文件移动成功: {} -> {}", sourcePath, targetPathStr);
-        return WebResult.success().addMsg("移动成功");
+        return true;
     }
 
     @Override
     @Transactional
-    public WebResult setVisible(Integer id, Boolean visible) {
+    public Boolean setVisible(Integer id, Boolean visible) {
         FilePO file = fileMapper.selectById(id);
         if (file == null) {
-            return WebResult.fail().addMsg("文件不存在");
+            throw new IllegalArgumentException("数据库文件不存在");
         }
         if (file.getIsDir() == 1) {
             Queue<FilePO> queue = new ConcurrentLinkedQueue<>();
@@ -469,7 +469,7 @@ public class FileServiceImpl implements FileService
             file.setVisible(visible);
             fileMapper.updateById(file);
         }
-        return WebResult.success().addMsg("访客可见性设置成功");
+        return true;
     }
 
     // =================== 其他工具 ===================

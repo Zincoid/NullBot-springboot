@@ -2,7 +2,6 @@ package org.bot.nullbot.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.page.FilePage;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,13 +24,13 @@ public interface FileService
 
     Boolean download(Integer id, HttpServletRequest request, HttpServletResponse response);
 
-    WebResult createDir(String curDir, String dirName) throws IOException;
+    Boolean createDir(String curDir, String dirName) throws IOException;
 
-    WebResult deleteFile(Integer id);
+    Boolean deleteFile(Integer id);
 
-    WebResult renameFile(Integer id, String newFileName);
+    Boolean renameFile(Integer id, String newFileName);
 
-    WebResult moveFile(Integer id, String newDir);
+    Boolean moveFile(Integer id, String newDir);
 
-    WebResult setVisible(Integer id, Boolean visible);
+    Boolean setVisible(Integer id, Boolean visible);
 }

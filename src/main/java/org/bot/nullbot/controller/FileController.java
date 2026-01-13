@@ -88,29 +88,60 @@ public class FileController
         String curDir = map.get("curDir");
         String dirName = map.get("dirName");
         try {
-            return fileService.createDir(curDir, dirName);
-        } catch (IOException e) {
-            return WebResult.fail().addMsg("抛出异常");
+            if(fileService.createDir(curDir, dirName))
+                return WebResult.success().addMsg("创建成功");
+            else
+                return WebResult.fail().addMsg("创建失败: 未知错误");
+        } catch (Exception e) {
+            return WebResult.fail().addMsg("创建失败: " + e.getMessage());
         }
     }
 
     @DeleteMapping("/delete/{id}")
     public WebResult deleteFile(@PathVariable Integer id){
-        return fileService.deleteFile(id);
+        try {
+            if(fileService.deleteFile(id))
+                return WebResult.success().addMsg("删除成功");
+            else
+                return WebResult.fail().addMsg("删除失败: 未知错误");
+        } catch (Exception e) {
+            return WebResult.fail().addMsg("删除失败: " + e.getMessage());
+        }
     }
 
     @GetMapping("/rename/{id}")
     public WebResult renameFile(@PathVariable Integer id, @RequestParam(defaultValue = "") String newFileName){
-        return fileService.renameFile(id, newFileName);
+        try {
+            if(fileService.renameFile(id, newFileName))
+                return WebResult.success().addMsg("重命名成功");
+            else
+                return WebResult.fail().addMsg("重命名失败: 未知错误");
+        } catch (Exception e) {
+            return WebResult.fail().addMsg("重命名失败: " + e.getMessage());
+        }
     }
 
     @GetMapping("/move/{id}")
     public WebResult moveFile(@PathVariable Integer id, @RequestParam String newDir){
-        return fileService.moveFile(id, newDir);
+        try {
+            if(fileService.moveFile(id, newDir))
+                return WebResult.success().addMsg("移动成功");
+            else
+                return WebResult.fail().addMsg("移动失败: 未知错误");
+        } catch (Exception e) {
+            return WebResult.fail().addMsg("移动失败: " + e.getMessage());
+        }
     }
 
     @GetMapping("/setVisible/{id}")
     public WebResult setVisible(@PathVariable Integer id, @RequestParam Boolean visible){
-        return fileService.setVisible(id, visible);
+        try {
+            if(fileService.setVisible(id, visible))
+                return WebResult.success().addMsg("设置成功");
+            else
+                return WebResult.fail().addMsg("设置失败: 未知错误");
+        } catch (Exception e) {
+            return WebResult.fail().addMsg("设置失败: " + e.getMessage());
+        }
     }
 }
