@@ -32,12 +32,22 @@ public class SysMsgSetCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
-            if(params.size() < 2) throw new NullBotMsgException("[提示词设置] ❌参数不足");
-
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getSender().getUserId();
             String option = params.getFirst();
 
+            if(params.isEmpty()) throw new NullBotMsgException("[提示词设置] ❌参数不足");
+            if ("-reset".equals(option)) {
+                if (userService.getUserAccess(userId) < 1)
+                    throw new NullBotMsgException("[提示词设置] \uD83D\uDEAB重置失败\n仅限权等级I及以上用户可重置提示词");
+                deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
+                sysMsgStorage.reset(groupId);
+                bot.sendGroupMsg(groupId, "[提示词设置] ✅已重置！", false);
+                log.info("\t\t\t\t├─[SysMsgSet] 提示词已重置 - {}", groupId);
+                return;
+            }
+
+            if(params.size() < 2) throw new NullBotMsgException("[提示词设置] ❌参数不足");
             if ("-default".equals(option)) {
                 if (settingManager.getChatOption(groupId).isCustom())
                     throw new NullBotMsgException("[提示词设置] ❌非Default模式");
@@ -60,15 +70,7 @@ public class SysMsgSetCommand implements Command
                 log.info("\t\t\t\t├─[SysMsgSet] Custom提示词已设置 - {} -> {}", groupId, customMessage);
                 return;
             }
-            if ("-reset".equals(option)) {
-                if (userService.getUserAccess(userId) < 1)
-                    throw new NullBotMsgException("[提示词设置] \uD83D\uDEAB重置失败\n仅限权等级I及以上用户可重置提示词");
-                deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
-                sysMsgStorage.reset(groupId);
-                bot.sendGroupMsg(groupId, "[提示词设置] ✅已重置！", false);
-                log.info("\t\t\t\t├─[SysMsgSet] 提示词已重置 - {}", groupId);
-                return;
-            }
+
             throw new NullBotMsgException("[提示词设置] ❌无此操作");
         }else
             throw new NullBotLogException("[提示词设置] ❌未设计 - 非群消息事件响应方式");
@@ -78,7 +80,7 @@ public class SysMsgSetCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ SysMsgSet 命令
-                功能: 设置AI系统提示词(并清空历史)
+                功能: 设置AI系统提示词并清空历史 (部分操作需二次限权验证)
                 限权: %d 级
                 格式: SysMsgSet [-default|-custom|-reset] [可选: 提示词]
                 中文命令: 提示词设置""", getAccess()
