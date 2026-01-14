@@ -301,4 +301,5 @@
 ### 2026.1.14 - v1.2.3
 - 增强 ExecutorHandler - 添加自定义异常类并在该 Handler 中处理；
 - 大幅优化 - 全部指令的错误提示方式和部分结构 抛出异常在 ExecutorHandler 中捕获后通过 Bot 发送；
+- 增强 SysMsgStorage - 添加 自定义Default提示词/重置提示词 功能 并增强相关设置指令；
 - 优化 文本。
