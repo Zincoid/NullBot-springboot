@@ -43,13 +43,13 @@ public class SettingController
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<SettingInfo> settings = settingService.getSettingList();
+        List<SettingInfo> settings = settingService.getSettings();
         CsvExportUtil.exportToCsv(response, "Settings_" + LocalDateTime.now(), settings, SettingInfo.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<SettingInfo> settings =  CsvImportUtil.importFromCsv(csvFile, SettingInfo.class);
-        settingService.addSettings(settings);
+        settingService.setSettings(settings);
     }
 }

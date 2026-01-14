@@ -19,7 +19,7 @@ public class SettingManager
     private final DefaultConfig defaultConfig;
     private final Map<Long, SettingInfo> settings = new ConcurrentHashMap<>();
 
-    public List<SettingInfo> getSettingList() {
+    public List<SettingInfo> getSettings() {
         return new ArrayList<>(settings.values());
     }
     public void setSettings(List<SettingInfo> newSettings) {

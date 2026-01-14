@@ -35,10 +35,10 @@ public class SettingServiceImpl implements SettingService
     // =================== WEB功能相关 ===================
     
     @Override
-    public List<SettingInfo> getSettingList() {
-        return settingManager.getSettingList();
+    public List<SettingInfo> getSettings() {
+        return settingManager.getSettings();
     }
 
     @Override
-    public void addSettings(List<SettingInfo> settings) { settingManager.setSettings(settings); }
+    public void setSettings(List<SettingInfo> settings) { settingManager.setSettings(settings); }
 }

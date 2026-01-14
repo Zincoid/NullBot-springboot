@@ -13,7 +13,7 @@ public interface SettingService
 
     ChatOption getChatOption(Long groupId);
 
-    List<SettingInfo> getSettingList();
+    List<SettingInfo> getSettings();
 
-    void addSettings(List<SettingInfo> settings);
+    void setSettings(List<SettingInfo> settings);
 }
