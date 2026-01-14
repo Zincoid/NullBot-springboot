@@ -83,7 +83,12 @@ public class SysMsgSetCommand implements Command
                 功能: 设置AI系统提示词并清空历史 (部分操作需二次限权验证)
                 限权: %d 级
                 格式: SysMsgSet [-default|-custom|-reset] [可选: 提示词]
-                中文命令: 提示词设置""", getAccess()
+                中文命令: 提示词设置
+                注意事项:
+                - 模式切换 使用 GroupSet 群设置指令
+                - Default模式 仅限权I及以上可修改提示词
+                - Custom模式 仅限权0及以上可修改提示词
+                - Custom模式 默认禁用指令模式""", getAccess()
         );
     }
 }
