@@ -23,12 +23,14 @@ public class SettingServiceImpl implements SettingService
     }
 
     @Override
-    public ChatOption getChatOption(Long groupId) { return settingManager.getChatOption(groupId); }
-
-    @Override
     public boolean updateSetting(SettingInfo setting) {
         return settingManager.setSetting(setting);
     }
+
+    // =================== BOT功能相关 ===================
+
+    @Override
+    public ChatOption getChatOption(Long groupId) { return settingManager.getChatOption(groupId); }
 
     // =================== WEB功能相关 ===================
     
