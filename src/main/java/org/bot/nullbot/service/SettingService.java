@@ -9,9 +9,9 @@ public interface SettingService
 {
     SettingInfo getSetting(Long groupId);
 
-    ChatOption getChatOption(Long groupId);
+    boolean setSetting(SettingInfo setting);
 
-    boolean updateSetting(SettingInfo setting);
+    ChatOption getChatOption(Long groupId);
 
     List<SettingInfo> getSettingList();
 

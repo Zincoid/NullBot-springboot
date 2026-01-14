@@ -23,7 +23,7 @@ public class SettingServiceImpl implements SettingService
     }
 
     @Override
-    public boolean updateSetting(SettingInfo setting) {
+    public boolean setSetting(SettingInfo setting) {
         return settingManager.setSetting(setting);
     }
 

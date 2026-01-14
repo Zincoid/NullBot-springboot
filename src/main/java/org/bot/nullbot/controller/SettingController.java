@@ -33,9 +33,9 @@ public class SettingController
             return WebResult.fail().addMsg("获取失败");
     }
 
-    @PutMapping("/update")
-    public WebResult updateSetting(@RequestBody SettingInfo setting){
-        if(settingService.updateSetting(setting))
+    @PutMapping("/set")
+    public WebResult setSetting(@RequestBody SettingInfo setting){
+        if(settingService.setSetting(setting))
             return WebResult.success().addMsg("更新成功");
         else
             return WebResult.fail().addMsg("更新失败");
