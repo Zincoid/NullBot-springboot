@@ -7,12 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
-import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.enums.Scope;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
 public class GroupSetCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
-    private final SettingManager settingManager;
+    private final SettingService settingService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -37,7 +37,7 @@ public class GroupSetCommand implements Command
                 String option = params.get(0);
 
                 if ("-view".equals(option)) {
-                    SettingInfo setting = settingManager.getSetting(groupId);
+                    SettingInfo setting = settingService.getSetting(groupId);
                     bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);
                     log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
                     return;
@@ -47,7 +47,7 @@ public class GroupSetCommand implements Command
                     if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
                     String setting = params.get(1);
                     if ("scp".equals(setting)) {
-                        Scope scope = settingManager.switchScope(groupId);
+                        Scope scope = settingService.switchScope(groupId);
                         bot.sendGroupMsg(groupId, "[AI] \uD83D\uDD04已切换: " + scope, false);
                         log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, scope);
                         return;
@@ -55,24 +55,24 @@ public class GroupSetCommand implements Command
                     if ("frq".equals(setting)) {
                         if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
                         double freq = Double.parseDouble(event.getCommandParameters().get(2));
-                        settingManager.setReplyFrequency(groupId, freq);
+                        settingService.setReplyFrequency(groupId, freq);
                         bot.sendGroupMsg(groupId, "[AI] ✅发言频率已更新", false);
                         log.info("\t\t\t\t├─[GroupSet] 已更改群 {} AI自动发言频率 -> {}", groupId, freq);
                         return;
                     }
                     boolean isEnabled = switch (setting) {
-                        case "ati" -> settingManager.switchAntiInjection(groupId);
-                        case "tkn" -> settingManager.switchThinking(groupId);
+                        case "ati" -> settingService.switchAntiInjection(groupId);
+                        case "tkn" -> settingService.switchThinking(groupId);
                         case "ebd" -> {
-                            deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
-                            yield settingManager.switchEmbedding(groupId);
+                            deepSeekClient.clearHistory(groupId, userId, settingService.getChatOption(groupId));
+                            yield settingService.switchEmbedding(groupId);
                         }
-                        case "eau" -> settingManager.switchEmbeddingAuth(groupId);
+                        case "eau" -> settingService.switchEmbeddingAuth(groupId);
                         case "cus" -> {
-                            deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
-                            yield settingManager.switchCustom(groupId);
+                            deepSeekClient.clearHistory(groupId, userId, settingService.getChatOption(groupId));
+                            yield settingService.switchCustom(groupId);
                         }
-                        case "aur" -> settingManager.switchAutoReply(groupId);
+                        case "aur" -> settingService.switchAutoReply(groupId);
                         default -> throw new NullBotMsgException("[群设置] ❌无此AI设置");
                     };
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[AI] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
@@ -84,11 +84,11 @@ public class GroupSetCommand implements Command
                     if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌监听设置参数不足");
                     String setting = params.get(1);
                     boolean isEnabled = switch (setting) {
-                        case "img" -> settingManager.switchImageCollect(groupId);
-                        case "msg" -> settingManager.switchMessageCollect(groupId);
-                        case "key" -> settingManager.switchKeywordDetect(groupId);
-                        case "pok" -> settingManager.switchPokeDetect(groupId);
-                        case "rcl" -> settingManager.switchRecallDetect(groupId);
+                        case "img" -> settingService.switchImageCollect(groupId);
+                        case "msg" -> settingService.switchMessageCollect(groupId);
+                        case "key" -> settingService.switchKeywordDetect(groupId);
+                        case "pok" -> settingService.switchPokeDetect(groupId);
+                        case "rcl" -> settingService.switchRecallDetect(groupId);
                         default -> throw new NullBotMsgException("[群设置] ❌无此监听设置");
                     };
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[监听] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
@@ -100,7 +100,7 @@ public class GroupSetCommand implements Command
                     if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Guess设置参数不足");
                     double ratio = Double.parseDouble(event.getCommandParameters().get(1));
                     int padding = Integer.parseInt(event.getCommandParameters().get(2));
-                    if(settingManager.setGuessParams(groupId, ratio, padding)) {
+                    if(settingService.setGuessParams(groupId, ratio, padding)) {
                         bot.sendGroupMsg(groupId, "[游戏] ✅参数已更新", false);
                         log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 -> Guess游戏参数", groupId);
                         return;

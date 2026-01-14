@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +25,7 @@ public class ChatCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
     private final ChatStorage chatStorage;
-    private final SettingManager settingManager;
+    private final SettingService settingService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
@@ -48,7 +48,7 @@ public class ChatCommand implements Command
 
             String response = deepSeekClient.chat(
                     messageId, groupId, userId, userName, message, bot, event,
-                    settingManager.getChatOption(groupId)
+                    settingService.getChatOption(groupId)
             );
 
             log.info("\t\t\t\t├─[Chat] 已回复: {}", response.replaceAll("\\R", " "));

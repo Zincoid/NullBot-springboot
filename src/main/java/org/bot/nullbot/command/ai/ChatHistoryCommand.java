@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"ChatHistory", "聊天历史"})
@@ -19,14 +19,14 @@ import org.springframework.stereotype.Component;
 public class ChatHistoryCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
-    private final SettingManager settingManager;
+    private final SettingService settingService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long userId = groupMessageEvent.getSender().getUserId();
             Long groupId = groupMessageEvent.getGroupId();
-            String history = deepSeekClient.getHistoryAsString(groupId, userId, settingManager.getChatOption(groupId));
+            String history = deepSeekClient.getHistoryAsString(groupId, userId, settingService.getChatOption(groupId));
             bot.sendGroupMsg(groupId, "[聊天历史] ✅已获取！" + history, false);
             log.info("\t\t\t\t├─[ChatHistory] 已获取 - 历史聊天记录");
         }else

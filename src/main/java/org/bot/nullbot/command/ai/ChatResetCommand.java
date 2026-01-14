@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"ChatReset", "重置聊天"})
@@ -19,14 +19,14 @@ import org.springframework.stereotype.Component;
 public class ChatResetCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
-    private final SettingManager settingManager;
+    private final SettingService settingService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long userId = groupMessageEvent.getSender().getUserId();
             Long groupId = groupMessageEvent.getGroupId();
-            String target = deepSeekClient.clearHistory(groupId, userId, settingManager.getChatOption(groupId));
+            String target = deepSeekClient.clearHistory(groupId, userId, settingService.getChatOption(groupId));
             bot.sendGroupMsg(groupId, "[重置聊天] ♻️" + target + " 聊天已重置！", false);
             log.info("\t\t\t\t├─[ChatReset] 已清除 - {} 历史聊天记录", target);
         }else
