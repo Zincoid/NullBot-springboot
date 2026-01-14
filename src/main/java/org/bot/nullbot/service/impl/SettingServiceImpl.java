@@ -14,6 +14,8 @@ public class SettingServiceImpl implements SettingService
 {
     private final SettingManager settingManager;
 
+    // =================== BOT功能相关 ===================
+
     @Override
     public SettingInfo getSetting(Long groupId) {
         return settingManager.getSetting(groupId);
@@ -23,6 +25,8 @@ public class SettingServiceImpl implements SettingService
     public boolean updateSetting(SettingInfo setting) {
         return settingManager.setSetting(setting);
     }
+
+    // =================== WEB功能相关 ===================
 
     @Override
     public List<SettingInfo> getSettingList() {
