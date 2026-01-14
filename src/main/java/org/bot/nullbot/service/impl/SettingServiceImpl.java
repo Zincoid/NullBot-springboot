@@ -2,6 +2,7 @@ package org.bot.nullbot.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.control.SettingManager;
+import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ public class SettingServiceImpl implements SettingService
 {
     private final SettingManager settingManager;
 
-    // =================== BOT功能相关 ===================
+    // =================== 全局功能相关 ===================
 
     @Override
     public SettingInfo getSetting(Long groupId) {
@@ -22,12 +23,15 @@ public class SettingServiceImpl implements SettingService
     }
 
     @Override
+    public ChatOption getChatOption(Long groupId) { return settingManager.getChatOption(groupId); }
+
+    @Override
     public boolean updateSetting(SettingInfo setting) {
         return settingManager.setSetting(setting);
     }
 
     // =================== WEB功能相关 ===================
-
+    
     @Override
     public List<SettingInfo> getSettingList() {
         return settingManager.getSettingList();

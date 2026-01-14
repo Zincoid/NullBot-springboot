@@ -1,5 +1,6 @@
 package org.bot.nullbot.service;
 
+import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
 
 import java.util.List;
@@ -7,6 +8,8 @@ import java.util.List;
 public interface SettingService
 {
     SettingInfo getSetting(Long groupId);
+
+    ChatOption getChatOption(Long groupId);
 
     boolean updateSetting(SettingInfo setting);
 
