@@ -39,7 +39,7 @@ public class UseCommand implements Command
             } catch (NumberFormatException e) {
                 throw new NullBotMsgException("[使用] ❌参数格式错误");
             }
-            // 存在检测
+            // 存在检查
             if (!itemService.exist(itemId))
                 throw new NullBotMsgException("[使用] ❌该物品不存在");
             // 可用检查
