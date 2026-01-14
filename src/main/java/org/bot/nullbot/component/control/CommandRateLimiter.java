@@ -22,7 +22,9 @@ public class CommandRateLimiter
 
     private Bucket resolveBucket(String key) {
         return buckets.computeIfAbsent(key, k -> Bucket.builder()
-                .addLimit(limit -> limit.capacity(rateLimitConfig.getCapacity()).refillGreedy(rateLimitConfig.getRefill(), Duration.ofMinutes(1)))
+                .addLimit(limit -> limit
+                        .capacity(rateLimitConfig.getCapacity())
+                        .refillGreedy(rateLimitConfig.getRefill(), Duration.ofMinutes(1)))
                 .build());
     }
 
