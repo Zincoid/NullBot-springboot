@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class PermissionHandler implements Handler
 {
-    // private final AccessManager accessManager;  # Deprecated
     private final GroupService groupService;
     private final UserService userService;
 
@@ -43,7 +42,7 @@ public class PermissionHandler implements Handler
                     chain.doHandle(bot, event, command);
                 }else{
                     log.info("\t\t├─[PermissionHandler] 用户限权不足");
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access] ❌限权不足\n需要限权等级: " + commandAccess + "\n你的限权等级: " + userAccess, false);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Access] \uD83D\uDEAB限权不足\n需要限权等级: " + commandAccess + "\n你的限权等级: " + userAccess, false);
                 }
             }else{
                 log.info("\t\t├─[PermissionHandler] 无需验证用户限权");
@@ -65,7 +64,7 @@ public class PermissionHandler implements Handler
                     chain.doHandle(bot, event, command);
                 }else{
                     log.info("\t\t├─[PermissionHandler] 用户限权不足");
-                    bot.sendGroupMsg(pokeNoticeEvent.getGroupId(), "[Access] ❌限权不足\n需要限权等级: " + commandAccess + "\n你的限权等级: " + userAccess, false);
+                    bot.sendGroupMsg(pokeNoticeEvent.getGroupId(), "[Access] \uD83D\uDEAB限权不足\n需要限权等级: " + commandAccess + "\n你的限权等级: " + userAccess, false);
                 }
             }else{
                 log.info("\t\t├─[PermissionHandler] 无需验证用户限权");

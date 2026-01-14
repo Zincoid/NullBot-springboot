@@ -42,7 +42,7 @@ public class AccessSetCommand implements Command
 
             switch (params.get(0))
             {
-                case "GROUP" -> {
+                case "-GROUP" -> {
                     if(!groupService.existGroup(targetId)) throw new NullBotMsgException("[限权设置] ❌群聊未注册");
                     int targetAccess = groupService.getGroupAccess(targetId);
                     int selfAccess = userService.getUserAccess(groupMessageEvent.getUserId());
@@ -56,7 +56,7 @@ public class AccessSetCommand implements Command
                     }
                 }
 
-                case "USER" -> {
+                case "-USER" -> {
                     if(!userService.existUser(targetId)) throw new NullBotMsgException("[限权设置] ❌用户未注册");
                     int targetAccess = userService.getUserAccess(targetId);
                     int selfAccess = userService.getUserAccess(groupMessageEvent.getUserId());
@@ -86,9 +86,9 @@ public class AccessSetCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ AccessSet 命令
-                功能: 设置用户限权等级
+                功能: 设置用户/群组限权等级
                 限权: %d 级
-                格式: AccessSet [USER|GROUP] [ID] [限权等级]
+                格式: AccessSet [-USER|-GROUP] [ID] [限权等级]
                 中文命令: 限权设置
                 注意:
                 针对用户 - 无法修改高于或等于自身限权用户, 设置的限权无法高于或等于自身限权
@@ -100,9 +100,9 @@ public class AccessSetCommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ AccessSet 命令
-                功能: 设置用户限权等级
+                功能: 设置用户/群组限权等级
                 限权: %d 级
-                格式: AccessSet [USER|GROUP] [ID] [限权等级]
+                格式: AccessSet [-USER|-GROUP] [ID] [限权等级]
                 示例: AccessSet USER 2660181154 2""", getAccess()
         );
     }

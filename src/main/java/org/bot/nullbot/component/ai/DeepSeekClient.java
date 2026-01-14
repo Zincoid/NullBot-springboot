@@ -282,7 +282,7 @@ public class DeepSeekClient
         if (option.isCustom())
             systemMessage = sysMsgStorage.getCustomMessage(groupId);
         else
-            systemMessage = sysMsgStorage.getDefaultMessage();
+            systemMessage = sysMsgStorage.getDefaultMessage(groupId);
 
         systemMessage = systemMessage +
                 "\n你在一个群聊中接收对话，不同用户的消息会带有消息ID和用户标识，格式为[Message ID][Username(UserId)]。" +

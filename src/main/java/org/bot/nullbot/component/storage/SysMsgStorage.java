@@ -11,17 +11,19 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class SysMsgStorage
 {
-    private final Map<Long, String> customMessages;
-    private final String defaultMessage;
+    private final DeepSeekConfig deepSeekConfig;
 
-    public SysMsgStorage(DeepSeekConfig config) {
-        customMessages = new ConcurrentHashMap<>();
-        this.defaultMessage = config.getDefaultSystemMessage();
-    }
+    private final Map<Long, String> defaultMessages = new ConcurrentHashMap<>();
+    private final Map<Long, String> customMessages = new ConcurrentHashMap<>();
 
-    public String getCustomMessage(Long groupId) {
-        return customMessages.computeIfAbsent(groupId, k -> "你是一个AI助手。");
-    }
+    public String getDefaultMessage(Long groupId) { return defaultMessages.computeIfAbsent(groupId, k -> deepSeekConfig.getDefaultSystemMessage()); }
+    public void setDefaultMessage(Long groupId, String message) { defaultMessages.put(groupId, message); }
 
+    public String getCustomMessage(Long groupId) { return customMessages.computeIfAbsent(groupId, k -> "你是一个AI助手，名字叫Null。"); }
     public void setCustomMessage(Long groupId, String message) { customMessages.put(groupId, message); }
+
+    public void reset(Long groupId) {
+        defaultMessages.remove(groupId);
+        customMessages.remove(groupId);
+    }
 }
