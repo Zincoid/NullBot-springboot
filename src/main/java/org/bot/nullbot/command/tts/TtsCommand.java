@@ -28,7 +28,7 @@ public class TtsCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
             if (params.isEmpty()) throw new NullBotMsgException("[转语音] ❌无参数");
-            String message = String.join(" ", params.subList(1, params.size()));
+            String message = String.join(" ", params.subList(0, params.size()));
             String base64;
             try {
                 base64 = ttsClient.synthesize(message);

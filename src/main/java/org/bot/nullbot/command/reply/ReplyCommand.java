@@ -22,7 +22,7 @@ public class ReplyCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
             if (params.isEmpty()) throw new NullBotMsgException("[应答] ❌无参数");
-            String message = String.join(" ", params.subList(1, params.size()));
+            String message = String.join(" ", params.subList(0, params.size()));
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), message, false);
             log.info("\t\t\t\t├─[Reply] 已回复 - {}", message.replaceAll("\\R", " "));
         }else
