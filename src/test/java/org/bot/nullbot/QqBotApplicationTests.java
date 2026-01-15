@@ -40,7 +40,7 @@ class QqBotApplicationTests {
 
     @Test
     void fileTest() throws IOException {
-        System.out.println(FileUtil.getFolderTreeString("C:\\Users\\Zincoid\\IdeaProjects\\NullBot\\src\\main\\resources", 0));
+        System.out.println(FileUtil.getFolderTreeString("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main", 0));
     }
 
    @Test

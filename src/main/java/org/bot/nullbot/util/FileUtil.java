@@ -41,10 +41,10 @@ public class FileUtil
                 boolean itemIsLast = (i == items.size() - 1);
 
                 sb.append(prefix);
-                sb.append(isLast ? "└ " : "├ ");
+                sb.append(itemIsLast ? "└ " : "├ ");
                 sb.append(item.getFileName()).append("\n");
 
-                String childPrefix = prefix + (isLast ? "    " : "│   ");
+                String childPrefix = prefix + (itemIsLast ? "    " : "│   ");
                 buildTreeString(item, childPrefix, itemIsLast, sb, maxDepth, currentDepth + 1);
             }
         }

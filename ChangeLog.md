@@ -303,6 +303,7 @@
 - 大幅优化 - 全部指令的错误提示方式和部分结构 抛出异常在 ExecutorHandler 中捕获后通过 Bot 发送；
 - 增强 SysMsgStorage - 添加 自定义Default提示词/重置提示词 功能 并增强相关设置指令；
 - 优化 SettingService 和 SettingManager 结构 - 细粒度逻辑移至服务 若后续持久化便于修改代码；
+- 优化 FileUtil 工具类 - 文件目录树方法；
 - 优化 文本。
 
 ### 2026.1.15 - v1.2.4
