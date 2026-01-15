@@ -304,3 +304,7 @@
 - 增强 SysMsgStorage - 添加 自定义Default提示词/重置提示词 功能 并增强相关设置指令；
 - 优化 SettingService 和 SettingManager 结构 - 细粒度逻辑移至服务 若后续持久化便于修改代码；
 - 优化 文本。
+
+### 2026.1.15 - v1.2.4
+- 新增 TTS 文本转语言 功能 - 使用免费推理网站 AI Hobbyist TTS: https://tts.acgnai.top/
+- 优化 文本。
