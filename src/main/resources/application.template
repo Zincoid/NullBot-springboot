@@ -102,7 +102,7 @@ ai:
     max-monitor-length: 100
     max-tokens: 500
     meme-path: /root/Nullbot/file/ai/meme  # 用于AI主动发表情
-    default-system-message: ""
+    default-system-message:
 
   tts:
     api-url: https://gsv2p.acgnai.top/infer_single
