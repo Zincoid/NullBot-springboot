@@ -57,13 +57,13 @@ public class DownloadUtil
                 throw new RuntimeException("Failed: File too large");
             }
 
-            log.info("\t\t\t\t├─ Downloading from url...");
-            log.info("\t\t\t\t├─ Content-Type: {}", contentType);
+            log.info("{}Downloading from url...", logPrefix);
+            log.info("{}Content-Type: {}", logPrefix, contentType);
             if (contentLength > 0) {
-                log.info("\t\t\t\t├─ File Size: {}", formatFileSize(contentLength));
+                log.info("{}File Size: {}", logPrefix, formatFileSize(contentLength));
             }
 
-            String finalFileName = determineFileName(fileName, contentType, fileUrl);
+            String finalFileName = determineFileName(fileName, contentType, fileUrl, logPrefix);
             Path saveFilePath = Paths.get(savePath, finalFileName);
             Files.createDirectories(Paths.get(savePath));
 
@@ -76,7 +76,7 @@ public class DownloadUtil
 
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
                     if (Thread.currentThread().isInterrupted()) {
-                        log.warn("\t\t\t\t├─ Download interrupted by thread");
+                        log.warn("{}Download interrupted by thread", logPrefix);
                         Files.deleteIfExists(saveFilePath);
                         throw new RuntimeException("Failed: Download interrupted");
                     }
@@ -85,12 +85,12 @@ public class DownloadUtil
                     totalBytesRead += bytesRead;
 
                     if (contentLength > 0 && totalBytesRead % (10 * 1024 * 1024) == 0) {
-                        log.info("\t\t\t\t├─ Download progress: {}/{}", formatFileSize(totalBytesRead), formatFileSize(contentLength));
+                        log.info("{}Download progress: {}/{}", logPrefix, formatFileSize(totalBytesRead), formatFileSize(contentLength));
                     }
                 }
 
                 long downloadedSize = Files.size(saveFilePath);
-                log.info("\t\t\t\t├─ Download completed: {} ({})", finalFileName, formatFileSize(downloadedSize));
+                log.info("{}Download completed: {} ({})", logPrefix, finalFileName, formatFileSize(downloadedSize));
 
                 LocalDateTime lastModified = Files
                         .getLastModifiedTime(saveFilePath)
@@ -102,13 +102,13 @@ public class DownloadUtil
             }
 
         } catch (IOException e) {
-            log.error("\t\t\t\t├─ Download failed: {}", e.getMessage(), e);
+            log.error("{}Download failed: {}", logPrefix, e.getMessage(), e);
             throw new RuntimeException("Failed: " + e.getMessage());
         } catch (Exception e) {
-            log.error("\t\t\t\t├─ Unexpected error: {}", e.getMessage(), e);
+            log.error("{}Unexpected error: {}", logPrefix, e.getMessage(), e);
             throw new RuntimeException("Failed: Unexpected error");
         } finally {
-            closeConnection(connection);
+            closeConnection(connection, logPrefix);
         }
     }
 
@@ -132,7 +132,7 @@ public class DownloadUtil
         }
     }
 
-    private static void closeConnection(HttpURLConnection connection) {
+    private static void closeConnection(HttpURLConnection connection, String logPrefix) {
         if (connection == null) return;
         try {
             try {
@@ -143,16 +143,16 @@ public class DownloadUtil
             try {
                 connection.disconnect();
             } catch (Exception e) {
-                log.warn("\t\t\t\t├─ Failed to disconnect connection: {}", e.getMessage());
+                log.warn("{}Failed to disconnect connection: {}", logPrefix, e.getMessage());
             }
         }
     }
 
-    private static String determineFileName(String fileName, String contentType, String fileUrl) {
+    private static String determineFileName(String fileName, String contentType, String fileUrl, String logPrefix) {
         if (hasExtension(fileName)) {
             return fileName;
         }
-        String extension = getFileExtension(contentType, fileUrl, fileName);
+        String extension = getFileExtension(contentType, fileUrl, fileName, logPrefix);
         return fileName + extension;
     }
 
@@ -170,13 +170,13 @@ public class DownloadUtil
         return false;
     }
 
-    private static String getFileExtension(String contentType, String fileUrl, String fileName) {
+    private static String getFileExtension(String contentType, String fileUrl, String fileName, String logPrefix) {
         String ext;
 
         if (fileName != null && !fileName.isEmpty()) {
             ext = extractExtensionFromFileName(fileName);
             if (!ext.isEmpty()) {
-                log.info("\t\t\t\t├─ Extension from filename: {}", ext);
+                log.info("{}Extension from filename: {}", logPrefix, ext);
                 return ext;
             }
         }
@@ -184,7 +184,7 @@ public class DownloadUtil
         if (contentType != null && !contentType.isEmpty()) {
             ext = getExtensionFromContentType(contentType);
             if (!ext.isEmpty()) {
-                log.info("\t\t\t\t├─ Extension from Content-Type: {}", ext);
+                log.info("{}Extension from Content-Type: {}", logPrefix, ext);
                 return ext;
             }
         }
@@ -192,12 +192,12 @@ public class DownloadUtil
         if (fileUrl != null && !fileUrl.isEmpty()) {
             ext = extractExtensionFromUrl(fileUrl);
             if (!ext.isEmpty()) {
-                log.info("\t\t\t\t├─ Extension from URL: {}", ext);
+                log.info("{}Extension from URL: {}", logPrefix, ext);
                 return ext;
             }
         }
 
-        log.info("\t\t\t\t├─ Using default extension: .dat");
+        log.info("{}Using default extension: .dat", logPrefix);
         return ".dat";
     }
 
