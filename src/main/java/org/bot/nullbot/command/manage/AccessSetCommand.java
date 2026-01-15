@@ -103,7 +103,7 @@ public class AccessSetCommand implements Command
                 功能: 设置用户/群组限权等级
                 限权: %d 级
                 格式: AccessSet [-USER|-GROUP] [ID] [限权等级]
-                示例: AccessSet USER 2660181154 2""", getAccess()
+                示例: AccessSet -USER 2660181154 2""", getAccess()
         );
     }
 }

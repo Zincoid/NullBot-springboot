@@ -95,10 +95,19 @@ nullbot:
 
 ai:
   deepseek:
-    api-key:
     api-url: https://api.deepseek.com/chat/completions
+    api-key:
     max-history-length: 50
     max-monitor-length: 100
     max-tokens: 500
     meme-path: /root/Nullbot/file/ai/meme  # 用于AI主动发表情
     default-system-message: ""
+
+  tts:
+    api-url: https://gsv2p.acgnai.top/infer_single
+    api-key:
+    version: v4
+    model_name: 明日方舟-日语-羽毛笔
+    prompt_text_lang: 日语
+    text_lang: 中文
+    emotion: 默认
