@@ -54,7 +54,7 @@ public class ImageSaveCommand implements Command
                 String fileName = originName.substring(0, originName.lastIndexOf("."));
                 String filePath = fileStorageConfig.getImagePath() + "/collect";
                 try {
-                    FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t├─ ");
+                    FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t\t├─ ");
                     if(!fileService.addFileRecordForBot(
                             filePath,
                             fileInfo.getFileName(),

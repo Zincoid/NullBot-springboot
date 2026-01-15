@@ -52,7 +52,7 @@ public class VideoSaveCommand implements Command
                 String filePath = fileStorageConfig.getVideoPath();
                 String url = entry.getValue();
                 try {
-                    FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t├─ ");
+                    FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t\t├─ ");
                     if(!fileService.addFileRecordForBot(
                             filePath,
                             fileInfo.getFileName(),
