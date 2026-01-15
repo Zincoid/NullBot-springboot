@@ -85,6 +85,7 @@ public class SettingInfo
                 ├ 会话范围 - %s
                 ├ 防注模式 - %s
                 ├ 思考模式 - %s
+                ├ 语音模式 - %s
                 ├ 指令模式 - %s
                 ├ 指令校验 - %s
                 └ 自定模式 - %s
@@ -102,6 +103,7 @@ public class SettingInfo
                 scope,
                 antiInjection ? "ON" : "OFF",
                 thinking ? "ON" : "OFF",
+                voice ? "ON" : "OFF",
                 embedding ? "ON" : "OFF",
                 embeddingAuth ? "ON" : "OFF",
                 custom ? "ON" : "OFF",
