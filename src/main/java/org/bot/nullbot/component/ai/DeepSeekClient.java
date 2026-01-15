@@ -60,6 +60,9 @@ public class DeepSeekClient
                 "AccessSet", "GroupSet", "UserBan",
                 "Help", "ImageFolder", "PUBG",
 
+                // 语音回复
+                "Tts",
+
                 // 加密命令
                 "eb0f8545",
                 "4ed1314d",

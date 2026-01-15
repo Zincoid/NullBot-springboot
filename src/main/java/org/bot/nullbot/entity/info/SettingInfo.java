@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bot.nullbot.config.DefaultConfig;
+import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.enums.Scope;
 
 @Data
@@ -16,6 +17,7 @@ public class SettingInfo
     private Scope scope;
     private boolean antiInjection;
     private boolean thinking;
+    private boolean voice;
     private boolean embedding;
     private boolean embeddingAuth;
     private boolean custom;
@@ -38,6 +40,7 @@ public class SettingInfo
         this.scope = config.getScope();
         this.antiInjection = config.isAntiInjection();
         this.thinking = config.isThinking();
+        this.voice = config.isVoice();
         this.embedding = config.isEmbedding();
         this.embeddingAuth = config.isEmbeddingAuth();
         this.custom = config.isCustom();
@@ -55,9 +58,14 @@ public class SettingInfo
         this.guessPadding = config.getGuessPadding();
     }
 
+    public ChatOption getChatOption() {
+        return new ChatOption(scope, antiInjection, thinking, voice, embedding, embeddingAuth, custom);
+    }
+
     public Scope switchScope() { return scope = scope.next(); }
     public boolean switchAntiInjection() { return antiInjection = !antiInjection; }
     public boolean switchThinking() { return thinking = !thinking; }
+    public boolean switchVoice() { return voice = !voice; }
     public boolean switchEmbedding() { return embedding = !embeddingAuth; }
     public boolean switchEmbeddingAuth() { return embeddingAuth = !embeddingAuth; }
     public boolean switchCustom() { return custom = !custom; }

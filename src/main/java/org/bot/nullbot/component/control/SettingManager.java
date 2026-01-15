@@ -19,9 +19,7 @@ public class SettingManager
     private final Map<Long, SettingInfo> settings = new ConcurrentHashMap<>();
 
     public ChatOption getChatOption(Long groupId) {
-        SettingInfo setting = getSetting(groupId);
-        return new ChatOption(setting.getScope(), setting.isAntiInjection(), setting.isThinking(),
-                setting.isEmbedding(), setting.isEmbeddingAuth(), setting.isCustom());
+        return getSetting(groupId).getChatOption();
     }
 
     public SettingInfo getSetting(Long groupId) {
@@ -37,6 +35,7 @@ public class SettingManager
     }
 
     public void setSettings(List<SettingInfo> newSettings) {
-        for (SettingInfo setting : newSettings) settings.put(setting.getGroupId(), setting);
+        for (SettingInfo setting : newSettings)
+            settings.put(setting.getGroupId(), setting);
     }
 }

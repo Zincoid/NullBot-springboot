@@ -59,6 +59,7 @@ nullbot:
     scope: group
     anti-injection: true
     thinking: false
+    voice: false
     embedding: true
     embedding-auth: false
     custom: false

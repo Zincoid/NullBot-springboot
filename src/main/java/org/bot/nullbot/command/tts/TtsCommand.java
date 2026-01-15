@@ -33,7 +33,7 @@ public class TtsCommand implements Command
             try {
                 base64 = ttsClient.synthesize(message);
             } catch (Exception e) {
-                throw new NullBotMsgException(e.getMessage());
+                throw new NullBotMsgException("[转语音] ❌" + e.getMessage());
             }
             String response = MsgUtils.builder()
                     .voice("base64://" + base64)
@@ -53,8 +53,19 @@ public class TtsCommand implements Command
                 ◉ Tts 命令
                 功能: 文字转语音
                 限权: %d 级
-                格式: Tts [内容]
+                格式: Tts [文本]
                 中文命令: 转语音""", getAccess()
+        );
+    }
+
+    @Override
+    public String getHelpForAI() {
+        return String.format("""
+                ◉ Tts 命令
+                功能: 文字转语音并发送到群中
+                限权: %d 级
+                格式: Tts [文本]
+                注意: 当你想要发送语音代替文字回复时使用该命令！""", getAccess()
         );
     }
 }

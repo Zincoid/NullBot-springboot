@@ -15,6 +15,7 @@ public class DefaultConfig
     private Scope scope;  // 会话范围
     private boolean antiInjection;  // 防注入模式
     private boolean thinking;  // 深度思考模式
+    private boolean voice;  // 语音模式
     private boolean embedding;  // 嵌入命令模式
     private boolean embeddingAuth;  // 嵌入限权验证
     private boolean custom;  // 自定义提示词模式

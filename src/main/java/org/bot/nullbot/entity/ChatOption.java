@@ -11,6 +11,7 @@ public class ChatOption
     private Scope scope;
     private boolean antiInjection;
     private boolean thinking;
+    private boolean voice;
     private boolean embedding;
     private boolean embeddingAuth;
     private boolean custom;

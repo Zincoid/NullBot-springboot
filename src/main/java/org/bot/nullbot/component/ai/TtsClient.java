@@ -37,7 +37,7 @@ public class TtsClient
     }
 
     /**
-     * 调用TTS API合成语音 返回base64编码的音频数据
+     * 调用 TTS API 合成语音 (BASE64 编码)
      */
     public String synthesize(String text) {
         // 1. 调用TTS API获取音频URL
@@ -79,7 +79,7 @@ public class TtsClient
         requestBody.put("if_sr", false);
 
         // 打印完整请求内容到日志
-        logCompleteRequest(apiUrl, headers, requestBody, text);
+        // logCompleteRequest(apiUrl, headers, requestBody, text);
 
         // 发送请求
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
@@ -107,11 +107,11 @@ public class TtsClient
 
     private void logCompleteRequest(String url, HttpHeaders headers, Map<String, Object> requestBody, String originalText) {
         try {
-            // 创建一个安全的headers副本，隐藏敏感信息
+            // 创建安全headers副本 隐藏敏感信息
             HttpHeaders safeHeaders = new HttpHeaders();
             safeHeaders.putAll(headers);
 
-            // 隐藏敏感信息：API Key
+            // 隐藏敏感信息: API Key
             if (safeHeaders.containsHeader("Authorization")) {
                 String authHeader = safeHeaders.getFirst("Authorization");
                 if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -171,8 +171,7 @@ public class TtsClient
             logMessage.append("}\n");
             logMessage.append("======================================\n");
 
-            log.info("TTS请求详情:\n{}", logMessage.toString());
-
+            log.info("TTS请求详情:\n{}", logMessage);
         } catch (Exception e) {
             log.warn("记录请求日志时发生异常: {}", e.getMessage());
         }
