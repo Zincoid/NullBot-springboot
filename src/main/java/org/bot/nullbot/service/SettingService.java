@@ -28,6 +28,8 @@ public interface SettingService
 
     boolean switchThinking(Long groupId);
 
+    boolean switchVoice(Long groupId);
+
     boolean switchEmbedding(Long groupId);
 
     boolean switchEmbeddingAuth(Long groupId);

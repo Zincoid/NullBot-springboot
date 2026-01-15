@@ -54,6 +54,10 @@ public class SettingServiceImpl implements SettingService
     @Override
     public boolean switchThinking(Long groupId) { return getSetting(groupId).switchThinking(); }
     @Override
+    public boolean switchVoice(Long groupId) {
+        return getSetting(groupId).switchVoice();
+    }
+    @Override
     public boolean switchEmbedding(Long groupId) { return getSetting(groupId).switchEmbedding(); }
     @Override
     public boolean switchEmbeddingAuth(Long groupId) { return getSetting(groupId).switchEmbeddingAuth(); }

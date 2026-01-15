@@ -307,4 +307,7 @@
 
 ### 2026.1.15 - v1.2.4
 - 新增 TTS 文本转语言 功能 - 使用免费推理网站 AI Hobbyist TTS: https://tts.acgnai.top/
+- 优化 SettingManager 和 SettingInfo 结构 - 将 ChatOption 的创建方法移至 SettingInfo；
+- 增强 AI - 添加语音功能 并 修改优化相关代码和设置组件；
+- 网页Bot管理系统 前端添加 语音设置相关界面；
 - 优化 文本。

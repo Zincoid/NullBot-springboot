@@ -63,6 +63,10 @@ public class GroupSetCommand implements Command
                     boolean isEnabled = switch (setting) {
                         case "ati" -> settingService.switchAntiInjection(groupId);
                         case "tkn" -> settingService.switchThinking(groupId);
+                        case "voi" -> {
+                            deepSeekClient.clearHistory(groupId, userId, settingService.getChatOption(groupId));
+                            yield settingService.switchVoice(groupId);
+                        }
                         case "ebd" -> {
                             deepSeekClient.clearHistory(groupId, userId, settingService.getChatOption(groupId));
                             yield settingService.switchEmbedding(groupId);
@@ -136,6 +140,7 @@ public class GroupSetCommand implements Command
                    scp - 会话范围
                    ati - 防注模式
                    tkn - 思考模式
+                   voi - 语音模式
                    ebd - 指令模式
                    eau - 指令验证
                    cus - 自定模式
@@ -153,6 +158,9 @@ public class GroupSetCommand implements Command
                 
                 • [-guess] [切割比例] [内边距]
                    设置 Guess 游戏难度
+                
+                注意:
+                - 切换AI语音/指令/自定模式时会清空历史
                 
                 中文命令: 群设置""", getAccess()
         );

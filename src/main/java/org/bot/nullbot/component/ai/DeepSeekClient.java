@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -291,6 +292,15 @@ public class DeepSeekClient
                 "\n你在一个群聊中接收对话，不同用户的消息会带有消息ID和用户标识，格式为[Message ID][Username(UserId)]。" +
                 "\n请根据标识区分不同消息和用户，回复消息时不要带以上那种格式化的标识。";
 
+        // 过滤 可用指令
+        Set<String> commands;
+        if (option.isVoice())
+            commands = AI_COMMAND_WHITE_LIST;
+        else
+            commands = AI_COMMAND_WHITE_LIST.stream()
+                    .filter(cmd -> !cmd.equals("Tts"))
+                    .collect(Collectors.toSet());
+
         // 添加 指令模式提示词
         if(!option.isCustom() && option.isEmbedding()) {
             systemMessage = systemMessage +
@@ -298,7 +308,7 @@ public class DeepSeekClient
                     "\n指令使用示例如下：" +
                     "\n当有人想要看二次元图片或者色图时，你可以使用 {Anime} 指令，这样就能自动调用图片发送。" +
                     "\n所有可用指令列表如下：" +
-                    "\n" + commandRegistry.getCommandHelpsForAI(AI_COMMAND_WHITE_LIST) +
+                    "\n" + commandRegistry.getCommandHelpsForAI(commands) +
                     "\n你曾经使用指令的出错记录如下，请避免再犯：" +
                     "\n" + chatStorage.getErrors() +
                     "\n注意: " +
