@@ -44,7 +44,7 @@ public class FileUtil
                 sb.append(itemIsLast ? "└ " : "├ ");
                 sb.append(item.getFileName()).append("\n");
 
-                String childPrefix = prefix + (itemIsLast ? "    " : "│   ");
+                String childPrefix = prefix + (itemIsLast ? "    " : "│ ");
                 buildTreeString(item, childPrefix, itemIsLast, sb, maxDepth, currentDepth + 1);
             }
         }
