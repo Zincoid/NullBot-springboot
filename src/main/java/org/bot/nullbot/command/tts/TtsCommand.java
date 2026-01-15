@@ -29,7 +29,12 @@ public class TtsCommand implements Command
             List<String> params = event.getCommandParameters();
             if (params.isEmpty()) throw new NullBotMsgException("[转语音] ❌无参数");
             String message = String.join(" ", params.subList(1, params.size()));
-            String base64 = ttsClient.synthesize(message);
+            String base64;
+            try {
+                base64 = ttsClient.synthesize(message);
+            } catch (Exception e) {
+                throw new NullBotMsgException(e.getMessage());
+            }
             String response = MsgUtils.builder()
                     .voice("base64://" + base64)
                     .build();
