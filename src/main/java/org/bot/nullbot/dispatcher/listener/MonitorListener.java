@@ -65,32 +65,33 @@ public class MonitorListener
     @FunctionControl(config = "ImgCollect")
     public void onGroupImageCollection(Bot bot, GroupMessageEvent event) {  // 群目录不存在时数据库无法插入详情文件条目 需手动SYNC
         if(!settingService.isImageCollect(event.getGroupId())) return;
+
+        Long groupId = event.getGroupId();
+        Long userId = event.getSender().getUserId();
+        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+
         boolean hasLogged = false;
         for(ArrayMsg msg : event.getArrayMsg()){
             if(msg.getType() == MsgTypeEnum.image){
                 if (!hasLogged){
-                    log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
+                    // log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> {}", groupId, userName, userId, event.getMessage());
+                    log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
                     hasLogged = true;
                 }
                 String originName =msg.getData().get("file");
                 String url = msg.getData().get("url");
                 String fileName = originName.substring(0, originName.lastIndexOf("."));
-
-                Long groupId = event.getGroupId();
-                Long userId = event.getSender().getUserId();
-                String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-
-                String savePath = fileStorageConfig.getImagePath() + "/monitor/" + groupId;
+                String filePath = fileStorageConfig.getImagePath() + "/monitor/" + groupId;
                 try {
-                    FileInfo fileInfo = DownloadUtil.downloadFile(url, savePath, fileName);
+                    FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "├─ ");
                     if(!fileService.addFileRecordForBot(
-                            savePath,
+                            filePath,
                             fileInfo.getFileName(),
                             fileInfo.getFileSize(),
                             fileInfo.getLastModified(),
                             userId, userName)
                     ) {
-                        log.info("└─[Error] DbSave Failed");
+                        log.info("├─[Error] DbSave Failed");
                     }
                     log.info("└─[Saved] {}", fileInfo.getFileName());
                 } catch (Exception e) {
@@ -109,7 +110,7 @@ public class MonitorListener
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
             chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
             chatStorage.trimHistory(chatMessages, deepSeekConfig.getMaxMonitorLength());
-            log.info("└─[Record] {} item(s)", chatMessages.size());
+            log.info("└─[Recorded] {} Message(s)", chatMessages.size());
         }
     }
 

@@ -49,11 +49,12 @@ public class VideoSaveCommand implements Command
 
             for (Map.Entry<String, String> entry : videoMap.entrySet()) {
                 String fileName = entry.getKey();
+                String filePath = fileStorageConfig.getVideoPath();
                 String url = entry.getValue();
                 try {
-                    FileInfo fileInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getVideoPath(), fileName);
+                    FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t├─ ");
                     if(!fileService.addFileRecordForBot(
-                            fileStorageConfig.getVideoPath(),
+                            filePath,
                             fileInfo.getFileName(),
                             fileInfo.getFileSize(),
                             fileInfo.getLastModified(),

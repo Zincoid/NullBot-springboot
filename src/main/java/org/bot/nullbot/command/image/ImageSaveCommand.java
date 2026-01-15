@@ -52,10 +52,11 @@ public class ImageSaveCommand implements Command
                 String url = entry.getValue();
                 // QQ给的扩展名是错的 让下载方法判断文件类型
                 String fileName = originName.substring(0, originName.lastIndexOf("."));
+                String filePath = fileStorageConfig.getImagePath() + "/collect";
                 try {
-                    FileInfo fileInfo = DownloadUtil.downloadFile(url, fileStorageConfig.getImagePath() + "/collect", fileName);
+                    FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t├─ ");
                     if(!fileService.addFileRecordForBot(
-                            fileStorageConfig.getImagePath() + "/collect",
+                            filePath,
                             fileInfo.getFileName(),
                             fileInfo.getFileSize(),
                             fileInfo.getLastModified(),

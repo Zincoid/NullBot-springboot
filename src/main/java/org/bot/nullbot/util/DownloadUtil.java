@@ -21,9 +21,16 @@ import java.util.regex.Pattern;
 public class DownloadUtil
 {
     /**
-     * 主下载方法
+     * 主下载方法 (无 LOG 前缀)
      */
     public static FileInfo downloadFile(String fileUrl, String savePath, String fileName) {
+        return downloadFile(fileUrl, savePath, fileName, "");
+    }
+
+    /**
+     * 主下载方法 (自定义 LOG 前缀)
+     */
+    public static FileInfo downloadFile(String fileUrl, String savePath, String fileName, String logPrefix) {
         HttpURLConnection connection = null;
 
         try {
@@ -46,7 +53,7 @@ public class DownloadUtil
 
             final long MAX_FILE_SIZE = 500L * 1024 * 1024;
             if (contentLength > MAX_FILE_SIZE) {
-                log.warn("\t\t\t\t├─ File too large: {} > {}", formatFileSize(contentLength), formatFileSize(MAX_FILE_SIZE));
+                log.warn("{}File too large: {} > {}", logPrefix, formatFileSize(contentLength), formatFileSize(MAX_FILE_SIZE));
                 throw new RuntimeException("Failed: File too large");
             }
 

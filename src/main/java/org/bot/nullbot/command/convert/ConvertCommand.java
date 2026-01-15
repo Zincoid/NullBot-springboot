@@ -78,7 +78,7 @@ public class ConvertCommand implements Command
                 String tempFileName = UUID.randomUUID().toString();
                 String downloadedFileName;
                 try {
-                    FileInfo fileInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName);
+                    FileInfo fileInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName, "\t\t\t├─ ");
                     downloadedFileName = fileInfo.getFileName();
                 } catch (Exception e) {
                     throw new NullBotMsgException("[图像处理] ❌下载图像失败");
