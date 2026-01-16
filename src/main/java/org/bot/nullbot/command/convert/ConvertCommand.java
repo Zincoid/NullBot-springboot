@@ -95,7 +95,7 @@ public class ConvertCommand implements Command
                     bot.sendGroupMsg(groupId, response, false);
                     log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
                 } catch (Exception e) {
-                    throw new NullBotMsgException("[图像处理] ❌处理时出错");
+                    throw new NullBotMsgException("[图像处理] ❌处理时出错: " + e.getMessage());
                 } finally {
                     FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
                 }
