@@ -39,7 +39,7 @@ public class TtsCommand implements Command
                     .voice("base64://" + base64)
                     .build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[Tts] 已回复 - {}", message.replaceAll("\\R", " "));
+            log.info("\t\t\t\t├─[Tts] 已回复语音: {}", message.replaceAll("\\R", " "));
         }else
             throw new NullBotLogException("[语音合成] ❌未设计 - 非群消息事件响应方式");
     }
