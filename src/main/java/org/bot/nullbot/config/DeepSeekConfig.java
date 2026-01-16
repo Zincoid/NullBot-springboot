@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "ai.deepseek")
+@ConfigurationProperties(prefix = "nullbot.ai.deepseek")
 public class DeepSeekConfig
 {
     private String apiKey;

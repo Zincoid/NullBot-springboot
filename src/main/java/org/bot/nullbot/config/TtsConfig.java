@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "ai.tts")
+@ConfigurationProperties(prefix = "nullbot.ai.tts")
 public class TtsConfig
 {
     private String apiUrl;
