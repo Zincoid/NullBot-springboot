@@ -2,6 +2,7 @@ package org.bot.nullbot.command.audio;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.dto.action.response.GetMsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
@@ -14,9 +15,13 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.TtsTemplateService;
+import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CommandMapping({"Tts", "语音合成"})
 @Component
@@ -42,6 +47,15 @@ public class TtsCommand implements Command
                             throw new NullBotMsgException("[语音合成] ❌需引用模板音频");
                         if (params.size() < 4)
                             throw new NullBotMsgException("[语音合成] ❌新模板参数不足");
+                        GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+                        Map<String, String> recordMap = MessageParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());
+                        Map<String, String> fileMap = MessageParseUtil.parseGroupRawMessageAsFileMap(replyMsg.getRawMessage());
+                        List<String> urls = new ArrayList<>();
+                        urls.addAll(recordMap.values());
+                        urls.addAll(fileMap.values());
+                        for (String url : urls) {
+
+                        }
                         // ttsTemplateService.addTemplate();
                     }
                 }
