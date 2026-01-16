@@ -1,4 +1,4 @@
-package org.bot.nullbot.component.tts;
+package org.bot.nullbot.component.ai;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
