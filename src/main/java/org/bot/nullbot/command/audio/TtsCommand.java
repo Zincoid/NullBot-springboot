@@ -121,9 +121,9 @@ public class TtsCommand implements Command
 
                     case "list" -> {
                         List<TtsTemplatePO> templates = ttsTemplateService.getTemplateList();
-                        StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new StringBuilder("\n[模板名 ========= 创建者]");
                         for (TtsTemplatePO template : templates) {
-                            sb.append("\n").append(template.getName());
+                            sb.append("\n").append(template.getName()).append(" - ").append(template.getOwnerName()).append("(").append(template.getOwnerId()).append(")");
                         }
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语音合成] ✅已获取模板列表" + sb, false);
                         log.info("\t\t\t\t├─[Tts] 已获取模板列表");
