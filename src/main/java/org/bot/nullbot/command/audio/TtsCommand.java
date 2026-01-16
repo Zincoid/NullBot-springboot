@@ -60,13 +60,14 @@ public class TtsCommand implements Command
                         GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                         Map<String, String> recordMap = MessageParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());
                         Map<String, String> fileMap = MessageParseUtil.parseGroupRawMessageAsFileMap(replyMsg.getRawMessage());
-                        List<String> urls = new ArrayList<>();
-                        urls.addAll(recordMap.values());
-                        urls.addAll(fileMap.values());
+                        Map<String, String> voiceMap = new HashMap<>();
+                        voiceMap.putAll(recordMap);
+                        voiceMap.putAll(fileMap);
 
                         String tempFilePath = fileStorageConfig.getTempPath();
-                        for (String url : urls) {
-                            String tempFileName = UUID.randomUUID().toString();
+                        for (Map.Entry<String, String> entry : voiceMap.entrySet()) {
+                            String tempFileName = entry.getKey();
+                            String url = entry.getValue();
                             String downloadedFileName;
                             try {
                                 FileInfo fileInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName, "\t\t\t\t├─ ");
@@ -82,6 +83,8 @@ public class TtsCommand implements Command
                                 bot.sendGroupMsg(groupId, "[语音合成] \uD83D\uDCBE模板已保存！\n" +
                                         templateName + " : " + templateText + " -> " + uploadedPath, false);
                                 log.info("\t\t\t\t├─[语音合成] 模板已保存 - {}:{} -> {}", templateName, templateText, uploadedPath);
+                            } catch (NullBotMsgException e) {
+                                throw e;
                             } catch (Exception e) {
                                 throw new NullBotMsgException("[语音合成] ❌模板保存时出错: " + e.getMessage());
                             } finally {
