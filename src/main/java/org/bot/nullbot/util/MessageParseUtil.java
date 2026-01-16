@@ -137,4 +137,44 @@ public class MessageParseUtil
                         LinkedHashMap::new
                 ));
     }
+
+    public static Map<String, String> parseGroupRawMessageAsRecordMap(String rawMessage) {
+        return Pattern.compile("\\[CQ:record([^]]+)]")
+                .matcher(rawMessage == null ? "" : rawMessage)
+                .results()
+                .map(match -> match.group(1))
+                .map(params -> new AbstractMap.SimpleEntry<>(
+                        Pattern.compile("file=([^,]+)").matcher(params).results()
+                                .findFirst().map(m -> m.group(1)).orElse(null),
+                        Pattern.compile("url=([^,]+)").matcher(params).results()
+                                .findFirst().map(m -> m.group(1).replace("&amp;", "&")).orElse(null)
+                ))
+                .filter(entry -> entry.getKey() != null && entry.getValue() != null)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (existing, replacement) -> replacement,
+                        LinkedHashMap::new
+                ));
+    }
+
+    public static Map<String, String> parseGroupRawMessageAsFileMap(String rawMessage) {
+        return Pattern.compile("\\[CQ:file([^]]+)]")
+                .matcher(rawMessage == null ? "" : rawMessage)
+                .results()
+                .map(match -> match.group(1))
+                .map(params -> new AbstractMap.SimpleEntry<>(
+                        Pattern.compile("file=([^,]+)").matcher(params).results()
+                                .findFirst().map(m -> m.group(1)).orElse(null),
+                        Pattern.compile("url=([^,]+)").matcher(params).results()
+                                .findFirst().map(m -> m.group(1).replace("&amp;", "&")).orElse(null)
+                ))
+                .filter(entry -> entry.getKey() != null && entry.getValue() != null)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (existing, replacement) -> replacement,
+                        LinkedHashMap::new
+                ));
+    }
 }

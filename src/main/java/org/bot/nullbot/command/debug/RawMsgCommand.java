@@ -12,7 +12,6 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
-import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"RawMsg", "原始消息"})
