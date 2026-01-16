@@ -58,6 +58,7 @@ public class TtsCommand implements Command
                         GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                         // Map<String, String> recordMap = MessageParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());  // 暂不支持 AMR 格式音频
                         Map<String, String> fileMap = MessageParseUtil.parseGroupRawMessageAsFileMap(replyMsg.getRawMessage());
+
                         Map<String, String> voiceMap = new HashMap<>();
                         // voiceMap.putAll(recordMap);
                         voiceMap.putAll(fileMap);
@@ -90,6 +91,10 @@ public class TtsCommand implements Command
                                 bot.sendGroupMsg(groupId, "[语音合成] \uD83D\uDCBE模板已保存！\n" +
                                         templateName + " : " + templateText + " -> " + uploadedPath, false);
                                 log.info("\t\t\t\t├─[语音合成] 模板已保存 - {}:{} -> {}", templateName, templateText, uploadedPath);
+                            } catch (NullBotMsgException e) {
+                                throw e;
+                            } catch (Exception e) {
+                                throw new NullBotMsgException("[语音合成] ❌保存模板出错: " + e.getMessage());
                             } finally {
                                 FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
                             }
@@ -129,9 +134,10 @@ public class TtsCommand implements Command
 
                     case "list" -> {
                         List<TtsTemplatePO> templates = ttsTemplateService.getTemplateList();
-                        StringBuilder sb = new StringBuilder("\n[模板名 ========= 创建者]");
+                        StringBuilder sb = new StringBuilder("\n[  模板名 ======= 创建者  ]");
                         for (TtsTemplatePO template : templates) {
-                            sb.append("\n").append(template.getName()).append(" - ").append(template.getOwnerName()).append("(").append(template.getOwnerId()).append(")");
+                            sb.append("\n").append(template.getName()).append(" - ")
+                                    .append(template.getOwnerName()).append("(").append(template.getOwnerId()).append(")");
                         }
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语音合成] ✅已获取模板列表" + sb, false);
                         log.info("\t\t\t\t├─[Tts] 已获取模板列表");
