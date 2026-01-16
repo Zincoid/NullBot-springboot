@@ -314,4 +314,5 @@
 - 优化 文本。
 
 ### 2026.1.16
-- 优化 DownloadUtil 工具类 - LOG 方法。
+- 优化 DownloadUtil 工具类 - LOG 方法；
+- 优化 文本。

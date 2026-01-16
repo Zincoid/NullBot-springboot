@@ -1,4 +1,4 @@
-package org.bot.nullbot.component.ai;
+package org.bot.nullbot.component.tts;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -91,7 +91,7 @@ public class TtsClient
             return (String) responseBody.get("audio_url");
         }
 
-        throw new RuntimeException("TTS合成失败: " + responseBody);
+        throw new RuntimeException("TTS失败: " + responseBody);
     }
 
     private String downloadAndConvertToBase64(String audioUrl) {

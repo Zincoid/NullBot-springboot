@@ -14,7 +14,7 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"RandomVideo", "vid", "随机视频", "视频"})
+@CommandMapping({"RandomVideo", "Video", "vid", "随机视频", "视频"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -52,7 +52,7 @@ public class RandomVideoCommand implements Command
                 ◉ RandomVideo 命令
                 功能: 发送保存的随机视频
                 限权: %d 级
-                格式: RandomVideo 或 vid
+                格式: RandomVideo 或 Video 或 vid
                 中文命令: 随机视频/视频""", getAccess()
         );
     }

@@ -15,7 +15,7 @@ import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
 
-@CommandMapping({"RandomImage", "img", "随机图片", "图片"})
+@CommandMapping({"RandomImage", "Image", "img", "随机图片", "图片"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -53,7 +53,7 @@ public class RandomImageCommand implements Command
                 ◉ RandomImage 命令
                 功能: 发送保存的随机图片
                 限权: %d 级
-                格式: RandomImage 或 img
+                格式: RandomImage 或 Image 或 img
                 中文命令: 随机图片/图片""", getAccess()
         );
     }
