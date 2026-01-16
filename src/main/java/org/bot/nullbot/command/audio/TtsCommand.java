@@ -101,7 +101,7 @@ public class TtsCommand implements Command
                             throw new NullBotMsgException("[语音合成] ❌删除参数不足");
                         String templateName = params.get(2);
                         if(!ttsTemplateService.deleteTemplate(templateName))
-                            throw new NullBotMsgException("[语音合成] ❌模板删除失败");
+                            throw new NullBotMsgException("[语音合成] ❌该模板不存在");
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语音合成] ⚠️模板已删除", false);
                         log.info("\t\t\t\t├─[Tts] 已删除模板 - {}", templateName);
                     }
