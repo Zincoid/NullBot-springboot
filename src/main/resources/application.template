@@ -15,9 +15,9 @@ server:
 #  address: 127.0.0.1  # 仅监听本地回环
   port: 8080
   tomcat:
-    max-swallow-size: -1  # -1表示不限制，默认2MB
-    max-http-form-post-size: 1073741824  # 1GB，单位字节
-    connection-timeout: 300000  # 5分钟
+    max-swallow-size: -1  # -1表示不限制 默认2MB
+    max-http-form-post-size: 1073741824  # 1GB 单位字节
+    connection-timeout: 300000  # 5Min
     max-connections: 10000
   compression:
     enabled: true
@@ -53,9 +53,8 @@ shiro:
 
 nullbot:
   bot-id:
-
   default:  # 默认群设置
-    # AI
+    # AI - Basic
     scope: group
     anti-injection: true
     thinking: false
@@ -63,21 +62,18 @@ nullbot:
     embedding: true
     embedding-auth: false
     custom: false
-
+    # AI - AutoReply
     auto-reply: false
     reply-frequency: 0.02
-
     # Monitor
     image-collect: false
-    message-collect: true  # 使用 AI Monitor 模式及 Recall Detect 功能 需启用该项
+    message-collect: true  # 某些功能需启用该项 如: AI Monitor/Recall Detect
     keyword-detect: true
     poke-detect: true
     recall-detect: false
-
     # Guess
     guess-ratio: 0.1
     guess-padding: 250
-
   command:
     prefix: /
     rate-limit:
@@ -85,7 +81,6 @@ nullbot:
       capacity: 25
       refill: 10
       scope: group
-
   file:
     storage:
       file-directory: /root/Nullbot/file  # 网页文件管理根目录
@@ -93,6 +88,11 @@ nullbot:
       image-path: /root/Nullbot/file/image
       video-path: /root/Nullbot/file/video
       audio-path: /root/Nullbot/file/audio
+#      file-directory: ${user.dir}/src/main/resources/upload
+#      temp-path: src/main/resources/file/temp
+#      image-path: src/main/resources/file/image
+#      video-path: src/main/resources/file/video
+#      audio-path: src/main/resources/file/audio
 
 ai:
   deepseek:
@@ -102,13 +102,12 @@ ai:
     max-monitor-length: 100
     max-tokens: 500
     meme-path: /root/Nullbot/file/ai/meme  # 用于AI主动发表情
-    default-system-message:
-
+    default-system-message: 你是一个助手
   tts:
     api-url: https://gsv2p.acgnai.top/infer_single
     api-key:
     version: v4
-    model_name: 明日方舟-日语-羽毛笔
-    prompt_text_lang: 日语
+    model_name: 明日方舟-中文-羽毛笔
+    prompt_text_lang: 中文
     text_lang: 中文
     emotion: 默认
