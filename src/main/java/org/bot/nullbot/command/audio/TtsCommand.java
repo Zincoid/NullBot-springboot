@@ -81,7 +81,7 @@ public class TtsCommand implements Command
                                     throw new NullBotMsgException("[语音合成] ❌模板保存失败");
                                 bot.sendGroupMsg(groupId, "[语音合成] \uD83D\uDCBE模板已保存！\n" +
                                         templateName + " : " + templateText + " -> " + uploadedPath, false);
-                                log.info("\t\t\t\t├─[语音合成] 模板已保存 - {} -> {}:{}", templateName, uploadedPath, templateText);
+                                log.info("\t\t\t\t├─[语音合成] 模板已保存 - {}:{} -> {}", templateName, templateText, uploadedPath);
                             } catch (Exception e) {
                                 throw new NullBotMsgException("[语音合成] ❌模板保存时出错: " + e.getMessage());
                             } finally {
