@@ -54,8 +54,6 @@ public class TtsCommand implements Command
                             throw new NullBotMsgException("[语音合成] ❌需引用模板音频");
                         if (params.size() < 4)
                             throw new NullBotMsgException("[语音合成] ❌新模板参数不足");
-                        String templateName = params.get(2);
-                        String templateText = params.get(3);
 
                         GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                         // Map<String, String> recordMap = MessageParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());  // 暂不支持 AMR 格式音频
@@ -66,12 +64,14 @@ public class TtsCommand implements Command
 
                         if(voiceMap.isEmpty())
                             throw new NullBotMsgException("[语音合成] ❌引用未包含音频");
-
                         for (Map.Entry<String, String> entry : voiceMap.entrySet())
-                            if(isAudioFile(entry.getKey()))
+                            if(!isAudioFile(entry.getKey()))
                                 throw new NullBotMsgException("[语音合成] ❌引用非音频文件");
 
                         String tempFilePath = fileStorageConfig.getTempPath();
+                        String templateName = params.get(2);
+                        String templateText = params.get(3);
+
                         for (Map.Entry<String, String> entry : voiceMap.entrySet()) {
                             String tempFileName = entry.getKey();
                             String url = entry.getValue();
