@@ -3,9 +3,14 @@ package org.bot.nullbot.component.ai;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.TtsConfig;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,18 +41,36 @@ public class TtsClient
         restTemplate = new RestTemplate();
     }
 
+    // ================== 用户方法 ==================
+
     /**
-     * 调用 TTS API 合成语音 (BASE64 编码)
+     * 调用TTS API合成语音 (BASE64 编码)
      */
     public String synthesize(String text) {
-        // 1. 调用TTS API获取音频URL
-        String audioUrl = callTtsApi(text);
-
-        // 2. 下载音频文件并转换为base64
+        // 调用TTS API获取音频URL
+        String audioUrl = callTtsApiInferSingle(text);
+        // 下载音频文件并转换为base64
         return downloadAndConvertToBase64(audioUrl);
     }
 
-    private String callTtsApi(String text) {
+    /**
+     * 调用TTS API克隆语音 (BASE64 编码)
+     */
+    public String synthesize_clone(String refAudioPath, String refText, String text) {
+        // 调用TTS API获取音频URL
+        String audioUrl = callTtsApiInferClassic(refAudioPath, refText, text);
+        // 下载音频文件并转换为base64
+        return downloadAndConvertToBase64(audioUrl);
+    }
+
+    // ================== 请求方法 ==================
+
+    /**
+     * 合成音频请求
+     * @param text 合成文本
+     * @return 音频 URL
+     */
+    private String callTtsApiInferSingle(String text) {
         // 构建请求头
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -62,6 +85,7 @@ public class TtsClient
         requestBody.put("emotion", emotion);
         requestBody.put("text", text);
         requestBody.put("text_lang", textLang);
+
         requestBody.put("top_k", 10);
         requestBody.put("top_p", 1);
         requestBody.put("temperature", 1);
@@ -83,7 +107,7 @@ public class TtsClient
 
         // 发送请求
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<Map> response = restTemplate.exchange(apiUrl, HttpMethod.POST, request, Map.class);
+        ResponseEntity<Map> response = restTemplate.exchange(apiUrl + "/infer_single", HttpMethod.POST, request, Map.class);
 
         // 解析响应
         Map<String, Object> responseBody = response.getBody();
@@ -93,6 +117,112 @@ public class TtsClient
 
         throw new RuntimeException("TTS失败: " + responseBody);
     }
+
+    /**
+     * 克隆音频请求
+     * @param refAudioPath TTS API端音频模板路径
+     * @param refText TTS API端音频模板路径文本
+     * @param text 合成文本
+     * @return 音频 URL
+     */
+    private String callTtsApiInferClassic(String refAudioPath, String refText, String text) {
+        // 构建请求头
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + apiKey);
+        headers.set("accept", "application/json");
+
+        // 构建请求体
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("version", "v4");
+        requestBody.put("gpt_model_name", "【GSVI】羽毛笔-e10");
+        requestBody.put("sovits_model_name", "【GSVI】羽毛笔_e10_s150_I32");
+        requestBody.put("ref_audio_path", refAudioPath);
+        requestBody.put("prompt_text", refText);
+        requestBody.put("prompt_text_lang", "中文");
+        requestBody.put("text", text);
+        requestBody.put("text_lang", "中文");
+
+        requestBody.put("top_k", 10);
+        requestBody.put("top_p", 1);
+        requestBody.put("temperature", 1);
+        requestBody.put("text_split_method", "不切");
+        requestBody.put("batch_size", 1);
+        requestBody.put("batch_threshold", 0.75);
+        requestBody.put("split_bucket", true);
+        requestBody.put("speed_facter", 1);
+        requestBody.put("fragment_interval", 0.3);
+        requestBody.put("media_type", "mp3");
+        requestBody.put("parallel_infer", true);
+        requestBody.put("repetition_penalty", 1.35);
+        requestBody.put("seed", -1);
+        requestBody.put("sample_steps", 16);
+        requestBody.put("if_sr", false);
+
+        // 打印完整请求内容到日志
+        // logCompleteRequest(apiUrl, headers, requestBody, text);
+
+        // 发送请求
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<Map> response = restTemplate.exchange(apiUrl + "/infer_classic", HttpMethod.POST, request, Map.class);
+
+        // 解析响应
+        Map<String, Object> responseBody = response.getBody();
+        if (responseBody != null && "合成成功".equals(responseBody.get("msg"))) {
+            return (String) responseBody.get("audio_url");
+        }
+
+        throw new RuntimeException("TTS失败: " + responseBody);
+    }
+
+    /**
+     * 上传音频文件到TTS API服务器
+     * @param filePath 本地文件路径
+     * @return 服务器上的文件路径
+     */
+    public String upload(String filePath) {
+        try {
+            File file = new File(filePath);
+            if (!file.exists() || !file.isFile()) {
+                throw new RuntimeException("文件不存在: " + filePath);
+            }
+
+            // 构建 multipart/form-data 请求
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            headers.set("accept", "application/json");
+
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("file", new FileSystemResource(file));
+
+            HttpEntity<MultiValueMap<String, Object>> requestEntity =
+                    new HttpEntity<>(body, headers);
+
+            // 发送上传请求
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    apiUrl + "/upload",
+                    HttpMethod.POST,
+                    requestEntity,
+                    Map.class
+            );
+
+            // 解析响应
+            Map<String, Object> responseBody = response.getBody();
+            if (responseBody != null && "上传成功".equals(responseBody.get("msg"))) {
+                return (String) responseBody.get("file_path");
+            } else {
+                String errorMsg = responseBody != null ?
+                        responseBody.toString() : "未知错误";
+                throw new RuntimeException("文件上传失败: " + errorMsg);
+            }
+
+        } catch (Exception e) {
+            log.error("上传文件失败: {}", filePath, e);
+            throw new RuntimeException("上传文件失败: " + e.getMessage(), e);
+        }
+    }
+
+    // ================== 工具方法 ==================
 
     private String downloadAndConvertToBase64(String audioUrl) {
         // 下载音频文件
