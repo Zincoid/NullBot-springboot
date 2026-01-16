@@ -147,6 +147,7 @@ public class TtsCommand implements Command
                         .build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[Tts] 已回复合成语音: {}", targetText.replaceAll("\\R", " "));
+                return;
             }
 
             throw new NullBotMsgException("[语音合成] ❌无此操作");
