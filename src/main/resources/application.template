@@ -93,21 +93,20 @@ nullbot:
 #      image-path: src/main/resources/file/image
 #      video-path: src/main/resources/file/video
 #      audio-path: src/main/resources/file/audio
-
-ai:
-  deepseek:
-    api-url: https://api.deepseek.com/chat/completions
-    api-key:
-    max-history-length: 50
-    max-monitor-length: 100
-    max-tokens: 500
-    meme-path: /root/Nullbot/file/ai/meme  # 用于AI主动发表情
-    default-system-message: 你是一个助手
-  tts:
-    api-url: https://gsv2p.acgnai.top/infer_single
-    api-key:
-    version: v4
-    model_name: 明日方舟-中文-羽毛笔
-    prompt_text_lang: 中文
-    text_lang: 中文
-    emotion: 默认
+  ai:
+    deepseek:
+      api-url: https://api.deepseek.com/chat/completions
+      api-key:
+      max-history-length: 50
+      max-monitor-length: 100
+      max-tokens: 500
+      meme-path: /root/Nullbot/file/ai/meme  # 用于AI主动发表情
+      default-system-message: 你是一个助手
+    tts:
+      api-url: https://gsv2p.acgnai.top/infer_single
+      api-key:
+      version: v4
+      model_name: 明日方舟-中文-羽毛笔
+      prompt_text_lang: 中文
+      text_lang: 中文
+      emotion: 默认
