@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.tts;
+package org.bot.nullbot.command.audio;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
