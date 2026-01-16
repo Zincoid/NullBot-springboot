@@ -41,7 +41,7 @@ public class RawMsgCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ RawMsg 命令
-                功能: 获取引用的原始消息
+                功能: 输出引用原始消息至控制台
                 限权: %d 级
                 格式: RawMsg
                 中文命令: 原始消息""", getAccess()
