@@ -106,6 +106,8 @@ public class TtsCommand implements Command
                         String templateName = params.get(2);
                         String targetText = params.get(3);
                         TtsTemplatePO template = ttsTemplateService.getTemplate(templateName);
+                        if (template == null)
+                            throw new NullBotMsgException("[语音合成] ❌模板不存在");
                         String base64;
                         try {
                             base64 = ttsClient.synthesize_clone(template.getPath(), template.getText(), targetText);
