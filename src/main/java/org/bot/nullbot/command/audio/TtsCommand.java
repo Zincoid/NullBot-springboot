@@ -58,11 +58,18 @@ public class TtsCommand implements Command
                         String templateText = params.get(3);
 
                         GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
-                        Map<String, String> recordMap = MessageParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());
+                        // Map<String, String> recordMap = MessageParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());  // 暂不支持 AMR 格式音频
                         Map<String, String> fileMap = MessageParseUtil.parseGroupRawMessageAsFileMap(replyMsg.getRawMessage());
                         Map<String, String> voiceMap = new HashMap<>();
-                        voiceMap.putAll(recordMap);
+                        // voiceMap.putAll(recordMap);
                         voiceMap.putAll(fileMap);
+
+                        if(voiceMap.isEmpty())
+                            throw new NullBotMsgException("[语音合成] ❌引用未包含音频");
+
+                        for (Map.Entry<String, String> entry : voiceMap.entrySet())
+                            if(isAudioFile(entry.getKey()))
+                                throw new NullBotMsgException("[语音合成] ❌引用非音频文件");
 
                         String tempFilePath = fileStorageConfig.getTempPath();
                         for (Map.Entry<String, String> entry : voiceMap.entrySet()) {
@@ -79,14 +86,10 @@ public class TtsCommand implements Command
                             try {
                                 String uploadedPath = ttsClient.upload(voicePath);
                                 if (!ttsTemplateService.addTemplate(templateName, uploadedPath, templateText, userId, userName))
-                                    throw new NullBotMsgException("[语音合成] ❌模板保存失败");
+                                    throw new NullBotMsgException("[语音合成] ❌存在重名冲突");
                                 bot.sendGroupMsg(groupId, "[语音合成] \uD83D\uDCBE模板已保存！\n" +
                                         templateName + " : " + templateText + " -> " + uploadedPath, false);
                                 log.info("\t\t\t\t├─[语音合成] 模板已保存 - {}:{} -> {}", templateName, templateText, uploadedPath);
-                            } catch (NullBotMsgException e) {
-                                throw e;
-                            } catch (Exception e) {
-                                throw new NullBotMsgException("[语音合成] ❌模板保存时出错: " + e.getMessage());
                             } finally {
                                 FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
                             }
@@ -158,6 +161,18 @@ public class TtsCommand implements Command
             throw new NullBotMsgException("[语音合成] ❌无此操作");
         }else
             throw new NullBotLogException("[语音合成] ❌未设计 - 非群消息事件响应方式");
+    }
+
+    public static boolean isAudioFile(String fileName) {
+        if (fileName == null || fileName.isEmpty()) return false;
+        String lowerFileName = fileName.toLowerCase();
+        int dotIndex = lowerFileName.lastIndexOf('.');
+        if (dotIndex == -1 || dotIndex == lowerFileName.length() - 1) return false;
+        String extension = lowerFileName.substring(dotIndex + 1);
+        return switch (extension) {
+            case "mp3", "wav", "aac", "flac", "m4a", "wma", "ogg", "aiff", "alac", "opus" -> true;
+            default -> false;
+        };
     }
 
     @Override

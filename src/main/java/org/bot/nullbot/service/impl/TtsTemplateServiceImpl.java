@@ -29,7 +29,7 @@ public class TtsTemplateServiceImpl implements TtsTemplateService
         try {
             return ttsTemplateMapper.insert(ttsTemplate) == 1;
         } catch (Exception e) {
-            throw new IllegalArgumentException("模板名称冲突");
+            return false;
         }
     }
 
