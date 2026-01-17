@@ -23,6 +23,7 @@ import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @CommandMapping({"Tts", "tts", "语音合成"})
@@ -127,6 +128,7 @@ public class TtsCommand implements Command
                         } catch (Exception e) {
                             throw new NullBotMsgException("[语音合成] ❌克隆时出错: " + e.getMessage());
                         }
+                        ttsTemplateService.increaseUsed(template.getId());
                         String response = MsgUtils.builder()
                                 .voice("base64://" + base64)
                                 .build();
@@ -136,10 +138,13 @@ public class TtsCommand implements Command
 
                     case "list" -> {
                         List<TtsTemplatePO> templates = ttsTemplateService.getTemplateList();
-                        StringBuilder sb = new StringBuilder("\n[  模板名 ======= 创建者  ]");
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
+                        StringBuilder sb = new StringBuilder("\n[名称 | 作者 - 创建日期 | 用量]");
                         for (TtsTemplatePO template : templates) {
-                            sb.append("\n").append(template.getName()).append(" - ")
-                                    .append(template.getOwnerName()).append("(").append(template.getOwnerId()).append(")");
+                            sb.append("\n").append(template.getName())
+                                    .append(" | ").append(template.getOwnerName())
+                                    .append(" - ").append(template.getCreatedTime().format(formatter))
+                                    .append(" | ").append(template.getUsed());
                         }
                         bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[语音合成] ✅已获取模板列表" + sb, false);
                         log.info("\t\t\t\t├─[Tts] 已获取模板列表");

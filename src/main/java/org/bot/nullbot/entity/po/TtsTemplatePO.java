@@ -23,4 +23,5 @@ public class TtsTemplatePO
     private Long ownerId;
     private String ownerName;
     private LocalDateTime createdTime;
+    private Long used;
 }

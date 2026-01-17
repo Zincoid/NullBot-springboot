@@ -10,5 +10,6 @@ CREATE TABLE `tts_template` (
     text VARCHAR(255) NOT NULL,
     owner_id BIGINT,
     owner_name VARCHAR(255),
-    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    used BIGINT DEFAULT 0
 );

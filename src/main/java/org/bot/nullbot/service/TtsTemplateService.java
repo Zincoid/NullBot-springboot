@@ -13,4 +13,6 @@ public interface TtsTemplateService
     TtsTemplatePO getTemplate(String templateName);
 
     List<TtsTemplatePO> getTemplateList();
+
+    void increaseUsed(Integer id);
 }

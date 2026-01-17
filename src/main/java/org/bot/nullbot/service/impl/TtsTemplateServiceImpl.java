@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.po.TtsTemplatePO;
-import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.mapper.TtsTemplateMapper;
 import org.bot.nullbot.service.TtsTemplateService;
 import org.springframework.stereotype.Service;
@@ -46,5 +45,13 @@ public class TtsTemplateServiceImpl implements TtsTemplateService
     @Override
     public List<TtsTemplatePO> getTemplateList() {
         return ttsTemplateMapper.selectList(null);
+    }
+
+    @Override
+    public void increaseUsed(Integer id) {
+        TtsTemplatePO template = ttsTemplateMapper.selectById(id);
+        if (template == null) return;
+        template.setUsed(template.getUsed() + 1);
+        ttsTemplateMapper.updateById(template);
     }
 }
