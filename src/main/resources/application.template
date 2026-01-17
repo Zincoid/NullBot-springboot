@@ -24,6 +24,12 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/
   max-http-request-header-size: 65536
 
+jwt:
+  location: classpath:key/JwtSignKey.jks  # .jks 密钥文件路径
+  alias:
+  password:
+  tokenTTL: 24h
+
 #logging:
 #  level:
 #    root: INFO
