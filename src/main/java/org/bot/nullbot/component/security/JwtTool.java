@@ -22,10 +22,10 @@ public class JwtTool
     }
 
     /**
-     * 创建 access-token
+     * 创建 Token
      * @param id 用户ID
      * @param type 用户类型
-     * @return access-token
+     * @return Token
      */
     public String createToken(Long id, Integer type, Duration ttl) {
         return JWT.create()
@@ -39,9 +39,9 @@ public class JwtTool
     /**
      * 解析 token
      * @param token token
-     * @return 解析刷新token得到的用户信息
+     * @return JWT 对象
      */
-    public Long parseToken(String token) {
+    public JWT parseToken(String token) {
         // 校验Token是否为空
         if (token == null)
             throw new UnauthorizedException("No Token");
@@ -58,24 +58,56 @@ public class JwtTool
         // 校验jwt是否有效
         if (!jwt.verify())
             throw new UnauthorizedException("Invalid Token");
-        // 校验是否过期
 
+        // 校验是否过期
         try {
             JWTValidator.of(jwt).validateDate();
         } catch (ValidateException e) {
             throw new UnauthorizedException("Expired Token");
         }
 
-        // 数据格式校验
-        Object userPayload = jwt.getPayload("user");
+        return jwt;
+    }
+
+    /**
+     * 解析 token 获取 用户ID
+     * @param token token
+     * @return 用户ID
+     */
+    public Long getLoginId(String token) {
+        JWT jwt = parseToken(token);
+
+        // 数据获取
+        Object userPayload = jwt.getPayload("id");
         if (userPayload == null)
-            throw new UnauthorizedException("Invalid Token");
+            throw new UnauthorizedException("No Info");
 
         // 数据解析
         try {
             return Long.valueOf(userPayload.toString());
         } catch (RuntimeException e) {
-            throw new UnauthorizedException("Invalid Token");
+            throw new UnauthorizedException("Invalid Info");
+        }
+    }
+
+    /**
+     * 解析 token 获取 用户Type
+     * @param token token
+     * @return 用户Type
+     */
+    public Integer getLoginType(String token) {
+        JWT jwt = parseToken(token);
+
+        // 数据获取
+        Object userPayload = jwt.getPayload("type");
+        if (userPayload == null)
+            throw new UnauthorizedException("No Info");
+
+        // 数据解析
+        try {
+            return Integer.valueOf(userPayload.toString());
+        } catch (RuntimeException e) {
+            throw new UnauthorizedException("Invalid Info");
         }
     }
 }
