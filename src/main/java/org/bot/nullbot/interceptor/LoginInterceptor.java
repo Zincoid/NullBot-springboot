@@ -23,8 +23,10 @@ import java.util.List;
 public class LoginInterceptor implements HandlerInterceptor
 {
     private final JwtTool jwtTool;
+    private static final List<String> GUEST_FORBIDDEN_URLS;
 
-    private static final List<String> GUEST_FORBIDDEN_URLS = Arrays.asList(
+    static {
+        GUEST_FORBIDDEN_URLS = Arrays.asList(
             "/nullbot/file/init",
             "/nullbot/file/upload",
             "/nullbot/file/createDir",
@@ -59,26 +61,26 @@ public class LoginInterceptor implements HandlerInterceptor
             "/nullbot/inventory/update",
             "/nullbot/inventory/exportCsv",
             "/nullbot/inventory/importCsv"
-    );
+        );
+    }
 
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
         String url = req.getRequestURL().toString();
 
-        if(url.contains("/nullbot/login")){
+        if (url.contains("/nullbot/login")) {
             log.info("[管理系统-JWT验证] 登录放行 - {}", url);
             return true;
         }
-        if(url.contains("/nullbot/guest")){
+        if (url.contains("/nullbot/guest")) {
             log.info("[管理系统-JWT验证] 访客放行 - {}", url);
             return true;
         }
-        if(url.contains("/nullbot/preview")){
+        if (url.contains("/nullbot/preview")) {
             log.info("[管理系统-JWT验证] 预览放行 - {}", url);
             return true;
         }
 
         String token = req.getHeader("token");
-
         JWT jwt;
 
         try {
@@ -91,9 +93,11 @@ public class LoginInterceptor implements HandlerInterceptor
             return false;
         }
 
-        if(claims.get("type", Integer.class) == 0){
+        Integer userType = jwtTool.getAs(jwt, "type", Integer.class);
+
+        if(userType == 0) {
             for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
-                if(url.contains(forbiddenUrl)){
+                if (url.contains(forbiddenUrl)) {
                     log.info("[管理系统-JWT验证] 访客禁止访问 - {}", url);
                     WebResult error = WebResult.fail().addMsg("No Access");
                     String info = JSONObject.toJSONString(error);
@@ -101,8 +105,9 @@ public class LoginInterceptor implements HandlerInterceptor
                     return false;
                 }
             }
+            log.info("[管理系统-JWT验证] 访客放行 - {}", url);
             return true;
-        }else if(claims.get("type", Integer.class) == 1){
+        } else if (userType == 1) {
             log.info("[管理系统-JWT验证] 管理员放行 - {}", url);
             return true;
         }
