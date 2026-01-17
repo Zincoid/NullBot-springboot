@@ -38,7 +38,7 @@ public class DisMatchCommand implements Command
                 功能: 取消当前匹配
                 限权: %d 级
                 格式: DisMatch
-                中文命令: 取消匹配""", getAccess()
+                别名: 取消匹配""", getAccess()
         );
     }
 }

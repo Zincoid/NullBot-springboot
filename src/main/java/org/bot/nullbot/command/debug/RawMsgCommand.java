@@ -24,8 +24,7 @@ public class RawMsgCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if (reply.getType() != MsgTypeEnum.reply)
-                throw new NullBotMsgException("[原始消息] ❌需引用消息");
+            if (reply.getType() != MsgTypeEnum.reply) throw new NullBotMsgException("[原始消息] ❌需引用消息");
             GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
             log.info("\t\t\t\t├─[RawMsg] 已输出\n{}", replyMsg.getRawMessage());
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[原始消息] ✅已输出至控制台", false);
@@ -43,7 +42,7 @@ public class RawMsgCommand implements Command
                 功能: 输出引用原始消息至控制台
                 限权: %d 级
                 格式: RawMsg
-                中文命令: 原始消息""", getAccess()
+                别名: 原始消息""", getAccess()
         );
     }
 }

@@ -61,7 +61,7 @@ public class PlusExpCommand implements Command
                 功能: 给予经验值
                 限权: %d 级
                 格式: PlusExp [QQ号] [经验值]
-                中文命令: 加经验""", getAccess()
+                别名: 加经验""", getAccess()
         );
     }
 }

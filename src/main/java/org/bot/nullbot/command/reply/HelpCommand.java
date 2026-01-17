@@ -49,8 +49,8 @@ public class HelpCommand implements Command
                 ◉ Help 命令
                 功能: 发送帮助菜单
                 限权: %d 级
-                格式: Help 或 help
-                中文命令: 帮助""", getAccess()
+                格式: Help
+                别名: help/帮助""", getAccess()
         );
     }
 }

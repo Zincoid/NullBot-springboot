@@ -43,7 +43,7 @@ public class ChatResetCommand implements Command
                 功能: 重置AI聊天记忆
                 限权: %d 级
                 格式: ChatReset
-                中文命令: 重置聊天""", getAccess()
+                别名: 重置聊天""", getAccess()
         );
     }
 

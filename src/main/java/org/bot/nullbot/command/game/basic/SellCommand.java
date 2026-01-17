@@ -79,7 +79,7 @@ public class SellCommand implements Command
                 格式: Sell [物品ID] [可选: 数量(默认为1)]
                 或 Sell -r [稀有度]
                 稀有度: RED/GOLD/PURPLE/BLUE/GREEN/WHITE
-                中文命令: 出售""", getAccess()
+                别名: 出售""", getAccess()
         );
     }
 }

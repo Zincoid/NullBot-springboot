@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@CommandMapping({"Tts", "语音合成"})
+@CommandMapping({"Tts", "tts", "语音合成"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -187,26 +187,32 @@ public class TtsCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ Tts 命令
-                功能: 文字转语音(一般合成/克隆)
+                功能: 文本转语音
                 限权: %d 级
-                格式: Tts [操作] [参数...]
+                格式: Tts [操作方式] [参数...]
                 
-                操作与参数:
-                • [-synth] [文本]
+                操作方式与参数:
+                • [-synth] [目标文本]
                    一般合成
+                • [-clone] [克隆选项] [参数...]
+                   克隆合成
                 
-                • [-clone] [选项] [选项参数]
-                   选项与参数:
-                   list
-                   - 查看模板列表
-                   save [模板名] [音频文本]
-                   - 保存模板 (需引用音频文件)
-                   delete [模板名]
-                   - 删除模板
-                   use [模板名] [目标文本]
-                   - 使用模板合成音频
+                克隆选项与参数:
+                - [list]
+                   模板列表
+                - [save] [模板名] [音频文本]
+                   保存模板 (需引用音频文件)
+                - [delete] [模板名]
+                   删除模板
+                - [use] [模板名] [目标文本]
+                   音频合成 (使用模板)
                 
-                中文命令: 语音合成""", getAccess()
+                注意:
+                - 一般合成使用固定人物模型
+                - 模板音频时长要求 3~10秒
+                - 保存模板需音频的内容文本
+                
+                别名: tts/语音合成""", getAccess()
         );
     }
 
@@ -214,7 +220,7 @@ public class TtsCommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ Tts 命令
-                功能: 文字转语音并发送到群中
+                功能: 文本转语音并发送到群中
                 限权: %d 级
                 格式: Tts -synth [文本]
                 注意: 当你想要发送语音代替文字回复时使用该命令！""", getAccess()

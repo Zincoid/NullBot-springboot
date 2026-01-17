@@ -64,7 +64,7 @@ public class FuncSetCommand implements Command
                 - [-view] 获取全局设置
                 - [-change] [功能标志] 更改启用状态
                 标志: AIAutoReply/ImgCollect/MsgCollect/KeyDetect/PokeDetect/RecallDetect
-                中文命令: 功能控制""", getAccess()
+                别名: 功能控制""", getAccess()
         );
     }
 }

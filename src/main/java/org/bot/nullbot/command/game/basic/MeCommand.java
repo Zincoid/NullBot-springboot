@@ -36,8 +36,8 @@ public class MeCommand implements Command
                 ◉ Me 命令
                 功能: 展示个人信息
                 限权: %d 级
-                格式: Me 或 me
-                中文命令: 个人信息""", getAccess()
+                格式: Me
+                item: me/个人信息""", getAccess()
         );
     }
 }

@@ -162,7 +162,7 @@ public class GroupSetCommand implements Command
                 注意:
                 - 切换AI语音/指令/自定模式时会清空历史
                 
-                中文命令: 群设置""", getAccess()
+                别名: 群设置""", getAccess()
         );
     }
 

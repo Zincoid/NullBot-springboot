@@ -26,12 +26,14 @@ public class DatabaseUpdateCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+
+            // 自定义更新方式
             groupService.updateAllGroupNames();
             userService.updateAllUserNames();
             inventoryService.updateAllInventories();
 
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[数据库更新] ✅已完成", false);
             log.info("\t\t\t\t├─[DatabaseUpdate] 数据库已更新");
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[DatabaseUpdate] ✅已更新", false);
         }else
             throw new NullBotLogException("[数据库更新] ❌未设计 - 非群消息事件响应方式");
     }
@@ -46,7 +48,7 @@ public class DatabaseUpdateCommand implements Command
                 功能: 更新数据库
                 限权: %d 级
                 格式: DatabaseUpdate
-                中文命令: 数据库更新""", getAccess()
+                别名: 数据库更新""", getAccess()
         );
     }
 }

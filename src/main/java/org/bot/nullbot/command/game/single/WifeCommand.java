@@ -125,10 +125,15 @@ public class WifeCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ Wife 命令
-                功能: 今日老婆(每天均可抽一次) 无参数时选群友老婆 带参数时选二次元老婆
+                功能: 今日老婆(每日可抽一次)
                 限权: %d 级
                 格式: Wife [可选: 人物来源]
-                中文命令: 今日老婆""", getAccess()
+                注意:
+                - 无参数时选择群友老婆
+                - 带参数时选二次元老婆
+                - 以上两种每日均可抽一次
+                - 人物来源可通过图片目录命令查看acg下子目录名获得
+                别名: 今日老婆""", getAccess()
         );
     }
 }

@@ -200,7 +200,7 @@ public class BreadCommand implements Command
                 - 吃面包 [e|-eat]
                 - 抢面包 [r|-rob] [@用户]
                 - 送面包 [g|-gift] [@用户]
-                中文命令: 面包/\uD83C\uDF5E""", getAccess()
+                别名: 面包/\uD83C\uDF5E""", getAccess()
         );
     }
 }

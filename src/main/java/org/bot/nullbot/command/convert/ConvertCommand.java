@@ -74,6 +74,7 @@ public class ConvertCommand implements Command
 
             // 开始处理
             String tempFilePath = fileStorageConfig.getTempPath();
+            String tempFontPath = tempFilePath + "/fonts";
             for (String url : urls) {
                 String tempFileName = UUID.randomUUID().toString();
                 String downloadedFileName;
@@ -81,24 +82,27 @@ public class ConvertCommand implements Command
                     FileInfo fileInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName, "\t\t\t\t├─ ");
                     downloadedFileName = fileInfo.getFileName();
                 } catch (Exception e) {
-                    throw new NullBotMsgException("[图像处理] ❌下载图像失败");
+                    throw new NullBotMsgException("[图像处理] ❌下载时出错: " + e.getMessage());
                 }
                 String avatarPath = tempFilePath + "/" + downloadedFileName;
+                String base64;
                 try {
-                    String base64 = switch (method){
-                        case "RIP" -> imageConverter.RIP(avatarPath, tempFilePath + "/fonts");
-                        case "PRTS" -> imageConverter.PRTS(avatarPath, tempFilePath + "/fonts");
-                        case "InversePRTS" -> imageConverter.inversePRTS(avatarPath, tempFilePath + "/fonts");
+                    base64 = switch (method){
+                        case "RIP" -> imageConverter.RIP(avatarPath, tempFontPath);
+                        case "PRTS" -> imageConverter.PRTS(avatarPath, tempFontPath);
+                        case "InvsPRTS" -> imageConverter.inversePRTS(avatarPath, tempFontPath);
                         default -> throw new NullBotMsgException("[图像处理] ❌方法不存在");
                     };
-                    String response = MsgUtils.builder().img("base64://" + base64).build();
-                    bot.sendGroupMsg(groupId, response, false);
-                    log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
+                } catch (NullBotMsgException e) {
+                    throw e;
                 } catch (Exception e) {
                     throw new NullBotMsgException("[图像处理] ❌处理时出错: " + e.getMessage());
                 } finally {
                     FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
                 }
+                String response = MsgUtils.builder().img("base64://" + base64).build();
+                bot.sendGroupMsg(groupId, response, false);
+                log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
             }
             // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ✅全部处理完成！", false);
         }else
@@ -110,11 +114,12 @@ public class ConvertCommand implements Command
         return String.format("""
                 ◉ Convert 命令
                 功能: P图!!!
-                方式: RIP/PRTS/InversePRTS...更多开发中
                 限权: %d 级
-                格式: [引用] Convert [处理方式]
-                或 Convert [处理方式] [@任何人/QQ号]
-                中文命令: 图像处理""", getAccess()
+                格式:
+                1. [引用] Convert [处理方式]
+                2. Convert [处理方式] [@任何人|QQ号]
+                方式: RIP/PRTS/InvsPRTS
+                别名: 图像处理""", getAccess()
         );
     }
 
@@ -123,7 +128,7 @@ public class ConvertCommand implements Command
         return String.format("""
                 ◉ Convert 命令
                 功能: P图!!!
-                方式: RIP(安息)/PRTS(封锁)/InversePRTS(封锁反色)
+                方式: RIP(安息)/PRTS(封锁)/InvsPRTS(封锁反色)
                 限权: %d 级
                 格式: Convert [方式] [QQ号]
                 示例: Convert RIP 2660181154""", getAccess()

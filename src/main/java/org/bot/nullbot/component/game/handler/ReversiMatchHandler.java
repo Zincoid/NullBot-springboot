@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-
 @Component
 public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, ReversiGameLogic>
 {

@@ -16,7 +16,7 @@ import org.bot.nullbot.service.ItemService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"Use", "使用", "使用物品"})
+@CommandMapping({"Use", "使用物品", "使用"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -74,7 +74,7 @@ public class UseCommand implements Command
                 功能: 使用库存的物品
                 限权: %d 级
                 格式: Use [物品ID]
-                中文命令: 使用/使用物品""", getAccess()
+                别名: 使用物品/使用""", getAccess()
         );
     }
 }

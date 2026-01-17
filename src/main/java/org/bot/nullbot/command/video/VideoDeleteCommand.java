@@ -63,8 +63,10 @@ public class VideoDeleteCommand implements Command
                 ◉ VideoDel 命令
                 功能: 删除保存的视频
                 限权: %d 级
-                格式: VideoDel [文件名] 或 [引用视频] VideoDel
-                中文命令: 删除视频""", getAccess()
+                格式:
+                1. VideoDel [文件名]
+                2. [引用视频] VideoDel
+                别名: 删除视频""", getAccess()
         );
     }
 }

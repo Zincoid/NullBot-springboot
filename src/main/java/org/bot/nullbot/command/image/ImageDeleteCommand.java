@@ -63,9 +63,10 @@ public class ImageDeleteCommand implements Command
                 ◉ ImageDel 命令
                 功能: 删除保存的图片
                 限权: %d 级
-                格式: ImageDel [文件名]
-                或 [引用图片] ImageDel
-                中文命令: 删除图片""", getAccess()
+                格式:
+                1. ImageDel [文件名]
+                2. [引用图片] ImageDel
+                别名: 删除图片""", getAccess()
         );
     }
 }

@@ -39,7 +39,7 @@ public class ImageFolderCommand implements Command
                 功能: 获取图片目录树结构
                 限权: %d 级
                 格式: ImageFolder
-                中文命令: 图片目录""",  getAccess()
+                别名: 图片目录""",  getAccess()
         );
     }
 }

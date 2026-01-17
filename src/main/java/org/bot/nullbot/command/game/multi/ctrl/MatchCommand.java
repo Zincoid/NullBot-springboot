@@ -55,7 +55,7 @@ public class MatchCommand implements Command
                 - Tictactoe 井字棋
                 - Reversi 黑白棋
                 - Looting 摸金
-                中文命令: 匹配""", getAccess()
+                别名: 匹配""", getAccess()
         );
     }
 }

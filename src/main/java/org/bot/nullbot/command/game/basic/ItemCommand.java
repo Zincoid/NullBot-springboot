@@ -50,8 +50,8 @@ public class ItemCommand implements Command
                 ◉ Item 命令
                 功能: 查询物品详情
                 限权: %d 级
-                格式: Item [物品ID] 或 item [物品ID]
-                中文命令: 查询物品/物品""", getAccess()
+                格式: Item [物品ID]
+                别名: item/查询物品/物品""", getAccess()
         );
     }
 }

@@ -89,7 +89,7 @@ public class AccessSetCommand implements Command
                 功能: 设置用户/群组限权等级
                 限权: %d 级
                 格式: AccessSet [-USER|-GROUP] [ID] [限权等级]
-                中文命令: 限权设置
+                别名: 限权设置
                 注意:
                 针对用户 - 无法修改高于或等于自身限权用户, 设置的限权无法高于或等于自身限权
                 针对群组 - 仅限权等级2用户可修改, 群组限权[-2]将拒绝包括此项的所有命令""", getAccess()

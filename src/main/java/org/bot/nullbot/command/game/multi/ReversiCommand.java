@@ -55,7 +55,7 @@ public class ReversiCommand implements Command
                 限权: %d 级
                 格式: Reversi [坐标]
                 示例: Reversi D3
-                中文命令: 黑白棋""", getAccess()
+                别名: 黑白棋""", getAccess()
         );
     }
 }

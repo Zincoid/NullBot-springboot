@@ -14,7 +14,7 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"RandomAudio", "Audio", "aud", "随机音频", "音频"})
+@CommandMapping({"RandomAudio", "Audio", "audio", "aud", "随机音频", "音频"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -52,8 +52,8 @@ public class RandomAudioCommand implements Command
                 ◉ RandomAudio 命令
                 功能: 发送保存的随机音频
                 限权: %d 级
-                格式: RandomAudio 或 Audio 或 aud
-                中文命令: 随机音频/音频""", getAccess()
+                格式: RandomAudio
+                别名: Audio/audio/aud/随机音频/音频""", getAccess()
         );
     }
 }

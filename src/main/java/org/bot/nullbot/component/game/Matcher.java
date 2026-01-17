@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Component
@@ -26,7 +27,7 @@ public class Matcher
     private final MatchPoolManager poolManager;
 
     // gameType -> match handler
-    private final Map<String, GameMatchHandler> handlerMap = new HashMap<>();
+    private final Map<String, GameMatchHandler> handlerMap;
 
     public Matcher(
             BotContainer botContainer,
@@ -41,6 +42,7 @@ public class Matcher
         this.matchManager = matchManager;
 
         // 自动注册所有 Handler
+        handlerMap = new ConcurrentHashMap<>();
         handlers.forEach(h -> handlerMap.put(h.gameType(), h));
     }
 
@@ -53,7 +55,7 @@ public class Matcher
         if (player.getStatus() != Player.PlayerStatus.IDLE) { return MatchResult.notMatched("你已经在匹配或游戏中！"); }
 
         GameMatchHandler handler = handlerMap.get(gameType);
-        if (handler == null) { return MatchResult.notMatched("暂不支持该类型游戏：" + gameType); }
+        if (handler == null) { return MatchResult.notMatched("暂不支持该类型游戏"); }
 
         // 尝试匹配另一个玩家
         Player other = poolManager.pollPlayer(gameType);
@@ -107,23 +109,26 @@ public class Matcher
     /**
      * 结束对局
      */
-    public String finishMatch(Long userId) {
+    public boolean finishMatch(Long userId) {
         Player player = playerManager.getPlayer(userId);
-        if (player == null) { return "用户未活跃"; }
+        if (player == null) return false;
         String matchId = player.getInProgressMatchId();
-        if (matchId == null) { return "没有正在进行的对局"; }
+        if (matchId == null) return false;
+
         Match match = matchManager.getMatch(matchId);
         Player p1 = match.getPlayer1();
         Player p2 = match.getPlayer2();
+
+        // 在对应游戏执行器中触发对局结束流程
+        handlerMap.get(match.getGameType()).onMatchEnd(match);
+
+        // 发送终止提醒
         Bot bot = botContainer.robots.get(botId);
         if(!Objects.equals(p1.getGroupId(), p2.getGroupId())){
             bot.sendGroupMsg(p1.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已被终止", false);
         }
         bot.sendGroupMsg(p2.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已被终止", false);
 
-        // 在对应游戏执行器中触发对局结束流程
-        handlerMap.get(match.getGameType()).onMatchEnd(match);
-
-        return null;
+        return true;
     }
 }

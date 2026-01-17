@@ -43,7 +43,7 @@ public class ChatHistoryCommand implements Command
                 功能: 获取AI聊天历史
                 限权: %d 级
                 格式: ChatHistory
-                中文命令: 聊天历史""", getAccess()
+                别名: 聊天历史""", getAccess()
         );
     }
 }

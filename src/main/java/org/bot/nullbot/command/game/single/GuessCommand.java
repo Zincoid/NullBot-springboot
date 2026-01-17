@@ -116,7 +116,7 @@ public class GuessCommand implements Command
                 奖励: 1抽数 & 10Exp
                 限权: %d 级
                 格式: Guess [人物来源|人物名|-f(放弃)]
-                中文命令: 猜角色/猜""", getAccess()
+                别名: 猜角色/猜""", getAccess()
         );
     }
 

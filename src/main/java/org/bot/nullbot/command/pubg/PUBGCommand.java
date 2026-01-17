@@ -59,9 +59,9 @@ public class PUBGCommand implements Command
                 ◉ PUBG 命令
                 功能: 获取PUBG资源地图
                 限权: %d 级
-                格式: PUBG [地图] 或 pubg [地图]
+                格式: PUBG [地图名]
                 地图: 艾伦格/泰戈/帝斯顿/维寒迪/荣都/米拉玛
-                中文命令: 获取PUBG资源地图""", getAccess()
+                别名: pubg/获取PUBG资源地图""", getAccess()
         );
     }
 
@@ -71,7 +71,7 @@ public class PUBGCommand implements Command
                 ◉ PUBG 命令
                 功能: 获取PUBG资源地图
                 限权: %d 级
-                格式: PUBG [地图]
+                格式: PUBG [地图名]
                 地图: 艾伦格/泰戈/帝斯顿/维寒迪/荣都/米拉玛
                 示例: PUBG 帝斯顿""", getAccess()
         );

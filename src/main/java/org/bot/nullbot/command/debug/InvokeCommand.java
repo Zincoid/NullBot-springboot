@@ -38,7 +38,7 @@ public class InvokeCommand implements Command {
             try {
                 Object result = invokeSpringMethod(applicationContext, beanName, methodName, args);
                 String res = result != null ? result.toString() : "null";
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[反射] ✅调用成功\n" + res, false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[反射] ✅已调用\n" + res, false);
                 log.info("\t\t\t\t├─[Invoke] 调用结果 -> {}", res);
             } catch (Exception e) {
                 throw new NullBotMsgException("[反射] ❌调用失败\n" + e.getMessage());
@@ -119,10 +119,10 @@ public class InvokeCommand implements Command {
     public String getHelp() {
         return String.format("""
                 ◉ Invoke 命令
-                功能: 反射调用方法
+                功能: 反射调用Bean方法
                 限权: %d 级
-                格式: Invoke [Bean名称] [方法名] [参数...]
-                中文命令: 调用""", getAccess()
+                格式: Invoke [Bean名] [方法名] [参数...]
+                别名: 调用""", getAccess()
         );
     }
 }

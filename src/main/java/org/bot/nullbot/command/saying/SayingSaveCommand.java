@@ -53,7 +53,7 @@ public class SayingSaveCommand implements Command
                 功能: 保存语录
                 限权: %d 级
                 格式: [引用文本] SayingSave
-                中文命令: 保存语录""", getAccess()
+                别名: 保存语录""", getAccess()
         );
     }
 }

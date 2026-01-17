@@ -13,7 +13,7 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"RandomSaying", "say", "随机语录", "语录"})
+@CommandMapping({"RandomSaying", "saying", "say", "随机语录", "语录"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -52,8 +52,8 @@ public class RandomSayingCommand implements Command
                 ◉ RandomSaying 命令
                 功能: 随机语录(可指定发言人)
                 限权: %d 级
-                格式: RandomSaying [可选: QQ号] 或 say [可选: QQ号]
-                中文命令: 随机语录/语录""", getAccess()
+                格式: RandomSaying [可选: QQ号]
+                别名: saying/say/随机语录/语录""", getAccess()
         );
     }
 }

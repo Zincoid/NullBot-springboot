@@ -9,6 +9,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"FinishMatch", "终止对局"})
@@ -22,14 +23,10 @@ public class FinishMatchCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getUserId();
-            String result = matcher.finishMatch(userId);
-            if (result != null) {
-                bot.sendGroupMsg(groupId, result, false);
-                log.info("\t\t\t\t├─[FinishMatch] 终止对局结果 - {}", result);
-            } else
-                log.info("\t\t\t\t├─[FinishMatch] 终止对局结果 - 已响应");
+            if(!matcher.finishMatch(userId))
+                throw new NullBotMsgException("[终止对局] ❌未找到玩家/对局");
+            log.info("\t\t\t\t├─[FinishMatch] 终止对局结果 - 已终止");
         } else
             throw new NullBotLogException("[终止对局] ❌未设计 - 非群消息事件响应方式");
     }
@@ -44,7 +41,7 @@ public class FinishMatchCommand implements Command
                 功能: 强制终止自身正在进行的对局
                 限权: %d 级
                 格式: FinishMatch
-                中文命令: 终止对局""", getAccess()
+                别名: 终止对局""", getAccess()
         );
     }
 }

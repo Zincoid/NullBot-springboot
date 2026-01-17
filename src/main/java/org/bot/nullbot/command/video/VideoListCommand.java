@@ -40,7 +40,7 @@ public class VideoListCommand  implements Command
                 功能: 获取保存视频列表
                 限权: %d 级
                 格式: VideoList
-                中文命令: 视频列表""", getAccess()
+                别名: 视频列表""", getAccess()
         );
     }
 }

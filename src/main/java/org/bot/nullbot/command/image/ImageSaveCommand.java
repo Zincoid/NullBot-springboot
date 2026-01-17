@@ -81,7 +81,7 @@ public class ImageSaveCommand implements Command
                 功能: 保存图片至图库
                 限权: %d 级
                 格式: [引用图片] ImageSave
-                中文命令: 保存图片""", getAccess()
+                别名: 保存图片""", getAccess()
         );
     }
 }

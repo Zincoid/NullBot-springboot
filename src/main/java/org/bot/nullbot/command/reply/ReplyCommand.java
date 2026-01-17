@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Deprecated
 @CommandMapping({"Reply", "应答"})
 @Component
 @Slf4j
@@ -36,10 +37,10 @@ public class ReplyCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ Reply 命令
-                功能: 简单回复(废弃)
+                功能: 文本输出 (废弃)
                 限权: %d 级
                 格式: Reply [内容]
-                中文命令: 应答""", getAccess()
+                别名: 应答""", getAccess()
         );
     }
 }

@@ -14,7 +14,7 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"Anime", "二次元", "色图", "涩图"})
+@CommandMapping({"Anime", "anime", "二次元", "色图", "涩图"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -52,7 +52,7 @@ public class AnimeCommand implements Command
                 功能: 随机二/三次元图
                 限权: %d 级
                 格式: Anime
-                中文命令: 二次元/色图/涩图""", getAccess()
+                别名: anime/二次元/色图/涩图""", getAccess()
         );
     }
 }

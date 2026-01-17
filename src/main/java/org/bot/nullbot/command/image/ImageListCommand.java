@@ -41,7 +41,7 @@ public class ImageListCommand implements Command
                 功能: 获取保存图片列表
                 限权: %d 级
                 格式: ImageList
-                中文命令: 图片列表""", getAccess()
+                别名: 图片列表""", getAccess()
         );
     }
 }

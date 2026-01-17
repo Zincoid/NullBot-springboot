@@ -47,7 +47,7 @@ public class SayingDeleteCommand implements Command
                 功能: 删除语录
                 限权: %d 级
                 格式: SayingDelete [语录ID]
-                中文命令: 删除语录""", getAccess()
+                别名: 删除语录""", getAccess()
         );
     }
 }

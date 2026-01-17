@@ -63,7 +63,7 @@ public class ChatCommand implements Command
                 功能: 与AI对话
                 限权: %d 级
                 格式: Chat [内容] 或 @Null [内容] 或 戳一戳
-                中文命令: 对话""", getAccess()
+                别名: 对话""", getAccess()
         );
     }
 }

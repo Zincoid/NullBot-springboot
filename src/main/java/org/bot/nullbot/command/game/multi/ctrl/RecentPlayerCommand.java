@@ -51,7 +51,7 @@ public class RecentPlayerCommand implements Command
                 功能: 展示最近活跃的5个玩家
                 限权: %d 级
                 格式: RecentPlayer
-                中文命令: 最近玩家""", getAccess()
+                别名: 最近玩家""", getAccess()
         );
     }
 }

@@ -59,7 +59,7 @@ public class TicTacToeCommand implements Command
                 限权: %d 级
                 格式: TicTacToe [行] [列]
                 示例: TicTacToe 1 1
-                中文命令: 井字棋""", getAccess()
+                别名: 井字棋""", getAccess()
         );
     }
 }

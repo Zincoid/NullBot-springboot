@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-
 @Component
 public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, TicTacToeGameLogic>
 {

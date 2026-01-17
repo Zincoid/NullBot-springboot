@@ -10,7 +10,7 @@ import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"UserBan", "禁言"})
+@CommandMapping({"UserBan", "ban", "禁言"})
 @Component
 @Slf4j
 public class UserBanCommand implements Command
@@ -24,7 +24,7 @@ public class UserBanCommand implements Command
                 long userId = Long.parseLong(event.getCommandParameters().get(0));
                 int time = Integer.parseInt(event.getCommandParameters().get(1));
                 bot.setGroupBan(groupMessageEvent.getGroupId(), userId, time * 60);
-                log.info("\t\t\t\t├─[UserBan] 已执行禁言 - {} -> {} min", userId, time);
+                log.info("\t\t\t\t├─[UserBan] 已执行禁言 - {} -> {} Min", userId, time);
             } catch (NumberFormatException e) {
                 throw new NullBotMsgException("[用户禁言] ❌参数格式错误");
             }
@@ -39,10 +39,10 @@ public class UserBanCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ UserBan 命令
-                功能: 用户禁言(时长设置为0则解除禁言)
+                功能: 用户禁言 (时长设为0时解除禁言)
                 限权: %d 级
                 格式: UserBan [QQ号] [时长(分钟)]
-                中文命令: 禁言""", getAccess()
+                别名: ban/禁言""", getAccess()
         );
     }
 
@@ -50,7 +50,7 @@ public class UserBanCommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ UserBan 命令
-                功能: 用户禁言(时长设置为0则解除禁言)
+                功能: 用户禁言 (时长设为0时解除禁言)
                 限权: %d 级
                 格式: UserBan [QQ号] [时长(分钟)]
                 注意: 你想禁言某人时可以自己主动调用！""", getAccess()

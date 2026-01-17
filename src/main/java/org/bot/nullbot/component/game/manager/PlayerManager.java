@@ -55,7 +55,7 @@ public class PlayerManager
     public void resetPlayer(Player player) {
         player.setStatus(Player.PlayerStatus.IDLE);
         player.setLastActionTime(LocalDateTime.now());
-        player.setGroupId(null);
+        // player.setGroupId(null);  // 不重置 作为上次活跃群聊
         player.setInProgressMatchId(null);
     }
 }

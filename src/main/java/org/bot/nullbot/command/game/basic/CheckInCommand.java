@@ -52,7 +52,7 @@ public class CheckInCommand implements Command
                 功能: 每日签到
                 限权: %d 级
                 格式: CheckIn
-                中文命令: 签到""", getAccess()
+                别名: 签到""", getAccess()
         );
     }
 }

@@ -79,7 +79,7 @@ public class VideoSaveCommand implements Command
                 功能: 保存视频至视频库
                 限权: %d 级
                 格式: [引用视频] VideoSave
-                中文命令: 保存视频""", getAccess()
+                别名: 保存视频""", getAccess()
         );
     }
 }

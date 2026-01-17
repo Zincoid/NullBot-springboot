@@ -66,7 +66,7 @@ public class InventoryCommand implements Command
                 功能: 查看库存物品
                 限权: %d 级
                 格式: Inventory [可选: 页码(默认为1)]
-                中文命令: 查看库存/库存""", getAccess()
+                别名: 查看库存/库存""", getAccess()
         );
     }
 }

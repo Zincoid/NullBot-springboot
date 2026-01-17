@@ -13,7 +13,7 @@ import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"Recall", "rc", "撤回"})
+@CommandMapping({"Recall", "recall", "rc", "撤回"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -41,8 +41,8 @@ public class RecallCommand implements Command
                 ◉ Recall 命令
                 功能: 撤回任意引用的消息
                 限权: %d 级
-                格式: [引用消息] Recall 或 [引用消息] rc
-                中文命令: 撤回""", getAccess()
+                格式: [引用消息] Recall
+                别名: recall/rc/撤回""", getAccess()
         );
     }
 }

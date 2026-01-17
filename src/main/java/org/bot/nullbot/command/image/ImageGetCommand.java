@@ -48,7 +48,7 @@ public class ImageGetCommand implements Command
                 功能: 获取保存的图片
                 限权: %d 级
                 格式: ImageGet [文件名]
-                中文命令: 获取图片""", getAccess()
+                别名: 获取图片""", getAccess()
         );
     }
 }
