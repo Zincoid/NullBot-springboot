@@ -91,7 +91,7 @@ public class LoginInterceptor implements HandlerInterceptor
 
         Integer userType = jwtTool.getAs(jwt, "type", Integer.class);
 
-        if(userType == 0) {
+        if (userType == 0) {
             for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
                 if (url.contains(forbiddenUrl)) {
                     log.info("[管理系统-JWT验证] 访客禁止访问 - {}", url);
@@ -102,7 +102,9 @@ public class LoginInterceptor implements HandlerInterceptor
             }
             log.info("[管理系统-JWT验证] 访客放行 - {}", url);
             return true;
-        } else if (userType == 1) {
+        }
+
+        if (userType == 1) {
             log.info("[管理系统-JWT验证] 管理员放行 - {}", url);
             return true;
         }
