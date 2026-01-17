@@ -42,20 +42,20 @@ public class JwtTool
      * @return JWT 对象
      */
     public JWT parseToken(String token) {
-        // 校验Token是否为空
+        // 校验Token非空
         if (token == null)
             throw new UnauthorizedException("No Token");
 
         JWT jwt;
 
-        // 校验并解析jwt
+        // 设置JWT对象
         try {
             jwt = JWT.of(token).setSigner(jwtSigner);
         } catch (Exception e) {
             throw new UnauthorizedException("Invalid Token", e);
         }
 
-        // 校验jwt是否有效
+        // 校验是否有效
         if (!jwt.verify())
             throw new UnauthorizedException("Invalid Token");
 
