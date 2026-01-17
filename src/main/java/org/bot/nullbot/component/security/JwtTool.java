@@ -7,6 +7,8 @@ import cn.hutool.jwt.signers.JWTSigner;
 import cn.hutool.jwt.signers.JWTSignerUtil;
 import org.bot.nullbot.exception.UnauthorizedException;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import tools.jackson.databind.ObjectMapper;
 
 import java.security.KeyPair;
 import java.time.Duration;
@@ -16,9 +18,11 @@ import java.util.Date;
 public class JwtTool
 {
     private final JWTSigner jwtSigner;
+    private final ObjectMapper objectMapper;
 
     public JwtTool(KeyPair keyPair) {
         this.jwtSigner = JWTSignerUtil.createSigner("rs256", keyPair);
+        this.objectMapper = new ObjectMapper();
     }
 
     /**
@@ -39,11 +43,11 @@ public class JwtTool
     /**
      * 解析 token
      * @param token token
-     * @return JWT 对象
+     * @return JWT对象
      */
     public JWT parseJwt(String token) {
         // 校验Token非空
-        if (token == null)
+        if (!StringUtils.hasLength(token))
             throw new UnauthorizedException("No Token");
 
         JWT jwt;
@@ -76,13 +80,9 @@ public class JwtTool
      */
     public Long getLoginId(String token) {
         JWT jwt = parseJwt(token);
-
-        // 数据获取
         Object userPayload = jwt.getPayload("id");
         if (userPayload == null)
             throw new UnauthorizedException("No Info");
-
-        // 数据解析
         try {
             return Long.valueOf(userPayload.toString());
         } catch (RuntimeException e) {
@@ -97,17 +97,33 @@ public class JwtTool
      */
     public Integer getLoginType(String token) {
         JWT jwt = parseJwt(token);
-
-        // 数据获取
         Object userPayload = jwt.getPayload("type");
         if (userPayload == null)
             throw new UnauthorizedException("No Info");
-
-        // 数据解析
         try {
             return Integer.valueOf(userPayload.toString());
         } catch (RuntimeException e) {
             throw new UnauthorizedException("Invalid Info");
+        }
+    }
+
+    /**
+     * 解析 JWT 获取数据
+     * @param jwt JWT对象
+     * @param attr 属性名
+     * @param clazz 类型
+     * @return Jwt中的指定数据
+     */
+    public <T> T getAs(JWT jwt, String attr, Class<T> clazz) {
+        Object payload = jwt.getPayload(attr);
+        if (payload == null)
+            throw new UnauthorizedException("No Info");
+        try {
+            if (clazz.isInstance(payload))
+                return clazz.cast(payload);
+            return objectMapper.convertValue(payload, clazz);
+        } catch (RuntimeException e) {
+            throw new UnauthorizedException("Invalid Info: " + e.getMessage());
         }
     }
 }

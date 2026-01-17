@@ -35,14 +35,14 @@ public class WebUtil
     /** 获取 登录用户 ID **/
     @Deprecated
     public static Long getLoginId(){
-        Claims token = JwtUtil.parseJWT(getRequest().getHeader("token"));
+        Claims token = JwtUtil.parseJwt(getRequest().getHeader("token"));
         return token.get("id", Long.class);
     }
 
     /** 获取 登录用户 Type **/
     @Deprecated
     public static Integer getLoginType(){
-        Claims token = JwtUtil.parseJWT(getRequest().getHeader("token"));
+        Claims token = JwtUtil.parseJwt(getRequest().getHeader("token"));
         return token.get("type", Integer.class);
     }
 }

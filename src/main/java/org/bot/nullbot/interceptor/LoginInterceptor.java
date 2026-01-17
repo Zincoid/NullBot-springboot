@@ -1,10 +1,13 @@
 package org.bot.nullbot.interceptor;
 
+import cn.hutool.jwt.JWT;
 import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.component.security.JwtTool;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.util.JwtUtil;
 import org.springframework.stereotype.Component;
@@ -16,8 +19,11 @@ import java.util.List;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class LoginInterceptor implements HandlerInterceptor
 {
+    private final JwtTool jwtTool;
+
     private static final List<String> GUEST_FORBIDDEN_URLS = Arrays.asList(
             "/nullbot/file/init",
             "/nullbot/file/upload",
@@ -71,23 +77,15 @@ public class LoginInterceptor implements HandlerInterceptor
             return true;
         }
 
-        String jwt = req.getHeader("token");
-        if(!StringUtils.hasLength(jwt)){
-            log.info("[管理系统-JWT验证] 令牌缺失 - {}", url);
-            WebResult error = WebResult.fail().addMsg("No Token");
-            String info = JSONObject.toJSONString(error);
-            res.getWriter().write(info);
-            return false;
-        }
+        String token = req.getHeader("token");
 
-        Claims claims;
+        JWT jwt;
 
         try {
-            claims = JwtUtil.parseJWT(jwt);
+            jwt = jwtTool.parseJwt(token);
         } catch (Exception e) {
-            // e.printStackTrace();
             log.info("[管理系统-JWT验证] 解析失败 - {}", url);
-            WebResult error = WebResult.fail().addMsg("Invalid Token");
+            WebResult error = WebResult.fail().addMsg(e.getMessage());
             String info = JSONObject.toJSONString(error);
             res.getWriter().write(info);
             return false;

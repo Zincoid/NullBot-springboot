@@ -7,8 +7,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 import java.util.Map;
 
-public class JwtUtil {
-
+@Deprecated
+public class JwtUtil  // 改用 Spring 组件 JwtTool
+{
     private static final String signKey = "zincoid";
     private static final Long expire = 43200000L;
 
@@ -31,7 +32,7 @@ public class JwtUtil {
      * @param jwt JWT令牌
      * @return JWT第二部分负载 payload 中存储的内容
      */
-    public static Claims parseJWT(String jwt){
+    public static Claims parseJwt(String jwt){
         Claims claims = Jwts.parser()
                 .setSigningKey(signKey)
                 .parseClaimsJws(jwt)
