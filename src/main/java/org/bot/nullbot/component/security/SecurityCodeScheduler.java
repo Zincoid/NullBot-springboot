@@ -43,7 +43,6 @@ public class SecurityCodeScheduler
      * 获取当前激活码
      */
     public String getCurrentActivationCode() {
-        log.info("[管理系统-安全码] 激活码已获取 - {}", activationCode);
         return activationCode;
     }
 
@@ -52,7 +51,6 @@ public class SecurityCodeScheduler
      */
     public void refreshActivationCode() {
         activationCode = UUID.randomUUID().toString();
-        log.info("[管理系统-安全码] 激活码已刷新 - {}", activationCode);
     }
 
     /**
@@ -62,6 +60,7 @@ public class SecurityCodeScheduler
         scheduledFuture = scheduler.schedule(
                 () -> {
                     refreshActivationCode();
+                    log.info("[管理系统-安全码] 激活码已自动刷新 - Code: {}", activationCode);
                     scheduleNextRefresh(); // 递归调度
                 },
                 REFRESH_INTERVAL,
