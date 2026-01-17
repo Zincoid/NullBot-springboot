@@ -64,6 +64,10 @@ public class LoginInterceptor implements HandlerInterceptor
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
         String url = req.getRequestURL().toString();
 
+        if (url.contains("/nullbot/regist")) {
+            log.info("[管理系统-JWT验证] 注册放行 - {}", url);
+            return true;
+        }
         if (url.contains("/nullbot/login")) {
             log.info("[管理系统-JWT验证] 登录放行 - {}", url);
             return true;
