@@ -12,8 +12,8 @@ public class WebConfig implements WebMvcConfigurer
 {
     private final LoginInterceptor loginInterceptor;
 
-    @Override //注册拦截器
-    public void addInterceptors(InterceptorRegistry registry) {
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {  // 注册拦截器
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**");
         // .excludePathPatterns("/NullBot");
