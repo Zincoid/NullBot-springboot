@@ -56,7 +56,7 @@ public class JwtTool
         try {
             jwt = JWT.of(token).setSigner(jwtSigner);
         } catch (Exception e) {
-            throw new UnauthorizedException("Invalid Token", e);
+            throw new UnauthorizedException("Invalid Token");
         }
 
         // 校验是否有效
