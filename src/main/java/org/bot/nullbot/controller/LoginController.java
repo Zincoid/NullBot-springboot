@@ -8,12 +8,8 @@ import org.bot.nullbot.entity.po.AdminPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.dto.LoginDTO;
 import org.bot.nullbot.service.AdminService;
-import org.bot.nullbot.util.JwtUtil;
 import org.bot.nullbot.util.WebUtil;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @CrossOrigin
 @RestController
