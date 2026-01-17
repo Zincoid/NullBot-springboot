@@ -161,7 +161,7 @@ public class FileServiceImpl implements FileService
 
     @Override
     @Transactional
-    public Boolean upload(MultipartFile uploadFile, String curDir) throws IOException {
+    public Boolean upload(Long ownerId, MultipartFile uploadFile, String curDir) throws IOException {
         String fileName = uploadFile.getOriginalFilename();
         String fullDir;
         if(curDir.equals("/"))
@@ -189,7 +189,6 @@ public class FileServiceImpl implements FileService
         String filePath = fullDir + "/" + fileName;
         uploadFile.transferTo(new java.io.File(filePath));
 
-        Long ownerId = WebUtil.getLoginId();
         String ownerName = adminMapper.selectById(ownerId).getUsername();
         LocalDateTime lastModified = Files
                 .getLastModifiedTime(Path.of(filePath))
@@ -232,7 +231,7 @@ public class FileServiceImpl implements FileService
 
     @Override
     @Transactional
-    public Boolean createDir(String curDir, String dirName) throws IOException {
+    public Boolean createDir(Long ownerId, String curDir, String dirName) throws IOException {
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
@@ -261,7 +260,6 @@ public class FileServiceImpl implements FileService
         } else
             throw new IllegalArgumentException("磁盘目录已存在");
 
-        Long ownerId = WebUtil.getLoginId();
         String ownerName = adminMapper.selectById(ownerId).getUsername();
         LocalDateTime lastModified = Files
                 .getLastModifiedTime(Path.of(dirPath))

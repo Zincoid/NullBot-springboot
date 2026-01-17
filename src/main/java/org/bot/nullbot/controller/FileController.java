@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.component.security.JwtTool;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.page.FilePage;
 import org.bot.nullbot.service.FileService;
@@ -11,9 +12,6 @@ import org.bot.nullbot.util.WebUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @CrossOrigin
@@ -23,6 +21,7 @@ import java.util.Map;
 @RequestMapping("/nullbot/file")
 public class FileController
 {
+    private final JwtTool jwtTool;
     private final FileService fileService;
 
     @GetMapping("/init")
@@ -48,7 +47,10 @@ public class FileController
     public WebResult getFileByPage(@PathVariable Integer currentPage,
                                 @PathVariable Integer pageSize,
                                 @RequestParam(defaultValue = "/") String curDir){
-        FilePage filePage = fileService.getFileByPage(currentPage, pageSize, curDir, WebUtil.getLoginType() == 0);
+        FilePage filePage = fileService.getFileByPage(
+                currentPage, pageSize, curDir,
+                jwtTool.getLoginType(WebUtil.getToken()) == 0
+        );
         return WebResult.success().addMsg("查询成功").addData("filePage", filePage);
     }
 
@@ -57,14 +59,18 @@ public class FileController
         if (key.contains("/") || key.contains("\\")){
             return WebResult.fail().addMsg("不允许出现斜杠");
         }
-        FilePage filePage = fileService.searchFile(key, curDir, WebUtil.getLoginType() == 0);
+        FilePage filePage = fileService.searchFile(
+                key, curDir,
+                jwtTool.getLoginType(WebUtil.getToken()) == 0
+        );
         return WebResult.success().addMsg("查询成功").addData("filePage", filePage);
     }
 
     @PostMapping("/upload")
     public WebResult upload(MultipartFile uploadFile, @RequestParam(defaultValue = "/") String curDir) {
         try {
-            if(fileService.upload(uploadFile, curDir))
+            Long userId = jwtTool.getLoginId(WebUtil.getToken());
+            if(fileService.upload(userId, uploadFile, curDir))
                 return WebResult.success().addMsg("上传成功");
             else
                 return WebResult.fail().addMsg("上传失败: 未知错误");
@@ -87,7 +93,8 @@ public class FileController
         String curDir = map.get("curDir");
         String dirName = map.get("dirName");
         try {
-            if(fileService.createDir(curDir, dirName))
+            Long userId = jwtTool.getLoginId(WebUtil.getToken());
+            if(fileService.createDir(userId, curDir, dirName))
                 return WebResult.success().addMsg("创建成功");
             else
                 return WebResult.fail().addMsg("创建失败: 未知错误");

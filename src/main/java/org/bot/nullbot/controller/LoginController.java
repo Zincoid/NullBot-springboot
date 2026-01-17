@@ -24,7 +24,6 @@ public class LoginController
 {
     private final JwtTool jwtTool;
     private final JwtProperties jwtProperties;
-
     private final AdminService adminService;
 
     @PostMapping("/guest")
@@ -37,27 +36,22 @@ public class LoginController
     @PostMapping("/login")
         public WebResult login(@RequestBody LoginDTO loginDTO){
         log.info("[管理系统] 管理员登录 - {}", loginDTO);
-
         if(adminService.login(loginDTO)){
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("id",loginDTO.getId());
-            claims.put("type", 1);
-
-            String jwt = JwtUtil.createJwt(claims);
-            return WebResult.success().addMsg("管理员登录成功").addData("token",jwt);
+            String jwt = jwtTool.createJwt(loginDTO.getId(), 1, jwtProperties.getTokenTTL());
+            return WebResult.success().addMsg("管理员登录成功").addData("token", jwt);
         }
         return WebResult.fail().addMsg("管理员登录失败");
     }
 
     @GetMapping("/info")
     public WebResult info(){
-        Integer type = WebUtil.getLoginType();
+        Integer type = jwtTool.getLoginType(WebUtil.getToken());
         if(type == 0){
             AdminPO admin = new AdminPO(null, "Guest", "看访客密码？", "访客无此信息");
             log.info("[管理系统] 获取访客信息");
             return WebResult.success().addMsg("获取访客信息成功").addData("info", admin).addData("userType", 0);
         }else if(type == 1){
-            Long id = WebUtil.getLoginId();
+            Long id = jwtTool.getLoginId(WebUtil.getToken());
             log.info("[管理系统] 获取管理员信息 - ID {}", id);
             AdminPO admin = adminService.info(id);
             if(admin != null){

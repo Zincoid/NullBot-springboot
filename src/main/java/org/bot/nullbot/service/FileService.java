@@ -20,11 +20,11 @@ public interface FileService
 
     FilePage searchFile(String key, String curDir, Boolean hidden);
 
-    Boolean upload(MultipartFile uploadFile, String curDir) throws IOException;
+    Boolean upload(Long owner, MultipartFile uploadFile, String curDir) throws IOException;
 
     void download(Integer id, HttpServletRequest request, HttpServletResponse response);
 
-    Boolean createDir(String curDir, String dirName) throws IOException;
+    Boolean createDir(Long ownerId, String curDir, String dirName) throws IOException;
 
     Boolean deleteFile(Integer id);
 
