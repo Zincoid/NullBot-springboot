@@ -93,17 +93,20 @@ public class Matcher
     /**
      * 取消匹配
      */
-    public String cancelMatch(Long userId) {
+    public MatchResult cancelMatch(Long userId) {
         Player player = playerManager.getPlayer(userId);
-        if (player == null) { return "暂无玩家记录"; }
-        if (player.getStatus() != Player.PlayerStatus.WAITING) { return "无法取消，当前不在匹配队列中"; }
+        if (player == null)
+            return MatchResult.notMatched("暂无玩家记录");
+        if (player.getStatus() != Player.PlayerStatus.WAITING)
+            return MatchResult.notMatched("无法取消，非等待匹配状态");
 
         // 从匹配池中移除
-        if (!poolManager.removePlayer(player)) { return "取消失败，未在匹配队列中找到你"; }
+        if (!poolManager.removePlayer(player))
+            return MatchResult.notMatched("取消失败，不在匹配队列中");
         // 重置玩家状态
         playerManager.updateStatus(player, Player.PlayerStatus.IDLE);
 
-        return "已成功取消匹配";
+        return MatchResult.notMatched("已成功取消匹配");
     }
 
     /**

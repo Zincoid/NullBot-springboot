@@ -8,6 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.CommandEvent;
+import org.bot.nullbot.entity.result.MatchResult;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.springframework.stereotype.Component;
 
@@ -24,8 +25,8 @@ public class DisMatchCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getUserId();
-            String result = matcher.cancelMatch(userId);
-            bot.sendGroupMsg(groupId, result, false);
+            MatchResult result = matcher.cancelMatch(userId);
+            bot.sendGroupMsg(groupId, result.getInfo(), false);
             log.info("\t\t\t\t├─[DisMatch] 取消匹配结果 - {}", result);
         }else
             throw new NullBotLogException("[取消匹配] ❌未设计 - 非群消息事件响应方式");
