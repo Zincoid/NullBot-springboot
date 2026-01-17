@@ -34,12 +34,12 @@ public class AdminServiceImpl implements AdminService
         if (!Objects.equals(registDTO.getActivationCode(), securityCodeScheduler.getCurrentActivationCode()))
             throw new IllegalArgumentException("激活码错误");
 
-        AdminPO admin = adminMapper.selectById(registDTO.getId());
-        if (admin != null)
-            throw new IllegalArgumentException("用户已注册");
         UserPO user = userMapper.selectById(registDTO.getId());
         if (user == null)
             throw new IllegalArgumentException("用户不可用 (未使用过 NullBot)");
+        AdminPO admin = adminMapper.selectById(registDTO.getId());
+        if (admin != null)
+            throw new IllegalArgumentException("用户已注册");
 
         AdminPO newAdmin = new AdminPO();
         newAdmin.setId(user.getId());
