@@ -17,7 +17,7 @@ public class JwtUtil {
      * @param claims JWT第二部分负载 payload 中存储的内容
      * @return JWT令牌
      */
-    public static String generateJwt(Map<String, Object> claims){
+    public static String createJwt(Map<String, Object> claims){
         String jwt = Jwts.builder()
                 .addClaims(claims)
                 .signWith(SignatureAlgorithm.HS256, signKey)

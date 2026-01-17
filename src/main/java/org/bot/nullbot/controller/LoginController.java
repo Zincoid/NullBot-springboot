@@ -1,6 +1,5 @@
 package org.bot.nullbot.controller;
 
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.po.AdminPO;
@@ -30,7 +29,7 @@ public class LoginController
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", 0);
 
-        String jwt = JwtUtil.generateJwt(claims);
+        String jwt = JwtUtil.createJwt(claims);
         return WebResult.success().addMsg("访客登录成功").addData("token",jwt);
     }
 
@@ -43,7 +42,7 @@ public class LoginController
             claims.put("id",loginDTO.getId());
             claims.put("type", 1);
 
-            String jwt = JwtUtil.generateJwt(claims);
+            String jwt = JwtUtil.createJwt(claims);
             return WebResult.success().addMsg("管理员登录成功").addData("token",jwt);
         }
         return WebResult.fail().addMsg("管理员登录失败");
