@@ -3,28 +3,39 @@ package org.bot.nullbot.config;
 import org.bot.nullbot.config.prop.JwtProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.encrypt.KeyStoreKeyFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 import java.security.KeyPair;
 
 @Configuration
 public class SecurityConfig
 {
+    // Spring Security 拦截
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth ->
+                        auth.anyRequest().permitAll()  // 允许所有请求
+                );
+        return http.build();
+    }
+
+    // 密码编码工具
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
+    // 秘钥生成工具
     @Bean
     public KeyPair keyPair(JwtProperties properties){
-        // 获取秘钥工厂
         KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(
                 properties.getLocation(),
                 properties.getPassword().toCharArray()
         );
-        //读取钥匙对
         return keyStoreKeyFactory.getKeyPair(
                 properties.getAlias(),
                 properties.getPassword().toCharArray()
