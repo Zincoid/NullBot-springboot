@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.exception.NullBotLogException;
@@ -27,7 +27,7 @@ import java.util.Map;
 @Slf4j
 public class VideoSaveCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
 
     @Override
@@ -49,7 +49,7 @@ public class VideoSaveCommand implements Command
 
             for (Map.Entry<String, String> entry : videoMap.entrySet()) {
                 String fileName = entry.getKey();
-                String filePath = fileStorageConfig.getVideoPath();
+                String filePath = fileStorageProperties.getVideoPath();
                 String url = entry.getValue();
                 try {
                     FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t\t├─ ");

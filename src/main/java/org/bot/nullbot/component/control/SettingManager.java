@@ -1,7 +1,7 @@
 package org.bot.nullbot.component.control;
 
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.config.DefaultConfig;
+import org.bot.nullbot.config.DefaultProperties;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class SettingManager
 {
-    private final DefaultConfig defaultConfig;
+    private final DefaultProperties defaultProperties;
     private final Map<Long, SettingInfo> settings = new ConcurrentHashMap<>();
 
     public ChatOption getChatOption(Long groupId) {
@@ -23,7 +23,7 @@ public class SettingManager
     }
 
     public SettingInfo getSetting(Long groupId) {
-        return settings.computeIfAbsent(groupId, k -> new SettingInfo(groupId, defaultConfig));
+        return settings.computeIfAbsent(groupId, k -> new SettingInfo(groupId, defaultProperties));
     }
 
     public boolean setSetting(SettingInfo setting) {

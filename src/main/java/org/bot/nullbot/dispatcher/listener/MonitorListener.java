@@ -12,8 +12,8 @@ import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.FunctionControl;
-import org.bot.nullbot.config.DeepSeekConfig;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.DeepSeekProperties;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
@@ -38,8 +38,8 @@ public class MonitorListener
 {
     private final CommandProcessor commandProcessor;
     private final ChatStorage chatStorage;
-    private final DeepSeekConfig deepSeekConfig;
-    private final FileStorageConfig fileStorageConfig;
+    private final DeepSeekProperties deepSeekProperties;
+    private final FileStorageProperties fileStorageProperties;
     private final SettingService settingService;
     private final FileService fileService;
 
@@ -81,7 +81,7 @@ public class MonitorListener
                 String originName =msg.getData().get("file");
                 String url = msg.getData().get("url");
                 String fileName = originName.substring(0, originName.lastIndexOf("."));
-                String filePath = fileStorageConfig.getImagePath() + "/monitor/" + groupId;
+                String filePath = fileStorageProperties.getImagePath() + "/monitor/" + groupId;
                 try {
                     FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "├─ ");
                     if(!fileService.addFileRecordForBot(
@@ -109,7 +109,7 @@ public class MonitorListener
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
             chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
-            chatStorage.trimHistory(chatMessages, deepSeekConfig.getMaxMonitorLength());
+            chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
             log.info("└─[Recorded] {} Message(s)", chatMessages.size());
         }
     }

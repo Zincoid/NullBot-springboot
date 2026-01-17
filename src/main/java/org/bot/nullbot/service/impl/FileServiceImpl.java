@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.page.FilePage;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.mapper.AdminMapper;
@@ -41,7 +41,7 @@ public class FileServiceImpl implements FileService
 {
     private final AdminMapper adminMapper;
     private final FileMapper fileMapper;
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
 
     // =================== BOT功能相关 ===================
 
@@ -92,7 +92,7 @@ public class FileServiceImpl implements FileService
     @Override
     @Transactional
     public Boolean initRootFile() {
-        Path rootPath = Path.of(fileStorageConfig.getFileDirectory());
+        Path rootPath = Path.of(fileStorageProperties.getFileDirectory());
         String rootParentPath = rootPath.getParent().toString();
         String rootFileName = rootPath.getFileName().toString();
 
@@ -135,9 +135,9 @@ public class FileServiceImpl implements FileService
     public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden) {
         String fullDir;
         if(curDir.equals("/"))
-            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
+            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
         else
-            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
+            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/") + curDir;
         LambdaQueryWrapper<FilePO> wrapper = new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, fullDir)
                 .orderByDesc(FilePO::getIsDir)
@@ -152,9 +152,9 @@ public class FileServiceImpl implements FileService
     public FilePage searchFile(String key, String curDir, Boolean hidden) {
         String fullDir;
         if(curDir.equals("/"))
-            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
+            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
         else
-            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
+            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/") + curDir;
         List<FilePO> fileList = hidden ? fileMapper.searchFileVisible(key, fullDir) : fileMapper.searchFile(key, fullDir);
         return new FilePage(fileList, 0L, 0, 0, 0);
     }
@@ -165,9 +165,9 @@ public class FileServiceImpl implements FileService
         String fileName = uploadFile.getOriginalFilename();
         String fullDir;
         if(curDir.equals("/"))
-            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
+            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
         else
-            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
+            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/") + curDir;
 
         if(!fileMapper.selectList(new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).eq(FilePO::getFileName, fileName)).isEmpty()) {
             throw new IllegalArgumentException("数据库存在同名冲突");
@@ -235,9 +235,9 @@ public class FileServiceImpl implements FileService
     public Boolean createDir(String curDir, String dirName) throws IOException {
         String fullDir;
         if(curDir.equals("/"))
-            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
+            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
         else
-            fullDir = fileStorageConfig.getFileDirectory().replace("\\", "/") + curDir;
+            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/") + curDir;
 
         // 查询父文件夹
         Path path = Paths.get(fullDir);
@@ -365,7 +365,7 @@ public class FileServiceImpl implements FileService
 
         // 构建目标目录的完整路径
         String targetFullDir;
-        String fileStorageDir = fileStorageConfig.getFileDirectory().replace("\\", "/");
+        String fileStorageDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
         if (newDir.equals("/"))
             targetFullDir = fileStorageDir;
         else
@@ -518,7 +518,7 @@ public class FileServiceImpl implements FileService
     public void scanAndSyncFiles() {
         try {
             // 1. 获取存储目录
-            String baseDir = normalizePath(fileStorageConfig.getFileDirectory());
+            String baseDir = normalizePath(fileStorageProperties.getFileDirectory());
             File baseDirectory = new File(baseDir);
             if (!baseDirectory.exists() || !baseDirectory.isDirectory()) {
                 System.err.println("存储目录不存在: " + baseDir);
@@ -604,7 +604,7 @@ public class FileServiceImpl implements FileService
             }
         }
         // 处理已删除的文件
-        Path rootPath = Path.of(fileStorageConfig.getFileDirectory());
+        Path rootPath = Path.of(fileStorageProperties.getFileDirectory());
         String rootParentPath = rootPath.getParent().toString();
         String rootFileName = rootPath.getFileName().toString();
 

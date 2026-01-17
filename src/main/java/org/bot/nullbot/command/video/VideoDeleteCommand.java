@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -25,7 +25,7 @@ import java.util.Map;
 @Slf4j
 public class VideoDeleteCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -38,13 +38,13 @@ public class VideoDeleteCommand implements Command
                 if(videoMap.isEmpty()) throw new NullBotMsgException("[删除视频] ❌未引用视频");
                 for (Map.Entry<String, String> entry : videoMap.entrySet()) {
                     String fileName = entry.getKey();
-                    String response = FileUtil.deleteFileByName(fileStorageConfig.getVideoPath(), fileName);
+                    String response = FileUtil.deleteFileByName(fileStorageProperties.getVideoPath(), fileName);
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️️" + response, false);
                     log.info("\t\t\t\t├─[VideoDelete] {}", response);
                 }
             }else if(!event.getCommandParameters().isEmpty()){
                 String fileName = event.getCommandParameters().getFirst();
-                    String response = FileUtil.deleteFileByName(fileStorageConfig.getVideoPath(), fileName);
+                    String response = FileUtil.deleteFileByName(fileStorageProperties.getVideoPath(), fileName);
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️️" + response, false);
                 log.info("\t\t\t\t├─[VideoDelete] {}", response);
             }else{

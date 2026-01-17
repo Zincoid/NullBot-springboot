@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -31,7 +31,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class WifeCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
 
     private final Map<Long, Long> memberWifeMap = new ConcurrentHashMap<>();
     private final Map<Long, LocalDateTime> memberExpireMap = new ConcurrentHashMap<>();
@@ -76,7 +76,7 @@ public class WifeCommand implements Command
                 LocalDateTime expireTime = acgExpireMap.get(userId);
                 if(expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
                     String category = event.getCommandParameters().getFirst();
-                    String acgPath = fileStorageConfig.getImagePath() + "/acg/" + category;
+                    String acgPath = fileStorageProperties.getImagePath() + "/acg/" + category;
 
                     String wifePath;
                     try {

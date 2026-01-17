@@ -5,12 +5,10 @@ import org.bot.nullbot.enums.Scope;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 @Data
 @Component
 @ConfigurationProperties(prefix = "nullbot.default")
-public class DefaultConfig
+public class DefaultProperties
 {
     private Scope scope;  // 会话范围
     private boolean antiInjection;  // 防注入模式

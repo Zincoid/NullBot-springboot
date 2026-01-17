@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.util.FileUtil;
@@ -20,12 +20,12 @@ import java.io.IOException;
 @Slf4j
 public class ImageFolderCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws IOException {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String structure = FileUtil.getFolderTreeString(fileStorageConfig.getImagePath(), 0);
+            String structure = FileUtil.getFolderTreeString(fileStorageProperties.getImagePath(), 0);
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片目录] \uD83D\uDCC1已获取！\n" + structure, false);
             log.info("\t\t\t\t├─[ImageFolder] 已输出 - 图片目录结构");
         } else

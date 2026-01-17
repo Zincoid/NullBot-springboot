@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.resource.ResourceLoader;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -22,14 +22,14 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class HelpCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
     private final ResourceLoader resourceLoader;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             try {
-                String helpPath = resourceLoader.getCached("static/help/help.jpg", fileStorageConfig.getTempPath()).toAbsolutePath().toString();
+                String helpPath = resourceLoader.getCached("static/help/help.jpg", fileStorageProperties.getTempPath()).toAbsolutePath().toString();
                 String response = MsgUtils.builder().img(helpPath).build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[Help] 已获取帮助");

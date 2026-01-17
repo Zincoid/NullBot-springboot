@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -25,7 +25,7 @@ import java.util.Map;
 @Slf4j
 public class ImageDeleteCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -39,13 +39,13 @@ public class ImageDeleteCommand implements Command
                     String originName = entry.getKey();
                     // QQ获取文件名后缀全是jpg只能模式匹配...
                     String fileName = originName.substring(0, originName.lastIndexOf("."));
-                    String response = FileUtil.deleteFilesByPattern(fileStorageConfig.getImagePath() + "/collect", fileName + ".*");
+                    String response = FileUtil.deleteFilesByPattern(fileStorageProperties.getImagePath() + "/collect", fileName + ".*");
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️️" + response, false);
                     log.info("\t\t\t\t├─[ImageDelete] {}", response);
                 }
             } else if (!event.getCommandParameters().isEmpty()) {
                 String fileName = event.getCommandParameters().getFirst();
-                String response = FileUtil.deleteFileByName(fileStorageConfig.getImagePath() + "/collect", fileName);
+                String response = FileUtil.deleteFileByName(fileStorageProperties.getImagePath() + "/collect", fileName);
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️️" + response, false);
                 log.info("\t\t\t\t├─[ImageDelete] {}", response);
             } else

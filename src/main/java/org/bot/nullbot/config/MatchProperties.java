@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Component
-public class MatchConfig
+public class MatchProperties
 {
     // 等待匹配超时（秒）
     private final long waitingTimeoutSeconds = 120;

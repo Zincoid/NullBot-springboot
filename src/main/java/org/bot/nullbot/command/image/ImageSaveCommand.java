@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.exception.NullBotLogException;
@@ -28,7 +28,7 @@ import java.util.Map;
 @Slf4j
 public class ImageSaveCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
 
     @Override
@@ -52,7 +52,7 @@ public class ImageSaveCommand implements Command
                 String url = entry.getValue();
                 // QQ给的扩展名是错的 让下载方法判断文件类型
                 String fileName = originName.substring(0, originName.lastIndexOf("."));
-                String filePath = fileStorageConfig.getImagePath() + "/collect";
+                String filePath = fileStorageProperties.getImagePath() + "/collect";
                 try {
                     FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t\t├─ ");
                     if(!fileService.addFileRecordForBot(

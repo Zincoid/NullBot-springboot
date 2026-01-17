@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.exception.NullBotLogException;
@@ -30,7 +30,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ConvertCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
     private final ImageConverter imageConverter;
 
     @Override
@@ -73,7 +73,7 @@ public class ConvertCommand implements Command
                 throw new NullBotMsgException("[图像处理] ❌无引用图片或ID参数或At消息");
 
             // 开始处理
-            String tempFilePath = fileStorageConfig.getTempPath();
+            String tempFilePath = fileStorageProperties.getTempPath();
             String tempFontPath = tempFilePath + "/fonts";
             for (String url : urls) {
                 String tempFileName = UUID.randomUUID().toString();

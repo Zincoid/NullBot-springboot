@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -21,14 +21,14 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class RandomImageCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String imagePath;
             try {
-                imagePath = FileUtil.getRandomFile(fileStorageConfig.getImagePath() + "/collect");
+                imagePath = FileUtil.getRandomFile(fileStorageProperties.getImagePath() + "/collect");
             } catch (Exception e) {
                 throw new NullBotMsgException("[随机图片] ❌目录异常");
             }

@@ -21,7 +21,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.component.storage.SysMsgStorage;
-import org.bot.nullbot.config.DeepSeekConfig;
+import org.bot.nullbot.config.DeepSeekProperties;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.enums.Scope;
 import org.bot.nullbot.dispatcher.CommandRegistry;
@@ -41,7 +41,7 @@ public class DeepSeekClient
     @Value("${nullbot.bot-id}")
     private Long botId;
 
-    private final DeepSeekConfig deepSeekConfig;
+    private final DeepSeekProperties deepSeekProperties;
     private final ChatStorage chatStorage;
     private final SysMsgStorage sysMsgStorage;
     private final ApplicationEventPublisher eventPublisher;
@@ -84,13 +84,13 @@ public class DeepSeekClient
     private boolean embeddingLimit = false;  // 嵌入速率限制 只能 FALSE
 
     public DeepSeekClient(
-            DeepSeekConfig deepSeekConfig,
+            DeepSeekProperties deepSeekProperties,
             ChatStorage chatStorage,
             SysMsgStorage sysMsgStorage,
             ApplicationEventPublisher eventPublisher,
             @Lazy CommandRegistry commandRegistry
     ) {
-        this.deepSeekConfig = deepSeekConfig;
+        this.deepSeekProperties = deepSeekProperties;
         this.chatStorage = chatStorage;
         this.sysMsgStorage = sysMsgStorage;
         this.eventPublisher = eventPublisher;
@@ -173,9 +173,9 @@ public class DeepSeekClient
 
             // 限制历史记录长度
             if (option.getScope() == Scope.Monitor)
-                chatStorage.trimHistory(chatMessages, deepSeekConfig.getMaxMonitorLength());
+                chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
             else
-                chatStorage.trimHistory(chatMessages, deepSeekConfig.getMaxHistoryLength());
+                chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxHistoryLength());
 
             // 内嵌指令执行
             String response;
@@ -336,7 +336,7 @@ public class DeepSeekClient
         // 构建JSON
         ObjectNode requestBody = objectMapper.createObjectNode();
         requestBody.put("model", option.isThinking() ? "deepseek-reasoner" : "deepseek-chat");
-        requestBody.put("max_tokens", deepSeekConfig.getMaxTokens());
+        requestBody.put("max_tokens", deepSeekProperties.getMaxTokens());
         requestBody.set("messages", objectMapper.valueToTree(_messages));
 
         // 次要参数
@@ -347,8 +347,8 @@ public class DeepSeekClient
         // 发送请求
         String jsonBody = objectMapper.writeValueAsString(requestBody);
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(deepSeekConfig.getApiUrl()))
-                .header("Authorization", "Bearer " + deepSeekConfig.getApiKey())
+                .uri(URI.create(deepSeekProperties.getApiUrl()))
+                .header("Authorization", "Bearer " + deepSeekProperties.getApiKey())
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
@@ -423,8 +423,8 @@ public class DeepSeekClient
 
         // 创建HTTP请求
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(deepSeekConfig.getApiUrl()))
-                .header("Authorization", "Bearer " + deepSeekConfig.getApiKey())
+                .uri(URI.create(deepSeekProperties.getApiUrl()))
+                .header("Authorization", "Bearer " + deepSeekProperties.getApiKey())
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))

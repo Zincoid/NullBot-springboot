@@ -3,7 +3,7 @@ package org.bot.nullbot.entity.info;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bot.nullbot.config.DefaultConfig;
+import org.bot.nullbot.config.DefaultProperties;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.enums.Scope;
 
@@ -34,28 +34,28 @@ public class SettingInfo
     private double guessRatio;
     private int guessPadding;
 
-    public SettingInfo(Long groupId, DefaultConfig config) {
+    public SettingInfo(Long groupId, DefaultProperties props) {
         this.groupId = groupId;
 
-        this.scope = config.getScope();
-        this.antiInjection = config.isAntiInjection();
-        this.thinking = config.isThinking();
-        this.voice = config.isVoice();
-        this.embedding = config.isEmbedding();
-        this.embeddingAuth = config.isEmbeddingAuth();
-        this.custom = config.isCustom();
+        this.scope = props.getScope();
+        this.antiInjection = props.isAntiInjection();
+        this.thinking = props.isThinking();
+        this.voice = props.isVoice();
+        this.embedding = props.isEmbedding();
+        this.embeddingAuth = props.isEmbeddingAuth();
+        this.custom = props.isCustom();
 
-        this.autoReply = config.isAutoReply();
-        this.replyFrequency = config.getReplyFrequency();
+        this.autoReply = props.isAutoReply();
+        this.replyFrequency = props.getReplyFrequency();
 
-        this.imageCollect = config.isImageCollect();
-        this.messageCollect = config.isMessageCollect();
-        this.keywordDetect = config.isKeywordDetect();
-        this.pokeDetect = config.isPokeDetect();
-        this.recallDetect = config.isRecallDetect();
+        this.imageCollect = props.isImageCollect();
+        this.messageCollect = props.isMessageCollect();
+        this.keywordDetect = props.isKeywordDetect();
+        this.pokeDetect = props.isPokeDetect();
+        this.recallDetect = props.isRecallDetect();
 
-        this.guessRatio = config.getGuessRatio();
-        this.guessPadding = config.getGuessPadding();
+        this.guessRatio = props.getGuessRatio();
+        this.guessPadding = props.getGuessPadding();
     }
 
     public ChatOption getChatOption() {

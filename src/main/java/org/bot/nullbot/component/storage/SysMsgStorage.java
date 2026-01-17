@@ -1,7 +1,7 @@
 package org.bot.nullbot.component.storage;
 
 import lombok.Data;
-import org.bot.nullbot.config.DeepSeekConfig;
+import org.bot.nullbot.config.DeepSeekProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -11,12 +11,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class SysMsgStorage
 {
-    private final DeepSeekConfig deepSeekConfig;
+    private final DeepSeekProperties deepSeekProperties;
 
     private final Map<Long, String> defaultMessages = new ConcurrentHashMap<>();
     private final Map<Long, String> customMessages = new ConcurrentHashMap<>();
 
-    public String getDefaultMessage(Long groupId) { return defaultMessages.computeIfAbsent(groupId, k -> deepSeekConfig.getDefaultSystemMessage()); }
+    public String getDefaultMessage(Long groupId) { return defaultMessages.computeIfAbsent(groupId, k -> deepSeekProperties.getDefaultSystemMessage()); }
     public void setDefaultMessage(Long groupId, String message) { defaultMessages.put(groupId, message); }
 
     public String getCustomMessage(Long groupId) { return customMessages.computeIfAbsent(groupId, k -> "你是一个AI助手，名字叫Null。"); }

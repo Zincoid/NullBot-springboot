@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.TtsClient;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.entity.po.TtsTemplatePO;
@@ -32,7 +32,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TtsCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
     private final TtsTemplateService ttsTemplateService;
     private final TtsClient ttsClient;
 
@@ -70,7 +70,7 @@ public class TtsCommand implements Command
                             if(!isAudioFile(entry.getKey()))
                                 throw new NullBotMsgException("[语音合成] ❌引用非音频文件");
 
-                        String tempFilePath = fileStorageConfig.getTempPath();
+                        String tempFilePath = fileStorageProperties.getTempPath();
                         String templateName = params.get(2);
                         String templateText = params.get(3);
 

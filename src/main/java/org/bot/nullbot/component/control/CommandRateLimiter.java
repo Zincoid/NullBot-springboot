@@ -8,7 +8,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import io.github.bucket4j.*;
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.config.RateLimitConfig;
+import org.bot.nullbot.config.RateLimitProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.stereotype.Component;
 
@@ -16,15 +16,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CommandRateLimiter
 {
-    private final RateLimitConfig rateLimitConfig;
+    private final RateLimitProperties rateLimitProperties;
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
     private final Map<Long, Long> lastProcess = new ConcurrentHashMap<>();
 
     private Bucket resolveBucket(String key) {
         return buckets.computeIfAbsent(key, k -> Bucket.builder()
                 .addLimit(limit -> limit
-                        .capacity(rateLimitConfig.getCapacity())
-                        .refillGreedy(rateLimitConfig.getRefill(), Duration.ofMinutes(1)))
+                        .capacity(rateLimitProperties.getCapacity())
+                        .refillGreedy(rateLimitProperties.getRefill(), Duration.ofMinutes(1)))
                 .build());
     }
 
@@ -37,14 +37,14 @@ public class CommandRateLimiter
     }
 
     public boolean tryConsume(CommandEvent<?> commandEvent) {
-        if (!rateLimitConfig.getEnabled()){
+        if (!rateLimitProperties.getEnabled()){
             return true;
         }
         if(commandEvent.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             if(isSpam(groupMessageEvent.getGroupId(), 500)){
                 return false;
             }
-            String key = switch (rateLimitConfig.getScope()) {
+            String key = switch (rateLimitProperties.getScope()) {
                 case User -> "user:" + groupMessageEvent.getSender().getUserId();
                 case Group -> "group:" + groupMessageEvent.getGroupId();
                 case Command -> "cmd:" + commandEvent.getCommandType();
@@ -56,7 +56,7 @@ public class CommandRateLimiter
             if(isSpam(pokeNoticeEvent.getGroupId(), 500)){
                 return false;
             }
-            String key = switch (rateLimitConfig.getScope()) {
+            String key = switch (rateLimitProperties.getScope()) {
                 case User -> "user:" + pokeNoticeEvent.getUserId();
                 case Group -> "group:" + pokeNoticeEvent.getGroupId();
                 case Command -> "cmd:" + commandEvent.getCommandType();

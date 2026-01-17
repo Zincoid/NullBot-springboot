@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.GuessStorage;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.GuessInfo;
 import org.bot.nullbot.exception.NullBotLogException;
@@ -30,7 +30,7 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class GuessCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
     private final SettingService settingService;
     private final GuessStorage guessStorage;
     private final UserService userService;
@@ -49,7 +49,7 @@ public class GuessCommand implements Command
             GuessInfo guessInfo = guessStorage.getGuessInfo(groupId);
             if (guessInfo == null){
                 // 初始化猜迷
-                String acgPath = fileStorageConfig.getImagePath() + "/acg/" + param;
+                String acgPath = fileStorageProperties.getImagePath() + "/acg/" + param;
 
                 String characterPath;
                 try {

@@ -2,7 +2,7 @@ package org.bot.nullbot.component.ai;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.config.TtsConfig;
+import org.bot.nullbot.config.TtsProperties;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -30,14 +30,14 @@ public class TtsClient
 
     private final RestTemplate restTemplate;
 
-    public TtsClient(TtsConfig config) {
-        apiUrl = config.getApiUrl();
-        apiKey = config.getApiKey();
-        version = config.getVersion();
-        modelName = config.getModelName();
-        promptTextLang = config.getPromptTextLang();
-        textLang = config.getTextLang();
-        emotion = config.getEmotion();
+    public TtsClient(TtsProperties props) {
+        apiUrl = props.getApiUrl();
+        apiKey = props.getApiKey();
+        version = props.getVersion();
+        modelName = props.getModelName();
+        promptTextLang = props.getPromptTextLang();
+        textLang = props.getTextLang();
+        emotion = props.getEmotion();
         restTemplate = new RestTemplate();
     }
 

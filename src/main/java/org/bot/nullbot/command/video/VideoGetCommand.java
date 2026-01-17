@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.config.FileStorageConfig;
+import org.bot.nullbot.config.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -22,14 +22,14 @@ import java.util.List;
 @Slf4j
 public class VideoGetCommand implements Command
 {
-    private final FileStorageConfig fileStorageConfig;
+    private final FileStorageProperties fileStorageProperties;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
             if(params.isEmpty()) throw new NullBotMsgException("[获取视频] ❌无文件名参数");
-            String videoPath = FileUtil.getFilePathByName(fileStorageConfig.getVideoPath(), params.getFirst());
+            String videoPath = FileUtil.getFilePathByName(fileStorageProperties.getVideoPath(), params.getFirst());
             if (videoPath == null) throw new NullBotMsgException("[获取视频] ❌未找到该视频");
 
             String response = MsgUtils.builder()
