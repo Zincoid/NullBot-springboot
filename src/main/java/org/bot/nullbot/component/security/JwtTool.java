@@ -73,39 +73,6 @@ public class JwtTool
         return jwt;
     }
 
-    /**
-     * 解析 token 获取 用户ID
-     * @param token token
-     * @return 用户ID
-     */
-    public Long getLoginId(String token) {
-        JWT jwt = parseJwt(token);
-        Object userPayload = jwt.getPayload("id");
-        if (userPayload == null)
-            throw new UnauthorizedException("No Info");
-        try {
-            return Long.valueOf(userPayload.toString());
-        } catch (RuntimeException e) {
-            throw new UnauthorizedException("Invalid Info");
-        }
-    }
-
-    /**
-     * 解析 token 获取 用户Type
-     * @param token token
-     * @return 用户Type
-     */
-    public Integer getLoginType(String token) {
-        JWT jwt = parseJwt(token);
-        Object userPayload = jwt.getPayload("type");
-        if (userPayload == null)
-            throw new UnauthorizedException("No Info");
-        try {
-            return Integer.valueOf(userPayload.toString());
-        } catch (RuntimeException e) {
-            throw new UnauthorizedException("Invalid Info");
-        }
-    }
 
     /**
      * 解析 JWT 获取数据
@@ -125,5 +92,25 @@ public class JwtTool
         } catch (RuntimeException e) {
             throw new UnauthorizedException("Invalid Info: " + e.getMessage());
         }
+    }
+
+    /**
+     * 解析 token 获取 用户ID
+     * @param token token
+     * @return 用户ID
+     */
+    public Long getLoginId(String token) {
+        JWT jwt = parseJwt(token);
+        return getAs(jwt, "id", Long.class);
+    }
+
+    /**
+     * 解析 token 获取 用户Type
+     * @param token token
+     * @return 用户Type
+     */
+    public Integer getLoginType(String token) {
+        JWT jwt = parseJwt(token);
+        return getAs(jwt, "type", Integer.class);
     }
 }
