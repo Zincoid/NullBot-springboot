@@ -27,7 +27,7 @@ public class JwtTool
      * @param type 用户类型
      * @return Token
      */
-    public String createToken(Long id, Integer type, Duration ttl) {
+    public String createJwt(Long id, Integer type, Duration ttl) {
         return JWT.create()
                 .setPayload("id", id)
                 .setPayload("type", type)
@@ -41,7 +41,7 @@ public class JwtTool
      * @param token token
      * @return JWT 对象
      */
-    public JWT parseToken(String token) {
+    public JWT parseJwt(String token) {
         // 校验Token非空
         if (token == null)
             throw new UnauthorizedException("No Token");
@@ -75,7 +75,7 @@ public class JwtTool
      * @return 用户ID
      */
     public Long getLoginId(String token) {
-        JWT jwt = parseToken(token);
+        JWT jwt = parseJwt(token);
 
         // 数据获取
         Object userPayload = jwt.getPayload("id");
@@ -96,7 +96,7 @@ public class JwtTool
      * @return 用户Type
      */
     public Integer getLoginType(String token) {
-        JWT jwt = parseToken(token);
+        JWT jwt = parseJwt(token);
 
         // 数据获取
         Object userPayload = jwt.getPayload("type");

@@ -2,6 +2,8 @@ package org.bot.nullbot.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.component.security.JwtTool;
+import org.bot.nullbot.config.prop.JwtProperties;
 import org.bot.nullbot.entity.po.AdminPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.dto.LoginDTO;
@@ -20,17 +22,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LoginController
 {
+    private final JwtTool jwtTool;
+    private final JwtProperties jwtProperties;
+
     private final AdminService adminService;
 
     @PostMapping("/guest")
     public WebResult guest(){
         log.info("[管理系统] 访客登录");
-
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("type", 0);
-
-        String jwt = JwtUtil.createJwt(claims);
-        return WebResult.success().addMsg("访客登录成功").addData("token",jwt);
+        String jwt = jwtTool.createJwt(0L, 0, jwtProperties.getTokenTTL());
+        return WebResult.success().addMsg("访客登录成功").addData("token", jwt);
     }
 
     @PostMapping("/login")
