@@ -42,40 +42,40 @@ public class JwtTool
      * @return 解析刷新token得到的用户信息
      */
     public Long parseToken(String token) {
-        // 校验token是否为空
+        // 校验Token是否为空
         if (token == null)
-            throw new UnauthorizedException("未登录");
-        // 校验并解析jwt
+            throw new UnauthorizedException("No Token");
+
         JWT jwt;
+
+        // 校验并解析jwt
         try {
             jwt = JWT.of(token).setSigner(jwtSigner);
         } catch (Exception e) {
-            throw new UnauthorizedException("无效的token", e);
+            throw new UnauthorizedException("Invalid Token", e);
         }
+
         // 校验jwt是否有效
-        if (!jwt.verify()) {
-            // 验证失败
-            throw new UnauthorizedException("无效的token");
-        }
+        if (!jwt.verify())
+            throw new UnauthorizedException("Invalid Token");
         // 校验是否过期
+
         try {
             JWTValidator.of(jwt).validateDate();
         } catch (ValidateException e) {
-            throw new UnauthorizedException("token已经过期");
+            throw new UnauthorizedException("Expired Token");
         }
+
         // 数据格式校验
         Object userPayload = jwt.getPayload("user");
-        if (userPayload == null) {
-            // 数据为空
-            throw new UnauthorizedException("无效的token");
-        }
+        if (userPayload == null)
+            throw new UnauthorizedException("Invalid Token");
 
         // 数据解析
         try {
             return Long.valueOf(userPayload.toString());
         } catch (RuntimeException e) {
-            // 数据格式有误
-            throw new UnauthorizedException("无效的token");
+            throw new UnauthorizedException("Invalid Token");
         }
     }
 }
