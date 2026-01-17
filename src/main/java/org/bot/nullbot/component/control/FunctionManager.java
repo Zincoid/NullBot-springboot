@@ -24,11 +24,11 @@ public class FunctionManager {
 
     @PostConstruct
     public void init() {
-        // loadConfigViaDefaultConfig();
-        loadConfigViaAnnotation();
+        // loadPropsViaDefault();
+        loadPropsViaAnnotation();
     }
 
-    private void loadConfigViaDefaultConfig() {
+    private void loadPropsViaDefault() {
         try {
             org.springframework.beans.BeanWrapper wrapper =
                     new org.springframework.beans.BeanWrapperImpl(defaultProperties);
@@ -46,7 +46,7 @@ public class FunctionManager {
         }
     }
 
-    private void loadConfigViaAnnotation() {
+    private void loadPropsViaAnnotation() {
         String[] beanNames = applicationContext.getBeanDefinitionNames();
         for (String beanName : beanNames) {
             if (beanName.equals("functionManager")) {
