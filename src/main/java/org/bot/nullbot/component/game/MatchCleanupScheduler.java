@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.game.manager.MatchManager;
 import org.bot.nullbot.component.game.manager.MatchPoolManager;
 import org.bot.nullbot.component.game.manager.PlayerManager;
-import org.bot.nullbot.config.MatchProperties;
+import org.bot.nullbot.config.prop.MatchProperties;
 import org.bot.nullbot.entity.game.basic.Match;
 import org.bot.nullbot.entity.game.basic.Player;
 import org.springframework.beans.factory.annotation.Value;

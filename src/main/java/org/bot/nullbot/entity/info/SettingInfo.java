@@ -3,7 +3,7 @@ package org.bot.nullbot.entity.info;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bot.nullbot.config.DefaultProperties;
+import org.bot.nullbot.config.prop.DefaultProperties;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.enums.Scope;
 

@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.GuessStorage;
-import org.bot.nullbot.config.FileStorageProperties;
+import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.GuessInfo;
 import org.bot.nullbot.exception.NullBotLogException;

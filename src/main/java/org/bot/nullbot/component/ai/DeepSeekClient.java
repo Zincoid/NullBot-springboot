@@ -21,7 +21,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.component.storage.SysMsgStorage;
-import org.bot.nullbot.config.DeepSeekProperties;
+import org.bot.nullbot.config.prop.DeepSeekProperties;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.enums.Scope;
 import org.bot.nullbot.dispatcher.CommandRegistry;

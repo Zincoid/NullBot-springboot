@@ -1,7 +1,7 @@
 package org.bot.nullbot.component.control;
 
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.config.DefaultProperties;
+import org.bot.nullbot.config.prop.DefaultProperties;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.springframework.stereotype.Component;

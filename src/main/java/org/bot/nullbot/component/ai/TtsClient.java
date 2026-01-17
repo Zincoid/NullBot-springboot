@@ -2,7 +2,7 @@ package org.bot.nullbot.component.ai;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.config.TtsProperties;
+import org.bot.nullbot.config.prop.TtsProperties;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;

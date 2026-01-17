@@ -1,4 +1,4 @@
-package org.bot.nullbot.config;
+package org.bot.nullbot.config.prop;
 
 import lombok.Getter;
 import org.springframework.stereotype.Component;

@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.config.FileStorageProperties;
+import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.page.FilePage;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.mapper.AdminMapper;

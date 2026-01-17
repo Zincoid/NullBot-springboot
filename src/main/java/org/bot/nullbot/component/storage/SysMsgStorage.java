@@ -1,7 +1,7 @@
 package org.bot.nullbot.component.storage;
 
 import lombok.Data;
-import org.bot.nullbot.config.DeepSeekProperties;
+import org.bot.nullbot.config.prop.DeepSeekProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

@@ -2,7 +2,7 @@ package org.bot.nullbot.component.control;
 
 import jakarta.annotation.PostConstruct;
 import org.bot.nullbot.annotation.FunctionControl;
-import org.bot.nullbot.config.DefaultProperties;
+import org.bot.nullbot.config.prop.DefaultProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;

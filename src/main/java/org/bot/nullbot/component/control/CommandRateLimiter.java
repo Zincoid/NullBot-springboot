@@ -8,7 +8,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import io.github.bucket4j.*;
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.config.RateLimitProperties;
+import org.bot.nullbot.config.prop.RateLimitProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.stereotype.Component;
 
