@@ -15,7 +15,7 @@ public class JwtUtil {
     /**
      * 生成JWT令牌
      * @param claims JWT第二部分负载 payload 中存储的内容
-     * @return
+     * @return JWT令牌
      */
     public static String generateJwt(Map<String, Object> claims){
         String jwt = Jwts.builder()
