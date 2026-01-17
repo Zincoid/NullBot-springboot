@@ -74,7 +74,7 @@ public class LoginInterceptor implements HandlerInterceptor
         String jwt = req.getHeader("token");
         if(!StringUtils.hasLength(jwt)){
             log.info("[管理系统-JWT验证] 令牌缺失 - {}", url);
-            WebResult error = WebResult.fail().addMsg("Invalid Token");
+            WebResult error = WebResult.fail().addMsg("No Token");
             String info = JSONObject.toJSONString(error);
             res.getWriter().write(info);
             return false;

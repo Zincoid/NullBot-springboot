@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class JwtUtil {
 
-    private static String signKey = "zincoid";
-    private static Long expire = 43200000L;
+    private static final String signKey = "zincoid";
+    private static final Long expire = 43200000L;
 
     /**
      * 生成JWT令牌
