@@ -20,9 +20,8 @@ public class SecurityCodeScheduler
     private static final long REFRESH_INTERVAL = 600_000;  // 10 Min
 
     public SecurityCodeScheduler() {
-        this.activationCode = UUID.randomUUID().toString();
-        log.info("[管理系统-安全码] 激活码已初始化 - {}", activationCode);
-        this.scheduler = Executors.newSingleThreadScheduledExecutor();
+        activationCode = UUID.randomUUID().toString();
+        scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduleNextRefresh();  // 初始调度
     }
 
