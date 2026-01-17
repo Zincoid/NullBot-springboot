@@ -85,8 +85,7 @@ public class LoginInterceptor implements HandlerInterceptor
         } catch (Exception e) {
             log.info("[管理系统-JWT验证] 解析失败 - {}", url);
             WebResult error = WebResult.fail().addMsg(e.getMessage());
-            String info = JSONObject.toJSONString(error);
-            res.getWriter().write(info);
+            res.getWriter().write(JSONObject.toJSONString(error));
             return false;
         }
 
@@ -97,8 +96,7 @@ public class LoginInterceptor implements HandlerInterceptor
                 if (url.contains(forbiddenUrl)) {
                     log.info("[管理系统-JWT验证] 访客禁止访问 - {}", url);
                     WebResult error = WebResult.fail().addMsg("No Access");
-                    String info = JSONObject.toJSONString(error);
-                    res.getWriter().write(info);
+                    res.getWriter().write(JSONObject.toJSONString(error));
                     return false;
                 }
             }
