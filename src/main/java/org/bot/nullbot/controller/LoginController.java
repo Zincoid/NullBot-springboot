@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.security.JwtTool;
 import org.bot.nullbot.config.prop.JwtProperties;
+import org.bot.nullbot.entity.dto.RegistDTO;
 import org.bot.nullbot.entity.po.AdminPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.dto.LoginDTO;
@@ -21,6 +22,19 @@ public class LoginController
     private final JwtTool jwtTool;
     private final JwtProperties jwtProperties;
     private final AdminService adminService;
+
+    @PostMapping("/regist")
+    public WebResult regist(@RequestBody RegistDTO registDTO){
+        log.info("[管理系统] 管理员注册 - {}", registDTO);
+        try {
+            if (adminService.regist(registDTO))
+                return WebResult.success().addMsg("管理员注册成功");
+            else
+                return WebResult.fail().addMsg("管理员注册失败");
+        } catch (Exception e) {
+            return WebResult.fail().addMsg("管理员注册失败: " + e.getMessage());
+        }
+    }
 
     @PostMapping("/guest")
     public WebResult guest(){

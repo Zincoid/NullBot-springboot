@@ -55,7 +55,7 @@ public class MatchCleanupScheduler
     }
 
     /**
-     * 每 10 秒清理一次超时
+     * 定时清理玩家和对局 (每 10 Sec 清理一次)
      */
     @Scheduled(fixedDelay = 10_000)
     public void cleanup() {
@@ -65,7 +65,7 @@ public class MatchCleanupScheduler
     }
 
     /**
-     * 清理等待匹配超时的玩家
+     * 等待匹配超时清理
      */
     private void cleanWaitingPlayers() {
         Bot bot = botContainer.robots.get(botId);
@@ -83,7 +83,7 @@ public class MatchCleanupScheduler
     }
 
     /**
-     * 清理对局超时（无操作）
+     * 对局无操作超时清理
      */
     private void cleanTimeoutMatches() {
         Bot bot = botContainer.robots.get(botId);

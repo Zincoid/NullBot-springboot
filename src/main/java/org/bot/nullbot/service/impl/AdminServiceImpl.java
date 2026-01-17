@@ -1,19 +1,55 @@
 package org.bot.nullbot.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.component.security.SecurityCodeScheduler;
 import org.bot.nullbot.entity.dto.LoginDTO;
+import org.bot.nullbot.entity.dto.RegistDTO;
 import org.bot.nullbot.entity.po.AdminPO;
+import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.mapper.AdminMapper;
+import org.bot.nullbot.mapper.UserMapper;
 import org.bot.nullbot.service.AdminService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService
 {
+    private final UserMapper userMapper;
     private final AdminMapper adminMapper;
 
+    private final SecurityCodeScheduler securityCodeScheduler;
+    private final PasswordEncoder passwordEncoder;
+
     // =================== WEB功能相关 ===================
+
+    @Override
+    public boolean regist(RegistDTO registDTO) {
+        if (!Objects.equals(registDTO.getActivationCode(), securityCodeScheduler.getCurrentActivationCode()))
+            throw new IllegalArgumentException("激活码错误");
+        AdminPO admin = adminMapper.selectById(registDTO.getId());
+        if (admin != null)
+            throw new IllegalArgumentException("用户已注册");
+        UserPO user = userMapper.selectById(registDTO.getId());
+        if (user == null)
+            throw new IllegalArgumentException("用户不可用 (未使用过 NullBot)");
+
+        AdminPO newAdmin = new AdminPO();
+        newAdmin.setId(user.getId());
+        newAdmin.setUsername(user.getName());
+        newAdmin.setEmail(registDTO.getEmail());
+        newAdmin.setPassword(passwordEncoder.encode(registDTO.getPassword()));
+        try {
+            boolean inserted = adminMapper.insert(newAdmin) == 1;
+            if (inserted) securityCodeScheduler.useAndRefreshActivationCode();
+            return inserted;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     @Override
     public boolean login(LoginDTO loginDTO) {
