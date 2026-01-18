@@ -142,12 +142,12 @@ class QqBotApplicationTests {
         // webScreenCapturer.captureFull("https://prts.wiki/w/%E7%BC%87%E7%BC%87");
         // webScreenCapturer.captureElement(
         //         "https://prts.wiki/w/%E7%BC%87%E7%BC%87",
-        //         ".mw-content-ltr.mw-parser-output"
+        //         "#bodyContent"
         // );
         webScreenCapturer.captureElements(
                 "https://prts.wiki/w/%E7%BC%87%E7%BC%87",
-                List.of(".mw-content-ltr.mw-parser-output"),
-                List.of(".backToTop", ".mw-headline", ".navbox navigation-not-searchable", ".catlinks")
+                List.of("#bodyContent"),
+                List.of(".backToTop", ".mw-headline", ".navbox.navigation-not-searchable", ".catlinks")
         );
     }
 }

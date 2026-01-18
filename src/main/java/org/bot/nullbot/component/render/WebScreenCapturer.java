@@ -152,9 +152,10 @@ public class WebScreenCapturer
 
     public WebDriver setupDriver() {
         // 自动下载 ChromeDriver
-        // WebDriverManager.chromedriver().setup();
+        WebDriverManager.chromedriver().setup();
         // 手动设置 ChromeDriver
-        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+        // System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+        // System.setProperty("webdriver.chrome.driver", "/root/Nullbot/file/driver/chromedriver");
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
