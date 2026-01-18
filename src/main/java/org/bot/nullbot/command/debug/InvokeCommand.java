@@ -20,8 +20,8 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class InvokeCommand implements Command {
-
+public class InvokeCommand implements Command
+{
     private final ApplicationContext applicationContext;
 
     @Override
