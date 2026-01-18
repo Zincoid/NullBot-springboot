@@ -29,7 +29,7 @@ public class InvokeCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
-            if (params.size() < 2) throw new NullBotMsgException("[Spring] ❌未指定Bean和方法");
+            if (params.size() < 2) throw new NullBotMsgException("[Spring] ❌未指定Bean和Method");
 
             String beanName = params.get(0);
             String methodName = params.get(1);
