@@ -58,11 +58,11 @@ public class InvokeCommand implements Command
         for (Method method : methods) {
             if (!method.getName().equals(methodName)) continue;
             if (method.getParameterCount() != args.length) continue;
-            // 处理无参数方法
-            if (args.length == 0) return method.invoke(bean);
-            // 处理有参数方法
-            Class<?>[] paramTypes = method.getParameterTypes();
             try {
+                // 处理无参数方法
+                if (args.length == 0) return method.invoke(bean);
+                // 处理有参数方法
+                Class<?>[] paramTypes = method.getParameterTypes();
                 for (int i = 0; i < args.length; i++)
                     args[i] = convertFromString((String) args[i], paramTypes[i]);
                 return method.invoke(bean, args);
