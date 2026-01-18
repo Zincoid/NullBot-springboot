@@ -26,6 +26,7 @@ public class LoginInterceptor implements HandlerInterceptor
         GUEST_FORBIDDEN_URLS = Arrays.asList(
             "/nullbot/delete",
             "/nullbot/update",
+            "/nullbot/changePwd",
 
             "/nullbot/file/init",
             "/nullbot/file/upload",

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.security.JwtTool;
 import org.bot.nullbot.config.prop.JwtProperties;
+import org.bot.nullbot.entity.dto.PwdChangeDTO;
 import org.bot.nullbot.entity.dto.RegistDTO;
 import org.bot.nullbot.entity.po.AdminPO;
 import org.bot.nullbot.entity.result.WebResult;
@@ -69,6 +70,19 @@ public class LoginController
         if(adminService.update(admin))
             return WebResult.success().addMsg("管理员更新成功");
         return WebResult.fail().addMsg("管理员更新失败");
+    }
+
+    @PostMapping("/changePwd")
+    public WebResult changePwd(@RequestBody PwdChangeDTO pwdChangeDTO) {
+        try {
+            Long id = jwtTool.getLoginId(WebUtil.getToken());
+            log.info("[管理系统] 管理员密码更改 - ID: {}", id);
+            if(adminService.changePwd(id, pwdChangeDTO))
+                return WebResult.success().addMsg("管理员密码更改成功");
+            return WebResult.fail().addMsg("管理员密码更改失败");
+        } catch (Exception e) {
+            return WebResult.fail().addMsg("管理员密码更改失败: " + e.getMessage());
+        }
     }
 
     @GetMapping("/info")

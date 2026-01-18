@@ -3,6 +3,7 @@ package org.bot.nullbot.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.security.SecurityCodeScheduler;
 import org.bot.nullbot.entity.dto.LoginDTO;
+import org.bot.nullbot.entity.dto.PwdChangeDTO;
 import org.bot.nullbot.entity.dto.RegistDTO;
 import org.bot.nullbot.entity.po.AdminPO;
 import org.bot.nullbot.entity.po.UserPO;
@@ -66,6 +67,17 @@ public class AdminServiceImpl implements AdminService
 
     @Override
     public boolean update(AdminPO admin) { return adminMapper.updateById(admin) == 1; }
+
+    @Override
+    public boolean changePwd(Long id, PwdChangeDTO pwdChangeDTO) {
+        if (!pwdChangeDTO.verify())
+            throw new IllegalArgumentException("修改密码表单验证失败");
+        AdminPO admin = adminMapper.selectById(id);
+        if (admin == null)
+            throw new IllegalArgumentException("用户不存在");
+        admin.setPassword(passwordEncoder.encode(pwdChangeDTO.getNewPassword()));
+        return adminMapper.updateById(admin) == 1;
+    }
 
     @Override
     public AdminPO info(Long id) {
