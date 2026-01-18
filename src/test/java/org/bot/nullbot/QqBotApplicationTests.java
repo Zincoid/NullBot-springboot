@@ -139,7 +139,6 @@ class QqBotApplicationTests {
 
     @Test
     void WebCaptureTest() {
-        // webScreenCapturer.capturePage("https://prts.wiki/w/%E9%A6%96%E9%A1%B5",
-        //         "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
+        webScreenCapturer.capturePageWithScroll("https://prts.wiki/w/%E9%A6%96%E9%A1%B5");
     }
 }
