@@ -12,6 +12,7 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,10 @@ public class InvokeCommand implements Command
                 for (int i = 0; i < args.length; i++)
                     args[i] = convertFromString((String) args[i], paramTypes[i]);
                 return method.invoke(bean, args);
-            } catch (RuntimeException e) {
+            } catch (InvocationTargetException e) {
+                Throwable targetException = e.getTargetException();
+                errors.add(targetException.getMessage());
+            } catch (Exception e) {
                 errors.add(e.getMessage());
             }
         }
@@ -74,7 +78,7 @@ public class InvokeCommand implements Command
             throw new NoSuchMethodException(
                     String.format("Method '%s' not found with %d args", methodName, args.length));
         else
-            throw new NoSuchMethodException(
+            throw new RuntimeException(
                     String.format("All %d method(s) failed:\n%s", errors.size(), String.join(";\n", errors)));
     }
 
