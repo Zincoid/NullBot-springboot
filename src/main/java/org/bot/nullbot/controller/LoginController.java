@@ -29,8 +29,7 @@ public class LoginController
         try {
             if (adminService.regist(registDTO))
                 return WebResult.success().addMsg("管理员注册成功");
-            else
-                return WebResult.fail().addMsg("管理员注册失败");
+            return WebResult.fail().addMsg("管理员注册失败");
         } catch (Exception e) {
             return WebResult.fail().addMsg("管理员注册失败: " + e.getMessage());
         }
@@ -39,7 +38,7 @@ public class LoginController
     @PostMapping("/guest")
     public WebResult guest(){
         log.info("[管理系统] 访客登录");
-        String jwt = jwtTool.createJwt(0L, 0, jwtProperties.getTokenTTL());
+        String jwt = jwtTool.createJwt(null, 0, jwtProperties.getTokenTTL());
         return WebResult.success().addMsg("访客登录成功").addData("token", jwt);
     }
 
@@ -51,6 +50,25 @@ public class LoginController
             return WebResult.success().addMsg("管理员登录成功").addData("token", jwt);
         }
         return WebResult.fail().addMsg("管理员登录失败");
+    }
+
+    @DeleteMapping("/delete")
+    public WebResult delete(){
+        Long id = jwtTool.getLoginId(WebUtil.getToken());
+        log.info("[管理系统] 管理员注销 - ID: {}", id);
+        if(adminService.delete(id))
+            return WebResult.success().addMsg("管理员注销成功");
+        return WebResult.fail().addMsg("管理员注销失败");
+    }
+
+    @PostMapping("/update")
+    public WebResult update(@RequestBody AdminPO admin){
+        Long id = jwtTool.getLoginId(WebUtil.getToken());
+        admin.setId(id);  // 从 Token 获取 ID
+        log.info("[管理系统] 管理员更新 - ID: {}", id);
+        if(adminService.update(admin))
+            return WebResult.success().addMsg("管理员更新成功");
+        return WebResult.fail().addMsg("管理员更新失败");
     }
 
     @GetMapping("/info")

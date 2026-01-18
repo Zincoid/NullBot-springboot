@@ -10,5 +10,9 @@ public interface AdminService
 
     boolean login(LoginDTO loginDTO);
 
+    boolean delete(Long id);
+
+    boolean update(AdminPO admin);
+
     AdminPO info(Long id);
 }
