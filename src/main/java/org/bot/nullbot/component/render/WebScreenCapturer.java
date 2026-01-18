@@ -80,8 +80,8 @@ public class WebScreenCapturer
             BufferedImage eleImage = screenshot.getImage();
 
             // 测试
-            // File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
-            // ImageIO.write(eleImage, "png", outputFile);
+            File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
+            ImageIO.write(eleImage, "png", outputFile);
 
             // 保存
             // File outputFile = new File(outputPath);
@@ -96,48 +96,48 @@ public class WebScreenCapturer
         }
     }
 
-    // 截取多个元素并可忽略
-    public String captureElements(String url, List<String> targetCssSelectors, List<String> ignoredCssSelectors,
-                                  int width, int height)
-    {
-        WebDriver driver = setupDriver();
-        try {
-            driver.get(url);
-            // 设置窗口尺寸
-            driver.manage().window().setSize(new Dimension(width, height));
-            // 等待页面加载
-            Thread.sleep(2000);
-            // 定位元素位置
-            List<WebElement> targets = targetCssSelectors.stream()
-                    .map(selector -> driver.findElement(By.cssSelector(selector)))
-                    .toList();
-            Set<By> ignores = ignoredCssSelectors.stream()
-                    .map(By::cssSelector)
-                    .collect(Collectors.toSet());
-            // 进行元素截图
-            AShot ashot = new AShot();
-            ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
-            ashot.coordsProvider(new WebDriverCoordsProvider());
-            ashot.ignoredElements(ignores);
-            Screenshot screenshot = ashot.takeScreenshot(driver, targets);
-            BufferedImage eleImage = screenshot.getImage();
-
-            // 测试
-            // File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
-            // ImageIO.write(eleImage, "png", outputFile);
-
-            // 保存
-            // File outputFile = new File(outputPath);
-            // ImageIO.write(eleImage, "png", outputFile);
-
-            // BASE64 转换
-            return imageToBase64(eleImage);
-        } catch (Exception e) {
-            throw new RuntimeException("网页截图出错: " + e.getMessage());
-        } finally {
-            driver.quit();
-        }
-    }
+    // // 截取多个元素并可忽略
+    // public String captureElements(String url, List<String> targetCssSelectors, List<String> ignoredCssSelectors,
+    //                               int width, int height)
+    // {
+    //     WebDriver driver = setupDriver();
+    //     try {
+    //         driver.get(url);
+    //         // 设置窗口尺寸
+    //         driver.manage().window().setSize(new Dimension(width, height));
+    //         // 等待页面加载
+    //         Thread.sleep(2000);
+    //         // 定位元素位置
+    //         List<WebElement> targets = targetCssSelectors.stream()
+    //                 .map(selector -> driver.findElement(By.cssSelector(selector)))
+    //                 .toList();
+    //         Set<By> ignores = ignoredCssSelectors.stream()
+    //                 .map(By::cssSelector)
+    //                 .collect(Collectors.toSet());
+    //         // 进行元素截图
+    //         AShot ashot = new AShot();
+    //         ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
+    //         ashot.coordsProvider(new WebDriverCoordsProvider());
+    //         ashot.ignoredElements(ignores);
+    //         Screenshot screenshot = ashot.takeScreenshot(driver, targets);
+    //         BufferedImage eleImage = screenshot.getImage();
+    //
+    //         // 测试
+    //         // File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
+    //         // ImageIO.write(eleImage, "png", outputFile);
+    //
+    //         // 保存
+    //         // File outputFile = new File(outputPath);
+    //         // ImageIO.write(eleImage, "png", outputFile);
+    //
+    //         // BASE64 转换
+    //         return imageToBase64(eleImage);
+    //     } catch (Exception e) {
+    //         throw new RuntimeException("网页截图出错: " + e.getMessage());
+    //     } finally {
+    //         driver.quit();
+    //     }
+    // }
 
     // =================== 工具方法 ===================
 
@@ -154,9 +154,9 @@ public class WebScreenCapturer
 
     public WebDriver setupDriver() {
         // 自动下载 ChromeDriver
-        // WebDriverManager.chromedriver().setup();
+        WebDriverManager.chromedriver().setup();
         // 手动设置 ChromeDriver
-        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+        // System.setProperty("webdriver.chrome.driver", chromeDriverPath);
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
