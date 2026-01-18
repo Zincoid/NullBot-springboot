@@ -229,7 +229,7 @@ public class TtsClient
         byte[] audioBytes = restTemplate.getForObject(audioUrl, byte[].class);
 
         if (audioBytes == null || audioBytes.length == 0)
-            throw new RuntimeException("下载音频文件失败");
+            throw new RuntimeException("下载音频文件失败 URL: " + audioUrl);
 
         // 转换为base64编码
         return Base64.getEncoder().encodeToString(audioBytes);
