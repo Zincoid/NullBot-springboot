@@ -32,7 +32,7 @@ public class AdminServiceImpl implements AdminService
     public boolean regist(RegistDTO registDTO) {
         if (!StringUtils.hasLength(registDTO.getPassword()))
             throw new IllegalArgumentException("未输入密码");
-        if (securityCodeScheduler.validateCode("regist", registDTO.getActivationCode()))
+        if (!securityCodeScheduler.validateCode("regist", registDTO.getActivationCode()))
             throw new IllegalArgumentException("激活码错误");
 
         UserPO user = userMapper.selectById(registDTO.getId());
