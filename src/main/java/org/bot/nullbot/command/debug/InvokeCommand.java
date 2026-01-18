@@ -68,9 +68,9 @@ public class InvokeCommand implements Command
                 return method.invoke(bean, args);
             } catch (InvocationTargetException e) {
                 Throwable targetException = e.getTargetException();
-                errors.add(targetException.getMessage());
+                errors.add("- " + targetException.getMessage());
             } catch (Exception e) {
-                errors.add(e.getMessage());
+                errors.add("- " + e.getMessage());
             }
         }
 
