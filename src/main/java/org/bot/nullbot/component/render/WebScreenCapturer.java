@@ -123,7 +123,7 @@ public class WebScreenCapturer
             int currentViewportHeight = Math.min(vHeight, remainingHeight);
             // 绘制到总图上
             if (currentViewportHeight < vHeight) {
-                // 最后一屏，从截图顶部截取相应高度
+                // 最后一屏 从截图顶部截取相应高度
                 BufferedImage croppedScreenshot = screenshot.getSubimage(0, 0, vWidth, currentViewportHeight);
                 g2d.drawImage(croppedScreenshot, 0, currentPosition, null);
             } else {
