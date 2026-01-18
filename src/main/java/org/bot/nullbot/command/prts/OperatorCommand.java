@@ -31,7 +31,7 @@ public class OperatorCommand implements Command
             String base64 = webScreenCapturer.captureElement(
                     "https://prts.wiki/w/" + params.getFirst(),
                     "#bodyContent",
-                    1000, 1000
+                    1000, 5000
             );
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);

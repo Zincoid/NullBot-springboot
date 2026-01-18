@@ -27,12 +27,12 @@ public class WebScreenCapturer
     private String chromeDriverPath;
 
     // 截取完整页面
-    public String captureFull(String url) {
+    public String captureFull(String url, int width, int height) {
         WebDriver driver = setupDriver();
         try {
             driver.get(url);
             // 设置窗口尺寸
-            driver.manage().window().setSize(new Dimension(1920, 1080));
+            driver.manage().window().setSize(new Dimension(width, height));
             // 等待页面加载
             Thread.sleep(2000);
             // 进行全页截图
@@ -97,12 +97,14 @@ public class WebScreenCapturer
     }
 
     // 截取多个元素并可忽略
-    public String captureElements(String url, List<String> targetCssSelectors, List<String> ignoredCssSelectors) {
+    public String captureElements(String url, List<String> targetCssSelectors, List<String> ignoredCssSelectors,
+                                  int width, int height)
+    {
         WebDriver driver = setupDriver();
         try {
             driver.get(url);
             // 设置窗口尺寸
-            driver.manage().window().setSize(new Dimension(1920, 1080));
+            driver.manage().window().setSize(new Dimension(width, height));
             // 等待页面加载
             Thread.sleep(2000);
             // 定位元素位置
