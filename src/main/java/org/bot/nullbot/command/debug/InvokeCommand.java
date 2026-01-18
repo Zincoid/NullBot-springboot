@@ -29,7 +29,7 @@ public class InvokeCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
-            if (params.size() < 2) throw new NullBotMsgException("[反射] ❌未指定Bean和方法");
+            if (params.size() < 2) throw new NullBotMsgException("[Spring] ❌未指定Bean和方法");
 
             String beanName = params.get(0);
             String methodName = params.get(1);
@@ -39,13 +39,13 @@ public class InvokeCommand implements Command
             try {
                 Object result = invokeSpringMethod(applicationContext, beanName, methodName, args);
                 String res = result != null ? result.toString() : "null";
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[反射] ✅已调用\n" + res, false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Spring] ✅方法已调用\n" + res, false);
                 log.info("\t\t\t\t├─[Invoke] 调用结果 -> {}", res);
             } catch (Exception e) {
-                throw new NullBotMsgException("[反射] ❌调用失败\n" + e.getMessage());
+                throw new NullBotMsgException("[Spring] ⚠️方法调用失败\n" + e.getMessage());
             }
         } else
-            throw new NullBotLogException("[反射] ❌未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[Spring] ❌未设计 - 非群消息事件响应方式");
     }
 
     public Object invokeSpringMethod(ApplicationContext context, String beanName,
@@ -123,7 +123,7 @@ public class InvokeCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ Invoke 命令
-                功能: 反射调用Bean方法
+                功能: 反射调用Spring方法
                 限权: %d 级
                 格式: Invoke [Bean名] [方法名] [参数...]
                 别名: 调用""", getAccess()
