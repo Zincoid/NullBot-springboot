@@ -1,4 +1,4 @@
-package org.bot.nullbot.component.convert;
+package org.bot.nullbot.component.render;
 
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.resource.ResourceLoader;

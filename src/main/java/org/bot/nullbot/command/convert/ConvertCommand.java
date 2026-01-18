@@ -19,7 +19,7 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.MessageParseUtil;
-import org.bot.nullbot.component.convert.ImageConverter;
+import org.bot.nullbot.component.render.ImageConverter;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

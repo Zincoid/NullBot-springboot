@@ -29,3 +29,6 @@ sudo xvfb-run -a /root/Napcat/opt/QQ/qq --no-sandbox
 ### NullBot 基础运行命令
 sudo screen -S nullbot  
 java -jar /root/Nullbot/jar/NullBot-0.0.1-SNAPSHOT.jar
+
+# Chrome
+Google Chrome 144.0.7559.59

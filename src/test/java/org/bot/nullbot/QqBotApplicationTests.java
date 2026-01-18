@@ -3,6 +3,7 @@ package org.bot.nullbot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import jakarta.annotation.Resource;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
+import org.bot.nullbot.component.render.WebScreenCapturer;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.game.Matcher;
@@ -30,6 +31,8 @@ class QqBotApplicationTests {
     Matcher matcher;
     @Resource
     TicTacToeGameLogic ticTacToeGameLogic;
+    @Resource
+    WebScreenCapturer webScreenCapturer;
 
     // @Test
     // void parseTest() throws IOException {
@@ -132,5 +135,11 @@ class QqBotApplicationTests {
         System.out.println(svgContent.substring(0, Math.min(svgContent.length(), 2000)) + "...");
 
         System.out.println("图片已生成: " + outputPath.toAbsolutePath());
+    }
+
+    @Test
+    void WebCaptureTest() {
+        // webScreenCapturer.capturePage("https://prts.wiki/w/%E9%A6%96%E9%A1%B5",
+        //         "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
     }
 }
