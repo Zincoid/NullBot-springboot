@@ -39,7 +39,7 @@ public class InvokeCommand implements Command
             try {
                 Object result = invokeSpringMethod(applicationContext, beanName, methodName, args);
                 String res = result != null ? result.toString() : "null";
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Spring] ✅方法已调用\n" + res, false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Spring] ✅方法调用成功\nThe method returned:\n" + res, false);
                 log.info("\t\t\t\t├─[Invoke] 调用结果 -> {}", res);
             } catch (Exception e) {
                 throw new NullBotMsgException("[Spring] ⚠️方法调用失败\n" + e.getMessage());
