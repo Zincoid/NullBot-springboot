@@ -18,8 +18,8 @@ public class SecurityCodeScheduler
     private final ScheduledExecutorService scheduler;  // 调度器
     private final ConcurrentHashMap<String, CodeEntry> codeEntries;  // 存储安全码及调度任务
 
-    // private static final long DEFAULT_REFRESH_INTERVAL = 600_000;  // 默认刷新间隔: 10 Min
-    private static final long DEFAULT_REFRESH_INTERVAL = 10_000;  // 测试刷新间隔: 10 Sec
+    private static final long DEFAULT_REFRESH_INTERVAL = 600_000;  // 默认刷新间隔: 10 Min
+    // private static final long DEFAULT_REFRESH_INTERVAL = 10_000;  // 测试刷新间隔: 10 Sec
 
     @AllArgsConstructor
     private static class CodeEntry {
