@@ -87,37 +87,54 @@ public class WebScreenCapturer
     // =================== 工具方法 ===================
 
     private BufferedImage capturePageWithHeight(WebDriver driver, Long pageHeight) throws IOException, InterruptedException {
-        int viewportWidth = 1920;
-        int viewportHeight = 1080;
+        // 获取浏览器实际可视区域高度
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        Long viewportHeight = (Long) js.executeScript(
+                "return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;"
+        );
+        Long viewportWidth = (Long) js.executeScript(
+                "return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;"
+        );
+        int vHeight = viewportHeight.intValue();
+        int vWidth = viewportWidth.intValue();
         // 创建完整页图像
-        BufferedImage combinedImage = new BufferedImage(viewportWidth, pageHeight.intValue(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage combinedImage = new BufferedImage(vWidth, pageHeight.intValue(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = combinedImage.createGraphics();
         int currentPosition = 0;
-        int scrollCounter = 0;
+        // 隐藏滚动条避免干扰
+        js.executeScript("document.documentElement.style.overflow = 'hidden';");
         while (currentPosition < pageHeight) {
-            // 滚动到当前位置
-            ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, " + currentPosition + ");");
-            // 等待滚动完成
-            Thread.sleep(800);
+            // 使用平滑滚动
+            js.executeScript("window.scrollTo({top: " + currentPosition + ", behavior: 'smooth'});");
+            // 等待滚动停止
+            Thread.sleep(1000);
+            // 确保滚动正确
+            Long currentScroll = (Long) js.executeScript("return window.pageYOffset;");
+            if (currentScroll.intValue() != currentPosition) {
+                // 如果没滚动到位，调整并重试
+                js.executeScript("window.scrollTo(0, " + currentPosition + ");");
+                Thread.sleep(800);
+            }
             // 截取当前视图
             File tempFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             BufferedImage screenshot = ImageIO.read(tempFile);
-            // 计算视口高度
+            // 计算剩余高度
             int remainingHeight = pageHeight.intValue() - currentPosition;
-            int currentViewportHeight = Math.min(viewportHeight, remainingHeight);
-            // 若最后一屏且高度不足 需调整截图区域
-            if (currentViewportHeight < viewportHeight) {
-                // 取截图的上半部分
-                BufferedImage croppedScreenshot = screenshot.getSubimage(0, 0, viewportWidth, currentViewportHeight);
+            int currentViewportHeight = Math.min(vHeight, remainingHeight);
+            // 绘制到总图上
+            if (currentViewportHeight < vHeight) {
+                // 最后一屏，从截图顶部截取相应高度
+                BufferedImage croppedScreenshot = screenshot.getSubimage(0, 0, vWidth, currentViewportHeight);
                 g2d.drawImage(croppedScreenshot, 0, currentPosition, null);
             } else {
-                // 正常使用完整截图
+                // 完整截图
                 g2d.drawImage(screenshot, 0, currentPosition, null);
             }
-            // 更新当前位置
+            // 更新位置（使用实际滚动高度 避免累积误差）
             currentPosition += currentViewportHeight;
-            scrollCounter++;
         }
+        // 恢复滚动条
+        js.executeScript("document.documentElement.style.overflow = 'auto';");
         g2d.dispose();
         return combinedImage;
     }

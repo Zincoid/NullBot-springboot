@@ -29,6 +29,10 @@ public class OperatorCommand implements Command
             List<String> params = event.getCommandParameters();
             if (params.isEmpty()) throw new NullBotMsgException("[干员查询] ❌参数不足");
             String base64 = webScreenCapturer.capturePageWithScroll("https://prts.wiki/w/" + params.getFirst());
+            // String base64 = webScreenCapturer.captureElement(
+            //         "https://prts.wiki/w/" + params.getFirst(),
+            //         ".mw-content-ltr.mw-parser-output"
+            // );
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
             log.info("\t\t\t\t├─[Operator] 已查询");
