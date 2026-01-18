@@ -13,12 +13,17 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class WebScreenCapturer
 {
+
+
     // 截取完整页面
     public String captureFull(String url) {
         WebDriver driver = setupDriver();
@@ -102,27 +107,20 @@ public class WebScreenCapturer
             List<WebElement> targets = targetCssSelectors.stream()
                     .map(selector -> driver.findElement(By.cssSelector(selector)))
                     .toList();
+            Set<By> ignores = ignoredCssSelectors.stream()
+                    .map(By::cssSelector)
+                    .collect(Collectors.toSet());
             // 进行元素截图
             AShot ashot = new AShot();
             ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
             ashot.coordsProvider(new WebDriverCoordsProvider());
-            // 添加忽略元素
-            if (ignoredCssSelectors != null && !ignoredCssSelectors.isEmpty()) {
-                for (String selector : ignoredCssSelectors) {
-                    try {
-                        ashot.addIgnoredElement(By.cssSelector(selector));
-                    } catch (Exception e) {
-                        // 如果元素不存在 忽略
-                    }
-                }
-            }
-            ashot.takeScreenshot(driver, targets);
-            Screenshot screenshot = ashot.takeScreenshot(driver);
+            ashot.ignoredElements(ignores);
+            Screenshot screenshot = ashot.takeScreenshot(driver, targets);
             BufferedImage eleImage = screenshot.getImage();
 
             // 测试
-            // File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
-            // ImageIO.write(eleImage, "png", outputFile);
+            File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
+            ImageIO.write(eleImage, "png", outputFile);
 
             // 保存
             // File outputFile = new File(outputPath);
