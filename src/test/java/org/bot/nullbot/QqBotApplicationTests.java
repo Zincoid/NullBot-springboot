@@ -139,6 +139,7 @@ class QqBotApplicationTests {
 
     @Test
     void WebCaptureTest() {
-        webScreenCapturer.capturePageWithScroll("https://prts.wiki/w/%E9%A6%96%E9%A1%B5");
+        // webScreenCapturer.captureFull("https://prts.wiki/w/%E7%BC%87%E7%BC%87");
+        webScreenCapturer.captureElement("https://prts.wiki/w/%E7%BC%87%E7%BC%87", ".mw-content-ltr.mw-parser-output");
     }
 }

@@ -28,7 +28,7 @@ public class OperatorCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
             if (params.isEmpty()) throw new NullBotMsgException("[干员查询] ❌参数不足");
-            String base64 = webScreenCapturer.capturePageWithScroll("https://prts.wiki/w/" + params.getFirst());
+            String base64 = webScreenCapturer.captureFull("https://prts.wiki/w/" + params.getFirst());
             // String base64 = webScreenCapturer.captureElement(
             //         "https://prts.wiki/w/" + params.getFirst(),
             //         ".mw-content-ltr.mw-parser-output"
