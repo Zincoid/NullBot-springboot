@@ -140,14 +140,17 @@ class QqBotApplicationTests {
     @Test
     void WebCaptureTest() {
         // webScreenCapturer.captureFull("https://prts.wiki/w/%E7%BC%87%E7%BC%87");
-        // webScreenCapturer.captureElement(
-        //         "https://prts.wiki/w/%E7%BC%87%E7%BC%87",
-        //         "#bodyContent"
-        // );
-        webScreenCapturer.captureElements(
+
+        webScreenCapturer.captureElement(
                 "https://prts.wiki/w/%E7%BC%87%E7%BC%87",
-                List.of("#bodyContent"),
-                List.of(".backToTop", ".mw-headline", ".navbox.navigation-not-searchable", ".catlinks")
+                "#bodyContent",
+                1000, 1000
         );
+
+        // webScreenCapturer.captureElements(
+        //         "https://prts.wiki/w/%E7%BC%87%E7%BC%87",
+        //         List.of("#bodyContent"),
+        //         List.of(".backToTop", ".mw-headline", ".navbox.navigation-not-searchable", ".catlinks")
+        // );
     }
 }

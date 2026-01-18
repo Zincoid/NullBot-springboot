@@ -30,7 +30,8 @@ public class OperatorCommand implements Command
             if (params.isEmpty()) throw new NullBotMsgException("[干员查询] ❌参数不足");
             String base64 = webScreenCapturer.captureElement(
                     "https://prts.wiki/w/" + params.getFirst(),
-                    "#bodyContent"
+                    "#bodyContent",
+                    1000, 1000
             );
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);

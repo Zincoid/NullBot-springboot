@@ -62,12 +62,12 @@ public class WebScreenCapturer
     }
 
     // 截取特定元素
-    public String captureElement(String url, String cssSelector) {
+    public String captureElement(String url, String cssSelector, int width, int height) {
         WebDriver driver = setupDriver();
         try {
             driver.get(url);
             // 设置窗口尺寸
-            driver.manage().window().setSize(new Dimension(1920, 1080));
+            driver.manage().window().setSize(new Dimension(width, height));
             // 等待页面加载
             Thread.sleep(2000);
             // 定位元素位置
@@ -121,8 +121,8 @@ public class WebScreenCapturer
             BufferedImage eleImage = screenshot.getImage();
 
             // 测试
-            File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
-            ImageIO.write(eleImage, "png", outputFile);
+            // File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
+            // ImageIO.write(eleImage, "png", outputFile);
 
             // 保存
             // File outputFile = new File(outputPath);
@@ -152,14 +152,14 @@ public class WebScreenCapturer
 
     public WebDriver setupDriver() {
         // 自动下载 ChromeDriver
-        WebDriverManager.chromedriver().setup();
+        // WebDriverManager.chromedriver().setup();
         // 手动设置 ChromeDriver
-        // System.setProperty("webdriver.chrome.driver", chromeDriverPath);
-        // System.setProperty("webdriver.chrome.driver", "/root/Nullbot/file/driver/chromedriver");
+        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
         options.addArguments("--window-size=1920,1080");
         options.addArguments("--hide-scrollbars");
 
