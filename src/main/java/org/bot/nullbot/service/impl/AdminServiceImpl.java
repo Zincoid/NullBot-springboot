@@ -71,10 +71,12 @@ public class AdminServiceImpl implements AdminService
     @Override
     public boolean changePwd(Long id, PwdChangeDTO pwdChangeDTO) {
         if (!pwdChangeDTO.verify())
-            throw new IllegalArgumentException("修改密码表单验证失败");
+            throw new IllegalArgumentException("表单验证失败");
         AdminPO admin = adminMapper.selectById(id);
         if (admin == null)
             throw new IllegalArgumentException("用户不存在");
+        if (!passwordEncoder.matches(pwdChangeDTO.getOldPassword(), admin.getPassword()))
+            throw new IllegalArgumentException("旧密码错误");
         admin.setPassword(passwordEncoder.encode(pwdChangeDTO.getNewPassword()));
         return adminMapper.updateById(admin) == 1;
     }
