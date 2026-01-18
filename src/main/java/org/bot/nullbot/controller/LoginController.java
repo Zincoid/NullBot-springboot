@@ -75,7 +75,7 @@ public class LoginController
     public WebResult info(){
         Integer type = jwtTool.getLoginType(WebUtil.getToken());
         if(type == 0){
-            AdminPO admin = new AdminPO(null, "Guest", "看访客密码？", "访客无此信息");
+            AdminPO admin = new AdminPO(null, "Guest", null, null);
             log.info("[管理系统] 获取访客信息");
             return WebResult.success().addMsg("获取访客信息成功").addData("info", admin).addData("userType", 0);
         }else if(type == 1){
@@ -83,7 +83,7 @@ public class LoginController
             log.info("[管理系统] 获取管理员信息 - ID {}", id);
             AdminPO admin = adminService.info(id);
             if(admin != null){
-                admin.setPassword("不能给你看");  // 安全
+                admin.setPassword(null);  // 安全
                 return WebResult.success().addMsg("获取管理员信息成功").addData("info", admin).addData("userType", 1);
             }else{
                 return WebResult.fail().addMsg("获取管理员信息失败");

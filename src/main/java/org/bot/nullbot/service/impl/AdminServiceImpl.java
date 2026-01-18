@@ -62,7 +62,7 @@ public class AdminServiceImpl implements AdminService
     }
 
     @Override
-    public boolean delete(Long id) { return adminMapper.deleteById(id) == 0; }
+    public boolean delete(Long id) { return adminMapper.deleteById(id) == 1; }
 
     @Override
     public boolean update(AdminPO admin) { return adminMapper.updateById(admin) == 1; }
