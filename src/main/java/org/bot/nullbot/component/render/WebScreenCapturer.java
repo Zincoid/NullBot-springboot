@@ -2,10 +2,12 @@ package org.bot.nullbot.component.render;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.*;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -85,33 +87,38 @@ public class WebScreenCapturer
     // =================== 工具方法 ===================
 
     private BufferedImage capturePageWithHeight(WebDriver driver, Long pageHeight) throws IOException, InterruptedException {
-        BufferedImage combinedImage = new BufferedImage(1920, pageHeight.intValue(), BufferedImage.TYPE_INT_ARGB);
-        int scrollHeight = 1080;
+        int viewportWidth = 1920;
+        int viewportHeight = 1080;
+        // 创建完整页图像
+        BufferedImage combinedImage = new BufferedImage(viewportWidth, pageHeight.intValue(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = combinedImage.createGraphics();
         int currentPosition = 0;
+        int scrollCounter = 0;
         while (currentPosition < pageHeight) {
             // 滚动到当前位置
             ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, " + currentPosition + ");");
             // 等待滚动完成
-            Thread.sleep(500);
+            Thread.sleep(800);
             // 截取当前视图
             File tempFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             BufferedImage screenshot = ImageIO.read(tempFile);
-            // 实际复制高度
-            int heightToCopy = Math.min(scrollHeight, pageHeight.intValue() - currentPosition);
-            // 拼接到完整图片
-            combinedImage.createGraphics().drawImage(
-                    screenshot,
-                    0,
-                    currentPosition,
-                    1920,
-                    currentPosition + heightToCopy,
-                    0,
-                    scrollHeight - heightToCopy,
-                    1920,
-                    scrollHeight,
-                    null);
-            currentPosition += heightToCopy;
+            // 计算视口高度
+            int remainingHeight = pageHeight.intValue() - currentPosition;
+            int currentViewportHeight = Math.min(viewportHeight, remainingHeight);
+            // 若最后一屏且高度不足 需调整截图区域
+            if (currentViewportHeight < viewportHeight) {
+                // 取截图的上半部分
+                BufferedImage croppedScreenshot = screenshot.getSubimage(0, 0, viewportWidth, currentViewportHeight);
+                g2d.drawImage(croppedScreenshot, 0, currentPosition, null);
+            } else {
+                // 正常使用完整截图
+                g2d.drawImage(screenshot, 0, currentPosition, null);
+            }
+            // 更新当前位置
+            currentPosition += currentViewportHeight;
+            scrollCounter++;
         }
+        g2d.dispose();
         return combinedImage;
     }
 
@@ -119,9 +126,9 @@ public class WebScreenCapturer
 
     public WebDriver setupDriver() {
         // 自动下载 ChromeDriver
-        WebDriverManager.chromedriver().setup();
+        // WebDriverManager.chromedriver().setup();
         // 手动设置 ChromeDriver
-        // System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "/root/Nullbot/file/driver/chromedriver");
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
