@@ -32,7 +32,7 @@ public class AdminServiceImpl implements AdminService
     public boolean regist(RegistDTO registDTO) {
         if (!StringUtils.hasLength(registDTO.getPassword()))
             throw new IllegalArgumentException("未输入密码");
-        if (!Objects.equals(registDTO.getActivationCode(), securityCodeScheduler.getCurrentActivationCode()))
+        if (securityCodeScheduler.validateCode("regist", registDTO.getActivationCode()))
             throw new IllegalArgumentException("激活码错误");
 
         UserPO user = userMapper.selectById(registDTO.getId());
@@ -49,7 +49,7 @@ public class AdminServiceImpl implements AdminService
         newAdmin.setPassword(passwordEncoder.encode(registDTO.getPassword()));
         try {
             boolean inserted = adminMapper.insert(newAdmin) == 1;
-            if (inserted) securityCodeScheduler.useAndRefreshActivationCode();
+            if (inserted) securityCodeScheduler.useCode("regist");
             return inserted;
         } catch (Exception e) {
             return false;
