@@ -80,8 +80,8 @@ public class WebScreenCapturer
             BufferedImage eleImage = screenshot.getImage();
 
             // 测试
-            File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
-            ImageIO.write(eleImage, "png", outputFile);
+            // File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
+            // ImageIO.write(eleImage, "png", outputFile);
 
             // 保存
             // File outputFile = new File(outputPath);
