@@ -4,6 +4,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
@@ -22,7 +23,8 @@ import java.util.stream.Collectors;
 @Component
 public class WebScreenCapturer
 {
-
+    @Value("${driver.chrome-driver-path}")
+    private String chromeDriverPath;
 
     // 截取完整页面
     public String captureFull(String url) {
@@ -150,9 +152,9 @@ public class WebScreenCapturer
 
     public WebDriver setupDriver() {
         // 自动下载 ChromeDriver
-        WebDriverManager.chromedriver().setup();
+        // WebDriverManager.chromedriver().setup();
         // 手动设置 ChromeDriver
-        // System.setProperty("webdriver.chrome.driver", "/root/Nullbot/file/driver/chromedriver");
+        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
