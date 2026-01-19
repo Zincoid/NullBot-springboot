@@ -42,7 +42,7 @@ public class OperatorCommand implements Command
                         1000, 5000
                 );
             } catch (Exception e) {
-                throw new NullBotMsgException("[干员查询] ❌ 查询失败: " + e.getMessage());
+                throw new NullBotMsgException("[干员查询] ❌查询失败: " + e.getMessage());
             }
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
