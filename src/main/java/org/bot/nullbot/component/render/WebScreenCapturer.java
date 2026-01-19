@@ -76,8 +76,7 @@ public class WebScreenCapturer
             } catch (NoSuchElementException e) {
                 throw new RuntimeException("未找到页元素");
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException("未知截图错误");
+                throw new RuntimeException("未知截图错误", e);
             } finally {
                 driver.quit();
             }
@@ -119,8 +118,7 @@ public class WebScreenCapturer
                 retryCount++;
                 log.info("[WebScreenCapturer] 页面访问超时: {} Times", retryCount);
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException("未知截图错误");
+                throw new RuntimeException("未知截图错误", e);
             } finally {
                 driver.quit();
             }
@@ -162,8 +160,7 @@ public class WebScreenCapturer
             } catch (NoSuchElementException e) {
                 throw new RuntimeException("未找到页元素");
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException("未知截图错误");
+                throw new RuntimeException("未知截图错误", e);
             } finally {
                 driver.quit();
             }
@@ -227,7 +224,6 @@ public class WebScreenCapturer
             ImageIO.write(image, "png", baos);
             return Base64.getEncoder().encodeToString(baos.toByteArray());
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException("图片转换失败");
         }
     }
