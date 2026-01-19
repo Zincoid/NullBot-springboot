@@ -153,7 +153,7 @@ class QqBotApplicationTests {
         // );
 
         String base64 = webScreenCapturer.capture(
-                "https://prts.wiki/w/" + operator, 1040, 5000,
+                "https://prts.wiki/w/" + operator, 1024, 5120,
                 List.of("#bodyContent"),
                 List.of(
                         ".backToTop", "#toc", "#rightToc",
