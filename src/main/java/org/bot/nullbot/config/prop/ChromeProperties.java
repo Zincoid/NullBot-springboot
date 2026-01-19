@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "driver.chrome")
-public class DriverProperties
+@ConfigurationProperties(prefix = "chrome")
+public class ChromeProperties
 {
     private Boolean driverAuto;
     private String driverPath;

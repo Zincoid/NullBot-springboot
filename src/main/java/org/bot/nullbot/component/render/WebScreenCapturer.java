@@ -2,7 +2,7 @@ package org.bot.nullbot.component.render;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.config.prop.DriverProperties;
+import org.bot.nullbot.config.prop.ChromeProperties;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -28,7 +28,7 @@ public class WebScreenCapturer
     private final int maxRetries;  // 最大重试次数
     private final long loadTimeout;  // 页面加载超时 (Sec)
 
-    public WebScreenCapturer(DriverProperties props) {
+    public WebScreenCapturer(ChromeProperties props) {
         driverAuto = props.getDriverAuto();
         driverPath = props.getDriverPath();
         maxRetries = props.getMaxRetries();

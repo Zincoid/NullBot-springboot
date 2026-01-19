@@ -1,5 +1,8 @@
 package org.bot.nullbot.component.render;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.config.prop.ChromeProperties;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -8,23 +11,38 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 @Component
+@Slf4j
 public class HtmlRenderer
 {
+    private final ChromeProperties chromeProperties;
+
     private WebDriver driver;
     private boolean initialized = false;
 
+    public HtmlRenderer(ChromeProperties chromeProperties) {
+        this.chromeProperties = chromeProperties;
+        initialize();
+    }
 
-    public HtmlRenderer()
-    {
-        if (chromeDriverAuto) {
+    // =================== 驱动加载 ===================
+
+    /**
+     * 启动驱动
+     */
+    public void initialize() {
+        if (initialized) {
+            log.info("[HtmlRenderer] Chrome 驱动已初始化过");
+            return;
+        }
+
+        if (chromeProperties.getDriverAuto()) {
             // 自动下载 ChromeDriver
             WebDriverManager.chromedriver().setup();
         } else {
             // 手动设置 ChromeDriver
-            System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+            System.setProperty("webdriver.chrome.driver", chromeProperties.getDriverPath());
         }
 
         ChromeOptions options = new ChromeOptions();
@@ -35,43 +53,33 @@ public class HtmlRenderer
         options.addArguments("--window-size=1920,1080");
         options.addArguments("--hide-scrollbars");
 
-        driver = new ChromeDriver(options);
+        WebDriver driver = new ChromeDriver(options);
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(chromeProperties.getLoadTimeout()));
+
+        this.driver = driver;
+        this.initialized = true;
+        log.info("[HtmlRenderer] Chrome 驱动已初始化");
     }
 
-    public void initialize() {
-        if (!initialized) {
-            WebDriverManager.chromedriver().setup();
-
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments(
-                    "--headless",
-                    "--disable-gpu",
-                    "--no-sandbox",
-                    "--disable-dev-shm-usage",
-                    "--window-size=1920,1080",
-                    "--hide-scrollbars"
-            );
-
-            // 启用更多功能
-            options.addArguments("--remote-allow-origins=*");
-
-            // 设置日志级别
-            System.setProperty("webdriver.chrome.silentOutput", "true");
-
-            driver = new ChromeDriver(options);
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-            initialized = true;
-
-            System.out.println("Chrome 驱动已初始化");
-        }
+    /**
+     * 关闭驱动
+     */
+    public void close() {
+        if (driver != null) {
+            driver.quit();
+            driver = null;
+            initialized = false;
+            log.info("[HtmlRenderer] Chrome 驱动已关闭");
+        } else
+            log.info("[HtmlRenderer] Chrome 驱动未初始化");
     }
+
+    // =================== 渲染方法 ===================
 
     /**
      * 从 HTML 字符串渲染为图片
      */
     public void renderFromHtml(String html, String outputPath) throws Exception {
-        initialize();
-
         // 保存 HTML 到临时文件
         File tempFile = File.createTempFile("render-", ".html");
         try (FileWriter writer = new FileWriter(tempFile)) {
@@ -124,17 +132,6 @@ public class HtmlRenderer
         tempFile.delete();
 
         System.out.println("图片已生成: " + outputPath);
-    }
-
-    /**
-     * 关闭驱动
-     */
-    public void close() {
-        if (driver != null) {
-            driver.quit();
-            initialized = false;
-            System.out.println("Chrome 驱动已关闭");
-        }
     }
 
     /**
