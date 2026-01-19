@@ -37,7 +37,7 @@ public class OperatorCommand implements Command
                         List.of(
                                 ".backToTop", "#toc", "#rightToc",
                                 "#干员模型", "#spine-root", "#注释与链接", "#catlinks",
-                                "#music-info", "#calc"
+                                ".music-btn", "#calc"
                         ),
                         1000, 5000
                 );

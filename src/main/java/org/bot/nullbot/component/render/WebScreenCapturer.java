@@ -57,7 +57,8 @@ public class WebScreenCapturer
             byte[] imageBytes = baos.toByteArray();
             return Base64.getEncoder().encodeToString(imageBytes);
         } catch (Exception e) {
-            throw new RuntimeException("网页截图出错: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("网页截图出错");
         } finally {
             driver.quit();
         }
@@ -92,7 +93,8 @@ public class WebScreenCapturer
             // BASE64 转换
             return imageToBase64(eleImage);
         } catch (Exception e) {
-            throw new RuntimeException("网页截图出错: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("网页截图出错");
         } finally {
             driver.quit();
         }
@@ -133,7 +135,8 @@ public class WebScreenCapturer
             // BASE64 转换
             return imageToBase64(eleImage);
         } catch (Exception e) {
-            throw new RuntimeException("网页截图出错: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("网页截图出错");
         } finally {
             driver.quit();
         }
@@ -162,7 +165,8 @@ public class WebScreenCapturer
             ImageIO.write(image, "png", baos);
             return Base64.getEncoder().encodeToString(baos.toByteArray());
         } catch (Exception e) {
-            throw new RuntimeException("图片转换失败", e);
+            e.printStackTrace();
+            throw new RuntimeException("图片转换失败");
         }
     }
 

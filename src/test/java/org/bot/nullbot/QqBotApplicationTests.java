@@ -13,10 +13,13 @@ import org.bot.nullbot.util.ResourceUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -138,7 +141,7 @@ class QqBotApplicationTests {
     }
 
     @Test
-    void WebCaptureTest() {
+    void WebCaptureTest() throws FileNotFoundException {
         // webScreenCapturer.captureFull("https://prts.wiki/w/%E8%8E%B1%E4%BC%8A");
 
         // webScreenCapturer.captureElement(
@@ -147,15 +150,29 @@ class QqBotApplicationTests {
         //         1000, 5000
         // );
 
-        webScreenCapturer.captureElements(
+        String base64 = webScreenCapturer.captureElements(
                 "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A",
                 List.of("#bodyContent"),
                 List.of(
                         ".backToTop", "#toc", "#rightToc",
-                        "#干员模型", "#spine-root", "#注释与链接", "#catlinks",
-                        "#music-info", "#calc"
+                        "#注释与链接", "#catlinks", ".music-btn", "#calc", "#equip-selector",
+                        "#mw-content-text > div.mw-content-ltr.mw-parser-output > div:nth-child(19)",
+                        "#干员档案", "#mw-content-text > div.mw-content-ltr.mw-parser-output > table.wikitable.mw-collapsible.mw-collapsed.logo.mw-made-collapsible",
+                        "#语音记录", "#voice-table-root",
+                        "#mw-content-text > div.mw-content-ltr.mw-parser-output > h2:nth-child(103)", "#mw-content-text > div.mw-content-ltr.mw-parser-output > table:nth-child(105)",
+                        "#mw-content-text > div.mw-content-ltr.mw-parser-output > h2:nth-child(103)", "#mw-content-text > div.mw-content-ltr.mw-parser-output > table.wikitable.mw-collapsible.logo.mp-extranav.mp-siteinfo.mp-mobile-extranav.mp-mobile-siteinfo.mw-made-collapsible.mw-collapsed",
+                        "#mw-content-text > div.mw-content-ltr.mw-parser-output > h2:nth-child(109)", "#spine-root"
                 ),
                 1000, 5000
         );
+
+        // 解码Base64字符串
+        byte[] imageBytes = Base64.getDecoder().decode(base64);
+        // 写入文件
+        try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png")) {
+            fos.write(imageBytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
