@@ -84,13 +84,13 @@ public class ConvertCommand implements Command
                 } catch (Exception e) {
                     throw new NullBotMsgException("[图像处理] ❌下载时出错: " + e.getMessage());
                 }
-                String avatarPath = tempFilePath + "/" + downloadedFileName;
+                String imagePath = tempFilePath + "/" + downloadedFileName;
                 String base64;
                 try {
                     base64 = switch (method){
-                        case "RIP" -> imageConverter.RIP(avatarPath, tempFontPath);
-                        case "PRTS" -> imageConverter.PRTS(avatarPath, tempFontPath);
-                        case "InvsPRTS" -> imageConverter.inversePRTS(avatarPath, tempFontPath);
+                        case "RIP" -> imageConverter.RIP(imagePath, tempFontPath);
+                        case "PRTS" -> imageConverter.PRTS(imagePath, tempFontPath);
+                        case "InvsPRTS" -> imageConverter.inversePRTS(imagePath, tempFontPath);
                         default -> throw new NullBotMsgException("[图像处理] ❌方法不存在");
                     };
                 } catch (NullBotMsgException e) {
