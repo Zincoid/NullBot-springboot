@@ -48,8 +48,19 @@ public class OperatorCommand implements Command
                 ◉ Operator 命令
                 功能: 明日方舟PRTS干员查询
                 限权: %d 级
-                格式: Operator
+                格式: Operator [干员名]
                 别名: PRTS/干员查询/干员""", getAccess()
+        );
+    }
+
+    @Override
+    public String getHelpForAI() {
+        return String.format("""
+                ◉ Operator 命令
+                功能: 通过PRTS网站查询明日方舟干员信息
+                限权: %d 级
+                格式: Operator [干员名]
+                示例: Operator 莱伊""", getAccess()
         );
     }
 }

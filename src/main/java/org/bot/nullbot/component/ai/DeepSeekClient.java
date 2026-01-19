@@ -59,7 +59,7 @@ public class DeepSeekClient
                 "ChatHistory", "ChatReset",
                 "Convert", "Anime", "Guess",
                 "AccessSet", "GroupSet", "UserBan",
-                "Help", "ImageFolder", "PUBG",
+                "Help", "ImageFolder", "PUBG", "PRTS",
 
                 // 语音回复
                 "Tts",
