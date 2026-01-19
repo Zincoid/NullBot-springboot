@@ -32,8 +32,8 @@ public class OperatorCommand implements Command
             String operator;
             String base64;
             try {
-                // 操作方法
                 if (params.size() > 1) {
+                    // 操作方法
                     String option = params.get(0);
                     operator = params.get(1);
                     base64 = switch (option) {
@@ -45,27 +45,28 @@ public class OperatorCommand implements Command
                             );
                         default -> throw new NullBotMsgException("[干员查询] ❌无此操作");
                     };
+                }else{
+                    // 默认方法
+                    operator = params.getFirst();
+                    base64 = webScreenCapturer.capture(
+                            "https://prts.wiki/w/" + operator, 1024, 5120,
+                            List.of("#bodyContent"),
+                            List.of(
+                                    ".backToTop", "#toc", "#rightToc",
+                                    ".music-btn", "#calc", "#equip-selector",
+                                    "#干员模型", "#spine-root",
+                                    "#注释与链接", "#catlinks"
+                            ),
+                            List.of(
+                                    "input[onchange*='switchDisplay第一天赋算法']",
+                                    "input[onchange*='switchDisplay第一天赋潜能']",
+                                    "input[onchange*='switchDisplay第二天赋算法']",
+                                    "input[onchange*='switchDisplay第二天赋潜能']"
+                            )
+                    );
                 }
-
-                // 默认方法
-                operator = params.getFirst();
-                base64 = webScreenCapturer.capture(
-                        "https://prts.wiki/w/" + operator, 1024, 5120,
-                        List.of("#bodyContent"),
-                        List.of(
-                                ".backToTop", "#toc", "#rightToc",
-                                ".music-btn", "#calc", "#equip-selector",
-                                "#干员模型", "#spine-root",
-                                "#注释与链接", "#catlinks"
-                        ),
-                        List.of(
-                                "input[onchange*='switchDisplay第一天赋算法']",
-                                "input[onchange*='switchDisplay第一天赋潜能']",
-                                "input[onchange*='switchDisplay第二天赋算法']",
-                                "input[onchange*='switchDisplay第二天赋潜能']"
-                        )
-                );
-
+            } catch (NullBotMsgException e) {
+                throw e;
             } catch (Exception e) {
                 throw new NullBotMsgException("[干员查询] ❌查询失败: " + e.getMessage());
             }
