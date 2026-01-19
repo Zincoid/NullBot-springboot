@@ -341,7 +341,7 @@
 - 增强 SecurityCodeScheduler 安全码调度器 - 支持添加多个自定义安全码；
 - 修复 Invoke 命令 - 未正确捕获异常的问题；
 - 新增 WebScreenCapturer 网页截图组件 - 通过 Chrome 无头模式 渲染图片；
-- 新增 明日方舟干员资料查询命令 - 通过 WebScreenCapturer 访问 PRTS 渲染资料页面；
+- 新增 明日方舟 PRTS 资料查询命令 - 通过 WebScreenCapturer 访问 PRTS 渲染资料页面；
 - 优化 文本；
 - 优化 前端表现；
 - 优化 项目结构。
