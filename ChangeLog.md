@@ -348,4 +348,5 @@
 
 ### 2026.1.20 - v1.2.9
 - 优化 WebScreenCapturer 网页截图组件 - 新增超时和重试配置设置；
-- 优化 Chrome Driver 配置 到 配置类。
+- 优化 Chrome Driver 配置 到 配置类；
+- 新增 HtmlRenderer 渲染组件 和 HtmlTemplateUtil 工具类 - 用于渲染自定义图片。

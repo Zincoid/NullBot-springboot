@@ -253,7 +253,7 @@ class QqBotApplicationTests
         html = HtmlTemplateUtil.replaceVariables(html, variables);
         html = HtmlTemplateUtil.replaceImages(html, images);
 
-        String base64 = htmlRenderer.renderElement(html, "#image-container");
+        String base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
 
         // Base64 解码
         byte[] imageBytes = Base64.getDecoder().decode(base64);
