@@ -23,7 +23,9 @@ import java.util.stream.Collectors;
 @Component
 public class WebScreenCapturer
 {
-    @Value("${driver.chrome-driver-path}")
+    @Value("${driver.chrome.auto}")
+    private Boolean chromeDriverAuto;
+    @Value("${driver.chrome.path}")
     private String chromeDriverPath;
 
     // 截取完整页面
@@ -167,10 +169,13 @@ public class WebScreenCapturer
     // =================== 驱动加载 ===================
 
     public WebDriver setupDriver() {
-        // 自动下载 ChromeDriver
-        // WebDriverManager.chromedriver().setup();
-        // 手动设置 ChromeDriver
-        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+        if (chromeDriverAuto) {
+            // 自动下载 ChromeDriver
+            WebDriverManager.chromedriver().setup();
+        } else {
+            // 手动设置 ChromeDriver
+            System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+        }
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
