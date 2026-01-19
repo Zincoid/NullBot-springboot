@@ -56,7 +56,7 @@ public class WebScreenCapturer
             ashot.coordsProvider(new WebDriverCoordsProvider());
             Screenshot screenshot = ashot.takeScreenshot(driver, targets);
             BufferedImage eleImage = screenshot.getImage();
-            // 保存
+            // 保存本地文件
             // File outputFile = new File(outputPath);
             // ImageIO.write(eleImage, "png", outputFile);
             // BASE64 转换
@@ -92,7 +92,7 @@ public class WebScreenCapturer
             ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
             Screenshot screenshot = ashot.takeScreenshot(driver);
             BufferedImage fullImage = screenshot.getImage();
-            // 保存
+            // 保存本地文件
             // File outputFile = new File(outputPath);
             // ImageIO.write(fullImage, "png", outputFile);
             // BASE64 转换
@@ -129,7 +129,7 @@ public class WebScreenCapturer
             ashot.coordsProvider(new WebDriverCoordsProvider());
             Screenshot screenshot = ashot.takeScreenshot(driver, element);
             BufferedImage eleImage = screenshot.getImage();
-            // 保存
+            // 保存本地文件
             // File outputFile = new File(outputPath);
             // ImageIO.write(eleImage, "png", outputFile);
             // BASE64 转换
