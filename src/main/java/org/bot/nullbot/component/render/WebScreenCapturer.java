@@ -28,7 +28,7 @@ public class WebScreenCapturer
     @Value("${driver.chrome.path}")
     private String chromeDriverPath;
 
-    private static final int MAX_RETRIES = 3;  // 最大重试次数
+    private static final int MAX_RETRIES = 5;  // 最大重试次数
     private static final long LOAD_TIMEOUT = 5;  // 页面加载超时 (Sec)
 
     // =================== 主要方法 ===================
