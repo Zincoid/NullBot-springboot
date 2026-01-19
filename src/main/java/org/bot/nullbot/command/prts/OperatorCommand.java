@@ -28,14 +28,16 @@ public class OperatorCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
             if (params.isEmpty()) throw new NullBotMsgException("[干员查询] ❌参数不足");
-            String base64 = webScreenCapturer.captureElement(
-                    "https://prts.wiki/w/" + params.getFirst(),
-                    "#bodyContent",
+            String operator = params.getFirst();
+            String base64 = webScreenCapturer.captureElements(
+                    "https://prts.wiki/w/" + operator,
+                    List.of("#bodyContent"),
+                    List.of(".backToTop", "#toc", "#rightToc", "#干员模型", "#spine-root", "#注释与链接", "#catlinks"),
                     1000, 5000
             );
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[Operator] 已查询");
+            log.info("\t\t\t\t├─[Operator] 已查询 - {}", operator);
         }else
             throw new NullBotLogException("[干员查询] ❌未设计 - 非群消息事件响应方式");
     }

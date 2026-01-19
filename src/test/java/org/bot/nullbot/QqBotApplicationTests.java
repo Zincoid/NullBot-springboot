@@ -131,7 +131,7 @@ class QqBotApplicationTests {
 
         // 读取并打印SVG内容
         String svgContent = Files.readString(svgPath);
-        System.out.println("生成的SVG内容:");
+        System.out.println("生成的SVG内容: ");
         System.out.println(svgContent.substring(0, Math.min(svgContent.length(), 2000)) + "...");
 
         System.out.println("图片已生成: " + outputPath.toAbsolutePath());
@@ -141,16 +141,16 @@ class QqBotApplicationTests {
     void WebCaptureTest() {
         // webScreenCapturer.captureFull("https://prts.wiki/w/%E8%8E%B1%E4%BC%8A");
 
-        webScreenCapturer.captureElement(
-                "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A",
-                "#bodyContent",
-                1000, 5000
-        );
+        // webScreenCapturer.captureElement(
+        //         "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A",
+        //         "#bodyContent",
+        //         1000, 5000
+        // );
 
         // webScreenCapturer.captureElements(
         //         "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A",
         //         List.of("#bodyContent"),
-        //         List.of(".backToTop", ".mw-headline", ".navbox.navigation-not-searchable", ".catlinks"),
+        //         List.of(".backToTop", "#toc", "#rightToc", "#干员模型", "#spine-root", "#注释与链接", "#catlinks"),
         //         1000, 5000
         // );
     }
