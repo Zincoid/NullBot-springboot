@@ -38,18 +38,32 @@ public class OperatorCommand implements Command
                     operator = params.get(1);
                     base64 = switch (option)
                     {
-                        case "档案" -> webScreenCapturer.capture(
-                                "https://prts.wiki/w/" + operator, 1024, 5120,
-                                List.of("table.wikitable.mw-collapsible.logo.mw-made-collapsible"),
-                                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                                List.of("button[class*='mw-collapsible-toggle']")
-                            );
-
                         case "语音" -> webScreenCapturer.capture(
                                 "https://prts.wiki/w/" + operator, 1024, 5120,
                                 List.of("#voice-table-root"),
                                 List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
                                 List.of("a[class*='z-1 float-right select-none']")
+                        );
+
+                        case "档案" -> webScreenCapturer.capture(
+                                "https://prts.wiki/w/" + operator, 1024, 5120,
+                                List.of("//table[.//th//b[contains(text(),'人员档案')]]"),
+                                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                                List.of("//table[.//th//b[contains(.,'人员档案')]]//button[contains(@class,'mw-collapsible-toggle')]")
+                        );
+
+                        case "密录" -> webScreenCapturer.capture(
+                                "https://prts.wiki/w/" + operator, 1024, 5120,
+                                List.of("//table[.//th//b[contains(text(),'干员密录')]]"),
+                                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                                List.of("//table[.//th//b[contains(.,'干员密录')]]//button[contains(@class,'mw-collapsible-toggle')]")
+                        );
+
+                        case "悖论" -> webScreenCapturer.capture(
+                                "https://prts.wiki/w/" + operator, 1024, 5120,
+                                List.of("//table[.//th//b[contains(text(),'悖论模拟')]]"),
+                                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                                List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
                         );
 
                         default -> throw new NullBotMsgException("[干员查询] ❌无此操作");
@@ -74,6 +88,7 @@ public class OperatorCommand implements Command
                             )
                     );
                 }
+
             } catch (NullBotMsgException e) {
                 throw e;
             } catch (Exception e) {
@@ -94,7 +109,7 @@ public class OperatorCommand implements Command
                 功能: 明日方舟PRTS干员查询
                 限权: %d 级
                 格式: Operator [可选: 查询内容] [干员名]
-                可查询内容: 档案/语音
+                可查询内容: 语音/档案/密录/悖论
                 别名: PRTS/prts/干员查询/干员""", getAccess()
         );
     }

@@ -142,7 +142,7 @@ class QqBotApplicationTests {
 
     @Test
     void WebCaptureTest() {
-        String operator = "m3";
+        String operator = "莱伊";
 
         // webScreenCapturer.captureFull("https://prts.wiki/w/" + operator);
 
@@ -170,24 +170,31 @@ class QqBotApplicationTests {
         // );
 
         // String base64 = webScreenCapturer.capture(
-        //                 "https://prts.wiki/w/" + operator, 1024, 5120,
-        //                 List.of("table.wikitable.mw-collapsible.logo.mw-made-collapsible"),
-        //                 List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-        //                 List.of("button[class*='mw-collapsible-toggle']")
-        //         );
-
-        // String base64 = webScreenCapturer.capture(
         //         "https://prts.wiki/w/" + operator, 1024, 5120,
         //         List.of("#voice-table-root"),
         //         List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
         //         List.of("a[class*='z-1 float-right select-none']")
         // );
 
+        // String base64 = webScreenCapturer.capture(
+        //         "https://prts.wiki/w/" + operator, 1024, 5120,
+        //         List.of("//table[.//th//b[contains(text(),'人员档案')]]"),
+        //         List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+        //         List.of("//table[.//th//b[contains(.,'人员档案')]]//button[contains(@class,'mw-collapsible-toggle')]")
+        // );
+
+        // String base64 = webScreenCapturer.capture(
+        //         "https://prts.wiki/w/" + operator, 1024, 5120,
+        //         List.of("//table[.//th//b[contains(text(),'干员密录')]]"),
+        //         List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+        //         List.of("//table[.//th//b[contains(.,'干员密录')]]//button[contains(@class,'mw-collapsible-toggle')]")
+        // );
+
         String base64 = webScreenCapturer.capture(
                 "https://prts.wiki/w/" + operator, 1024, 5120,
-                List.of("//table[.//th//b[contains(text(),'干员密录')]]"),
+                List.of("//table[.//th//b[contains(text(),'悖论模拟')]]"),
                 List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                List.of("button[class*='mw-collapsible-toggle']")
+                List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
         );
 
         // 解码Base64字符串
