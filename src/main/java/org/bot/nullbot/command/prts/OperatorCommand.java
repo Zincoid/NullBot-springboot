@@ -28,22 +28,58 @@ public class OperatorCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
             if (params.isEmpty()) throw new NullBotMsgException("[干员查询] ❌参数不足");
-            String operator = params.getFirst();
+
+            String operator;
             String base64;
             try {
-                base64 = webScreenCapturer.captureElements(
-                        "https://prts.wiki/w/" + operator,
-                        List.of("#bodyContent"),
-                        List.of(
-                                ".backToTop", "#toc", "#rightToc",
-                                "#干员模型", "#spine-root", "#注释与链接", "#catlinks",
-                                "#music-info", "#calc"
-                        ),
-                        1000, 5000
-                );
+                if (params.size() > 1) {
+                    // 操作方法
+                    String option = params.get(0);
+                    operator = params.get(1);
+                    base64 = switch (option)
+                    {
+                        case "档案" -> webScreenCapturer.capture(
+                                "https://prts.wiki/w/" + operator, 1024, 5120,
+                                List.of("table.wikitable.mw-collapsible.logo.mw-made-collapsible"),
+                                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                                List.of("button[class*='mw-collapsible-toggle']")
+                            );
+
+                        case "语音" -> webScreenCapturer.capture(
+                                "https://prts.wiki/w/" + operator, 1024, 5120,
+                                List.of("#voice-table-root"),
+                                List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
+                                List.of("a[class*='z-1 float-right select-none']")
+                        );
+
+                        default -> throw new NullBotMsgException("[干员查询] ❌无此操作");
+                    };
+                }else{
+                    // 默认方法
+                    operator = params.getFirst();
+                    base64 = webScreenCapturer.capture(
+                            "https://prts.wiki/w/" + operator, 1024, 5120,
+                            List.of("#bodyContent"),
+                            List.of(
+                                    ".backToTop", "#toc", "#rightToc",
+                                    ".music-btn", "#calc", "#equip-selector",
+                                    "#干员模型", "#spine-root",
+                                    "#注释与链接", "#catlinks"
+                            ),
+                            List.of(
+                                    "input[onchange*='switchDisplay第一天赋算法']",
+                                    "input[onchange*='switchDisplay第一天赋潜能']",
+                                    "input[onchange*='switchDisplay第二天赋算法']",
+                                    "input[onchange*='switchDisplay第二天赋潜能']"
+                            )
+                    );
+                }
+            } catch (NullBotMsgException e) {
+                throw e;
             } catch (Exception e) {
                 throw new NullBotMsgException("[干员查询] ❌查询失败: " + e.getMessage());
             }
+
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
             log.info("\t\t\t\t├─[Operator] 已查询 - {}", operator);
@@ -57,7 +93,8 @@ public class OperatorCommand implements Command
                 ◉ Operator 命令
                 功能: 明日方舟PRTS干员查询
                 限权: %d 级
-                格式: Operator [干员名]
+                格式: Operator [可选: 查询内容] [干员名]
+                可查询内容: 档案/语音
                 别名: PRTS/prts/干员查询/干员""", getAccess()
         );
     }

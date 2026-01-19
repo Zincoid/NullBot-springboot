@@ -13,10 +13,13 @@ import org.bot.nullbot.util.ResourceUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -139,23 +142,61 @@ class QqBotApplicationTests {
 
     @Test
     void WebCaptureTest() {
-        // webScreenCapturer.captureFull("https://prts.wiki/w/%E8%8E%B1%E4%BC%8A");
+        String operator = "m3";
+
+        // webScreenCapturer.captureFull("https://prts.wiki/w/" + operator);
 
         // webScreenCapturer.captureElement(
-        //         "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A",
+        //         "https://prts.wiki/w/" + operator,
         //         "#bodyContent",
         //         1000, 5000
         // );
 
-        webScreenCapturer.captureElements(
-                "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A",
-                List.of("#bodyContent"),
-                List.of(
-                        ".backToTop", "#toc", "#rightToc",
-                        "#干员模型", "#spine-root", "#注释与链接", "#catlinks",
-                        "#music-info", "#calc"
-                ),
-                1000, 5000
+        // String base64 = webScreenCapturer.capture(
+        //         "https://prts.wiki/w/" + operator, 1024, 5120,
+        //         List.of("#bodyContent"),
+        //         List.of(
+        //                 ".backToTop", "#toc", "#rightToc",
+        //                 ".music-btn", "#calc", "#equip-selector",
+        //                 "#干员模型", "#spine-root",
+        //                 "#注释与链接", "#catlinks"
+        //         ),
+        //         List.of(
+        //                 "input[onchange*='switchDisplay第一天赋算法']",
+        //                 "input[onchange*='switchDisplay第一天赋潜能']",
+        //                 "input[onchange*='switchDisplay第二天赋算法']",
+        //                 "input[onchange*='switchDisplay第二天赋潜能']"
+        //         )
+        // );
+
+        // String base64 = webScreenCapturer.capture(
+        //                 "https://prts.wiki/w/" + operator, 1024, 5120,
+        //                 List.of("table.wikitable.mw-collapsible.logo.mw-made-collapsible"),
+        //                 List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+        //                 List.of("button[class*='mw-collapsible-toggle']")
+        //         );
+
+        // String base64 = webScreenCapturer.capture(
+        //         "https://prts.wiki/w/" + operator, 1024, 5120,
+        //         List.of("#voice-table-root"),
+        //         List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
+        //         List.of("a[class*='z-1 float-right select-none']")
+        // );
+
+        String base64 = webScreenCapturer.capture(
+                "https://prts.wiki/w/" + operator, 1024, 5120,
+                List.of("//table[.//th//b[contains(text(),'干员密录')]]"),
+                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                List.of("button[class*='mw-collapsible-toggle']")
         );
+
+        // 解码Base64字符串
+        byte[] imageBytes = Base64.getDecoder().decode(base64);
+        // 写入文件
+        try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png")) {
+            fos.write(imageBytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
