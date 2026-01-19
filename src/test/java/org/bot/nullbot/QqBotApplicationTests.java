@@ -152,22 +152,29 @@ class QqBotApplicationTests {
         //         1000, 5000
         // );
 
+        // String base64 = webScreenCapturer.capture(
+        //         "https://prts.wiki/w/" + operator, 1024, 5120,
+        //         List.of("#bodyContent"),
+        //         List.of(
+        //                 ".backToTop", "#toc", "#rightToc",
+        //                 ".music-btn", "#calc", "#equip-selector",
+        //                 "#干员模型", "#spine-root",
+        //                 "#注释与链接", "#catlinks"
+        //         ),
+        //         List.of(
+        //                 "input[onchange*='switchDisplay第一天赋算法']",
+        //                 "input[onchange*='switchDisplay第一天赋潜能']",
+        //                 "input[onchange*='switchDisplay第二天赋算法']",
+        //                 "input[onchange*='switchDisplay第二天赋潜能']"
+        //         )
+        // );
+
         String base64 = webScreenCapturer.capture(
-                "https://prts.wiki/w/" + operator, 1024, 5120,
-                List.of("#bodyContent"),
-                List.of(
-                        ".backToTop", "#toc", "#rightToc",
-                        ".music-btn", "#calc", "#equip-selector",
-                        "#干员模型", "#spine-root",
-                        "#注释与链接", "#catlinks"
-                ),
-                List.of(
-                        "input[onchange*='switchDisplay第一天赋算法']",
-                        "input[onchange*='switchDisplay第一天赋潜能']",
-                        "input[onchange*='switchDisplay第二天赋算法']",
-                        "input[onchange*='switchDisplay第二天赋潜能']"
-                )
-        );
+                        "https://prts.wiki/w/" + operator, 1024, 5120,
+                        List.of("table.wikitable.mw-collapsible.logo.mw-made-collapsible"),
+                        List.of(".backToTop", "#rightToc"),
+                        List.of("button[class*='mw-collapsible-toggle']")
+                );
 
         // 解码Base64字符串
         byte[] imageBytes = Base64.getDecoder().decode(base64);
