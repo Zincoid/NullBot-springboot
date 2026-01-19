@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"Operator", "干员查询", "干员"})
+@CommandMapping({"Operator", "PRTS", "干员查询", "干员"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -49,7 +49,7 @@ public class OperatorCommand implements Command
                 功能: 明日方舟PRTS干员查询
                 限权: %d 级
                 格式: Operator
-                别名: 干员查询/干员""", getAccess()
+                别名: PRTS/干员查询/干员""", getAccess()
         );
     }
 }
