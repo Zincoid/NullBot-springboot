@@ -44,7 +44,7 @@ public class WebScreenCapturer
             Thread.sleep(2000);
             // 定位元素位置
             List<WebElement> targets = targetCssSelectors.stream()
-                    .map(selector -> driver.findElement(By.cssSelector(selector)))
+                    .map(selector -> driver.findElement(getBy(selector)))
                     .toList();
             // 点击附加元素
             for(String clickCssSelector : clickCssSelectors) clickElement(driver, clickCssSelector);
@@ -111,7 +111,7 @@ public class WebScreenCapturer
             // 等待页面加载
             Thread.sleep(2000);
             // 定位元素位置
-            WebElement element = driver.findElement(By.cssSelector(cssSelector));
+            WebElement element = driver.findElement(getBy(cssSelector));
             // 进行元素截图
             AShot ashot = new AShot();
             ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
@@ -133,6 +133,14 @@ public class WebScreenCapturer
 
     // =================== 工具方法 ===================
 
+    private By getBy(String selector) {
+        if (selector.startsWith("//") || selector.startsWith(".//") || selector.startsWith("(")) {
+            return By.xpath(selector);
+        } else {
+            return By.cssSelector(selector);
+        }
+    }
+
     private void hideElements(WebDriver driver, List<String> cssSelectors) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         for (String selector : cssSelectors) {
@@ -151,7 +159,7 @@ public class WebScreenCapturer
 
     private void clickElement(WebDriver driver, String cssSelector) {
         try {
-            WebElement element = driver.findElement(By.cssSelector(cssSelector));
+            WebElement element = driver.findElement(getBy(cssSelector));
             // 尝试常规点击
             element.click();
         } catch (NoSuchElementException e) {
@@ -161,7 +169,7 @@ public class WebScreenCapturer
             // 使用 JavaScript 点击
             try {
                 JavascriptExecutor js = (JavascriptExecutor) driver;
-                WebElement element = driver.findElement(By.cssSelector(cssSelector));
+                WebElement element = driver.findElement(getBy(cssSelector));
                 // 先确保元素可见
                 js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
                 Thread.sleep(200);

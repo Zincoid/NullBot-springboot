@@ -144,10 +144,10 @@ class QqBotApplicationTests {
     void WebCaptureTest() {
         String operator = "m3";
 
-        // webScreenCapturer.captureFull("https://prts.wiki/w/%E8%8E%B1%E4%BC%8A");
+        // webScreenCapturer.captureFull("https://prts.wiki/w/" + operator);
 
         // webScreenCapturer.captureElement(
-        //         "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A",
+        //         "https://prts.wiki/w/" + operator,
         //         "#bodyContent",
         //         1000, 5000
         // );
@@ -176,11 +176,18 @@ class QqBotApplicationTests {
         //                 List.of("button[class*='mw-collapsible-toggle']")
         //         );
 
+        // String base64 = webScreenCapturer.capture(
+        //         "https://prts.wiki/w/" + operator, 1024, 5120,
+        //         List.of("#voice-table-root"),
+        //         List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
+        //         List.of("a[class*='z-1 float-right select-none']")
+        // );
+
         String base64 = webScreenCapturer.capture(
                 "https://prts.wiki/w/" + operator, 1024, 5120,
-                List.of("#voice-table-root"),
-                List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
-                List.of("a[class*='z-1 float-right select-none']")
+                List.of("//table[.//th//b[contains(text(),'干员密录')]]"),
+                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                List.of("button[class*='mw-collapsible-toggle']")
         );
 
         // 解码Base64字符串
