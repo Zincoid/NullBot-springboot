@@ -68,7 +68,9 @@ public class OperatorCommand implements Command
 
                         default -> throw new NullBotMsgException("[干员查询] ❌无此操作");
                     };
-                }else{
+
+                } else {
+
                     // 默认方法
                     operator = params.getFirst();
                     base64 = webScreenCapturer.capture(
