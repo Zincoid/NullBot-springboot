@@ -94,7 +94,7 @@ public class OperatorCommand implements Command
                 功能: 明日方舟PRTS干员查询
                 限权: %d 级
                 格式: Operator [可选: 查询内容] [干员名]
-                查询内容: 档案/...
+                可查询内容: 档案/语音
                 别名: PRTS/prts/干员查询/干员""", getAccess()
         );
     }
