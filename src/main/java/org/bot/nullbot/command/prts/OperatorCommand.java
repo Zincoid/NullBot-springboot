@@ -36,19 +36,22 @@ public class OperatorCommand implements Command
                     // 操作方法
                     String option = params.get(0);
                     operator = params.get(1);
-                    base64 = switch (option) {
+                    base64 = switch (option)
+                    {
                         case "档案" -> webScreenCapturer.capture(
-                                    "https://prts.wiki/w/" + operator, 1024, 5120,
-                                    List.of("table.wikitable.mw-collapsible.logo.mw-made-collapsible"),
-                                    List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                                    List.of("button[class*='mw-collapsible-toggle']")
+                                "https://prts.wiki/w/" + operator, 1024, 5120,
+                                List.of("table.wikitable.mw-collapsible.logo.mw-made-collapsible"),
+                                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                                List.of("button[class*='mw-collapsible-toggle']")
                             );
+
                         case "语音" -> webScreenCapturer.capture(
                                 "https://prts.wiki/w/" + operator, 1024, 5120,
                                 List.of("#voice-table-root"),
                                 List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
                                 List.of("a[class*='z-1 float-right select-none']")
                         );
+
                         default -> throw new NullBotMsgException("[干员查询] ❌无此操作");
                     };
                 }else{
