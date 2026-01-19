@@ -40,7 +40,7 @@ public class OperatorCommand implements Command
                         case "档案" -> webScreenCapturer.capture(
                                     "https://prts.wiki/w/" + operator, 1024, 5120,
                                     List.of("table.wikitable.mw-collapsible.logo.mw-made-collapsible"),
-                                    List.of(".backToTop", "#rightToc"),
+                                    List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
                                     List.of("button[class*='mw-collapsible-toggle']")
                             );
                         default -> throw new NullBotMsgException("[干员查询] ❌无此操作");

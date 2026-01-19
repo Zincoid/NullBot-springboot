@@ -46,10 +46,10 @@ public class WebScreenCapturer
             List<WebElement> targets = targetCssSelectors.stream()
                     .map(selector -> driver.findElement(By.cssSelector(selector)))
                     .toList();
-            // 隐藏忽略元素
-            hideElements(driver, ignoredCssSelectors);
             // 点击附加元素
             for(String clickCssSelector : clickCssSelectors) clickElement(driver, clickCssSelector);
+            // 隐藏忽略元素
+            hideElements(driver, ignoredCssSelectors);
             // 进行元素截图
             AShot ashot = new AShot();
             ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
