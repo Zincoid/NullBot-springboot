@@ -40,7 +40,7 @@ public class HtmlTemplateUtil
     }
 
     /**
-     * 插入图片到 HTML
+     * 替换模板中的图片
      * @param template 原始 HTML
      * @param images 替换 MAP
      * @return 处理后的 HTML

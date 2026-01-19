@@ -124,7 +124,7 @@ public class SymmetryCommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ Convert 命令
-                功能: 图片对称
+                功能: 头像图片对称处理
                 限权: %d 级
                 格式: Symmetry [QQ号]
                 示例: Symmetry 2660181154""", getAccess()

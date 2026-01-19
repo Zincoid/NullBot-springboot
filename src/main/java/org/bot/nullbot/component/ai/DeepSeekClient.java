@@ -57,7 +57,7 @@ public class DeepSeekClient
                 // 普通命令
                 "aud", "vid", "img", "say",
                 "ChatHistory", "ChatReset",
-                "Convert", "Anime", "Guess",
+                "Convert", "Symmetry", "Anime", "Guess",
                 "AccessSet", "GroupSet", "UserBan",
                 "Help", "ImageFolder", "PUBG", "PRTS",
 
