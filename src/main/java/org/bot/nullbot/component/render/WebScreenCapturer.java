@@ -134,11 +134,10 @@ public class WebScreenCapturer
     // =================== 工具方法 ===================
 
     private By getBy(String selector) {
-        if (selector.startsWith("//") || selector.startsWith(".//") || selector.startsWith("(")) {
+        if (selector.startsWith("//") || selector.startsWith(".//") || selector.startsWith("("))
             return By.xpath(selector);
-        } else {
+        else
             return By.cssSelector(selector);
-        }
     }
 
     private void hideElements(WebDriver driver, List<String> cssSelectors) {
