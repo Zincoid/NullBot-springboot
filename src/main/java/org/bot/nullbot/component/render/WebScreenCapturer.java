@@ -35,16 +35,15 @@ public class WebScreenCapturer
 
     // 截取多个元素 可忽略元素 可附加点击
     public String capture(String url, int width, int height,
-                                  List<String> targetCssSelectors,
-                                  List<String> ignoredCssSelectors,
-                                  List<String> clickCssSelectors
+                          List<String> targetCssSelectors,
+                          List<String> ignoredCssSelectors,
+                          List<String> clickCssSelectors
     ) {
         int retryCount = 0;
 
         while (retryCount < MAX_RETRIES) {
             WebDriver driver = setupDriver();
             try {
-                driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(LOAD_TIMEOUT));
                 driver.get(url);
                 // 设置窗口尺寸
                 driver.manage().window().setSize(new Dimension(width, height));
@@ -94,7 +93,6 @@ public class WebScreenCapturer
         while (retryCount < MAX_RETRIES) {
             WebDriver driver = setupDriver();
             try {
-                driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(LOAD_TIMEOUT));
                 driver.get(url);
                 // 设置窗口尺寸
                 driver.manage().window().setSize(new Dimension(width, height));
@@ -134,7 +132,6 @@ public class WebScreenCapturer
         while (retryCount < MAX_RETRIES) {
             WebDriver driver = setupDriver();
             try {
-                driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(LOAD_TIMEOUT));
                 driver.get(url);
                 // 设置窗口尺寸
                 driver.manage().window().setSize(new Dimension(width, height));
@@ -247,6 +244,9 @@ public class WebScreenCapturer
         options.addArguments("--window-size=1920,1080");
         options.addArguments("--hide-scrollbars");
 
-        return new ChromeDriver(options);
+        WebDriver driver = new ChromeDriver(options);
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(LOAD_TIMEOUT));
+
+        return driver;
     }
 }
