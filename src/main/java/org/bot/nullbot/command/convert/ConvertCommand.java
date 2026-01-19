@@ -127,7 +127,7 @@ public class ConvertCommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ Convert 命令
-                功能: P图!!!
+                功能: 用户头像P图!!!
                 方式: RIP(安息)/PRTS(封锁)/InvsPRTS(封锁反色)
                 限权: %d 级
                 格式: Convert [方式] [QQ号]
