@@ -52,7 +52,7 @@ public class WebScreenCapturer
             hideElements(driver, ignoredCssSelectors);
             // 进行元素截图
             AShot ashot = new AShot();
-            ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
+            ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
             ashot.coordsProvider(new WebDriverCoordsProvider());
             Screenshot screenshot = ashot.takeScreenshot(driver, targets);
             BufferedImage eleImage = screenshot.getImage();
@@ -61,9 +61,16 @@ public class WebScreenCapturer
             // ImageIO.write(eleImage, "png", outputFile);
             // BASE64 转换
             return imageToBase64(eleImage);
+
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+            throw new RuntimeException("网页访问超时");
+        }  catch (NoSuchElementException e) {
+            e.printStackTrace();
+            throw new RuntimeException("未找到页元素");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("网页截图出错");
+            throw new RuntimeException("未知截图错误");
         } finally {
             driver.quit();
         }
@@ -82,7 +89,7 @@ public class WebScreenCapturer
             Thread.sleep(2000);
             // 进行全页截图
             AShot ashot = new AShot();
-            ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
+            ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
             Screenshot screenshot = ashot.takeScreenshot(driver);
             BufferedImage fullImage = screenshot.getImage();
             // 保存
@@ -93,9 +100,13 @@ public class WebScreenCapturer
             ImageIO.write(fullImage, "png", baos);
             byte[] imageBytes = baos.toByteArray();
             return Base64.getEncoder().encodeToString(imageBytes);
+
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+            throw new RuntimeException("网页访问超时");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("网页截图出错");
+            throw new RuntimeException("未知截图错误");
         } finally {
             driver.quit();
         }
@@ -114,7 +125,7 @@ public class WebScreenCapturer
             WebElement element = driver.findElement(getBy(cssSelector));
             // 进行元素截图
             AShot ashot = new AShot();
-            ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
+            ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
             ashot.coordsProvider(new WebDriverCoordsProvider());
             Screenshot screenshot = ashot.takeScreenshot(driver, element);
             BufferedImage eleImage = screenshot.getImage();
@@ -123,9 +134,16 @@ public class WebScreenCapturer
             // ImageIO.write(eleImage, "png", outputFile);
             // BASE64 转换
             return imageToBase64(eleImage);
+
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+            throw new RuntimeException("网页访问超时");
+        }  catch (NoSuchElementException e) {
+            e.printStackTrace();
+            throw new RuntimeException("未找到页元素");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("网页截图出错");
+            throw new RuntimeException("未知截图错误");
         } finally {
             driver.quit();
         }
