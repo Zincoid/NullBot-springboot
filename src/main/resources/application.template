@@ -35,10 +35,11 @@ jwt:
 #    root: INFO
 #    org.bot.nullbot: WARN
 
-driver:
-  chrome:
-    auto: false
-    path: /root/Nullbot/file/driver/chromedriver
+chrome:
+    driver-auto: false
+    driver-path: /root/Nullbot/file/driver/chromedriver
+    max-retries: 5
+    load-timeout: 5
 
 shiro:
   ws:

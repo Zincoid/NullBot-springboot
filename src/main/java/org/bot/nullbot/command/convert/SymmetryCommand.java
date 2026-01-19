@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.render.HtmlRenderer;
+import org.bot.nullbot.component.render.ImageConverter;
+import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.FileInfo;
@@ -18,32 +21,28 @@ import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.FileUtil;
+import org.bot.nullbot.util.HtmlTemplateUtil;
 import org.bot.nullbot.util.MessageParseUtil;
-import org.bot.nullbot.component.render.ImageConverter;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Path;
 import java.util.*;
 
-@CommandMapping({"Convert", "图像处理"})
+@CommandMapping({"Symmetry", "对称"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class ConvertCommand implements Command
+public class SymmetryCommand implements Command
 {
     private final FileStorageProperties fileStorageProperties;
-    private final ImageConverter imageConverter;
+
+    private final ResourceLoader resourceLoader;
+    private final HtmlRenderer htmlRenderer;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long groupId = groupMessageEvent.getGroupId();
-
-            if (event.getCommandParameters().isEmpty())
-                throw new NullBotMsgException("[图像处理] ❌无方法参数");
-
-            String method = event.getCommandParameters().getFirst();
-            if (!List.of("RIP", "PRTS", "InversePRTS").contains(method))
-                throw new NullBotMsgException("[图像处理] ❌方法不存在");
 
             List<String> urls = new ArrayList<>();
 
@@ -56,12 +55,12 @@ public class ConvertCommand implements Command
             }
 
             //  ID参数收集 或 AT收集
-            if (event.getCommandParameters().size() > 1) {
+            if (!event.getCommandParameters().isEmpty()) {
                 long qqNumber;
                 try {
-                    qqNumber = Long.parseLong(event.getCommandParameters().get(1));
+                    qqNumber = Long.parseLong(event.getCommandParameters().getFirst());
                 } catch (NumberFormatException e) {
-                    throw new NullBotMsgException("[图像处理] ❌参数格式错误");
+                    throw new NullBotMsgException("[对称] ❌参数格式错误");
                 }
                 urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
             }else{
@@ -70,11 +69,10 @@ public class ConvertCommand implements Command
             }
 
             if (urls.isEmpty())
-                throw new NullBotMsgException("[图像处理] ❌无引用图片或ID参数或At消息");
+                throw new NullBotMsgException("[对称] ❌无引用图片或ID参数或At消息");
 
             // 开始处理
             String tempFilePath = fileStorageProperties.getTempPath();
-            String tempFontPath = tempFilePath + "/fonts";
             for (String url : urls) {
                 String tempFileName = UUID.randomUUID().toString();
                 String downloadedFileName;
@@ -82,44 +80,43 @@ public class ConvertCommand implements Command
                     FileInfo fileInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName, "\t\t\t\t├─ ");
                     downloadedFileName = fileInfo.getFileName();
                 } catch (Exception e) {
-                    throw new NullBotMsgException("[图像处理] ❌下载时出错: " + e.getMessage());
+                    throw new NullBotMsgException("[对称] ❌下载时出错: " + e.getMessage());
                 }
                 String imagePath = tempFilePath + "/" + downloadedFileName;
                 String base64;
                 try {
-                    base64 = switch (method){
-                        case "RIP" -> imageConverter.RIP(imagePath, tempFontPath);
-                        case "PRTS" -> imageConverter.PRTS(imagePath, tempFontPath);
-                        case "InvsPRTS" -> imageConverter.inversePRTS(imagePath, tempFontPath);
-                        default -> throw new NullBotMsgException("[图像处理] ❌方法不存在");
-                    };
+                    Path htmlPath = resourceLoader.getCached("static/html/symmetry.html", tempFilePath + "/html");
+                    Map<String, String> images = new HashMap<>();
+                    images.put("image", imagePath);
+                    String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+                    html = HtmlTemplateUtil.replaceImages(html, images);
+                    base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
                 } catch (NullBotMsgException e) {
                     throw e;
                 } catch (Exception e) {
-                    throw new NullBotMsgException("[图像处理] ❌处理时出错: " + e.getMessage());
+                    throw new NullBotMsgException("[对称] ❌处理时出错: " + e.getMessage());
                 } finally {
                     FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
                 }
                 String response = MsgUtils.builder().img("base64://" + base64).build();
                 bot.sendGroupMsg(groupId, response, false);
-                log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
+                log.info("\t\t\t\t├─[Symmetry] 处理完成 - {}", downloadedFileName);
             }
-            // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图像处理] ✅全部处理完成！", false);
+            // bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[对称] ✅全部处理完成！", false);
         }else
-            throw new NullBotLogException("[图像处理] ❌未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[对称] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ Convert 命令
-                功能: P图!!!
+                ◉ Symmetry 命令
+                功能: 图片对称
                 限权: %d 级
                 格式:
-                1. [引用] Convert [处理方式]
-                2. Convert [处理方式] [@任何人|QQ号]
-                方式: RIP/PRTS/InvsPRTS
-                别名: 图像处理""", getAccess()
+                1. [引用] Symmetry
+                2. Symmetry [@任何人|QQ号]
+                别名: 对称""", getAccess()
         );
     }
 
@@ -127,11 +124,10 @@ public class ConvertCommand implements Command
     public String getHelpForAI() {
         return String.format("""
                 ◉ Convert 命令
-                功能: P图!!!
-                方式: RIP(安息)/PRTS(封锁)/InvsPRTS(封锁反色)
+                功能: 图片对称
                 限权: %d 级
-                格式: Convert [方式] [QQ号]
-                示例: Convert RIP 2660181154""", getAccess()
+                格式: Symmetry [QQ号]
+                示例: Symmetry 2660181154""", getAccess()
         );
     }
 }

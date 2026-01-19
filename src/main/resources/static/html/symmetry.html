@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        #mirrorContainer {
+            margin: 0;
+            padding: 0;
+            width: fit-content;
+            height: fit-content;
+        }
+
+        canvas {
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<!-- 主容器，用于渲染最终结果 -->
+<div id="mirrorContainer">
+    <!-- 原始图片元素（隐藏） -->
+    <img id="sourceImage" src="${image}" alt="原始图片" style="display:none;">
+
+    <!-- 用于渲染最终结果的Canvas -->
+    <canvas id="resultCanvas"></canvas>
+</div>
+
+<script>
+    // 立即执行，不等待DOMContentLoaded
+    const sourceImage = document.getElementById('sourceImage');
+    const resultCanvas = document.getElementById('resultCanvas');
+    const ctx = resultCanvas.getContext('2d');
+
+    // 图片加载完成后的处理
+    sourceImage.onload = function() {
+        // 获取原始图片尺寸
+        const originalWidth = sourceImage.naturalWidth;
+        const originalHeight = sourceImage.naturalHeight;
+
+        // 计算新图片尺寸（宽度减半，因为只取左边部分）
+        const newWidth = Math.floor(originalWidth / 2);
+        const newHeight = originalHeight;
+
+        // 设置Canvas尺寸
+        resultCanvas.width = originalWidth; // 最终宽度还是原图宽度
+        resultCanvas.height = newHeight;
+
+        // 1. 绘制左边部分（正常）
+        ctx.drawImage(
+            sourceImage,
+            0, 0, newWidth, newHeight, // 源图片裁剪区域（左半边）
+            0, 0, newWidth, newHeight  // 目标Canvas绘制区域（左边）
+        );
+
+        // 2. 绘制右边部分（镜像）
+        // 先保存当前状态
+        ctx.save();
+
+        // 平移坐标系到右边部分的中心
+        ctx.translate(originalWidth, 0);
+
+        // 水平翻转（镜像效果）
+        ctx.scale(-1, 1);
+
+        // 绘制左边部分到右边（因为是镜像翻转，所以还是绘制左边部分）
+        ctx.drawImage(
+            sourceImage,
+            0, 0, newWidth, newHeight, // 源图片裁剪区域（左半边）
+            0, 0, newWidth, newHeight  // 目标Canvas绘制区域（右边，已翻转）
+        );
+
+        // 恢复状态
+        ctx.restore();
+    };
+
+    // 图片加载失败处理
+    sourceImage.onerror = function() {
+        console.error('图片加载失败');
+    };
+
+    // 如果图片已经加载完成（例如从缓存加载）
+    if (sourceImage.complete) {
+        sourceImage.onload();
+    } else {
+        // 设置Canvas初始尺寸（如果图片加载中）
+        resultCanvas.width = 800;
+        resultCanvas.height = 400;
+    }
+</script>
+</body>
+</html>

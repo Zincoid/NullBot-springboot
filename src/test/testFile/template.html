@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .certificate {
+            width: 800px;
+            padding: 40px;
+            background: #fffaf0;
+            border: 20px solid transparent;
+            border-image: linear-gradient(45deg, #8b4513, #d2691e) 1;
+            position: relative;
+            font-family: '楷体', 'STKaiti', serif;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 40px;
+            color: #8b0000;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .content {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .recipient {
+            font-size: 28px;
+            color: #b22222;
+            text-align: center;
+            margin: 30px 0;
+            font-weight: bold;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 100px;
+            height: 100px;
+        }
+
+        .stamp {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 150px;
+            height: 150px;
+        }
+
+        .signature {
+            margin-top: 50px;
+            text-align: right;
+            font-size: 16px;
+        }
+
+        .signature-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="certificate">
+    <!-- 公司LOGO -->
+    <img class="logo" src="${companyLogo}" alt="公司LOGO">
+
+    <!-- 证书标题 -->
+    <div class="title">荣誉证书</div>
+
+    <div class="content">
+        <p>兹证明 <span class="recipient">${recipientName}</span> 同志，</p>
+        <p>在 ${period} 期间，${achievement}，</p>
+        <p>特发此证，以资鼓励。</p>
+    </div>
+
+    <!-- 成就图片展示 -->
+    <div style="text-align: center; margin: 30px 0;">
+        <img src="${achievementImage}" alt="成就展示" style="max-width: 80%; border-radius: 10px;">
+    </div>
+
+    <div class="signature">
+        <p>颁发单位：${companyName}</p>
+        <p>颁发日期：${issueDate}</p>
+        <div class="signature-name">${issuerName}</div>
+    </div>
+
+    <!-- 公司印章 -->
+    <img class="stamp" src="${companyStamp}" alt="公司印章">
+</div>
+</body>
+</html>
