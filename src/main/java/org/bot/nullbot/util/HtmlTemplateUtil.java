@@ -6,27 +6,18 @@ import java.util.*;
 
 public class HtmlTemplateUtil
 {
-    /**
-     * 从模板文件加载并替换占位符
-     */
-    public static String loadTemplate(String templatePath, Map<String, String> variables)
-            throws IOException {
-        String content = new String(Files.readAllBytes(Paths.get(templatePath)));
-        return replaceVariables(content, variables);
-    }
+    // =================== 主要方法 ===================
 
     /**
-     * 替换模板中的变量
-     * 格式：${variableName}
+     * 从模板文件加载并替换占位符
+     * @param templatePath 模板 HTML 路径
+     * @param variables 替换 MAP
+     * @return 处理后的 HTML
+     * 占位格式: ${variableName}
      */
-    private static String replaceVariables(String template, Map<String, String> variables) {
-        String result = template;
-        for (Map.Entry<String, String> entry : variables.entrySet()) {
-            String placeholder = "\\$\\{" + entry.getKey() + "\\}";
-            result = result.replaceAll(placeholder,
-                    entry.getValue() != null ? entry.getValue() : "");
-        }
-        return result;
+    public static String loadTemplate(String templatePath, Map<String, String> variables) throws IOException {
+        String content = new String(Files.readAllBytes(Paths.get(templatePath)));
+        return replaceVariables(content, variables);
     }
 
     /**
@@ -37,7 +28,7 @@ public class HtmlTemplateUtil
      * @return 处理后的 HTML
      */
     public static String insertImage(String html, String imgTag, String imagePath) {
-        // 如果图片是本地文件，转换为 data URI
+        // 如果图片是本地文件 转换为 data URI
         if (imagePath.startsWith("/") || imagePath.startsWith(".") ||
                 imagePath.startsWith("file://")) {
             try {
@@ -50,45 +41,47 @@ public class HtmlTemplateUtil
 
                     // 替换占位符或添加 img 标签
                     if (html.contains(imgTag)) {
-                        return html.replace(imgTag,
-                                "<img src=\"" + dataUri + "\" style=\"max-width: 100%;\">");
+                        return html.replace(imgTag, "<img src=\"" + dataUri + "\" style=\"max-width: 100%;\">");
                     } else {
-                        return html.replace("</body>",
-                                "<img src=\"" + dataUri + "\" style=\"max-width: 100%;\"></body>");
+                        return html.replace("</body>", "<img src=\"" + dataUri + "\" style=\"max-width: 100%;\"></body>");
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                // 如果转换失败，使用原始路径
-                return html.replace(imgTag,
-                        "<img src=\"" + imagePath + "\" style=\"max-width: 100%;\">");
+                // 转换失败 使用原始路径
+                return html.replace(imgTag, "<img src=\"" + imagePath + "\" style=\"max-width: 100%;\">");
             }
         }
-
         // 网络图片或无法转换的图片
-        return html.replace(imgTag,
-                "<img src=\"" + imagePath + "\" style=\"max-width: 100%;\">");
+        return html.replace(imgTag, "<img src=\"" + imagePath + "\" style=\"max-width: 100%;\">");
     }
 
-    /**
-     * 替换文本内容
-     */
-    public static String replaceText(String html, String placeholder, String newText) {
-        return html.replace(placeholder,
-                newText != null ? newText : "");
-    }
+    // =================== 次要方法 ===================
 
     /**
-     * 将文件编码为 Base64
+     * 替换模板中的变量
+     * @param template 模板 HTML 字符串
+     * @param variables 替换 MAP
+     * @return 处理后的 HTML
+     * 占位格式: ${variableName}
      */
+    private static String replaceVariables(String template, Map<String, String> variables) {
+        String result = template;
+        for (Map.Entry<String, String> entry : variables.entrySet()) {
+            String placeholder = "\\$\\{" + entry.getKey() + "\\}";
+            result = result.replaceAll(placeholder,
+                    entry.getValue() != null ? entry.getValue() : "");
+        }
+        return result;
+    }
+
+    // =================== 工具方法 ===================
+
     private static String encodeFileToBase64(File file) throws IOException {
         byte[] fileContent = Files.readAllBytes(file.toPath());
         return Base64.getEncoder().encodeToString(fileContent);
     }
 
-    /**
-     * 获取文件的 MIME 类型
-     */
     private static String getMimeType(String fileName) {
         if (fileName.endsWith(".png")) return "image/png";
         if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) return "image/jpeg";

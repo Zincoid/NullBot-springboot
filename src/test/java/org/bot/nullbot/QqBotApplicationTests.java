@@ -1,59 +1,72 @@
 package org.bot.nullbot;
 
+import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import jakarta.annotation.Resource;
+import org.bot.nullbot.component.game.handler.TicTacToeMatchHandler;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
+import org.bot.nullbot.component.render.HtmlRenderer;
 import org.bot.nullbot.component.render.WebScreenCapturer;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.svg.SvgCanvas;
 import org.bot.nullbot.util.FileUtil;
+import org.bot.nullbot.util.HtmlTemplateUtil;
+import org.bot.nullbot.util.MessageParseUtil;
 import org.bot.nullbot.util.ResourceUtil;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class QqBotApplicationTests {
-    // @Value("${nullbot.bot-id}")
-    // private Long botId;
-    // @Resource
-    // private BotContainer botContainer;
+class QqBotApplicationTests
+{
+    @Value("${nullbot.bot-id}")
+    private Long botId;
+    @Resource
+    private BotContainer botContainer;
     @Resource
     private CommandProcessor commandProcessor;
     @Resource
     Matcher matcher;
     @Resource
+    TicTacToeMatchHandler ticTacToeMatchHandler;
+    @Resource
     TicTacToeGameLogic ticTacToeGameLogic;
     @Resource
     WebScreenCapturer webScreenCapturer;
+    @Resource
+    HtmlRenderer htmlRenderer;
 
-    // @Test
-    // void parseTest() throws IOException {
-    //     Bot bot = botContainer.robots.get(botId);
-    //     System.out.println(bot.getStrangerInfo(2660181154L, true).getData().getNickname());
-    //     System.out.println(MessageParseUtil.parseRawSaying(bot, "[CQ:at,qq=2660181154] 你好！"));
-    // }
+    @Test
+    void parseTest() throws IOException {
+        Bot bot = botContainer.robots.get(botId);
+        System.out.println(bot.getStrangerInfo(2660181154L, true).getData().getNickname());
+        System.out.println(MessageParseUtil.parseRawSaying(bot, "[CQ:at,qq=2660181154] 你好！"));
+    }
 
     @Test
     void fileTest() throws IOException {
-        System.out.println(FileUtil.getFolderTreeString("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main", 0));
+        String root = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main";
+        System.out.println(FileUtil.getFolderTreeString(root, 0));
     }
 
    @Test
    void commandTest() throws Exception {
        String commandType = "help";
        List<String> commandParameters =  new ArrayList<>();
-       commandProcessor.processTest(new CommandEvent<>(commandType, commandParameters, new GroupMessageEvent(), false, true));
+       commandProcessor.processTest(new CommandEvent<>(
+               commandType, commandParameters, new GroupMessageEvent(),
+               false, true)
+       );
 
        // while (true)
        // {
@@ -81,10 +94,10 @@ class QqBotApplicationTests {
        //     int j = Integer.parseInt(command.split(" ")[1]);
        //
        //     if(current){
-       //         System.out.println(ticTacToeGameLogic.move(0L, i, j).getInfo());
+       //         System.out.println(ticTacToeGameLogic.place(0L, i, j).getInfo());
        //         current = false;
        //     }else{
-       //         System.out.println(ticTacToeGameLogic.move(1L, i, j).getInfo());
+       //         System.out.println(ticTacToeGameLogic.place(1L, i, j).getInfo());
        //         current = true;
        //     }
        // }
@@ -207,5 +220,13 @@ class QqBotApplicationTests {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    void HtmlRenderTest() {
+        String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\template.html";
+        Map<String, String> variables = new HashMap<>();
+        String html = HtmlTemplateUtil.loadTemplate(htmlPath, variables);
+        htmlRenderer
     }
 }
