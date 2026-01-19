@@ -70,7 +70,7 @@ public class HtmlRenderer
     // =================== 渲染方法 ===================
 
     // HTML 字符串渲染
-    public String renderFromHtml(String html, String outputPath) throws Exception {
+    public String renderFromHtml(String html) throws Exception {
         // 保存临时文件
         File tempFile = File.createTempFile("render-", ".html");
         try (FileWriter writer = new FileWriter(tempFile)) {
@@ -104,7 +104,7 @@ public class HtmlRenderer
     }
 
     // HTML 页元素渲染
-    public String renderElement(String html, String cssSelector, String outputPath) throws Exception {
+    public String renderElement(String html, String cssSelector) throws Exception {
         // 保存临时文件
         File tempFile = File.createTempFile("render-", ".html");
         try (FileWriter writer = new FileWriter(tempFile)) {

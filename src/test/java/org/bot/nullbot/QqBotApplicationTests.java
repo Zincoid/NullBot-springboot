@@ -212,7 +212,7 @@ class QqBotApplicationTests
         //         List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
         // );
 
-        // 解码Base64字符串
+        // Base64 解码
         byte[] imageBytes = Base64.getDecoder().decode(base64);
         // 写入文件
         try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\captured.png")) {
@@ -223,10 +223,45 @@ class QqBotApplicationTests
     }
 
     @Test
-    void HtmlRenderTest() {
-        String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\template.html";
+    void HtmlRenderTest() throws Exception {
+        // String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\template.html";
+        // String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\input.jpg";
+        //
+        // Map<String, String> variables = new HashMap<>();
+        // variables.put("recipientName", "张岚");
+        // variables.put("achievement", "吃了三斤使");
+        // variables.put("period", "打游戏");
+        //
+        // Map<String, String> images = new HashMap<>();
+        // images.put("companyLogo", imagePath);
+        //
+        // String html = HtmlTemplateUtil.loadTemplate(htmlPath);
+        // html = HtmlTemplateUtil.replaceVariables(html, variables);
+        // html = HtmlTemplateUtil.replaceImages(html, images);
+        //
+        // String base64 = htmlRenderer.renderElement(html, ".certificate");
+
+        String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\symmetry.html";
+        String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\input.jpg";
+
         Map<String, String> variables = new HashMap<>();
-        String html = HtmlTemplateUtil.loadTemplate(htmlPath, variables);
-        htmlRenderer
+
+        Map<String, String> images = new HashMap<>();
+        images.put("image", imagePath);
+
+        String html = HtmlTemplateUtil.loadTemplate(htmlPath);
+        html = HtmlTemplateUtil.replaceVariables(html, variables);
+        html = HtmlTemplateUtil.replaceImages(html, images);
+
+        String base64 = htmlRenderer.renderElement(html, "#image-container");
+
+        // Base64 解码
+        byte[] imageBytes = Base64.getDecoder().decode(base64);
+        // 写入文件
+        try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\rendered.png")) {
+            fos.write(imageBytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

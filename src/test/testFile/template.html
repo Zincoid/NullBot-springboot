@@ -1,160 +1,97 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
-        }
-
         .certificate {
             width: 800px;
-            margin: 0 auto;
             padding: 40px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border: 20px solid #4a6fa5;
-            border-image: linear-gradient(45deg, #4a6fa5, #166088) 1;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: #fffaf0;
+            border: 20px solid transparent;
+            border-image: linear-gradient(45deg, #8b4513, #d2691e) 1;
             position: relative;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #166088;
-            padding-bottom: 20px;
+            font-family: '楷体', 'STKaiti', serif;
         }
 
         .title {
-            color: #166088;
-            font-size: 36px;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .subtitle {
-            color: #4a6fa5;
-            font-size: 20px;
+            text-align: center;
+            font-size: 40px;
+            color: #8b0000;
+            margin-bottom: 30px;
+            font-weight: bold;
         }
 
         .content {
-            margin: 30px 0;
+            font-size: 18px;
             line-height: 1.8;
+            color: #333;
+            margin: 20px 0;
         }
 
         .recipient {
             font-size: 28px;
-            color: #166088;
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .description {
-            font-size: 18px;
-            margin: 20px 0;
-            text-align: justify;
-        }
-
-        .image-container {
+            color: #b22222;
             text-align: center;
             margin: 30px 0;
-        }
-
-        .signature-area {
-            margin-top: 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .signature {
-            text-align: center;
-        }
-
-        .signature-line {
-            width: 200px;
-            height: 1px;
-            background: #000;
-            margin: 0 auto 10px;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #666;
-            font-size: 14px;
+            font-weight: bold;
         }
 
         .logo {
             position: absolute;
             top: 20px;
-            right: 20px;
+            left: 20px;
             width: 100px;
-            opacity: 0.7;
+            height: 100px;
         }
 
         .stamp {
             position: absolute;
             bottom: 40px;
-            left: 40px;
+            right: 40px;
             width: 150px;
-            opacity: 0.9;
+            height: 150px;
+        }
+
+        .signature {
+            margin-top: 50px;
+            text-align: right;
+            font-size: 16px;
+        }
+
+        .signature-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 <div class="certificate">
     <!-- 公司LOGO -->
-    ${companyLogo}
+    <img class="logo" src="${companyLogo}" alt="公司LOGO">
 
-    <div class="header">
-        <h1 class="title">${certificateTitle}</h1>
-        <div class="subtitle">${certificateSubtitle}</div>
-    </div>
+    <!-- 证书标题 -->
+    <div class="title">荣誉证书</div>
 
     <div class="content">
-        <p>证书编号: <strong>${certificateNumber}</strong></p>
-        <p>颁发日期: <strong>${issueDate}</strong></p>
-
-        <div class="recipient">
-            授予: <span style="color: #e74c3c;">${recipientName}</span>
-        </div>
-
-        <div class="description">
-            兹证明 <strong>${recipientName}</strong> ${achievementDescription}
-            特发此证，以资鼓励。
-        </div>
-
-        <!-- 成就图片 -->
-        ${achievementImage}
+        <p>兹证明 <span class="recipient">${recipientName}</span> 同志，</p>
+        <p>在 ${period} 期间，${achievement}，</p>
+        <p>特发此证，以资鼓励。</p>
     </div>
 
-    <div class="signature-area">
-        <div class="signature">
-            <div class="signature-line"></div>
-            <div>颁发人: ${issuerName}</div>
-            <div>${issuerTitle}</div>
-        </div>
-
-        <div class="signature">
-            <div class="signature-line"></div>
-            <div>公司盖章</div>
-            <div>${companyName}</div>
-        </div>
+    <!-- 成就图片展示 -->
+    <div style="text-align: center; margin: 30px 0;">
+        <img src="${achievementImage}" alt="成就展示" style="max-width: 80%; border-radius: 10px;">
     </div>
 
-    <!-- 印章 -->
-    ${companyStamp}
-
-    <div class="footer">
-        <p>本证书电子版与纸质版具有同等效力 | 查询网址: ${verificationUrl}</p>
-        <p>${footerNote}</p>
+    <div class="signature">
+        <p>颁发单位：${companyName}</p>
+        <p>颁发日期：${issueDate}</p>
+        <div class="signature-name">${issuerName}</div>
     </div>
+
+    <!-- 公司印章 -->
+    <img class="stamp" src="${companyStamp}" alt="公司印章">
 </div>
 </body>
 </html>

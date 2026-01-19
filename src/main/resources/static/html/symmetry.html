@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>图片镜像处理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        #image-container {
+            max-width: 100%;
+            text-align: center;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+
+        #loading {
+            display: none;
+            color: #666;
+            font-family: Arial, sans-serif;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="image-container">
+    <div id="loading">正在处理图片...</div>
+    <canvas id="mirror-canvas"></canvas>
+</div>
+
+<script>
+    const imagePath = '${image}';
+
+    window.onload = function() {
+        const canvas = document.getElementById('mirror-canvas');
+        const ctx = canvas.getContext('2d');
+        const loading = document.getElementById('loading');
+        const container = document.getElementById('image-container');
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous'; // 处理跨域图片（如果需要）
+
+        img.onload = function() {
+            loading.style.display = 'none';
+
+            // 计算尺寸：宽度取原图一半的两倍（即保持原宽度）
+            const originalWidth = img.width;
+            const originalHeight = img.height;
+            const halfWidth = Math.floor(originalWidth / 2);
+
+            // 设置canvas尺寸
+            canvas.width = originalWidth;
+            canvas.height = originalHeight;
+
+            // 1. 绘制左半部分（原样）
+            ctx.drawImage(
+                img,
+                0, 0, halfWidth, originalHeight, // 源图像区域：左半部分
+                0, 0, halfWidth, originalHeight  // 目标区域：画布左半边
+            );
+
+            // 2. 绘制镜像右半部分
+            // 保存当前状态
+            ctx.save();
+
+            // 移动到右半边起始位置
+            ctx.translate(originalWidth, 0);
+
+            // 水平翻转（镜像）
+            ctx.scale(-1, 1);
+
+            // 绘制左半部分到右半边
+            ctx.drawImage(
+                img,
+                0, 0, halfWidth, originalHeight, // 源图像区域：左半部分
+                0, 0, halfWidth, originalHeight  // 目标区域：镜像到右半边
+            );
+
+            // 恢复状态
+            ctx.restore();
+
+            // 调整容器尺寸适应内容
+            container.style.width = canvas.width + 'px';
+        };
+
+        img.onerror = function() {
+            loading.style.display = 'none';
+            ctx.fillStyle = '#eee';
+            ctx.fillRect(0, 0, 400, 200);
+            ctx.fillStyle = '#999';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('图片加载失败', 200, 100);
+            canvas.width = 400;
+            canvas.height = 200;
+        };
+
+        // 显示加载状态
+        loading.style.display = 'block';
+
+        // 开始加载图片
+        img.src = imagePath;
+    };
+</script>
+</body>
+</html>
