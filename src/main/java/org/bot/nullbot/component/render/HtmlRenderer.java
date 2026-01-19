@@ -28,9 +28,6 @@ public class HtmlRenderer
 
     // =================== 驱动加载 ===================
 
-    /**
-     * 启动驱动
-     */
     public void initialize() {
         if (initialized) {
             log.info("[HtmlRenderer] Chrome 驱动已初始化过");
@@ -61,13 +58,9 @@ public class HtmlRenderer
         log.info("[HtmlRenderer] Chrome 驱动已初始化");
     }
 
-    /**
-     * 关闭驱动
-     */
     public void close() {
-        if (driver != null) {
+        if (initialized) {
             driver.quit();
-            driver = null;
             initialized = false;
             log.info("[HtmlRenderer] Chrome 驱动已关闭");
         } else
@@ -76,26 +69,19 @@ public class HtmlRenderer
 
     // =================== 渲染方法 ===================
 
-    /**
-     * 从 HTML 字符串渲染为图片
-     */
-    public void renderFromHtml(String html, String outputPath) throws Exception {
-        // 保存 HTML 到临时文件
+    // HTML 字符串渲染
+    public String renderFromHtml(String html, String outputPath) throws Exception {
+        // 保存临时文件
         File tempFile = File.createTempFile("render-", ".html");
         try (FileWriter writer = new FileWriter(tempFile)) {
             writer.write(html);
         }
-
-        // 加载页面
+        // 等待加载页面
         driver.get("file://" + tempFile.getAbsolutePath());
-
-        // 等待页面完全加载
         Thread.sleep(2000);
-
         // 执行 JavaScript 确保所有内容已加载
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("return document.readyState").equals("complete");
-
         // 计算页面高度
         Long totalHeight = (Long) js.executeScript(
                 "return Math.max(" +
@@ -105,63 +91,35 @@ public class HtmlRenderer
                         "document.documentElement.offsetHeight" +
                         ");"
         );
-
         // 调整窗口大小
-        driver.manage().window().setSize(
-                new Dimension(1200, totalHeight.intValue() + 100)
-        );
-
-        // 给一点时间让布局稳定
+        driver.manage().window().setSize(new Dimension(1200, totalHeight.intValue() + 100));
+        // 等待布局稳定
         Thread.sleep(1000);
-
-        // 截图
-        File screenshot = ((TakesScreenshot) driver)
-                .getScreenshotAs(OutputType.FILE);
-
-        // 保存到输出路径
-        try (InputStream in = new FileInputStream(screenshot);
-             OutputStream out = new FileOutputStream(outputPath)) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = in.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
-            }
-        }
-
+        // BASE64 截图
+        String base64 = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
         // 清理临时文件
         tempFile.delete();
 
-        System.out.println("图片已生成: " + outputPath);
+        return base64;
     }
 
-    /**
-     * 渲染指定元素
-     */
-    public void renderElement(String html, String cssSelector, String outputPath)
-            throws Exception {
-        initialize();
-
+    // HTML 页元素渲染
+    public String renderElement(String html, String cssSelector, String outputPath) throws Exception {
+        // 保存临时文件
         File tempFile = File.createTempFile("render-", ".html");
         try (FileWriter writer = new FileWriter(tempFile)) {
             writer.write(html);
         }
-
+        // 等待加载页面
         driver.get("file://" + tempFile.getAbsolutePath());
         Thread.sleep(2000);
-
+        // 查找目标元素
         WebElement element = driver.findElement(By.cssSelector(cssSelector));
-        File screenshot = element.getScreenshotAs(OutputType.FILE);
-
-        try (InputStream in = new FileInputStream(screenshot);
-             OutputStream out = new FileOutputStream(outputPath)) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = in.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
-            }
-        }
-
+        // BASE64 截图
+        String base64 = element.getScreenshotAs(OutputType.BASE64);
+        // 清理临时文件
         tempFile.delete();
-        System.out.println("元素截图已生成: " + outputPath);
+
+        return base64;
     }
 }
