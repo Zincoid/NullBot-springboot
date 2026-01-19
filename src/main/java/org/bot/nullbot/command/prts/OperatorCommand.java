@@ -32,14 +32,15 @@ public class OperatorCommand implements Command
             String base64;
             try {
                 base64 = webScreenCapturer.captureElements(
-                        "https://prts.wiki/w/" + operator,
+                        "https://prts.wiki/w/" + operator, 1040, 5000,
                         List.of("#bodyContent"),
                         List.of(
                                 ".backToTop", "#toc", "#rightToc",
-                                "#干员模型", "#spine-root", "#注释与链接", "#catlinks",
-                                ".music-btn", "#calc"
+                                ".music-btn", "#calc", "#equip-selector",
+                                "#干员模型", "#spine-root",
+                                "#注释与链接", "#catlinks"
                         ),
-                        1000, 5000
+                        List.of()
                 );
             } catch (Exception e) {
                 throw new NullBotMsgException("[干员查询] ❌查询失败: " + e.getMessage());

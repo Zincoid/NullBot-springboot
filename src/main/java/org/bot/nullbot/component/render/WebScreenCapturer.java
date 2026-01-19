@@ -1,6 +1,7 @@
 package org.bot.nullbot.component.render;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -14,13 +15,11 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.Base64;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class WebScreenCapturer
 {
     @Value("${driver.chrome.auto}")
@@ -100,9 +99,12 @@ public class WebScreenCapturer
         }
     }
 
-    // 截取多个元素并可忽略
-    public String captureElements(String url, List<String> targetCssSelectors, List<String> ignoredCssSelectors,
-                                  int width, int height)
+    // 截取多个元素并可忽略元素并附加点击
+    public String captureElements(String url, int width, int height,
+                                  List<String> targetCssSelectors,
+                                  List<String> ignoredCssSelectors,
+                                  List<String> clickCssSelectors
+    )
     {
         WebDriver driver = setupDriver();
         try {
@@ -116,7 +118,9 @@ public class WebScreenCapturer
                     .map(selector -> driver.findElement(By.cssSelector(selector)))
                     .toList();
             // 隐藏忽略元素
-            hideIgnoredElements(driver, ignoredCssSelectors);
+            hideElements(driver, ignoredCssSelectors);
+            // 点击附加元素
+            for(String clickCssSelector : clickCssSelectors) clickElement(driver, clickCssSelector);
             // 进行元素截图
             AShot ashot = new AShot();
             ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
@@ -144,9 +148,9 @@ public class WebScreenCapturer
 
     // =================== 工具方法 ===================
 
-    private void hideIgnoredElements(WebDriver driver, List<String> ignoredCssSelectors) {
+    private void hideElements(WebDriver driver, List<String> cssSelectors) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        for (String selector : ignoredCssSelectors) {
+        for (String selector : cssSelectors) {
             try {
                 // 隐藏所有匹配的元素
                 js.executeScript(
@@ -155,8 +159,19 @@ public class WebScreenCapturer
                                 "});"
                 );
             } catch (Exception e) {
-                // 如果选择器无效 继续处理下一个
+                log.info("[WebScreenCapturer] 隐藏元素未找到: {}", selector);
             }
+        }
+    }
+
+    private void clickElement(WebDriver driver, String cssSelector) {
+        try {
+            WebElement element = driver.findElement(By.cssSelector(cssSelector));
+            element.click();
+        } catch (NoSuchElementException e) {
+            log.info("[WebScreenCapturer] 交互元素未找到: {}", cssSelector);
+        } catch (ElementNotInteractableException e) {
+            log.info("[WebScreenCapturer] 该元素不可交互: {}", cssSelector);
         }
     }
 

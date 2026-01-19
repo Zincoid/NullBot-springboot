@@ -151,19 +151,20 @@ class QqBotApplicationTests {
         // );
 
         String base64 = webScreenCapturer.captureElements(
-                "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A",
+                "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A", 1040, 5000,
                 List.of("#bodyContent"),
                 List.of(
                         ".backToTop", "#toc", "#rightToc",
-                        "#注释与链接", "#catlinks", ".music-btn", "#calc", "#equip-selector",
-                        "#mw-content-text > div.mw-content-ltr.mw-parser-output > div:nth-child(19)",
-                        "#干员档案", "#mw-content-text > div.mw-content-ltr.mw-parser-output > table.wikitable.mw-collapsible.mw-collapsed.logo.mw-made-collapsible",
-                        "#语音记录", "#voice-table-root",
-                        "#mw-content-text > div.mw-content-ltr.mw-parser-output > h2:nth-child(103)", "#mw-content-text > div.mw-content-ltr.mw-parser-output > table:nth-child(105)",
-                        "#mw-content-text > div.mw-content-ltr.mw-parser-output > h2:nth-child(103)", "#mw-content-text > div.mw-content-ltr.mw-parser-output > table.wikitable.mw-collapsible.logo.mp-extranav.mp-siteinfo.mp-mobile-extranav.mp-mobile-siteinfo.mw-made-collapsible.mw-collapsed",
-                        "#mw-content-text > div.mw-content-ltr.mw-parser-output > h2:nth-child(109)", "#spine-root"
+                        ".music-btn", "#calc", "#equip-selector",
+                        "#干员模型", "#spine-root",
+                        "#注释与链接", "#catlinks"
                 ),
-                1000, 5000
+                List.of(
+                        "input[onchange*='switchDisplay第一天赋算法']",
+                        "input[onchange*='switchDisplay第一天赋潜能']",
+                        "input[onchange*='switchDisplay第二天赋算法']",
+                        "input[onchange*='switchDisplay第二天赋潜能']"
+                )
         );
 
         // 解码Base64字符串
