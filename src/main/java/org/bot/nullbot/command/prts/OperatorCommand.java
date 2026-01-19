@@ -32,7 +32,7 @@ public class OperatorCommand implements Command
             String base64;
             try {
                 base64 = webScreenCapturer.capture(
-                        "https://prts.wiki/w/" + operator, 1040, 5000,
+                        "https://prts.wiki/w/" + operator, 1030, 5000,
                         List.of("#bodyContent"),
                         List.of(
                                 ".backToTop", "#toc", "#rightToc",

@@ -141,7 +141,9 @@ class QqBotApplicationTests {
     }
 
     @Test
-    void WebCaptureTest() throws FileNotFoundException {
+    void WebCaptureTest() {
+        String operator = "m3";
+
         // webScreenCapturer.captureFull("https://prts.wiki/w/%E8%8E%B1%E4%BC%8A");
 
         // webScreenCapturer.captureElement(
@@ -151,7 +153,7 @@ class QqBotApplicationTests {
         // );
 
         String base64 = webScreenCapturer.capture(
-                "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A", 1040, 5000,
+                "https://prts.wiki/w/" + operator, 1040, 5000,
                 List.of("#bodyContent"),
                 List.of(
                         ".backToTop", "#toc", "#rightToc",
