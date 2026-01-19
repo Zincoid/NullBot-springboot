@@ -31,7 +31,7 @@ public class OperatorCommand implements Command
             String operator = params.getFirst();
             String base64;
             try {
-                base64 = webScreenCapturer.captureElements(
+                base64 = webScreenCapturer.capture(
                         "https://prts.wiki/w/" + operator, 1040, 5000,
                         List.of("#bodyContent"),
                         List.of(
@@ -40,7 +40,12 @@ public class OperatorCommand implements Command
                                 "#干员模型", "#spine-root",
                                 "#注释与链接", "#catlinks"
                         ),
-                        List.of()
+                        List.of(
+                                "input[onchange*='switchDisplay第一天赋算法']",
+                                "input[onchange*='switchDisplay第一天赋潜能']",
+                                "input[onchange*='switchDisplay第二天赋算法']",
+                                "input[onchange*='switchDisplay第二天赋潜能']"
+                        )
                 );
             } catch (Exception e) {
                 throw new NullBotMsgException("[干员查询] ❌查询失败: " + e.getMessage());

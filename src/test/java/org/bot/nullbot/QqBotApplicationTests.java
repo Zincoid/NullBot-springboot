@@ -150,7 +150,7 @@ class QqBotApplicationTests {
         //         1000, 5000
         // );
 
-        String base64 = webScreenCapturer.captureElements(
+        String base64 = webScreenCapturer.capture(
                 "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A", 1040, 5000,
                 List.of("#bodyContent"),
                 List.of(

@@ -27,6 +27,50 @@ public class WebScreenCapturer
     @Value("${driver.chrome.path}")
     private String chromeDriverPath;
 
+    // =================== 主要方法 ===================
+
+    // 截取多个元素 可忽略元素 可附加点击
+    public String capture(String url, int width, int height,
+                                  List<String> targetCssSelectors,
+                                  List<String> ignoredCssSelectors,
+                                  List<String> clickCssSelectors
+    ) {
+        WebDriver driver = setupDriver();
+        try {
+            driver.get(url);
+            // 设置窗口尺寸
+            driver.manage().window().setSize(new Dimension(width, height));
+            // 等待页面加载
+            Thread.sleep(2000);
+            // 定位元素位置
+            List<WebElement> targets = targetCssSelectors.stream()
+                    .map(selector -> driver.findElement(By.cssSelector(selector)))
+                    .toList();
+            // 隐藏忽略元素
+            hideElements(driver, ignoredCssSelectors);
+            // 点击附加元素
+            for(String clickCssSelector : clickCssSelectors) clickElement(driver, clickCssSelector);
+            // 进行元素截图
+            AShot ashot = new AShot();
+            ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
+            ashot.coordsProvider(new WebDriverCoordsProvider());
+            Screenshot screenshot = ashot.takeScreenshot(driver, targets);
+            BufferedImage eleImage = screenshot.getImage();
+            // 保存
+            // File outputFile = new File(outputPath);
+            // ImageIO.write(eleImage, "png", outputFile);
+            // BASE64 转换
+            return imageToBase64(eleImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("网页截图出错");
+        } finally {
+            driver.quit();
+        }
+    }
+
+    // =================== 次级方法 ===================
+
     // 截取完整页面
     public String captureFull(String url, int width, int height) {
         WebDriver driver = setupDriver();
@@ -41,15 +85,9 @@ public class WebScreenCapturer
             ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
             Screenshot screenshot = ashot.takeScreenshot(driver);
             BufferedImage fullImage = screenshot.getImage();
-
-            // 测试
-            // File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
-            // ImageIO.write(fullImage, "png", outputFile);
-
             // 保存
             // File outputFile = new File(outputPath);
             // ImageIO.write(fullImage, "png", outputFile);
-
             // BASE64 转换
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(fullImage, "png", baos);
@@ -80,62 +118,9 @@ public class WebScreenCapturer
             ashot.coordsProvider(new WebDriverCoordsProvider());
             Screenshot screenshot = ashot.takeScreenshot(driver, element);
             BufferedImage eleImage = screenshot.getImage();
-
-            // 测试
-            // File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
-            // ImageIO.write(eleImage, "png", outputFile);
-
             // 保存
             // File outputFile = new File(outputPath);
             // ImageIO.write(eleImage, "png", outputFile);
-
-            // BASE64 转换
-            return imageToBase64(eleImage);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("网页截图出错");
-        } finally {
-            driver.quit();
-        }
-    }
-
-    // 截取多个元素并可忽略元素并附加点击
-    public String captureElements(String url, int width, int height,
-                                  List<String> targetCssSelectors,
-                                  List<String> ignoredCssSelectors,
-                                  List<String> clickCssSelectors
-    )
-    {
-        WebDriver driver = setupDriver();
-        try {
-            driver.get(url);
-            // 设置窗口尺寸
-            driver.manage().window().setSize(new Dimension(width, height));
-            // 等待页面加载
-            Thread.sleep(2000);
-            // 定位元素位置
-            List<WebElement> targets = targetCssSelectors.stream()
-                    .map(selector -> driver.findElement(By.cssSelector(selector)))
-                    .toList();
-            // 隐藏忽略元素
-            hideElements(driver, ignoredCssSelectors);
-            // 点击附加元素
-            for(String clickCssSelector : clickCssSelectors) clickElement(driver, clickCssSelector);
-            // 进行元素截图
-            AShot ashot = new AShot();
-            ashot.shootingStrategy(ShootingStrategies.viewportPasting(1000));
-            ashot.coordsProvider(new WebDriverCoordsProvider());
-            Screenshot screenshot = ashot.takeScreenshot(driver, targets);
-            BufferedImage eleImage = screenshot.getImage();
-
-            // 测试
-            // File outputFile = new File("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png");
-            // ImageIO.write(eleImage, "png", outputFile);
-
-            // 保存
-            // File outputFile = new File(outputPath);
-            // ImageIO.write(eleImage, "png", outputFile);
-
             // BASE64 转换
             return imageToBase64(eleImage);
         } catch (Exception e) {
