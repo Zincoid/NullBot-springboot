@@ -2,10 +2,10 @@ package org.bot.nullbot.component.render;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.config.prop.DriverProperties;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
@@ -23,13 +23,17 @@ import java.util.List;
 @Slf4j
 public class WebScreenCapturer
 {
-    @Value("${driver.chrome.auto}")
-    private Boolean chromeDriverAuto;
-    @Value("${driver.chrome.path}")
-    private String chromeDriverPath;
+    private final Boolean driverAuto;  // 自动获取驱动
+    private final String driverPath;  // 手动指定驱动路径
+    private final int maxRetries;  // 最大重试次数
+    private final long loadTimeout;  // 页面加载超时 (Sec)
 
-    private static final int MAX_RETRIES = 5;  // 最大重试次数
-    private static final long LOAD_TIMEOUT = 5;  // 页面加载超时 (Sec)
+    public WebScreenCapturer(DriverProperties props) {
+        driverAuto = props.getDriverAuto();
+        driverPath = props.getDriverPath();
+        maxRetries = props.getMaxRetries();
+        loadTimeout = props.getLoadTimeout();
+    }
 
     // =================== 主要方法 ===================
 
@@ -41,7 +45,7 @@ public class WebScreenCapturer
     ) {
         int retryCount = 0;
 
-        while (retryCount < MAX_RETRIES) {
+        while (retryCount < maxRetries) {
             WebDriver driver = setupDriver();
             try {
                 driver.get(url);
@@ -90,7 +94,7 @@ public class WebScreenCapturer
     public String captureFull(String url, int width, int height) {
         int retryCount = 0;
 
-        while (retryCount < MAX_RETRIES) {
+        while (retryCount < maxRetries) {
             WebDriver driver = setupDriver();
             try {
                 driver.get(url);
@@ -129,7 +133,7 @@ public class WebScreenCapturer
     public String captureElement(String url, String cssSelector, int width, int height) {
         int retryCount = 0;
 
-        while (retryCount < MAX_RETRIES) {
+        while (retryCount < maxRetries) {
             WebDriver driver = setupDriver();
             try {
                 driver.get(url);
@@ -228,12 +232,12 @@ public class WebScreenCapturer
     // =================== 驱动加载 ===================
 
     public WebDriver setupDriver() {
-        if (chromeDriverAuto) {
+        if (driverAuto) {
             // 自动下载 ChromeDriver
             WebDriverManager.chromedriver().setup();
         } else {
             // 手动设置 ChromeDriver
-            System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+            System.setProperty("webdriver.chrome.driver", driverPath);
         }
 
         ChromeOptions options = new ChromeOptions();
@@ -245,7 +249,7 @@ public class WebScreenCapturer
         options.addArguments("--hide-scrollbars");
 
         WebDriver driver = new ChromeDriver(options);
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(LOAD_TIMEOUT));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(loadTimeout));
 
         return driver;
     }

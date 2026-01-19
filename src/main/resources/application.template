@@ -37,8 +37,8 @@ jwt:
 
 driver:
   chrome:
-    auto: false
-    path: /root/Nullbot/file/driver/chromedriver
+    chrome-driver-auto: false
+    chrome-driver-path: /root/Nullbot/file/driver/chromedriver
 
 shiro:
   ws:
