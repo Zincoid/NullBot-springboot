@@ -144,9 +144,11 @@ class QqBotApplicationTests {
     void WebCaptureTest() {
         String operator = "莱伊";
 
-        // webScreenCapturer.captureFull("https://prts.wiki/w/" + operator);
+        // String base64 = webScreenCapturer.captureFull(
+        //         "https://prts.wiki/w/" + operator, 1920, 1080
+        // );
 
-        // webScreenCapturer.captureElement(
+        // String base64 = webScreenCapturer.captureElement(
         //         "https://prts.wiki/w/" + operator,
         //         "#bodyContent",
         //         1000, 5000
