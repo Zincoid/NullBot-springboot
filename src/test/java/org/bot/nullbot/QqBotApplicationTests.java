@@ -155,12 +155,12 @@ class QqBotApplicationTests {
         // );
 
         // String base64 = webScreenCapturer.capture(
-        //         "https://prts.wiki/w/" + operator, 1024, 5120,
+        //         "https://prts.wiki/w/" + keyword, 1024, 5120,
         //         List.of("#bodyContent"),
         //         List.of(
         //                 ".backToTop", "#toc", "#rightToc",
         //                 ".music-btn", "#calc", "#equip-selector",
-        //                 "#干员模型", "#spine-root",
+        //                 "#干员模型", "#敌人模型", "#spine-root",
         //                 "#注释与链接", "#catlinks"
         //         ),
         //         List.of(
