@@ -147,11 +147,15 @@ class QqBotApplicationTests {
         //         1000, 5000
         // );
 
-        // webScreenCapturer.captureElements(
-        //         "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A",
-        //         List.of("#bodyContent"),
-        //         List.of(".backToTop", "#toc", "#rightToc", "#干员模型", "#spine-root", "#注释与链接", "#catlinks"),
-        //         1000, 5000
-        // );
+        webScreenCapturer.captureElements(
+                "https://prts.wiki/w/%E8%8E%B1%E4%BC%8A",
+                List.of("#bodyContent"),
+                List.of(
+                        ".backToTop", "#toc", "#rightToc",
+                        "#干员模型", "#spine-root", "#注释与链接", "#catlinks",
+                        "#music-info", "#calc"
+                ),
+                1000, 5000
+        );
     }
 }

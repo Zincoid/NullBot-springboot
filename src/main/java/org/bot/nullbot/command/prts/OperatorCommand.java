@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"Operator", "PRTS", "干员查询", "干员"})
+@CommandMapping({"Operator", "PRTS", "prts", "干员查询", "干员"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -32,7 +32,11 @@ public class OperatorCommand implements Command
             String base64 = webScreenCapturer.captureElements(
                     "https://prts.wiki/w/" + operator,
                     List.of("#bodyContent"),
-                    List.of(".backToTop", "#toc", "#rightToc", "#干员模型", "#spine-root", "#注释与链接", "#catlinks"),
+                    List.of(
+                            ".backToTop", "#toc", "#rightToc",
+                            "#干员模型", "#spine-root", "#注释与链接", "#catlinks",
+                            "#music-info", "#calc"
+                    ),
                     1000, 5000
             );
             String response = MsgUtils.builder().img("base64://" + base64).build();
@@ -49,7 +53,7 @@ public class OperatorCommand implements Command
                 功能: 明日方舟PRTS干员查询
                 限权: %d 级
                 格式: Operator [干员名]
-                别名: PRTS/干员查询/干员""", getAccess()
+                别名: PRTS/prts/干员查询/干员""", getAccess()
         );
     }
 
