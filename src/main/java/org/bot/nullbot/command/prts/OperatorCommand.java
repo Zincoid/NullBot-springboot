@@ -43,6 +43,12 @@ public class OperatorCommand implements Command
                                     List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
                                     List.of("button[class*='mw-collapsible-toggle']")
                             );
+                        case "语音" -> webScreenCapturer.capture(
+                                "https://prts.wiki/w/" + operator, 1024, 5120,
+                                List.of("#voice-table-root"),
+                                List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
+                                List.of("a[class*='z-1 float-right select-none']")
+                        );
                         default -> throw new NullBotMsgException("[干员查询] ❌无此操作");
                     };
                 }else{

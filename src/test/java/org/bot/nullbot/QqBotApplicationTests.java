@@ -169,12 +169,19 @@ class QqBotApplicationTests {
         //         )
         // );
 
+        // String base64 = webScreenCapturer.capture(
+        //                 "https://prts.wiki/w/" + operator, 1024, 5120,
+        //                 List.of("table.wikitable.mw-collapsible.logo.mw-made-collapsible"),
+        //                 List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+        //                 List.of("button[class*='mw-collapsible-toggle']")
+        //         );
+
         String base64 = webScreenCapturer.capture(
-                        "https://prts.wiki/w/" + operator, 1024, 5120,
-                        List.of("table.wikitable.mw-collapsible.logo.mw-made-collapsible"),
-                        List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                        List.of("button[class*='mw-collapsible-toggle']")
-                );
+                "https://prts.wiki/w/" + operator, 1024, 5120,
+                List.of("#voice-table-root"),
+                List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
+                List.of("a[class*='z-1 float-right select-none']")
+        );
 
         // 解码Base64字符串
         byte[] imageBytes = Base64.getDecoder().decode(base64);

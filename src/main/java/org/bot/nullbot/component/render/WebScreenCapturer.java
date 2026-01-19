@@ -152,11 +152,25 @@ public class WebScreenCapturer
     private void clickElement(WebDriver driver, String cssSelector) {
         try {
             WebElement element = driver.findElement(By.cssSelector(cssSelector));
+            // 尝试常规点击
             element.click();
         } catch (NoSuchElementException e) {
             log.info("[WebScreenCapturer] 交互元素未找到: {}", cssSelector);
         } catch (ElementNotInteractableException e) {
-            log.info("[WebScreenCapturer] 该元素不可交互: {}", cssSelector);
+            log.info("[WebScreenCapturer] 该元素不可交互: {} 尝试 JavaScript 方法...", cssSelector);
+            // 使用 JavaScript 点击
+            try {
+                JavascriptExecutor js = (JavascriptExecutor) driver;
+                WebElement element = driver.findElement(By.cssSelector(cssSelector));
+                // 先确保元素可见
+                js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+                Thread.sleep(200);
+                // 使用JavaScript点击
+                js.executeScript("arguments[0].click();", element);
+                log.info("[WebScreenCapturer] JavaScript 成功点击: {}", cssSelector);
+            } catch (Exception ex) {
+                log.info("[WebScreenCapturer] JavaScript 点击失败: {}", ex.getMessage());
+            }
         }
     }
 
