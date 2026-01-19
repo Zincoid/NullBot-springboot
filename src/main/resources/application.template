@@ -8,7 +8,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/NullBot
-    username: root
+    username:
     password:
 
 server:
@@ -34,6 +34,9 @@ jwt:
 #  level:
 #    root: INFO
 #    org.bot.nullbot: WARN
+
+driver:
+  chrome-driver-path: /root/Nullbot/file/driver/chromedriver
 
 shiro:
   ws:
@@ -109,7 +112,7 @@ nullbot:
       meme-path: /root/Nullbot/file/ai/meme  # 用于AI主动发表情
       default-system-message: 你是一个助手
     tts:
-      api-url: https://gsv2p.acgnai.top/infer_single
+      api-url: https://gsv2p.acgnai.top
       api-key:
       version: v4
       model_name: 明日方舟-中文-羽毛笔
