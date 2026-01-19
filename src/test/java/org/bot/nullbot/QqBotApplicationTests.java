@@ -178,12 +178,12 @@ class QqBotApplicationTests {
         //         List.of("a[class*='z-1 float-right select-none']")
         // );
 
-        // String base64 = webScreenCapturer.capture(
-        //         "https://prts.wiki/w/" + operator, 1024, 5120,
-        //         List.of("//table[.//th//b[contains(text(),'人员档案')]]"),
-        //         List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-        //         List.of("//table[.//th//b[contains(.,'人员档案')]]//button[contains(@class,'mw-collapsible-toggle')]")
-        // );
+        String base64 = webScreenCapturer.capture(
+                "https://prts.wiki/w/" + operator, 1024, 5120,
+                List.of("//table[.//th//b[contains(text(),'人员档案')]]"),
+                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                List.of("//table[.//th//b[contains(.,'人员档案')]]//button[contains(@class,'mw-collapsible-toggle')]")
+        );
 
         // String base64 = webScreenCapturer.capture(
         //         "https://prts.wiki/w/" + operator, 1024, 5120,
@@ -192,17 +192,17 @@ class QqBotApplicationTests {
         //         List.of("//table[.//th//b[contains(.,'干员密录')]]//button[contains(@class,'mw-collapsible-toggle')]")
         // );
 
-        String base64 = webScreenCapturer.capture(
-                "https://prts.wiki/w/" + operator, 1024, 5120,
-                List.of("//table[.//th//b[contains(text(),'悖论模拟')]]"),
-                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
-        );
+        // String base64 = webScreenCapturer.capture(
+        //         "https://prts.wiki/w/" + operator, 1024, 5120,
+        //         List.of("//table[.//th//b[contains(text(),'悖论模拟')]]"),
+        //         List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+        //         List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
+        // );
 
         // 解码Base64字符串
         byte[] imageBytes = Base64.getDecoder().decode(base64);
         // 写入文件
-        try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\capture.png")) {
+        try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\captured.png")) {
             fos.write(imageBytes);
         } catch (IOException e) {
             throw new RuntimeException(e);
