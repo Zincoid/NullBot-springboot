@@ -243,19 +243,30 @@ class QqBotApplicationTests
         // html = HtmlTemplateUtil.replaceVariables(html, variables);
         // String base64 = htmlRenderer.renderElement(html, "#templateContainer");
 
-        String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\meme_template.html";
-        String backgroundPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\input.jpg";
-        String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\neuro.png";
+        // String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\meme_template.html";
+        // String backgroundPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\input.jpg";
+        // String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\neuro.png";
+        // Map<String, String> variables = new HashMap<>();
+        // variables.put("text", "我去我去我去我去我去我去我去我去我去我去我去我去我去");
+        // Map<String, String> images = new HashMap<>();
+        // images.put("background", backgroundPath);
+        // images.put("image", imagePath);
+        // String html = HtmlTemplateUtil.loadTemplate(htmlPath);
+        // html = HtmlTemplateUtil.replaceVariables(html, variables);
+        // html = HtmlTemplateUtil.replaceImages(html, images);
+        // String base64 = htmlRenderer.renderElement(html, "#wrap");
+
+        String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\jojo.html";
+        String backgroundPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\image\\jojo.png";
         Map<String, String> variables = new HashMap<>();
-        variables.put("text", "我去我去我去我去我去我去我去我去我去我去我去我去我去");
+        variables.put("text1", "普奇你告诉我");
+        variables.put("text2", "为什么你要加速时间");
+        variables.put("text3", "我想玩《GTA6》");
         Map<String, String> images = new HashMap<>();
-        images.put("image", imagePath);
-        Map<String, String> imagesBase64 = new HashMap<>();
-        imagesBase64.put("background", backgroundPath);
+        images.put("background", backgroundPath);
         String html = HtmlTemplateUtil.loadTemplate(htmlPath);
         html = HtmlTemplateUtil.replaceVariables(html, variables);
         html = HtmlTemplateUtil.replaceImages(html, images);
-        html = HtmlTemplateUtil.replaceImagesBase64(html, imagesBase64);
         String base64 = htmlRenderer.renderElement(html, "#wrap");
 
         // Base64 解码
