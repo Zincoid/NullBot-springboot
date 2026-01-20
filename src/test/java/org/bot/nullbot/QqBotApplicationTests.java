@@ -256,11 +256,11 @@ class QqBotApplicationTests
         // html = HtmlTemplateUtil.replaceImages(html, images);
         // String base64 = htmlRenderer.renderElement(html, "#wrap");
 
-        String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\jojo.html";
-        String backgroundPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\image\\jojo.png";
+        String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\pucci.html";
+        String backgroundPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\image\\pucci.png";
         Map<String, String> variables = new HashMap<>();
-        variables.put("text1", "普奇你告诉我");
-        variables.put("text2", "为什么你要加速时间");
+        variables.put("text1", "普奇！！回答我！");
+        variables.put("text2", "为什么你要加速时间！！");
         variables.put("text3", "我想玩《GTA6》");
         Map<String, String> images = new HashMap<>();
         images.put("background", backgroundPath);
