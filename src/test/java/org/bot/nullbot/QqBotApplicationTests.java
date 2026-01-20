@@ -168,7 +168,7 @@ class QqBotApplicationTests
         // );
 
         // String base64 = webScreenCapturer.capture(
-        //         "https://prts.wiki/w/" + keyword, 1024, 5120,
+        //         "https://prts.wiki/w/" + operator, 1024, 5120,
         //         List.of("#bodyContent"),
         //         List.of(
         //                 ".backToTop", "#toc", "#rightToc",
