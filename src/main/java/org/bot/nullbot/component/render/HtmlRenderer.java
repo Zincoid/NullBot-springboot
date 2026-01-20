@@ -61,7 +61,7 @@ public class HtmlRenderer
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(chromeProperties.getLoadTimeout()));
 
         this.driver = driver;
-        this.initialized = true;
+        initialized = true;
         log.info("[HtmlRenderer] Chrome 驱动已初始化");
     }
 
