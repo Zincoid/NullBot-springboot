@@ -28,7 +28,7 @@ public class SystemController
             String result = systemService.invoke(beanName, methodName, args);
             return WebResult.success().addMsg("调用成功").addData("result", result);
         } catch (Exception e) {
-            return WebResult.fail().addMsg("调用失败: " + e.getMessage());
+            return WebResult.fail().addMsg("调用失败").addData("result", e);
         }
     }
 }
