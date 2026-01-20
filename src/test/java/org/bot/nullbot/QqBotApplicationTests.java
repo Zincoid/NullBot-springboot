@@ -241,20 +241,31 @@ class QqBotApplicationTests
         //
         // String base64 = htmlRenderer.renderElement(html, ".certificate");
 
-        String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\symmetry.html";
-        String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\neuro.png";
+        // String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\symmetry.html";
+        // String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\neuro.png";
+        //
+        // Map<String, String> variables = new HashMap<>();
+        // variables.put("mode", "right");
+        //
+        // Map<String, String> images = new HashMap<>();
+        // images.put("image", imagePath);
+        //
+        // String html = HtmlTemplateUtil.loadTemplate(htmlPath);
+        // html = HtmlTemplateUtil.replaceVariables(html, variables);
+        // html = HtmlTemplateUtil.replaceImages(html, images);
+        //
+        // String base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
+
+        String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\5000choyen.html";
 
         Map<String, String> variables = new HashMap<>();
-        variables.put("mode", "right");
-
-        Map<String, String> images = new HashMap<>();
-        images.put("image", imagePath);
+        variables.put("topText", "我去");
+        variables.put("bottomText", "不早说");
 
         String html = HtmlTemplateUtil.loadTemplate(htmlPath);
         html = HtmlTemplateUtil.replaceVariables(html, variables);
-        html = HtmlTemplateUtil.replaceImages(html, images);
 
-        String base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
+        String base64 = htmlRenderer.renderElement(html, "#templateContainer");
 
         // Base64 解码
         byte[] imageBytes = Base64.getDecoder().decode(base64);

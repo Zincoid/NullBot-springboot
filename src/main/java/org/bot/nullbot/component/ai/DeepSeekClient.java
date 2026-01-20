@@ -57,20 +57,19 @@ public class DeepSeekClient
                 // 普通命令
                 "aud", "vid", "img", "say",
                 "ChatHistory", "ChatReset",
-                "Convert", "Symmetry", "Anime", "Guess",
                 "AccessSet", "GroupSet", "UserBan",
                 "Help", "ImageFolder", "PUBG", "PRTS",
+                "Anime", "Guess",
+
+                // 图片生成
+                "Convert", "Symmetry", "Choyen",
 
                 // 语音回复
                 "Tts",
 
                 // 加密命令
-                "eb0f8545",
-                "4ed1314d",
-                "65275d24",
-                "1e7bd161",
-                "b6713262",
-                "db3fbe2b"
+                "eb0f8545", "4ed1314d", "65275d24",
+                "1e7bd161", "b6713262", "db3fbe2b"
         ));
         AI_COMMAND_WHITE_LIST = Collections.unmodifiableSet(commands);
     }
