@@ -74,10 +74,15 @@ public class HtmlRenderer
             log.info("[HtmlRenderer] Chrome 驱动未初始化");
     }
 
+    public void validate() {
+        if (!initialized) throw new RuntimeException("Chrome 驱动未初始化");
+    }
+
     // =================== 渲染方法 ===================
 
     // HTML 字符串渲染
     public String renderFromHtml(String html) throws Exception {
+        validate();
         File tempFile = null;
         try {
             // 保存临时文件
@@ -108,6 +113,7 @@ public class HtmlRenderer
 
     // HTML 页元素渲染
     public String renderElement(String html, String cssSelector) throws Exception {
+        validate();
         File tempFile = null;
         try {
             // 保存临时文件
