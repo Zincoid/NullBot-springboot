@@ -351,4 +351,5 @@
 - 优化 Chrome Driver 配置 到 配置类；
 - 新增 HtmlRenderer 渲染组件 和 HtmlTemplateUtil 工具类 - 用于渲染自定义图片；
 - 新增 Symmetry 对称指令 - 添加 symmetry.html 模板 可将图片对称处理；
-- 优化 WebScreenCapturer 和 HtmlRenderer - 优化等待页面加载方法。
+- 优化 WebScreenCapturer 和 HtmlRenderer - 优化等待页面加载方法；
+- 新增 Base64Util 工具类 - 提取冗余的图像转 Base64 方法。
