@@ -10,6 +10,7 @@ import org.bot.nullbot.component.control.SpringInvoker;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.service.SystemService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InvokeCommand implements Command
 {
-    private final SpringInvoker invoker;
+    private final SystemService systemService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
@@ -34,8 +35,7 @@ public class InvokeCommand implements Command
             if (params.size() > 2) args = params.subList(2, params.size()).toArray();
 
             try {
-                Object object = invoker.invokeSpringMethod(beanName, methodName, args);
-                String result = object != null ? object.toString() : "null";
+                String result = systemService.invoke(beanName, methodName, args);
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Spring] ✅方法调用成功\nThe method returned:\n" + result, false);
                 log.info("\t\t\t\t├─[Invoke] 调用结果 -> {}", result);
             } catch (Exception e) {
