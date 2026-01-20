@@ -34,10 +34,10 @@ public class InvokeCommand implements Command
             if (params.size() > 2) args = params.subList(2, params.size()).toArray();
 
             try {
-                Object result = invoker.invokeSpringMethod(beanName, methodName, args);
-                String res = result != null ? result.toString() : "null";
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Spring] ✅方法调用成功\nThe method returned:\n" + res, false);
-                log.info("\t\t\t\t├─[Invoke] 调用结果 -> {}", res);
+                Object object = invoker.invokeSpringMethod(beanName, methodName, args);
+                String result = object != null ? object.toString() : "null";
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Spring] ✅方法调用成功\nThe method returned:\n" + result, false);
+                log.info("\t\t\t\t├─[Invoke] 调用结果 -> {}", result);
             } catch (Exception e) {
                 throw new NullBotMsgException("[Spring] ⚠️方法调用失败\n" + e.getMessage());
             }
