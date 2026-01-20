@@ -1,6 +1,8 @@
 package org.bot.nullbot.dispatcher.handler.impl;
 
 import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.dto.action.response.GroupInfoResp;
+import com.mikuac.shiro.dto.action.response.StrangerInfoResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
@@ -28,22 +30,30 @@ public class RegisterHandler implements Handler
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
-        if(event.getEvent() instanceof GroupMessageEvent groupMessageEvent){
-            registerGroup(groupMessageEvent.getGroupId(), bot.getGroupInfo(groupMessageEvent.getGroupId(), true).getData().getGroupName());
-            registerUser(groupMessageEvent.getUserId(), groupMessageEvent.getSender().getNickname());
-            chain.doHandle(bot, event, command);
-        }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            registerGroup(pokeNoticeEvent.getGroupId(), bot.getGroupInfo(pokeNoticeEvent.getGroupId(), true).getData().getGroupName());
-            registerUser(pokeNoticeEvent.getUserId(), bot.getStrangerInfo(pokeNoticeEvent.getUserId(), true).getData().getNickname());
-            chain.doHandle(bot, event, command);
-        }else if(event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
-            registerGroup(groupMsgDeleteNoticeEvent.getGroupId(), bot.getGroupInfo(groupMsgDeleteNoticeEvent.getGroupId(), true).getData().getGroupName());
-            registerUser(groupMsgDeleteNoticeEvent.getUserId(), bot.getStrangerInfo(groupMsgDeleteNoticeEvent.getUserId(), true).getData().getNickname());
-            chain.doHandle(bot, event, command);
-        }else{
+        Long groupId;
+        Long userId;
+
+        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            groupId = groupMessageEvent.getGroupId();
+            userId = groupMessageEvent.getUserId();
+        } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
+            groupId = pokeNoticeEvent.getGroupId();
+            userId = pokeNoticeEvent.getUserId();
+        } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
+            groupId = groupMsgDeleteNoticeEvent.getGroupId();
+            userId = groupMsgDeleteNoticeEvent.getUserId();
+        } else {
             log.info("\t\t├─[RegisterHandler] 默认不注册的事件");
             chain.doHandle(bot, event, command);
+            return;
         }
+
+        GroupInfoResp groupData = bot.getGroupInfo(groupId, true).getData();
+        if (groupData != null) registerGroup(groupId, groupData.getGroupName());
+        StrangerInfoResp userData = bot.getStrangerInfo(userId, true).getData();
+        if (userData != null) registerUser(userId, userData.getNickname());
+
+        chain.doHandle(bot, event, command);
     }
 
     private void registerGroup(Long groupId, String groupName) {
@@ -53,7 +63,7 @@ public class RegisterHandler implements Handler
             log.info("\t\t├─[RegisterHandler] 新群聊注册完成");
         } else {
             groupService.updateGroupName(groupId, groupName);
-            log.info("\t\t├─[RegisterHandler] 群聊已注册 -> 群名已更新");
+            log.info("\t\t├─[RegisterHandler] 群聊已注册 -> 更新完成");
         }
     }
 
@@ -64,7 +74,7 @@ public class RegisterHandler implements Handler
             log.info("\t\t├─[RegisterHandler] 新用户注册完成");
         } else {
             userService.updateUserName(userId, userName);
-            log.info("\t\t├─[RegisterHandler] 用户已注册 -> 昵称已更新");
+            log.info("\t\t├─[RegisterHandler] 用户已注册 -> 更新完成");
         }
     }
 }
