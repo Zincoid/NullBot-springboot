@@ -356,3 +356,7 @@
 - 优化 RegisterHandler - 提取冗余代码 添加空信息验证 防止获取信息出错时指令被拦截；
 - 新增 Choyen 梗图生成指令 - 添加 5000choyen.html 模板 用于生成；
 - 优化 文本。
+
+### 2026.1.21 - v1.3.0
+- 优化 HtmlTemplateUtil 工具类 - 替换目标改为仅占位符；
+- 新增 template_generator.html 页面工具 - 用于创建带占位符的html图片渲染模板；
