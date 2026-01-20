@@ -86,9 +86,21 @@ public class SymmetryCommand implements Command
                 String base64;
                 try {
                     Path htmlPath = resourceLoader.getCached("static/html/symmetry.html", tempFilePath + "/html");
+                    Map<String, String> variables = new HashMap<>();
+                    variables.put("mode", "left");
+                    if (!event.getCommandParameters().isEmpty()) {
+                        String mode = switch (event.getCommandParameters().getFirst()) {
+                            case "右" -> "right";
+                            case "上" -> "top";
+                            case "下" -> "bottom";
+                            default -> "left";
+                        };
+                        variables.put("mode", mode);
+                    }
                     Map<String, String> images = new HashMap<>();
                     images.put("image", imagePath);
                     String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+                    html = HtmlTemplateUtil.replaceVariables(html, variables);
                     html = HtmlTemplateUtil.replaceImages(html, images);
                     base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
                 } catch (NullBotMsgException e) {
