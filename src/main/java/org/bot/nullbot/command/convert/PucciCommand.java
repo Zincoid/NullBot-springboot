@@ -43,12 +43,18 @@ public class PucciCommand implements Command
             String tempFilePath = fileStorageProperties.getTempPath();
             try {
                 Path htmlPath = resourceLoader.getCached("static/html/pucci.html", tempFilePath + "/html");
+                Path bgPath = resourceLoader.getCached("static/image/pucci.png", tempFilePath + "/meme");
                 Map<String, String> variables = new HashMap<>();
+                Map<String, String> images = new HashMap<>();
+
                 variables.put("text1", "普奇！！回答我！");
                 variables.put("text2", "为什么你要加速时间！！");
                 variables.put("text3", params.getFirst());
+                images.put("background", bgPath.toAbsolutePath().toString());
+
                 String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
                 html = HtmlTemplateUtil.replaceVariables(html, variables);
+                html = HtmlTemplateUtil.replaceImages(html, images);
                 base64 = htmlRenderer.renderElement(html, "#wrap");
             } catch (Exception e) {
                 throw new NullBotMsgException("[普奇] ❌处理时出错: " + e.getMessage());
