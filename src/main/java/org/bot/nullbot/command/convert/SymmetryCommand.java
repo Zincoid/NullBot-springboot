@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.render.HtmlRenderer;
-import org.bot.nullbot.component.render.ImageConverter;
 import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
@@ -55,26 +54,27 @@ public class SymmetryCommand implements Command
                 urls.addAll(imageMap.values());
             }
 
-            // AT 收集
-            List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
-            for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
-
-            // ID 收集
+            // ID 收集 AT 收集
             if (!params.isEmpty()) {
-                long qqNumber;
                 try {
                     if (List.of("左", "右", "上", "下").contains(params.getFirst())) {
                         if (params.size() > 1) {
-                            qqNumber = Long.parseLong(params.get(1));
+                            long qqNumber = Long.parseLong(params.get(1));
                             urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+                        } else {
+                            List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+                            for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
                         }
                     } else {
-                        qqNumber = Long.parseLong(params.get(0));
+                        long qqNumber = Long.parseLong(params.get(0));
                         urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
                     }
                 } catch (NumberFormatException e) {
                     throw new NullBotMsgException("[对称] ❌参数格式错误");
                 }
+            } else {
+                List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+                for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
             }
 
             if (urls.isEmpty())
@@ -147,8 +147,9 @@ public class SymmetryCommand implements Command
                 ◉ Convert 命令
                 功能: 头像图片对称处理
                 限权: %d 级
-                格式: Symmetry [QQ号]
-                示例: Symmetry 2660181154""", getAccess()
+                格式: Symmetry [可选: 方式] [QQ号]
+                方式: 上/下/左/右 (默认左)
+                示例: Symmetry 右 2660181154""", getAccess()
         );
     }
 }
