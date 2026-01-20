@@ -55,20 +55,22 @@ public class SymmetryCommand implements Command
                 urls.addAll(imageMap.values());
             }
 
-            //  ID参数收集 或 AT收集
+            // AT 收集
+            List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+            for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+
+            // ID 收集
             if (!params.isEmpty()) {
                 long qqNumber;
                 try {
-                    int index = 0;
-                    if (List.of("左", "右", "上", "下").contains(params.getFirst())) index = 1;
-                    qqNumber = Long.parseLong(params.getFirst());
+                    if (List.of("左", "右", "上", "下").contains(params.getFirst()) && params.size() > 1)
+                        qqNumber = Long.parseLong(params.get(1));
+                    else
+                        qqNumber = Long.parseLong(params.get(0));
                 } catch (NumberFormatException e) {
                     throw new NullBotMsgException("[对称] ❌参数格式错误");
                 }
                 urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
-            } else {
-                List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
-                for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
             }
 
             if (urls.isEmpty())
