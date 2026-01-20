@@ -245,6 +245,7 @@ class QqBotApplicationTests
         String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\neuro.png";
 
         Map<String, String> variables = new HashMap<>();
+        variables.put("mode", "right");
 
         Map<String, String> images = new HashMap<>();
         images.put("image", imagePath);
