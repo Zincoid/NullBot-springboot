@@ -37,7 +37,7 @@
         drawer.topText.value = "${topText}";
         drawer.bottomText.value = "${bottomText}";
         drawer.bottomText.useImg = false;
-        drawer.useTransparent = false;
+        drawer.useTransparent = true;
 
         // 等待字体加载完成
         document.fonts.ready.then(function() {
@@ -143,7 +143,7 @@
     function BottomText(ctx) {
         this.value = "";
         this.font = "";
-        this.x = 250.0;
+        this.x = 0.0; // 初始值，将在Drawer.refresh()中动态计算
         this.y = 230.0;
         this.w = 0.0;
         this.ctx = ctx;
@@ -234,12 +234,12 @@
 
         this.topText = new TopText(this.ctx);
         this.bottomText = new BottomText(this.ctx);
-        this.useTransparent = false;
+        this.useTransparent = true;
         this.lang = "";
     }
 
     Drawer.prototype.refresh = function() {
-        if (this.lang == "ja") {
+        if (this.lang === "ja") {
             this.topText.font = "100px notobk";
             this.bottomText.font = "100px notoserifbk";
         } else {
@@ -249,15 +249,19 @@
 
         // 先设置字体以测量文本宽度
         this.ctx.font = this.topText.font;
-        this.topText.w = this.ctx.measureText(this.topText.value).width;
+        this.topText.w = this.ctx.measureText(this.topText.value).width + 75;
 
         this.ctx.font = this.bottomText.font;
         this.bottomText.w = this.ctx.measureText(this.bottomText.value).width;
 
+        // 动态计算银色文本的缩进：红色文本长度的一半
+        // 红色文本的x坐标是70，所以我们计算70 + (红色文本宽度)/2
+        this.bottomText.x = this.topText.x + this.topText.w / 2;
+
         // 计算所需宽度：取两个文本的最大宽度
         const topTextRight = this.topText.x + this.topText.w;
         const bottomTextRight = this.bottomText.x + this.bottomText.w;
-        const requiredWidth = Math.max(topTextRight, bottomTextRight)
+        const requiredWidth = Math.max(topTextRight, bottomTextRight);
 
         // 更新canvas宽度
         this.canvas.width = Math.max(requiredWidth, 500); // 最小宽度500px
@@ -275,7 +279,7 @@
         this.clear();
 
         // 重新设置字体
-        if (this.lang == "ja") {
+        if (this.lang === "ja") {
             this.topText.font = "100px notobk";
             this.bottomText.font = "100px notoserifbk";
         } else {
