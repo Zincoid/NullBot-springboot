@@ -42,8 +42,8 @@ public class ChoyenCommand implements Command
             try {
                 Path htmlPath = resourceLoader.getCached("static/html/5000choyen.html", tempFilePath + "/html");
                 Map<String, String> variables = new HashMap<>();
-                variables.put("textTop", params.get(0));
-                variables.put("textBottom", params.get(1));
+                variables.put("topText", params.get(0));
+                variables.put("bottomText", params.get(1));
                 String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
                 html = HtmlTemplateUtil.replaceVariables(html, variables);
                 base64 = htmlRenderer.renderElement(html, "#templateContainer");
