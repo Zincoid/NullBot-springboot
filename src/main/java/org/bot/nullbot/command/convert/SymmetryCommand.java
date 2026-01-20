@@ -42,6 +42,7 @@ public class SymmetryCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            List<String> params = event.getCommandParameters();
             Long groupId = groupMessageEvent.getGroupId();
 
             List<String> urls = new ArrayList<>();
@@ -55,15 +56,17 @@ public class SymmetryCommand implements Command
             }
 
             //  ID参数收集 或 AT收集
-            if (!event.getCommandParameters().isEmpty()) {
+            if (!params.isEmpty()) {
                 long qqNumber;
                 try {
-                    qqNumber = Long.parseLong(event.getCommandParameters().getFirst());
+                    int index = 0;
+                    if (List.of("左", "右", "上", "下").contains(params.getFirst())) index = 1;
+                    qqNumber = Long.parseLong(params.getFirst());
                 } catch (NumberFormatException e) {
                     throw new NullBotMsgException("[对称] ❌参数格式错误");
                 }
                 urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
-            }else{
+            } else {
                 List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
                 for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
             }
@@ -88,14 +91,13 @@ public class SymmetryCommand implements Command
                     Path htmlPath = resourceLoader.getCached("static/html/symmetry.html", tempFilePath + "/html");
                     Map<String, String> variables = new HashMap<>();
                     variables.put("mode", "left");
-                    if (!event.getCommandParameters().isEmpty()) {
-                        String mode = switch (event.getCommandParameters().getFirst()) {
-                            case "右" -> "right";
-                            case "上" -> "top";
-                            case "下" -> "bottom";
-                            default -> "left";
-                        };
-                        variables.put("mode", mode);
+                    if (!params.isEmpty()) {
+                        switch (params.getFirst()) {
+                            case "左" -> variables.put("mode", "left");
+                            case "右" -> variables.put("mode", "right");
+                            case "上" -> variables.put("mode", "top");
+                            case "下" -> variables.put("mode", "bottom");
+                        }
                     }
                     Map<String, String> images = new HashMap<>();
                     images.put("image", imagePath);
