@@ -3,12 +3,19 @@ package org.bot.nullbot.component.render;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.prop.ChromeProperties;
+import org.bot.nullbot.util.Base64Util;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
+import ru.yandex.qatools.ashot.AShot;
+import ru.yandex.qatools.ashot.Screenshot;
+import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
+import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.time.Duration;
 
@@ -47,7 +54,7 @@ public class HtmlRenderer
         options.addArguments("--headless");
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
-        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--window-size=3840,2160");
         options.addArguments("--hide-scrollbars");
 
         WebDriver driver = new ChromeDriver(options);
@@ -76,31 +83,23 @@ public class HtmlRenderer
         try (FileWriter writer = new FileWriter(tempFile)) {
             writer.write(html);
         }
-        // 等待加载页面
+        // 加载页面文件
         driver.get("file://" + tempFile.getAbsolutePath());
-        Thread.sleep(2000);
-        // 执行 JavaScript 确保所有内容已加载
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("return document.readyState").equals("complete");
-        // 计算页面高度
-        Long totalHeight = (Long) js.executeScript(
-                "return Math.max(" +
-                        "document.body.scrollHeight, " +
-                        "document.documentElement.scrollHeight, " +
-                        "document.body.offsetHeight, " +
-                        "document.documentElement.offsetHeight" +
-                        ");"
+        // 确保内容加载
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                .executeScript("return document.readyState")
+                .equals("complete")
         );
-        // 调整窗口大小
-        driver.manage().window().setSize(new Dimension(1200, totalHeight.intValue() + 100));
-        // 等待布局稳定
-        Thread.sleep(1000);
-        // BASE64 截图
-        String base64 = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
+        // 进行全页截图
+        AShot ashot = new AShot();
+        ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
+        Screenshot screenshot = ashot.takeScreenshot(driver);
+        BufferedImage fullImage = screenshot.getImage();
         // 清理临时文件
         tempFile.delete();
 
-        return base64;
+        return Base64Util.imageToBase64(fullImage);
     }
 
     // HTML 页元素渲染
@@ -110,16 +109,25 @@ public class HtmlRenderer
         try (FileWriter writer = new FileWriter(tempFile)) {
             writer.write(html);
         }
-        // 等待加载页面
+        // 加载页面文件
         driver.get("file://" + tempFile.getAbsolutePath());
-        Thread.sleep(2000);
+        // 确保内容加载
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                .executeScript("return document.readyState")
+                .equals("complete")
+        );
         // 查找目标元素
         WebElement element = driver.findElement(By.cssSelector(cssSelector));
-        // BASE64 截图
-        String base64 = element.getScreenshotAs(OutputType.BASE64);
+        // 进行元素截图
+        AShot ashot = new AShot();
+        ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
+        ashot.coordsProvider(new WebDriverCoordsProvider());
+        Screenshot screenshot = ashot.takeScreenshot(driver, element);
+        BufferedImage eleImage = screenshot.getImage();
         // 清理临时文件
         tempFile.delete();
 
-        return base64;
+        return Base64Util.imageToBase64(eleImage);
     }
 }

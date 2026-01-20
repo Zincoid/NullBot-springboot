@@ -3,20 +3,19 @@ package org.bot.nullbot.component.render;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.prop.ChromeProperties;
+import org.bot.nullbot.util.Base64Util;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.time.Duration;
-import java.util.Base64;
 import java.util.List;
 
 @Component
@@ -52,7 +51,11 @@ public class WebScreenCapturer
                 // 设置窗口尺寸
                 driver.manage().window().setSize(new Dimension(width, height));
                 // 等待页面加载
-                Thread.sleep(2000);
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+                wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                        .executeScript("return document.readyState")
+                        .equals("complete")
+                );
                 // 定位元素位置
                 List<WebElement> targets = targetCssSelectors.stream()
                         .map(selector -> driver.findElement(getBy(selector)))
@@ -71,7 +74,7 @@ public class WebScreenCapturer
                 // File outputFile = new File(outputPath);
                 // ImageIO.write(eleImage, "png", outputFile);
                 // BASE64 转换
-                return imageToBase64(eleImage);
+                return Base64Util.imageToBase64(eleImage);
 
             } catch (TimeoutException e) {
                 retryCount++;
@@ -101,7 +104,11 @@ public class WebScreenCapturer
                 // 设置窗口尺寸
                 driver.manage().window().setSize(new Dimension(width, height));
                 // 等待页面加载
-                Thread.sleep(2000);
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+                wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                        .executeScript("return document.readyState")
+                        .equals("complete")
+                );
                 // 进行全页截图
                 AShot ashot = new AShot();
                 ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
@@ -111,10 +118,7 @@ public class WebScreenCapturer
                 // File outputFile = new File(outputPath);
                 // ImageIO.write(fullImage, "png", outputFile);
                 // BASE64 转换
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(fullImage, "png", baos);
-                byte[] imageBytes = baos.toByteArray();
-                return Base64.getEncoder().encodeToString(imageBytes);
+                return Base64Util.imageToBase64(fullImage);
 
             } catch (TimeoutException e) {
                 retryCount++;
@@ -140,7 +144,11 @@ public class WebScreenCapturer
                 // 设置窗口尺寸
                 driver.manage().window().setSize(new Dimension(width, height));
                 // 等待页面加载
-                Thread.sleep(2000);
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+                wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                        .executeScript("return document.readyState")
+                        .equals("complete")
+                );
                 // 定位元素位置
                 WebElement element = driver.findElement(getBy(cssSelector));
                 // 进行元素截图
@@ -153,7 +161,7 @@ public class WebScreenCapturer
                 // File outputFile = new File(outputPath);
                 // ImageIO.write(eleImage, "png", outputFile);
                 // BASE64 转换
-                return imageToBase64(eleImage);
+                return Base64Util.imageToBase64(eleImage);
 
             } catch (TimeoutException e) {
                 retryCount++;
@@ -217,15 +225,6 @@ public class WebScreenCapturer
             } catch (Exception ex) {
                 log.info("[WebScreenCapturer] JavaScript 点击失败: {}", ex.getMessage());
             }
-        }
-    }
-
-    private static String imageToBase64(BufferedImage image) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            ImageIO.write(image, "png", baos);
-            return Base64.getEncoder().encodeToString(baos.toByteArray());
-        } catch (Exception e) {
-            throw new RuntimeException("图片转换失败");
         }
     }
 
