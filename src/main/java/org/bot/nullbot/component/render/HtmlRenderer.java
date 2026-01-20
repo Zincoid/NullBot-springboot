@@ -78,56 +78,64 @@ public class HtmlRenderer
 
     // HTML 字符串渲染
     public String renderFromHtml(String html) throws Exception {
-        // 保存临时文件
-        File tempFile = File.createTempFile("render-", ".html");
-        try (FileWriter writer = new FileWriter(tempFile)) {
-            writer.write(html);
-        }
-        // 加载页面文件
-        driver.get("file://" + tempFile.getAbsolutePath());
-        // 确保内容加载
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(webDriver -> ((JavascriptExecutor) webDriver)
-                .executeScript("return document.readyState")
-                .equals("complete")
-        );
-        // 进行全页截图
-        AShot ashot = new AShot();
-        ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-        Screenshot screenshot = ashot.takeScreenshot(driver);
-        BufferedImage fullImage = screenshot.getImage();
-        // 清理临时文件
-        tempFile.delete();
+        File tempFile = null;
+        try {
+            // 保存临时文件
+            tempFile = File.createTempFile("render-", ".html");
+            try (FileWriter writer = new FileWriter(tempFile)) {
+                writer.write(html);
+            }
+            // 加载页面文件
+            driver.get("file://" + tempFile.getAbsolutePath());
+            // 确保内容加载
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                    .executeScript("return document.readyState")
+                    .equals("complete")
+            );
+            // 进行全页截图
+            AShot ashot = new AShot();
+            ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
+            Screenshot screenshot = ashot.takeScreenshot(driver);
+            BufferedImage fullImage = screenshot.getImage();
 
-        return Base64Util.imageToBase64(fullImage);
+            return Base64Util.imageToBase64(fullImage);
+        } finally {
+            // 清理临时文件
+            if (tempFile != null && tempFile.exists()) tempFile.delete();
+        }
     }
 
     // HTML 页元素渲染
     public String renderElement(String html, String cssSelector) throws Exception {
-        // 保存临时文件
-        File tempFile = File.createTempFile("render-", ".html");
-        try (FileWriter writer = new FileWriter(tempFile)) {
-            writer.write(html);
-        }
-        // 加载页面文件
-        driver.get("file://" + tempFile.getAbsolutePath());
-        // 确保内容加载
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(webDriver -> ((JavascriptExecutor) webDriver)
-                .executeScript("return document.readyState")
-                .equals("complete")
-        );
-        // 查找目标元素
-        WebElement element = driver.findElement(By.cssSelector(cssSelector));
-        // 进行元素截图
-        AShot ashot = new AShot();
-        ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-        ashot.coordsProvider(new WebDriverCoordsProvider());
-        Screenshot screenshot = ashot.takeScreenshot(driver, element);
-        BufferedImage eleImage = screenshot.getImage();
-        // 清理临时文件
-        tempFile.delete();
+        File tempFile = null;
+        try {
+            // 保存临时文件
+            tempFile = File.createTempFile("render-", ".html");
+            try (FileWriter writer = new FileWriter(tempFile)) {
+                writer.write(html);
+            }
+            // 加载页面文件
+            driver.get("file://" + tempFile.getAbsolutePath());
+            // 确保内容加载
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                    .executeScript("return document.readyState")
+                    .equals("complete")
+            );
+            // 查找目标元素
+            WebElement element = driver.findElement(By.cssSelector(cssSelector));
+            // 进行元素截图
+            AShot ashot = new AShot();
+            ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
+            ashot.coordsProvider(new WebDriverCoordsProvider());
+            Screenshot screenshot = ashot.takeScreenshot(driver, element);
+            BufferedImage eleImage = screenshot.getImage();
 
-        return Base64Util.imageToBase64(eleImage);
+            return Base64Util.imageToBase64(eleImage);
+        } finally {
+            // 清理临时文件
+            if (tempFile != null && tempFile.exists()) tempFile.delete();
+        }
     }
 }
