@@ -360,4 +360,5 @@
 ### 2026.1.21 - v1.3.0
 - 优化 HtmlTemplateUtil 工具类 - 替换目标改为仅占位符；
 - 新增 template_generator.html 页面工具 - 用于创建带占位符的 html 图片渲染模板；
-- 新增 Pucci 梗图生成指令 - 添加 pucci.html 模板 用于生成。
+- 新增 Pucci 梗图生成指令 - 添加 pucci.html 模板 用于生成；
+- 优化 反射调用功能 - 将 Invoke 指令内逻辑提取为 SpringInvoker 组件。
