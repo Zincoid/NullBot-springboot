@@ -61,7 +61,7 @@ public class PucciCommand implements Command
             }
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[Pucci] 处理完成 - {} {}", params.get(0), params.get(1));
+            log.info("\t\t\t\t├─[Pucci] 处理完成 - {}", params.getFirst());
         }else
             throw new NullBotLogException("[普奇] ❌未设计 - 非群消息事件响应方式");
     }
