@@ -1,6 +1,5 @@
 package org.bot.nullbot.component.render;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.prop.ChromeProperties;
 import org.bot.nullbot.util.Base64Util;
