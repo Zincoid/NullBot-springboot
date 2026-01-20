@@ -242,7 +242,7 @@ class QqBotApplicationTests
         // String base64 = htmlRenderer.renderElement(html, ".certificate");
 
         String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\symmetry.html";
-        String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\input.jpg";
+        String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\neuro.png";
 
         Map<String, String> variables = new HashMap<>();
 

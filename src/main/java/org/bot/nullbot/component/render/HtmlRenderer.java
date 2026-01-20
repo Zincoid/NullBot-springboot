@@ -54,7 +54,7 @@ public class HtmlRenderer
         options.addArguments("--headless");
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
-        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--window-size=3840,2160");
         options.addArguments("--hide-scrollbars");
 
         WebDriver driver = new ChromeDriver(options);
