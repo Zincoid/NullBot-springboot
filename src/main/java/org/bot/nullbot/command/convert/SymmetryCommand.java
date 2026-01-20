@@ -134,8 +134,9 @@ public class SymmetryCommand implements Command
                 功能: 图片对称
                 限权: %d 级
                 格式:
-                1. [引用] Symmetry
-                2. Symmetry [@任何人|QQ号]
+                1. [引用] Symmetry [可选: 方式]
+                2. Symmetry [可选: 方式] [@任何人|QQ号]
+                方式: 上/下/左/右 (默认左)
                 别名: 对称""", getAccess()
         );
     }
