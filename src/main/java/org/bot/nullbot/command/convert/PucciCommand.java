@@ -49,7 +49,7 @@ public class PucciCommand implements Command
                 variables.put("text3", params.getFirst());
                 String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
                 html = HtmlTemplateUtil.replaceVariables(html, variables);
-                base64 = htmlRenderer.renderElement(html, "#warp");
+                base64 = htmlRenderer.renderElement(html, "#wrap");
             } catch (Exception e) {
                 throw new NullBotMsgException("[普奇] ❌处理时出错: " + e.getMessage());
             }
