@@ -353,4 +353,5 @@
 - 新增 Symmetry 对称指令 - 添加 symmetry.html 模板 可将图片对称处理；
 - 优化 WebScreenCapturer 和 HtmlRenderer - 优化等待页面加载方法；
 - 新增 Base64Util 工具类 - 提取冗余的图像转 Base64 方法；
-- 优化 RegisterHandler - 提取冗余代码 添加空信息验证 防止获取信息出错时指令被拦截。
+- 优化 RegisterHandler - 提取冗余代码 添加空信息验证 防止获取信息出错时指令被拦截；
+- 优化 文本。
