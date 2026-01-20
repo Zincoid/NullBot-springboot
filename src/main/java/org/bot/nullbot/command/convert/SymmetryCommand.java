@@ -63,14 +63,18 @@ public class SymmetryCommand implements Command
             if (!params.isEmpty()) {
                 long qqNumber;
                 try {
-                    if (List.of("左", "右", "上", "下").contains(params.getFirst()) && params.size() > 1)
-                        qqNumber = Long.parseLong(params.get(1));
-                    else
+                    if (List.of("左", "右", "上", "下").contains(params.getFirst())) {
+                        if (params.size() > 1) {
+                            qqNumber = Long.parseLong(params.get(1));
+                            urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+                        }
+                    } else {
                         qqNumber = Long.parseLong(params.get(0));
+                        urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+                    }
                 } catch (NumberFormatException e) {
                     throw new NullBotMsgException("[对称] ❌参数格式错误");
                 }
-                urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
             }
 
             if (urls.isEmpty())
