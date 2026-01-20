@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>梗图模板</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+        }
+        #wrap {
+            position: relative;
+            width: 872px;
+            height: 888px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .layer {
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrap" style="background-image: url('${background}');">
+        <img class="layer" style="left:134px;top:129px;width:226px;height:158px;transform:rotate(-21deg)" src="${image}" alt="" />
+        <div class="layer" style="position:absolute;left:589px;top:534px;width:76px;height:261px;font-family:"Microsoft YaHei";font-size:28px;color:rgb(0, 0, 0);text-align:center;-webkit-text-stroke:1px rgb(0, 0, 0);text-stroke:1px rgb(0, 0, 0);transform:rotate(24deg);">${text}</div>
+    </div>
+</body>
+</html>

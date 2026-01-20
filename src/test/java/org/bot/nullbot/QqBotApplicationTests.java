@@ -224,48 +224,39 @@ class QqBotApplicationTests
 
     @Test
     void HtmlRenderTest() throws Exception {
-        // String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\template.html";
-        // String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\input.jpg";
-        //
-        // Map<String, String> variables = new HashMap<>();
-        // variables.put("recipientName", "张岚");
-        // variables.put("achievement", "吃了三斤使");
-        // variables.put("period", "打游戏");
-        //
-        // Map<String, String> images = new HashMap<>();
-        // images.put("companyLogo", imagePath);
-        //
-        // String html = HtmlTemplateUtil.loadTemplate(htmlPath);
-        // html = HtmlTemplateUtil.replaceVariables(html, variables);
-        // html = HtmlTemplateUtil.replaceImages(html, images);
-        //
-        // String base64 = htmlRenderer.renderElement(html, ".certificate");
-
         // String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\symmetry.html";
         // String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\neuro.png";
-        //
         // Map<String, String> variables = new HashMap<>();
         // variables.put("mode", "right");
-        //
         // Map<String, String> images = new HashMap<>();
         // images.put("image", imagePath);
-        //
         // String html = HtmlTemplateUtil.loadTemplate(htmlPath);
         // html = HtmlTemplateUtil.replaceVariables(html, variables);
         // html = HtmlTemplateUtil.replaceImages(html, images);
-        //
         // String base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
 
-        String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\5000choyen.html";
+        // String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\5000choyen.html";
+        // Map<String, String> variables = new HashMap<>();
+        // variables.put("topText", "我去");
+        // variables.put("bottomText", "不早说");
+        // String html = HtmlTemplateUtil.loadTemplate(htmlPath);
+        // html = HtmlTemplateUtil.replaceVariables(html, variables);
+        // String base64 = htmlRenderer.renderElement(html, "#templateContainer");
 
+        String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\meme_template.html";
+        String backgroundPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\input.jpg";
+        String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\neuro.png";
         Map<String, String> variables = new HashMap<>();
-        variables.put("topText", "我去");
-        variables.put("bottomText", "不早说");
-
+        variables.put("text", "我去我去我去我去我去我去我去我去我去我去我去我去我去");
+        Map<String, String> images = new HashMap<>();
+        images.put("image", imagePath);
+        Map<String, String> imagesBase64 = new HashMap<>();
+        imagesBase64.put("background", backgroundPath);
         String html = HtmlTemplateUtil.loadTemplate(htmlPath);
         html = HtmlTemplateUtil.replaceVariables(html, variables);
-
-        String base64 = htmlRenderer.renderElement(html, "#templateContainer");
+        html = HtmlTemplateUtil.replaceImages(html, images);
+        html = HtmlTemplateUtil.replaceImagesBase64(html, imagesBase64);
+        String base64 = htmlRenderer.renderElement(html, "#wrap");
 
         // Base64 解码
         byte[] imageBytes = Base64.getDecoder().decode(base64);

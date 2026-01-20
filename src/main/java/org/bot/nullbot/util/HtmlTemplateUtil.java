@@ -50,26 +50,24 @@ public class HtmlTemplateUtil
         String result = template;
         for (Map.Entry<String, String> entry : images.entrySet()) {
             String placeholder = entry.getKey();
-            String imagePath = entry.getValue();
-            // 模式1: 直接替换 ${placeholder}
-            String placeholderPattern = "src\\s*=\\s*[\"']\\$\\{" + Pattern.quote(placeholder) + "}[\"']";
-            // String placeholderPattern = "\\$\\{" + Pattern.quote(placeholder) + "}[\"']";
-            // 模式2: 已经转换的 src 路径
-            String finalImagePath = imagePath;
-            // 如果是本地文件 转换为文件URL
-            if (imagePath != null && !imagePath.startsWith("http") && !imagePath.startsWith("data:")) {
-                File imageFile = new File(imagePath);
-                if (imageFile.exists()) {
+            String value = entry.getValue();
+            if (value == null) continue;
+            // 直接匹配 ${placeholder} 格式
+            String placeholderPattern = "\\$\\{" + Pattern.quote(placeholder) + "}";
+            // 处理图片路径: 如果是本地文件 转换为 file:// URL
+            String finalValue = value;
+            if (!value.startsWith("http") && !value.startsWith("data:")) {
+                File file = new File(value);
+                if (file.exists()) {
                     // 转换为 file:// URL
-                    finalImagePath = "file://" + imageFile.getAbsolutePath().replace("\\", "/");
+                    finalValue = "file://" + file.getAbsolutePath().replace("\\", "/");
                 } else {
-                    log.info("[HtmlTemplateUtil] 图片文件不存在: {}", imagePath);
-                    continue;
+                    log.info("[HtmlTemplateUtil] 文件不存在: {}", value);
+                    continue; // 文件不存在时跳过替换
                 }
             }
-            // 替换占位符为实际图片路径
-            String replacement = "src=\"" + finalImagePath + "\"";
-            result = result.replaceAll(placeholderPattern, replacement);
+            // 替换所有匹配的占位符
+            result = result.replaceAll(placeholderPattern, Matcher.quoteReplacement(finalValue));
         }
         return result;
     }
@@ -79,33 +77,30 @@ public class HtmlTemplateUtil
     /**
      * BASE64编码图片替换 (图片直接嵌入HTML 无需外部文件)
      */
-    public static String replaceImagesWithBase64(String template, Map<String, String> images) throws IOException {
+    public static String replaceImagesBase64(String template, Map<String, String> images) throws IOException {
         String result = template;
         for (Map.Entry<String, String> entry : images.entrySet()) {
             String placeholder = entry.getKey();
-            String imagePath = entry.getValue();
-            if (imagePath == null) continue;
-            // 查找 src="${placeholder}" 模式
-            Pattern pattern = Pattern.compile(
-                    "src\\s*=\\s*[\"']\\$\\{" + Pattern.quote(placeholder) + "}[\"']",
-                    Pattern.CASE_INSENSITIVE
-            );
-            Matcher matcher = pattern.matcher(result);
-            if (matcher.find()) {
-                File imageFile = new File(imagePath);
-                if (!imageFile.exists()) {
-                    log.info("[HtmlTemplateUtil] 图片文件不存在: {}", imagePath);
-                    continue;
+            String value = entry.getValue();
+            if (value == null) continue;
+            // 直接替换 ${placeholder} 格式的占位符
+            Pattern pattern = Pattern.compile("\\$\\{" + Pattern.quote(placeholder) + "\\}");
+            // 检查是否是图片文件路径（根据文件扩展名判断）
+            if (value.toLowerCase().matches(".*\\.(jpg|jpeg|png|gif|bmp|svg|webp)$")) {
+                File imageFile = new File(value);
+                if (imageFile.exists()) {
+                    // 读取图片并转换为Base64
+                    String base64Image = encodeFileToBase64(imageFile);
+                    String mimeType = getMimeType(value);
+                    String dataUri = "data:" + mimeType + ";base64," + base64Image;
+                    // 替换所有匹配项
+                    result = result.replaceAll("\\$\\{" + Pattern.quote(placeholder) + "}", Matcher.quoteReplacement(dataUri));
+                } else {
+                    log.info("[HtmlTemplateUtil] 图片文件不存在: {}", value);
                 }
-                // 读取图片并转换为Base64
-                String base64Image = encodeFileToBase64(imageFile);
-                String mimeType = getMimeType(imagePath);
-                String dataUri = "data:" + mimeType + ";base64," + base64Image;
-                // 替换所有匹配项
-                result = result.replaceAll(
-                        "src\\s*=\\s*[\"']\\$\\{" + Pattern.quote(placeholder) + "}[\"']",
-                        "src=\"" + dataUri + "\""
-                );
+            } else {
+                // 如果不是图片文件，直接替换为文本值
+                result = result.replaceAll("\\$\\{" + Pattern.quote(placeholder) + "}", Matcher.quoteReplacement(value));
             }
         }
         return result;
