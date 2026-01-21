@@ -363,4 +363,5 @@
 - 新增 Pucci 梗图生成指令 - 添加 pucci.html 模板 用于生成；
 - 优化 反射调用功能 - 将 Invoke 指令内逻辑提取为 SpringInvoker 组件；
 - 网页Bot管理系统 后端添加 SpringInvoker 反射调用相关 Controller 和 Service；
-- 网页Bot管理系统 前端添加 反射系统调用 相关界面。
+- 网页Bot管理系统 前端添加 反射系统调用 相关界面；
+- 修复 引用命令触发自动回复导致速率限制的问题。

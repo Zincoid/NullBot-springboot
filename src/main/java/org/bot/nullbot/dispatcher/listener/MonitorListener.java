@@ -50,8 +50,13 @@ public class MonitorListener
 
     @FunctionControl(config = "AIAutoReply")
     public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
-        if(!settingService.isAutoReply(event.getGroupId())) return false;
-        if(event.getMessage().startsWith(commandPrefix)) return false;
+        if (!settingService.isAutoReply(event.getGroupId())) return false;
+        if (event.getMessage().startsWith(commandPrefix)) {
+            return false;
+        } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
+            String slashCommand = event.getArrayMsg().get(1).getData().get("text");
+            if(slashCommand != null && slashCommand.startsWith(commandPrefix)) return false;
+        }
 
         double freq = settingService.getReplyFrequency(event.getGroupId());
         if (freq > Math.random()) {
@@ -73,7 +78,7 @@ public class MonitorListener
         boolean hasLogged = false;
         for(ArrayMsg msg : event.getArrayMsg()){
             if(msg.getType() == MsgTypeEnum.image){
-                if (!hasLogged){
+                if (!hasLogged) {
                     // log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> {}", groupId, userName, userId, event.getMessage());
                     log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
                     hasLogged = true;
@@ -104,8 +109,8 @@ public class MonitorListener
 
     @FunctionControl(config = "MsgCollect")
     public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
-        if(!settingService.isMessageCollect(event.getGroupId())) return;
-        if(!(event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话"))){  // Chat 命令会自动记录消息 跳过
+        if (!settingService.isMessageCollect(event.getGroupId())) return;
+        if (!(event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话"))) {  // Chat 命令会自动记录消息 跳过
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
             chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
@@ -116,7 +121,7 @@ public class MonitorListener
 
     @FunctionControl(config = "KeyDetect")
     public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {
-        if(!settingService.isKeywordDetect(event.getGroupId())) return;
+        if (!settingService.isKeywordDetect(event.getGroupId())) return;
         if (event.getMessage().contains("男娘")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
             bot.sendGroupMsg(event.getGroupId(), "哪有男娘？", false);
@@ -135,8 +140,8 @@ public class MonitorListener
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
-        if(!settingService.isPokeDetect(event.getGroupId())) return;
-        if(Objects.equals(event.getTargetId(), event.getSelfId())){
+        if (!settingService.isPokeDetect(event.getGroupId())) return;
+        if (Objects.equals(event.getTargetId(), event.getSelfId())) {
             log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (已限制为戳Bot自己)", event.getGroupId(), event.getUserId(), event.getTargetId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
         }
@@ -146,7 +151,7 @@ public class MonitorListener
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
-        if(!settingService.isRecallDetect(event.getGroupId())) return;
+        if (!settingService.isRecallDetect(event.getGroupId())) return;
         log.info("◉ [GroupMonitor:Recall] 来自群 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));
     }
