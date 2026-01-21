@@ -49,7 +49,8 @@ public class MonitorListener
     // =================== 串行监听方法 ===================
 
     @FunctionControl(config = "AIAutoReply")
-    public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
+    public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception
+    {
         if (!settingService.isAutoReply(event.getGroupId())) return false;
         if (event.getMessage().startsWith(commandPrefix)) {
             return false;
@@ -68,7 +69,8 @@ public class MonitorListener
     }
 
     @FunctionControl(config = "ImgCollect")
-    public void onGroupImageCollection(Bot bot, GroupMessageEvent event) {  // 群目录不存在时数据库无法插入详情文件条目 需手动SYNC
+    public void onGroupImageCollection(Bot bot, GroupMessageEvent event)  // 群目录不存在时数据库无法插入详情文件条目 需手动SYNC
+    {
         if(!settingService.isImageCollect(event.getGroupId())) return;
 
         Long groupId = event.getGroupId();
@@ -108,7 +110,8 @@ public class MonitorListener
     }
 
     @FunctionControl(config = "MsgCollect")
-    public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
+    public void onGroupMessageCollection(Bot bot, GroupMessageEvent event)
+    {
         if (!settingService.isMessageCollect(event.getGroupId())) return;
         if (!(event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话"))) {  // Chat 命令会自动记录消息 跳过
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
@@ -120,7 +123,8 @@ public class MonitorListener
     }
 
     @FunctionControl(config = "KeyDetect")
-    public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {
+    public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception
+    {
         if (!settingService.isKeywordDetect(event.getGroupId())) return;
         if (event.getMessage().contains("男娘")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
@@ -139,7 +143,8 @@ public class MonitorListener
     @FunctionControl(config = "PokeDetect")
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
-    public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
+    public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception
+    {
         if (!settingService.isPokeDetect(event.getGroupId())) return;
         if (Objects.equals(event.getTargetId(), event.getSelfId())) {
             log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (已限制为戳Bot自己)", event.getGroupId(), event.getUserId(), event.getTargetId());
@@ -150,7 +155,8 @@ public class MonitorListener
     @FunctionControl(config = "RecallDetect")
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
-    public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
+    public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception
+    {
         if (!settingService.isRecallDetect(event.getGroupId())) return;
         log.info("◉ [GroupMonitor:Recall] 来自群 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));
