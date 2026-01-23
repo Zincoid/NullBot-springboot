@@ -111,7 +111,7 @@ nullbot:
       api-key:
       max-history-length: 50
       max-monitor-length: 100
-      max-tokens: 500
+      max-tokens: 200
       meme-path: /root/Nullbot/file/ai/meme  # 用于AI主动发表情
       default-system-message: 你是一个助手
     tts:
