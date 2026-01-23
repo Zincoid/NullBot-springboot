@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class QqBotApplicationTests
@@ -45,6 +46,15 @@ class QqBotApplicationTests
     WebScreenCapturer webScreenCapturer;
     @Resource
     HtmlRenderer htmlRenderer;
+
+    @Test
+    void regexTest() {
+        String message = "[123][文件[]名称(456)]: 这是一些描述内容";
+        String regex = "\\[\\d+]\\[.+?\\(\\d+\\)]:";
+        Pattern pattern = Pattern.compile(regex);
+        java.util.regex.Matcher matcher = pattern.matcher(message);
+        System.out.println(matcher.find());
+    }
 
     @Test
     void parseTest() throws IOException {
