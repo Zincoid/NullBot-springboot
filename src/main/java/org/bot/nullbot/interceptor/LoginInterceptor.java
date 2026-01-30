@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.security.JwtTool;
 import org.bot.nullbot.entity.result.WebResult;
+import org.bot.nullbot.util.WebUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -69,21 +70,19 @@ public class LoginInterceptor implements HandlerInterceptor
 
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
         String url = req.getRequestURL().toString();
+        String ip = WebUtil.getClientIpAddress();
+        log.info("◎ [WebManagement] 来自 {} 的请求 - {}", ip, url);
 
+        if (url.contains("/nullbot/login") || url.contains("/nullbot/guest")) {
+            log.info("\t\t└─[LoginInterceptor] 登录放行");
+            return true;
+        }
         if (url.contains("/nullbot/regist")) {
-            log.info("[管理系统-JWT验证] 注册放行 - {}", url);
-            return true;
-        }
-        if (url.contains("/nullbot/login")) {
-            log.info("[管理系统-JWT验证] 登录放行 - {}", url);
-            return true;
-        }
-        if (url.contains("/nullbot/guest")) {
-            log.info("[管理系统-JWT验证] 访客放行 - {}", url);
+            log.info("\t\t└─[LoginInterceptor] 注册放行");
             return true;
         }
         if (url.contains("/nullbot/preview")) {
-            log.info("[管理系统-JWT验证] 预览放行 - {}", url);
+            log.info("\t\t└─[LoginInterceptor] 预览放行");
             return true;
         }
 
@@ -93,7 +92,7 @@ public class LoginInterceptor implements HandlerInterceptor
         try {
             jwt = jwtTool.parseJwt(token);
         } catch (Exception e) {
-            log.info("[管理系统-JWT验证] 解析失败 - {}", url);
+            log.info("\t\t└─[LoginInterceptor] 验证失败");
             WebResult error = WebResult.fail().addMsg(e.getMessage());
             res.getWriter().write(JSONObject.toJSONString(error));
             return false;
@@ -104,22 +103,22 @@ public class LoginInterceptor implements HandlerInterceptor
         if (userType == 0) {
             for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
                 if (url.contains(forbiddenUrl)) {
-                    log.info("[管理系统-JWT验证] 访客禁止访问 - {}", url);
+                    log.info("\t\t└─[LoginInterceptor] 访客受限");
                     WebResult error = WebResult.fail().addMsg("No Access");
                     res.getWriter().write(JSONObject.toJSONString(error));
                     return false;
                 }
             }
-            log.info("[管理系统-JWT验证] 访客放行 - {}", url);
+            log.info("\t\t└─[LoginInterceptor] 访客放行");
             return true;
         }
 
         if (userType == 1) {
-            log.info("[管理系统-JWT验证] 管理员放行 - {}", url);
+            log.info("\t\t└─[LoginInterceptor] 管理放行");
             return true;
         }
 
-        log.info("[管理系统-JWT验证] 用户类型不存在 - {}", url);
+        log.info("\t\t└─[LoginInterceptor] 用户类型不存在");
         return false;
     }
 }

@@ -116,7 +116,7 @@ public class StatisticServiceImpl implements StatisticService
         List<String> userAxis = new ArrayList<>();
         List<Long> userData = new ArrayList<>();
         for (Map<String, Object> map : topUsers) {
-            Long userId = (Long) map.get("user_id");
+            long userId = Long.parseLong(map.get("user_id").toString());
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             userAxis.add(userName + "\n(" + userId + ")");
             userData.add(Long.valueOf(map.get("total_visits").toString()));
