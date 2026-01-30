@@ -13,11 +13,11 @@ import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"DatabaseUpdate", "数据库更新"})
+@CommandMapping({"DbUpdate", "数据库更新"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DatabaseUpdateCommand implements Command
+public class DbUpdateCommand implements Command
 {
     private final GroupService groupService;
     private final UserService userService;
@@ -33,7 +33,7 @@ public class DatabaseUpdateCommand implements Command
             inventoryService.updateAllInventories();
 
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[数据库更新] ✅已完成", false);
-            log.info("\t\t\t\t├─[DatabaseUpdate] 数据库已更新");
+            log.info("\t\t\t\t├─[DbUpdate] 数据库已更新");
         }else
             throw new NullBotLogException("[数据库更新] ❌未设计 - 非群消息事件响应方式");
     }
@@ -44,10 +44,10 @@ public class DatabaseUpdateCommand implements Command
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ DatabaseUpdate 命令
-                功能: 更新数据库
+                ◉ DbUpdate 命令
+                功能: 更新数据库条目
                 限权: %d 级
-                格式: DatabaseUpdate
+                格式: DbUpdate
                 别名: 数据库更新""", getAccess()
         );
     }
