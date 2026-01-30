@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 
 public class FileUtil
 {
+    // =================== 文件列表相关 ===================
+
     public static String getFolderTreeString(String rootPath, int maxDepth) throws IOException {
         Path root = Paths.get(rootPath);
         StringBuilder sb = new StringBuilder();
@@ -80,6 +82,8 @@ public class FileUtil
             return "读取目录出错: " + e.getMessage();
         }
     }
+
+    // =================== 路径获取相关 ===================
 
     public static String getRandomFile(String directoryPath) {
         try {
@@ -213,6 +217,32 @@ public class FileUtil
         return foundPaths;
     }
 
+    public static List<String> getFilesByKeyword(String directoryPath, String keyword) {
+        List<String> foundPaths = new ArrayList<>();
+        try {
+            Path directory = Paths.get(directoryPath);
+            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+                System.err.println("目录不存在或不是有效目录: " + directoryPath);
+                return foundPaths;
+            }
+
+            String lowerKeyword = keyword.toLowerCase();  // 不区分大小写的关键字匹配
+            try (Stream<Path> stream = Files.list(directory)) {
+                foundPaths = stream
+                        .filter(Files::isRegularFile)
+                        .filter(path -> {
+                            String fileName = path.getFileName().toString().toLowerCase();
+                            return fileName.contains(lowerKeyword);
+                        })
+                        .map(path -> path.toAbsolutePath().toString())
+                        .collect(Collectors.toList());
+            }
+        } catch (IOException e) {
+            System.err.println("读取目录出错: " + e.getMessage());
+        }
+        return foundPaths;
+    }
+
     public static String getFilePathRecursive(String directoryPath, String fileName) {
         try {
             Path directory = Paths.get(directoryPath);
@@ -235,6 +265,8 @@ public class FileUtil
             return null;
         }
     }
+
+    // =================== 文件删除相关 ===================
 
     public static String deleteFileByName(String directoryPath, String fileName) {
         try {

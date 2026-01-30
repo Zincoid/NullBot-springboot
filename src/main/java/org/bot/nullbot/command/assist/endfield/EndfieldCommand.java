@@ -34,7 +34,7 @@ public class EndfieldCommand implements Command
                 log.info("\t\t\t\t├─[Endfield] 已获取列表");
                 return;
             }
-            List<String> helpPaths = FileUtil.getFilesByPattern(fileStorageProperties.getImagePath() + "/assist/endfield", params.getFirst());
+            List<String> helpPaths = FileUtil.getFilesByKeyword(fileStorageProperties.getImagePath() + "/assist/endfield", params.getFirst());
             if (helpPaths.isEmpty()) throw new NullBotMsgException("[终末地] ❌未找到内容");
             String response = MsgUtils.builder().img(helpPaths.getFirst()).build();  // 只取第一个查询结果
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);

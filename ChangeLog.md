@@ -375,6 +375,7 @@
 
 ### 2026.1.30 - v1.3.2
 - 增强 FileUtil 工具类 - getFileListAsString 方法 添加是否带扩展名参数并修改相关代码；
+- 增强 FileUtil 工具类 - 新增 getFilesByKeyword 方法 按关键词获取文件路径列表；
 - 新增 Endfield 终末地查询指令 - 用于查询相关攻略图片资料；
 - 优化 部分文本。
 - 优化 项目结构。
