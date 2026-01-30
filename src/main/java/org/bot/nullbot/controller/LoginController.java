@@ -26,7 +26,7 @@ public class LoginController
 
     @PostMapping("/regist")
     public WebResult regist(@RequestBody RegistDTO registDTO){
-        log.info("[管理系统] 管理员注册 - {}", registDTO);
+        log.info("└─[LoginController] 管理员注册 - {}", registDTO);
         try {
             if (adminService.regist(registDTO))
                 return WebResult.success().addMsg("管理员注册成功");
@@ -38,14 +38,14 @@ public class LoginController
 
     @PostMapping("/guest")
     public WebResult guest(){
-        log.info("[管理系统] 访客登录");
+        log.info("└─[LoginController] 访客登录");
         String jwt = jwtTool.createJwt(null, 0, jwtProperties.getTokenTTL());
         return WebResult.success().addMsg("访客登录成功").addData("token", jwt);
     }
 
     @PostMapping("/login")
         public WebResult login(@RequestBody LoginDTO loginDTO){
-        log.info("[管理系统] 管理员登录 - {}", loginDTO);
+        log.info("└─[LoginController] 管理员登录 - {}", loginDTO);
         if(adminService.login(loginDTO)){
             String jwt = jwtTool.createJwt(loginDTO.getId(), 1, jwtProperties.getTokenTTL());
             return WebResult.success().addMsg("管理员登录成功").addData("token", jwt);
@@ -56,7 +56,7 @@ public class LoginController
     @DeleteMapping("/delete")
     public WebResult delete(){
         Long id = jwtTool.getLoginId(WebUtil.getToken());
-        log.info("[管理系统] 管理员注销 - ID: {}", id);
+        log.info("└─[LoginController] 管理员注销 - ID: {}", id);
         if(adminService.delete(id))
             return WebResult.success().addMsg("管理员注销成功");
         return WebResult.fail().addMsg("管理员注销失败");
@@ -66,7 +66,7 @@ public class LoginController
     public WebResult update(@RequestBody AdminPO admin){
         Long id = jwtTool.getLoginId(WebUtil.getToken());
         admin.setId(id);  // 从 Token 获取 ID
-        log.info("[管理系统] 管理员更新 - ID: {}", id);
+        log.info("└─[LoginController] 管理员更新 - ID: {}", id);
         if(adminService.update(admin))
             return WebResult.success().addMsg("管理员更新成功");
         return WebResult.fail().addMsg("管理员更新失败");
@@ -76,7 +76,7 @@ public class LoginController
     public WebResult changePwd(@RequestBody PwdChangeDTO pwdChangeDTO) {
         try {
             Long id = jwtTool.getLoginId(WebUtil.getToken());
-            log.info("[管理系统] 管理员密码更改 - ID: {}", id);
+            log.info("└─[LoginController] 管理员密码更改 - ID: {}", id);
             if(adminService.changePwd(id, pwdChangeDTO))
                 return WebResult.success().addMsg("管理员密码更改成功");
             return WebResult.fail().addMsg("管理员密码更改失败");
@@ -90,11 +90,11 @@ public class LoginController
         Integer type = jwtTool.getLoginType(WebUtil.getToken());
         if(type == 0){
             AdminPO admin = new AdminPO(null, "Guest", null, null);
-            log.info("[管理系统] 获取访客信息");
+            log.info("└─[LoginController] 获取访客信息");
             return WebResult.success().addMsg("获取访客信息成功").addData("info", admin).addData("userType", 0);
         }else if(type == 1){
             Long id = jwtTool.getLoginId(WebUtil.getToken());
-            log.info("[管理系统] 获取管理员信息 - ID {}", id);
+            log.info("└─[LoginController] 获取管理员信息 - ID {}", id);
             AdminPO admin = adminService.info(id);
             if(admin != null){
                 admin.setPassword(null);  // 安全
