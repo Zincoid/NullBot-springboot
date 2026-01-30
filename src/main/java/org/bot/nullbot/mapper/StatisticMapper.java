@@ -19,9 +19,9 @@ public interface StatisticMapper extends BaseMapper<StatisticPO>
             "LIMIT #{limit}")
     List<Map<String, Object>> selectTopGroups(@Param("limit") int limit);
 
-    @Select("SELECT user_id, user_name, SUM(visits) as total_visits " +
+    @Select("SELECT user_id, SUM(visits) as total_visits " +
             "FROM statistic " +
-            "GROUP BY user_id, user_name " +
+            "GROUP BY user_id" +
             "ORDER BY total_visits DESC " +
             "LIMIT #{limit}")
     List<Map<String, Object>> selectTopUsers(@Param("limit") int limit);

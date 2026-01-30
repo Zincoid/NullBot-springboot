@@ -1,6 +1,8 @@
 package org.bot.nullbot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.core.BotContainer;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.entity.po.StatisticDatePO;
 import org.bot.nullbot.entity.po.StatisticPO;
@@ -8,13 +10,13 @@ import org.bot.nullbot.entity.vo.StatisticVO;
 import org.bot.nullbot.mapper.StatisticDateMapper;
 import org.bot.nullbot.mapper.StatisticMapper;
 import org.bot.nullbot.service.StatisticService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,6 +25,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatisticServiceImpl implements StatisticService
 {
+    @Value("${nullbot.bot-id}")
+    private Long botId;
+    private final BotContainer botContainer;
+
     private final StatisticMapper statisticMapper;
     private final StatisticDateMapper statisticDateMapper;
 
@@ -105,11 +111,14 @@ public class StatisticServiceImpl implements StatisticService
         }
 
         // 查询访问次数最多的user
+        Bot bot = botContainer.robots.get(botId);
         List<Map<String, Object>> topUsers = statisticMapper.selectTopUsers(20);
         List<String> userAxis = new ArrayList<>();
         List<Long> userData = new ArrayList<>();
         for (Map<String, Object> map : topUsers) {
-            userAxis.add(map.get("user_name") + "\n(" + map.get("user_id") + ")");
+            Long userId = (Long) map.get("user_id");
+            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+            userAxis.add(userName + "\n(" + userId + ")");
             userData.add(Long.valueOf(map.get("total_visits").toString()));
         }
 
