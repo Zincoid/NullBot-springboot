@@ -185,6 +185,7 @@ public class FileUtil
         try {
             Path directory = Paths.get(directoryPath);
             if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+                System.err.println("目录不存在或不是有效目录: " + directoryPath);
                 return foundPaths;
             }
 
@@ -198,7 +199,6 @@ public class FileUtil
                         .map(path -> path.toAbsolutePath().toString())
                         .collect(Collectors.toList());
             }
-
         } catch (IOException e) {
             System.err.println("读取目录出错: " + e.getMessage());
         }
