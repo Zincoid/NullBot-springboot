@@ -36,7 +36,7 @@ public class HtmlRenderer
 
     public void initialize() {
         if (initialized) {
-            log.info("[HtmlRenderer] Chrome 驱动已初始化过");
+            log.info("▽ [HtmlRenderer] Chrome 驱动已初始化过");
             return;
         }
 
@@ -61,16 +61,16 @@ public class HtmlRenderer
 
         this.driver = driver;
         initialized = true;
-        log.info("[HtmlRenderer] Chrome 驱动已初始化");
+        log.info("▽ [HtmlRenderer] Chrome 驱动已初始化");
     }
 
     public void close() {
         if (initialized) {
             driver.quit();
             initialized = false;
-            log.info("[HtmlRenderer] Chrome 驱动已关闭");
+            log.info("▽ [HtmlRenderer] Chrome 驱动已关闭");
         } else
-            log.info("[HtmlRenderer] Chrome 驱动未初始化");
+            log.info("▽ [HtmlRenderer] Chrome 驱动未初始化");
     }
 
     public void validate() {

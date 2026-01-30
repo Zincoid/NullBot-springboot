@@ -78,7 +78,7 @@ public class WebScreenCapturer
 
             } catch (TimeoutException e) {
                 retryCount++;
-                log.info("[WebScreenCapturer] 页面访问超时: {} Times", retryCount);
+                log.info("▽ [WebScreenCapturer] 页面访问超时: {} Times", retryCount);
             } catch (NoSuchElementException e) {
                 throw new RuntimeException("未找到页元素");
             } catch (Exception e) {
@@ -122,7 +122,7 @@ public class WebScreenCapturer
 
             } catch (TimeoutException e) {
                 retryCount++;
-                log.info("[WebScreenCapturer] 页面访问超时: {} Times", retryCount);
+                log.info("▽ [WebScreenCapturer] 页面访问超时: {} Times", retryCount);
             } catch (Exception e) {
                 throw new RuntimeException("未知截图错误", e);
             } finally {
@@ -165,7 +165,7 @@ public class WebScreenCapturer
 
             } catch (TimeoutException e) {
                 retryCount++;
-                log.info("[WebScreenCapturer] 页面访问超时: {} Times", retryCount);
+                log.info("▽ [WebScreenCapturer] 页面访问超时: {} Times", retryCount);
             } catch (NoSuchElementException e) {
                 throw new RuntimeException("未找到页元素");
             } catch (Exception e) {
@@ -198,7 +198,7 @@ public class WebScreenCapturer
                                 "});"
                 );
             } catch (Exception e) {
-                log.info("[WebScreenCapturer] 隐藏元素未找到: {}", selector);
+                log.info("▽ [WebScreenCapturer] 隐藏元素未找到: {}", selector);
             }
         }
     }
@@ -209,9 +209,9 @@ public class WebScreenCapturer
             // 尝试常规点击
             element.click();
         } catch (NoSuchElementException e) {
-            log.info("[WebScreenCapturer] 交互元素未找到: {}", cssSelector);
+            log.info("▽ [WebScreenCapturer] 交互元素未找到: {}", cssSelector);
         } catch (ElementNotInteractableException e) {
-            log.info("[WebScreenCapturer] 该元素不可交互: {} 尝试 JavaScript 方法...", cssSelector);
+            log.info("▽ [WebScreenCapturer] 该元素不可交互: {} 尝试 JavaScript 方法...", cssSelector);
             // 使用 JavaScript 点击
             try {
                 JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -221,9 +221,9 @@ public class WebScreenCapturer
                 Thread.sleep(200);
                 // 使用JavaScript点击
                 js.executeScript("arguments[0].click();", element);
-                log.info("[WebScreenCapturer] JavaScript 成功点击: {}", cssSelector);
+                log.info("▽ [WebScreenCapturer] JavaScript 成功点击: {}", cssSelector);
             } catch (Exception ex) {
-                log.info("[WebScreenCapturer] JavaScript 点击失败: {}", ex.getMessage());
+                log.info("▽ [WebScreenCapturer] JavaScript 点击失败: {}", ex.getMessage());
             }
         }
     }
