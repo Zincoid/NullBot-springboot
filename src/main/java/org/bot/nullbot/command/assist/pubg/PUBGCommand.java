@@ -47,7 +47,7 @@ public class PUBGCommand implements Command
                         .toAbsolutePath().toString();
                 String response = MsgUtils.builder().img(helpPath).build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                log.info("\t\t\t\t├─[PUBG] 已获取资源");
+                log.info("\t\t\t\t├─[PUBG] 已获取地图");
             } catch (IOException e) {
                 throw new NullBotMsgException("[PUBG] ❌资源缺失");
             }
