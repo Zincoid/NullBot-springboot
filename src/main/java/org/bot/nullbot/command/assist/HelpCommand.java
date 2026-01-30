@@ -29,7 +29,9 @@ public class HelpCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             try {
-                String helpPath = resourceLoader.getCached("static/help/help.jpg", fileStorageProperties.getTempPath()).toAbsolutePath().toString();
+                String helpPath = resourceLoader
+                        .getCached("static/help/help.jpg", fileStorageProperties.getTempPath())
+                        .toAbsolutePath().toString();
                 String response = MsgUtils.builder().img(helpPath).build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[Help] 已获取帮助");
