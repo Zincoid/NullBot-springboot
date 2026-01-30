@@ -21,16 +21,16 @@ public class AsyncConfig implements AsyncConfigurer
 {
     @Bean(name = "ThreadExecutor")
     public Executor ThreadExecutor() {
-        // Java 21+：使用虚拟线程（正式功能）
-        log.info("Java 21+ 环境：使用虚拟线程执行器");
+        // Java 21+: 使用虚拟线程（正式）
+        log.info("[Async] Java 21+ 环境 - 使用虚拟线程执行器");
         return Executors.newVirtualThreadPerTaskExecutor();
 
-        // Java 19-20：使用虚拟线程（预览功能）
-        // log.info("Java 19-20 环境：使用虚拟线程执行器（预览功能）");
+        // Java 19-20: 使用虚拟线程 (预览)
+        // log.info("[Async] Java 19-20 环境 - 使用虚拟线程执行器");
         // return createVirtualThreadExecutorWithPreview();
 
-        // Java 8-18：使用传统线程池
-        // log.info("Java 8-18 环境：使用传统线程池（虚拟线程不可用）");
+        // Java 8-18: 使用传统线程池
+        // log.info("[Async] Java 8-18 环境 - 使用传统线程池");
         // return createTraditionalThreadPool();
     }
 
@@ -62,7 +62,7 @@ public class AsyncConfig implements AsyncConfigurer
      */
     private Executor createVirtualThreadExecutorWithPreview() {
         try {
-            // 反射调用，避免编译错误
+            // 反射调用 避免编译错误
             Method method = Executors.class.getMethod("newVirtualThreadPerTaskExecutor");
             return (Executor) method.invoke(null);
         } catch (Exception e) {
