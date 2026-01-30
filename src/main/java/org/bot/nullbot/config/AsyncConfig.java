@@ -22,15 +22,15 @@ public class AsyncConfig implements AsyncConfigurer
     @Bean(name = "ThreadExecutor")
     public Executor ThreadExecutor() {
         // Java 21+: 使用虚拟线程（正式）
-        log.info("[Async] Java 21+ 环境 - 使用虚拟线程执行器");
+        log.info("▽ [AsyncConfigurer] Java 21+ 环境 - 使用虚拟线程执行器");
         return Executors.newVirtualThreadPerTaskExecutor();
 
         // Java 19-20: 使用虚拟线程 (预览)
-        // log.info("[Async] Java 19-20 环境 - 使用虚拟线程执行器");
+        // log.info("▽ [AsyncConfigurer] Java 19-20 环境 - 使用虚拟线程执行器");
         // return createVirtualThreadExecutorWithPreview();
 
         // Java 8-18: 使用传统线程池
-        // log.info("[Async] Java 8-18 环境 - 使用传统线程池");
+        // log.info("▽ [AsyncConfigurer] Java 8-18 环境 - 使用传统线程池");
         // return createTraditionalThreadPool();
     }
 

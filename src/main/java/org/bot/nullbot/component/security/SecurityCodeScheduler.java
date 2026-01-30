@@ -40,7 +40,7 @@ public class SecurityCodeScheduler
     @PreDestroy
     public void destroy() {
         if (scheduler != null && !scheduler.isShutdown()) scheduler.shutdownNow();
-        log.info("[SecurityCodeScheduler] 安全码调度器已关闭");
+        log.info("▽ [SecurityCodeScheduler] 安全码调度器已关闭");
     }
 
     /**
@@ -70,7 +70,7 @@ public class SecurityCodeScheduler
                 TimeUnit.MILLISECONDS
         );
         codeEntries.put(codeId, new CodeEntry(initCode, future, interval));  // 存储
-        log.info("[SecurityCodeScheduler] 安全码已创建 - CodeId: {}, InitCode: {}", codeId, initCode);
+        log.info("▽ [SecurityCodeScheduler] 安全码已创建 - CodeId: {}, InitCode: {}", codeId, initCode);
         return initCode;
     }
 
@@ -82,7 +82,7 @@ public class SecurityCodeScheduler
         codeExistenceValidation(codeId);
         CodeEntry entry = codeEntries.remove(codeId);
         if (entry.future != null) entry.future.cancel(false);
-        log.info("[SecurityCodeScheduler] 安全码已移除 - CodeId: {}", codeId);
+        log.info("▽ [SecurityCodeScheduler] 安全码已移除 - CodeId: {}", codeId);
     }
 
     /**
@@ -126,7 +126,7 @@ public class SecurityCodeScheduler
                 TimeUnit.MILLISECONDS
         );
         codeEntries.put(codeId, new CodeEntry(newCode, newFuture, entry.refreshInterval));  // 更新
-        log.info("[SecurityCodeScheduler] 安全码已使用并刷新 - UsedCodeId: {}, UsedCode: {}", codeId, usedCode);
+        log.info("▽ [SecurityCodeScheduler] 安全码已使用并刷新 - UsedCodeId: {}, UsedCode: {}", codeId, usedCode);
         return usedCode;
     }
 
@@ -140,7 +140,7 @@ public class SecurityCodeScheduler
         CodeEntry entry = codeEntries.get(codeId);
         String newCode = UUID.randomUUID().toString();  // 生成新安全码
         codeEntries.put(codeId, new CodeEntry(newCode, entry.future, entry.refreshInterval));  // 更新
-        log.info("[SecurityCodeScheduler] 安全码已刷新 - CodeId: {}, Code: {}", codeId, newCode);
+        log.info("▽ [SecurityCodeScheduler] 安全码已刷新 - CodeId: {}, Code: {}", codeId, newCode);
         return newCode;
     }
 
@@ -174,7 +174,7 @@ public class SecurityCodeScheduler
                 TimeUnit.MILLISECONDS
         );
         codeEntries.put(codeId, new CodeEntry(entry.code, newFuture, newInterval));  // 更新
-        log.info("[SecurityCodeScheduler] 安全码刷新间隔已更新 - CodeId: {}, NewInterval: {} ms", codeId, newInterval);
+        log.info("▽ [SecurityCodeScheduler] 安全码刷新间隔已更新 - CodeId: {}, NewInterval: {} ms", codeId, newInterval);
     }
 
     // =================== 工具方法 ===================
