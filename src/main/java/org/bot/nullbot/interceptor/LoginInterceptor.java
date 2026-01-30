@@ -74,15 +74,15 @@ public class LoginInterceptor implements HandlerInterceptor
         log.info("◎ [WebManagement] 来自 {} 的请求 - {}", ip, url);
 
         if (url.contains("/nullbot/login") || url.contains("/nullbot/guest")) {
-            log.info("\t\t└─[LoginInterceptor] 登录放行");
+            log.info("└─[LoginInterceptor] 登录放行");
             return true;
         }
         if (url.contains("/nullbot/regist")) {
-            log.info("\t\t└─[LoginInterceptor] 注册放行");
+            log.info("└─[LoginInterceptor] 注册放行");
             return true;
         }
         if (url.contains("/nullbot/preview")) {
-            log.info("\t\t└─[LoginInterceptor] 预览放行");
+            log.info("└─[LoginInterceptor] 预览放行");
             return true;
         }
 
@@ -92,7 +92,7 @@ public class LoginInterceptor implements HandlerInterceptor
         try {
             jwt = jwtTool.parseJwt(token);
         } catch (Exception e) {
-            log.info("\t\t└─[LoginInterceptor] 验证失败");
+            log.info("└─[LoginInterceptor] 验证失败");
             WebResult error = WebResult.fail().addMsg(e.getMessage());
             res.getWriter().write(JSONObject.toJSONString(error));
             return false;
@@ -103,22 +103,22 @@ public class LoginInterceptor implements HandlerInterceptor
         if (userType == 0) {
             for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
                 if (url.contains(forbiddenUrl)) {
-                    log.info("\t\t└─[LoginInterceptor] 访客受限");
+                    log.info("└─[LoginInterceptor] 访客受限");
                     WebResult error = WebResult.fail().addMsg("No Access");
                     res.getWriter().write(JSONObject.toJSONString(error));
                     return false;
                 }
             }
-            log.info("\t\t└─[LoginInterceptor] 访客放行");
+            log.info("└─[LoginInterceptor] 访客放行");
             return true;
         }
 
         if (userType == 1) {
-            log.info("\t\t└─[LoginInterceptor] 管理放行");
+            log.info("└─[LoginInterceptor] 管理放行");
             return true;
         }
 
-        log.info("\t\t└─[LoginInterceptor] 用户类型不存在");
+        log.info("└─[LoginInterceptor] 用户类型不存在");
         return false;
     }
 }
