@@ -377,5 +377,6 @@
 - 增强 FileUtil 工具类 - getFileListAsString 方法 添加是否带扩展名参数并修改相关代码；
 - 增强 FileUtil 工具类 - 新增 getFilesByKeyword 方法 按关键词获取文件路径列表；
 - 新增 Endfield 终末地查询指令 - 用于查询相关攻略图片资料；
+- 修复 StatisticService - 同用户不同命令记录中的昵称仅调用当前命令时更新导致统计异常 合计用户总用量移除按昵称分组并通过ID和Bot容器获取实际昵称；
 - 优化 部分文本。
 - 优化 项目结构。
