@@ -24,7 +24,7 @@ public class ImageListCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String imageList = FileUtil.getFileListAsString(fileStorageProperties.getImagePath() + "/collect", "\n");
+            String imageList = FileUtil.getFileListAsString(fileStorageProperties.getImagePath() + "/collect", "\n", true);
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片列表] ✅已获取！\n" + imageList, false);
             log.info("\t\t\t\t├─[ImageList] 已获取 - 图片列表");
         }else

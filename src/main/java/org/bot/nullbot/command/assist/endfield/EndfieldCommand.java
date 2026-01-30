@@ -28,8 +28,14 @@ public class EndfieldCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
-            if(params.isEmpty()) throw new NullBotMsgException("[终末地] ❌未指定内容");
-            List<String> helpPaths = FileUtil.getFilesByPattern(fileStorageProperties.getImagePath() + "/assist", params.getFirst());
+            if (params.isEmpty()) throw new NullBotMsgException("[终末地] ❌未指定内容");
+            if ("-list".equals(params.getFirst())) {
+                String imageList = FileUtil.getFileListAsString(fileStorageProperties.getImagePath() + "/assist/endfield", "\n", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片列表] ✅已获取！\n" + imageList, false);
+                log.info("\t\t\t\t├─[ImageList] 已获取 - 图片列表");
+                return;
+            }
+            List<String> helpPaths = FileUtil.getFilesByPattern(fileStorageProperties.getImagePath() + "/assist/endfield", params.getFirst());
             if (helpPaths.isEmpty()) throw new NullBotMsgException("[终末地] ❌未找到内容");
             String response = MsgUtils.builder().img(helpPaths.getFirst()).build();  // 只取第一个查询结果
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);

@@ -50,7 +50,7 @@ public class FileUtil
         }
     }
 
-    public static String getFileListAsString(String directoryPath, String delimiter) {
+    public static String getFileListAsString(String directoryPath, String delimiter, boolean withExtension) {
         try {
             Path directory = Paths.get(directoryPath);
             if (!Files.exists(directory) || !Files.isDirectory(directory)) {
@@ -60,7 +60,15 @@ public class FileUtil
             try (Stream<Path> stream = Files.list(directory)) {
                 List<String> fileNames = stream
                         .filter(Files::isRegularFile)
-                        .map(path -> path.getFileName().toString())
+                        .map(path -> {
+                            String fileName = path.getFileName().toString();
+                            if (!withExtension) {
+                                int dotIndex = fileName.lastIndexOf('.');
+                                if (dotIndex > 0)
+                                    return fileName.substring(0, dotIndex);
+                            }
+                            return fileName;
+                        })
                         .collect(Collectors.toList());
 
                 if (fileNames.isEmpty()) {
