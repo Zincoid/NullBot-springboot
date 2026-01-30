@@ -42,13 +42,13 @@ public class AsyncConfig implements AsyncConfigurer
 
         // 根据 CPU 核心数配置
         int corePoolSize = Runtime.getRuntime().availableProcessors();
-        executor.setCorePoolSize(corePoolSize * 2);      // IO密集型：2倍CPU核心数
+        executor.setCorePoolSize(corePoolSize * 2);      // IO密集型: 2倍CPU核心数
         executor.setMaxPoolSize(corePoolSize * 4);       // 最大线程数
         executor.setQueueCapacity(100);                  // 队列容量
         executor.setThreadNamePrefix("async-");          // 线程名前缀
         executor.setKeepAliveSeconds(60);                // 空闲线程存活时间
 
-        // 拒绝策略：调用者运行（避免任务丢失）
+        // 拒绝策略 调用者运行（避免任务丢失）
         executor.setRejectedExecutionHandler(
                 new java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy()
         );
