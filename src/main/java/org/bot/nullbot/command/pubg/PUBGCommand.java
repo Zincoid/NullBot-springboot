@@ -42,7 +42,9 @@ public class PUBGCommand implements Command
             if (map == null)
                 throw new NullBotMsgException("[PUBG] ❌不支持此地图");
             try {
-                String helpPath = resourceLoader.getCached("static/pubg/" + map, fileStorageProperties.getTempPath()).toAbsolutePath().toString();
+                String helpPath = resourceLoader
+                        .getCached("static/pubg/" + map, fileStorageProperties.getTempPath())
+                        .toAbsolutePath().toString();
                 String response = MsgUtils.builder().img(helpPath).build();
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[PUBG] 已获取资源");
