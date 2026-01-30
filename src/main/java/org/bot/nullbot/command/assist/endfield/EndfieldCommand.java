@@ -29,8 +29,8 @@ public class EndfieldCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
             if (params.isEmpty() || "-list".equals(params.getFirst())) {
-                String imageList = FileUtil.getFileListAsString(fileStorageProperties.getImagePath() + "/assist/endfield", "\n", false);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[终末地] \uD83D\uDD0D可查询内容...\n================\n" + imageList + "\n================", false);
+                String imageList = FileUtil.getFileListAsString(fileStorageProperties.getImagePath() + "/assist/endfield", "\n- ", false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[终末地] \uD83D\uDD0D可查询内容...\n- " + imageList, false);
                 log.info("\t\t\t\t├─[Endfield] 已获取列表");
                 return;
             }
