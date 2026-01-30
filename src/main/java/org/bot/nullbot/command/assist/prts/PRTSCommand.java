@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.prts;
+package org.bot.nullbot.command.assist.prts;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;

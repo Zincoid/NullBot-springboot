@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.reply;
+package org.bot.nullbot.command.assist;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
