@@ -62,7 +62,7 @@ public class DeepSeekClient
                 "Anime", "Guess",
 
                 // 图片生成
-                "Convert", "Symmetry", "Choyen",
+                "Convert", "Symmetry",
 
                 // 语音回复
                 "Tts",
