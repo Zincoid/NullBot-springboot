@@ -9,20 +9,20 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableAsync
 @EnableScheduling
-public class QqBotApplication
+public class NullBotApplication
 {
     private static ConfigurableApplicationContext context;
     private static String[] args;
 
     public static void main(String[] args) {
-        QqBotApplication.args = args;
-        QqBotApplication.context = SpringApplication.run(QqBotApplication.class, args);
+        NullBotApplication.args = args;
+        NullBotApplication.context = SpringApplication.run(NullBotApplication.class, args);
     }
 
     public static void restart() {
         Thread thread = new Thread(() -> {
             context.close();
-            context = SpringApplication.run(QqBotApplication.class, args);
+            context = SpringApplication.run(NullBotApplication.class, args);
         });
         thread.setDaemon(false);
         thread.start();
