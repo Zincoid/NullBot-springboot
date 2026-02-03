@@ -95,12 +95,16 @@ nullbot:
       scope: group
   file:
     storage:
-      file-directory: /root/Nullbot/file  # 网页文件管理根目录
-      temp-path: /root/Nullbot/file/temp  # 选择根下子目录
+      # 网页文件管理根目录
+      file-directory: /root/Nullbot/file
+      # 以下路径需选择管理根下子目录
+      config-path: /root/Nullbot/file/config  # 可配置文件 - 群设置: Group_Settings.csv
+      temp-path: /root/Nullbot/file/temp
       image-path: /root/Nullbot/file/image
       video-path: /root/Nullbot/file/video
       audio-path: /root/Nullbot/file/audio
 #      file-directory: ${user.dir}/src/main/resources/upload
+#      config-path: src/main/resources/file/config
 #      temp-path: src/main/resources/file/temp
 #      image-path: src/main/resources/file/image
 #      video-path: src/main/resources/file/video

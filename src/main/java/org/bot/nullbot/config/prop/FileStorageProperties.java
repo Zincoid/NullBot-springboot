@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class FileStorageProperties
 {
     private String fileDirectory;
+    private String configPath;
     private String tempPath;
     private String imagePath;
     private String videoPath;

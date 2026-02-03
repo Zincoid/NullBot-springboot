@@ -1,22 +1,38 @@
 package org.bot.nullbot.component.control;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.prop.DefaultProperties;
+import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
+import org.bot.nullbot.util.CsvImportUtil;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-@RequiredArgsConstructor
+@Slf4j
 public class SettingManager
 {
     private final DefaultProperties defaultProperties;
-    private final Map<Long, SettingInfo> settings = new ConcurrentHashMap<>();
+    private final Map<Long, SettingInfo> settings;
+
+    public SettingManager(DefaultProperties defaultProperties, FileStorageProperties fileStorageProperties) {
+        this.defaultProperties = defaultProperties;
+        settings = new ConcurrentHashMap<>();
+        try {
+            List<SettingInfo> defaultSettings = CsvImportUtil.importFromCsv(
+                    fileStorageProperties.getConfigPath() + "/Group_Settings.csv", SettingInfo.class);
+            setSettings(defaultSettings);
+            log.info("▽ [SettingManager] 群组配置文件已载入");
+        } catch (IOException e) {
+            log.info("▽ [SettingManager] 群组配置文件未载入");
+        }
+    }
 
     public ChatOption getChatOption(Long groupId) {
         return getSetting(groupId).getChatOption();
