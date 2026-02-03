@@ -201,12 +201,12 @@ class NullBotApplicationTests
         //         List.of("a[class*='z-1 float-right select-none']")
         // );
 
-        String base64 = webScreenCapturer.capture(
-                "https://prts.wiki/w/" + operator, 1024, 5120,
-                List.of("//table[.//th//b[contains(text(),'人员档案')]]"),
-                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                List.of("//table[.//th//b[contains(.,'人员档案')]]//button[contains(@class,'mw-collapsible-toggle')]")
-        );
+        // String base64 = webScreenCapturer.capture(
+        //         "https://prts.wiki/w/" + operator, 1024, 5120,
+        //         List.of("//table[.//th//b[contains(text(),'人员档案')]]"),
+        //         List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+        //         List.of("//table[.//th//b[contains(.,'人员档案')]]//button[contains(@class,'mw-collapsible-toggle')]")
+        // );
 
         // String base64 = webScreenCapturer.capture(
         //         "https://prts.wiki/w/" + operator, 1024, 5120,
@@ -221,6 +221,20 @@ class NullBotApplicationTests
         //         List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
         //         List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
         // );
+
+        String weapon = "熔铸火焰";
+        String base64 = webScreenCapturer.capture(
+                "https://end.canmoe.com/", 1024, 5120,
+                List.of("#app"),
+                List.of(),
+                List.of(
+                        "#app > div > div > div.notice-footer > div.about-actions > button",
+                        String.format(
+                                "//div[@class='weapon-name']/div[@class='weapon-title' and text()='%s']/ancestor::div[contains(@class,'weapon-item')]",
+                                weapon
+                        )
+                )
+        );
 
         // Base64 解码
         byte[] imageBytes = Base64.getDecoder().decode(base64);
