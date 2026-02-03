@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 public class Restarter
 {
     public void restart() {
+        log.info("▽ [Restarter] 正在重启应用...");
         NullBotApplication.restart();
     }
 
