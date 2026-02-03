@@ -224,7 +224,7 @@ class NullBotApplicationTests
 
         String weapon = "熔铸火焰";
         String base64 = webScreenCapturer.capture(
-                "https://end.canmoe.com/", 1024, 5120,
+                "https://end.canmoe.com/", 2048, 1024,
                 List.of("#app"),
                 List.of(),
                 List.of(

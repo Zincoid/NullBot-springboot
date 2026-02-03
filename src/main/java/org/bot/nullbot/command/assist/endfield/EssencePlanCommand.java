@@ -35,22 +35,20 @@ public class EssencePlanCommand implements Command
             try {
                 base64 = webScreenCapturer.capture(
                         "https://end.canmoe.com/", 1024, 5120,
-                        List.of("#app > main > section.panel.panel-hidden"),
+                        List.of("#app"),
                         List.of(),
-                        List.of(
-                                "#app > div > div > div.notice-footer > div.about-actions > button"
-                        )
+                        List.of()
                 );
 
             } catch (Exception e) {
-                throw new NullBotMsgException("[PRTS] ❌查询失败: " + e.getMessage());
+                throw new NullBotMsgException("[基质规划] ❌查询失败: " + e.getMessage());
             }
 
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
             log.info("\t\t\t\t├─[EssencePlan] 已查询 - {}", weapon);
         }else
-            throw new NullBotLogException("[EssencePlan] ❌未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[基质规划] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override

@@ -40,7 +40,7 @@ public class EndfieldCommand implements Command
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
             log.info("\t\t\t\t├─[Endfield] 已获取内容");
         }else
-            throw new NullBotLogException("[Endfield] ❌未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[终末地] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override
