@@ -390,4 +390,5 @@
 - 新增 Restart 重启指令 - 添加重启服务及相关组件和方法；
 - 修改 启动类名；
 - 增强 SettingManager - 可通过配置文件在启动时自动载入群设置；
-- 优化 HtmlRenderer 组件 - 使用 @PreDestroy 在程序退出时关闭 Chrome 驱动和对应进程。
+- 优化 HtmlRenderer 组件 - 使用 @PreDestroy 在程序退出时关闭 Chrome 驱动和对应进程；
+- 新增 EssencePlan 基质规划命令 - 通过访问 https://end.canmoe.com/ 获取对应的终末地攻略截图。
