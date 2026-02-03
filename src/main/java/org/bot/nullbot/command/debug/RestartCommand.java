@@ -22,7 +22,7 @@ public class RestartCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[重启] ⚠️指令已下发", false);
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[重启] ⚠️指令已下发\n请稍候...", false);
             log.info("\t\t\t\t├─[Restart] 重启指令已下发");
             systemService.restart();
         } else
