@@ -38,6 +38,7 @@ jwt:
 chrome:
     driver-auto: false
     driver-path: /root/Nullbot/file/driver/chromedriver
+#    driver-path: src/test/testFile/driver/chromedriver.exe
     max-retries: 5
     load-timeout: 5
 
