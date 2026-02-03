@@ -29,7 +29,8 @@ public class EssencePlanCommand implements Command
             List<String> params = event.getCommandParameters();
             if (params.isEmpty()) throw new NullBotMsgException("[基质规划] ❌参数不足");
 
-            String weapon = String.join(" ", params.subList(0, params.size()));
+            String weapon = params.getFirst();
+            // String weapon = String.join(" ", params.subList(0, params.size()));
             String base64;
 
             try {

@@ -222,7 +222,7 @@ class NullBotApplicationTests
         //         List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
         // );
 
-        String weapon = "扶摇";
+        String weapon = "熔铸火焰";
         String base64 = webScreenCapturer.capture(
                 "https://end.canmoe.com/", 2048, 1024,
                 List.of("//section[contains(@class,'panel')][.//h2[contains(text(),'方案推荐列表')]]"),
