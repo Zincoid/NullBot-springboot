@@ -8,11 +8,8 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
-import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SystemService;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @CommandMapping({"Restart", "重启"})
 @Component
@@ -25,11 +22,11 @@ public class RestartCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Spring] ✅重启指令已下发", false);
-            log.info("\t\t\t\t├─[Spring] 重启指令已下发");
+            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[重启] ⚠️指令已下发", false);
+            log.info("\t\t\t\t├─[Restart] 重启指令已下发");
             systemService.restart();
         } else
-            throw new NullBotLogException("[Spring] ❌未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[重启] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override
