@@ -1,5 +1,6 @@
 package org.bot.nullbot.component.render;
 
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.prop.ChromeProperties;
 import org.bot.nullbot.util.Base64Util;
@@ -30,6 +31,11 @@ public class HtmlRenderer
     public HtmlRenderer(ChromeProperties chromeProperties) {
         this.chromeProperties = chromeProperties;
         initialize();
+    }
+
+    @PreDestroy
+    public void destroy() {
+        close();
     }
 
     // =================== 驱动加载 ===================
