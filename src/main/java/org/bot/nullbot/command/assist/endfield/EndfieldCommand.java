@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"Endfield", "endfield", "end", "终末地"})
+@CommandMapping({"Endfield", "endfield", "end", "终末地查询", "终末地"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -50,7 +50,7 @@ public class EndfieldCommand implements Command
                 功能: 获取终末地攻略
                 限权: %d 级
                 格式: Endfield [可选: 关键字|-list]
-                别名: endfield/end/终末地""", getAccess()
+                别名: endfield/end/终末地查询/终末地""", getAccess()
         );
     }
 }
