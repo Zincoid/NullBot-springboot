@@ -1,7 +1,6 @@
 package org.bot.nullbot.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.NullBotApplication;
 import org.bot.nullbot.component.control.Restarter;
 import org.bot.nullbot.component.control.SpringInvoker;
 import org.bot.nullbot.service.SystemService;
