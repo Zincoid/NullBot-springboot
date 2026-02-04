@@ -12,6 +12,7 @@ import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.MessageParseUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,9 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class ChatCommand implements Command
 {
+    @Value("${nullbot.command.prefix}")
+    private String commandPrefix;
+
     private final DeepSeekClient deepSeekClient;
     private final ChatStorage chatStorage;
     private final SettingService settingService;
@@ -51,6 +55,15 @@ public class ChatCommand implements Command
                     settingService.getChatOption(groupId)
             );
 
+            if (message.contains(commandPrefix))
+                bot.sendGroupMsg(groupId,
+                        """
+                                [AI] ⚠️检测到指令前缀 注意!!!
+                                - 使用指令时请不要@Null
+                                - @Null仅触发AI对话
+                                - Null可执行部分指令所以有时候@Null她会帮你执行""",
+                        false
+                );
             log.info("\t\t\t\t├─[Chat] 已回复: {}", response.replaceAll("\\R", " "));
         }else
             throw new NullBotLogException("[对话] ❌未设计 - 非群消息事件响应方式");

@@ -395,4 +395,5 @@
 
 ### 2026.2.4 - v1.3.2
 - 优化 WebScreenCapturer 网页截图组件 - 添加中文标识驱动配置；
-- 增强 Restarter 组件 - 新增 restartViaJar 重启方法。
+- 增强 Restarter 组件 - 新增 restartViaJar 重启方法；
+- 增强 Chat 指令 - 添加消息带指令前缀时的提醒。
