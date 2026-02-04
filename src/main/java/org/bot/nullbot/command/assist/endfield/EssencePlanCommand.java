@@ -40,7 +40,13 @@ public class EssencePlanCommand implements Command
                         List.of(".ghost-button"),
                         List.of(
                                 "#app > div > div > div.notice-footer > div.about-actions > button",
-                                String.format("//div[@class='weapon-name']/div[@class='weapon-title' and text()='%s']/ancestor::div[contains(@class,'weapon-item')]", weapon)
+                                String.format(
+                                        "//div[@class='weapon-name']" +
+                                        "/div[@class='weapon-title' and text()='%s']" +
+                                        "/ancestor::div[contains(@class,'weapon-item')]",
+                                        weapon
+                                ),
+                                "//button[contains(.,'收起其他方案')]"
                         )
                 );
 
