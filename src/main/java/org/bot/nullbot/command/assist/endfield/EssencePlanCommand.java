@@ -35,7 +35,7 @@ public class EssencePlanCommand implements Command
 
             try {
                 base64 = webScreenCapturer.capture(
-                        "https://end.canmoe.com/", 2048, 5120,
+                        "https://end.canmoe.com/", 1536, 5120,
                         List.of("//section[contains(@class,'panel')][.//h2[contains(text(),'方案推荐列表')]]"),
                         List.of(".ghost-button"),
                         List.of(
