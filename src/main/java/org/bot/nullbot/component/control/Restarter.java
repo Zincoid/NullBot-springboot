@@ -40,7 +40,9 @@ public class Restarter
             log.info("▽ [Restarter] 将于3秒后重启...");
             Thread.sleep(3000);
             new ProcessBuilder(killScreenCmd).start().waitFor();
+            Thread.sleep(1000);
             new ProcessBuilder(screenCommand).directory(new File("/root")).start();
+            Thread.sleep(1000);
             System.exit(0);
 
         } catch (Exception e) {
