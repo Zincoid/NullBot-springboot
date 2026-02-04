@@ -367,13 +367,13 @@
 - 修复 引用命令触发自动回复导致速率限制的问题；
 - 网页Bot管理系统 前端添加 网站ICP/公安备案信息。
 
-### 2026.1.23 - v1.3.1
+### 2026.1.23
 - 优化 DeepSeekClient - 去除AI回复的重复换行；
 - 优化 DeepSeekClient - 添加回复过滤方法 防止AI泄露格式化标识；
 - 优化 DeepSeekClient 提示词；
 - 优化 部分代码。
 
-### 2026.1.30 - v1.3.2
+### 2026.1.30 - v1.3.1
 - 增强 FileUtil 工具类 - getFileListAsString 方法 添加是否带扩展名参数并修改相关代码；
 - 增强 FileUtil 工具类 - 新增 getFilesByKeyword 方法 按关键词获取文件路径列表；
 - 新增 Endfield 终末地查询指令 - 用于查询相关攻略图片资料；
@@ -386,9 +386,12 @@
 ### 2026.1.31
 - 移除 AI对梗图生成指令的可调用性。
 
-### 2026.2.3 - v1.3.3
+### 2026.2.3
 - 新增 Restart 重启指令 - 添加重启服务及相关组件和方法；
 - 修改 启动类名；
 - 增强 SettingManager - 可通过配置文件在启动时自动载入群设置；
 - 优化 HtmlRenderer 组件 - 使用 @PreDestroy 在程序退出时关闭 Chrome 驱动和对应进程；
 - 新增 EssencePlan 基质规划命令 - 通过访问 https://end.canmoe.com/ 获取对应的终末地攻略截图。
+
+### 2026.2.4 - v1.3.2
+- 优化 WebScreenCapturer 网页截图组件 - 添加中文标识驱动配置。
