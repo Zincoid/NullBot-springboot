@@ -27,7 +27,7 @@ public class EssencePlanCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
-            if (params.isEmpty()) throw new NullBotMsgException("[基质规划] ❌参数不足");
+            if (params.isEmpty()) throw new NullBotMsgException("[基质规划] ❌未指定武器");
 
             String weapon = params.getFirst();
             // String weapon = String.join(" ", params.subList(0, params.size()));
@@ -35,7 +35,7 @@ public class EssencePlanCommand implements Command
 
             try {
                 base64 = webScreenCapturer.capture(
-                        "https://end.canmoe.com/", 2048, 1024,
+                        "https://end.canmoe.com/", 2048, 5120,
                         List.of("//section[contains(@class,'panel')][.//h2[contains(text(),'方案推荐列表')]]"),
                         List.of(".ghost-button"),
                         List.of(

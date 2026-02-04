@@ -30,7 +30,7 @@ public class EndfieldCommand implements Command
             List<String> params = event.getCommandParameters();
             if (params.isEmpty() || "-list".equals(params.getFirst())) {
                 String imageList = FileUtil.getFileListAsString(fileStorageProperties.getImagePath() + "/assist/endfield", "\n- ", false);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[终末地] \uD83D\uDD0D可查询内容...\n- " + imageList, false);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[终末地] \uD83D\uDD0D可查询项\n- " + imageList, false);
                 log.info("\t\t\t\t├─[Endfield] 已获取列表");
                 return;
             }
