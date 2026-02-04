@@ -226,13 +226,10 @@ class NullBotApplicationTests
         String base64 = webScreenCapturer.capture(
                 "https://end.canmoe.com/", 2048, 1024,
                 List.of("//section[contains(@class,'panel')][.//h2[contains(text(),'方案推荐列表')]]"),
-                List.of(),
+                List.of(".ghost-button"),
                 List.of(
                         "#app > div > div > div.notice-footer > div.about-actions > button",
-                        String.format(
-                                "//div[@class='weapon-name']/div[@class='weapon-title' and text()='%s']/ancestor::div[contains(@class,'weapon-item')]",
-                                weapon
-                        )
+                        String.format("//div[@class='weapon-name']/div[@class='weapon-title' and text()='%s']/ancestor::div[contains(@class,'weapon-item')]", weapon)
                 )
         );
 

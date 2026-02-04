@@ -246,6 +246,8 @@ public class WebScreenCapturer
         options.addArguments("--no-sandbox");
         options.addArguments("--window-size=1920,1080");
         options.addArguments("--hide-scrollbars");
+        options.addArguments("--lang=zh-CN");
+        options.addArguments("--accept-lang=zh-CN,zh");
 
         WebDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(loadTimeout));
