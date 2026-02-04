@@ -394,4 +394,5 @@
 - 新增 EssencePlan 基质规划命令 - 通过访问 https://end.canmoe.com/ 获取对应的终末地攻略截图。
 
 ### 2026.2.4 - v1.3.2
-- 优化 WebScreenCapturer 网页截图组件 - 添加中文标识驱动配置。
+- 优化 WebScreenCapturer 网页截图组件 - 添加中文标识驱动配置；
+- 增强 Restarter 组件 - 新增 restartViaJar 重启方法。
