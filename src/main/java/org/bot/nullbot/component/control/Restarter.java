@@ -20,14 +20,16 @@ public class Restarter
     }
 
     public void restartViaJar() {
+        restartViaJar(JAR_PATH);
+    }
+
+    public void restartViaJar(String jarPath) {
         log.info("▽ [Restarter] 正在通过JAR文件重启应用...");
         try {
-            // 获取 JAR文件
-            String jarPath = JAR_PATH;  // 暂不动态获取
             // 验证 JAR文件
             if (!new File(jarPath).exists()) {
                 log.error("▽ [Restarter] JAR文件不存在: {}", jarPath);
-                return;
+                throw new IllegalArgumentException("JAR文件不存在");
             }
 
             // 构建 重启命令

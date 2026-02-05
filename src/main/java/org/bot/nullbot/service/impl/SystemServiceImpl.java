@@ -19,6 +19,16 @@ public class SystemServiceImpl implements SystemService
     }
 
     @Override
+    public void restartViaJar() {
+        restarter.restartViaJar();
+    }
+
+    @Override
+    public void restartViaJar(String jarPath) {
+        restarter.restartViaJar(jarPath);
+    }
+
+    @Override
     public String invoke(String beanName, String methodName, Object[] args) throws Exception {
         Object result = invoker.invokeSpringMethod(beanName, methodName, args);
         return result != null ? result.toString() : "null";
