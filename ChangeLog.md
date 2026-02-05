@@ -403,4 +403,5 @@
 - 增强 Endfield 指令 - 存在多个匹配项时输出列表且支持 TXT 文件读取发送；
 - 调整 资源文件存储路径和读取方式 - 将 AI表情文件 和 游戏攻略文件 移至 resource 目录；
 - 优化 restartViaJar 功能相关代码 并 增强 Restart 指令；
-- 移除 AI 对部分指令的可执行性。
+- 移除 AI 对部分指令的可执行性；
+- 优化 SecurityCodeScheduler 组件 和 HtmlRenderer 组件 - 优化初始化方法。

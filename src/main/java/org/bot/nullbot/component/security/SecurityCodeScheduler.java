@@ -1,5 +1,6 @@
 package org.bot.nullbot.component.security;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,10 @@ public class SecurityCodeScheduler
     public SecurityCodeScheduler() {
         scheduler = Executors.newScheduledThreadPool(5);
         codeEntries = new ConcurrentHashMap<>();
+    }
 
-        // 初始化的安全码类型
+    @PostConstruct
+    public void init() {  // 初始化安全码
         createCode("regist");
         createCode("access");
     }

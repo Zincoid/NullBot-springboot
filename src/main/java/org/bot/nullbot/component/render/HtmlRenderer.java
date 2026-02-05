@@ -1,5 +1,6 @@
 package org.bot.nullbot.component.render;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.prop.ChromeProperties;
@@ -24,12 +25,16 @@ import java.time.Duration;
 public class HtmlRenderer
 {
     private final ChromeProperties chromeProperties;
-
+    private boolean initialized;
     private WebDriver driver;
-    private boolean initialized = false;
 
     public HtmlRenderer(ChromeProperties chromeProperties) {
         this.chromeProperties = chromeProperties;
+        initialized = false;
+    }
+
+    @PostConstruct
+    public void init() {
         initialize();
     }
 
