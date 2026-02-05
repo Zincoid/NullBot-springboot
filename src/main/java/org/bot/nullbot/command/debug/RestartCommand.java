@@ -30,7 +30,8 @@ public class RestartCommand implements Command
             if (params.isEmpty()) throw new NullBotMsgException("[重启] ❌未指定方式");
 
             String option = params.getFirst();
-            switch (option) {
+            switch (option)
+            {
                 case "-APP" -> {
                     bot.sendGroupMsg(groupId, "[重启] ⚠️指令已下发\n- 方式: [-APP]\n- 请稍候...", false);
                     log.info("\t\t\t\t├─[Restart] APP重启指令已下发");
