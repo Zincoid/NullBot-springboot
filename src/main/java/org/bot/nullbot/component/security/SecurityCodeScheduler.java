@@ -47,6 +47,8 @@ public class SecurityCodeScheduler
         log.info("▽ [SecurityCodeScheduler] 安全码调度器已关闭");
     }
 
+    // =================== 调用方法 ===================
+
     /**
      * 创建安全码 (使用默认刷新间隔)
      * @param codeId 安全码标识

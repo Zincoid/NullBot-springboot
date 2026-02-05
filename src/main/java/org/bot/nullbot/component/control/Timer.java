@@ -43,8 +43,10 @@ public class Timer
         });
     }
 
+    // =================== 调用方法 ===================
+
     /**
-     * 设置一次性闹钟（指定具体时间）
+     * 设置一次性闹钟
      */
     public void setOneTimeAlarm(String alarmId, LocalDateTime alarmTime, Runnable task) {
         long delay = calculateDelay(alarmTime);
@@ -63,7 +65,7 @@ public class Timer
     }
 
     /**
-     * 设置每天重复的闹钟
+     * 设置每天重复闹钟
      */
     public void scheduleDailyAlarm(String alarmId, int hour, int minute, int second, Runnable task) {
         long initialDelay = calculateDelayForToday(hour, minute, second);
@@ -78,7 +80,7 @@ public class Timer
     }
 
     /**
-     * 设置固定间隔的闹钟
+     * 设置固定间隔闹钟
      * @param alarmId 闹钟ID
      * @param initialDelay 初始延迟（毫秒）
      * @param period 执行间隔（毫秒）
@@ -96,7 +98,7 @@ public class Timer
     }
 
     /**
-     * 设置工作日闹钟（周一到周五）
+     * 设置工作日闹钟
      */
     public void scheduleWorkdayAlarm(String alarmId, int hour, int minute, Runnable task) {
         Runnable workdayTask = () -> {
@@ -142,7 +144,7 @@ public class Timer
         return status;
     }
 
-    // ========== 工具方法 ==========
+    // =================== 工具方法 ===================
 
     private long calculateDelay(LocalDateTime alarmTime) {
         return Duration.between(LocalDateTime.now(), alarmTime).toMillis();
