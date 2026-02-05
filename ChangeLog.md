@@ -406,5 +406,6 @@
 - 移除 AI 对部分指令的可执行性；
 - 优化 SecurityCodeScheduler 组件 和 HtmlRenderer 组件 - 优化初始化方法。
 
-### 2026.2.6
-- 新增 Timer 定时器组件 - 添加定时群消息方法。
+### 2026.2.6 - v1.3.3
+- 新增 Timer 定时器组件 - 添加定时群消息方法；
+- [ 重要！] 修复 AsyncConfig 配置 - 修复 ThreadExecutor Bean 未自动关闭线程池导致 Restarter 无法完全结束当前应用进程的问题。
