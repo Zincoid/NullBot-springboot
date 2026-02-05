@@ -34,11 +34,23 @@ public class Timer
     @PostConstruct
     public void init() {
         setDailyGroupMsgAlarm(
-                "0721-alarm",
+                "Alarm-0721-459358160",
                 459358160L,
                 "现在是07:21时间!!!\nCiallo(∠・ω< )⌒☆",
                 7, 21, 0
         );
+        setDailyGroupMsgAlarm(
+                "Alarm-0721-364928377",
+                364928377L,
+                "现在是07:21时间!!!\nCiallo(∠・ω< )⌒☆",
+                7, 21, 0
+        );
+        // setDailyGroupMsgAlarm(
+        //         "Alarm-test-875310845",
+        //         875310845L,
+        //         "这是一条测试消息",
+        //         0, 0, 0
+        // );
         log.info("▽ [Timer] 定时器已初始化");
     }
 
@@ -76,7 +88,7 @@ public class Timer
 
     public void setDailyAlarm(String alarmId, int hour, int minute, int second, Runnable task) {
         long initialDelay = calculateDelay(hour, minute, second);
-        long period = 24 * 60 * 60 * 1000L;  // 24小时毫秒数
+        long period = 24 * 60 * 60 * 1000L;
         ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(
                 wrapWithLogging(alarmId, task, false),
                 initialDelay,
@@ -99,9 +111,9 @@ public class Timer
     public Map<String, String> getAlarms() {
         Map<String, String> status = new HashMap<>();
         alarmTasks.forEach((id, future) -> {
-            String state = future.isCancelled() ? "已取消" :
-                    future.isDone() ? "已完成" :
-                            "运行中";
+            String state = future.isCancelled() ? "Cancelled" :
+                    future.isDone() ? "Done" :
+                            "Running";
             status.put(id, state);
         });
         return status;

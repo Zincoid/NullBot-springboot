@@ -405,3 +405,6 @@
 - 优化 restartViaJar 功能相关代码 并 增强 Restart 指令；
 - 移除 AI 对部分指令的可执行性；
 - 优化 SecurityCodeScheduler 组件 和 HtmlRenderer 组件 - 优化初始化方法。
+
+### 2026.2.6
+- 新增 Timer 定时器组件 - 添加定时群消息方法。
