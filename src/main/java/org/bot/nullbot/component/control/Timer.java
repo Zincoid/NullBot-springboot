@@ -138,10 +138,10 @@ public class Timer
     private Runnable wrapWithLogging(String alarmId, Runnable task, boolean remove) {
         return () -> {
             try {
-                log.info("▽ [Timer] {}: {} - 任务开始执行", LocalDateTime.now(), alarmId);
+                log.info("▽ [Timer] {} - {} 任务开始执行", LocalDateTime.now(), alarmId);
                 task.run();
             } catch (Exception e) {
-                log.error("▽ [Timer] {}: {} - 任务执行失败", LocalDateTime.now(), alarmId);
+                log.error("▽ [Timer] {} - {} 任务执行出错", LocalDateTime.now(), alarmId);
                 throw e;
             } finally {
                 if (remove) alarmTasks.remove(alarmId);
