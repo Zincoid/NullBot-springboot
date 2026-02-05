@@ -83,9 +83,9 @@ public class PRTSCommand implements Command
                                     "#注释与链接", "#catlinks"
                             ),
                             List.of(
-                                    "input[onchange*='switchDisplay第一天赋算法']",
+                                    // "input[onchange*='switchDisplay第一天赋算法']",
                                     "input[onchange*='switchDisplay第一天赋潜能']",
-                                    "input[onchange*='switchDisplay第二天赋算法']",
+                                    // "input[onchange*='switchDisplay第二天赋算法']",
                                     "input[onchange*='switchDisplay第二天赋潜能']"
                             )
                     );

@@ -397,3 +397,7 @@
 - 优化 WebScreenCapturer 网页截图组件 - 添加中文标识驱动配置；
 - 增强 Restarter 组件 - 新增 restartViaJar 重启方法；
 - 增强 Chat 指令 - 添加消息带指令前缀时的提醒。
+
+### 2026.2.5
+- 优化 PRTS 指令 - 取消算法勾选；
+- 增强 Endfield 指令 - 存在多个匹配项时输出列表且支持 TXT 文件读取发送。
