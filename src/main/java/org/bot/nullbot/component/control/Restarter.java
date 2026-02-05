@@ -45,7 +45,7 @@ public class Restarter
             Thread.sleep(1000);
             new ProcessBuilder(screenCommand).directory(new File("/root")).start();
             Thread.sleep(1000);
-            System.exit(0);
+            Runtime.getRuntime().exit(0);
 
         } catch (IllegalArgumentException e) {
             throw e;
