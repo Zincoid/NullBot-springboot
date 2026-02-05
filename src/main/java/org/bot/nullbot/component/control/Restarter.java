@@ -33,7 +33,8 @@ public class Restarter
             }
 
             // 构建 重启命令
-            String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+            // String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+            String javaBin = "java";
             String javaCommand = String.format("%s -jar %s 2>&1 | tee %s", javaBin, jarPath, LOG_PATH);
             String[] screenCommand = {"screen", "-dmS", SESSION_NAME, "bash", "-c", javaCommand};
             String[] killScreenCmd = {"screen", "-S", SESSION_NAME, "-X", "quit"};
@@ -45,7 +46,7 @@ public class Restarter
             Thread.sleep(1000);
             new ProcessBuilder(screenCommand).directory(new File("/root")).start();
             Thread.sleep(1000);
-            Runtime.getRuntime().exit(0);
+            System.exit(0);
 
         } catch (IllegalArgumentException e) {
             throw e;
