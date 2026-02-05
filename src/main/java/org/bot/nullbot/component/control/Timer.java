@@ -131,9 +131,7 @@ public class Timer
                 now.getYear(), now.getMonth(), now.getDayOfMonth(),
                 hour, minute, second
         );
-        if (now.isAfter(todayAlarm)) {
-            todayAlarm = todayAlarm.plusDays(1);
-        }
+        if (now.isAfter(todayAlarm)) todayAlarm = todayAlarm.plusDays(1);
         return calculateDelay(todayAlarm);
     }
 
