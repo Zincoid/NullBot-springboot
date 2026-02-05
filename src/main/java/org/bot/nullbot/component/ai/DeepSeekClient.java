@@ -56,16 +56,18 @@ public class DeepSeekClient
         Set<String> commands = new HashSet<>(Arrays.asList(
                 // 普通命令
                 "aud", "vid", "img", "say",
-                "ChatHistory", "ChatReset",
-                "AccessSet", "GroupSet", "UserBan",
-                "Help", "ImageFolder", "PUBG", "PRTS",
+                "ChatReset", "UserBan",
+                "Help", "ImageFolder", "PUBG",
                 "Anime", "Guess",
 
-                // 图片生成
-                "Convert", "Symmetry",
+                // "aud", "vid", "img", "say",
+                // "ChatHistory", "ChatReset",
+                // "AccessSet", "GroupSet", "UserBan",
+                // "Help", "ImageFolder", "PUBG", "PRTS",
+                // "Anime", "Guess",
 
-                // 语音回复
-                "Tts",
+                // 合成命令
+                "Convert", "Symmetry", "Tts",
 
                 // 加密命令
                 "eb0f8545", "4ed1314d", "65275d24",
