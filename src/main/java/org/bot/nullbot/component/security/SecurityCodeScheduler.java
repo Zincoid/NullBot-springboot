@@ -38,6 +38,7 @@ public class SecurityCodeScheduler
     public void init() {  // 初始化安全码
         createCode("regist");
         createCode("access");
+        log.info("▽ [SecurityCodeScheduler] 安全码调度器已初始化");
     }
 
     @PreDestroy

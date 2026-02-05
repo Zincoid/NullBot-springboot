@@ -26,21 +26,13 @@ public class Timer
     @PostConstruct
     public void init() {
         setupDefaultAlarms();
+        log.info("▽ [Timer] 定时器已初始化");
     }
 
     @PreDestroy
     public void destroy() {
-        if (scheduler != null) {
-            scheduler.shutdown();
-            try {
-                if (!scheduler.awaitTermination(60, TimeUnit.SECONDS)) {
-                    scheduler.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                scheduler.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
-        }
+        if (scheduler != null && !scheduler.isShutdown()) scheduler.shutdownNow();
+        log.info("▽ [Timer] 定时器已关闭");
     }
 
     private void setupDefaultAlarms() {
