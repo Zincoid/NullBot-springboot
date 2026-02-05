@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.ChatStorage;
-import org.bot.nullbot.config.prop.DeepSeekProperties;
+import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class MemeCommand implements Command
 {
-    private final DeepSeekProperties deepSeekProperties;
+    private final FileStorageProperties fileStorageProperties;
     private final ChatStorage chatStorage;
 
     @Override
@@ -38,7 +38,7 @@ public class MemeCommand implements Command
 
         if(event.getCommandParameters().isEmpty()) throw new NullBotMsgException("[表情] ❌参数不足");
 
-        String memeFolderPath = deepSeekProperties.getMemePath();
+        String memeFolderPath = fileStorageProperties.getResourcePath() + "/ai/meme";
         String memeName = event.getCommandParameters().getFirst();
         String memePath = FileUtil.getFilePathByName(memeFolderPath, memeName);
 
@@ -72,7 +72,7 @@ public class MemeCommand implements Command
                 注意: 你可以发送表情包图片以表达自己的情绪，要经常发表情！
                 (重要！)你只能用提供给你的完整表情文件名！不要用下划线把不同文件名的主体人物和表达内容情绪的文本拼接起来使用，这种文件不存在！""",
                 getAccess(),
-                FileUtil.getFileListAsString(deepSeekProperties.getMemePath(), ", ", true)
+                FileUtil.getFileListAsString(fileStorageProperties.getResourcePath() + "/ai/meme", ", ", true)
         );
     }
 }

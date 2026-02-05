@@ -39,8 +39,8 @@ chrome:
     driver-auto: false
     driver-path: /root/Nullbot/file/driver/chromedriver
 #    driver-path: src/test/testFile/driver/chromedriver.exe
-    max-retries: 5
-    load-timeout: 5
+    max-retries: 3
+    load-timeout: 10
 
 shiro:
   ws:
@@ -100,12 +100,14 @@ nullbot:
       file-directory: /root/Nullbot/file
       # 以下路径需选择管理根下子目录
       config-path: /root/Nullbot/file/config  # 可配置文件 - 群设置: Group_Settings.csv
+      resource-path: /root/Nullbot/file/resource
       temp-path: /root/Nullbot/file/temp
       image-path: /root/Nullbot/file/image
       video-path: /root/Nullbot/file/video
       audio-path: /root/Nullbot/file/audio
 #      file-directory: ${user.dir}/src/main/resources/upload
 #      config-path: src/main/resources/file/config
+#      resource-path: src/main/resources/file/resource
 #      temp-path: src/main/resources/file/temp
 #      image-path: src/main/resources/file/image
 #      video-path: src/main/resources/file/video
@@ -117,7 +119,6 @@ nullbot:
       max-history-length: 50
       max-monitor-length: 100
       max-tokens: 250
-      meme-path: /root/Nullbot/file/ai/meme  # 用于AI主动发表情
       default-system-message: 你是一个助手
     tts:
       api-url: https://gsv2p.acgnai.top

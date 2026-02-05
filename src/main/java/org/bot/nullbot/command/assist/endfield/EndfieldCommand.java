@@ -36,13 +36,13 @@ public class EndfieldCommand implements Command
             Long groupId = groupMessageEvent.getGroupId();
 
             if (params.isEmpty() || "-list".equals(params.getFirst())) {
-                String imageList = FileUtil.getFileListAsString(fileStorageProperties.getImagePath() + "/assist/endfield", "\n- ", false);
+                String imageList = FileUtil.getFileListAsString(fileStorageProperties.getResourcePath() + "/endfield", "\n- ", false);
                 bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD0D可查询项\n- " + imageList, false);
                 log.info("\t\t\t\t├─[Endfield] 已获取列表");
                 return;
             }
 
-            List<String> helpPaths = FileUtil.getFilesByKeyword(fileStorageProperties.getImagePath() + "/assist/endfield", params.getFirst());
+            List<String> helpPaths = FileUtil.getFilesByKeyword(fileStorageProperties.getResourcePath() + "/endfield", params.getFirst());
             if (helpPaths.isEmpty()) throw new NullBotMsgException("[终末地] ❌无查询项");
             if (helpPaths.size() > 1) {
                 List<String> helpNames = helpPaths.stream()

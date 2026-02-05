@@ -14,6 +14,5 @@ public class DeepSeekProperties
     private Integer maxHistoryLength;
     private Integer maxMonitorLength;
     private Integer maxTokens;
-    private String MemePath;
     private String DefaultSystemMessage;
 }
