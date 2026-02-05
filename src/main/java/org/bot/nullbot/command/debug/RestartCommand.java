@@ -46,7 +46,7 @@ public class RestartCommand implements Command
                         else
                             systemService.restartViaJar();
                     } catch (Exception e) {
-                        throw new  NullBotMsgException("[重启] ❌出错: " + e.getMessage());
+                        throw new NullBotMsgException("[重启] ❌出错: " + e.getMessage());
                     }
                 }
                 default -> throw new NullBotMsgException("[重启] ❌无此方式");

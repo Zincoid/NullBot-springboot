@@ -47,6 +47,8 @@ public class Restarter
             Thread.sleep(1000);
             System.exit(0);
 
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             log.error("▽ [Restarter] 重启过程中出错", e);
         }
