@@ -10,7 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Component
@@ -19,8 +19,8 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class AsyncConfig implements AsyncConfigurer
 {
-    @Bean(name = "ThreadExecutor")
-    public Executor ThreadExecutor() {
+    @Bean(name = "ThreadExecutor", destroyMethod = "shutdown")
+    public ExecutorService ThreadExecutor() {
         // Java 21+: 使用虚拟线程（正式）
         log.info("▽ [AsyncConfigurer] Java 21+ 环境 - 使用虚拟线程执行器");
         return Executors.newVirtualThreadPerTaskExecutor();
@@ -37,7 +37,7 @@ public class AsyncConfig implements AsyncConfigurer
     /**
      * 创建传统线程池（Java 8-18 兼容）
      */
-    private Executor createTraditionalThreadPool() {
+    private ExecutorService createTraditionalThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 
         // 根据 CPU 核心数配置
@@ -54,17 +54,17 @@ public class AsyncConfig implements AsyncConfigurer
         );
 
         executor.initialize();
-        return executor;
+        return executor.getThreadPoolExecutor();
     }
 
     /**
      * 使用反射创建虚拟线程执行器（兼容 Java 19-20 预览版）
      */
-    private Executor createVirtualThreadExecutorWithPreview() {
+    private ExecutorService createVirtualThreadExecutorWithPreview() {
         try {
             // 反射调用 避免编译错误
             Method method = Executors.class.getMethod("newVirtualThreadPerTaskExecutor");
-            return (Executor) method.invoke(null);
+            return (ExecutorService) method.invoke(null);
         } catch (Exception e) {
             log.warn("使用传统线程池", e);
             return createTraditionalThreadPool();
