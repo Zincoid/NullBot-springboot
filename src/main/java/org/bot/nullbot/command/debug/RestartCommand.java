@@ -32,13 +32,13 @@ public class RestartCommand implements Command
             String option = params.getFirst();
             switch (option)
             {
-                case "-APP" -> {
-                    bot.sendGroupMsg(groupId, "[重启] ⚠️指令已下发\n- 方式: [-APP]\n- 请稍候...", false);
+                case "-app" -> {
+                    bot.sendGroupMsg(groupId, "[重启] ⚠️指令已下发\n- 方式: [APP]\n- 请稍候...", false);
                     log.info("\t\t\t\t├─[Restart] APP重启指令已下发");
                     systemService.restart();
                 }
-                case "-JAR" -> {
-                    bot.sendGroupMsg(groupId, "[重启] ⚠️指令已下发\n- 方式: [-JAR]\n- 请稍候...", false);
+                case "-jar" -> {
+                    bot.sendGroupMsg(groupId, "[重启] ⚠️指令已下发\n- 方式: [JAR]\n- 请稍候...", false);
                     log.info("\t\t\t\t├─[Restart] JAR重启指令已下发");
                     try {
                         if (params.size() > 1)
@@ -65,8 +65,8 @@ public class RestartCommand implements Command
                 功能: 重启应用
                 限权: %d 级
                 格式:
-                1. Restart [-APP]
-                2. Restart [-JAR] [可选: Path]
+                1. Restart [-app]
+                2. Restart [-jar] [可选: 路径]
                 别名: 重启""", getAccess()
         );
     }
