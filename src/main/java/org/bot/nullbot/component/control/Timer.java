@@ -2,7 +2,6 @@ package org.bot.nullbot.component.control;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
-import com.mikuac.shiro.dto.action.common.ActionList;
 import com.mikuac.shiro.dto.action.response.GroupInfoResp;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
