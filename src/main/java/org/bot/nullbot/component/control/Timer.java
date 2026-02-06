@@ -2,6 +2,8 @@ package org.bot.nullbot.component.control;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
+import com.mikuac.shiro.dto.action.common.ActionList;
+import com.mikuac.shiro.dto.action.response.GroupInfoResp;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -33,24 +36,11 @@ public class Timer
 
     @PostConstruct
     public void init() {
-        setDailyGroupMsgAlarm(
-                "Alarm-0721-459358160",
-                459358160L,
-                "现在是07:21时间!!!\nCiallo(∠・ω< )⌒☆",
+        setDailyAllGroupMsgAlarm(
+                "Alarm-0721-allGroups",
+                "现在是 07:21 时间!!!\nCiallo(∠・ω< )⌒☆",
                 7, 21, 0
         );
-        setDailyGroupMsgAlarm(
-                "Alarm-0721-364928377",
-                364928377L,
-                "现在是07:21时间!!!\nCiallo(∠・ω< )⌒☆",
-                7, 21, 0
-        );
-        // setDailyGroupMsgAlarm(
-        //         "Alarm-test-875310845",
-        //         875310845L,
-        //         "这是一条测试消息",
-        //         0, 0, 0
-        // );
         log.info("▽ [Timer] 定时器已初始化");
     }
 
@@ -68,6 +58,16 @@ public class Timer
         setDailyAlarm(alarmId, hour, minute, second, () -> {
             Bot bot = botContainer.robots.get(botId);
             bot.sendGroupMsg(groupId, message, false);
+        });
+    }
+
+    public void setDailyAllGroupMsgAlarm(String alarmId, String message,
+                                         int hour, int minute, int second)
+    {
+        setDailyAlarm(alarmId, hour, minute, second, () -> {
+            Bot bot = botContainer.robots.get(botId);
+            for (GroupInfoResp group : bot.getGroupList().getData())
+                bot.sendGroupMsg(group.getGroupId(), message, false);
         });
     }
 
