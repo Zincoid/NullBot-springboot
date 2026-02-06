@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"Restart", "重启"})
+@CommandMapping({"Restart", "reboot", "重启"})
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -62,12 +62,12 @@ public class RestartCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ Restart 命令
-                功能: 重启应用
+                功能: 重新启动应用
                 限权: %d 级
                 格式:
                 1. Restart [-app]
                 2. Restart [-jar] [可选: 路径]
-                别名: 重启""", getAccess()
+                别名: reboot/重启""", getAccess()
         );
     }
 }
