@@ -13,7 +13,7 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Component;
 
-@CommandMapping({"RandomSaying", "saying", "say", "随机语录", "语录"})
+@CommandMapping({"RandomSaying", "Saying", "saying", "say", "随机语录", "语录"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
