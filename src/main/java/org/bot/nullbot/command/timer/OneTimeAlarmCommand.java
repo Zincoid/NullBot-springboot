@@ -38,7 +38,7 @@ public class OneTimeAlarmCommand implements Command
 
             String option = params.get(0);
             String message = params.get(2);
-            String alarmId = UUID.randomUUID().toString();
+            String alarmId = "Alarm-%s-%s".formatted(userId, UUID.randomUUID().toString().substring(0, 8));
             switch (option)
             {
                 case "-t" -> {
@@ -80,8 +80,8 @@ public class OneTimeAlarmCommand implements Command
                 default -> throw new NullBotMsgException("[一次性闹钟] ❌无此模式");
             }
 
-            bot.sendGroupMsg(groupId, "[一次性闹钟] ⏰已设置！\n- AlarmId: " + alarmId, false);
-            log.info("\t\t\t\t├─[OneTimeAlarm] 已设置 - AlarmId: {}", alarmId);
+            bot.sendGroupMsg(groupId, "[一次性闹钟] ⏰已设置！\n- AlarmID: " + alarmId, false);
+            log.info("\t\t\t\t├─[OneTimeAlarm] 已设置 - AlarmID: {}", alarmId);
         }else
             throw new NullBotLogException("[一次性闹钟] ❌未设计 - 非群消息事件响应方式");
     }

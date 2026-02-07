@@ -35,7 +35,7 @@ public class Timer
     @PostConstruct
     public void init() {
         setDailyAllGroupMsgAlarm(
-                "Alarm-0721-Global",
+                "Alarm-Global-0721",
                 """
                         现在是 07:21 时间！✨
                         Ciallo～(∠・ω< )⌒☆""",
