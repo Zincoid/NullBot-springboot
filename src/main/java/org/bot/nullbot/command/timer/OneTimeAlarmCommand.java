@@ -36,7 +36,7 @@ public class OneTimeAlarmCommand implements Command
             if (params.size() < 3)
                 throw new NullBotMsgException("[一次性闹钟] ❌参数不足");
 
-            String option = params.get(1);
+            String option = params.get(0);
             String message = params.get(2);
             switch (option)
             {
