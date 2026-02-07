@@ -39,45 +39,43 @@ public class OneTimeAlarmCommand implements Command
             String option = params.get(0);
             String message = params.get(2);
             String alarmId = "Alarm-%s-%s".formatted(userId, UUID.randomUUID().toString().substring(0, 8));
-            switch (option)
-            {
-                case "-t" -> {
-                    LocalDateTime alarmTime;
-                    try {
-                        alarmTime = LocalDateTime.parse(params.get(1), formatter);
+
+            try {
+                switch (option)
+                {
+                    case "-t" -> {
+                        LocalDateTime alarmTime = LocalDateTime.parse(params.get(1), formatter);
                         if (params.size() > 3) userId = Long.parseLong(params.get(3));
-                    } catch (NumberFormatException e) {
-                        throw new NullBotMsgException("[一次性闹钟] ❌QQ号格式错误");
-                    } catch (DateTimeParseException e) {
-                        throw new NullBotMsgException("[一次性闹钟] ❌时间格式错误");
+                        timer.setOneTimeGroupAtMsgAlarm(
+                                alarmId,
+                                groupId,
+                                userId,
+                                message,
+                                alarmTime
+                        );
                     }
-                    timer.setOneTimeGroupAtMsgAlarm(
-                            alarmId,
-                            groupId,
-                            userId,
-                            message,
-                            alarmTime
-                    );
+
+                    case "-d" -> {
+                        int delay = Integer.parseInt(params.get(1));
+                        if (params.size() > 3) userId = Long.parseLong(params.get(3));
+                        timer.setOneTimeGroupAtMsgAlarm(
+                                alarmId,
+                                groupId,
+                                userId,
+                                message,
+                                LocalDateTime.now().plusMinutes(delay)
+                        );
+                    }
+
+                    default -> throw new IllegalArgumentException("无此模式");
                 }
 
-                case "-d" -> {
-                    int delay;
-                    try {
-                        delay = Integer.parseInt(params.get(1));
-                        if (params.size() > 3) userId = Long.parseLong(params.get(3));
-                    } catch (NumberFormatException e) {
-                        throw new NullBotMsgException("[一次性闹钟] ❌参数格式错误");
-                    }
-                    timer.setOneTimeGroupAtMsgAlarm(
-                            alarmId,
-                            groupId,
-                            userId,
-                            message,
-                            LocalDateTime.now().plusMinutes(delay)
-                    );
-                }
-
-                default -> throw new NullBotMsgException("[一次性闹钟] ❌无此模式");
+            } catch (NumberFormatException e) {
+                throw new NullBotMsgException("[一次性闹钟] ❌参数格式错误");
+            } catch (DateTimeParseException e) {
+                throw new NullBotMsgException("[一次性闹钟] ❌时间格式错误");
+            } catch (Exception e) {
+                throw new NullBotMsgException("[一次性闹钟] ❌" + e.getMessage());
             }
 
             bot.sendGroupMsg(groupId, "[一次性闹钟] ⏰已设置！\n- AlarmID: " + alarmId, false);

@@ -37,7 +37,7 @@ public class CancelAlarmCommand implements Command
 
             boolean cancelled = timer.cancelAlarm(alarmId);
 
-            bot.sendGroupMsg(groupId, "[取消闹钟] ⏰取消%s！".formatted(cancelled ? "成功" : "失败"), false);
+            bot.sendGroupMsg(groupId, "[取消闹钟] %s".formatted(cancelled ? "✅已取消" : "❌未取消"), false);
             log.info("\t\t\t\t├─[CancelAlarm] 闹钟取消{} - AlarmID: {}", cancelled ? "成功" : "失败", alarmId);
         }else
             throw new NullBotLogException("[取消闹钟] ❌未设计 - 非群消息事件响应方式");
