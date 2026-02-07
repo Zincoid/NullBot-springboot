@@ -92,7 +92,7 @@ public class OneTimeAlarmCommand implements Command
                 ◉ OneTimeAlarm 命令
                 功能: 设置一次性群内提醒闹钟
                 限权: %d 级
-                格式: OneTimeAlarm [模式] [时间] [文本] [可选: QQ号]
+                格式: OneTimeAlarm [模式] [时间] [文本] [可选: 目标QQ号]
                 模式:
                 - [-t] 时间模式
                   时间格式: "yy-MM-dd'T'HH:mm"
@@ -100,6 +100,24 @@ public class OneTimeAlarmCommand implements Command
                 - [-d] 延迟模式
                   时间格式: 分钟数
                 别名: 一次性闹钟""", getAccess()
+        );
+    }
+
+    @Override
+    public String getHelpForAI() {
+        return String.format("""
+                ◉ OneTimeAlarm 命令
+                功能: 设置一次性群内提醒闹钟
+                限权: %d 级
+                格式: OneTimeAlarm [模式] [时间] [文本] [目标QQ号]
+                模式:
+                - [-t] 时间模式
+                  时间格式: "yy-MM-dd'T'HH:mm"
+                - [-d] 延迟模式
+                  时间格式: 分钟数
+                示例:
+                OneTimeAlarm -t 26-02-07T09:00 九点到了 2660181154
+                OneTimeAlarm -d 10 十分钟了 2660181154""", getAccess()
         );
     }
 }
