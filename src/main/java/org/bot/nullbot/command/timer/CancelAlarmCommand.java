@@ -44,9 +44,6 @@ public class CancelAlarmCommand implements Command
     }
 
     @Override
-    public Integer getAccess() { return 1; }
-
-    @Override
     public String getHelp() {
         return String.format("""
                 ◉ CancelAlarm 命令
