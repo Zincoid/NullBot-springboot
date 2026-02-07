@@ -52,6 +52,15 @@ public class Timer
 
     // =================== 调用方法 ===================
 
+    public void setOneTimeGroupAtMsgAlarm(String alarmId, Long groupId, Long userId,
+                                          String message, LocalDateTime alarmTime)
+    {
+        setOneTimeAlarm(alarmId, alarmTime, () -> {
+            Bot bot = botContainer.robots.get(botId);
+            bot.sendGroupMsg(groupId, "[CQ:at,qq=%s] %s".formatted(userId, message), false);
+        });
+    }
+
     public void setDailyGroupMsgAlarm(String alarmId, Long groupId, String message,
                                       int hour, int minute, int second)
     {
