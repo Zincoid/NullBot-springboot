@@ -112,7 +112,7 @@ public class OneTimeAlarmCommand implements Command
                 格式: OneTimeAlarm [模式] [时间] [文本] [目标QQ号]
                 模式:
                 - [-t] 时间模式
-                  时间格式: "yy-MM-dd'T'HH:mm"
+                  时间格式: yy-MM-ddTHH:mm
                 - [-d] 延迟模式
                   时间格式: 分钟数
                 示例:
