@@ -411,5 +411,5 @@
 - [ 重要！] 修复 AsyncConfig 配置 - 修复 ThreadExecutor Bean 未自动关闭线程池使得 Restarter 无法完全结束当前应用进程进而导致多次通过 Jar 重启应用后产生大量 Java 进程造成卡死的问题。
 
 ### 2026.2.7
-- 新增 OneTimeAlarm 一次性闹钟命令 - 可定时发送群组内@消息提醒；
+- 新增 OneTimeAlarm 一次性闹钟指令 - 可定时发送群组内@消息提醒；
 - 优化 文本。
