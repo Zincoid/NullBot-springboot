@@ -38,6 +38,7 @@ public class OneTimeAlarmCommand implements Command
 
             String option = params.get(0);
             String message = params.get(2);
+            String alarmId = UUID.randomUUID().toString();
             switch (option)
             {
                 case "-t" -> {
@@ -51,7 +52,7 @@ public class OneTimeAlarmCommand implements Command
                         throw new NullBotMsgException("[一次性闹钟] ❌时间格式错误");
                     }
                     timer.setOneTimeGroupAtMsgAlarm(
-                            UUID.randomUUID().toString(),
+                            alarmId,
                             groupId,
                             userId,
                             message,
@@ -68,7 +69,7 @@ public class OneTimeAlarmCommand implements Command
                         throw new NullBotMsgException("[一次性闹钟] ❌参数格式错误");
                     }
                     timer.setOneTimeGroupAtMsgAlarm(
-                            UUID.randomUUID().toString(),
+                            alarmId,
                             groupId,
                             userId,
                             message,
@@ -78,6 +79,9 @@ public class OneTimeAlarmCommand implements Command
 
                 default -> throw new NullBotMsgException("[一次性闹钟] ❌无此模式");
             }
+
+            bot.sendGroupMsg(groupId, "[一次性闹钟] ⏰已设置！\n- AlarmId: " + alarmId, false);
+            log.info("\t\t\t\t├─[OneTimeAlarm] 已设置 - AlarmId: {}", alarmId);
         }else
             throw new NullBotLogException("[一次性闹钟] ❌未设计 - 非群消息事件响应方式");
     }
