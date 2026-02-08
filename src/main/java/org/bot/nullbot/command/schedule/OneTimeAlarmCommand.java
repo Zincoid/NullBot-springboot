@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.timer;
+package org.bot.nullbot.command.schedule;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
