@@ -100,7 +100,7 @@ nullbot:
       file-directory: /root/Nullbot/file
       # 以下路径需选择管理根下子目录
       config-path: /root/Nullbot/file/config  # 可配置文件 - 群设置: Group_Settings.csv
-      resource-path: /root/Nullbot/file/resource
+      resource-path: /root/Nullbot/file/resource  # 内部资源文件夹 - ai/meme, endfield, pubg
       temp-path: /root/Nullbot/file/temp
       image-path: /root/Nullbot/file/image
       video-path: /root/Nullbot/file/video
