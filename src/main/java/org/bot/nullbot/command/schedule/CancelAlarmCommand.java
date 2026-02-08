@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.control.TaskScheduler;
+import org.bot.nullbot.component.control.BotTaskScheduler;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CancelAlarmCommand implements Command
 {
-    private final TaskScheduler taskScheduler;
+    private final BotTaskScheduler botTaskScheduler;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -35,7 +35,7 @@ public class CancelAlarmCommand implements Command
             if (!alarmId.contains("Alarm-" + userId.toString()))
                 throw new NullBotMsgException("[取消闹钟] ❌非法闹钟");
 
-            boolean cancelled = taskScheduler.cancelTask(alarmId);
+            boolean cancelled = botTaskScheduler.cancelTask(alarmId);
 
             bot.sendGroupMsg(groupId, "[取消闹钟] %s".formatted(cancelled ? "✅已取消" : "❌未取消"), false);
             log.info("\t\t\t\t├─[CancelAlarm] 闹钟取消{} - AlarmID: {}", cancelled ? "成功" : "失败", alarmId);

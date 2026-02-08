@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.control.TaskScheduler;
+import org.bot.nullbot.component.control.BotTaskScheduler;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -25,7 +25,7 @@ import java.util.UUID;
 public class OneTimeAlarmCommand implements Command
 {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd'T'HH:mm");
-    private final TaskScheduler taskScheduler;
+    private final BotTaskScheduler botTaskScheduler;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -46,7 +46,7 @@ public class OneTimeAlarmCommand implements Command
                     case "-t" -> {
                         LocalDateTime alarmTime = LocalDateTime.parse(params.get(1), formatter);
                         if (params.size() > 3) userId = Long.parseLong(params.get(3));
-                        taskScheduler.setOneTimeGroupAtMsgAlarm(
+                        botTaskScheduler.setOneTimeGroupAtMsgAlarm(
                                 alarmId,
                                 groupId,
                                 userId,
@@ -58,7 +58,7 @@ public class OneTimeAlarmCommand implements Command
                     case "-d" -> {
                         int delay = Integer.parseInt(params.get(1));
                         if (params.size() > 3) userId = Long.parseLong(params.get(3));
-                        taskScheduler.setOneTimeGroupAtMsgAlarm(
+                        botTaskScheduler.setOneTimeGroupAtMsgAlarm(
                                 alarmId,
                                 groupId,
                                 userId,

@@ -17,7 +17,7 @@ import java.util.concurrent.*;
 
 @Slf4j
 @Component
-public class TaskScheduler
+public class BotTaskScheduler
 {
     @Value("${nullbot.bot-id}")
     private Long botId;
@@ -26,7 +26,7 @@ public class TaskScheduler
     private final ScheduledExecutorService scheduler;
     private final ConcurrentHashMap<String, ScheduledFuture<?>> tasks;
 
-    public TaskScheduler(BotContainer botContainer) {
+    public BotTaskScheduler(BotContainer botContainer) {
         this.botContainer = botContainer;
         scheduler = Executors.newScheduledThreadPool(5);
         tasks = new ConcurrentHashMap<>();
@@ -41,13 +41,13 @@ public class TaskScheduler
                         Ciallo～(∠・ω< )⌒☆""",
                 7, 21, 0
         );
-        log.info("▽ [TaskScheduler] 任务调度器已初始化");
+        log.info("▽ [BotTaskScheduler] 任务调度器已初始化");
     }
 
     @PreDestroy
     public void destroy() {
         if (scheduler != null && !scheduler.isShutdown()) scheduler.shutdownNow();
-        log.info("▽ [TaskScheduler] 任务调度器已关闭");
+        log.info("▽ [BotTaskScheduler] 任务调度器已关闭");
     }
 
     // =================== BOT方法 ===================
@@ -147,10 +147,10 @@ public class TaskScheduler
     private Runnable wrapWithLogging(String taskId, Runnable task, boolean remove) {
         return () -> {
             try {
-                log.info("▽ [TaskScheduler] {} - {} 任务开始执行", LocalDateTime.now(), taskId);
+                log.info("▽ [BotTaskScheduler] {} - {} 任务开始执行", LocalDateTime.now(), taskId);
                 task.run();
             } catch (Exception e) {
-                log.error("▽ [TaskScheduler] {} - {} 任务执行出错", LocalDateTime.now(), taskId);
+                log.error("▽ [BotTaskScheduler] {} - {} 任务执行出错", LocalDateTime.now(), taskId);
                 throw e;
             } finally {
                 if (remove) tasks.remove(taskId);
