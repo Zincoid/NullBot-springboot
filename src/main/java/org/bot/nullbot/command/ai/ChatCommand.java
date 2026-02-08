@@ -10,6 +10,7 @@ import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,10 +51,15 @@ public class ChatCommand implements Command
             String userName = groupMessageEvent.getSender().getNickname();
             Integer messageId = groupMessageEvent.getMessageId();
 
-            String response = deepSeekClient.chat(
-                    messageId, groupId, userId, userName, message, bot, event,
-                    settingService.getChatOption(groupId)
-            );
+            String response;
+            try {
+                response = deepSeekClient.chat(
+                        messageId, groupId, userId, userName, message, bot, event,
+                        settingService.getChatOption(groupId)
+                );
+            } catch (Exception e) {
+                throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
+            }
 
             if (message.contains(commandPrefix))
                 bot.sendGroupMsg(groupId,
@@ -64,6 +70,7 @@ public class ChatCommand implements Command
                                 - Null可执行部分指令所以有时候@Null她会帮你执行""",
                         false
                 );
+
             log.info("\t\t\t\t├─[Chat] 已回复: {}", response.replaceAll("\\R", " "));
         }else
             throw new NullBotLogException("[对话] ❌未设计 - 非群消息事件响应方式");

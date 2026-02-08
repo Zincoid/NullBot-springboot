@@ -10,6 +10,7 @@ import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
@@ -32,8 +33,9 @@ public class PokeReactCommand implements Command
         if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
             if(!Objects.equals(pokeNoticeEvent.getTargetId(), pokeNoticeEvent.getSelfId())) return;  // 仅检测戳Bot
 
-            Long userId = pokeNoticeEvent.getUserId();
             Long groupId = pokeNoticeEvent.getGroupId();
+            Long userId = pokeNoticeEvent.getUserId();
+            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
 
             if(chatStorage.isUserBanned(userId)) {
                 LocalDateTime until = chatStorage.getUserBannedUntil(userId);
@@ -44,11 +46,15 @@ public class PokeReactCommand implements Command
                 return;
             }
 
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            String response = deepSeekClient.chat(
-                    null, groupId, userId, userName, "揉了你一下", bot, event,
-                    settingService.getChatOption(groupId)
-            );
+            String response;
+            try {
+                response = deepSeekClient.chat(
+                        null, groupId, userId, userName, "揉了你一下", bot, event,
+                        settingService.getChatOption(groupId)
+                );
+            } catch (Exception e) {
+                throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
+            }
 
             log.info("\t\t\t\t├─[PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", " "));
         }else
