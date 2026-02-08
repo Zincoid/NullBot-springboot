@@ -17,19 +17,19 @@ import java.util.concurrent.*;
 
 @Slf4j
 @Component
-public class Timer
+public class TaskScheduler
 {
     @Value("${nullbot.bot-id}")
     private Long botId;
     private final BotContainer botContainer;
 
     private final ScheduledExecutorService scheduler;
-    private final ConcurrentHashMap<String, ScheduledFuture<?>> alarmTasks;
+    private final ConcurrentHashMap<String, ScheduledFuture<?>> tasks;
 
-    public Timer(BotContainer botContainer) {
+    public TaskScheduler(BotContainer botContainer) {
         this.botContainer = botContainer;
         scheduler = Executors.newScheduledThreadPool(5);
-        alarmTasks = new ConcurrentHashMap<>();
+        tasks = new ConcurrentHashMap<>();
     }
 
     @PostConstruct
@@ -41,21 +41,21 @@ public class Timer
                         Ciallo～(∠・ω< )⌒☆""",
                 7, 21, 0
         );
-        log.info("▽ [Timer] 定时器已初始化");
+        log.info("▽ [TaskScheduler] 任务调度器已初始化");
     }
 
     @PreDestroy
     public void destroy() {
         if (scheduler != null && !scheduler.isShutdown()) scheduler.shutdownNow();
-        log.info("▽ [Timer] 定时器已关闭");
+        log.info("▽ [TaskScheduler] 任务调度器已关闭");
     }
 
-    // =================== 调用方法 ===================
+    // =================== BOT方法 ===================
 
     public void setOneTimeGroupAtMsgAlarm(String alarmId, Long groupId, Long userId,
                                           String message, LocalDateTime alarmTime)
     {
-        setOneTimeAlarm(alarmId, alarmTime, () -> {
+        setOneTimeTask(alarmId, alarmTime, () -> {
             Bot bot = botContainer.robots.get(botId);
             bot.sendGroupMsg(groupId, "[CQ:at,qq=%s] %s".formatted(userId, message), false);
         });
@@ -64,7 +64,7 @@ public class Timer
     public void setDailyGroupMsgAlarm(String alarmId, Long groupId, String message,
                                       int hour, int minute, int second)
     {
-        setDailyAlarm(alarmId, hour, minute, second, () -> {
+        setDailyTask(alarmId, hour, minute, second, () -> {
             Bot bot = botContainer.robots.get(botId);
             bot.sendGroupMsg(groupId, message, false);
         });
@@ -73,53 +73,53 @@ public class Timer
     public void setDailyAllGroupMsgAlarm(String alarmId, String message,
                                          int hour, int minute, int second)
     {
-        setDailyAlarm(alarmId, hour, minute, second, () -> {
+        setDailyTask(alarmId, hour, minute, second, () -> {
             Bot bot = botContainer.robots.get(botId);
             for (GroupInfoResp group : bot.getGroupList().getData())
                 bot.sendGroupMsg(group.getGroupId(), message, false);
         });
     }
 
-    // =================== 定时方法 ===================
+    // =================== 任务方法 ===================
 
-    public void setOneTimeAlarm(String alarmId, LocalDateTime alarmTime, Runnable task) {
+    public void setOneTimeTask(String taskId, LocalDateTime alarmTime, Runnable task) {
         long delay = calculateDelay(alarmTime);
         if (delay > 0) {
             ScheduledFuture<?> future = scheduler.schedule(
-                    wrapWithLogging(alarmId, task, true),
+                    wrapWithLogging(taskId, task, true),
                     delay,
                     TimeUnit.MILLISECONDS
             );
-            alarmTasks.put(alarmId, future);
+            tasks.put(taskId, future);
         } else
             throw new IllegalArgumentException("时间不合法");
     }
 
-    public void setDailyAlarm(String alarmId, int hour, int minute, int second, Runnable task) {
+    public void setDailyTask(String taskId, int hour, int minute, int second, Runnable task) {
         long initialDelay = calculateDelay(hour, minute, second);
         long period = 24 * 60 * 60 * 1000L;
         ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(
-                wrapWithLogging(alarmId, task, false),
+                wrapWithLogging(taskId, task, false),
                 initialDelay,
                 period,
                 TimeUnit.MILLISECONDS
         );
-        alarmTasks.put(alarmId, future);
+        tasks.put(taskId, future);
     }
 
-    public boolean cancelAlarm(String alarmId) {
-        ScheduledFuture<?> future = alarmTasks.get(alarmId);
+    public boolean cancelTask(String taskId) {
+        ScheduledFuture<?> future = tasks.get(taskId);
         if (future != null) {
             boolean cancelled = future.cancel(false);
-            alarmTasks.remove(alarmId);
+            tasks.remove(taskId);
             return cancelled;
         }
         return false;
     }
 
-    public Map<String, String> getAlarms() {
+    public Map<String, String> getTasks() {
         Map<String, String> status = new HashMap<>();
-        alarmTasks.forEach((id, future) -> {
+        tasks.forEach((id, future) -> {
             String state = future.isCancelled() ? "Cancelled" :
                     future.isDone() ? "Done" :
                             "Running";
@@ -130,30 +130,30 @@ public class Timer
 
     // =================== 工具方法 ===================
 
-    private long calculateDelay(LocalDateTime alarmTime) {
-        return Duration.between(LocalDateTime.now(), alarmTime).toMillis();
+    private long calculateDelay(LocalDateTime time) {
+        return Duration.between(LocalDateTime.now(), time).toMillis();
     }
 
     private long calculateDelay(int hour, int minute, int second) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime todayAlarm = LocalDateTime.of(
+        LocalDateTime todayTime = LocalDateTime.of(
                 now.getYear(), now.getMonth(), now.getDayOfMonth(),
                 hour, minute, second
         );
-        if (now.isAfter(todayAlarm)) todayAlarm = todayAlarm.plusDays(1);
-        return calculateDelay(todayAlarm);
+        if (now.isAfter(todayTime)) todayTime = todayTime.plusDays(1);
+        return calculateDelay(todayTime);
     }
 
-    private Runnable wrapWithLogging(String alarmId, Runnable task, boolean remove) {
+    private Runnable wrapWithLogging(String taskId, Runnable task, boolean remove) {
         return () -> {
             try {
-                log.info("▽ [Timer] {} - {} 任务开始执行", LocalDateTime.now(), alarmId);
+                log.info("▽ [TaskScheduler] {} - {} 任务开始执行", LocalDateTime.now(), taskId);
                 task.run();
             } catch (Exception e) {
-                log.error("▽ [Timer] {} - {} 任务执行出错", LocalDateTime.now(), alarmId);
+                log.error("▽ [TaskScheduler] {} - {} 任务执行出错", LocalDateTime.now(), taskId);
                 throw e;
             } finally {
-                if (remove) alarmTasks.remove(alarmId);
+                if (remove) tasks.remove(taskId);
             }
         };
     }
