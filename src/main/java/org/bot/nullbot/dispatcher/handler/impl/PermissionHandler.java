@@ -33,7 +33,7 @@ public class PermissionHandler implements Handler
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
-        String commandType = event.getCommandType();
+        String commandClass = command.getClass().getSimpleName();
         List<String> params = event.getCommandParameters();
         Long groupId;
         Long userId;
@@ -80,12 +80,12 @@ public class PermissionHandler implements Handler
         }
 
         if (!params.isEmpty() && "-x".equals(params.getFirst())) {
-            onBanningRefresh(bot, userAccess, groupId, commandType);
+            onBanningRefresh(bot, userAccess, groupId, commandClass);
             return;
         }
 
-        if (banMap.computeIfAbsent(groupId, k -> new ArrayList<>()).contains(commandType)) {
-            log.info("\t\t├─[PermissionHandler] 群组 {} - {} 停用中", groupId, commandType);
+        if (banMap.computeIfAbsent(groupId, k -> new ArrayList<>()).contains(commandClass)) {
+            log.info("\t\t├─[PermissionHandler] 群组 {} - {} 停用中", groupId, commandClass);
             bot.sendGroupMsg(groupId, "[Access] ⛔️停用中", false);
             return;
         }
