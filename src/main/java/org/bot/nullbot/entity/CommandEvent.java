@@ -22,7 +22,10 @@ public class CommandEvent<T extends Event>
     private boolean authRequired = true;
     private boolean rateLimit = true;
 
-    public CommandEvent(T event) {  // 基础 创建事件
+    // =================== 构造方法 ===================
+
+    // 基础 创建事件 (根据事件类型自动获取指令名和参数)
+    public CommandEvent(T event) {
         this.event = event;
         if(event instanceof GroupMessageEvent groupMessageEvent)
             parseGroupMessageEvent(groupMessageEvent, groupMessageEvent.getArrayMsg().getFirst().getType() == MsgTypeEnum.reply ? 1 : 0);
@@ -32,13 +35,8 @@ public class CommandEvent<T extends Event>
             parseGroupMsgDeleteNoticeEvent();
     }
 
-    public CommandEvent(String commandType, T event) {  // AT触发聊天 创建事件
-        this.event = event;
-        this.commandType = commandType;
-        commandParameters = new ArrayList<>();
-    }
-
-    public CommandEvent(T event, String command, boolean authRequired, boolean rateLimit) {  // 嵌入调用指令或关键词检测时 创建事件
+    // 自定 创建事件 (嵌入调用 关键词检测 AT触发聊天等)
+    public CommandEvent(T event, String command, boolean authRequired, boolean rateLimit) {
         this.event = event;
         this.authRequired = authRequired;
         this.rateLimit = rateLimit;
@@ -63,6 +61,7 @@ public class CommandEvent<T extends Event>
     }
 
     private void parseGroupMsgDeleteNoticeEvent() {
+        authRequired = false;
         commandType = "RecallReact";
         commandParameters = new ArrayList<>();
     }

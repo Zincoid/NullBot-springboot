@@ -62,7 +62,7 @@ public class MonitorListener
         double freq = settingService.getReplyFrequency(event.getGroupId());
         if (freq > Math.random()) {
             log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至 群聊 {}", event.getGroupId());
-            commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
+            commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", false, false));
             return true;
         } else
             return false;

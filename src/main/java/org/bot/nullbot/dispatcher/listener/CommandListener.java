@@ -64,7 +64,7 @@ public class CommandListener
         monitorListener.onGroupImageCollection(bot, event);
 
         log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
-        commandProcessor.processQQ(bot, new CommandEvent<>("Chat", event));
+        commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", true, true));
     }
 
     // 框架有BUG 回复消息中有@机器人和另一个人时会被判定为 AtEnum.NOT_NEED 的方法 暂时不知道怎么修
