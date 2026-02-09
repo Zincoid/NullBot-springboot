@@ -24,29 +24,29 @@ public class RateLimitHandler implements Handler
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception
     {
-        if(!event.isRateLimit()) {
+        if (!event.isRateLimit()) {
             log.info("\t\t├─[RateLimitHandler] 无速率限制");
             chain.doHandle(bot, event, command);
             return;
         }
 
-        if(event.getEvent() instanceof GroupMessageEvent groupMessageEvent){
-            if(commandRateLimiter.tryConsume(event)){
+        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            if (commandRateLimiter.tryConsume(event)) {
                 log.info("\t\t├─[RateLimitHandler] 基本消息未达到速率限制");
                 chain.doHandle(bot, event, command);
-            }else{
+            } else {
                 log.info("\t\t├─[RateLimitHandler] 基本消息达到速率限制");
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "请求太多啦！", false);
             }
-        }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent){
-            if(commandRateLimiter.tryConsume(event)){
+        } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
+            if (commandRateLimiter.tryConsume(event)) {
                 log.info("\t\t├─[RateLimitHandler] 戳一戳未达到速率限制");
                 chain.doHandle(bot, event, command);
-            }else{
+            } else {
                 log.info("\t\t├─[RateLimitHandler] 戳一戳达到速率限制");
                 // bot.sendGroupNotice(pokeNoticeEvent.getGroupId(), MsgUtils.builder().poke(pokeNoticeEvent.getUserId()).build());
             }
-        }else{
+        } else {
             log.info("\t\t├─[RateLimitHandler] 默认不限速的事件");
             chain.doHandle(bot, event, command);
         }
