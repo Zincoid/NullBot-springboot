@@ -26,8 +26,9 @@ public class PermissionHandler implements Handler
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
-        if(event.getEvent() instanceof GroupMessageEvent groupMessageEvent){
-            int commandAccess = command.getAccess();
+        int commandAccess = command.getAccess();
+
+        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             int groupAccess = groupService.getGroupAccess(groupMessageEvent.getGroupId());
             if(groupAccess >= commandAccess){
                 log.info("\t\t├─[PermissionHandler] 群限权满足");
@@ -48,8 +49,7 @@ public class PermissionHandler implements Handler
                 log.info("\t\t├─[PermissionHandler] 无需验证用户限权");
                 chain.doHandle(bot, event, command);
             }
-        }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent){
-            int commandAccess = command.getAccess();
+        } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
             int groupAccess = groupService.getGroupAccess(pokeNoticeEvent.getGroupId());
             if(groupAccess >= commandAccess){
                 log.info("\t\t├─[PermissionHandler] 群限权满足");
@@ -70,8 +70,7 @@ public class PermissionHandler implements Handler
                 log.info("\t\t├─[PermissionHandler] 无需验证用户限权");
                 chain.doHandle(bot, event, command);
             }
-        }else if(event.getEvent() instanceof GroupMsgDeleteNoticeEvent  groupMsgDeleteNoticeEvent){
-            int commandAccess = command.getAccess();
+        } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent  groupMsgDeleteNoticeEvent) {
             int groupAccess = groupService.getGroupAccess(groupMsgDeleteNoticeEvent.getGroupId());
             if(groupAccess >= commandAccess){
                 log.info("\t\t├─[PermissionHandler] 群限权满足");
@@ -79,7 +78,7 @@ public class PermissionHandler implements Handler
             }else{
                 log.info("\t\t├─[PermissionHandler] 群限权不足");
             }
-        }else{
+        } else {
             log.info("\t\t├─[PermissionHandler] 默认通过的事件类型");
             chain.doHandle(bot, event, command);
         }
