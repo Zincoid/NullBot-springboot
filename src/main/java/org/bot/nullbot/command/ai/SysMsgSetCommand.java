@@ -82,7 +82,9 @@ public class SysMsgSetCommand implements Command
                 ◉ SysMsgSet 命令
                 功能: 设置AI系统提示词并清空历史 (部分操作需二次限权验证)
                 限权: %d 级
-                格式: SysMsgSet [-reset|-default|-custom] [可选: 提示词]
+                格式:
+                1. SysMsgSet [-reset]
+                2. SysMsgSet [-default|-custom] [提示词]
                 别名: 提示词设置
                 注意:
                 - 模式切换 使用 GroupSet 群设置指令
