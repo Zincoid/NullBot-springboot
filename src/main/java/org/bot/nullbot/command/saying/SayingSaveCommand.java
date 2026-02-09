@@ -34,11 +34,12 @@ public class SayingSaveCommand implements Command
             GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
             long userId = Long.parseLong(replyMsg.getSender().getUserId());
             String userName = replyMsg.getSender().getNickname();
-            String text = MessageParseUtil.parseRawSaying(bot, replyMsg.getRawMessage());
-            if(text == null)
-                throw new NullBotMsgException("[保存语录] \uD83D\uDE21禁止套娃！");
-            if(text.trim().isEmpty())
-                throw new NullBotMsgException("[保存语录] ❌禁止空文本");
+            String text;
+            try {
+                text = MessageParseUtil.parseRawSaying(bot, replyMsg.getRawMessage());
+            } catch (Exception e) {
+                throw new NullBotMsgException("[保存语录] ❌" + e.getMessage());
+            }
             int inserted = sayingService.addSaying(userId, userName, text);
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), inserted == 1 ? "\uD83D\uDCBE 已记录！" : "[保存语录] ❌出错", false);
             log.info("\t\t\t\t├─[SayingSave] 语录保存 - {} -> {}", text, inserted == 1 ? "已记录" : "出错");

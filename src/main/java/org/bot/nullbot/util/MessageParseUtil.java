@@ -62,40 +62,42 @@ public class MessageParseUtil
     @Deprecated
     public static String parseRawSaying(String rawSaying) {
         String text = rawSaying.replaceAll("\\[CQ:at,qq=(\\d+)]", "@$1").replaceAll("\\[CQ:.*?]", "");
-        if(!Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(text)))
-            return text;
-        else
-            return null;
+        if(Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(text)))
+            throw new IllegalArgumentException("禁止套娃");
+        if(text.trim().isEmpty())
+            throw new IllegalArgumentException("禁止空文本");
+        return text;
     }
 
     public static String parseRawSaying(Bot bot, String rawSaying) {
-        if(!Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(rawSaying))) {
-            // 用于匹配[CQ:at,qq=xxx]的正则表达式
-            Pattern atPattern = Pattern.compile("\\[CQ:at,qq=(\\d+)]");
-            Matcher matcher = atPattern.matcher(rawSaying);
-            StringBuilder result = new StringBuilder();
-            while (matcher.find()) {
-                try {
-                    long qq = Long.parseLong(matcher.group(1));
-                    // 获取昵称 - 这里假设bot.getStrangerInfo是同步方法
-                    String nickname = bot.getStrangerInfo(qq, true).getData().getNickname();
-                    // 构建替换文本：@昵称(QQ号)
-                    String replacement = "@" + nickname + "(" + qq + ")";
-                    matcher.appendReplacement(result, replacement);
-                } catch (Exception e) {
-                    // 如果获取昵称失败，使用QQ号作为后备
-                    String fallback = "@" + matcher.group(1);
-                    matcher.appendReplacement(result, fallback);
-                }
+        if(Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(rawSaying)))
+            throw new IllegalArgumentException("禁止套娃");
+
+        Pattern atPattern = Pattern.compile("\\[CQ:at,qq=(\\d+)]");
+        Matcher matcher = atPattern.matcher(rawSaying);
+        StringBuilder result = new StringBuilder();
+        while (matcher.find()) {
+            try {
+                long qq = Long.parseLong(matcher.group(1));
+                // 获取昵称 - 这里假设bot.getStrangerInfo是同步方法
+                String nickname = bot.getStrangerInfo(qq, true).getData().getNickname();
+                // 构建替换文本：@昵称(QQ号)
+                String replacement = "@" + nickname + "(" + qq + ")";
+                matcher.appendReplacement(result, replacement);
+            } catch (Exception e) {
+                // 如果获取昵称失败，使用QQ号作为后备
+                String fallback = "@" + matcher.group(1);
+                matcher.appendReplacement(result, fallback);
             }
-            matcher.appendTail(result);
-            // 移除其他CQ码（非@的CQ码）
-            String finalResult = result.toString();
-            finalResult = finalResult.replaceAll("\\[CQ:(?!at\\b).*?]", "");
-            return finalResult;
-        } else {
-            return null;
         }
+        matcher.appendTail(result);
+        // 移除其他CQ码（非@的CQ码）
+        String finalResult = result.toString();
+        finalResult = finalResult.replaceAll("\\[CQ:(?!at\\b).*?]", "");
+
+        if(finalResult.trim().isEmpty())
+            throw new IllegalArgumentException("禁止空文本");
+        return finalResult;
     }
 
     public static Map<String, String> parseGroupRawMessageAsImageMap(String rawMessage) {
