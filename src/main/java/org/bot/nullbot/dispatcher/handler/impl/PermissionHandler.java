@@ -62,7 +62,7 @@ public class PermissionHandler implements Handler
             log.info("\t\t├─[PermissionHandler] 系统已锁定");
             bot.sendGroupMsg(groupId, """
                         [访问] \uD83D\uDD10系统已锁定
-                        - 仅限权等级II用户可操作""", false);
+                        - 操作需限权等级II""", false);
             return;
         }
 
