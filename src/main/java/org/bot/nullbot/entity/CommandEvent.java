@@ -35,7 +35,7 @@ public class CommandEvent<T extends Event>
             parseGroupMsgDeleteNoticeEvent();
     }
 
-    // 自定 创建事件 (嵌入调用 关键词检测 AT触发聊天等)
+    // 自定 创建事件 (嵌入调用 关键词/AT检测 自动回复等)
     public CommandEvent(T event, String command, boolean authRequired, boolean rateLimit) {
         this.event = event;
         this.authRequired = authRequired;
