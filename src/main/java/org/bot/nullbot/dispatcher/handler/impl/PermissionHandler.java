@@ -93,7 +93,7 @@ public class PermissionHandler implements Handler
         chain.doHandle(bot, event, command);
     }
 
-    private void onBanningRefresh(Bot bot, int userAccess, Long groupId, String commandType) {
+    private void onBanningRefresh(Bot bot, int userAccess, Long groupId, String commandClass) {
         if (userAccess < 1) {
             log.info("\t\t├─[PermissionHandler] 修改限权不足");
             bot.sendGroupMsg(groupId, """
@@ -103,13 +103,13 @@ public class PermissionHandler implements Handler
             return;
         }
         List<String> banned = banMap.computeIfAbsent(groupId, k -> new ArrayList<>());
-        if (banned.contains(commandType)) {
-            banned.remove(commandType);
-            log.info("\t\t├─[PermissionHandler] 群组 {} - {} 已恢复", groupId, commandType);
+        if (banned.contains(commandClass)) {
+            banned.remove(commandClass);
+            log.info("\t\t├─[PermissionHandler] 群组 {} - {} 已恢复", groupId, commandClass);
             bot.sendGroupMsg(groupId, "[Access] ✅已恢复", false);
         } else {
-            banned.add(commandType);
-            log.info("\t\t├─[PermissionHandler] 群组 {} - {} 已停用", groupId, commandType);
+            banned.add(commandClass);
+            log.info("\t\t├─[PermissionHandler] 群组 {} - {} 已停用", groupId, commandClass);
             bot.sendGroupMsg(groupId, "[Access] ⛔️已停用", false);
         }
     }
