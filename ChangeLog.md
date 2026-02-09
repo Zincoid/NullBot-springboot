@@ -420,6 +420,7 @@
 - 优化 AI 聊天相关指令 - 添加群内报错消息。
 - 修改 Timer 定时器组件 - 更名为 BotTaskScheduler 任务调度器并修改优化相关代码。
 
-### 2026.2.9
+### 2026.2.9 - v1.3.4
 - 优化 CommandEvent 类 - 合并不必要的构造方法并修改相关代码 且构造撤回事件时 authRequired 置为 false；
-- 增强 PermissionHandler - 简化代码 添加临时停用指令功能。
+- 增强 PermissionHandler - 简化代码 添加临时停用指令功能；
+- 优化 帮助文档。
