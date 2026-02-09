@@ -1,4 +1,4 @@
-package org.bot.nullbot.command.debug;
+package org.bot.nullbot.command.system;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.GetMsgResp;
