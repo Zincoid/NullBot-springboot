@@ -28,12 +28,13 @@ public class RecallReactCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
+            Long groupId = groupMsgDeleteNoticeEvent.getGroupId();
             Long userId = groupMsgDeleteNoticeEvent.getUserId();
             Long operatorId = groupMsgDeleteNoticeEvent.getOperatorId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             String operatorName = bot.getStrangerInfo(operatorId, true).getData().getNickname();
             Integer messageId = groupMsgDeleteNoticeEvent.getMessageId();
-            Long groupId = groupMsgDeleteNoticeEvent.getGroupId();
+
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(groupId);
             for(ChatMessage chatMessage : chatMessages) {
                 if(Objects.equals(chatMessage.getMessageId(), messageId)) {
@@ -46,6 +47,7 @@ public class RecallReactCommand implements Command
                     return;
                 }
             }
+
             throw new NullBotMsgException("[撤回反馈] ❌该消息已清理");
         }else
             throw new NullBotLogException("[撤回反馈] ❌未设计 - 非群撤回事件响应方式");
