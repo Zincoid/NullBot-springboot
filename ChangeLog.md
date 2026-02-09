@@ -422,6 +422,7 @@
 
 ### 2026.2.9 - v1.3.4
 - 优化 CommandEvent 类 - 合并不必要的构造方法并修改相关代码 且构造撤回事件时 authRequired 置为 false；
-- 增强 PermissionHandler - 简化代码 添加临时停用指令功能；
+- 增强 PermissionHandler - 简化代码 添加临时停用指令功能 添加全局锁定功能；
+- 优化 ExecutorHandler - 添加 不支持事件类型的 NullBotMsgException 的重新抛出；
 - 优化 语录功能 - 移除语录输出秒位并优化 parseRawSaying 方法；
 - 优化 文本 和 帮助文档。

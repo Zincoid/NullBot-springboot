@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PermissionHandler implements Handler
 {
     private final Map<Long, List<String>> banMap = new ConcurrentHashMap<>();  // GroupId -> Commands
+    private boolean inMaintenance = false;
 
     private final GroupService groupService;
     private final UserService userService;
@@ -57,6 +58,14 @@ public class PermissionHandler implements Handler
         int groupAccess = groupService.getGroupAccess(groupId);
         int userAccess = userService.getUserAccess(userId);
 
+        if (inMaintenance && userAccess < 2) {
+            log.info("\t\t├─[PermissionHandler] 系统已锁定");
+            bot.sendGroupMsg(groupId, """
+                        [访问] \uD83D\uDD10系统已锁定
+                        - 仅限权等级II用户可操作""", false);
+            return;
+        }
+
         if (groupAccess >= commandAccess) {
             log.info("\t\t├─[PermissionHandler] 群限权满足");
         } else {
@@ -70,7 +79,7 @@ public class PermissionHandler implements Handler
             } else {
                 log.info("\t\t├─[PermissionHandler] 用户限权不足");
                 bot.sendGroupMsg(groupId, """
-                        [Access] \uD83D\uDEAB限权不足
+                        [访问] \uD83D\uDEAB限权不足
                         - 需要限权等级: %s
                         - 你的限权等级: %s""".formatted(commandAccess, userAccess), false);
                 return;
@@ -86,18 +95,20 @@ public class PermissionHandler implements Handler
 
         if (banMap.computeIfAbsent(groupId, k -> new ArrayList<>()).contains(commandClass)) {
             log.info("\t\t├─[PermissionHandler] 群组 {} - {} 停用中", groupId, commandClass);
-            bot.sendGroupMsg(groupId, "[Access] ⛔️停用中", false);
+            bot.sendGroupMsg(groupId, "[访问] ⛔️停用中", false);
             return;
         }
 
         chain.doHandle(bot, event, command);
     }
 
+    // =================== 工具方法 ===================
+
     private void onBanningRefresh(Bot bot, int userAccess, Long groupId, String commandClass) {
         if (userAccess < 1) {
             log.info("\t\t├─[PermissionHandler] 修改限权不足");
             bot.sendGroupMsg(groupId, """
-                    [Access] \uD83D\uDEAB限权不足
+                    [访问] \uD83D\uDEAB限权不足
                     - 需要限权等级: 1
                     - 你的限权等级: %s""".formatted(userAccess), false);
             return;
@@ -106,11 +117,17 @@ public class PermissionHandler implements Handler
         if (banned.contains(commandClass)) {
             banned.remove(commandClass);
             log.info("\t\t├─[PermissionHandler] 群组 {} - {} 已恢复", groupId, commandClass);
-            bot.sendGroupMsg(groupId, "[Access] ✅已恢复", false);
+            bot.sendGroupMsg(groupId, "[访问] ✅已恢复", false);
         } else {
             banned.add(commandClass);
             log.info("\t\t├─[PermissionHandler] 群组 {} - {} 已停用", groupId, commandClass);
-            bot.sendGroupMsg(groupId, "[Access] ⛔️已停用", false);
+            bot.sendGroupMsg(groupId, "[访问] ⛔️已停用", false);
         }
+    }
+
+    // =================== 锁定方法 ===================
+
+    public boolean switchInMaintenance() {
+        return inMaintenance = !inMaintenance;
     }
 }

@@ -26,14 +26,18 @@ public class ExecutorHandler implements Handler
         try {
             command.execute(bot, event);
         } catch (NullBotMsgException e) {
-            Long groupId = 0L;
+            Long groupId;
             if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent)
                 groupId = groupMessageEvent.getGroupId();
             else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent)
                 groupId = pokeNoticeEvent.getGroupId();
-            else if(event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent)
+            else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent)
                 groupId = groupMsgDeleteNoticeEvent.getGroupId();
-            if (groupId != 0L) {
+            else {
+                log.warn("\t\t  [ExecutorHandler] MsgException - 不支持的事件类型");
+                throw e;
+            }
+            if (groupId != null) {
                 bot.sendGroupMsg(groupId, e.getMessage(), false);
                 log.warn("\t\t  [ExecutorHandler] MsgException - 指令警告: {}", e.getMessage());
             } else
