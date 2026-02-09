@@ -47,6 +47,8 @@ public class CommandEvent<T extends Event>
         commandParameters = information.subList(1, information.size());
     }
 
+    // =================== 工具方法 ===================
+
     private void parseGroupMessageEvent(GroupMessageEvent event, int i)
     {
         String command = event.getArrayMsg().get(i).getData().get("text").substring(1);
