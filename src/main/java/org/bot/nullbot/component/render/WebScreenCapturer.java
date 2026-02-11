@@ -56,6 +56,7 @@ public class WebScreenCapturer
                         .executeScript("return document.readyState")
                         .equals("complete")
                 );
+                Thread.sleep(200);  // 某些网页加载慢再延迟一会
                 // 定位元素位置
                 List<WebElement> targets = targetCssSelectors.stream()
                         .map(selector -> driver.findElement(getBy(selector)))
@@ -109,6 +110,7 @@ public class WebScreenCapturer
                         .executeScript("return document.readyState")
                         .equals("complete")
                 );
+                Thread.sleep(200);  // 某些网页加载慢再延迟一会
                 // 进行全页截图
                 AShot ashot = new AShot();
                 ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
@@ -149,6 +151,7 @@ public class WebScreenCapturer
                         .executeScript("return document.readyState")
                         .equals("complete")
                 );
+                Thread.sleep(200);  // 某些网页加载慢再延迟一会
                 // 定位元素位置
                 WebElement element = driver.findElement(getBy(cssSelector));
                 // 进行元素截图
