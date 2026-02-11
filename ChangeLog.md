@@ -427,3 +427,6 @@
 - 优化 ExecutorHandler - 添加 不支持事件类型的 NullBotMsgException 的重新抛出；
 - 优化 语录功能 - 移除语录输出秒位并优化 parseRawSaying 方法；
 - 优化 项目结构 和 文本 和 帮助文档。
+
+### 2026.2.11
+- 优化 WebScreenCapturer 组件方法 - 添加额外等待时间应对某些异常加载现象。
