@@ -120,12 +120,10 @@ public class PRTSCommand implements Command
 
     @Override
     public String getHelpForAI() {
-        return String.format("""
+        return """
                 ◉ PRTS 命令
                 功能: 通过PRTS网站查询明日方舟相关信息
-                限权: %d 级
                 格式: PRTS [查询内容]
-                示例: PRTS 莱伊""", getAccess()
-        );
+                示例: PRTS 莱伊""";
     }
 }

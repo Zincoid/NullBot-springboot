@@ -6,7 +6,8 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class EmbeddedCommandEvent {
+public class EmbeddedCommandEvent
+{
     private Bot bot;
     private CommandEvent<?> event;
 }

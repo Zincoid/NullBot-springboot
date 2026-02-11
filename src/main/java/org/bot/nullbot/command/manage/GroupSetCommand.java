@@ -168,10 +168,9 @@ public class GroupSetCommand implements Command
 
     @Override
     public String getHelpForAI() {
-        return String.format("""
+        return """
                 ◉ GroupSet 命令
                 功能: 设置群功能
-                限权: %d 级
                 格式: GroupSet [操作] [可选: 参数]
                 
                 操作与参数:
@@ -196,7 +195,6 @@ public class GroupSetCommand implements Command
                 
                 注意:
                 你不可执行 [-ai] 相关设置指令！
-                针对Guess游戏 - 切割比例越小越难 内边距越小越难""", getAccess()
-        );
+                针对Guess游戏 - 切割比例越小越难 内边距越小越难""";
     }
 }

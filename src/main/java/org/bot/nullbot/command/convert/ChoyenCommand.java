@@ -67,15 +67,4 @@ public class ChoyenCommand implements Command
                 别名: 5000兆""", getAccess()
         );
     }
-
-    @Override
-    public String getHelpForAI() {
-        return String.format("""
-                ◉ Choyen 命令
-                功能: 5000兆円梗图生成
-                限权: %d 级
-                格式: Choyen [文本1] [文本2]
-                示例: Choyen 我去 不早说""", getAccess()
-        );
-    }
 }
