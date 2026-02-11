@@ -116,8 +116,8 @@ public class PermissionHandler implements Handler
         List<String> banned = banMap.computeIfAbsent(groupId, k -> new ArrayList<>());
         if (banned.contains(commandClass)) {
             banned.remove(commandClass);
-            log.info("\t\t├─[PermissionHandler] 群组 {} - {} 已恢复", groupId, commandClass);
-            bot.sendGroupMsg(groupId, "[访问] ✅已恢复", false);
+            log.info("\t\t├─[PermissionHandler] 群组 {} - {} 已启用", groupId, commandClass);
+            bot.sendGroupMsg(groupId, "[访问] ✅已启用", false);
         } else {
             banned.add(commandClass);
             log.info("\t\t├─[PermissionHandler] 群组 {} - {} 已停用", groupId, commandClass);
