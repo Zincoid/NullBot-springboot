@@ -1,4 +1,4 @@
-package org.bot.nullbot.component.control;
+package org.bot.nullbot.component.tool;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
