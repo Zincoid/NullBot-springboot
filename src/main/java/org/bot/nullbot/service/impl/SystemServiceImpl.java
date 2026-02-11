@@ -1,8 +1,8 @@
 package org.bot.nullbot.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.component.control.Restarter;
-import org.bot.nullbot.component.tool.SpringInvoker;
+import org.bot.nullbot.component.tool.Restarter;
+import org.bot.nullbot.component.tool.Invoker;
 import org.bot.nullbot.service.SystemService;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class SystemServiceImpl implements SystemService
 {
     private final Restarter restarter;
-    private final SpringInvoker invoker;
+    private final Invoker invoker;
 
     @Override
     public void restart() {

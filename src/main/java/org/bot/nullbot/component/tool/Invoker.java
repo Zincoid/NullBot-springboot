@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class SpringInvoker
+public class Invoker
 {
     private final ApplicationContext applicationContext;
 
