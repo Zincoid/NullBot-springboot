@@ -59,14 +59,7 @@ public class DeepSeekClient
                 "aud", "vid", "img", "say",
                 "ChatReset", "UserBan",
                 "Help", "ImageFolder", "PUBG",
-                "Anime", "Guess",
-                "OneTimeAlarm",
-
-                // "aud", "vid", "img", "say",
-                // "ChatHistory", "ChatReset",
-                // "AccessSet", "GroupSet", "UserBan",
-                // "Help", "ImageFolder", "PUBG", "PRTS",
-                // "Anime", "Guess",
+                "Anime", "Guess", "OneTimeAlarm",
 
                 // 合成命令
                 "Convert", "Symmetry", "Tts",
