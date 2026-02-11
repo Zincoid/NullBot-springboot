@@ -430,4 +430,5 @@
 
 ### 2026.2.11
 - 优化 WebScreenCapturer 组件方法 - 添加额外等待时间应对某些异常加载现象；
-- 优化 BotTaskScheduler 及相关定时指令 - 优化任务命名相关逻辑。
+- 优化 BotTaskScheduler 及相关定时指令 - 优化任务命名相关逻辑；
+- 新增 BotOperator 组件 - 可用于主动需求 Bot 对象的操作。
