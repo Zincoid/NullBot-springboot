@@ -1,4 +1,4 @@
-package org.bot.nullbot.component.control;
+package org.bot.nullbot.component.aspect;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.bot.nullbot.annotation.FunctionControl;
+import org.bot.nullbot.component.control.FunctionManager;
 import org.springframework.stereotype.Component;
 
 @Aspect
