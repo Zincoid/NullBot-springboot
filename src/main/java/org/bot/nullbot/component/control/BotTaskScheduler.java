@@ -35,7 +35,7 @@ public class BotTaskScheduler
     @PostConstruct
     public void init() {
         setDailyAllGroupMsgAlarm(
-                "Alarm-Global-0721",
+                "0721",
                 """
                         现在是 07:21 时间！✨
                         Ciallo～(∠・ω< )⌒☆""",
@@ -55,7 +55,8 @@ public class BotTaskScheduler
     public void setOneTimeGroupAtMsgAlarm(String alarmId, Long groupId, Long userId,
                                           String message, LocalDateTime alarmTime)
     {
-        setOneTimeTask(alarmId, alarmTime, () -> {
+        String taskId = "Alarm-%s-%s".formatted(userId, alarmId);
+        setOneTimeTask(taskId, alarmTime, () -> {
             Bot bot = botContainer.robots.get(botId);
             bot.sendGroupMsg(groupId, "[CQ:at,qq=%s] %s".formatted(userId, message), false);
         });
@@ -64,7 +65,8 @@ public class BotTaskScheduler
     public void setDailyGroupMsgAlarm(String alarmId, Long groupId, String message,
                                       int hour, int minute, int second)
     {
-        setDailyTask(alarmId, hour, minute, second, () -> {
+        String taskId = "Alarm-%s-%s".formatted(groupId, alarmId);
+        setDailyTask(taskId, hour, minute, second, () -> {
             Bot bot = botContainer.robots.get(botId);
             bot.sendGroupMsg(groupId, message, false);
         });
@@ -73,7 +75,8 @@ public class BotTaskScheduler
     public void setDailyAllGroupMsgAlarm(String alarmId, String message,
                                          int hour, int minute, int second)
     {
-        setDailyTask(alarmId, hour, minute, second, () -> {
+        String taskId = "Alarm-%s-%s".formatted("Global", alarmId);
+        setDailyTask(taskId, hour, minute, second, () -> {
             Bot bot = botContainer.robots.get(botId);
             for (GroupInfoResp group : bot.getGroupList().getData())
                 bot.sendGroupMsg(group.getGroupId(), message, false);

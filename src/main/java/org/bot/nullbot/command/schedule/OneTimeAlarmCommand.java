@@ -38,7 +38,7 @@ public class OneTimeAlarmCommand implements Command
 
             String option = params.get(0);
             String message = params.get(2);
-            String alarmId = "Alarm-%s-%s".formatted(userId, UUID.randomUUID().toString().substring(0, 8));
+            String alarmId = UUID.randomUUID().toString().substring(0, 8);
 
             try {
                 switch (option)

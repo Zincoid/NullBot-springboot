@@ -28,14 +28,12 @@ public class CancelAlarmCommand implements Command
             List<String> params = event.getCommandParameters();
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getSender().getUserId();
-
             if (params.isEmpty())
                 throw new NullBotMsgException("[取消闹钟] ❌参数不足");
             String alarmId = params.getFirst();
-            if (!alarmId.contains("Alarm-" + userId.toString()))
-                throw new NullBotMsgException("[取消闹钟] ❌非法闹钟");
 
-            boolean cancelled = botTaskScheduler.cancelTask(alarmId);
+            String taskId = "Alarm-%s-%s".formatted(userId, alarmId);
+            boolean cancelled = botTaskScheduler.cancelTask(taskId);
 
             bot.sendGroupMsg(groupId, "[取消闹钟] %s".formatted(cancelled ? "✅已取消" : "❌未取消"), false);
             log.info("\t\t\t\t├─[CancelAlarm] 闹钟取消{} - AlarmID: {}", cancelled ? "成功" : "失败", alarmId);
@@ -47,7 +45,7 @@ public class CancelAlarmCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ CancelAlarm 命令
-                功能: 取消闹钟
+                功能: 取消个人闹钟
                 限权: %d 级
                 格式: CancelAlarm [AlarmID]
                 别名: 取消闹钟""", getAccess()
