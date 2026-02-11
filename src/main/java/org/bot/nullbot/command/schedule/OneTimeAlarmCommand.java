@@ -31,6 +31,7 @@ public class OneTimeAlarmCommand implements Command
     private final List<DateTimeFormatter> formatters = Arrays.asList(
             DateTimeFormatter.ofPattern("yy-MM-dd'T'HH:mm"),
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"),
+            DateTimeFormatter.ofPattern("yy-MM-dd'T'HH:mm:ss"),
             DateTimeFormatter.ISO_LOCAL_DATE_TIME  // yyyy-MM-dd'T'HH:mm:ss
     );
 
