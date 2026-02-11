@@ -37,14 +37,12 @@ public class RecallUserCommand implements Command
 
     @Override
     public String getHelpForAI() {
-        return String.format("""
+        return """
                 ◉ b6713262 命令
                 功能: 撤回非AI发送的用户消息
-                限权: %d 级
                 格式: b6713262 [Message ID]
                 示例: b6713262 965922865
-                注意: 已撤回的消息依然会存在于之后发给你的消息列表里！
-                撤回其他人的消息用这个，撤回你自己的消息不要用这个！""", getAccess()
-        );
+                注意: 已撤回的消息依然会存在于之后发给你的消息列表里
+                撤回其他人的消息用这个，撤回你自己的消息不要用这个""";
     }
 }

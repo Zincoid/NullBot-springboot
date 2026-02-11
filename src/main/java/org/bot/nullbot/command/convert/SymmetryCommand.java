@@ -143,13 +143,11 @@ public class SymmetryCommand implements Command
 
     @Override
     public String getHelpForAI() {
-        return String.format("""
+        return """
                 ◉ Symmetry 命令
                 功能: 头像图片对称处理
-                限权: %d 级
                 格式: Symmetry [可选: 方式] [QQ号]
                 方式: 上/下/左/右 (默认左)
-                示例: Symmetry 右 2660181154""", getAccess()
-        );
+                示例: Symmetry 右 2660181154""";
     }
 }

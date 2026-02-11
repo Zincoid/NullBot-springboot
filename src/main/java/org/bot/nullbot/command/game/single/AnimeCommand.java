@@ -55,4 +55,12 @@ public class AnimeCommand implements Command
                 别名: anime/二次元/色图/涩图""", getAccess()
         );
     }
+
+    @Override
+    public String getHelpForAI() {
+        return """
+                ◉ Anime 命令
+                功能: 随机二/三次元图
+                格式: Anime""";
+    }
 }

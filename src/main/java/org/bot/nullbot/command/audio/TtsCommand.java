@@ -223,12 +223,10 @@ public class TtsCommand implements Command
 
     @Override
     public String getHelpForAI() {
-        return String.format("""
+        return """
                 ◉ Tts 命令
                 功能: 文本转语音并发送到群中
-                限权: %d 级
                 格式: Tts -synth [文本]
-                注意: 当你想要发送语音代替文字回复时使用该命令！""", getAccess()
-        );
+                注意: 需要发送语音替代文字回复时使用该命令""";
     }
 }

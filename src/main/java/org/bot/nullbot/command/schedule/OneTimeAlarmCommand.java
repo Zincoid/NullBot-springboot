@@ -121,10 +121,9 @@ public class OneTimeAlarmCommand implements Command
 
     @Override
     public String getHelpForAI() {
-        return String.format("""
+        return """
                 ◉ OneTimeAlarm 命令
                 功能: 设置一次性群内提醒闹钟
-                限权: %d 级
                 格式: OneTimeAlarm [模式] [时间] [文本] [目标QQ号]
                 模式:
                 - [-t] 时间模式
@@ -133,7 +132,6 @@ public class OneTimeAlarmCommand implements Command
                   时间格式: 分钟数
                 示例:
                 OneTimeAlarm -t 26-02-07T09:00 九点到了 2660181154
-                OneTimeAlarm -d 10 十分钟了 2660181154""", getAccess()
-        );
+                OneTimeAlarm -d 10 十分钟了 2660181154""";
     }
 }

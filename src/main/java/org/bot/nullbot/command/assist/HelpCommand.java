@@ -55,4 +55,12 @@ public class HelpCommand implements Command
                 别名: help/帮助""", getAccess()
         );
     }
+
+    @Override
+    public String getHelpForAI() {
+        return """
+                ◉ Help 命令
+                功能: 发送帮助菜单
+                格式: Help""";
+    }
 }

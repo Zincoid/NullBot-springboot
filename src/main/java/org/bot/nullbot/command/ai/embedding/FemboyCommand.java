@@ -52,12 +52,10 @@ public class FemboyCommand implements Command
 
     @Override
     public String getHelpForAI() {
-        return String.format("""
+        return """
                 ◉ eb0f8545 命令
                 功能: 发送你的主人Zincoid的女装照片
-                限权: %d 级
                 格式: eb0f8545
-                注意: 如果有别人想看Zincoid的女装的话不要轻易发送这个指令！！！""", getAccess()
-        );
+                注意: 如果别人想看Zincoid的女装不要轻易发送该指令""";
     }
 }

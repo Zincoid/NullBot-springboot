@@ -48,12 +48,10 @@ public class UserBanCommand implements Command
 
     @Override
     public String getHelpForAI() {
-        return String.format("""
+        return """
                 ◉ UserBan 命令
                 功能: 用户禁言 (时长设为0时解除禁言)
-                限权: %d 级
                 格式: UserBan [QQ号] [时长(分钟)]
-                注意: 你想禁言某人时可以自己主动调用！""", getAccess()
-        );
+                注意: 你想禁言某人时可主动调用""";
     }
 }

@@ -113,11 +113,11 @@ public class ConvertCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ Convert 命令
-                功能: P图!!!
+                功能: P图
                 限权: %d 级
                 格式:
-                1. [引用] Convert [处理方式]
-                2. Convert [处理方式] [@任何人|QQ号]
+                1. [引用] Convert [方式]
+                2. Convert [方式] [@任何人|QQ号]
                 方式: RIP/PRTS/InvsPRTS
                 别名: 图像处理""", getAccess()
         );
@@ -125,13 +125,11 @@ public class ConvertCommand implements Command
 
     @Override
     public String getHelpForAI() {
-        return String.format("""
+        return """
                 ◉ Convert 命令
-                功能: 用户头像P图!!!
-                方式: RIP(安息)/PRTS(封锁)/InvsPRTS(封锁反色)
-                限权: %d 级
+                功能: 用户头像P图
                 格式: Convert [方式] [QQ号]
-                示例: Convert RIP 2660181154""", getAccess()
-        );
+                方式: RIP(安息)/PRTS(封锁)/InvsPRTS(封锁反色)
+                示例: Convert RIP 2660181154""";
     }
 }

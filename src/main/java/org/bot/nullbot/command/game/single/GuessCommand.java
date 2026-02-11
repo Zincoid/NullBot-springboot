@@ -113,7 +113,7 @@ public class GuessCommand implements Command
         return String.format("""
                 ◉ Guess 命令
                 功能: 猜角色
-                奖励: 1抽数 & 10Exp
+                奖励: 5抽数 & 20Exp
                 限权: %d 级
                 格式: Guess [人物来源|人物名|-f(放弃)]
                 别名: 猜角色/猜""", getAccess()
@@ -122,14 +122,12 @@ public class GuessCommand implements Command
 
     @Override
     public String getHelpForAI() {
-        return String.format("""
+        return """
                 ◉ Guess 命令
                 功能: 猜角色
-                限权: %d 级
                 格式: Guess [人物来源|-f(放弃)]
                 人物来源: 明日方舟
-                示例: Guess 明日方舟""", getAccess()
-        );
+                示例: Guess 明日方舟""";
     }
 
     // public static String crop(String p, double r) throws Exception {
