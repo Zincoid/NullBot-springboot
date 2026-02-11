@@ -57,4 +57,12 @@ public class RandomImageCommand implements Command
                 别名: Image/image/img/随机图片/图片""", getAccess()
         );
     }
+
+    @Override
+    public String getHelpForAI() {
+        return """
+                ◉ RandomImage 命令
+                功能: 发送保存的随机图片
+                格式: RandomImage""";
+    }
 }

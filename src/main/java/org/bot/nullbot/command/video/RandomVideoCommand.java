@@ -56,4 +56,12 @@ public class RandomVideoCommand implements Command
                 别名: Video/video/vid/随机视频/视频""", getAccess()
         );
     }
+
+    @Override
+    public String getHelpForAI() {
+        return """
+                ◉ RandomVideo 命令
+                功能: 发送保存的随机视频
+                格式: RandomVideo""";
+    }
 }

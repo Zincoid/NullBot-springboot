@@ -56,4 +56,12 @@ public class RandomAudioCommand implements Command
                 别名: Audio/audio/aud/随机音频/音频""", getAccess()
         );
     }
+
+    @Override
+    public String getHelpForAI() {
+        return """
+                ◉ RandomAudio 命令
+                功能: 发送保存的随机音频
+                格式: RandomAudio""";
+    }
 }
