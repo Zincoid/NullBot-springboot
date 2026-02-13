@@ -1,6 +1,6 @@
 # NullBot 更新日志
 
-## Beta
+# Beta
 
 ### 2025.12.3
 - Ping...Pong!
