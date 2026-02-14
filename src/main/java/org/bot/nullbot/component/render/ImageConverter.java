@@ -76,7 +76,7 @@ public class ImageConverter
 
     public String invsPRTS(String imagePath) throws Exception {
         Path prts = resourceLoader.getCached("static/image/InvsPRTS.png", tempImagePath);
-        Path tempPngPath = Files.createTempFile("InversePRTS_", ".png");
+        Path tempPngPath = Files.createTempFile("InvsPRTS_", ".png");
         try {
             // 创建 画布
             SvgCanvas canvas = SvgCanvas.create(640, 640);
