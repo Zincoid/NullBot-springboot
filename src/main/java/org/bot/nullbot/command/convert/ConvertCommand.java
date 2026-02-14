@@ -42,7 +42,7 @@ public class ConvertCommand implements Command
                 throw new NullBotMsgException("[图像处理] ❌无方法参数");
 
             String method = event.getCommandParameters().getFirst();
-            if (!List.of("RIP", "PRTS", "InversePRTS").contains(method))
+            if (!List.of("RIP", "PRTS", "InvsPRTS").contains(method))
                 throw new NullBotMsgException("[图像处理] ❌方法不存在");
 
             List<String> urls = new ArrayList<>();
@@ -90,7 +90,7 @@ public class ConvertCommand implements Command
                         case "RIP" -> imageConverter.RIP(imagePath);
                         case "PRTS" -> imageConverter.PRTS(imagePath);
                         case "InvsPRTS" -> imageConverter.invsPRTS(imagePath);
-                        default -> throw new NullBotMsgException("[图像处理] ❌方法不存在: " + method);
+                        default -> throw new NullBotMsgException("[图像处理] ❌方法不存在");
                     };
                 } catch (NullBotMsgException e) {
                     throw e;
