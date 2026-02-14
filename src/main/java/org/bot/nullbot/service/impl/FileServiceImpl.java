@@ -13,6 +13,8 @@ import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.mapper.AdminMapper;
 import org.bot.nullbot.mapper.FileMapper;
 import org.bot.nullbot.service.FileService;
+import org.springframework.context.event.EventListener;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,12 @@ public class FileServiceImpl implements FileService
     private final AdminMapper adminMapper;
     private final FileMapper fileMapper;
     private final FileStorageProperties fileStorageProperties;
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void init(ApplicationReadyEvent event) {  // 更新文件数据库
+        log.info("◎ [FileService] 初始化文件同步中...");
+        scanAndSyncFiles();
+    }
 
     // =================== BOT功能相关 ===================
 

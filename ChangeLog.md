@@ -447,5 +447,6 @@
 - 优化 ImageConverter 组件 - 使用 Base64Util 且不再通过方法参数指定临时路径；
 - 优化 DeepSeekClient 组件 - 拒绝对话和过滤回复添加图片响应；
 - 调整 DeepSeekClient 和 ChatStorage 组件结构 - 将 ChatOption 配置的获取调整至 DeepSeekClient 主方法内并优化历史获取相关方法结构；
+- 增强 FileService - 在应用启动后自动进行一次文件同步；
 - 优化 临时目录结构 和 项目结构；
 - 修复 一些小问题。
