@@ -222,22 +222,24 @@ class NullBotApplicationTests
         //         List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
         // );
 
-        String weapon = "领航者";
-        String base64 = webScreenCapturer.capture(
-                "https://end.canmoe.com/", 1536, 5120,
-                List.of("//section[contains(@class,'panel')][.//h2[contains(text(),'方案推荐列表')]]"),
-                List.of(".ghost-button"),
-                List.of(
-                        "#app > div > div > div.notice-footer > div.about-actions > button",
-                        String.format(
-                                "//div[@class='weapon-name']" +
-                                        "/div[@class='weapon-title' and text()='%s']" +
-                                        "/ancestor::div[contains(@class,'weapon-item')]",
-                                weapon
-                        ),
-                        "//button[contains(.,'收起其他方案')]"
-                )
-        );
+        // String weapon = "领航者";
+        // String base64 = webScreenCapturer.capture(
+        //         "https://end.canmoe.com/", 1536, 5120,
+        //         List.of("//section[contains(@class,'panel')][.//h2[contains(text(),'方案推荐列表')]]"),
+        //         List.of(".ghost-button"),
+        //         List.of(
+        //                 "#app > div > div > div.notice-footer > div.about-actions > button",
+        //                 String.format(
+        //                         "//div[@class='weapon-name']" +
+        //                                 "/div[@class='weapon-title' and text()='%s']" +
+        //                                 "/ancestor::div[contains(@class,'weapon-item')]",
+        //                         weapon
+        //                 ),
+        //                 "//button[contains(.,'收起其他方案')]"
+        //         )
+        // );
+
+        String base64 = webScreenCapturer.captureFull("https://www.baidu.com/", 1920, 1080);
 
         // Base64 解码
         byte[] imageBytes = Base64.getDecoder().decode(base64);
