@@ -7,6 +7,7 @@ import org.bot.nullbot.entity.po.TtsTemplatePO;
 import org.bot.nullbot.mapper.TtsTemplateMapper;
 import org.bot.nullbot.service.TtsTemplateService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -48,6 +49,7 @@ public class TtsTemplateServiceImpl implements TtsTemplateService
     }
 
     @Override
+    @Transactional
     public void increaseUsed(Integer id) {
         TtsTemplatePO template = ttsTemplateMapper.selectById(id);
         if (template == null) return;

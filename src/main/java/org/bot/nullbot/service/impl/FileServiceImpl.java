@@ -13,7 +13,6 @@ import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.mapper.AdminMapper;
 import org.bot.nullbot.mapper.FileMapper;
 import org.bot.nullbot.service.FileService;
-import org.bot.nullbot.util.WebUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
