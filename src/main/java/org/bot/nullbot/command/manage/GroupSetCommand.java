@@ -64,16 +64,16 @@ public class GroupSetCommand implements Command
                         case "ati" -> settingService.switchAntiInjection(groupId);
                         case "tkn" -> settingService.switchThinking(groupId);
                         case "voi" -> {
-                            deepSeekClient.clearHistory(groupId, userId, settingService.getChatOption(groupId));
+                            deepSeekClient.clearHistory(groupId, userId);
                             yield settingService.switchVoice(groupId);
                         }
                         case "ebd" -> {
-                            deepSeekClient.clearHistory(groupId, userId, settingService.getChatOption(groupId));
+                            deepSeekClient.clearHistory(groupId, userId);
                             yield settingService.switchEmbedding(groupId);
                         }
                         case "eau" -> settingService.switchEmbeddingAuth(groupId);
                         case "cus" -> {
-                            deepSeekClient.clearHistory(groupId, userId, settingService.getChatOption(groupId));
+                            deepSeekClient.clearHistory(groupId, userId);
                             yield settingService.switchCustom(groupId);
                         }
                         case "aur" -> settingService.switchAutoReply(groupId);

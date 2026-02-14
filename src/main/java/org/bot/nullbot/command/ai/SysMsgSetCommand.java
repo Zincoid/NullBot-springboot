@@ -40,7 +40,7 @@ public class SysMsgSetCommand implements Command
             if ("-reset".equals(option)) {
                 if (userService.getUserAccess(userId) < 1)
                     throw new NullBotMsgException("[提示词设置] \uD83D\uDEAB重置失败\n仅限权等级I及以上用户可重置提示词");
-                deepSeekClient.clearHistory(groupId, userId, settingService.getChatOption(groupId));
+                deepSeekClient.clearHistory(groupId, userId);
                 sysMsgStorage.reset(groupId);
                 bot.sendGroupMsg(groupId, "[提示词设置] ✅已重置！", false);
                 log.info("\t\t\t\t├─[SysMsgSet] 提示词已重置 - {}", groupId);
@@ -54,7 +54,7 @@ public class SysMsgSetCommand implements Command
                 if (userService.getUserAccess(userId) < 1)
                     throw new NullBotMsgException("[提示词设置] \uD83D\uDEAB设置失败\n仅限权等级I及以上用户可修改Default提示词");
                 String defaultMessage = String.join(" ", params.subList(1, params.size()));
-                deepSeekClient.clearHistory(groupId, userId, settingService.getChatOption(groupId));
+                deepSeekClient.clearHistory(groupId, userId);
                 sysMsgStorage.setDefaultMessage(groupId, defaultMessage);
                 bot.sendGroupMsg(groupId, "[提示词设置] ✅Default模式: 已设置！", false);
                 log.info("\t\t\t\t├─[SysMsgSet] Default提示词已设置 - {} -> {}", groupId, defaultMessage);
@@ -64,7 +64,7 @@ public class SysMsgSetCommand implements Command
                 if (!settingService.getChatOption(groupId).isCustom())
                     throw new NullBotMsgException("[提示词设置] ❌非Custom模式");
                 String customMessage = String.join(" ", params.subList(1, params.size()));
-                deepSeekClient.clearHistory(groupId, userId, settingService.getChatOption(groupId));
+                deepSeekClient.clearHistory(groupId, userId);
                 sysMsgStorage.setCustomMessage(groupId, customMessage);
                 bot.sendGroupMsg(groupId, "[提示词设置] ✅Custom模式: 已设置！", false);
                 log.info("\t\t\t\t├─[SysMsgSet] Custom提示词已设置 - {} -> {}", groupId, customMessage);

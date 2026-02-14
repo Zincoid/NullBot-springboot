@@ -9,7 +9,6 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.exception.NullBotLogException;
-import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
 @CommandMapping({"ChatHistory", "聊天历史"})
@@ -19,14 +18,13 @@ import org.springframework.stereotype.Component;
 public class ChatHistoryCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
-    private final SettingService settingService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long userId = groupMessageEvent.getSender().getUserId();
             Long groupId = groupMessageEvent.getGroupId();
-            String history = deepSeekClient.getHistory(groupId, userId, settingService.getChatOption(groupId));
+            String history = deepSeekClient.getHistory(groupId, userId);
             bot.sendGroupMsg(groupId, "[聊天历史] ✅已获取！\n" + history, false);
             log.info("\t\t\t\t├─[ChatHistory] 已获取 - 历史聊天记录");
         }else
