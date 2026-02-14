@@ -36,13 +36,13 @@ public class ConvertCommand implements Command
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            List<String> params = event.getCommandParameters();
             Long groupId = groupMessageEvent.getGroupId();
 
-            if (event.getCommandParameters().isEmpty())
+            if (params.isEmpty())
                 throw new NullBotMsgException("[图像处理] ❌无方法参数");
-
-            String method = event.getCommandParameters().getFirst();
-            if (!List.of("RIP", "PRTS", "InvsPRTS").contains(method))
+            String method = params.getFirst();
+            if (!List.of("RIP", "PRTS", "InvsPRTS").contains(method))  // 用于减少不必要的图像下载
                 throw new NullBotMsgException("[图像处理] ❌方法不存在");
 
             List<String> urls = new ArrayList<>();
@@ -56,10 +56,10 @@ public class ConvertCommand implements Command
             }
 
             //  ID参数收集 或 AT收集
-            if (event.getCommandParameters().size() > 1) {
+            if (params.size() > 1) {
                 long qqNumber;
                 try {
-                    qqNumber = Long.parseLong(event.getCommandParameters().get(1));
+                    qqNumber = Long.parseLong(params.get(1));
                 } catch (NumberFormatException e) {
                     throw new NullBotMsgException("[图像处理] ❌参数格式错误");
                 }
