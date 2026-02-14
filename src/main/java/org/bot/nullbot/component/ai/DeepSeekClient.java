@@ -199,7 +199,7 @@ public class DeepSeekClient
      *  @param userId 用户ID
      *  @return 历史记录
      */
-    public String getHistoryAsString(Long groupId, Long userId, ChatOption option) {
+    public String getHistory(Long groupId, Long userId, ChatOption option) {
         return switch (option.getScope()) {
             case Group -> chatStorage.getGroupHistoryAsString(groupId, option);
             case Personal -> chatStorage.getUserHistoryAsString(userId, option);

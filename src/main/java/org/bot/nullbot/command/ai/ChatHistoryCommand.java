@@ -26,7 +26,7 @@ public class ChatHistoryCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long userId = groupMessageEvent.getSender().getUserId();
             Long groupId = groupMessageEvent.getGroupId();
-            String history = deepSeekClient.getHistoryAsString(groupId, userId, settingService.getChatOption(groupId));
+            String history = deepSeekClient.getHistory(groupId, userId, settingService.getChatOption(groupId));
             bot.sendGroupMsg(groupId, "[聊天历史] ✅已获取！" + history, false);
             log.info("\t\t\t\t├─[ChatHistory] 已获取 - 历史聊天记录");
         }else
