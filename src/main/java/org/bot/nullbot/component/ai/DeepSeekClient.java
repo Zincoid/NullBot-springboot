@@ -171,7 +171,7 @@ public class DeepSeekClient
     }
 
     /**
-     * 清空指定对话历史
+     * 清空对话历史
      * @param groupId 群ID
      * @param userId 用户ID
      * @return 清除目标
@@ -194,7 +194,7 @@ public class DeepSeekClient
     }
 
     /**
-     * 获取历史对话
+     * 获取对话历史
      *  @param groupId 群ID
      *  @param userId 用户ID
      *  @return 历史记录
@@ -205,20 +205,20 @@ public class DeepSeekClient
             case Personal -> chatStorage.getUserHistory(userId);
             case Monitor -> chatStorage.getMonitorHistory(groupId);
         };
-        if (history == null || history.isEmpty()) return "\n无对话历史";
+        if (history == null || history.isEmpty()) return "无对话历史";
         StringBuilder sb = new StringBuilder();
         for (ChatMessage msg : history) {
             if("user".equals(msg.getRole()))
                 sb.append("\n---\n").append(msg.getUserName()).append("(").append(msg.getUserId()).append("): ").append(msg.getContent());
-            else{
+            else {
                 String content = msg.getContent();
                 if(!option.isCustom() && option.isEmbedding())
                     if(content.startsWith("{") && content.endsWith("}")) continue;
-                sb.append("\n---\n").append("AI: ").append(content);
+                sb.append("\n---\n").append("Null: ").append(content);
             }
 
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     // =================== 工具方法 ===================

@@ -446,5 +446,6 @@
 - 增强 Base64Util 工具类 - 新增 Path 和 String 类型参数的重载方法；
 - 优化 ImageConverter 组件 - 使用 Base64Util 且不再通过方法参数指定临时路径；
 - 优化 DeepSeekClient 组件 - 拒绝对话和过滤回复添加图片响应；
+- 调整 DeepSeekClient 和 ChatStorage 组件 功能分配；
 - 优化 临时目录结构 和 项目结构；
 - 修复 一些小问题。
