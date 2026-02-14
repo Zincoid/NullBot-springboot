@@ -74,8 +74,8 @@ public class ImageConverter
         }
     }
 
-    public String inversePRTS(String imagePath) throws Exception {
-        Path prts = resourceLoader.getCached("static/image/InversePRTS.png", tempImagePath);
+    public String invsPRTS(String imagePath) throws Exception {
+        Path prts = resourceLoader.getCached("static/image/InvsPRTS.png", tempImagePath);
         Path tempPngPath = Files.createTempFile("InversePRTS_", ".png");
         try {
             // 创建 画布

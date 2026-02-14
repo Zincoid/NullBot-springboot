@@ -133,7 +133,7 @@ class NullBotApplicationTests
         //         // .bold()
         //         .stroke("#FFFFFF", 6);
 
-        Path prts = ResourceUtil.getCached("static/image/inversePRTS.png", "/root/Nullbot/file/temp/font");
+        Path prts = ResourceUtil.getCached("static/image/invsPRTS.png", "/root/Nullbot/file/temp/font");
         // 创建 SVG 画布
         SvgCanvas canvas = SvgCanvas.create(640, 640);
         // 添加用户头像

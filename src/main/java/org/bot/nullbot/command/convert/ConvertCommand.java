@@ -89,7 +89,7 @@ public class ConvertCommand implements Command
                     base64 = switch (method){
                         case "RIP" -> imageConverter.RIP(imagePath);
                         case "PRTS" -> imageConverter.PRTS(imagePath);
-                        case "InvsPRTS" -> imageConverter.inversePRTS(imagePath);
+                        case "InvsPRTS" -> imageConverter.invsPRTS(imagePath);
                         default -> throw new NullBotMsgException("[图像处理] ❌方法不存在");
                     };
                 } catch (NullBotMsgException e) {
