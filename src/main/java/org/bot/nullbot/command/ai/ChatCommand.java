@@ -11,7 +11,6 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
-import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -30,7 +29,6 @@ public class ChatCommand implements Command
 
     private final DeepSeekClient deepSeekClient;
     private final ChatStorage chatStorage;
-    private final SettingService settingService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
@@ -53,21 +51,17 @@ public class ChatCommand implements Command
 
             String response;
             try {
-                response = deepSeekClient.chat(
-                        messageId, groupId, userId, userName, message, bot, event,
-                        settingService.getChatOption(groupId)
-                );
+                response = deepSeekClient.chat(messageId, groupId, userId, userName, message, bot, event);
             } catch (Exception e) {
                 throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
             }
 
             if (message.contains(commandPrefix))
-                bot.sendGroupMsg(groupId,
-                        """
-                                [AI] ⚠️检测到指令前缀 注意!!!
+                bot.sendGroupMsg(groupId, """
+                                [AI] ⚠️检测到指令前缀
                                 - 使用指令时请不要@Null
                                 - @Null仅触发AI对话
-                                - Null可执行部分指令所以有时候@Null她会帮你执行""",
+                                - Null仅可执行部分指令""",
                         false
                 );
 
