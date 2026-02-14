@@ -43,7 +43,7 @@ public class PucciCommand implements Command
             String tempFilePath = fileStorageProperties.getTempPath();
             try {
                 Path htmlPath = resourceLoader.getCached("static/html/pucci.html", tempFilePath + "/html");
-                Path bgPath = resourceLoader.getCached("static/image/pucci.png", tempFilePath + "/meme");
+                Path bgPath = resourceLoader.getCached("static/image/pucci.png", tempFilePath + "/image");
                 Map<String, String> variables = new HashMap<>();
                 Map<String, String> images = new HashMap<>();
 

@@ -410,7 +410,7 @@ public class DeepSeekClient
     private String buildRefusedMsg() throws IOException {
         return MsgUtils.builder()
                 .text("[AI] ⚠️该对话被拒绝")
-                .img(resourceLoader.getCached("static/image/Neuro_Filtered.jpg").toAbsolutePath().toString())
+                .img(resourceLoader.getCached("static/image/Filtered.jpg").toAbsolutePath().toString())
                 .build();
     }
 
@@ -421,7 +421,7 @@ public class DeepSeekClient
     private String buildFilteredMsg() throws IOException {
         return MsgUtils.builder()
                 .text("[AI] ⚠️该回复被过滤")
-                .img(resourceLoader.getCached("static/image/Neuro_Filtered.jpg").toAbsolutePath().toString())
+                .img(resourceLoader.getCached("static/image/Filtered.jpg").toAbsolutePath().toString())
                 .build();
     }
 
