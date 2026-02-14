@@ -11,7 +11,6 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
-import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -26,7 +25,6 @@ public class PokeReactCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
     private final ChatStorage chatStorage;
-    private final SettingService settingService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) throws Exception {
@@ -48,10 +46,7 @@ public class PokeReactCommand implements Command
 
             String response;
             try {
-                response = deepSeekClient.chat(
-                        null, groupId, userId, userName, "揉了你一下", bot, event,
-                        settingService.getChatOption(groupId)
-                );
+                response = deepSeekClient.chat(null, groupId, userId, userName, "揉了你一下", bot, event);
             } catch (Exception e) {
                 throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
             }

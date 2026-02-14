@@ -92,6 +92,7 @@ public class ResourceLoader
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
+        // 添加至数据库系统 (不会自动新增父目录 需手动SYNC)
         fileService.addFileRecordForBot(
                 tempPath, tempFile.getFileName().toString(), Files.size(tempFile),
                 lastModified, null, null
