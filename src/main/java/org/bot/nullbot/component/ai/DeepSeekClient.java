@@ -111,7 +111,7 @@ public class DeepSeekClient
      * @param userId 用户ID 用于区分不同的对话历史，帮助AI区分用户
      * @param userName 用户昵称 用于帮助AI区分用户
      * @param userMessage 用户当前消息
-     * @param bot 机器人实体 (用于执行嵌入命令)
+     * @param bot 机器人实体 (用于执行嵌入命令和回复)
      * @param event 命令事件实体 (用于执行嵌入命令)
      * @return AI回复内容
      */
@@ -149,7 +149,7 @@ public class DeepSeekClient
             // 用户消息添加到历史
             chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
             // 构建完整消息列表
-            List<Map<String, String>> _messages = buildMessages(chatMessages, option, groupId);
+            List<Map<String, String>> _messages = buildMessages(chatMessages, groupId, option);
             // 发送对话请求到API
             String originalResponse = sendRequest(_messages, option);
 
@@ -274,9 +274,11 @@ public class DeepSeekClient
     /**
      * 添加系统信息构建发送给 API 的消息列表
      * @param chatMessages 信息列表
+     * @param groupId 群ID
+     * @param option 配置
      * @return 发送给 API 的消息列表
      */
-    private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages, ChatOption option, Long groupId) {
+    private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages, Long groupId, ChatOption option) {
         String systemMessage;
         if (option.isCustom())
             systemMessage = sysMsgStorage.getCustomMessage(groupId);
@@ -324,6 +326,7 @@ public class DeepSeekClient
     /**
      * 发送 HTTP 请求到 API
      * @param _messages 请求消息列表 (包括历史)
+     * @param option 配置
      * @return AI 回复内容
      */
     private String sendRequest(List<Map<String, String>> _messages, ChatOption option) throws Exception {
@@ -364,6 +367,10 @@ public class DeepSeekClient
 
     /**
      * 非指令嵌入模式应答处理
+     * @param originalResponse 原始响应文本
+     * @param chatMessages 历史存储
+     * @param groupId 群ID
+     * @param bot 机器人实体
      * @return 处理过的消息 (已过滤)
      */
     String executeBasic(String originalResponse, List<ChatMessage> chatMessages, Long groupId,
@@ -386,6 +393,12 @@ public class DeepSeekClient
 
     /**
      * 指令嵌入模式应答处理 (链式)
+     * @param originalResponse 原始响应文本
+     * @param chatMessages 历史存储
+     * @param groupId 群ID
+     * @param bot 机器人实体
+     * @param event 指令事件
+     * @param option 配置
      * @return 处理过的消息 (未过滤)
      */
     String executeEmbeddingChain(String originalResponse, List<ChatMessage> chatMessages, Long groupId,
@@ -435,6 +448,12 @@ public class DeepSeekClient
 
     /**
      * 指令嵌入模式应答处理 (非链式)
+     * @param originalResponse 原始响应文本
+     * @param chatMessages 历史存储
+     * @param groupId 群ID
+     * @param bot 机器人实体
+     * @param event 指令事件
+     * @param option 配置
      * @return 处理过的消息 (已过滤)
      */
     @Deprecated
@@ -460,6 +479,7 @@ public class DeepSeekClient
 
     /**
      * 异常消息过滤器
+     * @param message 消息
      * @return 是否过滤
      */
     boolean messageFilter(String message) {
