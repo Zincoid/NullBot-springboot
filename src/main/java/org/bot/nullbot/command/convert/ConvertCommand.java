@@ -74,7 +74,6 @@ public class ConvertCommand implements Command
 
             // 开始处理
             String tempFilePath = fileStorageProperties.getTempPath();
-            String tempFontPath = tempFilePath + "/fonts";
             for (String url : urls) {
                 String tempFileName = UUID.randomUUID().toString();
                 String downloadedFileName;
@@ -88,9 +87,9 @@ public class ConvertCommand implements Command
                 String base64;
                 try {
                     base64 = switch (method){
-                        case "RIP" -> imageConverter.RIP(imagePath, tempFontPath);
-                        case "PRTS" -> imageConverter.PRTS(imagePath, tempFontPath);
-                        case "InvsPRTS" -> imageConverter.inversePRTS(imagePath, tempFontPath);
+                        case "RIP" -> imageConverter.RIP(imagePath);
+                        case "PRTS" -> imageConverter.PRTS(imagePath);
+                        case "InvsPRTS" -> imageConverter.inversePRTS(imagePath);
                         default -> throw new NullBotMsgException("[图像处理] ❌方法不存在");
                     };
                 } catch (NullBotMsgException e) {
