@@ -200,11 +200,25 @@ public class DeepSeekClient
      *  @return 历史记录
      */
     public String getHistory(Long groupId, Long userId, ChatOption option) {
-        return switch (option.getScope()) {
-            case Group -> chatStorage.getGroupHistoryAsString(groupId, option);
-            case Personal -> chatStorage.getUserHistoryAsString(userId, option);
-            case Monitor -> chatStorage.getMonitorHistoryAsString(groupId, option);
+        List<ChatMessage> history = switch (option.getScope()) {
+            case Group -> chatStorage.getGroupHistory(groupId);
+            case Personal -> chatStorage.getUserHistory(userId);
+            case Monitor -> chatStorage.getMonitorHistory(groupId);
         };
+        if (history == null || history.isEmpty()) return "\n无对话历史";
+        StringBuilder sb = new StringBuilder();
+        for (ChatMessage msg : history) {
+            if("user".equals(msg.getRole()))
+                sb.append("\n---\n").append(msg.getUserName()).append("(").append(msg.getUserId()).append("): ").append(msg.getContent());
+            else{
+                String content = msg.getContent();
+                if(!option.isCustom() && option.isEmbedding())
+                    if(content.startsWith("{") && content.endsWith("}")) continue;
+                sb.append("\n---\n").append("AI: ").append(content);
+            }
+
+        }
+        return sb.toString();
     }
 
     // =================== 工具方法 ===================

@@ -17,16 +17,40 @@ import java.util.concurrent.locks.ReentrantLock;
 @Component
 public class ChatStorage
 {
-    private final Map<Long, ReentrantLock> groupLocks = new ConcurrentHashMap<>();
-    private final Map<Long, ReentrantLock> userLocks = new ConcurrentHashMap<>();
-
     private final Map<Long, List<ChatMessage>> userHistories = new ConcurrentHashMap<>();
     private final Map<Long, List<ChatMessage>> groupHistories = new ConcurrentHashMap<>();
     private final Map<Long, List<ChatMessage>> monitorHistories = new ConcurrentHashMap<>();
 
-    private final Map<Long, LocalDateTime> banMap = new ConcurrentHashMap<>();
+    private final Map<Long, ReentrantLock> groupLocks = new ConcurrentHashMap<>();
+    private final Map<Long, ReentrantLock> userLocks = new ConcurrentHashMap<>();
 
+    private final Map<Long, LocalDateTime> banMap = new ConcurrentHashMap<>();
     private final List<String> errorMessages = new CopyOnWriteArrayList<>();
+
+    // =================== 历史功能相关 ===================
+
+    public List<ChatMessage> getUserHistory(Long userId) { return userHistories.computeIfAbsent(userId, k -> new ArrayList<>()); }
+    public List<ChatMessage> getGroupHistory(Long groupId) { return groupHistories.computeIfAbsent(groupId, k -> new ArrayList<>()); }
+    public List<ChatMessage> getMonitorHistory(Long groupId) { return monitorHistories.computeIfAbsent(groupId, k -> new ArrayList<>()); }
+
+    public void trimHistory(List<ChatMessage> history, int maxHistoryLength) {
+        if (history.size() > maxHistoryLength) {
+            int removeCount = history.size() - maxHistoryLength;
+            int startIndex = 0;
+            if ("system".equals(history.getFirst().getRole())) startIndex = 1;  // 跳过系统消息
+            for (int i = 0; i < removeCount; i++) history.remove(startIndex);  // 移除最旧消息
+        }
+    }
+
+    public void clearUserHistory(Long userId) { userHistories.remove(userId); }
+    public void clearGroupHistory(Long groupId) { groupHistories.remove(groupId); }
+    public void clearMonitorHistory(Long groupId) { monitorHistories.remove(groupId); }
+
+    public void resetAllHistories() {
+        userHistories.clear();
+        groupHistories.clear();
+        monitorHistories.clear();
+    }
 
     // =================== 并发功能相关 ===================
 
@@ -80,53 +104,6 @@ public class ChatStorage
         } finally {
             lock.unlock();  // 解锁历史存储
         }
-    }
-
-    // =================== 历史功能相关 ===================
-
-    public List<ChatMessage> getUserHistory(Long userId) { return userHistories.computeIfAbsent(userId, k -> new ArrayList<>()); }
-    public List<ChatMessage> getGroupHistory(Long groupId) { return groupHistories.computeIfAbsent(groupId, k -> new ArrayList<>()); }
-    public List<ChatMessage> getMonitorHistory(Long groupId) { return monitorHistories.computeIfAbsent(groupId, k -> new ArrayList<>()); }
-
-    public void trimHistory(List<ChatMessage> history, int maxHistoryLength) {
-        if (history.size() > maxHistoryLength) {
-            int removeCount = history.size() - maxHistoryLength;
-            int startIndex = 0;
-            if ("system".equals(history.getFirst().getRole())) startIndex = 1;  // 跳过系统消息
-            for (int i = 0; i < removeCount; i++) history.remove(startIndex);  // 移除最旧消息
-        }
-    }
-
-    public String getUserHistoryAsString(Long userId, ChatOption option) { return getHistoryStringForAI(userId, userHistories, option); }
-    public String getGroupHistoryAsString(Long groupId, ChatOption option) { return getHistoryStringForAI(groupId, groupHistories, option); }
-    public String getMonitorHistoryAsString(Long groupId, ChatOption option) { return getHistoryStringForAI(groupId, monitorHistories, option); }
-
-    private String getHistoryStringForAI(Long id, Map<Long, List<ChatMessage>> histories, ChatOption option) {
-        StringBuilder sb = new StringBuilder();
-        List<ChatMessage> history =  histories.get(id);
-        if (history == null || history.isEmpty()) return "\n无对话历史";
-        for (ChatMessage msg : history) {
-            if("user".equals(msg.getRole()))
-                sb.append("\n---\n").append(msg.getUserName()).append("(").append(msg.getUserId()).append("): ").append(msg.getContent());
-            else{
-                String content = msg.getContent();
-                if(!option.isCustom() && option.isEmbedding())
-                    if(content.startsWith("{") && content.endsWith("}")) continue;
-                sb.append("\n---\n").append("AI: ").append(content);
-            }
-
-        }
-        return sb.toString();
-    }
-
-    public void clearUserHistory(Long userId) { userHistories.remove(userId); }
-    public void clearGroupHistory(Long groupId) { groupHistories.remove(groupId); }
-    public void clearMonitorHistory(Long groupId) { monitorHistories.remove(groupId); }
-
-    public void resetAllHistories() {
-        userHistories.clear();
-        groupHistories.clear();
-        monitorHistories.clear();
     }
 
     // =================== 纠错功能相关 ===================
