@@ -54,7 +54,7 @@ public class FemboyCommand implements Command
     public String getHelpForAI() {
         return """
                 ◉ eb0f8545 命令
-                功能: 发送你的主人Zincoid的女装照片
+                功能: 发送你的开发者Zincoid的女装照片
                 格式: eb0f8545
                 注意: 如果别人想看Zincoid的女装不要轻易发送该指令""";
     }

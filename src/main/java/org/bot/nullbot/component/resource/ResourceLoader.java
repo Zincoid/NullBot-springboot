@@ -1,6 +1,7 @@
 package org.bot.nullbot.component.resource;
 
 import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.service.FileService;
 import org.springframework.stereotype.Component;
 import java.io.*;
@@ -16,8 +17,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class ResourceLoader
 {
+    private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
+
     private final Map<String, Path> CACHE = new ConcurrentHashMap<>();
+
+    // =================== 应用方法 ===================
+
+    public Path getCached(String resourcePath) throws IOException {
+        return getCached(resourcePath, fileStorageProperties.getTempPath());
+    }
 
     public Path getCached(String resourcePath, String tempPath) throws IOException {
         // 尝试获取缓存
@@ -40,6 +49,16 @@ public class ResourceLoader
             }
         }
     }
+
+    public void clearCache() {
+        CACHE.clear();
+    }
+
+    public void removeFromCache(String resourcePath) {
+        CACHE.remove(resourcePath);
+    }
+
+    // =================== 工具方法 ===================
 
     public Path getCachedOrigin(String resourcePath, String tempPath) {
         // 使用缓存
@@ -80,13 +99,5 @@ public class ResourceLoader
         // JVM退出时删除
         tempFile.toFile().deleteOnExit();
         return tempFile;
-    }
-
-    public void clearCache() {
-        CACHE.clear();
-    }
-
-    public void removeFromCache(String resourcePath) {
-        CACHE.remove(resourcePath);
     }
 }

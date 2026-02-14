@@ -1,5 +1,6 @@
 package org.bot.nullbot.component.ai;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -15,11 +16,13 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.component.storage.SysMsgStorage;
 import org.bot.nullbot.config.prop.DeepSeekProperties;
@@ -45,6 +48,7 @@ public class DeepSeekClient
     private final DeepSeekProperties deepSeekProperties;
     private final ChatStorage chatStorage;
     private final SysMsgStorage sysMsgStorage;
+    private final ResourceLoader resourceLoader;
     private final ApplicationEventPublisher eventPublisher;
     private final CommandRegistry commandRegistry;
 
@@ -71,24 +75,20 @@ public class DeepSeekClient
         AI_COMMAND_WHITE_LIST = Collections.unmodifiableSet(commands);
     }
 
-    // private Scope scope = Scope.Group;  // 会话范围
-    // private boolean antiInjection = true;  // 防注入模式
-    // private boolean thinking = false;  // 深度思考模式
-    // private boolean embedding = true;  // 嵌入命令模式
-    // private boolean embeddingAuth = false;  // 嵌入限权验证
-
     private boolean embeddingLimit = false;  // 嵌入速率限制 只能 FALSE
 
     public DeepSeekClient(
             DeepSeekProperties deepSeekProperties,
             ChatStorage chatStorage,
             SysMsgStorage sysMsgStorage,
+            ResourceLoader resourceLoader,
             ApplicationEventPublisher eventPublisher,
             @Lazy CommandRegistry commandRegistry
     ) {
         this.deepSeekProperties = deepSeekProperties;
         this.chatStorage = chatStorage;
         this.sysMsgStorage = sysMsgStorage;
+        this.resourceLoader = resourceLoader;
         this.eventPublisher = eventPublisher;
         this.commandRegistry = commandRegistry;
 
@@ -98,32 +98,14 @@ public class DeepSeekClient
                 .build();
     }
 
-    // public String changeScope() {
-    //     scope = scope.next();
-    //     return scope.toString();
-    // }
-
-    // public String changeThinking() {
-    //     thinking = !thinking;
-    //     return thinking ? "思考" : "非思考";
-    // }
-
-    // public String changeEmbedding() {
-    //     embedding = !embedding;
-    //     return embedding ? "指令" : "非指令";
-    // }
-
-    // public String changeAntiInjection() {
-    //     antiInjection = !antiInjection;
-    //     return antiInjection ? "防注入" : "无防御";
-    // }
+    // =================== 主调用方法 ===================
 
     /**
      * 与DeepSeek进行对话（连续对话）
-     * @param messageId 消息ID，在此仅记录用 (用于撤回检测)
-     * @param groupId 群ID，用于区分不同的对话历史
-     * @param userId 用户ID，用于区分不同的对话历史，帮助AI区分用户
-     * @param userName 用户昵称，用于帮助AI区分用户
+     * @param messageId 消息ID 在此仅记录用 (用于撤回检测)
+     * @param groupId 群ID 用于区分不同的对话历史
+     * @param userId 用户ID 用于区分不同的对话历史，帮助AI区分用户
+     * @param userName 用户昵称 用于帮助AI区分用户
      * @param userMessage 用户当前消息
      * @param bot 机器人实体 (用于执行嵌入命令)
      * @param event 命令事件实体 (用于执行嵌入命令)
@@ -140,7 +122,7 @@ public class DeepSeekClient
                     """.formatted(userMessage);
             String res = chatSingle(req);
             if(res.contains("YES")) {
-                String response = "[AI] ⚠️该对话被拒绝";
+                String response = buildRefusedMsg();
                 bot.sendGroupMsg(groupId, response, false);
                 return response;
             }
@@ -189,13 +171,52 @@ public class DeepSeekClient
     }
 
     /**
+     * 清空指定对话历史
+     * @param groupId 群ID
+     * @param userId 用户ID
+     * @return 清除目标
+     */
+    public String clearHistory(Long groupId, Long userId, ChatOption option) {
+        return switch (option.getScope()) {
+            case Group -> {
+                chatStorage.clearGroupHistory(groupId);
+                yield "(Group模式) 群聊" + groupId;
+            }
+            case Personal -> {
+                chatStorage.clearUserHistory(userId);
+                yield "(Personal模式) 用户" + userId;
+            }
+            case Monitor -> {
+                chatStorage.clearMonitorHistory(groupId);
+                yield "(Monitor模式) 群聊" + groupId;
+            }
+        };
+    }
+
+    /**
+     * 获取历史对话
+     *  @param groupId 群ID
+     *  @param userId 用户ID
+     *  @return 历史记录
+     */
+    public String getHistoryAsString(Long groupId, Long userId, ChatOption option) {
+        return switch (option.getScope()) {
+            case Group -> chatStorage.getGroupHistoryAsString(groupId, option);
+            case Personal -> chatStorage.getUserHistoryAsString(userId, option);
+            case Monitor -> chatStorage.getMonitorHistoryAsString(groupId, option);
+        };
+    }
+
+    // =================== 工具方法 ===================
+
+    /**
      * 执行非嵌入模式处理逻辑
      * @return 处理过的消息 (过滤)
      */
-    String executeBasic(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot) {
+    String executeBasic(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot) throws IOException {
         // 处理消息
         String response = originalResponse.replaceAll("(\r?\n)+", "\n").trim();
-        if (messageFilter(response)) response = "[AI] ⚠️该回复被过滤";
+        if (messageFilter(response)) response = buildFilteredMsg();
         // 发送消息
         ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
         // 记录消息
@@ -213,7 +234,7 @@ public class DeepSeekClient
      * 执行嵌入模式处理逻辑 (链式)
      * @return 处理过的消息 (未过滤)
      */
-    String executeEmbeddingChain(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot, CommandEvent<?> event, ChatOption option) {
+    String executeEmbeddingChain(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot, CommandEvent<?> event, ChatOption option) throws IOException {
         String response = originalResponse.replaceAll("(\r?\n)+", "\n").trim();
         // 使用正则匹配所有{指令}和文本部分
         Pattern pattern = Pattern.compile("(\\{.*?}|[^{]+)");
@@ -241,7 +262,7 @@ public class DeepSeekClient
                 // 发送消息
                 String text = segment.trim();
                 if (!text.isEmpty()) {
-                    if (messageFilter(text)) text = "[AI] ⚠️该回复被过滤";
+                    if (messageFilter(text)) text = buildFilteredMsg();
                     ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, text, false);
                     // 记录消息
                     chatMessages.add(new ChatMessage(
@@ -262,7 +283,7 @@ public class DeepSeekClient
      * @return 处理过的消息 (过滤)
      */
     @Deprecated
-    String executeEmbedding(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot, CommandEvent<?> event, ChatOption option) {
+    String executeEmbedding(String originalResponse, List<ChatMessage> chatMessages, Long groupId, Bot bot, CommandEvent<?> event, ChatOption option) throws IOException {
         Matcher m = Pattern.compile("\\{(.*?)}").matcher(originalResponse);
         // 执行指令
         while (m.find()) {
@@ -271,22 +292,12 @@ public class DeepSeekClient
         }
         // 处理消息
         String response = originalResponse.replaceAll("\\{.*?}", "").replaceAll("(\r?\n)+", "\n").trim();
-        if (messageFilter(response)) response = "[AI] ⚠️该回复被过滤";
+        if (messageFilter(response)) response =  buildFilteredMsg();
         // 发送消息
         ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
         // 记录消息
         chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", originalResponse, botId, "Null"));
         return response;
-    }
-
-    /**
-     * 异常消息过滤器
-     * @return 是否过滤
-     */
-    boolean messageFilter(String message) {
-        Pattern pattern = Pattern.compile("\\[\\d+]\\[.+?\\(\\d+\\)]:");
-        Matcher matcher = pattern.matcher(message);
-        return matcher.find();
     }
 
     /**
@@ -383,40 +394,35 @@ public class DeepSeekClient
     }
 
     /**
-     * 清空指定对话历史
-     * @param groupId 群ID
-     * @param userId 用户ID
-     * @return 清除目标
+     * 异常消息过滤器
+     * @return 是否过滤
      */
-    public String clearHistory(Long groupId, Long userId, ChatOption option) {
-        return switch (option.getScope()) {
-            case Group -> {
-                chatStorage.clearGroupHistory(groupId);
-                yield "(Group模式) 群聊" + groupId;
-            }
-            case Personal -> {
-                chatStorage.clearUserHistory(userId);
-                yield "(Personal模式) 用户" + userId;
-            }
-            case Monitor -> {
-                chatStorage.clearMonitorHistory(groupId);
-                yield "(Monitor模式) 群聊" + groupId;
-            }
-        };
+    boolean messageFilter(String message) {
+        Pattern pattern = Pattern.compile("\\[\\d+]\\[.+?\\(\\d+\\)]:");
+        Matcher matcher = pattern.matcher(message);
+        return matcher.find();
     }
 
     /**
-     * 获取历史对话
-     *  @param groupId 群ID
-     *  @param userId 用户ID
-     *  @return 历史记录
+     * 构建拒绝应答消息
+     * @return 消息字符串
      */
-    public String getHistoryAsString(Long groupId, Long userId, ChatOption option) {
-        return switch (option.getScope()) {
-            case Group -> chatStorage.getGroupHistoryAsString(groupId, option);
-            case Personal -> chatStorage.getUserHistoryAsString(userId, option);
-            case Monitor -> chatStorage.getMonitorHistoryAsString(groupId, option);
-        };
+    private String buildRefusedMsg() throws IOException {
+        return MsgUtils.builder()
+                .text("[AI] ⚠️该对话被拒绝")
+                .img(resourceLoader.getCached("static/image/Neuro_Filtered.jpg").toAbsolutePath().toString())
+                .build();
+    }
+
+    /**
+     * 构建过滤回复消息
+     * @return 消息字符串
+     */
+    private String buildFilteredMsg() throws IOException {
+        return MsgUtils.builder()
+                .text("[AI] ⚠️该回复被过滤")
+                .img(resourceLoader.getCached("static/image/Neuro_Filtered.jpg").toAbsolutePath().toString())
+                .build();
     }
 
     /**
