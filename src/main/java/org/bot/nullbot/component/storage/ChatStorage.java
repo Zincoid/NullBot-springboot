@@ -3,6 +3,7 @@ package org.bot.nullbot.component.storage;
 import lombok.Data;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.ChatOption;
+import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,8 @@ public class ChatStorage
 
     private final Map<Long, LocalDateTime> banMap = new ConcurrentHashMap<>();
     private final List<String> errorMessages = new CopyOnWriteArrayList<>();
+
+    private final SettingService settingService;
 
     // =================== 历史功能相关 ===================
 
@@ -80,7 +83,8 @@ public class ChatStorage
 
     // =================== 撤回功能相关 ===================
 
-    public List<ChatMessage> getAIMessagesForRecall(ChatOption option, Long groupId, Long userId, int n) {
+    public List<ChatMessage> getAIMessagesForRecall(Long groupId, Long userId, int n) {
+        ChatOption option = settingService.getChatOption(groupId);
         ReentrantLock lock = switch (option.getScope()) {
             case Group, Monitor -> getGroupLock(groupId);
             case Personal -> getUserLock(userId);

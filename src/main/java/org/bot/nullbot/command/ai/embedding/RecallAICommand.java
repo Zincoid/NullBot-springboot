@@ -11,7 +11,6 @@ import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
-import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,7 +22,6 @@ import java.util.List;
 public class RecallAICommand implements Command
 {
     private final ChatStorage chatStorage;
-    private final SettingService settingService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -41,7 +39,7 @@ public class RecallAICommand implements Command
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getSender().getUserId();
 
-            List<ChatMessage> messages = chatStorage.getAIMessagesForRecall(settingService.getChatOption(groupId), groupId, userId, n);
+            List<ChatMessage> messages = chatStorage.getAIMessagesForRecall(groupId, userId, n);
             for (ChatMessage message : messages) bot.deleteMsg(message.getMessageId());
 
             log.info("\t\t\t\t├─[RecallAI] 已撤回AI消息 -> {}条", n);
