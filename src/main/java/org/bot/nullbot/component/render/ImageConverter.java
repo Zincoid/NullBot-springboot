@@ -19,13 +19,13 @@ public class ImageConverter
 
     public ImageConverter(ResourceLoader resourceLoader, FileStorageProperties fileStorageProperties) {
         this.resourceLoader = resourceLoader;
-        tempFontPath = fileStorageProperties.getTempPath() + "/fonts";
+        tempFontPath = fileStorageProperties.getTempPath() + "/font";
         tempImagePath = fileStorageProperties.getTempPath() + "/image";
 
     }
 
     public String RIP(String imagePath) throws Exception {
-        resourceLoader.getCached("static/fonts/Bernard MT Condensed.ttf", tempFontPath);
+        resourceLoader.getCached("static/font/Bernard MT Condensed.ttf", tempFontPath);
         Path tempPngPath = Files.createTempFile("RIP_", ".png");
         try {
             // 创建 画布

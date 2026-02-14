@@ -115,7 +115,7 @@ class NullBotApplicationTests
 
     @Test
     void renderTest() throws Exception {
-        // Path fontPath = ResourceUtil.getCached("static/fonts/Bernard MT Condensed.ttf", "/root/Nullbot/file/temp/fonts");
+        // Path fontPath = ResourceUtil.getCached("static/font/Bernard MT Condensed.ttf", "/root/Nullbot/file/temp/font");
         // // 创建 SVG 画布
         // SvgCanvas canvas = SvgCanvas.create(640, 640);
         //
@@ -133,7 +133,7 @@ class NullBotApplicationTests
         //         // .bold()
         //         .stroke("#FFFFFF", 6);
 
-        Path prts = ResourceUtil.getCached("static/image/inversePRTS.png", "/root/Nullbot/file/temp/fonts");
+        Path prts = ResourceUtil.getCached("static/image/inversePRTS.png", "/root/Nullbot/file/temp/font");
         // 创建 SVG 画布
         SvgCanvas canvas = SvgCanvas.create(640, 640);
         // 添加用户头像
@@ -149,7 +149,7 @@ class NullBotApplicationTests
 
         // 使用 resvg 渲染为 PNG
         Path outputPath = Path.of("src/test/testFile/output.png");
-        canvas.render(outputPath, "/root/Nullbot/file/temp/fonts");
+        canvas.render(outputPath, "/root/Nullbot/file/temp/font");
 
         // 先保存SVG文件查看内容
         Path svgPath = Path.of("src/test/testFile/output.svg");

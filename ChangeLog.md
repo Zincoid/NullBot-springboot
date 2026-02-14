@@ -445,4 +445,5 @@
 - 优化 ResourceLoader 组件 - 添加默认临时路径方法；
 - 增强 Base64Util 工具类 - 新增 Path 和 String 类型参数的重载方法；
 - 优化 ImageConverter 组件 - 使用 Base64Util 且不再通过方法参数指定临时路径；
-- 优化 DeepSeekClient 组件 - 拒绝对话和过滤回复添加图片响应。
+- 优化 DeepSeekClient 组件 - 拒绝对话和过滤回复添加图片响应；
+- 优化 临时目录结构。
