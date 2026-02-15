@@ -98,7 +98,7 @@ def main():
     # 执行重命名操作
     remove_prefix_in_directory(directory_path, prefix)
 
-    input("按Enter键退出...")
+    input("\n按Enter键退出...")
 
 if __name__ == "__main__":
     main()
