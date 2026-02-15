@@ -28,7 +28,7 @@ public class ImageGetCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
-            if(params.isEmpty()) throw new NullBotMsgException("[获取图片] ❌无文件名参数");
+            if (params.isEmpty()) throw new NullBotMsgException("[获取图片] ❌无文件名参数");
             String imagePath = FileUtil.getFilePathByName(fileStorageProperties.getImagePath() + "/collect", params.getFirst());
             if (imagePath == null) throw new NullBotMsgException("[获取图片] ❌未找到该图片");
 

@@ -28,7 +28,7 @@ public class VideoGetCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
-            if(params.isEmpty()) throw new NullBotMsgException("[获取视频] ❌无文件名参数");
+            if (params.isEmpty()) throw new NullBotMsgException("[获取视频] ❌无文件名参数");
             String videoPath = FileUtil.getFilePathByName(fileStorageProperties.getVideoPath(), params.getFirst());
             if (videoPath == null) throw new NullBotMsgException("[获取视频] ❌未找到该视频");
 

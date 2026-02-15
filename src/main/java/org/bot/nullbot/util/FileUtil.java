@@ -13,11 +13,8 @@ public class FileUtil
     public static String getFolderTreeString(String rootPath, int maxDepth) throws IOException {
         Path root = Paths.get(rootPath);
         StringBuilder sb = new StringBuilder();
-        if (!Files.exists(root)) {
-            throw new IllegalArgumentException("路径不存在: " + rootPath);
-        }
-        if (!Files.isDirectory(root)) {
-            throw new IllegalArgumentException("不是文件夹: " + rootPath);
+        if (!Files.exists(root) || !Files.isDirectory(root)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + rootPath);
         }
         sb.append(root.getFileName().toString()).append("\n");
         buildTreeString(root, "", true, sb, maxDepth, 0);
@@ -95,22 +92,21 @@ public class FileUtil
                 files = stream.filter(Files::isRegularFile).toList();
             }
 
-            if (files.isEmpty()) {
-                return null;
-            }
-
-            Random random = new Random();
-            Path selectedFile = files.get(random.nextInt(files.size()));
-            return selectedFile.toAbsolutePath().toString();
-
+            if (files.isEmpty()) return null;
+            return files.get(new Random().nextInt(files.size()))
+                    .toAbsolutePath().toString();
         } catch (IOException e) {
-            throw new IllegalArgumentException("读取目录出错: " + directoryPath);
+            throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
     }
 
     public static String getRandomFileByPattern(String directoryPath, String pattern) {
         try {
             Path directory = Paths.get(directoryPath);
+            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+                throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+            }
+
             FileSystem fs = FileSystems.getDefault();
             PathMatcher matcher = fs.getPathMatcher("glob:" + pattern);
 
@@ -122,46 +118,31 @@ public class FileUtil
                         .toList();
             }
 
-            if (matchedFiles.isEmpty()) {
-                System.err.println("没有匹配的文件: " + pattern);
-                return null;
-            }
-
+            if (matchedFiles.isEmpty()) return null;
             return matchedFiles.get(new Random().nextInt(matchedFiles.size()))
                     .toAbsolutePath().toString();
-
         } catch (IOException e) {
-            System.err.println("读取目录出错: " + e.getMessage());
-            return null;
+            throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
     }
 
-    public static String getRandomFileRecursive(String directoryPath, boolean recursive) {
+    public static String getRandomFileRecursive(String directoryPath) {
         try {
             Path startDir = Paths.get(directoryPath);
-            List<Path> allFiles = new ArrayList<>();
-
-            if (recursive) {
-                try (Stream<Path> stream = Files.walk(startDir)) {
-                    stream.filter(Files::isRegularFile).forEach(allFiles::add);
-                }
-            } else {
-                try (Stream<Path> stream = Files.list(startDir)) {
-                    stream.filter(Files::isRegularFile).forEach(allFiles::add);
-                }
+            if (!Files.exists(startDir) || !Files.isDirectory(startDir)) {
+                throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
             }
 
-            if (allFiles.isEmpty()) {
-                System.err.println("没有找到文件");
-                return null;
+            List<Path> files;
+            try (Stream<Path> stream = Files.walk(startDir)) {
+                files = stream.filter(Files::isRegularFile).toList();
             }
 
-            return allFiles.get(new Random().nextInt(allFiles.size()))
+            if (files.isEmpty()) return null;
+            return files.get(new Random().nextInt(files.size()))
                     .toAbsolutePath().toString();
-
         } catch (IOException e) {
-            System.err.println("读取目录出错: " + e.getMessage());
-            return null;
+            throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
     }
 
@@ -169,8 +150,7 @@ public class FileUtil
         try {
             Path directory = Paths.get(directoryPath);
             if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-                System.err.println("目录不存在或不是有效目录: " + directoryPath);
-                return null;
+                throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
             }
 
             try (Stream<Path> stream = Files.list(directory)) {
@@ -178,12 +158,10 @@ public class FileUtil
                         .filter(Files::isRegularFile)
                         .filter(path -> path.getFileName().toString().equals(fileName))
                         .findFirst();
-
                 return found.map(p -> p.toAbsolutePath().toString()).orElse(null);
             }
         } catch (IOException e) {
-            System.err.println("读取目录出错: " + e.getMessage());
-            return null;
+            throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
     }
 
