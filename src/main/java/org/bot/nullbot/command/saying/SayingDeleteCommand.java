@@ -28,8 +28,8 @@ public class SayingDeleteCommand implements Command
             try {
                 int id = Integer.parseInt(event.getCommandParameters().getFirst());
                 boolean deleted = sayingService.deleteById(id);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除语录] ⚠️No." + id + (deleted ? " 已删除！" : " 无记录"), false);
-                log.info("\t\t\t\t├─[SayingDelete] 执行语录删除 - No.{} -> {}", id, deleted ? "已删除" : "无记录");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除语录] ⚠️No." + id + (deleted ? " 已删除" : " 不存在"), false);
+                log.info("\t\t\t\t├─[SayingDelete] 执行语录删除 - No.{} -> {}", id, deleted ? "已删除" : "不存在");
             } catch (NumberFormatException e) {
                 throw new NullBotMsgException("[删除语录] ❌参数格式错误");
             }

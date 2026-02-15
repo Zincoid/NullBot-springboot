@@ -54,7 +54,7 @@ public class ImageDeleteCommand implements Command
                         throw new NullBotMsgException("[删除图片] ❌删除异常");
                     if(!fileService.deleteFileRecordForBot(directory, realFileNames.getFirst()))
                         throw new NullBotMsgException("[删除图片] ❌数据库更新失败");
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️已删除\n- " +
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除图片] ⚠️已删除\n- " +
                             StringUtil.truncateFileName(realFileNames.getFirst(), 12), false);
                     log.info("\t\t\t\t├─[ImageDelete] 图片已删除 - {}.*", fileName);
                 }
@@ -67,7 +67,7 @@ public class ImageDeleteCommand implements Command
                 }
                 if(!fileService.deleteFileRecordForBot(directory, fileName))
                     throw new NullBotMsgException("[删除图片] ❌数据库更新失败");
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️已删除\n- " +
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除图片] ⚠️已删除\n- " +
                         StringUtil.truncateFileName(fileName, 12), false);
                 log.info("\t\t\t\t├─[ImageDelete] 图片已删除 - {}", fileName);
             } else
