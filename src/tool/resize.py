@@ -137,7 +137,7 @@ def process_images(input_folder, output_folder, max_width=150):
     print(f"输出文件夹: {output_folder}")
     print(f"目标宽度: {max_width} 像素")
     print("-" * 60)
-    print(f"总处理数: {processed_count + skipped_count + copied_count} 张")
+    print(f"总处理数: {processed_count + skipped_count + copied_count} 个")
     print(f"缩放数: {processed_count} 张")
     print(f"复制数: {skipped_count + copied_count} 个")
     print(f"  ├─ 宽度不足的图片: {skipped_count} 张")
