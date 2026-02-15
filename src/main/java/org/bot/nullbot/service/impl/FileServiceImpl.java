@@ -292,7 +292,10 @@ public class FileServiceImpl implements FileService
     @Transactional
     public Boolean deleteFile(Integer id) {
         FilePO file = fileMapper.selectById(id);
-        deleteFileByDir(new java.io.File(file.getDirectory() + "/" + file.getFileName()));
+        String filePath = file.getDirectory() + "/" + file.getFileName();
+        deleteFileByDir(new java.io.File(filePath));
+        if (file.getIsDir() == 1)
+            fileMapper.delete(new LambdaQueryWrapper<FilePO>().likeRight(FilePO::getDirectory, filePath));
         fileMapper.deleteById(id);
         return true;
     }
@@ -497,9 +500,9 @@ public class FileServiceImpl implements FileService
 
     private void deleteFileByDir(java.io.File dir){
         java.io.File[] files = dir.listFiles();
-        if(files != null){
-            for(java.io.File f : files){
-                if(f.isFile()){
+        if (files != null) {
+            for (java.io.File f : files) {
+                if (f.isFile()) {
                     f.delete();
                 } else {
                     deleteFileByDir(f);
