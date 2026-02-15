@@ -17,17 +17,13 @@ public class FileUtil
             throw new IllegalArgumentException("目录不存在或不是有效目录: " + rootPath);
         }
         sb.append(root.getFileName().toString()).append("\n");
-        buildTreeString(root, "", true, sb, maxDepth, 0);
+        buildTreeString(root, "", sb, maxDepth, 0);
         return sb.toString().trim();
     }
 
-    private static void buildTreeString(Path directory, String prefix, boolean isLast,
-                                        StringBuilder sb, int maxDepth, int currentDepth)
-            throws IOException {
-        if (maxDepth > 0 && currentDepth >= maxDepth) {
-            return;
-        }
-
+    private static void buildTreeString(Path directory, String prefix, StringBuilder sb,
+                                        int maxDepth, int currentDepth) throws IOException {
+        if (maxDepth > 0 && currentDepth >= maxDepth) return;
         try (Stream<Path> stream = Files.list(directory)) {
             List<Path> items = stream
                     .filter(Files::isDirectory)
@@ -42,9 +38,9 @@ public class FileUtil
                 sb.append(prefix);
                 sb.append(itemIsLast ? "└ " : "├ ");
                 sb.append(item.getFileName()).append("\n");
-
                 String childPrefix = prefix + (itemIsLast ? "    " : "│ ");
-                buildTreeString(item, childPrefix, itemIsLast, sb, maxDepth, currentDepth + 1);
+
+                buildTreeString(item, childPrefix, sb, maxDepth, currentDepth + 1);
             }
         }
     }
