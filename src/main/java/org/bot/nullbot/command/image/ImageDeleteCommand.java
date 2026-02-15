@@ -45,9 +45,9 @@ public class ImageDeleteCommand implements Command
                 }
             } else if (!event.getCommandParameters().isEmpty()) {
                 String fileName = event.getCommandParameters().getFirst();
-                String response = FileUtil.deleteFileByName(fileStorageProperties.getImagePath() + "/collect", fileName);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️️" + response, false);
-                log.info("\t\t\t\t├─[ImageDelete] {}", response);
+                FileUtil.deleteFileByName(fileStorageProperties.getImagePath() + "/collect", fileName);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️已删除！️\n- " + fileName, false);
+                log.info("\t\t\t\t├─[ImageDelete] 已删除 - {}", fileName);
             } else
                 throw new NullBotMsgException("[删除图片] ❌无文件名或引用");
         } else

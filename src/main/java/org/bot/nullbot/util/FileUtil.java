@@ -46,12 +46,11 @@ public class FileUtil
     }
 
     public static String getFileListAsString(String directoryPath, String delimiter, boolean withExtension) {
+        Path directory = Paths.get(directoryPath);
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+        }
         try {
-            Path directory = Paths.get(directoryPath);
-            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-                throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
-            }
-
             try (Stream<Path> stream = Files.list(directory)) {
                 List<String> fileNames = stream
                         .filter(Files::isRegularFile)
@@ -77,17 +76,15 @@ public class FileUtil
     // =================== 路径获取相关 ===================
 
     public static String getRandomFile(String directoryPath) {
+        Path directory = Paths.get(directoryPath);
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+        }
         try {
-            Path directory = Paths.get(directoryPath);
-            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-                throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
-            }
-
             List<Path> files;
             try (Stream<Path> stream = Files.list(directory)) {
                 files = stream.filter(Files::isRegularFile).toList();
             }
-
             if (files.isEmpty()) return null;
             return files.get(new Random().nextInt(files.size()))
                     .toAbsolutePath().toString();
@@ -97,15 +94,13 @@ public class FileUtil
     }
 
     public static String getRandomFileByPattern(String directoryPath, String pattern) {
+        Path directory = Paths.get(directoryPath);
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+        }
         try {
-            Path directory = Paths.get(directoryPath);
-            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-                throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
-            }
-
             FileSystem fs = FileSystems.getDefault();
             PathMatcher matcher = fs.getPathMatcher("glob:" + pattern);
-
             List<Path> matchedFiles;
             try (Stream<Path> stream = Files.list(directory)) {
                 matchedFiles = stream
@@ -113,7 +108,6 @@ public class FileUtil
                         .filter(path -> matcher.matches(path.getFileName()))
                         .toList();
             }
-
             if (matchedFiles.isEmpty()) return null;
             return matchedFiles.get(new Random().nextInt(matchedFiles.size()))
                     .toAbsolutePath().toString();
@@ -123,17 +117,15 @@ public class FileUtil
     }
 
     public static String getRandomFileRecursive(String directoryPath) {
+        Path startDir = Paths.get(directoryPath);
+        if (!Files.exists(startDir) || !Files.isDirectory(startDir)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+        }
         try {
-            Path startDir = Paths.get(directoryPath);
-            if (!Files.exists(startDir) || !Files.isDirectory(startDir)) {
-                throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
-            }
-
             List<Path> files;
             try (Stream<Path> stream = Files.walk(startDir)) {
                 files = stream.filter(Files::isRegularFile).toList();
             }
-
             if (files.isEmpty()) return null;
             return files.get(new Random().nextInt(files.size()))
                     .toAbsolutePath().toString();
@@ -143,12 +135,11 @@ public class FileUtil
     }
 
     public static String getFilePathByName(String directoryPath, String fileName) {
+        Path directory = Paths.get(directoryPath);
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+        }
         try {
-            Path directory = Paths.get(directoryPath);
-            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-                throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
-            }
-
             try (Stream<Path> stream = Files.list(directory)) {
                 Optional<Path> found = stream
                         .filter(Files::isRegularFile)
@@ -166,34 +157,30 @@ public class FileUtil
         if (!Files.exists(directory) || !Files.isDirectory(directory)) {
             throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
         }
-
         List<String> foundPaths;
         try {
             FileSystem fs = FileSystems.getDefault();
             PathMatcher matcher = fs.getPathMatcher("glob:" + pattern);
-
             try (Stream<Path> stream = Files.list(directory)) {
                 foundPaths = stream
                         .filter(Files::isRegularFile)
                         .filter(path -> matcher.matches(path.getFileName()))
                         .map(path -> path.toAbsolutePath().toString())
                         .collect(Collectors.toList());
-                return foundPaths;
             }
+            return foundPaths;
         } catch (IOException e) {
             throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
     }
 
     public static List<String> getFilesByKeyword(String directoryPath, String keyword) {
-        List<String> foundPaths = new ArrayList<>();
+        Path directory = Paths.get(directoryPath);
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+        }
+        List<String> foundPaths;
         try {
-            Path directory = Paths.get(directoryPath);
-            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-                System.err.println("目录不存在或不是有效目录: " + directoryPath);
-                return foundPaths;
-            }
-
             String lowerKeyword = keyword.toLowerCase();  // 不区分大小写的关键字匹配
             try (Stream<Path> stream = Files.list(directory)) {
                 foundPaths = stream
@@ -205,55 +192,47 @@ public class FileUtil
                         .map(path -> path.toAbsolutePath().toString())
                         .collect(Collectors.toList());
             }
+            return foundPaths;
         } catch (IOException e) {
-            System.err.println("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
-        return foundPaths;
     }
 
     public static String getFilePathRecursive(String directoryPath, String fileName) {
+        Path directory = Paths.get(directoryPath);
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+        }
         try {
-            Path directory = Paths.get(directoryPath);
-            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-                System.err.println("目录不存在或不是有效目录: " + directoryPath);
-                return null;
-            }
-
             try (Stream<Path> stream = Files.walk(directory)) {
                 Optional<Path> found = stream
                         .filter(Files::isRegularFile)
                         .filter(path -> path.getFileName().toString().equals(fileName))
                         .findFirst();
-
                 return found.map(p -> p.toAbsolutePath().toString()).orElse(null);
             }
-
         } catch (IOException e) {
-            System.err.println("读取目录出错: " + e.getMessage());
-            return null;
+            throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
     }
 
     // =================== 文件删除相关 ===================
 
-    public static String deleteFileByName(String directoryPath, String fileName) {
+    public static void deleteFileByName(String directoryPath, String fileName) {
         try {
             Path baseDir = Paths.get(directoryPath).toRealPath();
             Path targetFile = baseDir.resolve(fileName).normalize();
             Path realTarget = targetFile.toRealPath();
-
             if (!realTarget.startsWith(baseDir)) {
-                return "错误: 路径遍历攻击被阻止 - " + fileName;
+                throw new SecurityException("路径遍历攻击被阻止: " + fileName);
             }
-
             if (Files.isRegularFile(realTarget)) {
                 Files.delete(realTarget);
-                return "已删除！\n" + fileName;
             } else {
-                return "错误: 文件不是普通文件, 无法删除";
+                throw new IllegalArgumentException("不是普通文件");
             }
         } catch (IOException e) {
-            return "错误: 文件不存在或访问被拒绝";
+            throw new RuntimeException("文件不存在或访问被拒绝: " + e.getMessage());
         }
     }
 
