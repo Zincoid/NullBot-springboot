@@ -29,7 +29,7 @@ public class FemboyCommand implements Command
 
             String femboyPath;
             try {
-                femboyPath = FileUtil.getRandomFile(acgPath);
+                femboyPath = FileUtil.getRandomFilePath(acgPath);
             } catch (Exception e) {
                 throw new NullBotMsgException("[男娘] ❌目录异常");
             }

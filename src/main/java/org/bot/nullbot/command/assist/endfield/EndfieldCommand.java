@@ -42,7 +42,7 @@ public class EndfieldCommand implements Command
                 return;
             }
 
-            List<String> helpPaths = FileUtil.getFilesByKeyword(fileStorageProperties.getResourcePath() + "/endfield", params.getFirst());
+            List<String> helpPaths = FileUtil.getFilePathsByKeyword(fileStorageProperties.getResourcePath() + "/endfield", params.getFirst());
             if (helpPaths.isEmpty()) throw new NullBotMsgException("[终末地] ❌无查询项");
             if (helpPaths.size() > 1) {
                 List<String> helpNames = helpPaths.stream()

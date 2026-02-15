@@ -29,7 +29,7 @@ public class AnimeCommand implements Command
 
             String animePath;
             try {
-                animePath = FileUtil.getRandomFile(acgPath);
+                animePath = FileUtil.getRandomFilePath(acgPath);
             } catch (Exception e) {
                 throw new NullBotMsgException("[二次元] ❌目录异常");
             }

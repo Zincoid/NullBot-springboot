@@ -28,7 +28,7 @@ public class RandomImageCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String imagePath;
             try {
-                imagePath = FileUtil.getRandomFile(fileStorageProperties.getImagePath() + "/collect");
+                imagePath = FileUtil.getRandomFilePath(fileStorageProperties.getImagePath() + "/collect");
             } catch (Exception e) {
                 throw new NullBotMsgException("[随机图片] ❌目录异常");
             }

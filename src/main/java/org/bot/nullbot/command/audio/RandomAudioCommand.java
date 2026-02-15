@@ -27,7 +27,7 @@ public class RandomAudioCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             String audioPath;
             try {
-                audioPath = FileUtil.getRandomFile(fileStorageProperties.getAudioPath());
+                audioPath = FileUtil.getRandomFilePath(fileStorageProperties.getAudioPath());
             } catch (Exception e) {
                 throw new NullBotMsgException("[随机音频] ❌目录异常");
             }

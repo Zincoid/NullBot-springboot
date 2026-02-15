@@ -80,7 +80,7 @@ public class WifeCommand implements Command
 
                     String wifePath;
                     try {
-                        wifePath = FileUtil.getRandomFile(acgPath);
+                        wifePath = FileUtil.getRandomFilePath(acgPath);
                     } catch (Exception e) {
                         throw new NullBotMsgException("[今日老婆] ❌不存在该类别"); // 目录异常
                     }

@@ -53,7 +53,7 @@ public class GuessCommand implements Command
 
                 String characterPath;
                 try {
-                    characterPath = FileUtil.getRandomFile(acgPath);
+                    characterPath = FileUtil.getRandomFilePath(acgPath);
                 } catch (Exception e) {
                     throw new NullBotMsgException("[猜角色] ❌不存在该类别");  // 目录异常
                 }
