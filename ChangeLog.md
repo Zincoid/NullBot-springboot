@@ -460,4 +460,5 @@
 
 ### 2026.2.16
 - 增强 FileService - 新增 deleteFileRecordForBot 方法；
+- 新增 StringUtil 工具类 - 添加 truncateFileName 方法；
 - 修复 调用 Bot 文件删除相关指令时未删除数据库条目的漏洞。
