@@ -203,12 +203,12 @@ public class FileUtil
         try {
             Path baseDir = directory.toRealPath();
             Path targetFile = baseDir.resolve(fileName).normalize();
+            if (!Files.exists(targetFile)) {
+                throw new IllegalArgumentException("文件不存在");
+            }
             Path realTarget = targetFile.toRealPath();
             if (!realTarget.startsWith(baseDir)) {
                 throw new SecurityException("路径遍历攻击被阻止: " + fileName);
-            }
-            if (!Files.exists(realTarget)) {
-                throw new IllegalArgumentException("文件不存在");
             }
             if (Files.isRegularFile(realTarget)) {
                 Files.delete(realTarget);
