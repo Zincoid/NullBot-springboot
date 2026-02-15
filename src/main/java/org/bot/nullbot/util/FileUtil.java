@@ -14,10 +14,10 @@ public class FileUtil
         Path root = Paths.get(rootPath);
         StringBuilder sb = new StringBuilder();
         if (!Files.exists(root)) {
-            return "路径不存在: " + rootPath;
+            throw new IllegalArgumentException("路径不存在: " + rootPath);
         }
         if (!Files.isDirectory(root)) {
-            return "不是文件夹: " + rootPath;
+            throw new IllegalArgumentException("不是文件夹: " + rootPath);
         }
         sb.append(root.getFileName().toString()).append("\n");
         buildTreeString(root, "", true, sb, maxDepth, 0);
@@ -56,7 +56,7 @@ public class FileUtil
         try {
             Path directory = Paths.get(directoryPath);
             if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-                return "目录不存在或不是有效目录: " + directoryPath;
+                throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
             }
 
             try (Stream<Path> stream = Files.list(directory)) {
@@ -73,13 +73,11 @@ public class FileUtil
                         })
                         .collect(Collectors.toList());
 
-                if (fileNames.isEmpty()) {
-                    return "目录中没有文件: " + directoryPath;
-                }
+                if (fileNames.isEmpty()) return "无文件";
                 return String.join(delimiter, fileNames);
             }
         } catch (IOException e) {
-            return "读取目录出错: " + e.getMessage();
+            throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
     }
 
@@ -88,11 +86,8 @@ public class FileUtil
     public static String getRandomFile(String directoryPath) {
         try {
             Path directory = Paths.get(directoryPath);
-            if (!Files.exists(directory)) {
-                throw new IllegalArgumentException("目录不存在: " + directoryPath);
-            }
-            if (!Files.isDirectory(directory)) {
-                throw new IllegalArgumentException("路径不是目录: " + directoryPath);
+            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+                throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
             }
 
             List<Path> files;

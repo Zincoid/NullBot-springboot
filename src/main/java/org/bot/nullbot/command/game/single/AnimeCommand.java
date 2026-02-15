@@ -33,7 +33,7 @@ public class AnimeCommand implements Command
             } catch (Exception e) {
                 throw new NullBotMsgException("[二次元] ❌目录异常");
             }
-            if(animePath == null)
+            if (animePath == null)
                 throw new NullBotMsgException("[二次元] ❌暂无图片");
 
             String response = MsgUtils.builder()

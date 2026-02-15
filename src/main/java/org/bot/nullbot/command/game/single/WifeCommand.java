@@ -45,7 +45,7 @@ public class WifeCommand implements Command
                 GroupMemberInfoResp wife;
                 Long userId = groupMessageEvent.getUserId();
                 LocalDateTime expireTime = memberExpireMap.get(userId);
-                if(expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
+                if (expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
                     List<GroupMemberInfoResp> groupMemberList = bot.getGroupMemberList(groupMessageEvent.getGroupId()).getData();
                     do {
                         int randomIndex = ThreadLocalRandom.current().nextInt(groupMemberList.size());
@@ -61,7 +61,7 @@ public class WifeCommand implements Command
                             .build();
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                     log.info("\t\t\t\t├─[Wife] 今日群友老婆: {} -> {}", userId, wifeId);
-                }else{
+                } else {
                     Long wifeId = memberWifeMap.get(userId);
                     String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
                     String response = MsgUtils.builder()
@@ -71,10 +71,10 @@ public class WifeCommand implements Command
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                     log.info("\t\t\t\t├─[Wife] 今日已选过群友老婆: {} -> {}", userId, wifeId);
                 }
-            }else{
+            } else {
                 Long userId = groupMessageEvent.getUserId();
                 LocalDateTime expireTime = acgExpireMap.get(userId);
-                if(expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
+                if (expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
                     String category = event.getCommandParameters().getFirst();
                     String acgPath = fileStorageProperties.getImagePath() + "/acg/" + category;
 
@@ -84,7 +84,7 @@ public class WifeCommand implements Command
                     } catch (Exception e) {
                         throw new NullBotMsgException("[今日老婆] ❌不存在该类别"); // 目录异常
                     }
-                    if(wifePath == null)
+                    if (wifePath == null)
                         throw new NullBotMsgException("[今日老婆] ❌该类别下暂无角色");
 
                     String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,
@@ -99,7 +99,7 @@ public class WifeCommand implements Command
                             .build();
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
                     log.info("\t\t\t\t├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
-                }else{
+                } else {
                     try {
                         String wifePath = acgWifeMap.get(userId);
                         String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,

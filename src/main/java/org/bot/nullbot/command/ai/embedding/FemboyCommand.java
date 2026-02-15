@@ -33,7 +33,7 @@ public class FemboyCommand implements Command
             } catch (Exception e) {
                 throw new NullBotMsgException("[男娘] ❌目录异常");
             }
-            if(femboyPath == null)
+            if (femboyPath == null)
                 throw new NullBotMsgException("[男娘] ❌暂无图片");
 
             String response = MsgUtils.builder()

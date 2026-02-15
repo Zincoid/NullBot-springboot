@@ -47,7 +47,7 @@ public class GuessCommand implements Command
             String param = event.getCommandParameters().getFirst();
 
             GuessInfo guessInfo = guessStorage.getGuessInfo(groupId);
-            if (guessInfo == null){
+            if (guessInfo == null) {
                 // 初始化猜迷
                 String acgPath = fileStorageProperties.getImagePath() + "/acg/" + param;
 
@@ -57,7 +57,7 @@ public class GuessCommand implements Command
                 } catch (Exception e) {
                     throw new NullBotMsgException("[猜角色] ❌不存在该类别");  // 目录异常
                 }
-                if(characterPath == null)
+                if (characterPath == null)
                     throw new NullBotMsgException("[猜角色] ❌该类别下暂无角色");
 
                 String characterName = characterPath
@@ -76,14 +76,14 @@ public class GuessCommand implements Command
                 log.info("\t\t\t\t├─[Guess] 初始化群猜谜 - {} -> {}", groupId, characterName);
             }else{
                 // 判断对错
-                if("-f".equals(param)){
+                if ("-f".equals(param)) {
                     bot.sendGroupMsg(groupId, "已放弃\uD83D\uDCA6 答案是...\n" + guessInfo.getName() + "！", false);
                     guessStorage.removeGuess(groupId);
                     log.info("\t\t\t\t├─[Guess] 放弃猜测 - {}", userId);
                     return;
                 }
                 guessStorage.increaseTimes(groupId);
-                if(guessInfo.getName().equals(param)){
+                if (guessInfo.getName().equals(param)) {
                     userService.plusExperience(userId, 20);  // 给赢家20Exp
                     userService.increaseDrawTimes(userId, 5);  // 给赢家5抽
                     String response = MsgUtils.builder()
@@ -93,12 +93,12 @@ public class GuessCommand implements Command
                     bot.sendGroupMsg(groupId, response, false);
                     guessStorage.removeGuess(groupId);
                     log.info("\t\t\t\t├─[Guess] 猜测正确 - {}", userId);
-                }else{
-                    if(guessInfo.getTimes() >= 10){
+                } else {
+                    if (guessInfo.getTimes() >= 10) {
                         bot.sendGroupMsg(groupId, "错了10次啦！答案是...\n" + guessInfo.getName() + "！", false);
                         guessStorage.removeGuess(groupId);
                         log.info("\t\t\t\t├─[Guess] 猜测错误 已超过最大尝试次数 - {}", userId);
-                    }else{
+                    } else {
                         bot.sendGroupMsg(groupId, "猜错啦！", false);
                         log.info("\t\t\t\t├─[Guess] 猜测错误 - {}", userId);
                     }
