@@ -166,14 +166,13 @@ public class FileUtil
     }
 
     public static List<String> getFilesByPattern(String directoryPath, String pattern) {
-        List<String> foundPaths = new ArrayList<>();
-        try {
-            Path directory = Paths.get(directoryPath);
-            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-                System.err.println("目录不存在或不是有效目录: " + directoryPath);
-                return foundPaths;
-            }
+        Path directory = Paths.get(directoryPath);
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+        }
 
+        List<String> foundPaths;
+        try {
             FileSystem fs = FileSystems.getDefault();
             PathMatcher matcher = fs.getPathMatcher("glob:" + pattern);
 
@@ -183,11 +182,11 @@ public class FileUtil
                         .filter(path -> matcher.matches(path.getFileName()))
                         .map(path -> path.toAbsolutePath().toString())
                         .collect(Collectors.toList());
+                return foundPaths;
             }
         } catch (IOException e) {
-            System.err.println("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
-        return foundPaths;
     }
 
     public static List<String> getFilesByKeyword(String directoryPath, String keyword) {
