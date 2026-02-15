@@ -33,7 +33,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service
 @RequiredArgsConstructor
@@ -457,24 +456,17 @@ public class FileServiceImpl implements FileService
             throw new IllegalArgumentException("数据库文件不存在");
         }
         if (file.getIsDir() == 1) {
-            Queue<FilePO> queue = new ConcurrentLinkedQueue<>();
-            queue.offer(file);
-            while (!queue.isEmpty()) {
-                FilePO curFile = queue.poll();
-                curFile.setVisible(visible);
-                fileMapper.updateById(curFile);
-                if (curFile.getIsDir() == 1) {
-                    List<FilePO> files = fileMapper.selectList(
-                            new LambdaQueryWrapper<FilePO>()
-                                    .likeRight(FilePO::getDirectory, curFile.getDirectory() + "/" + file.getFileName())
-                    );
-                    queue.addAll(files);
-                }
+            List<FilePO> subFiles = fileMapper.selectList(
+                    new LambdaQueryWrapper<FilePO>()
+                            .likeRight(FilePO::getDirectory, file.getDirectory() + "/" + file.getFileName())
+            );
+            for (FilePO subFile : subFiles) {
+                subFile.setVisible(visible);
+                fileMapper.updateById(subFile);
             }
-        } else {
-            file.setVisible(visible);
-            fileMapper.updateById(file);
         }
+        file.setVisible(visible);
+        fileMapper.updateById(file);
         return true;
     }
 
