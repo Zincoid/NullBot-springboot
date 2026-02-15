@@ -31,23 +31,23 @@ public class VideoDeleteCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if(reply.getType() == MsgTypeEnum.reply){
+            if (reply.getType() == MsgTypeEnum.reply) {
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
                 // 可优化为单个键值对?
                 Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());
-                if(videoMap.isEmpty()) throw new NullBotMsgException("[删除视频] ❌未引用视频");
+                if (videoMap.isEmpty()) throw new NullBotMsgException("[删除视频] ❌未引用视频");
                 for (Map.Entry<String, String> entry : videoMap.entrySet()) {
                     String fileName = entry.getKey();
-                    String response = FileUtil.deleteFileByName(fileStorageProperties.getVideoPath(), fileName);
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️️" + response, false);
-                    log.info("\t\t\t\t├─[VideoDelete] {}", response);
+                    FileUtil.deleteFileByName(fileStorageProperties.getVideoPath(), fileName);
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️已删除\n- " + fileName, false);
+                    log.info("\t\t\t\t├─[VideoDelete] 视频已删除 - {}", fileName);
                 }
-            }else if(!event.getCommandParameters().isEmpty()){
+            } else if (!event.getCommandParameters().isEmpty()) {
                 String fileName = event.getCommandParameters().getFirst();
-                    String response = FileUtil.deleteFileByName(fileStorageProperties.getVideoPath(), fileName);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️️" + response, false);
-                log.info("\t\t\t\t├─[VideoDelete] {}", response);
-            }else{
+                FileUtil.deleteFileByName(fileStorageProperties.getVideoPath(), fileName);
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️已删除\n- " + fileName, false);
+                log.info("\t\t\t\t├─[VideoDelete] 视频已删除 - {}", fileName);
+            } else {
                 throw new NullBotMsgException("[删除视频] ❌无文件名或引用");
             }
         }else
