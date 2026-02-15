@@ -13,8 +13,10 @@ import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.StringUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -26,10 +28,12 @@ import java.util.Map;
 public class VideoDeleteCommand implements Command
 {
     private final FileStorageProperties fileStorageProperties;
+    private final FileService fileService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            String directory = fileStorageProperties.getVideoPath();
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
             if (reply.getType() == MsgTypeEnum.reply) {
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
@@ -38,14 +42,20 @@ public class VideoDeleteCommand implements Command
                 if (videoMap.isEmpty()) throw new NullBotMsgException("[删除视频] ❌未引用视频");
                 for (Map.Entry<String, String> entry : videoMap.entrySet()) {
                     String fileName = entry.getKey();
-                    FileUtil.deleteFileByName(fileStorageProperties.getVideoPath(), fileName);
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️已删除\n- " + fileName, false);
+                    FileUtil.deleteFileByName(directory, fileName);
+                    if(!fileService.deleteFileRecordForBot(directory, fileName))
+                        throw new NullBotMsgException("[删除视频] ❌数据库更新失败");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️已删除\n- " +
+                            StringUtil.truncateFileName(fileName, 12), false);
                     log.info("\t\t\t\t├─[VideoDelete] 视频已删除 - {}", fileName);
                 }
             } else if (!event.getCommandParameters().isEmpty()) {
                 String fileName = event.getCommandParameters().getFirst();
-                FileUtil.deleteFileByName(fileStorageProperties.getVideoPath(), fileName);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️已删除\n- " + fileName, false);
+                FileUtil.deleteFileByName(directory, fileName);
+                if(!fileService.deleteFileRecordForBot(directory, fileName))
+                    throw new NullBotMsgException("[删除视频] ❌数据库更新失败");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️已删除\n- " +
+                        StringUtil.truncateFileName(fileName, 12), false);
                 log.info("\t\t\t\t├─[VideoDelete] 视频已删除 - {}", fileName);
             } else {
                 throw new NullBotMsgException("[删除视频] ❌无文件名或引用");

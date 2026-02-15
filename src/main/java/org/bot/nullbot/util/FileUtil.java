@@ -266,25 +266,25 @@ public class FileUtil
             if (filesToDelete.isEmpty()) {
                 throw new IllegalArgumentException("文件不存在");
             }
-            int deleteCount = 0;
-            List<String> securityRejectedFiles = new ArrayList<>();
+            List<String> deletedFiles = new ArrayList<>();
+            List<String> rejectedFiles = new ArrayList<>();
             for (Path file : filesToDelete) {
                 try {
                     Path targetFile = baseDir.resolve(file.getFileName()).normalize();
                     Path realTarget = targetFile.toRealPath();
                     if (!realTarget.startsWith(baseDir)) {
-                        securityRejectedFiles.add(file.getFileName().toString());
+                        rejectedFiles.add(file.getFileName().toString());
                         continue;
                     }
                     Files.delete(realTarget);
-                    deleteCount++;
+                    deletedFiles.add(file.getFileName().toString());
                 } catch (IOException ignored) {
                 }
             }
-            if (!securityRejectedFiles.isEmpty()) {
-                log.info("安全阻止: {} 个文件删除因路径安全问题被阻止\n{}", securityRejectedFiles.size(), String.join(", ", securityRejectedFiles));
+            if (!rejectedFiles.isEmpty()) {
+                log.info("安全阻止: {} 个文件删除因路径安全问题被阻止\n{}", rejectedFiles.size(), String.join(", ", rejectedFiles));
             }
-            return deleteCount;
+            return deletedFiles;
         } catch (IOException e) {
             throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
