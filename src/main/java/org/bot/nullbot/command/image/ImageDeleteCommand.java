@@ -13,6 +13,7 @@ import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
@@ -26,10 +27,12 @@ import java.util.Map;
 public class ImageDeleteCommand implements Command
 {
     private final FileStorageProperties fileStorageProperties;
+    private final FileService fileService;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+            String directory = fileStorageProperties.getImagePath() + "/collect";
             ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
             if (reply.getType() == MsgTypeEnum.reply) {
                 GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
@@ -39,14 +42,18 @@ public class ImageDeleteCommand implements Command
                     String originName = entry.getKey();
                     // QQ获取文件名后缀全是jpg只能模式匹配...
                     String fileName = originName.substring(0, originName.lastIndexOf("."));
-                    FileUtil.deleteFilesByPattern(fileStorageProperties.getImagePath() + "/collect", fileName + ".*");
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️已删除\n- " + fileName, false);
-                    log.info("\t\t\t\t├─[ImageDelete] 图片已删除 - {}", fileName);
+                    String realFileName = FileUtil.deleteFilesByPattern(directory, fileName + ".*").getFirst();
+                    if(!fileService.deleteFileRecordForBot(directory, realFileName))
+                        throw new NullBotMsgException("[删除图片] ❌数据库更新失败");
+                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️已删除", false);
+                    log.info("\t\t\t\t├─[ImageDelete] 图片已删除 - {}.*", fileName);
                 }
             } else if (!event.getCommandParameters().isEmpty()) {
                 String fileName = event.getCommandParameters().getFirst();
-                FileUtil.deleteFileByName(fileStorageProperties.getImagePath() + "/collect", fileName);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️已删除\n- " + fileName, false);
+                FileUtil.deleteFileByName(directory, fileName);
+                if(!fileService.deleteFileRecordForBot(directory, fileName))
+                    throw new NullBotMsgException("[删除图片] ❌数据库更新失败");
+                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️已删除", false);
                 log.info("\t\t\t\t├─[ImageDelete] 图片已删除 - {}", fileName);
             } else
                 throw new NullBotMsgException("[删除图片] ❌无文件名或引用");

@@ -12,6 +12,8 @@ public interface FileService
 {
     Boolean addFileRecordForBot(String directory, String fileName, Long fileSize, LocalDateTime lastModified, Long ownerId, String ownerName);
 
+    Boolean deleteFileRecordForBot(String directory, String fileName);
+
     Boolean initRootFile();
 
     void syncFilesToDatabase();

@@ -247,7 +247,7 @@ public class FileUtil
         }
     }
 
-    public static int deleteFilesByPattern(String directoryPath, String pattern) {
+    public static List<String> deleteFilesByPattern(String directoryPath, String pattern) {
         Path directory = Paths.get(directoryPath);
         if (!Files.exists(directory) || !Files.isDirectory(directory)) {
             throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);

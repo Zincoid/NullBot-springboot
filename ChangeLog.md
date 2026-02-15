@@ -457,3 +457,7 @@
 - 优化 FileService - 优化可见性设置方法；
 - 优化 FileUtil 工具类 - 优化代码并使用异常抛出错误信息并修改相关使用； 
 - 优化 代码风格。
+
+### 2026.2.16
+- 增强 FileService - 新增 deleteFileRecordForBot 方法；
+- 修复 调用 Bot 文件删除相关指令时未删除数据库条目的漏洞。

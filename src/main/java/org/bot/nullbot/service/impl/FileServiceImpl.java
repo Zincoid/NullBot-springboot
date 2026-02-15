@@ -93,6 +93,14 @@ public class FileServiceImpl implements FileService
         return fileMapper.insert(file) == 1;
     }
 
+    @Override
+    public Boolean deleteFileRecordForBot(String directory, String fileName) {
+        return fileMapper.delete(new LambdaQueryWrapper<FilePO>()
+                .eq(FilePO::getDirectory, directory)
+                .eq(FilePO::getFileName, fileName)
+        ) == 1;
+    }
+
     // =================== WEB功能相关 ===================
 
     @Override
