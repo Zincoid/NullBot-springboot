@@ -38,7 +38,7 @@ public class ChatCommand implements Command
 
             if(chatStorage.isUserBanned(userId)) {
                 LocalDateTime until = chatStorage.getUserBannedUntil(userId);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 String formattedUntil = until != null ? until.format(formatter) : "";
                 bot.sendGroupMsg(groupId, "[AI] ⚠️你已被停用至！\n" + formattedUntil, false);
                 log.info("\t\t\t\t├─[Chat] 已被停用至 - {}", until);
