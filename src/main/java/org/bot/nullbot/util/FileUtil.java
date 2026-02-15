@@ -1,11 +1,14 @@
 package org.bot.nullbot.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 public class FileUtil
 {
     // =================== 文件列表相关 ===================
@@ -219,8 +222,12 @@ public class FileUtil
     // =================== 文件删除相关 ===================
 
     public static void deleteFileByName(String directoryPath, String fileName) {
+        Path directory = Paths.get(directoryPath);
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+        }
         try {
-            Path baseDir = Paths.get(directoryPath).toRealPath();
+            Path baseDir = directory.toRealPath();
             Path targetFile = baseDir.resolve(fileName).normalize();
             Path realTarget = targetFile.toRealPath();
             if (!realTarget.startsWith(baseDir)) {
@@ -236,13 +243,12 @@ public class FileUtil
         }
     }
 
-    public static String deleteFileRecursive(String directoryPath, String fileName) {
+    public static int deleteFileRecursive(String directoryPath, String fileName) {  // 不安全
+        Path directory = Paths.get(directoryPath);
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+        }
         try {
-            Path directory = Paths.get(directoryPath);
-            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
-                return "错误：目录不存在或不是目录";
-            }
-
             List<Path> filesToDelete;
             try (Stream<Path> stream = Files.walk(directory)) {
                 filesToDelete = stream
@@ -250,54 +256,33 @@ public class FileUtil
                         .filter(path -> path.getFileName().toString().equals(fileName))
                         .toList();
             }
-
             if (filesToDelete.isEmpty()) {
-                return "提示：没有找到文件 '" + fileName + "'";
+                throw new IllegalArgumentException("文件不存在");
             }
 
-            System.out.println("将删除以下 " + filesToDelete.size() + " 个文件:");
-            for (int i = 0; i < filesToDelete.size(); i++) {
-                System.out.printf("%3d. %s\n", i + 1, filesToDelete.get(i).toAbsolutePath());
-            }
-
-            int successCount = 0;
-            int failCount = 0;
-            List<String> failedFiles = new ArrayList<>();
-
+            int deleteCount = 0;
             for (Path file : filesToDelete) {
                 try {
                     Files.delete(file);
-                    successCount++;
-                } catch (IOException e) {
-                    failCount++;
-                    failedFiles.add(file.toAbsolutePath() + " (" + e.getMessage() + ")");
+                    deleteCount++;
+                } catch (IOException ignored) {
                 }
             }
-
-            StringBuilder result = new StringBuilder();
-            result.append("删除完成：成功 ").append(successCount)
-                    .append(" 个，失败 ").append(failCount).append(" 个\n");
-
-            if (failCount > 0) {
-                result.append("失败的文件：\n").append(String.join("\n", failedFiles));
-            }
-            return result.toString();
-
+            return deleteCount;
         } catch (IOException e) {
-            return "错误：读取目录时发生IO异常 - " + e.getMessage();
+            throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
     }
 
-    public static String deleteFilesByPattern(String directoryPath, String pattern) {
+    public static int deleteFilesByPattern(String directoryPath, String pattern) {
+        Path directory = Paths.get(directoryPath);
+        if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("目录不存在或不是有效目录: " + directoryPath);
+        }
         try {
-            Path baseDir = Paths.get(directoryPath).toRealPath();
-            if (!Files.isDirectory(baseDir)) {
-                return "错误：路径不是目录";
-            }
-
+            Path baseDir = directory.toRealPath();
             FileSystem fs = FileSystems.getDefault();
             PathMatcher matcher = fs.getPathMatcher("glob:" + pattern);
-
             List<Path> filesToDelete;
             try (Stream<Path> stream = Files.list(baseDir)) {
                 filesToDelete = stream
@@ -305,53 +290,30 @@ public class FileUtil
                         .filter(path -> matcher.matches(path.getFileName()))
                         .toList();
             }
-
             if (filesToDelete.isEmpty()) {
-                return "错误: 文件不存在或访问被拒绝";
+                throw new IllegalArgumentException("文件不存在");
             }
-
-            int successCount = 0;
-            int failCount = 0;
+            int deleteCount = 0;
             List<String> securityRejectedFiles = new ArrayList<>();
-            List<String> successFiles = new ArrayList<>();
-
             for (Path file : filesToDelete) {
                 try {
                     Path targetFile = baseDir.resolve(file.getFileName()).normalize();
                     Path realTarget = targetFile.toRealPath();
-
                     if (!realTarget.startsWith(baseDir)) {
                         securityRejectedFiles.add(file.getFileName().toString());
                         continue;
                     }
-
                     Files.delete(realTarget);
-                    successCount++;
-                    successFiles.add(file.getFileName().toString());
-
-                } catch (IOException e) {
-                    failCount++;
+                    deleteCount++;
+                } catch (IOException ignored) {
                 }
             }
-
-            StringBuilder result = new StringBuilder();
-
             if (!securityRejectedFiles.isEmpty()) {
-                result.append("安全阻止：").append(securityRejectedFiles.size())
-                        .append(" 个文件因路径安全问题被阻止删除: ")
-                        .append(String.join(", ", securityRejectedFiles)).append("\n");
+                log.info("安全阻止: {} 个文件删除因路径安全问题被阻止\n{}", securityRejectedFiles.size(), String.join(", ", securityRejectedFiles));
             }
-
-            if (successCount == 1) {
-                result.append("已删除！\n").append(String.join(", ", successFiles));
-            } else {
-                result.append("错误: 删除出错");
-            }
-
-            return result.toString().trim();
-
+            return deleteCount;
         } catch (IOException e) {
-            return "错误：读取目录时发生IO异常 - " + e.getMessage();
+            throw new RuntimeException("读取目录出错: " + e.getMessage());
         }
     }
 }
