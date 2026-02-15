@@ -42,7 +42,11 @@ public class VideoDeleteCommand implements Command
                 if (videoMap.isEmpty()) throw new NullBotMsgException("[删除视频] ❌未引用视频");
                 for (Map.Entry<String, String> entry : videoMap.entrySet()) {
                     String fileName = entry.getKey();
-                    FileUtil.deleteFileByName(directory, fileName);
+                    try {
+                        FileUtil.deleteFileByName(directory, fileName);
+                    } catch (Exception e) {
+                        throw new NullBotMsgException("[删除视频] ❌" + e.getMessage());
+                    }
                     if(!fileService.deleteFileRecordForBot(directory, fileName))
                         throw new NullBotMsgException("[删除视频] ❌数据库更新失败");
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️已删除\n- " +
@@ -51,7 +55,11 @@ public class VideoDeleteCommand implements Command
                 }
             } else if (!event.getCommandParameters().isEmpty()) {
                 String fileName = event.getCommandParameters().getFirst();
-                FileUtil.deleteFileByName(directory, fileName);
+                try {
+                    FileUtil.deleteFileByName(directory, fileName);
+                } catch (Exception e) {
+                    throw new NullBotMsgException("[删除视频] ❌" + e.getMessage());
+                }
                 if(!fileService.deleteFileRecordForBot(directory, fileName))
                     throw new NullBotMsgException("[删除视频] ❌数据库更新失败");
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除视频] ⚠️已删除\n- " +

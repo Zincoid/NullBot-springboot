@@ -44,7 +44,12 @@ public class ImageDeleteCommand implements Command
                     String originName = entry.getKey();
                     // QQ获取文件名后缀全是jpg只能模式匹配...
                     String fileName = originName.substring(0, originName.lastIndexOf("."));
-                    List<String> realFileNames = FileUtil.deleteFilesByPattern(directory, fileName + ".*");
+                    List<String> realFileNames;
+                    try {
+                        realFileNames = FileUtil.deleteFilesByPattern(directory, fileName + ".*");
+                    } catch (Exception e) {
+                        throw new NullBotMsgException("[删除图片] ❌" + e.getMessage());
+                    }
                     if (realFileNames.size() != 1)
                         throw new NullBotMsgException("[删除图片] ❌删除异常");
                     if(!fileService.deleteFileRecordForBot(directory, realFileNames.getFirst()))
@@ -55,7 +60,11 @@ public class ImageDeleteCommand implements Command
                 }
             } else if (!event.getCommandParameters().isEmpty()) {
                 String fileName = event.getCommandParameters().getFirst();
-                FileUtil.deleteFileByName(directory, fileName);
+                try {
+                    FileUtil.deleteFileByName(directory, fileName);
+                } catch (Exception e) {
+                    throw new NullBotMsgException("[删除图片] ❌" + e.getMessage());
+                }
                 if(!fileService.deleteFileRecordForBot(directory, fileName))
                     throw new NullBotMsgException("[删除图片] ❌数据库更新失败");
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[图片] ⚠️已删除\n- " +
