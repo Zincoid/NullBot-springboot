@@ -67,7 +67,7 @@ public class FileUtil
             if (fileNames.isEmpty()) return "无文件";
             return String.join(delimiter, fileNames);
         } catch (IOException e) {
-            throw new RuntimeException("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("IO出错: " + e.getMessage());
         }
     }
 
@@ -84,7 +84,7 @@ public class FileUtil
             return files.get(new Random().nextInt(files.size()))
                     .toAbsolutePath().toString();
         } catch (IOException e) {
-            throw new RuntimeException("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("IO出错: " + e.getMessage());
         }
     }
 
@@ -104,7 +104,7 @@ public class FileUtil
             return matchedFiles.get(new Random().nextInt(matchedFiles.size()))
                     .toAbsolutePath().toString();
         } catch (IOException e) {
-            throw new RuntimeException("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("IO出错: " + e.getMessage());
         }
     }
 
@@ -119,7 +119,7 @@ public class FileUtil
             return files.get(new Random().nextInt(files.size()))
                     .toAbsolutePath().toString();
         } catch (IOException e) {
-            throw new RuntimeException("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("IO出错: " + e.getMessage());
         }
     }
 
@@ -135,7 +135,7 @@ public class FileUtil
                     .findFirst();
                 return found.map(p -> p.toAbsolutePath().toString()).orElse(null);
         } catch (IOException e) {
-            throw new RuntimeException("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("IO出错: " + e.getMessage());
         }
     }
 
@@ -153,7 +153,7 @@ public class FileUtil
                     .map(path -> path.toAbsolutePath().toString())
                     .toList();
         } catch (IOException e) {
-            throw new RuntimeException("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("IO出错: " + e.getMessage());
         }
     }
 
@@ -173,7 +173,7 @@ public class FileUtil
                     .map(path -> path.toAbsolutePath().toString())
                     .toList();
         } catch (IOException e) {
-            throw new RuntimeException("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("IO出错: " + e.getMessage());
         }
     }
 
@@ -189,7 +189,7 @@ public class FileUtil
                     .map(path -> path.toAbsolutePath().toString())
                     .toList();
         } catch (IOException e) {
-            throw new RuntimeException("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("IO出错: " + e.getMessage());
         }
     }
 
@@ -207,13 +207,16 @@ public class FileUtil
             if (!realTarget.startsWith(baseDir)) {
                 throw new SecurityException("路径遍历攻击被阻止: " + fileName);
             }
+            if (!Files.exists(realTarget)) {
+                throw new IllegalArgumentException("文件不存在");
+            }
             if (Files.isRegularFile(realTarget)) {
                 Files.delete(realTarget);
             } else {
-                throw new IllegalArgumentException("不是普通文件");
+                throw new IllegalArgumentException("不是普通文件: " + fileName);
             }
         } catch (IOException e) {
-            throw new RuntimeException("文件不存在或访问被拒绝: " + e.getMessage());
+            throw new RuntimeException("IO出错: " + e.getMessage());
         }
     }
 
@@ -243,7 +246,7 @@ public class FileUtil
             }
             return deleteCount;
         } catch (IOException e) {
-            throw new RuntimeException("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("IO出错: " + e.getMessage());
         }
     }
 
@@ -286,7 +289,7 @@ public class FileUtil
             }
             return deletedFiles;
         } catch (IOException e) {
-            throw new RuntimeException("读取目录出错: " + e.getMessage());
+            throw new RuntimeException("IO出错: " + e.getMessage());
         }
     }
 }
