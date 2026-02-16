@@ -31,7 +31,12 @@ public class RateLimitHandler implements Handler
         }
 
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (commandRateLimiter.tryConsume(event)) {
+            if (
+                    commandRateLimiter.tryConsume(
+                            groupMessageEvent.getGroupId(),
+                            groupMessageEvent.getSender().getUserId(),
+                            event.getCommandType())
+            ) {
                 log.info("\t\t├─[RateLimitHandler] 基本消息未达到速率限制");
                 chain.doHandle(bot, event, command);
             } else {
@@ -39,7 +44,12 @@ public class RateLimitHandler implements Handler
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "请求太多啦！", false);
             }
         } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            if (commandRateLimiter.tryConsume(event)) {
+            if (
+                    commandRateLimiter.tryConsume(
+                            pokeNoticeEvent.getGroupId(),
+                            pokeNoticeEvent.getUserId(),
+                            event.getCommandType())
+            ) {
                 log.info("\t\t├─[RateLimitHandler] 戳一戳未达到速率限制");
                 chain.doHandle(bot, event, command);
             } else {

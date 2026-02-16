@@ -4,12 +4,9 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import io.github.bucket4j.*;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.config.prop.RateLimitProperties;
-import org.bot.nullbot.entity.CommandEvent;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,37 +20,20 @@ public class CommandRateLimiter
 
     // =================== 调用方法 ===================
 
-    public boolean tryConsume(CommandEvent<?> commandEvent) {
+    public boolean tryConsume(Long groupId, Long userId, String commandType) {
         if (!rateLimitProperties.getEnabled()) {
             return true;
         }
-        if (commandEvent.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if(isSpam(groupMessageEvent.getGroupId(), 500)){
-                return false;
-            }
-            String key = switch (rateLimitProperties.getScope()) {
-                case User -> "user:" + groupMessageEvent.getSender().getUserId();
-                case Group -> "group:" + groupMessageEvent.getGroupId();
-                case Command -> "cmd:" + commandEvent.getCommandType();
-                case Global -> "global";
-            };
-            Bucket bucket = resolveBucket(key);
-            return bucket.tryConsume(1);
-        } else if (commandEvent.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            if(isSpam(pokeNoticeEvent.getGroupId(), 500)){
-                return false;
-            }
-            String key = switch (rateLimitProperties.getScope()) {
-                case User -> "user:" + pokeNoticeEvent.getUserId();
-                case Group -> "group:" + pokeNoticeEvent.getGroupId();
-                case Command -> "cmd:" + commandEvent.getCommandType();
-                case Global -> "global";
-            };
-            Bucket bucket = resolveBucket(key);
-            return bucket.tryConsume(1);
-        } else
-            //默认不限速的事件
-            return true;
+        if (isSpam(groupId, 500)) {
+            return false;
+        }
+        String key = switch (rateLimitProperties.getScope()) {
+            case User -> "user:" + userId;
+            case Group -> "group:" + groupId;
+            case Command -> "cmd:" + commandType;
+            case Global -> "global";
+        };
+        return resolveBucket(key).tryConsume(1);
     }
 
     // =================== 工具方法 ===================
