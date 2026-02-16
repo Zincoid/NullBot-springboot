@@ -1,10 +1,12 @@
 package org.bot.nullbot.component.control;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.bucket4j.*;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ public class CommandRateLimiter
 {
     private final SettingService settingService;
 
+    @Getter  // 调试用
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
     private final Map<Long, Long> lastProcess = new ConcurrentHashMap<>();
 
