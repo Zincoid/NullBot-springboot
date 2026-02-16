@@ -3,6 +3,8 @@ package org.bot.nullbot.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.component.ai.DeepSeekClient;
+import org.bot.nullbot.component.control.CommandRateLimiter;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.SettingService;
@@ -23,6 +25,8 @@ import java.util.List;
 public class SettingController
 {
     private final SettingService settingService;
+    private final CommandRateLimiter commandRateLimiter;
+    private final DeepSeekClient deepSeekClient;
 
     @GetMapping("/{id}")
     public WebResult getSetting(@PathVariable Long id) {
@@ -35,8 +39,11 @@ public class SettingController
 
     @PutMapping("/set")
     public WebResult setSetting(@RequestBody SettingInfo setting){
-        if(settingService.setSetting(setting))
+        if(settingService.setSetting(setting)) {
+            commandRateLimiter.reset(setting.getGroupId());
+            deepSeekClient.clearHistory(setting.getGroupId(), null);
             return WebResult.success().addMsg("更新成功");
+        }
         else
             return WebResult.fail().addMsg("更新失败");
     }

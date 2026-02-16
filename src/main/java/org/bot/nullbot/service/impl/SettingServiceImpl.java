@@ -18,20 +18,13 @@ import java.util.List;
 public class SettingServiceImpl implements SettingService
 {
     private final SettingManager settingManager;
-    private final CommandRateLimiter commandRateLimiter;
-    private final DeepSeekClient deepSeekClient;
 
     // =================== 全局功能相关 ===================
 
     @Override
     public SettingInfo getSetting(Long groupId) { return settingManager.getSetting(groupId); }
     @Override
-    public boolean setSetting(SettingInfo setting) {
-        boolean set = settingManager.setSetting(setting);
-        commandRateLimiter.reset(setting.getGroupId());
-        deepSeekClient.clearHistory(setting.getGroupId(), null);
-        return set;
-    }
+    public boolean setSetting(SettingInfo setting) { return settingManager.setSetting(setting); }
 
     // =================== WEB功能相关 ===================
 
