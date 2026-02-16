@@ -10,6 +10,7 @@ import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.enums.ChatScope;
+import org.bot.nullbot.enums.LimitScope;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SettingService;
@@ -41,6 +42,34 @@ public class GroupSetCommand implements Command
                     bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);
                     log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
                     return;
+                }
+
+                if ("-limit".equals(option)) {
+                    if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
+                    String setting = params.get(1);
+                    if ("scp".equals(setting)) {
+                        LimitScope limitScope = settingService.switchLimitScope(groupId);
+                        bot.sendGroupMsg(groupId, "[Limit] \uD83D\uDD04已切换: " + limitScope, false);
+                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速范围 -> {}", groupId, limitScope);
+                        return;
+                    }
+                    if ("cap".equals(setting)) {
+                        if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
+                        int capcity = Integer.parseInt(event.getCommandParameters().get(2));
+                        settingService.setLimitCapacity(groupId, capcity);
+                        bot.sendGroupMsg(groupId, "[Limit] ✅限速容量已更新", false);
+                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速容量 -> {}", groupId, capcity);
+                        return;
+                    }
+                    if ("ref".equals(setting)) {
+                        if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
+                        int refill = Integer.parseInt(event.getCommandParameters().get(2));
+                        settingService.setLimitCapacity(groupId, refill);
+                        bot.sendGroupMsg(groupId, "[Limit] ✅限速补充已更新", false);
+                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速补充 -> {}", groupId, refill);
+                        return;
+                    }
+                    throw new NullBotMsgException("[群设置] ❌无此Limit设置");
                 }
 
                 if ("-ai".equals(option)) {
@@ -85,7 +114,7 @@ public class GroupSetCommand implements Command
                 }
 
                 if ("-monitor".equals(option)) {
-                    if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌监听设置参数不足");
+                    if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌Monitor设置参数不足");
                     String setting = params.get(1);
                     boolean isEnabled = switch (setting) {
                         case "img" -> settingService.switchImageCollect(groupId);
@@ -93,7 +122,7 @@ public class GroupSetCommand implements Command
                         case "key" -> settingService.switchKeywordDetect(groupId);
                         case "pok" -> settingService.switchPokeDetect(groupId);
                         case "rcl" -> settingService.switchRecallDetect(groupId);
-                        default -> throw new NullBotMsgException("[群设置] ❌无此监听设置");
+                        default -> throw new NullBotMsgException("[群设置] ❌无此Monitor设置");
                     };
                     bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[监听] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
                     log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, isEnabled ? "ON" : "OFF");
@@ -134,6 +163,13 @@ public class GroupSetCommand implements Command
                 操作与参数:
                 • [-view]
                    获取群设置
+                
+                • [-limit] [选项|其他]
+                   选项:
+                   scp - 限速范围
+                   其他:
+                   cap [Int] - 限速容量
+                   ref [Int] - 限速补充
                 
                 • [-ai] [模式选项|其他]
                    模式选项:
@@ -177,24 +213,15 @@ public class GroupSetCommand implements Command
                 • [-view]
                    获取群设置
                 
-                • [-monitor] [监测类型]
-                   监测类型:
-                   img - 图片收集
-                   msg - 消息收集
-                   key - 词语检测
-                   pok - 戳戳检测
-                   rcl - 撤回检测
-                
                 • [-guess] [切割比例] [内边距]
                    设置 Guess 游戏难度
                 
                 示例:
                 GroupSet -view
-                GroupSet -monitor img
                 GroupSet -guess 0.1 250
                 
                 注意:
-                你不可执行 [-ai] 相关设置指令！
+                你不可执行 [-limit] 和 [-ai] 和 [-monitor] 相关设置指令！
                 针对Guess游戏 - 切割比例越小越难 内边距越小越难""";
     }
 }

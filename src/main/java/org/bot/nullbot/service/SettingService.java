@@ -19,13 +19,15 @@ public interface SettingService
 
     LimitScope getLimitScope(Long groupId);
 
-    LimitScope switchLimitScope(Long groupId);
-
     int getLimitCapacity(Long groupId);
 
     int getLimitRefill(Long groupId);
 
-    boolean setLimitParams(Long groupId, int limitCapacity, int limitRefill);
+    LimitScope switchLimitScope(Long groupId);
+
+    boolean setLimitCapacity(Long groupId, int limitCapacity);
+
+    boolean setLimitRefill(Long groupId, int limitRefill);
 
     ChatOption getChatOption(Long groupId);
 

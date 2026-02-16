@@ -39,18 +39,28 @@ public class SettingServiceImpl implements SettingService
 
     // ------------------- Limit 功能控制 --------------------
 
+    // 查询方法
     @Override
     public LimitScope getLimitScope(Long groupId) { return getSetting(groupId).getLimitScope(); }
-    @Override
-    public LimitScope switchLimitScope(Long groupId) { return getSetting(groupId).switchLimitScope(); }
     @Override
     public int getLimitCapacity(Long groupId) { return getSetting(groupId).getLimitCapacity(); }
     @Override
     public int getLimitRefill(Long groupId) { return getSetting(groupId).getLimitRefill(); }
+
+    // 修改方法
     @Override
-    public boolean setLimitParams(Long groupId, int limitCapacity, int limitRefill) {
+    public LimitScope switchLimitScope(Long groupId) { return getSetting(groupId).switchLimitScope(); }
+
+    @Override
+    public boolean setLimitCapacity(Long groupId, int limitCapacity) {
         SettingInfo setting = getSetting(groupId);
         setting.setLimitCapacity(limitCapacity);
+        return true;
+    }
+
+    @Override
+    public boolean setLimitRefill(Long groupId, int limitRefill) {
+        SettingInfo setting = getSetting(groupId);
         setting.setLimitRefill(limitRefill);
         return true;
     }
