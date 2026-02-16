@@ -21,21 +21,7 @@ public class CommandRateLimiter
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
     private final Map<Long, Long> lastProcess = new ConcurrentHashMap<>();
 
-    private Bucket resolveBucket(String key) {
-        return buckets.computeIfAbsent(key, k -> Bucket.builder()
-                .addLimit(limit -> limit
-                        .capacity(rateLimitProperties.getCapacity())
-                        .refillGreedy(rateLimitProperties.getRefill(), Duration.ofMinutes(1)))
-                .build());
-    }
-
-    public boolean isSpam(Long groupId, long msLimit) {
-        long now = System.currentTimeMillis();
-        long last = lastProcess.getOrDefault(groupId, 0L);
-        if (now - last < msLimit) return true;
-        lastProcess.put(groupId, now);
-        return false;
-    }
+    // =================== 调用方法 ===================
 
     public boolean tryConsume(CommandEvent<?> commandEvent) {
         if (!rateLimitProperties.getEnabled()) {
@@ -68,5 +54,23 @@ public class CommandRateLimiter
         } else
             //默认不限速的事件
             return true;
+    }
+
+    // =================== 工具方法 ===================
+
+    private Bucket resolveBucket(String key) {
+        return buckets.computeIfAbsent(key, k -> Bucket.builder()
+                .addLimit(limit -> limit
+                        .capacity(rateLimitProperties.getCapacity())
+                        .refillGreedy(rateLimitProperties.getRefill(), Duration.ofMinutes(1)))
+                .build());
+    }
+
+    public boolean isSpam(Long groupId, long msLimit) {
+        long now = System.currentTimeMillis();
+        long last = lastProcess.getOrDefault(groupId, 0L);
+        if (now - last < msLimit) return true;
+        lastProcess.put(groupId, now);
+        return false;
     }
 }
