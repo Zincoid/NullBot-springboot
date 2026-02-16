@@ -38,19 +38,19 @@ public class CommandRateLimiter
 
     // =================== 工具方法 ===================
 
-    private Bucket resolveBucket(String key) {
-        return buckets.computeIfAbsent(key, k -> Bucket.builder()
-                .addLimit(limit -> limit
-                        .capacity(rateLimitProperties.getCapacity())
-                        .refillGreedy(rateLimitProperties.getRefill(), Duration.ofMinutes(1)))
-                .build());
-    }
-
     public boolean isSpam(Long groupId, long msLimit) {
         long now = System.currentTimeMillis();
         long last = lastProcess.getOrDefault(groupId, 0L);
         if (now - last < msLimit) return true;
         lastProcess.put(groupId, now);
         return false;
+    }
+
+    private Bucket resolveBucket(String key) {
+    return buckets.computeIfAbsent(key, k -> Bucket.builder()
+            .addLimit(limit -> limit
+                    .capacity(rateLimitProperties.getCapacity())
+                    .refillGreedy(rateLimitProperties.getRefill(), Duration.ofMinutes(1)))
+            .build());
     }
 }
