@@ -462,7 +462,7 @@
 - 增强 FileService - 新增 deleteFileRecordForBot 方法；
 - 新增 StringUtil 工具类 - 添加 truncateFileName 方法；
 - 修复 Bot 文件删除相关指令 - 修复未删除文件对应数据库条目的漏洞 (因为已取消登入自动 Sync)；
-- 优化 RateLimiter 组件及相关代码；
+- 优化 CommandRateLimiter 组件及相关代码；
 - 修改 Scope 类名 为 ChatScope；
 - 增强 RateLimit 功能 - 将全局限速更改为分群限速并新增相关 GroupSet 设置功能；
 - 网页Bot管理系统 后端优化 - 更新群设置时重置群 AI 和限速器。
