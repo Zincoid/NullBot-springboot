@@ -1,7 +1,7 @@
 package org.bot.nullbot.config.prop;
 
 import lombok.Data;
-import org.bot.nullbot.enums.Scope;
+import org.bot.nullbot.enums.ChatScope;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "nullbot.default")
 public class DefaultProperties
 {
-    private Scope scope;  // 会话范围
+    private ChatScope chatScope;  // 会话范围
     private boolean antiInjection;  // 防注入模式
     private boolean thinking;  // 深度思考模式
     private boolean voice;  // 语音模式

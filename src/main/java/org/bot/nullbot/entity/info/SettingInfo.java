@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bot.nullbot.config.prop.DefaultProperties;
 import org.bot.nullbot.entity.ChatOption;
-import org.bot.nullbot.enums.Scope;
+import org.bot.nullbot.enums.ChatScope;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +14,7 @@ public class SettingInfo
 {
     private Long groupId;
 
-    private Scope scope;
+    private ChatScope chatScope;
     private boolean antiInjection;
     private boolean thinking;
     private boolean voice;
@@ -37,7 +37,7 @@ public class SettingInfo
     public SettingInfo(Long groupId, DefaultProperties props) {
         this.groupId = groupId;
 
-        this.scope = props.getScope();
+        this.chatScope = props.getChatScope();
         this.antiInjection = props.isAntiInjection();
         this.thinking = props.isThinking();
         this.voice = props.isVoice();
@@ -59,10 +59,10 @@ public class SettingInfo
     }
 
     public ChatOption getChatOption() {
-        return new ChatOption(scope, antiInjection, thinking, voice, embedding, embeddingAuth, custom);
+        return new ChatOption(chatScope, antiInjection, thinking, voice, embedding, embeddingAuth, custom);
     }
 
-    public Scope switchScope() { return scope = scope.next(); }
+    public ChatScope switchChatScope() { return chatScope = chatScope.next(); }
     public boolean switchAntiInjection() { return antiInjection = !antiInjection; }
     public boolean switchThinking() { return thinking = !thinking; }
     public boolean switchVoice() { return voice = !voice; }
@@ -100,7 +100,7 @@ public class SettingInfo
                  ◉ Guess 设置
                 ├ 切割比例 - %s
                 └ 切割边距 - %s""",
-                scope,
+                chatScope,
                 antiInjection ? "ON" : "OFF",
                 thinking ? "ON" : "OFF",
                 voice ? "ON" : "OFF",
@@ -114,7 +114,8 @@ public class SettingInfo
                 keywordDetect ? "ON" : "OFF",
                 pokeDetect ? "ON" : "OFF",
                 recallDetect ? "ON" : "OFF",
-                guessRatio, guessPadding
+                guessRatio,
+                guessPadding
         );
     }
 }

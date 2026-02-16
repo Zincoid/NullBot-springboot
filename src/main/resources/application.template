@@ -68,7 +68,7 @@ nullbot:
   bot-id:
   default:  # 默认群设置
     # AI - Basic
-    scope: group
+    chat-scope: group
     anti-injection: true
     thinking: false
     voice: false
@@ -91,9 +91,9 @@ nullbot:
     prefix: /
     rate-limit:
       enabled: true
+      scope: group
       capacity: 25
       refill: 10
-      scope: group
   file:
     storage:
       # 网页文件管理根目录

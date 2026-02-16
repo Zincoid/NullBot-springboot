@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
-import org.bot.nullbot.enums.Scope;
+import org.bot.nullbot.enums.ChatScope;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +52,7 @@ public class SettingServiceImpl implements SettingService
 
     // 修改方法
     @Override
-    public Scope switchScope(Long groupId) { return getSetting(groupId).switchScope(); }
+    public ChatScope switchChatScope(Long groupId) { return getSetting(groupId).switchChatScope(); }
     @Override
     public boolean switchAntiInjection(Long groupId) { return getSetting(groupId).switchAntiInjection(); }
     @Override

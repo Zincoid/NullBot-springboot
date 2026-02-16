@@ -27,7 +27,7 @@ import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.component.storage.SysMsgStorage;
 import org.bot.nullbot.config.prop.DeepSeekProperties;
 import org.bot.nullbot.entity.ChatOption;
-import org.bot.nullbot.enums.Scope;
+import org.bot.nullbot.enums.ChatScope;
 import org.bot.nullbot.dispatcher.CommandRegistry;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
@@ -132,7 +132,7 @@ public class DeepSeekClient
             }
         }
 
-        ReentrantLock lock = switch (option.getScope()) {
+        ReentrantLock lock = switch (option.getChatScope()) {
             case Group, Monitor -> chatStorage.getGroupLock(groupId);
             case Personal -> chatStorage.getUserLock(userId);
         };
@@ -141,7 +141,7 @@ public class DeepSeekClient
         List<ChatMessage> chatMessages = List.of();
         try {
             // 获取历史聊天记录
-            chatMessages = switch (option.getScope()) {
+            chatMessages = switch (option.getChatScope()) {
                 case Group -> chatStorage.getGroupHistory(groupId);
                 case Personal -> chatStorage.getUserHistory(userId);
                 case Monitor -> chatStorage.getMonitorHistory(groupId);
@@ -154,7 +154,7 @@ public class DeepSeekClient
             String originalResponse = sendRequest(_messages, option);
 
             // 限制历史记录长度
-            if (option.getScope() == Scope.Monitor)
+            if (option.getChatScope() == ChatScope.Monitor)
                 chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
             else
                 chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxHistoryLength());
@@ -167,7 +167,7 @@ public class DeepSeekClient
                 response = executeBasic(originalResponse, chatMessages, groupId, bot);
             return response;
         } catch (Exception e) {
-            if(option.getScope() != Scope.Monitor) chatMessages.removeLast();  // 非监听模式请求失败移除新增的用户消息
+            if(option.getChatScope() != ChatScope.Monitor) chatMessages.removeLast();  // 非监听模式请求失败移除新增的用户消息
             throw e;
         } finally {
             lock.unlock();  // 解锁历史存储
@@ -182,7 +182,7 @@ public class DeepSeekClient
      */
     public String clearHistory(Long groupId, Long userId) {
         ChatOption option = settingService.getChatOption(groupId);
-        return switch (option.getScope()) {
+        return switch (option.getChatScope()) {
             case Group -> {
                 chatStorage.clearGroupHistory(groupId);
                 yield "(Group模式) 群聊" + groupId;
@@ -206,7 +206,7 @@ public class DeepSeekClient
      */
     public String getHistory(Long groupId, Long userId) {
         ChatOption option = settingService.getChatOption(groupId);
-        List<ChatMessage> history = switch (option.getScope()) {
+        List<ChatMessage> history = switch (option.getChatScope()) {
             case Group -> chatStorage.getGroupHistory(groupId);
             case Personal -> chatStorage.getUserHistory(userId);
             case Monitor -> chatStorage.getMonitorHistory(groupId);

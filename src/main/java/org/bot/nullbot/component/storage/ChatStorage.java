@@ -85,14 +85,14 @@ public class ChatStorage
 
     public List<ChatMessage> getAIMessagesForRecall(Long groupId, Long userId, int n) {
         ChatOption option = settingService.getChatOption(groupId);
-        ReentrantLock lock = switch (option.getScope()) {
+        ReentrantLock lock = switch (option.getChatScope()) {
             case Group, Monitor -> getGroupLock(groupId);
             case Personal -> getUserLock(userId);
         };
         lock.lock();  // 锁定历史存储
 
         try {
-            List<ChatMessage> history = switch (option.getScope()) {
+            List<ChatMessage> history = switch (option.getChatScope()) {
                 case Group -> groupHistories.get(groupId);
                 case Monitor -> monitorHistories.get(groupId);
                 case Personal -> userHistories.get(userId);

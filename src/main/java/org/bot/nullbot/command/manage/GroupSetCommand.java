@@ -9,7 +9,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.SettingInfo;
-import org.bot.nullbot.enums.Scope;
+import org.bot.nullbot.enums.ChatScope;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SettingService;
@@ -47,9 +47,9 @@ public class GroupSetCommand implements Command
                     if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
                     String setting = params.get(1);
                     if ("scp".equals(setting)) {
-                        Scope scope = settingService.switchScope(groupId);
-                        bot.sendGroupMsg(groupId, "[AI] \uD83D\uDD04已切换: " + scope, false);
-                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, scope);
+                        ChatScope chatScope = settingService.switchChatScope(groupId);
+                        bot.sendGroupMsg(groupId, "[AI] \uD83D\uDD04已切换: " + chatScope, false);
+                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 会话范围 -> {}", groupId, chatScope);
                         return;
                     }
                     if ("frq".equals(setting)) {

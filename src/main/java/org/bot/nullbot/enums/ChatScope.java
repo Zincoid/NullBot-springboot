@@ -1,12 +1,12 @@
 package org.bot.nullbot.enums;
 
-public enum Scope
+public enum ChatScope
 {
     Group,
     Personal,
     Monitor;
 
-    public Scope next() {
+    public ChatScope next() {
         int nextOrdinal = (this.ordinal() + 1) % values().length;
         return values()[nextOrdinal];
     }

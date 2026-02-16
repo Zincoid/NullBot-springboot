@@ -2,7 +2,7 @@ package org.bot.nullbot.service;
 
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
-import org.bot.nullbot.enums.Scope;
+import org.bot.nullbot.enums.ChatScope;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public interface SettingService
 
     double getReplyFrequency(Long groupId);
 
-    Scope switchScope(Long groupId);
+    ChatScope switchChatScope(Long groupId);
 
     boolean switchAntiInjection(Long groupId);
 
