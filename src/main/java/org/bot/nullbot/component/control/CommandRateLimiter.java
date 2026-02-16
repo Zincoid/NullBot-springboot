@@ -6,14 +6,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.bucket4j.*;
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.config.prop.RateLimitProperties;
+import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class CommandRateLimiter
 {
-    private final RateLimitProperties rateLimitProperties;
+    private final SettingService settingService;
 
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
     private final Map<Long, Long> lastProcess = new ConcurrentHashMap<>();
@@ -22,13 +22,13 @@ public class CommandRateLimiter
 
     public boolean tryConsume(Long groupId, Long userId, String commandType) {
         if (isSpam(groupId, 500)) return false;
-        String key = switch (rateLimitProperties.getScope()) {
-            case User -> "user:" + userId;
-            case Group -> "group:" + groupId;
-            case Command -> "cmd:" + commandType;
-            case Global -> "global";
+        String key = switch (settingService.getLimitScope(groupId)) {
+            case User -> "User:" + userId;
+            case Group -> "Group:" + groupId;
+            case Command -> "Command:" + commandType;
+            case Global -> "Global";
         };
-        return resolveBucket(key).tryConsume(1);
+        return resolveBucket(key, groupId).tryConsume(1);
     }
 
     // =================== 工具方法 ===================
@@ -41,11 +41,11 @@ public class CommandRateLimiter
         return false;
     }
 
-    private Bucket resolveBucket(String key) {
+    private Bucket resolveBucket(String key, Long groupId) {
     return buckets.computeIfAbsent(key, k -> Bucket.builder()
             .addLimit(limit -> limit
-                    .capacity(rateLimitProperties.getCapacity())
-                    .refillGreedy(rateLimitProperties.getRefill(), Duration.ofMinutes(1)))
+                    .capacity(settingService.getLimitCapacity(groupId))
+                    .refillGreedy(settingService.getLimitRefill(groupId), Duration.ofMinutes(1)))
             .build());
     }
 }
