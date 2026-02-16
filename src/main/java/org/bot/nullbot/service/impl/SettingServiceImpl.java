@@ -36,7 +36,11 @@ public class SettingServiceImpl implements SettingService
 
     // =================== BOT功能相关 ===================
 
-    // ------------------- AI功能控制 --------------------
+    // ------------------- RateLimit 功能控制 --------------------
+
+
+
+    // ------------------- AI 功能控制 --------------------
 
     // 查询方法
     @Override
@@ -73,7 +77,7 @@ public class SettingServiceImpl implements SettingService
         return true;
     }
 
-    // ----------------- Monitor功能控制 -----------------
+    // ----------------- Monitor 功能控制 -----------------
 
     // 查询方法
     @Override
@@ -99,7 +103,7 @@ public class SettingServiceImpl implements SettingService
     @Override
     public boolean switchRecallDetect(Long groupId) { return getSetting(groupId).switchRecallDetect(); }
 
-    // ------------------ Guess功能控制 ------------------
+    // ------------------ Guess 功能控制 ------------------
 
     // 查询方法
     @Override
