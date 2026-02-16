@@ -21,12 +21,8 @@ public class CommandRateLimiter
     // =================== 调用方法 ===================
 
     public boolean tryConsume(Long groupId, Long userId, String commandType) {
-        if (!rateLimitProperties.getEnabled()) {
-            return true;
-        }
-        if (isSpam(groupId, 500)) {
-            return false;
-        }
+        if (!rateLimitProperties.getEnabled()) return true;
+        if (isSpam(groupId, 500)) return false;
         String key = switch (rateLimitProperties.getScope()) {
             case User -> "user:" + userId;
             case Group -> "group:" + groupId;
