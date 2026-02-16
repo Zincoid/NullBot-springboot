@@ -6,6 +6,7 @@ import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.config.prop.RateLimitProperties;
 import org.bot.nullbot.dispatcher.CommandHandlerChain;
 import org.bot.nullbot.dispatcher.handler.Handler;
 import org.bot.nullbot.entity.CommandEvent;
@@ -19,13 +20,20 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class RateLimitHandler implements Handler
 {
+    private final RateLimitProperties rateLimitProperties;
     private final CommandRateLimiter commandRateLimiter;
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception
     {
+        if (!rateLimitProperties.getEnabled()) {
+            log.info("\t\t├─[RateLimitHandler] 未启用速率限制");
+            chain.doHandle(bot, event, command);
+            return;
+        }
+
         if (!event.isRateLimit()) {
-            log.info("\t\t├─[RateLimitHandler] 无速率限制");
+            log.info("\t\t├─[RateLimitHandler] 无需速率限制");
             chain.doHandle(bot, event, command);
             return;
         }
