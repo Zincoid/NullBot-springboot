@@ -31,6 +31,10 @@ public class CommandRateLimiter
         return resolveBucket(key, groupId).tryConsume(1);
     }
 
+    public boolean removeBucket(Long groupId) {
+        return true;
+    }
+
     // =================== 工具方法 ===================
 
     public boolean isSpam(Long groupId, long msLimit) {
