@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class CommandRateLimiter
 {
     private final RateLimitProperties rateLimitProperties;
+
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
     private final Map<Long, Long> lastProcess = new ConcurrentHashMap<>();
 
@@ -37,10 +38,10 @@ public class CommandRateLimiter
     }
 
     public boolean tryConsume(CommandEvent<?> commandEvent) {
-        if (!rateLimitProperties.getEnabled()){
+        if (!rateLimitProperties.getEnabled()) {
             return true;
         }
-        if(commandEvent.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+        if (commandEvent.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             if(isSpam(groupMessageEvent.getGroupId(), 500)){
                 return false;
             }
@@ -52,7 +53,7 @@ public class CommandRateLimiter
             };
             Bucket bucket = resolveBucket(key);
             return bucket.tryConsume(1);
-        }else if(commandEvent.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent){
+        } else if (commandEvent.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
             if(isSpam(pokeNoticeEvent.getGroupId(), 500)){
                 return false;
             }
@@ -64,7 +65,7 @@ public class CommandRateLimiter
             };
             Bucket bucket = resolveBucket(key);
             return bucket.tryConsume(1);
-        }else
+        } else
             //默认不限速的事件
             return true;
     }
