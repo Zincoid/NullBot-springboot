@@ -64,7 +64,7 @@ public class GroupSetCommand implements Command
                     if ("ref".equals(setting)) {
                         if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
                         int refill = Integer.parseInt(event.getCommandParameters().get(2));
-                        settingService.setLimitCapacity(groupId, refill);
+                        settingService.setLimitRefill(groupId, refill);
                         bot.sendGroupMsg(groupId, "[Limit] ✅限速补充已更新", false);
                         log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速补充 -> {}", groupId, refill);
                         return;
