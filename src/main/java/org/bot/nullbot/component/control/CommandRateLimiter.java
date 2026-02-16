@@ -1,7 +1,6 @@
 package org.bot.nullbot.component.control;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
