@@ -55,10 +55,10 @@ public class GroupSetCommand implements Command
                     }
                     if ("cap".equals(setting)) {
                         if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
-                        int capcity = Integer.parseInt(event.getCommandParameters().get(2));
-                        settingService.setLimitCapacity(groupId, capcity);
+                        int capacity = Integer.parseInt(event.getCommandParameters().get(2));
+                        settingService.setLimitCapacity(groupId, capacity);
                         bot.sendGroupMsg(groupId, "[Limit] ✅限速容量已更新", false);
-                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速容量 -> {}", groupId, capcity);
+                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速容量 -> {}", groupId, capacity);
                         return;
                     }
                     if ("ref".equals(setting)) {
