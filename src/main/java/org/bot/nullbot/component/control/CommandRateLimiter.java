@@ -23,17 +23,20 @@ public class CommandRateLimiter
     public boolean tryConsume(Long groupId, Long userId, String commandType) {
         if (isSpam(groupId, 500)) return false;
         String key = switch (settingService.getLimitScope(groupId)) {
-            case User -> "User:" + userId;
-            case Group -> "Group:" + groupId;
-            case Command -> "Command:" + commandType;
-            case Global -> "Global";
+            case Group ->  "[%s]".formatted(groupId);
+            case User -> "[%s][User:%s]".formatted(groupId, userId);
+            case Cmd ->  "[%s][Cmd:%s]".formatted(groupId, commandType);
         };
         return resolveBucket(key, groupId).tryConsume(1);
     }
 
-    // public boolean removeBucket(Long groupId) {
-    //     return true;
-    // }
+    public void reset(Long groupId) {
+        for (String key : buckets.keySet()) {
+            if (key.startsWith("[%s]".formatted(groupId))) {
+                buckets.remove(key);
+            }
+        }
+    }
 
     // =================== 工具方法 ===================
 

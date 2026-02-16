@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
+import org.bot.nullbot.component.control.CommandRateLimiter;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.enums.ChatScope;
@@ -26,6 +27,7 @@ public class GroupSetCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
     private final SettingService settingService;
+    private final CommandRateLimiter commandRateLimiter;
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -49,6 +51,7 @@ public class GroupSetCommand implements Command
                     String setting = params.get(1);
                     if ("scp".equals(setting)) {
                         LimitScope limitScope = settingService.switchLimitScope(groupId);
+                        commandRateLimiter.reset(groupId);
                         bot.sendGroupMsg(groupId, "[Limit] \uD83D\uDD04已切换: " + limitScope, false);
                         log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速范围 -> {}", groupId, limitScope);
                         return;
@@ -57,6 +60,7 @@ public class GroupSetCommand implements Command
                         if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
                         int capacity = Integer.parseInt(event.getCommandParameters().get(2));
                         settingService.setLimitCapacity(groupId, capacity);
+                        commandRateLimiter.reset(groupId);
                         bot.sendGroupMsg(groupId, "[Limit] ✅限速容量已更新", false);
                         log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速容量 -> {}", groupId, capacity);
                         return;
@@ -65,6 +69,7 @@ public class GroupSetCommand implements Command
                         if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
                         int refill = Integer.parseInt(event.getCommandParameters().get(2));
                         settingService.setLimitRefill(groupId, refill);
+                        commandRateLimiter.reset(groupId);
                         bot.sendGroupMsg(groupId, "[Limit] ✅限速补充已更新", false);
                         log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速补充 -> {}", groupId, refill);
                         return;
@@ -134,8 +139,8 @@ public class GroupSetCommand implements Command
                     double ratio = Double.parseDouble(event.getCommandParameters().get(1));
                     int padding = Integer.parseInt(event.getCommandParameters().get(2));
                     if(settingService.setGuessParams(groupId, ratio, padding)) {
-                        bot.sendGroupMsg(groupId, "[游戏] ✅参数已更新", false);
-                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 -> Guess游戏参数", groupId);
+                        bot.sendGroupMsg(groupId, "[猜] ✅参数已更新", false);
+                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} Guess参数 -> {} {}", groupId, ratio, padding);
                         return;
                     }
                     throw new NullBotMsgException("[群设置] ❌Guess参数更新失败");

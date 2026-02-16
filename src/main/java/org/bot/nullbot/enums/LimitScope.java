@@ -4,8 +4,7 @@ public enum LimitScope
 {
     User,
     Group,
-    Command,
-    Global;
+    Cmd;
 
     public LimitScope next() {
         int nextOrdinal = (this.ordinal() + 1) % values().length;
