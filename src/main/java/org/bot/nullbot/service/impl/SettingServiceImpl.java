@@ -1,6 +1,8 @@
 package org.bot.nullbot.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.component.ai.DeepSeekClient;
+import org.bot.nullbot.component.control.CommandRateLimiter;
 import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
@@ -16,6 +18,8 @@ import java.util.List;
 public class SettingServiceImpl implements SettingService
 {
     private final SettingManager settingManager;
+    private final CommandRateLimiter commandRateLimiter;
+    private final DeepSeekClient deepSeekClient;
 
     // =================== 全局功能相关 ===================
 
@@ -23,7 +27,10 @@ public class SettingServiceImpl implements SettingService
     public SettingInfo getSetting(Long groupId) { return settingManager.getSetting(groupId); }
     @Override
     public boolean setSetting(SettingInfo setting) {
-        return settingManager.setSetting(setting);
+        boolean set = settingManager.setSetting(setting);
+        commandRateLimiter.reset(setting.getGroupId());
+        deepSeekClient.clearHistory(setting.getGroupId(), null);
+        return set;
     }
 
     // =================== WEB功能相关 ===================

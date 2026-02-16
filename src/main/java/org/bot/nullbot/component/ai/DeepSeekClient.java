@@ -178,24 +178,16 @@ public class DeepSeekClient
      * 清空对话历史
      * @param groupId 群ID
      * @param userId 用户ID
-     * @return 清除目标
+     * @return 清除模式
      */
-    public String clearHistory(Long groupId, Long userId) {
-        ChatOption option = settingService.getChatOption(groupId);
-        return switch (option.getChatScope()) {
-            case Group -> {
-                chatStorage.clearGroupHistory(groupId);
-                yield "(Group模式) 群聊" + groupId;
-            }
-            case Personal -> {
-                chatStorage.clearUserHistory(userId);
-                yield "(Personal模式) 用户" + userId;
-            }
-            case Monitor -> {
-                chatStorage.clearMonitorHistory(groupId);
-                yield "(Monitor模式) 群聊" + groupId;
-            }
-        };
+    public ChatScope clearHistory(Long groupId, Long userId) {
+        ChatScope chatScope = settingService.getChatOption(groupId).getChatScope();
+        switch (chatScope) {
+            case Group -> chatStorage.clearGroupHistory(groupId);
+            case Personal -> { if (userId != null) chatStorage.clearUserHistory(userId); }
+            case Monitor -> chatStorage.clearMonitorHistory(groupId);
+        }
+        return chatScope;
     }
 
     /**
