@@ -67,6 +67,10 @@ shiro:
 nullbot:
   bot-id:
   default:  # 默认群设置
+    # Limit
+    limit-scope: Group
+    limit-capacity: 25
+    limit-refill: 10
     # AI - Basic
     chat-scope: group
     anti-injection: true
@@ -91,9 +95,6 @@ nullbot:
     prefix: /
     rate-limit:
       enabled: true
-      scope: group
-      capacity: 25
-      refill: 10
   file:
     storage:
       # 网页文件管理根目录
@@ -119,7 +120,7 @@ nullbot:
       max-history-length: 50
       max-monitor-length: 100
       max-tokens: 250
-      default-system-message: 你是一个助手
+      default-system-message: 你是一只猫娘！
     tts:
       api-url: https://gsv2p.acgnai.top
       api-key:
