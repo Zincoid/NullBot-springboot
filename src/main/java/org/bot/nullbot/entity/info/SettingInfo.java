@@ -42,6 +42,10 @@ public class SettingInfo
     public SettingInfo(Long groupId, DefaultProperties props) {
         this.groupId = groupId;
 
+        this.limitScope = props.getLimitScope();
+        this.limitCapacity = props.getLimitCapacity();
+        this.limitRefill = props.getLimitRefill();
+
         this.chatScope = props.getChatScope();
         this.antiInjection = props.isAntiInjection();
         this.thinking = props.isThinking();
@@ -62,6 +66,8 @@ public class SettingInfo
         this.guessRatio = props.getGuessRatio();
         this.guessPadding = props.getGuessPadding();
     }
+
+    public LimitScope switchLimitScope() { return limitScope = limitScope.next(); }
 
     public ChatOption getChatOption() {
         return new ChatOption(chatScope, antiInjection, thinking, voice, embedding, embeddingAuth, custom);
@@ -86,6 +92,10 @@ public class SettingInfo
     @Override
     public String toString() {
         return String.format("""
+                 ◉ Limit 设置
+                ├ 限速范围 - %s
+                ├ 限速容量 - %s
+                └ 限速补充 - %s
                  ◉ AI 设置
                 ├ 会话范围 - %s
                 ├ 防注模式 - %s
@@ -105,6 +115,9 @@ public class SettingInfo
                  ◉ Guess 设置
                 ├ 切割比例 - %s
                 └ 切割边距 - %s""",
+                limitScope,
+                limitCapacity,
+                limitRefill,
                 chatScope,
                 antiInjection ? "ON" : "OFF",
                 thinking ? "ON" : "OFF",

@@ -10,9 +10,4 @@ import org.springframework.stereotype.Component;
 public class RateLimitProperties
 {
     private Boolean enabled;
-    private Integer capacity;
-    private Integer refill;
-    private Scope scope;
-
-    public enum Scope { User, Group, Command, Global }
 }

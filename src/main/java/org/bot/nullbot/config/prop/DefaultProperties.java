@@ -2,6 +2,7 @@ package org.bot.nullbot.config.prop;
 
 import lombok.Data;
 import org.bot.nullbot.enums.ChatScope;
+import org.bot.nullbot.enums.LimitScope;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,10 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "nullbot.default")
 public class DefaultProperties
 {
+    private LimitScope limitScope;  // 限速范围
+    private int limitCapacity;  //  限速容量
+    private int limitRefill;  // 限速补充 (每分钟)
+
     private ChatScope chatScope;  // 会话范围
     private boolean antiInjection;  // 防注入模式
     private boolean thinking;  // 深度思考模式
@@ -17,6 +22,7 @@ public class DefaultProperties
     private boolean embedding;  // 嵌入命令模式
     private boolean embeddingAuth;  // 嵌入限权验证
     private boolean custom;  // 自定义提示词模式
+
     private boolean autoReply;  // 自动回复模式
     private double replyFrequency;  // 猜 切割比例
 

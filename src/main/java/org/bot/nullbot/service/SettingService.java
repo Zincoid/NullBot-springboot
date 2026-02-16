@@ -3,6 +3,7 @@ package org.bot.nullbot.service;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.enums.ChatScope;
+import org.bot.nullbot.enums.LimitScope;
 
 import java.util.List;
 
@@ -15,6 +16,16 @@ public interface SettingService
     List<SettingInfo> getSettings();
 
     void setSettings(List<SettingInfo> settings);
+
+    LimitScope getLimitScope(Long groupId);
+
+    LimitScope switchLimitScope(Long groupId);
+
+    int getLimitCapacity(Long groupId);
+
+    int getLimitRefill(Long groupId);
+
+    boolean setLimitParams(Long groupId, int limitCapacity, int limitRefill);
 
     ChatOption getChatOption(Long groupId);
 

@@ -5,6 +5,7 @@ import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.enums.ChatScope;
+import org.bot.nullbot.enums.LimitScope;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,21 @@ public class SettingServiceImpl implements SettingService
 
     // ------------------- Limit 功能控制 --------------------
 
-
+    @Override
+    public LimitScope getLimitScope(Long groupId) { return getSetting(groupId).getLimitScope(); }
+    @Override
+    public LimitScope switchLimitScope(Long groupId) { return getSetting(groupId).switchLimitScope(); }
+    @Override
+    public int getLimitCapacity(Long groupId) { return getSetting(groupId).getLimitCapacity(); }
+    @Override
+    public int getLimitRefill(Long groupId) { return getSetting(groupId).getLimitRefill(); }
+    @Override
+    public boolean setLimitParams(Long groupId, int limitCapacity, int limitRefill) {
+        SettingInfo setting = getSetting(groupId);
+        setting.setLimitCapacity(limitCapacity);
+        setting.setLimitRefill(limitRefill);
+        return true;
+    }
 
     // ------------------- AI 功能控制 --------------------
 
