@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.bot.nullbot.config.prop.DefaultProperties;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.enums.ChatScope;
+import org.bot.nullbot.enums.LimitScope;
 
 @Data
 @AllArgsConstructor
@@ -13,6 +14,10 @@ import org.bot.nullbot.enums.ChatScope;
 public class SettingInfo
 {
     private Long groupId;
+
+    private LimitScope limitScope;
+    private int limitCapacity;
+    private int limitRefill;
 
     private ChatScope chatScope;
     private boolean antiInjection;

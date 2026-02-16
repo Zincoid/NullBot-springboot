@@ -36,7 +36,7 @@ public class SettingServiceImpl implements SettingService
 
     // =================== BOT功能相关 ===================
 
-    // ------------------- RateLimit 功能控制 --------------------
+    // ------------------- Limit 功能控制 --------------------
 
 
 
