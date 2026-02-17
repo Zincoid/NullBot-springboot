@@ -4,6 +4,8 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import jakarta.annotation.Resource;
+import jdash.client.GDClient;
+import jdash.common.LevelSearchMode;
 import org.bot.nullbot.component.game.handler.TicTacToeMatchHandler;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
 import org.bot.nullbot.component.render.HtmlRenderer;
@@ -46,6 +48,8 @@ class NullBotApplicationTests
     WebScreenCapturer webScreenCapturer;
     @Resource
     HtmlRenderer htmlRenderer;
+    @Resource
+    GDClient gdClient;
 
     @Test
     void regexTest() {
@@ -306,5 +310,10 @@ class NullBotApplicationTests
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    void GDTest() throws Exception {
+        gdClient.searchLevels(LevelSearchMode.SEARCH, query, null, 1);
     }
 }
