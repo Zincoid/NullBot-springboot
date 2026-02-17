@@ -4,11 +4,11 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import jakarta.annotation.Resource;
-import jdash.client.GDClient;
-import jdash.common.Length;
-import jdash.common.LevelSearchFilter;
-import jdash.common.LevelSearchMode;
-import jdash.common.entity.GDLevel;
+// import jdash.client.GDClient;
+// import jdash.common.Length;
+// import jdash.common.LevelSearchFilter;
+// import jdash.common.LevelSearchMode;
+// import jdash.common.entity.GDLevel;
 import org.bot.nullbot.component.game.handler.TicTacToeMatchHandler;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
 import org.bot.nullbot.component.render.HtmlRenderer;
@@ -342,6 +342,6 @@ class NullBotApplicationTests
         //     System.out.println("输入查询序号: ");
         //     System.out.println(levels.get(scanner.nextInt() - 1));
         //     scanner.nextLine();
-        }
+        // }
     }
 }
