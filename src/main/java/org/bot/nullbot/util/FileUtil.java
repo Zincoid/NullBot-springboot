@@ -151,6 +151,7 @@ public class FileUtil
                     .filter(Files::isRegularFile)
                     .filter(path -> matcher.matches(path.getFileName()))
                     .map(path -> path.toAbsolutePath().toString())
+                    // .sorted()
                     .toList();
         } catch (IOException e) {
             throw new RuntimeException("IO出错: " + e.getMessage());
@@ -171,7 +172,7 @@ public class FileUtil
                         return fileName.contains(lowerKeyword);
                     })
                     .map(path -> path.toAbsolutePath().toString())
-                    .sorted().toList();
+                    .toList();
         } catch (IOException e) {
             throw new RuntimeException("IO出错: " + e.getMessage());
         }
