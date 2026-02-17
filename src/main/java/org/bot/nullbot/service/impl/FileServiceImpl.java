@@ -44,7 +44,7 @@ public class FileServiceImpl implements FileService
     private final FileStorageProperties fileStorageProperties;
 
     @EventListener(ApplicationReadyEvent.class)
-    public void init(ApplicationReadyEvent event) {  // 更新文件数据库
+    public void init() {  // 更新文件数据库
         log.info("◎ [FileService] 初始化文件同步中...");
         scanAndSyncFiles();
     }
