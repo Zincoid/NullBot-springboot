@@ -48,7 +48,7 @@ public class MonitorListener
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
 
-    // =================== NextInput 监听方法 ===================
+    // =================== 输入监听方法 ===================
 
     public boolean onGroupNextInputDetection(GroupMessageEvent event) {
         return botNextInputer.response(event.getUserId(), event.getMessage());
