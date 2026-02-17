@@ -12,6 +12,7 @@ import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.FunctionControl;
+import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.config.prop.DeepSeekProperties;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.dispatcher.CommandProcessor;
@@ -36,6 +37,7 @@ import java.util.Objects;
 @Slf4j
 public class MonitorListener
 {
+    private final BotNextInputer botNextInputer;
     private final CommandProcessor commandProcessor;
     private final ChatStorage chatStorage;
     private final DeepSeekProperties deepSeekProperties;
@@ -45,6 +47,12 @@ public class MonitorListener
 
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
+
+    // =================== NextInput 监听方法 ===================
+
+    public boolean onGroupNextInputDetection(GroupMessageEvent event) {
+        return botNextInputer.response(event.getUserId(), event.getMessage());
+    }
 
     // =================== 串行监听方法 ===================
 

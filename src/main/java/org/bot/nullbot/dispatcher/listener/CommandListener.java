@@ -35,10 +35,16 @@ public class CommandListener
     public void onGroupMessageInteraction(Bot bot, GroupMessageEvent event) throws Exception
     {
         // 串行调用 消息预处理
-        monitorListener.onGroupKeywordDetection(bot, event);
-        if (!monitorListener.onGroupAIAutoReply(bot, event))  // 触发自动发言会记录当前消息 忽略消息收集
+        if (monitorListener.onGroupNextInputDetection(event)) {
             monitorListener.onGroupMessageCollection(bot, event);
-        monitorListener.onGroupImageCollection(bot, event);
+            monitorListener.onGroupImageCollection(bot, event);
+            return;
+        } else {
+            monitorListener.onGroupKeywordDetection(bot, event);
+            if (!monitorListener.onGroupAIAutoReply(bot, event))  // 触发自动发言会记录当前消息 忽略消息收集
+                monitorListener.onGroupMessageCollection(bot, event);
+            monitorListener.onGroupImageCollection(bot, event);
+        }
 
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
             log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage().replaceAll("\\R", " "));

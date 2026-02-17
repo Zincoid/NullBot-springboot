@@ -42,7 +42,7 @@ public class BotNextInputer
             log.info("▽ [BotNextInputer] 用户 {} 已响应 - {}", userId, message);
             return true;
         }
-        log.info("▽ [BotNextInputer] 用户 {} 未等待输入", userId);
+        // log.info("▽ [BotNextInputer] 用户 {} 未等待输入", userId);
         return false;
     }
 
