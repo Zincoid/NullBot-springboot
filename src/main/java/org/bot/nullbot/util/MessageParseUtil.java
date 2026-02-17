@@ -79,19 +79,19 @@ public class MessageParseUtil
         while (matcher.find()) {
             try {
                 long qq = Long.parseLong(matcher.group(1));
-                // 获取昵称 - 这里假设bot.getStrangerInfo是同步方法
+                // 获取用户昵称
                 String nickname = bot.getStrangerInfo(qq, true).getData().getNickname();
-                // 构建替换文本：@昵称(QQ号)
+                // 构建替换文本: @昵称(QQ号)
                 String replacement = "@" + nickname + "(" + qq + ")";
                 matcher.appendReplacement(result, replacement);
             } catch (Exception e) {
-                // 如果获取昵称失败，使用QQ号作为后备
+                // 获取昵称失败: 使用QQ号
                 String fallback = "@" + matcher.group(1);
                 matcher.appendReplacement(result, fallback);
             }
         }
         matcher.appendTail(result);
-        // 移除其他CQ码（非@的CQ码）
+        // 移除其他CQ码 (非@CQ码)
         String finalResult = result.toString();
         finalResult = finalResult.replaceAll("\\[CQ:(?!at\\b).*?]", "");
 
