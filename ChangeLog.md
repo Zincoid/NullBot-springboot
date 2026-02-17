@@ -469,4 +469,4 @@
 
 ### 2026.2.17 - 1.3.6
 - 新增 BotNextInputer 组件 - 用于监听指定用户的下一输入内容；
-- 增强 Endfield 指令 - 存在复数可选查询时通过 BotNextInputer 获取序号选择内容。
+- 增强 Endfield 指令 - 存在复数可选查询时通过 BotNextInputer 获取序号选择内容并移除原始查询全部方法。
