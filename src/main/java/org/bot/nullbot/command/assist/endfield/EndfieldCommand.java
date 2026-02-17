@@ -64,10 +64,10 @@ public class EndfieldCommand implements Command
                 try {
                     i = Integer.parseInt(next) - 1;
                 } catch (NumberFormatException e) {
-                    throw new NullBotMsgException("[终末地] ❌参数格式错误");
+                    throw new NullBotMsgException("[终末地] ❌格式错误");
                 }
                 if (i < 0 || i > helpPaths.size() - 1)
-                    throw new NullBotMsgException("[终末地] ❌输入范围错误");
+                    throw new NullBotMsgException("[终末地] ❌范围错误");
             }
 
             String helpPath = helpPaths.get(i);
@@ -79,7 +79,7 @@ public class EndfieldCommand implements Command
                     bot.sendGroupMsg(groupId, response, false);
                     log.info("\t\t\t\t├─[Endfield] 已获取文本内容");
                 } catch (IOException e) {
-                    throw new NullBotMsgException("[终末地] ❌文本读取出错");
+                    throw new NullBotMsgException("[终末地] ❌读取出错");
                 }
             } else {
                 // 其他文件类型 按图片处理
