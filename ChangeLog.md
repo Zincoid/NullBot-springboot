@@ -466,3 +466,7 @@
 - 修改 Scope 类名 为 ChatScope；
 - 增强 RateLimit 功能 - 将全局限速更改为分群限速并新增相关 GroupSet 设置功能；
 - 网页Bot管理系统 后端优化 - 更新群设置时重置群 AI 和限速器。
+
+### 2026.2.17 - 1.3.6
+- 新增 BotNextInputer 组件 - 用于监听指定用户的下一输入内容；
+- 增强 Endfield 指令 - 存在复数可选查询时通过 BotNextInputer 获取序号选择内容。

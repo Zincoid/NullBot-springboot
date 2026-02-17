@@ -26,6 +26,10 @@ public class TestCommand implements Command
             Long userId = groupMessageEvent.getUserId();
             bot.sendGroupMsg(groupId, "[测试] 等待输入...", false);
             String next = botNextInputer.request(userId, 10);
+            if (next == null) {
+                bot.sendGroupMsg(groupId, "[测试] 输入超时！", false);
+                return;
+            }
             bot.sendGroupMsg(groupId, "[测试] 输入内容: " + next, false);
         }else
             throw new NullBotLogException("[测试] ❌未设计 - 非群消息事件响应方式");
