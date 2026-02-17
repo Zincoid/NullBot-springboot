@@ -171,7 +171,7 @@ public class FileUtil
                         return fileName.contains(lowerKeyword);
                     })
                     .map(path -> path.toAbsolutePath().toString())
-                    .toList();
+                    .sorted().toList();
         } catch (IOException e) {
             throw new RuntimeException("IO出错: " + e.getMessage());
         }
