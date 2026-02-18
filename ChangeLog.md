@@ -473,4 +473,4 @@
 
 ### 2026.2.18
 - 新增 Question 指令 - 单人问答游戏；
-- 优化 DeepSeekClient - 优化 chatSingle 方法和非法请求消息过滤。
+- 优化 DeepSeekClient - 优化 chatSingle 方法。
