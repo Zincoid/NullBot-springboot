@@ -66,7 +66,7 @@ public class QuestionCommand implements Command
 
                 bot.sendGroupMsg(groupId, response, false);
             } else
-                throw new NullBotMsgException("[问答] ❌生成异常问题");
+                throw new NullBotMsgException("[问答] ❌生成问题异常");
         }else
             throw new NullBotLogException("[问答] ❌未设计 - 非群消息事件响应方式");
     }
