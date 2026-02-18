@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +30,7 @@ public class QuestionCommand implements Command
     private final DeepSeekClient deepSeekClient;
     private final BotNextInputer botNextInputer;
 
-    private final Set<Long> inGameUsers = new HashSet<>();
+    private final Set<Long> inGameUsers = ConcurrentHashMap.newKeySet();
     private static final int QUESTION_TIMEOUT = 30;  // Second
 
     @Override
