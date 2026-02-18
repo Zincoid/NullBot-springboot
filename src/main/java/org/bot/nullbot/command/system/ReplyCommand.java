@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Deprecated
-@CommandMapping({"Reply", "应答"})
+@CommandMapping({"Reply", "回复"})
 @Component
 @Slf4j
 public class ReplyCommand implements Command
@@ -22,12 +22,12 @@ public class ReplyCommand implements Command
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             List<String> params = event.getCommandParameters();
-            if (params.isEmpty()) throw new NullBotMsgException("[应答] ❌无参数");
+            if (params.isEmpty()) throw new NullBotMsgException("[回复] ❌无参数");
             String message = String.join(" ", params.subList(0, params.size()));
             bot.sendGroupMsg(groupMessageEvent.getGroupId(), message, false);
             log.info("\t\t\t\t├─[Reply] 已回复 - {}", message.replaceAll("\\R", " "));
         }else
-            throw new NullBotLogException("[应答] ❌未设计 - 非群消息事件响应方式");
+            throw new NullBotLogException("[回复] ❌未设计 - 非群消息事件响应方式");
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ReplyCommand implements Command
                 功能: 文本输出 (废弃)
                 限权: %d 级
                 格式: Reply [内容]
-                别名: 应答""", getAccess()
+                别名: 回复""", getAccess()
         );
     }
 }
