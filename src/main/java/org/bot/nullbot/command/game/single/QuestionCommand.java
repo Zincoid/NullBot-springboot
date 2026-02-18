@@ -14,6 +14,7 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,21 +37,24 @@ public class QuestionCommand implements Command
             String prompt;
             String raw;
             if (params.isEmpty())
-                prompt = "出一道二次元选择题并给出答案(无需解析),将答案用{}包围放在开头,例如{正确选项}";
+                prompt = "出一道二次元单选题并给出答案(无需解析),将答案用{}包围放在开头,例如{A},生成种子:%s"
+                        .formatted(UUID.randomUUID());
             else
-                prompt = "出一道选择题并给出答案(无需解析),将答案用{}包围放在开头,例如{正确选项},问题主题为:" + params.getFirst();
+                prompt = "出一道单选题并给出答案(无需解析),将答案用{}包围放在开头,例如{A},生成种子:%s,问题主题:%s"
+                        .formatted(UUID.randomUUID(), params.getFirst());
             try {
-                raw = deepSeekClient.chatSingle(prompt);
+                raw = deepSeekClient.chatSingle(prompt, false);
             } catch (Exception e) {
                 throw new NullBotMsgException("[问答] ❌生成问题出错");
             }
+            log.info(raw);
 
-            Pattern answerPattern = Pattern.compile("\\{([A-Z])}");
+            Pattern answerPattern = Pattern.compile("\\{([A-Za-z])}");
             Matcher answerMatcher = answerPattern.matcher(raw);
 
             if (answerMatcher.find()) {
-                String answer = answerMatcher.group(1);
-                String question = raw.replaceFirst("\\{[A-Z]}\\s*", "");
+                String answer = answerMatcher.group(1).toUpperCase();
+                String question = raw.replaceFirst("\\{[A-Za-z]}\\s*", "");
                 String response;
 
                 bot.sendGroupMsg(groupId, question + "\n注: 请直接回复选项！", false);
@@ -58,7 +62,7 @@ public class QuestionCommand implements Command
 
                 if (next == null)
                     response = "超时啦！答案是...%s！".formatted(answer);
-                else if (answer.equals(next))
+                else if (answer.equals(next.toUpperCase()))
                     response = "回答正确！";
                 else
                     response = "回答错误！答案是...%s！".formatted(answer);
