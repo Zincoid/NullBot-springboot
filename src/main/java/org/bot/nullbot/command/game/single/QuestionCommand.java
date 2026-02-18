@@ -36,9 +36,9 @@ public class QuestionCommand implements Command
             String prompt;
             String raw;
             if (params.isEmpty())
-                prompt = "出一道二次元选择题并给出答案(无需解析),将答案用{}包围放在开头,例如{A}";
+                prompt = "出一道二次元选择题并给出答案(无需解析),将答案用{}包围放在开头,例如{正确选项}";
             else
-                prompt = "出一道选择题并给出答案(无需解析),将答案用{}包围放在开头,例如{A},问题主题为:" + params.getFirst();
+                prompt = "出一道选择题并给出答案(无需解析),将答案用{}包围放在开头,例如{正确选项},问题主题为:" + params.getFirst();
             try {
                 raw = deepSeekClient.chatSingle(prompt);
             } catch (Exception e) {
