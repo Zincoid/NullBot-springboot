@@ -351,7 +351,8 @@ class NullBotApplicationTests
 
     @Test
     void ChatTest() throws Exception {
-        String response = deepSeekClient.chatSingle("你好", true);
+        String response = deepSeekClient.chatSingle("出一道单选题并给出题目和答案,问题主题:%s,生成种子:%s (注:将答案用{}包围放在开头,例如{正确选项},无需答案解析)"
+                .formatted("二次元", UUID.randomUUID()), true, 1000);
         System.out.println(response);
     }
 }

@@ -36,17 +36,17 @@ public class QuestionCommand implements Command
             Long userId = groupMessageEvent.getUserId();
             List<String> params = event.getCommandParameters();
 
+            bot.sendGroupMsg(groupId, "⏳问题生成中, 请稍候...", false);
             String raw;
             try {
                 raw = deepSeekClient.chatSingle(
                         "出一道单选题并给出题目和答案,问题主题:%s,生成种子:%s (注:将答案用{}包围放在开头,例如{正确选项},无需答案解析)"
                         .formatted(params.isEmpty() ? "二次元" : params.getFirst(), UUID.randomUUID()),
-                        true
+                        true, 1000
                 );
             } catch (Exception e) {
-                throw new NullBotMsgException("[问答] ❌生成问题出错");
+                throw new NullBotMsgException("[问答] ❌生成请求出错");
             }
-            log.info("[Question] generated: {}", raw);
 
             Pattern answerPattern = Pattern.compile("\\{([A-Za-z])}");
             Matcher answerMatcher = answerPattern.matcher(raw);
