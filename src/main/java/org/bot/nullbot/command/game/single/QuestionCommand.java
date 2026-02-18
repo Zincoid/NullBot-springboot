@@ -31,29 +31,32 @@ public class QuestionCommand implements Command
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getUserId();
 
-            String response;
+            String raw;
             try {
-                response = deepSeekClient.chatSingle("出一道二次元选择题并给出答案，将答案用{}包围放在开头，例如{A}");
+                raw = deepSeekClient.chatSingle("出一道二次元选择题并给出答案(无需解析)，将答案用{}包围放在开头，例如{A}");
             } catch (Exception e) {
                 throw new NullBotMsgException("[问答] ❌生成问题出错");
             }
 
             Pattern answerPattern = Pattern.compile("\\{([A-Z])}");
-            Matcher answerMatcher = answerPattern.matcher(response);
+            Matcher answerMatcher = answerPattern.matcher(raw);
 
             if (answerMatcher.find()) {
                 String answer = answerMatcher.group(1);
-                String question = response.replaceFirst("\\{[A-Z]}\\s*", "");
+                String question = raw.replaceFirst("\\{[A-Z]}\\s*", "");
+                String response;
+
                 bot.sendGroupMsg(groupId, question + "\n注: 请直接回复选项！", false);
                 String next = botNextInputer.request(userId, 30);
-                if (next == null) {
-                    bot.sendGroupMsg(groupId, "超时啦！答案是...%s！".formatted(answer), false);
-                    return;
-                }
-                if (answer.equals(next))
-                    bot.sendGroupMsg(groupId, "回答正确！", false);
+
+                if (next == null)
+                    response = "超时啦！答案是...%s！".formatted(answer);
+                else if (answer.equals(next))
+                    response = "回答正确！";
                 else
-                    bot.sendGroupMsg(groupId, "回答错误！答案是...%s！".formatted(answer), false);
+                    response = "回答错误！答案是...%s！".formatted(answer);
+
+                bot.sendGroupMsg(groupId, response, false);
             } else
                 throw new NullBotMsgException("[问答] ❌生成异常问题");
         }else
