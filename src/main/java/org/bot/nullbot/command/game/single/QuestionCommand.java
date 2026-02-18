@@ -66,10 +66,10 @@ public class QuestionCommand implements Command
                 if (answerMatcher.find()) {
                     String answer = answerMatcher.group(1).toUpperCase();
                     String question = """
-                            请%s(%s)回答！
+                            请[CQ:at,qq=%s]回答问题！
                             %s
                             注: 请直接回复选项, 限时%s秒！"""
-                            .formatted(userName, userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
+                            .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
                     String response;
 
                     bot.sendGroupMsg(groupId, question, false);
