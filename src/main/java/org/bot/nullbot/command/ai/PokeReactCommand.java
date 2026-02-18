@@ -39,7 +39,7 @@ public class PokeReactCommand implements Command
                 LocalDateTime until = chatStorage.getUserBannedUntil(userId);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 String formattedUntil = until != null ? until.format(formatter) : "";
-                bot.sendGroupMsg(groupId, "[AI] ⚠️你已被停用至！\n" + formattedUntil, false);
+                bot.sendGroupMsg(groupId, "[AI] ⛔️你已被停用至！\n" + formattedUntil, false);
                 log.info("\t\t\t\t├─[PokeReact] 已被停用至 - {}", until);
                 return;
             }
