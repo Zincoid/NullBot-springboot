@@ -42,7 +42,7 @@ public class QuestionCommand implements Command
             List<String> params = event.getCommandParameters();
 
             if (inGameUsers.contains(userId))
-                throw new NullBotMsgException("[问答] ❌已在游戏中");
+                throw new NullBotMsgException("[问答] ⚠️已在游戏中");
 
             try {
                 inGameUsers.add(userId);
@@ -50,7 +50,7 @@ public class QuestionCommand implements Command
                 String raw;
                 try {
                     raw = deepSeekClient.chatSingle(
-                            "出一道单选题并给出题目和答案,问题主题:%s,生成种子:%s (注:将答案用{}包围放在开头,例如{正确选项字母},无需答案解析)"
+                            "出一道单选题并给出题目和答案,问题主题:%s,生成种子:%s (注:将答案用{}包围放在开头,例如{正确选项字母},无需答案解析,选项要换行)"
                             .formatted(params.isEmpty() ? "二次元" : params.getFirst(), UUID.randomUUID()),
                             true, 2500
                     );
