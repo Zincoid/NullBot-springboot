@@ -472,5 +472,5 @@
 - 增强 Endfield 指令 - 存在复数可选查询时通过 BotNextInputer 获取序号选择内容并移除原始查询全部方法。
 
 ### 2026.2.18
-- 新增 Question 指令 - 单人二次元相关问答游戏；
+- 新增 Question 指令 - 单人问答游戏；
 - 优化 DeepSeekClient - 优化 chatSingle 方法。
