@@ -27,6 +27,8 @@ public class QuestionCommand implements Command
     private final DeepSeekClient deepSeekClient;
     private final BotNextInputer botNextInputer;
 
+    private static final int QUESTION_TIMEOUT = 30;  // Second
+
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
@@ -51,11 +53,14 @@ public class QuestionCommand implements Command
 
             if (answerMatcher.find()) {
                 String answer = answerMatcher.group(1).toUpperCase();
-                String question = raw.replaceFirst("\\{[A-Za-z]}\\s*", "") + "\n注: 请直接回复选项！";
+                String question = """
+                        %s
+                        注: 请直接回复选项！限时%s秒！"""
+                        .formatted(raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
                 String response;
 
                 bot.sendGroupMsg(groupId, question, false);
-                String next = botNextInputer.request(userId, 30);
+                String next = botNextInputer.request(userId, QUESTION_TIMEOUT);
 
                 if (next == null)
                     response = "超时啦！答案是...%s！".formatted(answer);
