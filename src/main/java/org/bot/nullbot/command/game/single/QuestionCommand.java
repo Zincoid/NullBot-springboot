@@ -69,7 +69,7 @@ public class QuestionCommand implements Command
                 String question = """
                             请[CQ:at,qq=%s]回答问题！
                             %s
-                            注: 请直接回复选项, 限时%s秒！"""
+                            注: 请直接发送选项, 限时%s秒！"""
                         .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
 
                 bot.sendGroupMsg(groupId, question, false);
