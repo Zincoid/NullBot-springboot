@@ -26,7 +26,7 @@ public class SettingManager
         settings = new ConcurrentHashMap<>();
         try {
             List<SettingInfo> defaultSettings = CsvImportUtil.importFromCsv(
-                    fileStorageProperties.getConfigPath() + "/Group_Settings.csv", SettingInfo.class);
+                    fileStorageProperties.getConfigPath() + "/Settings.csv", SettingInfo.class);
             setSettings(defaultSettings);
             log.info("▽ [SettingManager] 群组配置文件已载入");
         } catch (IOException e) {

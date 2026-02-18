@@ -234,7 +234,7 @@ public class DeepSeekClient
                         "role", "user",
                         "content", userMessage
                 )),
-                "max_tokens", 200
+                "max_tokens", 250
         ));
 
         // 创建HTTP请求
