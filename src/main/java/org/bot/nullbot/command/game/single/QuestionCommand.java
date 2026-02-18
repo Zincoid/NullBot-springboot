@@ -82,7 +82,7 @@ public class QuestionCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ Question 命令
-                功能: 二次元问答题
+                功能: 问答题 (默认二次元主题)
                 限权: %d 级
                 格式: Question [可选: 主题]
                 别名: 问答""", getAccess()
