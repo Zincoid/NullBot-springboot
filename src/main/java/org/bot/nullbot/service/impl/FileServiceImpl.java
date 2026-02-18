@@ -46,7 +46,7 @@ public class FileServiceImpl implements FileService
     @EventListener(ApplicationReadyEvent.class)
     public void init() {  // 更新文件数据库
         log.info("◎ [FileService] 初始化文件同步中...");
-        scanAndSyncFiles();
+        // scanAndSyncFiles();
     }
 
     // =================== BOT功能相关 ===================

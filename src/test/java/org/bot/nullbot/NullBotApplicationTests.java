@@ -9,6 +9,7 @@ import jakarta.annotation.Resource;
 // import jdash.common.LevelSearchFilter;
 // import jdash.common.LevelSearchMode;
 // import jdash.common.entity.GDLevel;
+import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.game.handler.TicTacToeMatchHandler;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
 import org.bot.nullbot.component.render.HtmlRenderer;
@@ -22,6 +23,7 @@ import org.bot.nullbot.util.HtmlTemplateUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.bot.nullbot.util.ResourceUtil;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -51,6 +53,8 @@ class NullBotApplicationTests
     WebScreenCapturer webScreenCapturer;
     @Resource
     HtmlRenderer htmlRenderer;
+    @Resource
+    private DeepSeekClient deepSeekClient;
 
     @Test
     void regexTest() {
@@ -343,5 +347,11 @@ class NullBotApplicationTests
         //     System.out.println(levels.get(scanner.nextInt() - 1));
         //     scanner.nextLine();
         // }
+    }
+
+    @Test
+    void ChatTest() throws Exception {
+        String response = deepSeekClient.chatSingle("你好", true);
+        System.out.println(response);
     }
 }
