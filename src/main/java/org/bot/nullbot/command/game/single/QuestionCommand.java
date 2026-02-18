@@ -59,32 +59,31 @@ public class QuestionCommand implements Command
                 }
 
                 // log.info("[Question] generated: {}", raw);
-
                 Pattern answerPattern = Pattern.compile("\\{([A-Za-z])}");
                 Matcher answerMatcher = answerPattern.matcher(raw);
 
-                if (answerMatcher.find()) {
-                    String answer = answerMatcher.group(1).toUpperCase();
-                    String question = """
+                if (!answerMatcher.find())
+                    throw new NullBotMsgException("[问答] ❌生成问题异常");
+
+                String answer = answerMatcher.group(1).toUpperCase();
+                String question = """
                             请[CQ:at,qq=%s]回答问题！
                             %s
                             注: 请直接回复选项, 限时%s秒！"""
-                            .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
-                    String response;
+                        .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
 
-                    bot.sendGroupMsg(groupId, question, false);
-                    String next = botNextInputer.request(userId, QUESTION_TIMEOUT);
+                bot.sendGroupMsg(groupId, question, false);
+                String next = botNextInputer.request(userId, QUESTION_TIMEOUT);
 
-                    if (next == null)
-                        response = "%s回答超时！答案是...%s！".formatted(userName, answer);
-                    else if (answer.equals(next.toUpperCase()))
-                        response = "%s回答正确！".formatted(userName);
-                    else
-                        response = "%s回答错误！答案是...%s！".formatted(userName, answer);
+                String response;
+                if (next == null)
+                    response = "%s回答超时！答案是...%s！".formatted(userName, answer);
+                else if (answer.equals(next.toUpperCase()))
+                    response = "%s回答正确！".formatted(userName);
+                else
+                    response = "%s回答错误！答案是...%s！".formatted(userName, answer);
 
-                    bot.sendGroupMsg(groupId, response, false);
-                } else
-                    throw new NullBotMsgException("[问答] ❌生成问题异常");
+                bot.sendGroupMsg(groupId, response, false);
             } finally {
                 inGameUsers.remove(userId);
             }
