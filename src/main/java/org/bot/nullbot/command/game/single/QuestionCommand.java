@@ -6,10 +6,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @CommandMapping({"Question", "问答"})
 @Component
@@ -17,6 +22,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class QuestionCommand implements Command
 {
+    private final DeepSeekClient deepSeekClient;
     private final BotNextInputer botNextInputer;
 
     @Override
@@ -24,28 +30,44 @@ public class QuestionCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getUserId();
-            bot.sendGroupMsg(groupId, "[测试] 等待输入...", false);
-            String next = botNextInputer.request(userId, 10);
-            if (next == null) {
-                bot.sendGroupMsg(groupId, "[测试] 输入超时！", false);
-                return;
-            }
-            bot.sendGroupMsg(groupId, "[测试] 输入内容: " + next, false);
-        }else
-            throw new NullBotLogException("[测试] ❌未设计 - 非群消息事件响应方式");
-    }
 
-    @Override
-    public Integer getAccess() { return 2; }
+            String response;
+            try {
+                response = deepSeekClient.chatSingle("出一道二次元选择题并给出答案，将答案用{}包围放在开头，例如{A}");
+            } catch (Exception e) {
+                throw new NullBotMsgException("[问答] ❌生成问题出错");
+            }
+
+            Pattern answerPattern = Pattern.compile("\\{([A-Z])}");
+            Matcher answerMatcher = answerPattern.matcher(response);
+
+            if (answerMatcher.find()) {
+                String answer = answerMatcher.group(1);
+                String question = response.replaceFirst("\\{[A-Z]}\\s*", "");
+                bot.sendGroupMsg(groupId, question + "\n注: 请直接回复选项！", false);
+                String next = botNextInputer.request(userId, 30);
+                if (next == null) {
+                    bot.sendGroupMsg(groupId, "超时啦！答案是...%s！".formatted(answer), false);
+                    return;
+                }
+                if (answer.equals(next))
+                    bot.sendGroupMsg(groupId, "回答正确！", false);
+                else
+                    bot.sendGroupMsg(groupId, "回答错误！答案是...%s！".formatted(answer), false);
+            } else
+                throw new NullBotMsgException("[问答] ❌生成异常问题");
+        }else
+            throw new NullBotLogException("[问答] ❌未设计 - 非群消息事件响应方式");
+    }
 
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ Test 命令
-                功能: 测试
+                ◉ Question 命令
+                功能: 二次元问答题
                 限权: %d 级
-                格式: 不固定
-                别名: test/测试""", getAccess()
+                格式: Question
+                别名: 问答""", getAccess()
         );
     }
 }
