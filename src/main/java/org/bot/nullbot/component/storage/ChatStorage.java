@@ -25,7 +25,7 @@ public class ChatStorage
     private final Map<Long, ReentrantLock> groupLocks = new ConcurrentHashMap<>();
     private final Map<Long, ReentrantLock> userLocks = new ConcurrentHashMap<>();
 
-    private final Map<Long, LocalDateTime> banMap = new ConcurrentHashMap<>();
+    private final Map<Long, LocalDateTime> bannedUsers = new ConcurrentHashMap<>();
     private final List<String> errorMessages = new CopyOnWriteArrayList<>();
 
     private final SettingService settingService;
@@ -68,20 +68,20 @@ public class ChatStorage
     // =================== 封禁功能相关 ===================
 
     public void banUser(Long userId, int time) {
-        banMap.put(userId, LocalDateTime.now().plusMinutes(time));
+        bannedUsers.put(userId, LocalDateTime.now().plusMinutes(time));
     }
 
     public boolean isUserBanned(Long userId) {
-        LocalDateTime banUntil = banMap.get(userId);
+        LocalDateTime banUntil = bannedUsers.get(userId);
         if (banUntil == null) return false; // 用户未被封禁
         if (LocalDateTime.now().isAfter(banUntil)) {
-            banMap.remove(userId);  // 封禁时间已过 自动清理
+            bannedUsers.remove(userId);  // 封禁时间已过 自动清理
             return false;
         }
         return true;
     }
 
-    public LocalDateTime getUserBannedUntil(Long userId) { return banMap.get(userId); }
+    public LocalDateTime getUserBannedUntil(Long userId) { return bannedUsers.get(userId); }
 
     // =================== 撤回功能相关 ===================
 
