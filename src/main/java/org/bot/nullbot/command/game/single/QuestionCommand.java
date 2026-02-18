@@ -13,6 +13,7 @@ import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,10 +31,16 @@ public class QuestionCommand implements Command
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             Long groupId = groupMessageEvent.getGroupId();
             Long userId = groupMessageEvent.getUserId();
+            List<String> params = event.getCommandParameters();
 
+            String prompt;
             String raw;
+            if (params.isEmpty())
+                prompt = "出一道二次元选择题并给出答案(无需解析),将答案用{}包围放在开头,例如{A}";
+            else
+                prompt = "出一道选择题并给出答案(无需解析),将答案用{}包围放在开头,例如{A},问题主题为:" + params.getFirst();
             try {
-                raw = deepSeekClient.chatSingle("出一道二次元选择题并给出答案(无需解析)，将答案用{}包围放在开头，例如{A}");
+                raw = deepSeekClient.chatSingle(prompt);
             } catch (Exception e) {
                 throw new NullBotMsgException("[问答] ❌生成问题出错");
             }
@@ -69,7 +76,7 @@ public class QuestionCommand implements Command
                 ◉ Question 命令
                 功能: 二次元问答题
                 限权: %d 级
-                格式: Question
+                格式: Question [可选: 主题]
                 别名: 问答""", getAccess()
         );
     }
