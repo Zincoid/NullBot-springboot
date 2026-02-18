@@ -67,7 +67,9 @@ public class ChatStorage
 
     // =================== 封禁功能相关 ===================
 
-    public void banUser(Long userId, int time) { banMap.put(userId, LocalDateTime.now().plusMinutes(time)); }
+    public void banUser(Long userId, int time) {
+        banMap.put(userId, LocalDateTime.now().plusMinutes(time));
+    }
 
     public boolean isUserBanned(Long userId) {
         LocalDateTime banUntil = banMap.get(userId);

@@ -1,5 +1,6 @@
 package org.bot.nullbot.command.game.single;
 
+import cn.hutool.core.collection.ConcurrentHashSet;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,9 @@ import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,8 +32,11 @@ public class QuestionCommand implements Command
     private final DeepSeekClient deepSeekClient;
     private final BotNextInputer botNextInputer;
 
-    private final Set<Long> inGameUsers = ConcurrentHashMap.newKeySet();
-    private static final int QUESTION_TIMEOUT = 60;  // Second
+    private final Map<Long, LocalDateTime> bannedUsers = new ConcurrentHashMap<>();
+    private final Set<Long> inGameUsers = new ConcurrentHashSet<>();
+
+    private static final int BLOCKING_TIME = 30;  // 封禁时间 单位: Minute
+    private static final int QUESTION_TIMEOUT = 60;  // 回答时间 单位: Second
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
@@ -40,6 +46,8 @@ public class QuestionCommand implements Command
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             List<String> params = event.getCommandParameters();
 
+            if (isUserBanned(userId))
+                throw new NullBotMsgException("[问答] ⛔️你已被封禁");
             if (inGameUsers.contains(userId))
                 throw new NullBotMsgException("[问答] ⚠️已在游戏中");
 
@@ -60,15 +68,18 @@ public class QuestionCommand implements Command
                 } catch (Exception e) {
                     throw new NullBotMsgException("""
                             [问答] ❌生成请求出错
-                            - User: [CQ:at,qq=%s]""".formatted(userId)
+                            - 用户: [CQ:at,qq=%s]""".formatted(userId)
                     );
                 }
 
-                if (raw.contains("REFUSED"))
+                if (raw.contains("REFUSED")) {
+                    banUser(userId, BLOCKING_TIME);
                     throw new NullBotMsgException("""
                             [问答] ❌生成问题敏感
-                            - User: [CQ:at,qq=%s]""".formatted(userId)
+                            - 已封禁: %s Min
+                            - 用户: [CQ:at,qq=%s]""".formatted(BLOCKING_TIME, userId)
                     );
+                }
 
                 Pattern answerPattern = Pattern.compile("\\{([A-Za-z])}");
                 Matcher answerMatcher = answerPattern.matcher(raw);
@@ -76,7 +87,7 @@ public class QuestionCommand implements Command
                 if (!answerMatcher.find())
                     throw new NullBotMsgException("""
                             [问答] ❌生成格式异常
-                            - User: [CQ:at,qq=%s]""".formatted(userId)
+                            - 用户: [CQ:at,qq=%s]""".formatted(userId)
                     );
 
                 String answer = answerMatcher.group(1).toUpperCase();
@@ -103,6 +114,24 @@ public class QuestionCommand implements Command
             }
         } else
             throw new NullBotLogException("[问答] ❌未设计 - 非群消息事件响应方式");
+    }
+
+    public void banUser(Long userId, int time) {
+        bannedUsers.put(userId, LocalDateTime.now().plusMinutes(time));
+    }
+
+    public boolean isUserBanned(Long userId) {
+        LocalDateTime banUntil = bannedUsers.get(userId);
+        if (banUntil == null) return false; // 用户未被封禁
+        if (LocalDateTime.now().isAfter(banUntil)) {
+            bannedUsers.remove(userId);  // 封禁时间已过 自动清理
+            return false;
+        }
+        return true;
+    }
+
+    public void unBanUser(Long userId) {
+        bannedUsers.remove(userId);
     }
 
     @Override
