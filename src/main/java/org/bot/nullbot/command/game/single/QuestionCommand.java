@@ -37,10 +37,10 @@ public class QuestionCommand implements Command
             String prompt;
             String raw;
             if (params.isEmpty())
-                prompt = "出一道二次元单选题并给出答案(无需解析),将答案用{}包围放在开头,例如{A},生成种子:%s"
+                prompt = "出一道二次元单选题并给出题目和答案(无需解析),将答案用{}包围放在开头,例如{正确选项},生成种子:%s"
                         .formatted(UUID.randomUUID());
             else
-                prompt = "出一道单选题并给出答案(无需解析),将答案用{}包围放在开头,例如{A},生成种子:%s,问题主题:%s"
+                prompt = "出一道单选题并给出题目和答案(无需解析),将答案用{}包围放在开头,例如{正确选项},生成种子:%s,问题主题:%s"
                         .formatted(UUID.randomUUID(), params.getFirst());
             try {
                 raw = deepSeekClient.chatSingle(prompt, false);
@@ -54,10 +54,10 @@ public class QuestionCommand implements Command
 
             if (answerMatcher.find()) {
                 String answer = answerMatcher.group(1).toUpperCase();
-                String question = raw.replaceFirst("\\{[A-Za-z]}\\s*", "");
+                String question = raw.replaceFirst("\\{[A-Za-z]}\\s*", "") + "\n注: 请直接回复选项！";
                 String response;
 
-                bot.sendGroupMsg(groupId, question + "\n注: 请直接回复选项！", false);
+                bot.sendGroupMsg(groupId, question, false);
                 String next = botNextInputer.request(userId, 30);
 
                 if (next == null)
