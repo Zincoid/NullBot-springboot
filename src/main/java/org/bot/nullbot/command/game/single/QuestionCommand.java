@@ -30,7 +30,7 @@ public class QuestionCommand implements Command
     private final BotNextInputer botNextInputer;
 
     private final Set<Long> inGameUsers = ConcurrentHashMap.newKeySet();
-    private static final int QUESTION_TIMEOUT = 30;  // Second
+    private static final int QUESTION_TIMEOUT = 60;  // Second
 
     @Override
     public void execute(Bot bot, CommandEvent<?> event) {
