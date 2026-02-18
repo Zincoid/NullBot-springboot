@@ -52,10 +52,11 @@ public class QuestionCommand implements Command
                                     出一道单选题并给出题目和答案
                                     问题主题:%s,生成种子:%s
                                     (注:将答案用{}包围放在开头,例如{正确选项字母},无需答案解析,选项要换行)
-                                    (注:禁止生成中国国内政治事件和政治人物相关的问题)"""
+                                    (注:禁止生成中国国内政治事件和政治人物相关的问题,此时仅回复REFUSED)"""
                                     .formatted(params.isEmpty() ? "二次元" : String.join(" ", params), UUID.randomUUID()),
                             true, 2500
                     );
+                    // log.info("[Question] generated: {}", raw);
                 } catch (Exception e) {
                     throw new NullBotMsgException("""
                             [问答] ❌生成请求出错
@@ -63,13 +64,18 @@ public class QuestionCommand implements Command
                     );
                 }
 
-                // log.info("[Question] generated: {}", raw);
+                if (raw.contains("REFUSED"))
+                    throw new NullBotMsgException("""
+                            [问答] ❌生成问题敏感
+                            - User: [CQ:at,qq=%s]""".formatted(userId)
+                    );
+
                 Pattern answerPattern = Pattern.compile("\\{([A-Za-z])}");
                 Matcher answerMatcher = answerPattern.matcher(raw);
 
                 if (!answerMatcher.find())
                     throw new NullBotMsgException("""
-                            [问答] ❌生成问题异常
+                            [问答] ❌生成格式异常
                             - User: [CQ:at,qq=%s]""".formatted(userId)
                     );
 
