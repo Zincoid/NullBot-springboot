@@ -88,7 +88,7 @@ public class QuestionCommand implements Command
             } finally {
                 inGameUsers.remove(userId);
             }
-        }else
+        } else
             throw new NullBotLogException("[问答] ❌未设计 - 非群消息事件响应方式");
     }
 

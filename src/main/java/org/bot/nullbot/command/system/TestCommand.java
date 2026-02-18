@@ -31,7 +31,7 @@ public class TestCommand implements Command
                 return;
             }
             bot.sendGroupMsg(groupId, "[测试] 输入内容: " + next, false);
-        }else
+        } else
             throw new NullBotLogException("[测试] ❌未设计 - 非群消息事件响应方式");
     }
 
