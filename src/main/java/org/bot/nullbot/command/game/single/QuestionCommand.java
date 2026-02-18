@@ -58,7 +58,7 @@ public class QuestionCommand implements Command
                     throw new NullBotMsgException("[问答] ❌生成请求出错");
                 }
 
-                log.info("[Question] generated: {}", raw);
+                // log.info("[Question] generated: {}", raw);
 
                 Pattern answerPattern = Pattern.compile("\\{([A-Za-z])}");
                 Matcher answerMatcher = answerPattern.matcher(raw);
