@@ -48,13 +48,19 @@ public class QuestionCommand implements Command
                 bot.sendGroupMsg(groupId, "⏳问题生成中, 请稍候...", false);
                 String raw;
                 try {
-                    raw = deepSeekClient.chatSingle(
-                            "出一道单选题并给出题目和答案,问题主题:%s,生成种子:%s (注:将答案用{}包围放在开头,例如{正确选项字母},无需答案解析,选项要换行)"
-                            .formatted(params.isEmpty() ? "二次元" : String.join(" ", params), UUID.randomUUID()),
+                    raw = deepSeekClient.chatSingle("""
+                                    出一道单选题并给出题目和答案
+                                    问题主题:%s,生成种子:%s
+                                    (注:将答案用{}包围放在开头,例如{正确选项字母},无需答案解析,选项要换行)
+                                    (注:禁止生成中国国内政治事件和政治人物相关的问题)"""
+                                    .formatted(params.isEmpty() ? "二次元" : String.join(" ", params), UUID.randomUUID()),
                             true, 2500
                     );
                 } catch (Exception e) {
-                    throw new NullBotMsgException("[问答] ❌生成请求出错");
+                    throw new NullBotMsgException("""
+                            [问答] ❌生成请求出错
+                            - User: [CQ:at,qq=%s]""".formatted(userId)
+                    );
                 }
 
                 // log.info("[Question] generated: {}", raw);
@@ -62,7 +68,10 @@ public class QuestionCommand implements Command
                 Matcher answerMatcher = answerPattern.matcher(raw);
 
                 if (!answerMatcher.find())
-                    throw new NullBotMsgException("[问答] ❌生成问题异常");
+                    throw new NullBotMsgException("""
+                            [问答] ❌生成问题异常
+                            - User: [CQ:at,qq=%s]""".formatted(userId)
+                    );
 
                 String answer = answerMatcher.group(1).toUpperCase();
                 String question = """
