@@ -56,7 +56,7 @@ public class QuestionCommand implements Command
                                     .formatted(params.isEmpty() ? "二次元" : String.join(" ", params), UUID.randomUUID()),
                             true, 2500
                     );
-                    log.info("[Question] generated: {}", raw);  // DEBUG
+                    // log.info("[Question] generated: {}", raw);  // DEBUG
                 } catch (Exception e) {
                     throw new NullBotMsgException("""
                             [问答] ❌生成请求出错
