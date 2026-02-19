@@ -54,8 +54,8 @@ public class CommandProcessor
             chainProcess(null, event, command);
             log.info("[CommandProcessor] {} 命令处理完毕", event.getCommandType());
 
-            // 在Command组件中使用
-            // if(bot == null){
+            // 在 Command 组件中使用
+            // if (bot == null) {
             //     logger.info("[Test] 测试结果");
             // }
 
