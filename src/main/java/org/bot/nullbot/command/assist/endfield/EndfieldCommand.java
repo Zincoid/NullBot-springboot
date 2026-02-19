@@ -56,6 +56,7 @@ public class EndfieldCommand implements Command
                         
                         请发送序号来选择内容""".formatted(helpPaths.size(), helpList), false);
             log.info("\t\t\t\t├─[Endfield] 找到 {} 个匹配项", helpPaths.size());
+
             String next = botNextInputer.request(userId, 20, "[1-9]\\d*");
             if (next == null)
                 throw new NullBotMsgException("[终末地] ⌛️输入超时");
