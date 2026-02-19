@@ -24,7 +24,7 @@ public class TestCommand implements Command
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         bot.sendGroupMsg(groupId, "[测试] 等待输入...", false);
-        String next = botNextInputer.request(userId, 10);
+        String next = botNextInputer.request(userId, 10, ".*");
         if (next == null) {
             bot.sendGroupMsg(groupId, "[测试] 输入超时！", false);
             return;

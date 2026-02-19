@@ -95,7 +95,7 @@ public class QuestionCommand implements Command
                     .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
 
             bot.sendGroupMsg(groupId, question, false);
-            String next = botNextInputer.request(userId, QUESTION_TIMEOUT);
+            String next = botNextInputer.request(userId, QUESTION_TIMEOUT, "[a-zA-Z]");
 
             String response;
             if (next == null)
