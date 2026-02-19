@@ -46,8 +46,10 @@ public class BotNextInputer
     public boolean response(Long userId, String message) {
         InputEntry entry = inputEntries.remove(userId);
         if (entry != null && !entry.future.isDone()) {
-            if (!entry.pattern.matcher(message).matches())
+            if (!entry.pattern.matcher(message).matches()) {
+                inputEntries.put(userId, entry);
                 return false;
+            }
             entry.future.complete(message);
             log.info("▽ [BotNextInputer] 用户 {} 已响应 - {}", userId, message);
             return true;

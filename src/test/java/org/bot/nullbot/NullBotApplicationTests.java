@@ -10,6 +10,7 @@ import jakarta.annotation.Resource;
 // import jdash.common.LevelSearchMode;
 // import jdash.common.entity.GDLevel;
 import org.bot.nullbot.component.ai.DeepSeekClient;
+import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.component.game.handler.TicTacToeMatchHandler;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
 import org.bot.nullbot.component.render.HtmlRenderer;
@@ -55,14 +56,22 @@ class NullBotApplicationTests
     HtmlRenderer htmlRenderer;
     @Resource
     private DeepSeekClient deepSeekClient;
+    @Resource
+    private BotNextInputer botNextInputer;
 
     @Test
     void regexTest() {
-        String message = "[123][文件[]名称(456)]: 这是一些描述内容";
-        String regex = "\\[\\d+]\\[.+?\\(\\d+\\)]:";
+        // String message = "[123][文件[]名称(456)]: 这是一些描述内容";
+        // String regex = "\\[\\d+]\\[.+?\\(\\d+\\)]:";
+        // Pattern pattern = Pattern.compile(regex);
+        // java.util.regex.Matcher matcher = pattern.matcher(message);
+        // System.out.println(matcher.find());
+
+        String message = "120";
+        String regex = "[1-9]\\d*";
         Pattern pattern = Pattern.compile(regex);
         java.util.regex.Matcher matcher = pattern.matcher(message);
-        System.out.println(matcher.find());
+        System.out.println(matcher.matches());
     }
 
     @Test
@@ -354,5 +363,22 @@ class NullBotApplicationTests
         String response = deepSeekClient.chatSingle("出一道单选题并给出题目和答案,问题主题:%s,生成种子:%s (注:将答案用{}包围放在开头,例如{正确选项字母},无需答案解析)"
                 .formatted("二次元", UUID.randomUUID()), true, 2500);
         System.out.println(response);
+    }
+
+    @Test
+    void NextInputerTest() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                botNextInputer.response(0L, "test");
+                botNextInputer.response(0L, "A");
+                botNextInputer.response(0L, "11");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+
+        String next = botNextInputer.request(0L, 5, "[1-9]\\d*");
+        System.out.println("已响应: " + next);
     }
 }
