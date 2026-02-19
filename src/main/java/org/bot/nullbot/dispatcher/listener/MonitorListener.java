@@ -82,7 +82,7 @@ public class MonitorListener
         if(!settingService.isImageCollect(event.getGroupId())) return;
 
         Long groupId = event.getGroupId();
-        Long userId = event.getSender().getUserId();
+        Long userId = event.getUserId();
         String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
 
         boolean hasLogged = false;

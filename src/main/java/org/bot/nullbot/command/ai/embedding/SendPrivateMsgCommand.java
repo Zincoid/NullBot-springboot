@@ -5,8 +5,6 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -18,25 +16,20 @@ import java.util.List;
 public class SendPrivateMsgCommand implements Command
 {
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (event.getCommandParameters().size() < 2) throw new NullBotMsgException("[私信] ❌参数不足");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        if (params.size() < 2)
+            throw new NullBotMsgException("[私信] ❌参数不足");
 
-            long qqNumber;
-            try {
-                qqNumber = Long.parseLong(event.getCommandParameters().getFirst());
-            } catch (NumberFormatException e) {
-                throw new NullBotMsgException("[私信] ❌参数格式错误");
-            }
+        long qqNumber;
+        try {
+            qqNumber = Long.parseLong(params.getFirst());
+        } catch (NumberFormatException e) {
+            throw new NullBotMsgException("[私信] ❌参数格式错误");
+        }
 
-            // 将第二个及之后的参数用空格拼接起来
-            List<String> params = event.getCommandParameters();
-            String message = String.join(" ", params.subList(1, params.size()));
-
-            bot.sendPrivateMsg(qqNumber, message, false);
-            log.info("\t\t\t\t├─[SendPrivateMsg] 私信已发送 - {} -> {}", qqNumber, message);
-        } else
-            throw new NullBotLogException("[私信] ❌未设计 - 非群消息事件响应方式");
+        String message = String.join(" ", params.subList(1, params.size()));  // 拼接信息
+        bot.sendPrivateMsg(qqNumber, message, false);
+        log.info("\t\t\t\t├─[SendPrivateMsg] 私信已发送 - {} -> {}", qqNumber, message);
     }
 
     @Override

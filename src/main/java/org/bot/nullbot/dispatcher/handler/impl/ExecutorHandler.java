@@ -23,21 +23,22 @@ public class ExecutorHandler implements Handler
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         log.info("\t\t└─[ExecutorHandler] 执行开始");
 
+        Long groupId = 0L;
         try {
-            command.execute(bot, event);
-        } catch (NullBotMsgException e) {
-            Long groupId;
-            if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent)
+            if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
                 groupId = groupMessageEvent.getGroupId();
-            else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent)
+                command.execute(bot, groupMessageEvent, event.getCommandParameters());
+            } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
                 groupId = pokeNoticeEvent.getGroupId();
-            else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent)
+                command.execute(bot, pokeNoticeEvent, event.getCommandParameters());
+            } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
                 groupId = groupMsgDeleteNoticeEvent.getGroupId();
-            else {
-                log.warn("\t\t  [ExecutorHandler] MsgException - 不支持的事件类型");
-                throw e;
+                command.execute(bot, groupMsgDeleteNoticeEvent, event.getCommandParameters());
+            } else {
+                log.warn("\t\t  [ExecutorHandler] 不可执行的事件类型");
             }
-            if (groupId != null) {
+        } catch (NullBotMsgException e) {
+            if (groupId != 0L) {
                 bot.sendGroupMsg(groupId, e.getMessage(), false);
                 log.warn("\t\t  [ExecutorHandler] MsgException - 指令警告: {}", e.getMessage());
             } else

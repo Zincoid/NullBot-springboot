@@ -10,8 +10,6 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.render.HtmlRenderer;
 import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.HtmlTemplateUtil;
 import org.springframework.stereotype.Component;
@@ -31,30 +29,28 @@ public class ChoyenCommand implements Command
     private final HtmlRenderer htmlRenderer;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            Long groupId = groupMessageEvent.getGroupId();
-            List<String> params = event.getCommandParameters();
-            if (params.size() < 2) throw new NullBotMsgException("[5000兆] ❌需要两个参数");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long groupId = event.getGroupId();
+        if (params.size() < 2)
+            throw new NullBotMsgException("[5000兆] ❌需要两个参数");
 
-            String base64;
-            String tempFilePath = fileStorageProperties.getTempPath();
-            try {
-                Path htmlPath = resourceLoader.getCached("static/html/5000choyen.html", tempFilePath + "/html");
-                Map<String, String> variables = new HashMap<>();
-                variables.put("topText", params.get(0));
-                variables.put("bottomText", params.get(1));
-                String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
-                html = HtmlTemplateUtil.replaceVariables(html, variables);
-                base64 = htmlRenderer.renderElement(html, "#templateContainer");
-            } catch (Exception e) {
-                throw new NullBotMsgException("[5000兆] ❌处理时出错: " + e.getMessage());
-            }
-            String response = MsgUtils.builder().img("base64://" + base64).build();
-            bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[Choyen] 处理完成 - {} {}", params.get(0), params.get(1));
-        }else
-            throw new NullBotLogException("[5000兆] ❌未设计 - 非群消息事件响应方式");
+        String base64;
+        String tempFilePath = fileStorageProperties.getTempPath();
+        try {
+            Path htmlPath = resourceLoader.getCached("static/html/5000choyen.html", tempFilePath + "/html");
+            Map<String, String> variables = new HashMap<>();
+            variables.put("topText", params.get(0));
+            variables.put("bottomText", params.get(1));
+            String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+            html = HtmlTemplateUtil.replaceVariables(html, variables);
+            base64 = htmlRenderer.renderElement(html, "#templateContainer");
+
+        } catch (Exception e) {
+            throw new NullBotMsgException("[5000兆] ❌处理时出错: " + e.getMessage());
+        }
+        String response = MsgUtils.builder().img("base64://" + base64).build();
+        bot.sendGroupMsg(groupId, response, false);
+        log.info("\t\t\t\t├─[Choyen] 处理完成 - {} {}", params.get(0), params.get(1));
     }
 
     @Override

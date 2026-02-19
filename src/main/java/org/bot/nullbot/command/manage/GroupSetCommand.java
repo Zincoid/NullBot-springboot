@@ -8,11 +8,9 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.CommandRateLimiter;
-import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.info.SettingInfo;
 import org.bot.nullbot.enums.ChatScope;
 import org.bot.nullbot.enums.LimitScope;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
@@ -30,128 +28,124 @@ public class GroupSetCommand implements Command
     private final CommandRateLimiter commandRateLimiter;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            List<String> params = event.getCommandParameters();
-            Long groupId = groupMessageEvent.getGroupId();
-            Long userId = groupMessageEvent.getUserId();
-            try {
-                if (params.isEmpty()) throw new NullBotMsgException("[群设置] ❌参数不足");
-                String option = params.get(0);
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        try {
+            if (params.isEmpty()) throw new NullBotMsgException("[群设置] ❌参数不足");
+            String option = params.get(0);
 
-                if ("-view".equals(option)) {
-                    SettingInfo setting = settingService.getSetting(groupId);
-                    bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);
-                    log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
-                    return;
-                }
-
-                if ("-limit".equals(option)) {
-                    if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
-                    String setting = params.get(1);
-                    if ("scp".equals(setting)) {
-                        LimitScope limitScope = settingService.switchLimitScope(groupId);
-                        commandRateLimiter.reset(groupId);
-                        bot.sendGroupMsg(groupId, "[Limit] \uD83D\uDD04已切换: " + limitScope, false);
-                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速范围 -> {}", groupId, limitScope);
-                        return;
-                    }
-                    if ("cap".equals(setting)) {
-                        if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
-                        int capacity = Integer.parseInt(event.getCommandParameters().get(2));
-                        settingService.setLimitCapacity(groupId, capacity);
-                        commandRateLimiter.reset(groupId);
-                        bot.sendGroupMsg(groupId, "[Limit] ✅限速容量已更新", false);
-                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速容量 -> {}", groupId, capacity);
-                        return;
-                    }
-                    if ("ref".equals(setting)) {
-                        if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
-                        int refill = Integer.parseInt(event.getCommandParameters().get(2));
-                        settingService.setLimitRefill(groupId, refill);
-                        commandRateLimiter.reset(groupId);
-                        bot.sendGroupMsg(groupId, "[Limit] ✅限速补充已更新", false);
-                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速补充 -> {}", groupId, refill);
-                        return;
-                    }
-                    throw new NullBotMsgException("[群设置] ❌无此Limit设置");
-                }
-
-                if ("-ai".equals(option)) {
-                    if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
-                    String setting = params.get(1);
-                    if ("scp".equals(setting)) {
-                        ChatScope chatScope = settingService.switchChatScope(groupId);
-                        bot.sendGroupMsg(groupId, "[AI] \uD83D\uDD04已切换: " + chatScope, false);
-                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 会话范围 -> {}", groupId, chatScope);
-                        return;
-                    }
-                    if ("frq".equals(setting)) {
-                        if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
-                        double freq = Double.parseDouble(event.getCommandParameters().get(2));
-                        settingService.setReplyFrequency(groupId, freq);
-                        bot.sendGroupMsg(groupId, "[AI] ✅发言频率已更新", false);
-                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} AI自动发言频率 -> {}", groupId, freq);
-                        return;
-                    }
-                    boolean isEnabled = switch (setting) {
-                        case "ati" -> settingService.switchAntiInjection(groupId);
-                        case "tkn" -> settingService.switchThinking(groupId);
-                        case "voi" -> {
-                            deepSeekClient.clearHistory(groupId, userId);
-                            yield settingService.switchVoice(groupId);
-                        }
-                        case "ebd" -> {
-                            deepSeekClient.clearHistory(groupId, userId);
-                            yield settingService.switchEmbedding(groupId);
-                        }
-                        case "eau" -> settingService.switchEmbeddingAuth(groupId);
-                        case "cus" -> {
-                            deepSeekClient.clearHistory(groupId, userId);
-                            yield settingService.switchCustom(groupId);
-                        }
-                        case "aur" -> settingService.switchAutoReply(groupId);
-                        default -> throw new NullBotMsgException("[群设置] ❌无此AI设置");
-                    };
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[AI] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
-                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, isEnabled ? "ON" : "OFF");
-                    return;
-                }
-
-                if ("-monitor".equals(option)) {
-                    if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌Monitor设置参数不足");
-                    String setting = params.get(1);
-                    boolean isEnabled = switch (setting) {
-                        case "img" -> settingService.switchImageCollect(groupId);
-                        case "msg" -> settingService.switchMessageCollect(groupId);
-                        case "key" -> settingService.switchKeywordDetect(groupId);
-                        case "pok" -> settingService.switchPokeDetect(groupId);
-                        case "rcl" -> settingService.switchRecallDetect(groupId);
-                        default -> throw new NullBotMsgException("[群设置] ❌无此Monitor设置");
-                    };
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[监听] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
-                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, isEnabled ? "ON" : "OFF");
-                    return;
-                }
-
-                if ("-guess".equals(option)) {
-                    if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Guess设置参数不足");
-                    double ratio = Double.parseDouble(event.getCommandParameters().get(1));
-                    int padding = Integer.parseInt(event.getCommandParameters().get(2));
-                    if(settingService.setGuessParams(groupId, ratio, padding)) {
-                        bot.sendGroupMsg(groupId, "[猜] ✅参数已更新", false);
-                        log.info("\t\t\t\t├─[GroupSet] 已更改群 {} Guess参数 -> {} {}", groupId, ratio, padding);
-                        return;
-                    }
-                    throw new NullBotMsgException("[群设置] ❌Guess参数更新失败");
-                }
-
-                throw new NullBotMsgException("[群设置] ❌无此操作类型");
-            } catch (NumberFormatException e) {
-                throw new NullBotMsgException("[群设置] ❌参数格式错误");
+            if ("-view".equals(option)) {
+                SettingInfo setting = settingService.getSetting(groupId);
+                bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);
+                log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
+                return;
             }
-        }else
-            throw new NullBotLogException("[群设置] ❌未设计 - 非群消息事件响应方式");
+
+            if ("-limit".equals(option)) {
+                if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
+                String setting = params.get(1);
+                if ("scp".equals(setting)) {
+                    LimitScope limitScope = settingService.switchLimitScope(groupId);
+                    commandRateLimiter.reset(groupId);
+                    bot.sendGroupMsg(groupId, "[Limit] \uD83D\uDD04已切换: " + limitScope, false);
+                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速范围 -> {}", groupId, limitScope);
+                    return;
+                }
+                if ("cap".equals(setting)) {
+                    if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
+                    int capacity = Integer.parseInt(params.get(2));
+                    settingService.setLimitCapacity(groupId, capacity);
+                    commandRateLimiter.reset(groupId);
+                    bot.sendGroupMsg(groupId, "[Limit] ✅限速容量已更新", false);
+                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速容量 -> {}", groupId, capacity);
+                    return;
+                }
+                if ("ref".equals(setting)) {
+                    if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
+                    int refill = Integer.parseInt(params.get(2));
+                    settingService.setLimitRefill(groupId, refill);
+                    commandRateLimiter.reset(groupId);
+                    bot.sendGroupMsg(groupId, "[Limit] ✅限速补充已更新", false);
+                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速补充 -> {}", groupId, refill);
+                    return;
+                }
+                throw new NullBotMsgException("[群设置] ❌无此Limit设置");
+            }
+
+            if ("-ai".equals(option)) {
+                if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
+                String setting = params.get(1);
+                if ("scp".equals(setting)) {
+                    ChatScope chatScope = settingService.switchChatScope(groupId);
+                    bot.sendGroupMsg(groupId, "[AI] \uD83D\uDD04已切换: " + chatScope, false);
+                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 会话范围 -> {}", groupId, chatScope);
+                    return;
+                }
+                if ("frq".equals(setting)) {
+                    if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
+                    double freq = Double.parseDouble(params.get(2));
+                    settingService.setReplyFrequency(groupId, freq);
+                    bot.sendGroupMsg(groupId, "[AI] ✅发言频率已更新", false);
+                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} AI自动发言频率 -> {}", groupId, freq);
+                    return;
+                }
+                boolean isEnabled = switch (setting) {
+                    case "ati" -> settingService.switchAntiInjection(groupId);
+                    case "tkn" -> settingService.switchThinking(groupId);
+                    case "voi" -> {
+                        deepSeekClient.clearHistory(groupId, userId);
+                        yield settingService.switchVoice(groupId);
+                    }
+                    case "ebd" -> {
+                        deepSeekClient.clearHistory(groupId, userId);
+                        yield settingService.switchEmbedding(groupId);
+                    }
+                    case "eau" -> settingService.switchEmbeddingAuth(groupId);
+                    case "cus" -> {
+                        deepSeekClient.clearHistory(groupId, userId);
+                        yield settingService.switchCustom(groupId);
+                    }
+                    case "aur" -> settingService.switchAutoReply(groupId);
+                    default -> throw new NullBotMsgException("[群设置] ❌无此AI设置");
+                };
+                bot.sendGroupMsg(event.getGroupId(), "[AI] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
+                log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, isEnabled ? "ON" : "OFF");
+                return;
+            }
+
+            if ("-monitor".equals(option)) {
+                if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌Monitor设置参数不足");
+                String setting = params.get(1);
+                boolean isEnabled = switch (setting) {
+                    case "img" -> settingService.switchImageCollect(groupId);
+                    case "msg" -> settingService.switchMessageCollect(groupId);
+                    case "key" -> settingService.switchKeywordDetect(groupId);
+                    case "pok" -> settingService.switchPokeDetect(groupId);
+                    case "rcl" -> settingService.switchRecallDetect(groupId);
+                    default -> throw new NullBotMsgException("[群设置] ❌无此Monitor设置");
+                };
+                bot.sendGroupMsg(event.getGroupId(), "[监听] \uD83D\uDD04已切换: " + (isEnabled ? "ON" : "OFF"), false);
+                log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 设置 {} -> {}", groupId, setting, isEnabled ? "ON" : "OFF");
+                return;
+            }
+
+            if ("-guess".equals(option)) {
+                if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Guess设置参数不足");
+                double ratio = Double.parseDouble(params.get(1));
+                int padding = Integer.parseInt(params.get(2));
+                if(settingService.setGuessParams(groupId, ratio, padding)) {
+                    bot.sendGroupMsg(groupId, "[猜] ✅参数已更新", false);
+                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} Guess参数 -> {} {}", groupId, ratio, padding);
+                    return;
+                }
+                throw new NullBotMsgException("[群设置] ❌Guess参数更新失败");
+            }
+
+            throw new NullBotMsgException("[群设置] ❌无此操作类型");
+        } catch (NumberFormatException e) {
+            throw new NullBotMsgException("[群设置] ❌参数格式错误");
+        }
     }
 
     @Override

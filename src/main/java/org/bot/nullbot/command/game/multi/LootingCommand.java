@@ -7,11 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.game.handler.LootingMatchHandler;
-import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.result.GameResult;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 
 @CommandMapping({"Looting", "摸金"})
@@ -23,24 +23,21 @@ public class LootingCommand implements Command
     private final LootingMatchHandler lootingMatchHandler;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if ((event.getEvent() instanceof GroupMessageEvent groupMessageEvent)) {
-            Long userId = groupMessageEvent.getUserId();
-            String commandText = event.getCommandParameters().isEmpty() ? "侦察" : String.join(" ", event.getCommandParameters());
-            GameResult result = lootingMatchHandler.action(userId, commandText);
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long userId = event.getUserId();
+        String commandText = params.isEmpty() ? "侦察" : String.join(" ", params);
+        GameResult result = lootingMatchHandler.action(userId, commandText);
 
-            if(result.getSuccess()){
-                if(!result.getIsAsync()) throw new NullBotMsgException("[摸金] ❌该模式不发送同步消息");
-                if(!result.getSelfInfo().isEmpty())
-                    bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-                if(!result.getOpponentInfo().isEmpty())
-                    bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
-            }else
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), result.getSelfInfo(), false);
-
-            log.info("\t\t\t\t├─[Looting] 玩家 {} 执行指令 [{}]", userId, commandText);
+        if (result.getSuccess()) {
+            if (!result.getIsAsync()) throw new NullBotMsgException("[摸金] ❌该模式不发送同步消息");
+            if (!result.getSelfInfo().isEmpty())
+                bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+            if (!result.getOpponentInfo().isEmpty())
+                bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
         } else
-            throw new NullBotLogException("[摸金] ❌未设计 - 非群消息事件响应方式");
+            bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
+
+        log.info("\t\t\t\t├─[Looting] 玩家 {} 执行指令 [{}]", userId, commandText);
     }
 
     @Override

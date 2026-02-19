@@ -9,8 +9,6 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.BotNextInputer;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -38,82 +36,79 @@ public class QuestionCommand implements Command
     private static final int QUESTION_TIMEOUT = 60;  // 回答时间 单位: Second
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            Long groupId = groupMessageEvent.getGroupId();
-            Long userId = groupMessageEvent.getUserId();
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            List<String> params = event.getCommandParameters();
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
 
-            if (isUserBanned(userId))
-                throw new NullBotMsgException("[问答] ⛔️你已被封禁");
-            if (inGameUsers.contains(userId))
-                throw new NullBotMsgException("[问答] ⚠️已在游戏中");
+        if (isUserBanned(userId))
+            throw new NullBotMsgException("[问答] ⛔️你已被封禁");
+        if (inGameUsers.contains(userId))
+            throw new NullBotMsgException("[问答] ⚠️已在游戏中");
 
+        try {
+            inGameUsers.add(userId);
+            bot.sendGroupMsg(groupId, "⏳问题生成中, 请稍候...", false);
+            String raw;
             try {
-                inGameUsers.add(userId);
-                bot.sendGroupMsg(groupId, "⏳问题生成中, 请稍候...", false);
-                String raw;
-                try {
-                    raw = deepSeekClient.chatSingle("""
+                raw = deepSeekClient.chatSingle("""
                                     出一道单选题并给出题目和答案
                                     问题主题:%s
                                     (注:将答案用{}包围放在开头,例如{正确选项字母},无需答案解析,选项要换行)
                                     (注:禁止生成中国国内政治事件和政治人物相关问题,
                                     当主题涉及或影射上述禁止内容时仅回复REFUSED)"""
-                                    .formatted(params.isEmpty() ? "二次元" : String.join(" ", params)),
-                            true, 2500
-                    );
-                    // log.info("[Question] generated: {}", raw);  // DEBUG
-                } catch (Exception e) {
-                    throw new NullBotMsgException("""
+                                .formatted(params.isEmpty() ? "二次元" : String.join(" ", params)),
+                        true, 2500
+                );
+                // log.info("[Question] generated: {}", raw);  // DEBUG
+            } catch (Exception e) {
+                throw new NullBotMsgException("""
                             [问答] ❌生成请求出错
                             - 用户: [CQ:at,qq=%s]""".formatted(userId)
-                    );
-                }
+                );
+            }
 
-                if (raw.contains("REFUSED")) {
-                    banUser(userId, BLOCKING_TIME);
-                    throw new NullBotMsgException("""
+            if (raw.contains("REFUSED")) {
+                banUser(userId, BLOCKING_TIME);
+                throw new NullBotMsgException("""
                             [问答] 🚫生成问题敏感
                             - 用户: [CQ:at,qq=%s]
                             - 处罚: 封禁功能%s分钟""".formatted(userId, BLOCKING_TIME)
-                    );
-                }
+                );
+            }
 
-                Pattern answerPattern = Pattern.compile("\\{([A-Za-z])}");
-                Matcher answerMatcher = answerPattern.matcher(raw);
+            Pattern answerPattern = Pattern.compile("\\{([A-Za-z])}");
+            Matcher answerMatcher = answerPattern.matcher(raw);
 
-                if (!answerMatcher.find())
-                    throw new NullBotMsgException("""
+            if (!answerMatcher.find())
+                throw new NullBotMsgException("""
                             [问答] ❌生成格式异常
                             - 用户: [CQ:at,qq=%s]""".formatted(userId)
-                    );
+                );
 
-                String answer = answerMatcher.group(1).toUpperCase();
-                String question = """
+            String answer = answerMatcher.group(1).toUpperCase();
+            String question = """
                             请[CQ:at,qq=%s]回答问题！
                             %s
                             注: 请直接发送选项, 限时%s秒！"""
-                        .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
+                    .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
 
-                bot.sendGroupMsg(groupId, question, false);
-                String next = botNextInputer.request(userId, QUESTION_TIMEOUT);
+            bot.sendGroupMsg(groupId, question, false);
+            String next = botNextInputer.request(userId, QUESTION_TIMEOUT);
 
-                String response;
-                if (next == null)
-                    response = "%s回答超时！答案是...%s！".formatted(userName, answer);
-                else if (answer.equals(next.toUpperCase()))
-                    response = "%s回答正确！".formatted(userName);
-                else
-                    response = "%s回答错误！答案是...%s！".formatted(userName, answer);
+            String response;
+            if (next == null)
+                response = "%s回答超时！答案是...%s！".formatted(userName, answer);
+            else if (answer.equals(next.toUpperCase()))
+                response = "%s回答正确！".formatted(userName);
+            else
+                response = "%s回答错误！答案是...%s！".formatted(userName, answer);
 
-                bot.sendGroupMsg(groupId, response, false);
-            } finally {
-                inGameUsers.remove(userId);
-            }
-        } else
-            throw new NullBotLogException("[问答] ❌未设计 - 非群消息事件响应方式");
+            bot.sendGroupMsg(groupId, response, false);
+
+        } finally {
+            inGameUsers.remove(userId);
+        }
     }
 
     public void banUser(Long userId, int time) {

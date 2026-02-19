@@ -6,12 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.service.GroupService;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"DbUpdate", "数据库更新"})
 @Component
@@ -24,18 +24,15 @@ public class DbUpdateCommand implements Command
     private final InventoryService inventoryService;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
 
-            // 自定义更新方式
-            groupService.updateAllGroupNames();
-            userService.updateAllUserNames();
-            inventoryService.updateAllInventories();
+        // 自定义更新方式
+        groupService.updateAllGroupNames();
+        userService.updateAllUserNames();
+        inventoryService.updateAllInventories();
 
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[数据库更新] ✅已完成", false);
-            log.info("\t\t\t\t├─[DbUpdate] 数据库已更新");
-        }else
-            throw new NullBotLogException("[数据库更新] ❌未设计 - 非群消息事件响应方式");
+        bot.sendGroupMsg(event.getGroupId(), "[数据库更新] ✅已完成", false);
+        log.info("\t\t\t\t├─[DbUpdate] 数据库已更新");
     }
 
     @Override

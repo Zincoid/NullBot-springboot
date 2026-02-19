@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.ChatStorage;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"1e7bd161"})  // 加密 仅供AI嵌入调用
 @Component
@@ -24,22 +24,23 @@ public class BanChatCommand implements Command
     private final ChatStorage chatStorage;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        Long groupId;
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        banChat(bot, params, event.getGroupId());
+    }
 
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent)
-            groupId = groupMessageEvent.getGroupId();
-        else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent)
-            groupId = pokeNoticeEvent.getGroupId();
-        else
-            throw new NullBotLogException("[停用AI] ❌未设计 - 非群消息/戳一戳事件响应方式");
+    @Override
+    public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
+        banChat(bot, params, event.getGroupId());
+    }
 
-        if(event.getCommandParameters().size() < 2) throw new NullBotMsgException("[停用AI] ❌参数不足");
-
+    private void banChat(Bot bot, List<String> params, Long groupId) {
+        if (params.size() < 2)
+            throw new NullBotMsgException("[停用AI] ❌参数不足");
         try {
-            long userId = Long.parseLong(event.getCommandParameters().get(0));
-            int time = Integer.parseInt(event.getCommandParameters().get(1));
-            if(!userService.existUser(userId)) throw new NullBotMsgException("[停用AI] ❌用户不存在");
+            long userId = Long.parseLong(params.get(0));
+            int time = Integer.parseInt(params.get(1));
+            if(!userService.existUser(userId))
+                throw new NullBotMsgException("[停用AI] ❌用户不存在");
             chatStorage.banUser(userId, time);
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             bot.sendGroupMsg(groupId, "[停用AI] ✅已设置！\n" + userName + " -> " + time + " Min", false);

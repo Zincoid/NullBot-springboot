@@ -7,9 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.BotNextInputer;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"Test", "test", "测试"})
 @Component
@@ -20,19 +20,16 @@ public class TestCommand implements Command
     private final BotNextInputer botNextInputer;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            Long groupId = groupMessageEvent.getGroupId();
-            Long userId = groupMessageEvent.getUserId();
-            bot.sendGroupMsg(groupId, "[测试] 等待输入...", false);
-            String next = botNextInputer.request(userId, 10);
-            if (next == null) {
-                bot.sendGroupMsg(groupId, "[测试] 输入超时！", false);
-                return;
-            }
-            bot.sendGroupMsg(groupId, "[测试] 输入内容: " + next, false);
-        } else
-            throw new NullBotLogException("[测试] ❌未设计 - 非群消息事件响应方式");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        bot.sendGroupMsg(groupId, "[测试] 等待输入...", false);
+        String next = botNextInputer.request(userId, 10);
+        if (next == null) {
+            bot.sendGroupMsg(groupId, "[测试] 输入超时！", false);
+            return;
+        }
+        bot.sendGroupMsg(groupId, "[测试] 输入内容: " + next, false);
     }
 
     @Override

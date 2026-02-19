@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.enums.ChatScope;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"ChatReset", "重置聊天"})
 @Component
@@ -21,22 +21,19 @@ public class ChatResetCommand implements Command
     private final DeepSeekClient deepSeekClient;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            Long userId = groupMessageEvent.getSender().getUserId();
-            Long groupId = groupMessageEvent.getGroupId();
-            ChatScope chatScope = deepSeekClient.clearHistory(groupId, userId);
-            Long id = switch (chatScope) {
-                case Group, Monitor ->  groupId;
-                case Personal -> userId;
-            };
-            bot.sendGroupMsg(groupId, """
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        ChatScope chatScope = deepSeekClient.clearHistory(groupId, userId);
+        Long id = switch (chatScope) {
+            case Group, Monitor ->  groupId;
+            case Personal -> userId;
+        };
+        bot.sendGroupMsg(groupId, """
                     [重置聊天] ♻️聊天历史已重置
-                    - ChatScope: %s
-                    - ID: %s""".formatted(chatScope, id), false);
-            log.info("\t\t\t\t├─[ChatReset] 聊天历史已重置 - {}: {}", chatScope, id);
-        }else
-            throw new NullBotLogException("[重置聊天] ❌未设计 - 非群消息事件响应方式");
+                    - Chat Scope: %s
+                    - Target ID: %s""".formatted(chatScope, id), false);
+        log.info("\t\t\t\t├─[ChatReset] 聊天历史已重置 - {}: {}", chatScope, id);
     }
 
     @Override

@@ -7,14 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.entity.EmbeddedCommandEvent;
-import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.ItemService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"Use", "使用物品", "使用"})
 @Component
@@ -27,44 +27,41 @@ public class UseCommand implements Command
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) throws Exception {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            // 参数检查
-            if (event.getCommandParameters().isEmpty())
-                throw new NullBotMsgException("[使用] ❌参数不足");
-            // 解析物品
-            int itemId;
-            try {
-                itemId = Integer.parseInt(event.getCommandParameters().getFirst());
-            } catch (NumberFormatException e) {
-                throw new NullBotMsgException("[使用] ❌参数格式错误");
-            }
-            // 存在检查
-            if (!itemService.exist(itemId))
-                throw new NullBotMsgException("[使用] ❌该物品不存在");
-            // 可用检查
-            if (!itemService.isUsable(itemId))
-                throw new NullBotMsgException("[使用] ❌该物品不可使用");
-            // 库存检查
-            Long userId = groupMessageEvent.getUserId();
-            if (!inventoryService.decreaseInventory(userId, itemId, 1))
-                throw new NullBotMsgException("[使用] ❌该物品数量不足");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        // 参数检查
+        if (params.isEmpty())
+            throw new NullBotMsgException("[使用] ❌参数不足");
+        // 解析物品
+        int itemId;
+        try {
+            itemId = Integer.parseInt(params.getFirst());
+        } catch (NumberFormatException e) {
+            throw new NullBotMsgException("[使用] ❌参数格式错误");
+        }
+        // 存在检查
+        if (!itemService.exist(itemId))
+            throw new NullBotMsgException("[使用] ❌该物品不存在");
+        // 可用检查
+        if (!itemService.isUsable(itemId))
+            throw new NullBotMsgException("[使用] ❌该物品不可使用");
+        // 库存检查
+        Long userId = event.getUserId();
+        if (!inventoryService.decreaseInventory(userId, itemId, 1))
+            throw new NullBotMsgException("[使用] ❌该物品数量不足");
 
-            // 替换参数
-            String command = itemService.getItemCommand(itemId);
-            if ("UserBan".equals(command.split(" ")[0]))
-                command = command.replace("userId", userId.toString());
+        // 替换参数
+        String command = itemService.getItemCommand(itemId);
+        if ("UserBan".equals(command.split(" ")[0]))
+            command = command.replace("userId", userId.toString());
 
-            // 执行命令
-            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, false, false)));
+        // 执行命令
+        eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event, command, false, false)));
 
-            // 发送通知
-            String itemName = itemService.getItem(itemId).getName();
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[使用] ✅" + userName + " 已使用 " + itemName + "！", false);
-            log.info("\t\t\t\t├─[Use] 已使用");
-        } else
-            throw new NullBotLogException("[使用] ❌未设计 - 非群消息事件响应方式");
+        // 发送通知
+        String itemName = itemService.getItem(itemId).getName();
+        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        bot.sendGroupMsg(event.getGroupId(), "[使用] ✅" + userName + " 已使用 " + itemName + "！", false);
+        log.info("\t\t\t\t├─[Use] 已使用");
     }
 
     @Override

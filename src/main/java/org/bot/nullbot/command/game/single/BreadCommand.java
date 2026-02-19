@@ -6,12 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.page.InventoryPage;
 import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.po.UserPO;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.BreadService;
 import org.bot.nullbot.service.InventoryService;
@@ -35,25 +33,20 @@ public class BreadCommand implements Command
     private final Random random = new Random();
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            List<String> params = event.getCommandParameters();
-            Long userId = groupMessageEvent.getUserId();
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            Long groupId = groupMessageEvent.getGroupId();
-
-            if (params.isEmpty()) throw new NullBotMsgException("[面包] ❌无操作");
-
-            switch (params.getFirst()) {
-                case "-buy", "b" -> buy(bot, userId, groupId, userName);
-                case "-eat", "e" -> eat(bot, userId, userName, groupId);
-                case "-rob", "r" -> rob(bot, groupMessageEvent, groupId, userId, userName);
-                case "-gift", "g" -> gift(bot, groupMessageEvent, groupId, userId, userName);
-                case "-look", "l" -> look(bot, params, groupId, userId, userName);
-                default -> throw new NullBotMsgException("[面包] ❌操作不存在");
-            }
-        }else
-            throw new NullBotLogException("[面包] ❌未设计 - 非群消息事件响应方式");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        if (params.isEmpty())
+            throw new NullBotMsgException("[面包] ❌无操作");
+        switch (params.getFirst()) {
+            case "-buy", "b" -> buy(bot, userId, groupId, userName);
+            case "-eat", "e" -> eat(bot, userId, userName, groupId);
+            case "-rob", "r" -> rob(bot, event, groupId, userId, userName);
+            case "-gift", "g" -> gift(bot, event, groupId, userId, userName);
+            case "-look", "l" -> look(bot, params, groupId, userId, userName);
+            default -> throw new NullBotMsgException("[面包] ❌操作不存在");
+        }
     }
 
     private void buy(Bot bot, Long userId, Long groupId, String userName) {
@@ -65,7 +58,7 @@ public class BreadCommand implements Command
                 log.info("\t\t\t\t├─[Bread-Buy] 已购买普通面包 - {}({}) -> {}个", userName, userId, i);
                 return;
             }
-        }else{
+        } else {
             ItemPO bread = breadService.buySpecialBread(userId, cost);
             if (bread != null) {
                 bot.sendGroupMsg(groupId, userName + " 花费￥" + cost + "...\n- 买到1个特殊面包！\n" + bread, false);
@@ -93,8 +86,8 @@ public class BreadCommand implements Command
                 log.info("\t\t\t\t├─[Bread-Eat] 已吃面包 - {}({}) -> {}个", userName, userId, i);
                 return;
             }
-        }else{
-            if(breadService.eatRottenBread(userId)){
+        } else {
+            if (breadService.eatRottenBread(userId)) {
                 bot.sendGroupMsg(groupId, userName + " 吃到1个烂面包！\n- Exp清空了！", false);
                 log.info("\t\t\t\t├─[Bread-Eat] 吃到烂面包 - {}({})", userName, userId);
                 return;
@@ -106,7 +99,7 @@ public class BreadCommand implements Command
 
     private void rob(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
         List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
-        if(qqNumbers.isEmpty()){
+        if (qqNumbers.isEmpty()) {
             bot.sendGroupMsg(groupId, "[抢面包] ❌未指定对象", false);
             log.info("\t\t\t\t├─[Bread-Rob] 未指定对象");
             return;
@@ -115,7 +108,7 @@ public class BreadCommand implements Command
         long targetId = qqNumbers.getFirst(); // 只抢第一个人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
 
-        if(!userService.existUser(targetId)){
+        if (!userService.existUser(targetId)) {
             bot.sendGroupMsg(groupId, "[抢面包] ❌对象未注册", false);
             log.info("\t\t\t\t├─[Bread-Rob] 对象未注册 - {}({})", targetName, targetId);
             return;
@@ -125,7 +118,7 @@ public class BreadCommand implements Command
         if (i > 0) {
             bot.sendGroupMsg(groupId, userName + " 抢了 " + targetName + " " + i + "个面包！", false);
             log.info("\t\t\t\t├─[Bread-Rob] 已抢面包 - {}({}) -> {}个", targetName, targetId, i);
-        }else{
+        } else {
             bot.sendGroupMsg(groupId, targetName + " 面包没了！", false);
             log.info("\t\t\t\t├─[Bread-Rob] 对方无面包 - {}({})", targetName, targetId);
         }
@@ -133,7 +126,7 @@ public class BreadCommand implements Command
 
     private void gift(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
         List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
-        if(qqNumbers.isEmpty()){
+        if (qqNumbers.isEmpty()) {
             bot.sendGroupMsg(groupId, "[送面包] ❌未指定对象", false);
             log.info("\t\t\t\t├─[Bread-Gift] 未指定对象");
             return;
@@ -142,7 +135,7 @@ public class BreadCommand implements Command
         long targetId = qqNumbers.getFirst(); // 只送第一个人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
 
-        if(!userService.existUser(targetId)){
+        if (!userService.existUser(targetId)) {
             bot.sendGroupMsg(groupId, "[送面包] ❌对象未注册", false);
             log.info("\t\t\t\t├─[Bread-Gift] 对象未注册 - {}({})", targetName, targetId);
             return;
@@ -152,7 +145,7 @@ public class BreadCommand implements Command
         if (i > 0) {
             bot.sendGroupMsg(groupId, userName + " 送了 " + targetName + " " + i + "个面包！", false);
             log.info("\t\t\t\t├─[Bread-Gift] 已送面包 - {}({}) -> {}个", targetName, targetId, i);
-        }else{
+        } else {
             bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
             log.info("\t\t\t\t├─[Bread-Gift] 自身无面包 - {}({})", userName, userId);
         }
@@ -160,7 +153,7 @@ public class BreadCommand implements Command
 
     private void look(Bot bot, List<String> params, Long groupId, Long userId, String userName) {
         int p = 1;
-        if(params.size() > 1)
+        if (params.size() > 1)
             try {
                 p = Integer.parseInt(params.get(1));
             } catch (NumberFormatException e) {
@@ -175,11 +168,10 @@ public class BreadCommand implements Command
                 .append("[面包] ").append(userName).append("(").append(userId).append(")\n")
                 .append("现金: ￥").append(user.getCash()).append("  容量: ").append(totalAmount).append("/").append(user.getCapacity()).append("\n")
                 .append("[ID -- 名称 -- 品质/单价 - 数量]\n");
-        if(inventoryPage.getTotal() > 0){
-            for(InventoryPO inventoryPO : inventoryPage.getInventories()) {
+        if (inventoryPage.getTotal() > 0) {
+            for (InventoryPO inventoryPO : inventoryPage.getInventories())
                 sb.append(inventoryPO.toString()).append("\n");
-            }
-        }else{
+        } else {
             sb.append("无面包...").append("\n");
         }
         sb.append("[第").append(inventoryPage.getCurrentPage()).append("页").append(" / 共").append(inventoryPage.getTotalPage()).append("页 (每页").append(inventoryPage.getPageSize()).append("条)]");

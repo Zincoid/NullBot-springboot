@@ -8,8 +8,6 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.ChatMessage;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -24,27 +22,24 @@ public class RecallAICommand implements Command
     private final ChatStorage chatStorage;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            int n = 1;
-            if(!event.getCommandParameters().isEmpty()){
-                try {
-                    n = Integer.parseInt(event.getCommandParameters().getFirst());
-                    if(n <= 0) throw new NullBotMsgException("[撤回AI消息] ❌参数非正");
-                } catch (NumberFormatException e) {
-                    throw new NullBotMsgException("[撤回AI消息] ❌参数格式错误");
-                }
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        int n = 1;
+        if (!params.isEmpty()) {
+            try {
+                n = Integer.parseInt(params.getFirst());
+                if(n <= 0) throw new NullBotMsgException("[撤回AI消息] ❌参数非正");
+            } catch (NumberFormatException e) {
+                throw new NullBotMsgException("[撤回AI消息] ❌参数格式错误");
             }
+        }
 
-            Long groupId = groupMessageEvent.getGroupId();
-            Long userId = groupMessageEvent.getSender().getUserId();
+        Long groupId = event.getGroupId();
+        Long userId = event.getSender().getUserId();
 
-            List<ChatMessage> messages = chatStorage.getAIMessagesForRecall(groupId, userId, n);
-            for (ChatMessage message : messages) bot.deleteMsg(message.getMessageId());
+        List<ChatMessage> messages = chatStorage.getAIMessagesForRecall(groupId, userId, n);
+        for (ChatMessage message : messages) bot.deleteMsg(message.getMessageId());
 
-            log.info("\t\t\t\t├─[RecallAI] 已撤回AI消息 -> {}条", n);
-        }else
-            throw new NullBotLogException("[撤回AI消息] ❌未设计 - 非群消息事件响应方式");
+        log.info("\t\t\t\t├─[RecallAI] 已撤回AI消息 -> {}条", n);
     }
 
     @Override

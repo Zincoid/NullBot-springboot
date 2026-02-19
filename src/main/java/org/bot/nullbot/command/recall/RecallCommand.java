@@ -8,10 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"Recall", "recall", "rc", "撤回"})
 @Component
@@ -20,16 +20,13 @@ import org.springframework.stereotype.Component;
 public class RecallCommand implements Command
 {
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if (reply.getType() != MsgTypeEnum.reply)
-                throw new NullBotMsgException("[撤回] ❌需引用消息");
-            int messageId = Integer.parseInt(reply.getData().get("id"));
-            bot.deleteMsg(messageId);
-            log.info("\t\t\t\t├─[Recall] 已撤回引用消息 - Message Id -> {}", messageId);
-        }else
-            throw new NullBotLogException("[撤回] ❌未设计 - 非群消息事件响应方式");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        ArrayMsg reply = event.getArrayMsg().getFirst();
+        if (reply.getType() != MsgTypeEnum.reply)
+            throw new NullBotMsgException("[撤回] ❌需引用消息");
+        int messageId = Integer.parseInt(reply.getData().get("id"));
+        bot.deleteMsg(messageId);
+        log.info("\t\t\t\t├─[Recall] 已撤回引用消息 - Message Id -> {}", messageId);
     }
 
     @Override

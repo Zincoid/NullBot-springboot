@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"ChatHistory", "聊天历史"})
 @Component
@@ -20,15 +20,12 @@ public class ChatHistoryCommand implements Command
     private final DeepSeekClient deepSeekClient;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            Long userId = groupMessageEvent.getSender().getUserId();
-            Long groupId = groupMessageEvent.getGroupId();
-            String history = deepSeekClient.getHistory(groupId, userId);
-            bot.sendGroupMsg(groupId, "[聊天历史] ✅已获取！\n" + history, false);
-            log.info("\t\t\t\t├─[ChatHistory] 已获取 - 历史聊天记录");
-        }else
-            throw new NullBotLogException("[聊天历史] ❌未设计 - 非群消息事件响应方式");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        String history = deepSeekClient.getHistory(groupId, userId);
+        bot.sendGroupMsg(groupId, "[聊天历史] ✅已获取！\n" + history, false);
+        log.info("\t\t\t\t├─[ChatHistory] 已获取 - 历史聊天记录");
     }
 
     @Override

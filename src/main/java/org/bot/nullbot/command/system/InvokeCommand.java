@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SystemService;
 import org.springframework.stereotype.Component;
@@ -23,25 +21,28 @@ public class InvokeCommand implements Command
     private final SystemService systemService;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) throws Exception {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            List<String> params = event.getCommandParameters();
-            if (params.size() < 2) throw new NullBotMsgException("[Spring] ❌未指定Bean和Method");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        if (params.size() < 2)
+            throw new NullBotMsgException("[Spring] ❌未指定Bean和Method");
 
-            String beanName = params.get(0);
-            String methodName = params.get(1);
-            Object[] args = new Object[0];
-            if (params.size() > 2) args = params.subList(2, params.size()).toArray();
+        String beanName = params.get(0);
+        String methodName = params.get(1);
+        Object[] args = new Object[0];
 
-            try {
-                String result = systemService.invoke(beanName, methodName, args);
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[Spring] ✅方法调用成功\nThe method returned:\n" + result, false);
-                log.info("\t\t\t\t├─[Invoke] 调用结果 -> {}", result);
-            } catch (Exception e) {
-                throw new NullBotMsgException("[Spring] ⚠️方法调用失败\n" + e.getMessage());
-            }
-        } else
-            throw new NullBotLogException("[Spring] ❌未设计 - 非群消息事件响应方式");
+        if (params.size() > 2)
+            args = params.subList(2, params.size()).toArray();
+
+        try {
+            String result = systemService.invoke(beanName, methodName, args);
+            bot.sendGroupMsg(event.getGroupId(), """
+                    [Spring] ✅方法调用成功
+                    The method returned:
+                    %s""".formatted(result), false
+            );
+            log.info("\t\t\t\t├─[Invoke] 调用结果 -> {}", result);
+        } catch (Exception e) {
+            throw new NullBotMsgException("[Spring] ⚠️方法调用失败\n" + e.getMessage());
+        }
     }
 
     @Override

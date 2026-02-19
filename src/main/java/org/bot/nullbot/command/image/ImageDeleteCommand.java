@@ -10,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.FileUtil;
@@ -32,48 +30,45 @@ public class ImageDeleteCommand implements Command
     private final FileService fileService;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String directory = fileStorageProperties.getImagePath() + "/collect";
-            ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if (reply.getType() == MsgTypeEnum.reply) {
-                GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
-                Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
-                if (imageMap.isEmpty()) throw new NullBotMsgException("[删除图片] ❌未引用图片");
-                for (Map.Entry<String, String> entry : imageMap.entrySet()) {
-                    String originName = entry.getKey();
-                    // QQ获取文件名后缀全是jpg只能模式匹配...
-                    String fileName = originName.substring(0, originName.lastIndexOf("."));
-                    List<String> realFileNames;
-                    try {
-                        realFileNames = FileUtil.deleteFilesByPattern(directory, fileName + ".*");
-                    } catch (Exception e) {
-                        throw new NullBotMsgException("[删除图片] ❌" + e.getMessage());
-                    }
-                    if (realFileNames.size() != 1)
-                        throw new NullBotMsgException("[删除图片] ❌删除异常");
-                    if(!fileService.deleteFileRecordForBot(directory, realFileNames.getFirst()))
-                        throw new NullBotMsgException("[删除图片] ❌数据库更新失败");
-                    bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除图片] ⚠️已删除\n- " +
-                            StringUtil.truncateFileName(realFileNames.getFirst(), 12), false);
-                    log.info("\t\t\t\t├─[ImageDelete] 图片已删除 - {}.*", fileName);
-                }
-            } else if (!event.getCommandParameters().isEmpty()) {
-                String fileName = event.getCommandParameters().getFirst();
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        String directory = fileStorageProperties.getImagePath() + "/collect";
+        ArrayMsg reply = event.getArrayMsg().getFirst();
+        if (reply.getType() == MsgTypeEnum.reply) {
+            GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+            Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
+            if (imageMap.isEmpty()) throw new NullBotMsgException("[删除图片] ❌未引用图片");
+            for (Map.Entry<String, String> entry : imageMap.entrySet()) {
+                String originName = entry.getKey();
+                // QQ获取文件名后缀全是jpg只能模式匹配...
+                String fileName = originName.substring(0, originName.lastIndexOf("."));
+                List<String> realFileNames;
                 try {
-                    FileUtil.deleteFileByName(directory, fileName);
+                    realFileNames = FileUtil.deleteFilesByPattern(directory, fileName + ".*");
                 } catch (Exception e) {
                     throw new NullBotMsgException("[删除图片] ❌" + e.getMessage());
                 }
-                if(!fileService.deleteFileRecordForBot(directory, fileName))
+                if (realFileNames.size() != 1)
+                    throw new NullBotMsgException("[删除图片] ❌删除异常");
+                if (!fileService.deleteFileRecordForBot(directory, realFileNames.getFirst()))
                     throw new NullBotMsgException("[删除图片] ❌数据库更新失败");
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[删除图片] ⚠️已删除\n- " +
-                        StringUtil.truncateFileName(fileName, 12), false);
-                log.info("\t\t\t\t├─[ImageDelete] 图片已删除 - {}", fileName);
-            } else
-                throw new NullBotMsgException("[删除图片] ❌无文件名或引用");
+                bot.sendGroupMsg(event.getGroupId(), "[删除图片] ⚠️已删除\n- " +
+                        StringUtil.truncateFileName(realFileNames.getFirst(), 12), false);
+                log.info("\t\t\t\t├─[ImageDelete] 图片已删除 - {}.*", fileName);
+            }
+        } else if (!params.isEmpty()) {
+            String fileName = params.getFirst();
+            try {
+                FileUtil.deleteFileByName(directory, fileName);
+            } catch (Exception e) {
+                throw new NullBotMsgException("[删除图片] ❌" + e.getMessage());
+            }
+            if (!fileService.deleteFileRecordForBot(directory, fileName))
+                throw new NullBotMsgException("[删除图片] ❌数据库更新失败");
+            bot.sendGroupMsg(event.getGroupId(), "[删除图片] ⚠️已删除\n- " +
+                    StringUtil.truncateFileName(fileName, 12), false);
+            log.info("\t\t\t\t├─[ImageDelete] 图片已删除 - {}", fileName);
         } else
-            throw new NullBotLogException("[删除图片] ❌未设计 - 非群消息事件响应方式");
+            throw new NullBotMsgException("[删除图片] ❌无文件名或引用");
     }
 
     @Override

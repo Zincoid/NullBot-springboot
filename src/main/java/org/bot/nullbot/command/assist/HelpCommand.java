@@ -9,12 +9,11 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
 
 @CommandMapping({"Help", "help", "帮助"})
 @Component
@@ -26,20 +25,17 @@ public class HelpCommand implements Command
     private final ResourceLoader resourceLoader;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            try {
-                String helpPath = resourceLoader
-                        .getCached("static/help/help.jpg", fileStorageProperties.getTempPath())
-                        .toAbsolutePath().toString();
-                String response = MsgUtils.builder().img(helpPath).build();
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-                log.info("\t\t\t\t├─[Help] 已获取帮助");
-            } catch (IOException e) {
-                throw new NullBotMsgException("[帮助] ❌资源缺失");
-            }
-        }else
-            throw new NullBotLogException("[帮助] ❌未设计 - 非群消息事件响应方式");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        try {
+            String helpPath = resourceLoader
+                    .getCached("static/help/help.jpg", fileStorageProperties.getTempPath())
+                    .toAbsolutePath().toString();
+            String response = MsgUtils.builder().img(helpPath).build();
+            bot.sendGroupMsg(event.getGroupId(), response, false);
+            log.info("\t\t\t\t├─[Help] 已获取帮助");
+        } catch (IOException e) {
+            throw new NullBotMsgException("[帮助] ❌资源缺失");
+        }
     }
 
     @Override

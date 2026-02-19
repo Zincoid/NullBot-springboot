@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"RandomAudio", "Audio", "audio", "aud", "随机音频", "音频"})
 @Component
@@ -23,24 +23,21 @@ public class RandomAudioCommand implements Command
     private final FileStorageProperties fileStorageProperties;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String audioPath;
-            try {
-                audioPath = FileUtil.getRandomFilePath(fileStorageProperties.getAudioPath());
-            } catch (Exception e) {
-                throw new NullBotMsgException("[随机音频] ❌目录异常");
-            }
-            if (audioPath == null)
-                throw new NullBotMsgException("[随机音频] ❌暂无音频");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        String audioPath;
+        try {
+            audioPath = FileUtil.getRandomFilePath(fileStorageProperties.getAudioPath());
+        } catch (Exception e) {
+            throw new NullBotMsgException("[随机音频] ❌目录异常");
+        }
+        if (audioPath == null)
+            throw new NullBotMsgException("[随机音频] ❌暂无音频");
 
-            String response = MsgUtils.builder()
-                    .voice(audioPath)
-                    .build();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[RandomAudio] 已发送音频 - {}", audioPath);
-        }else
-            throw new NullBotLogException("[随机音频] ❌未设计 - 非群消息事件响应方式");
+        String response = MsgUtils.builder()
+                .voice(audioPath)
+                .build();
+        bot.sendGroupMsg(event.getGroupId(), response, false);
+        log.info("\t\t\t\t├─[RandomAudio] 已发送音频 - {}", audioPath);
     }
 
     @Override

@@ -7,9 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dispatcher.handler.impl.PermissionHandler;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"Lock", "锁定"})
 @Component
@@ -20,16 +20,13 @@ public class LockCommand implements Command
     private final PermissionHandler permissionHandler;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            boolean locked = permissionHandler.switchInMaintenance();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(),
-                    "[锁定] " + (locked ? "\uD83D\uDD12系统已锁定" : "\uD83D\uDD13系统已解锁"),
-                    false
-            );
-            log.info("\t\t\t\t├─[Lock] 系统已{}", locked ? "锁定" : "解锁");
-        }else
-            throw new NullBotLogException("[锁定] ❌未设计 - 非群消息事件响应方式");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        boolean locked = permissionHandler.switchInMaintenance();
+        bot.sendGroupMsg(event.getGroupId(),
+                "[锁定] " + (locked ? "\uD83D\uDD12系统已锁定" : "\uD83D\uDD13系统已解锁"),
+                false
+        );
+        log.info("\t\t\t\t├─[Lock] 系统已{}", locked ? "锁定" : "解锁");
     }
 
     @Override

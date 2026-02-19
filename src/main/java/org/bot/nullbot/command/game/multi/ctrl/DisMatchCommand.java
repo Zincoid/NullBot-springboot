@@ -7,10 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.game.Matcher;
-import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.result.MatchResult;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"DisMatch", "取消匹配"})
 @Component
@@ -21,15 +21,10 @@ public class DisMatchCommand implements Command
     private final Matcher matcher;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            Long groupId = groupMessageEvent.getGroupId();
-            Long userId = groupMessageEvent.getUserId();
-            MatchResult result = matcher.cancelMatch(userId);
-            bot.sendGroupMsg(groupId, result.getInfo(), false);
-            log.info("\t\t\t\t├─[DisMatch] 取消匹配结果 - {}", result);
-        }else
-            throw new NullBotLogException("[取消匹配] ❌未设计 - 非群消息事件响应方式");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        MatchResult result = matcher.cancelMatch(event.getUserId());
+        bot.sendGroupMsg(event.getGroupId(), result.getInfo(), false);
+        log.info("\t\t\t\t├─[DisMatch] 取消匹配结果 - {}", result);
     }
 
     @Override

@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"Anime", "anime", "二次元", "色图", "涩图"})
 @Component
@@ -23,26 +23,22 @@ public class AnimeCommand implements Command
     private final FileStorageProperties fileStorageProperties;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String acgPath = fileStorageProperties.getImagePath() + "/acg/二次元";
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        String acgPath = fileStorageProperties.getImagePath() + "/acg/二次元";
+        String animePath;
+        try {
+            animePath = FileUtil.getRandomFilePath(acgPath);
+        } catch (Exception e) {
+            throw new NullBotMsgException("[二次元] ❌目录异常");
+        }
+        if (animePath == null)
+            throw new NullBotMsgException("[二次元] ❌暂无图片");
 
-            String animePath;
-            try {
-                animePath = FileUtil.getRandomFilePath(acgPath);
-            } catch (Exception e) {
-                throw new NullBotMsgException("[二次元] ❌目录异常");
-            }
-            if (animePath == null)
-                throw new NullBotMsgException("[二次元] ❌暂无图片");
-
-            String response = MsgUtils.builder()
-                    .img(animePath)
-                    .build();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[Anime] 获取二次元图片");
-        }else
-            throw new NullBotLogException("[二次元] ❌未设计 - 非群消息事件响应方式");
+        String response = MsgUtils.builder()
+                .img(animePath)
+                .build();
+        bot.sendGroupMsg(event.getGroupId(), response, false);
+        log.info("\t\t\t\t├─[Anime] 获取二次元图片");
     }
 
     @Override

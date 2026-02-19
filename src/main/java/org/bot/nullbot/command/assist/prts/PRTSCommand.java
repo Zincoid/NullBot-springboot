@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.render.WebScreenCapturer;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -24,84 +22,80 @@ public class PRTSCommand implements Command
     private final WebScreenCapturer webScreenCapturer;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            List<String> params = event.getCommandParameters();
-            if (params.isEmpty()) throw new NullBotMsgException("[PRTS] ❌参数不足");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        if (params.isEmpty())
+            throw new NullBotMsgException("[PRTS] ❌参数不足");
 
-            String option = params.getFirst();
-            String keyword;
-            String base64;
+        String option = params.getFirst();
+        String keyword;
+        String base64;
 
-            try {
-                if (List.of("语音", "档案", "密录", "悖论").contains(option)) {
-                    if (params.size() < 2) throw new NullBotMsgException("[PRTS] ❌参数不足");
-                    keyword = params.get(1);
-                    base64 = switch (option)
-                    {
-                        case "语音" -> webScreenCapturer.capture(
-                                "https://prts.wiki/w/" + keyword, 1024, 5120,
-                                List.of("#voice-table-root"),
-                                List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
-                                List.of("a[class*='z-1 float-right select-none']")
-                        );
-
-                        case "档案" -> webScreenCapturer.capture(
-                                "https://prts.wiki/w/" + keyword, 1024, 5120,
-                                List.of("//table[.//th//b[contains(text(),'人员档案')]]"),
-                                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                                List.of("//table[.//th//b[contains(.,'人员档案')]]//button[contains(@class,'mw-collapsible-toggle')]")
-                        );
-
-                        case "密录" -> webScreenCapturer.capture(
-                                "https://prts.wiki/w/" + keyword, 1024, 5120,
-                                List.of("//table[.//th//b[contains(text(),'干员密录')]]"),
-                                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                                List.of("//table[.//th//b[contains(.,'干员密录')]]//button[contains(@class,'mw-collapsible-toggle')]")
-                        );
-
-                        case "悖论" -> webScreenCapturer.capture(
-                                "https://prts.wiki/w/" + keyword, 1024, 5120,
-                                List.of("//table[.//th//b[contains(text(),'悖论模拟')]]"),
-                                List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                                List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
-                        );
-
-                        default ->  throw new NullBotMsgException("[PRTS] ❌无此操作");
-                    };
-
-                } else {
-
-                    keyword = String.join(" ", params.subList(0, params.size()));
-                    base64 = webScreenCapturer.capture(
+        try {
+            if (List.of("语音", "档案", "密录", "悖论").contains(option)) {
+                if (params.size() < 2)
+                    throw new NullBotMsgException("[PRTS] ❌参数不足");
+                keyword = params.get(1);
+                base64 = switch (option)
+                {
+                    case "语音" -> webScreenCapturer.capture(
                             "https://prts.wiki/w/" + keyword, 1024, 5120,
-                            List.of("#bodyContent"),
-                            List.of(
-                                    ".backToTop", "#toc", "#rightToc",
-                                    ".music-btn", "#calc", "#equip-selector",
-                                    "#干员模型", "#敌人模型", "#spine-root",
-                                    "#注释与链接", "#catlinks"
-                            ),
-                            List.of(
-                                    // "input[onchange*='switchDisplay第一天赋算法']",
-                                    "input[onchange*='switchDisplay第一天赋潜能']",
-                                    // "input[onchange*='switchDisplay第二天赋算法']",
-                                    "input[onchange*='switchDisplay第二天赋潜能']"
-                            )
+                            List.of("#voice-table-root"),
+                            List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
+                            List.of("a[class*='z-1 float-right select-none']")
                     );
-                }
 
-            } catch (NullBotMsgException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new NullBotMsgException("[PRTS] ❌查询失败: " + e.getMessage());
+                    case "档案" -> webScreenCapturer.capture(
+                            "https://prts.wiki/w/" + keyword, 1024, 5120,
+                            List.of("//table[.//th//b[contains(text(),'人员档案')]]"),
+                            List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                            List.of("//table[.//th//b[contains(.,'人员档案')]]//button[contains(@class,'mw-collapsible-toggle')]")
+                    );
+
+                    case "密录" -> webScreenCapturer.capture(
+                            "https://prts.wiki/w/" + keyword, 1024, 5120,
+                            List.of("//table[.//th//b[contains(text(),'干员密录')]]"),
+                            List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                            List.of("//table[.//th//b[contains(.,'干员密录')]]//button[contains(@class,'mw-collapsible-toggle')]")
+                    );
+
+                    case "悖论" -> webScreenCapturer.capture(
+                            "https://prts.wiki/w/" + keyword, 1024, 5120,
+                            List.of("//table[.//th//b[contains(text(),'悖论模拟')]]"),
+                            List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                            List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
+                    );
+
+                    default ->  throw new NullBotMsgException("[PRTS] ❌无此操作");
+                };
+            } else {
+                keyword = String.join(" ", params.subList(0, params.size()));
+                base64 = webScreenCapturer.capture(
+                        "https://prts.wiki/w/" + keyword, 1024, 5120,
+                        List.of("#bodyContent"),
+                        List.of(
+                                ".backToTop", "#toc", "#rightToc",
+                                ".music-btn", "#calc", "#equip-selector",
+                                "#干员模型", "#敌人模型", "#spine-root",
+                                "#注释与链接", "#catlinks"
+                        ),
+                        List.of(
+                                // "input[onchange*='switchDisplay第一天赋算法']",
+                                "input[onchange*='switchDisplay第一天赋潜能']",
+                                // "input[onchange*='switchDisplay第二天赋算法']",
+                                "input[onchange*='switchDisplay第二天赋潜能']"
+                        )
+                );
             }
 
-            String response = MsgUtils.builder().img("base64://" + base64).build();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[PRTS] 已查询 - {}", keyword);
-        }else
-            throw new NullBotLogException("[PRTS] ❌未设计 - 非群消息事件响应方式");
+        } catch (NullBotMsgException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new NullBotMsgException("[PRTS] ❌查询失败: " + e.getMessage());
+        }
+
+        String response = MsgUtils.builder().img("base64://" + base64).build();
+        bot.sendGroupMsg(event.getGroupId(), response, false);
+        log.info("\t\t\t\t├─[PRTS] 已查询 - {}", keyword);
     }
 
     @Override

@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"PUBG", "pubg", "资源地图"})
 @Component
@@ -23,29 +23,26 @@ public class PUBGCommand implements Command
     private final FileStorageProperties fileStorageProperties;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if(event.getCommandParameters().isEmpty())
-                throw new NullBotMsgException("[PUBG] ❌未指定地图");
-            String map = switch (event.getCommandParameters().getFirst()) {
-                case "艾伦格" -> "Erangel.png";
-                case "米拉玛" -> "Miramar.png";
-                case "维寒迪" -> "Vikendi.png";
-                case "帝斯顿" -> "Deston.png";
-                case "荣都" -> "Rondo.png";
-                case "泰戈" -> "Tiger.png";
-                default -> null;
-            };
-            if (map == null)
-                throw new NullBotMsgException("[PUBG] ❌不支持此地图");
-            String helpPath = FileUtil.getFilePathByName(fileStorageProperties.getResourcePath() + "/pubg", map);
-            if (helpPath == null)
-                throw new NullBotMsgException("[PUBG] ❌资源缺失");
-            String response = MsgUtils.builder().img(helpPath).build();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[PUBG] 已获取地图");
-        }else
-            throw new NullBotLogException("[PUBG] ❌未设计 - 非群消息事件响应方式");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        if (params.isEmpty())
+            throw new NullBotMsgException("[PUBG] ❌未指定地图");
+        String map = switch (params.getFirst()) {
+            case "艾伦格" -> "Erangel.png";
+            case "米拉玛" -> "Miramar.png";
+            case "维寒迪" -> "Vikendi.png";
+            case "帝斯顿" -> "Deston.png";
+            case "荣都" -> "Rondo.png";
+            case "泰戈" -> "Tiger.png";
+            default -> null;
+        };
+        if (map == null)
+            throw new NullBotMsgException("[PUBG] ❌不支持此地图");
+        String helpPath = FileUtil.getFilePathByName(fileStorageProperties.getResourcePath() + "/pubg", map);
+        if (helpPath == null)
+            throw new NullBotMsgException("[PUBG] ❌资源缺失");
+        String response = MsgUtils.builder().img(helpPath).build();
+        bot.sendGroupMsg(event.getGroupId(), response, false);
+        log.info("\t\t\t\t├─[PUBG] 已获取地图");
     }
 
     @Override

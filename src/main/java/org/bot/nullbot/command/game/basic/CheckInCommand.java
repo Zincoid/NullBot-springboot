@@ -6,14 +6,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,22 +26,19 @@ public class CheckInCommand implements Command
     private final UserService userService;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            Long userId = groupMessageEvent.getUserId();
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            LocalDateTime expireTime = checkInExpireMap.get(userId);
-            if(expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
-                userService.increaseDrawTimes(userId, 25);
-                checkInExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "✨" + userName + " 签到成功！获得: \n- 抽奖次数 x 25", false);
-                log.info("\t\t\t\t├─[CheckIn] 签到成功 - 用户 {}", userId);
-            }else{
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), userName + " 今日已签过到！", false);
-                log.info("\t\t\t\t├─[CheckIn] 今日已签过到 - 用户 {}", userId);
-            }
-        }else
-            throw new NullBotLogException("[签到] ❌未设计 - 非群消息事件响应方式");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long userId = event.getUserId();
+        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        LocalDateTime expireTime = checkInExpireMap.get(userId);
+        if (expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
+            userService.increaseDrawTimes(userId, 25);
+            checkInExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
+            bot.sendGroupMsg(event.getGroupId(), "✨" + userName + " 签到成功！获得: \n- 抽奖次数 x 25", false);
+            log.info("\t\t\t\t├─[CheckIn] 签到成功 - 用户 {}", userId);
+        } else {
+            bot.sendGroupMsg(event.getGroupId(), userName + " 今日已签过到！", false);
+            log.info("\t\t\t\t├─[CheckIn] 今日已签过到 - 用户 {}", userId);
+        }
     }
 
     @Override

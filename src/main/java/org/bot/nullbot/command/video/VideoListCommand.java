@@ -7,10 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"VideoList", "视频列表"})
 @Component
@@ -21,13 +21,10 @@ public class VideoListCommand  implements Command
     private final FileStorageProperties fileStorageProperties;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String videoList = FileUtil.getFileListAsString(fileStorageProperties.getVideoPath(), "\n", true);
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[视频列表] ✅已获取！\n" + videoList, false);
-            log.info("\t\t\t\t├─[VideoList] 已获取 - 视频列表");
-        }else
-            throw new NullBotLogException("[视频列表] ❌未设计 - 非群消息事件响应方式");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        String videoList = FileUtil.getFileListAsString(fileStorageProperties.getVideoPath(), "\n", true);
+        bot.sendGroupMsg(event.getGroupId(), "[视频列表] ✅已获取！\n" + videoList, false);
+        log.info("\t\t\t\t├─[VideoList] 已获取 - 视频列表");
     }
 
     @Override

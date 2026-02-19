@@ -9,10 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"RawMsg", "原始消息"})
 @Component
@@ -21,15 +21,12 @@ import org.springframework.stereotype.Component;
 public class RawMsgCommand implements Command
 {
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            ArrayMsg reply = groupMessageEvent.getArrayMsg().getFirst();
-            if (reply.getType() != MsgTypeEnum.reply) throw new NullBotMsgException("[原始消息] ❌需引用消息");
-            GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
-            log.info("\t\t\t\t├─[RawMsg] 已输出\n{}", replyMsg.getRawMessage());
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), "[原始消息] ✅已输出至控制台", false);
-        }else
-            throw new NullBotLogException("[原始消息] ❌未设计 - 非群消息事件响应方式");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        ArrayMsg reply = event.getArrayMsg().getFirst();
+        if (reply.getType() != MsgTypeEnum.reply) throw new NullBotMsgException("[原始消息] ❌需引用消息");
+        GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+        log.info("\t\t\t\t├─[RawMsg] 已输出\n{}", replyMsg.getRawMessage());
+        bot.sendGroupMsg(event.getGroupId(), "[原始消息] ✅已输出至控制台", false);
     }
 
     @Override

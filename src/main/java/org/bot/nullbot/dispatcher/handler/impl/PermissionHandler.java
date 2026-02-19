@@ -41,7 +41,7 @@ public class PermissionHandler implements Handler
 
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             groupId = groupMessageEvent.getGroupId();
-            userId = groupMessageEvent.getSender().getUserId();
+            userId = groupMessageEvent.getUserId();
         } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
             groupId = pokeNoticeEvent.getGroupId();
             userId = pokeNoticeEvent.getUserId();

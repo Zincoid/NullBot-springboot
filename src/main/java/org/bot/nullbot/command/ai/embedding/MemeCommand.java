@@ -10,11 +10,12 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"65275d24"})  // 加密 仅供AI嵌入调用
 @Component
@@ -26,20 +27,21 @@ public class MemeCommand implements Command
     private final ChatStorage chatStorage;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        Long groupId;
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        meme(bot, params, event.getGroupId());
+    }
 
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent)
-            groupId = groupMessageEvent.getGroupId();
-        else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent)
-            groupId = pokeNoticeEvent.getGroupId();
-        else
-            throw new NullBotLogException("[表情] ❌未设计 - 非群消息/戳一戳事件响应方式");
+    @Override
+    public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
+        meme(bot, params, event.getGroupId());
+    }
 
-        if(event.getCommandParameters().isEmpty()) throw new NullBotMsgException("[表情] ❌参数不足");
+    private void meme(Bot bot, List<String> params, Long groupId) {
+        if(params.isEmpty())
+            throw new NullBotMsgException("[表情] ❌参数不足");
 
         String memeFolderPath = fileStorageProperties.getResourcePath() + "/ai/meme";
-        String memeName = event.getCommandParameters().getFirst();
+        String memeName = params.getFirst();
         String memePath = FileUtil.getFilePathByName(memeFolderPath, memeName);
 
         if (memePath == null) {

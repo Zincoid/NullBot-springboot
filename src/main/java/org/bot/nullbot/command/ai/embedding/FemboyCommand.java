@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"eb0f8545"})  // 加密 仅供AI嵌入调用
 @Component
@@ -23,26 +23,22 @@ public class FemboyCommand implements Command
     private final FileStorageProperties fileStorageProperties;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String acgPath = fileStorageProperties.getImagePath() + "/femboy";
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        String acgPath = fileStorageProperties.getImagePath() + "/femboy";
+        String femboyPath;
+        try {
+            femboyPath = FileUtil.getRandomFilePath(acgPath);
+        } catch (Exception e) {
+            throw new NullBotMsgException("[男娘] ❌目录异常");
+        }
+        if (femboyPath == null)
+            throw new NullBotMsgException("[男娘] ❌暂无图片");
 
-            String femboyPath;
-            try {
-                femboyPath = FileUtil.getRandomFilePath(acgPath);
-            } catch (Exception e) {
-                throw new NullBotMsgException("[男娘] ❌目录异常");
-            }
-            if (femboyPath == null)
-                throw new NullBotMsgException("[男娘] ❌暂无图片");
-
-            String response = MsgUtils.builder()
-                    .img(femboyPath)
-                    .build();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[Femboy] 获取男娘图片");
-        }else
-            throw new NullBotLogException("[男娘] ❌未设计 - 非群消息事件响应方式");
+        String response = MsgUtils.builder()
+                .img(femboyPath)
+                .build();
+        bot.sendGroupMsg(event.getGroupId(), response, false);
+        log.info("\t\t\t\t├─[Femboy] 获取男娘图片");
     }
 
     @Override

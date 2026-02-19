@@ -7,14 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.ChatStorage;
-import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.ai.DeepSeekClient;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
 
 @CommandMapping({"PokeReact"})
@@ -27,15 +26,14 @@ public class PokeReactCommand implements Command
     private final ChatStorage chatStorage;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) throws Exception {
-        if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            if(!Objects.equals(pokeNoticeEvent.getTargetId(), pokeNoticeEvent.getSelfId())) return;  // 仅检测戳Bot
+    public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
+            if(!Objects.equals(event.getTargetId(), event.getSelfId())) return;  // 仅检测戳Bot
 
-            Long groupId = pokeNoticeEvent.getGroupId();
-            Long userId = pokeNoticeEvent.getUserId();
+            Long groupId = event.getGroupId();
+            Long userId = event.getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
 
-            if(chatStorage.isUserBanned(userId)) {
+            if (chatStorage.isUserBanned(userId)) {
                 LocalDateTime until = chatStorage.getUserBannedUntil(userId);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 String formattedUntil = until != null ? until.format(formatter) : "";
@@ -52,8 +50,6 @@ public class PokeReactCommand implements Command
             }
 
             log.info("\t\t\t\t├─[PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", " "));
-        }else
-            throw new NullBotLogException("[戳戳反馈] ❌未设计 - 非戳一戳事件响应方式");
     }
 
     // 特殊命令 无帮助

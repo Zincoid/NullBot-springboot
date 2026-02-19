@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 
 @CommandMapping({"RandomImage", "Image", "image", "img", "随机图片", "图片"})
@@ -24,24 +24,21 @@ public class RandomImageCommand implements Command
     private final FileStorageProperties fileStorageProperties;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String imagePath;
-            try {
-                imagePath = FileUtil.getRandomFilePath(fileStorageProperties.getImagePath() + "/collect");
-            } catch (Exception e) {
-                throw new NullBotMsgException("[随机图片] ❌目录异常");
-            }
-            if (imagePath == null)
-                throw new NullBotMsgException("[随机图片] ❌暂无图片");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        String imagePath;
+        try {
+            imagePath = FileUtil.getRandomFilePath(fileStorageProperties.getImagePath() + "/collect");
+        } catch (Exception e) {
+            throw new NullBotMsgException("[随机图片] ❌目录异常");
+        }
+        if (imagePath == null)
+            throw new NullBotMsgException("[随机图片] ❌暂无图片");
 
-            String response = MsgUtils.builder()
-                    .img(imagePath)
-                    .build();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[RandomImage] 已发送图片 - {}", imagePath);
-        }else
-            throw new NullBotLogException("[随机图片] ❌未设计 - 非群消息事件响应方式");
+        String response = MsgUtils.builder()
+                .img(imagePath)
+                .build();
+        bot.sendGroupMsg(event.getGroupId(), response, false);
+        log.info("\t\t\t\t├─[RandomImage] 已发送图片 - {}", imagePath);
     }
 
     @Override

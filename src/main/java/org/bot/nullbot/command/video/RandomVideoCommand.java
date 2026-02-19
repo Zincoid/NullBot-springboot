@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @CommandMapping({"RandomVideo", "Video", "video", "vid", "随机视频", "视频"})
 @Component
@@ -23,24 +23,21 @@ public class RandomVideoCommand implements Command
     private final FileStorageProperties fileStorageProperties;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            String videoPath;
-            try {
-                videoPath = FileUtil.getRandomFilePath(fileStorageProperties.getVideoPath());
-            } catch (Exception e) {
-                throw new NullBotMsgException("[随机视频] ❌目录异常");
-            }
-            if (videoPath == null)
-                throw new NullBotMsgException("[随机视频] ❌暂无视频");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        String videoPath;
+        try {
+            videoPath = FileUtil.getRandomFilePath(fileStorageProperties.getVideoPath());
+        } catch (Exception e) {
+            throw new NullBotMsgException("[随机视频] ❌目录异常");
+        }
+        if (videoPath == null)
+            throw new NullBotMsgException("[随机视频] ❌暂无视频");
 
-            String response = MsgUtils.builder()
-                    .video(videoPath, "")
-                    .build();
-            bot.sendGroupMsg(groupMessageEvent.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[RandomVideo] 已发送视频 - {}", videoPath);
-        }else
-            throw new NullBotLogException("[随机视频] ❌未设计 - 非群消息事件响应方式");
+        String response = MsgUtils.builder()
+                .video(videoPath, "")
+                .build();
+        bot.sendGroupMsg(event.getGroupId(), response, false);
+        log.info("\t\t\t\t├─[RandomVideo] 已发送视频 - {}", videoPath);
     }
 
     @Override

@@ -20,6 +20,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
+import com.mikuac.shiro.dto.event.Event;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.resource.ResourceLoader;
@@ -116,7 +117,7 @@ public class DeepSeekClient
      * @return AI回复内容
      */
     public String chat(Integer messageId, Long groupId, Long userId, String userName,
-                       String userMessage, Bot bot, CommandEvent<?> event) throws Exception
+                       String userMessage, Bot bot, Event event) throws Exception
     {
         ChatOption option = settingService.getChatOption(groupId);
 
@@ -396,7 +397,7 @@ public class DeepSeekClient
      * @return 处理过的消息 (未过滤)
      */
     String executeEmbeddingChain(String originalResponse, List<ChatMessage> chatMessages, Long groupId,
-                                 Bot bot, CommandEvent<?> event, ChatOption option) throws IOException {
+                                 Bot bot, Event event, ChatOption option) throws IOException {
         String response = originalResponse.replaceAll("(\r?\n)+", "\n").trim();
         // 使用正则匹配所有{指令}和文本部分
         Pattern pattern = Pattern.compile("(\\{.*?}|[^{]+)");
@@ -409,7 +410,7 @@ public class DeepSeekClient
                 if (command.isEmpty()) continue;
                 eventPublisher.publishEvent(new EmbeddedCommandEvent(
                         bot,
-                        new CommandEvent<>(event.getEvent(), command,
+                        new CommandEvent<>(event, command,
                                 option.isEmbeddingAuth(), embeddingLimit)
                 ));
                 // 记录指令
@@ -452,12 +453,12 @@ public class DeepSeekClient
      */
     @Deprecated
     String executeEmbedding(String originalResponse, List<ChatMessage> chatMessages, Long groupId,
-                            Bot bot, CommandEvent<?> event, ChatOption option) throws IOException {
+                            Bot bot, Event event, ChatOption option) throws IOException {
         Matcher m = Pattern.compile("\\{(.*?)}").matcher(originalResponse);
         // 执行指令
         while (m.find()) {
             String command = m.group(1);
-            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event.getEvent(), command, option.isEmbeddingAuth(), embeddingLimit)));
+            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event, command, option.isEmbeddingAuth(), embeddingLimit)));
         }
         // 处理消息
         String response = originalResponse.replaceAll("\\{.*?}", "").replaceAll("(\r?\n)+", "\n").trim();

@@ -10,8 +10,6 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.render.HtmlRenderer;
 import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.CommandEvent;
-import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.HtmlTemplateUtil;
 import org.springframework.stereotype.Component;
@@ -33,37 +31,35 @@ public class PucciCommand implements Command
     private final HtmlRenderer htmlRenderer;
 
     @Override
-    public void execute(Bot bot, CommandEvent<?> event) {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            Long groupId = groupMessageEvent.getGroupId();
-            List<String> params = event.getCommandParameters();
-            if (params.isEmpty()) throw new NullBotMsgException("[普奇] ❌参数不足");
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long groupId = event.getGroupId();
+        if (params.isEmpty())
+            throw new NullBotMsgException("[普奇] ❌参数不足");
 
-            String base64;
-            String tempFilePath = fileStorageProperties.getTempPath();
-            try {
-                Path htmlPath = resourceLoader.getCached("static/html/pucci.html", tempFilePath + "/html");
-                Path bgPath = resourceLoader.getCached("static/image/pucci.png", tempFilePath + "/image");
-                Map<String, String> variables = new HashMap<>();
-                Map<String, String> images = new HashMap<>();
+        String base64;
+        String tempFilePath = fileStorageProperties.getTempPath();
+        try {
+            Path htmlPath = resourceLoader.getCached("static/html/pucci.html", tempFilePath + "/html");
+            Path bgPath = resourceLoader.getCached("static/image/pucci.png", tempFilePath + "/image");
+            Map<String, String> variables = new HashMap<>();
+            Map<String, String> images = new HashMap<>();
 
-                variables.put("text1", "普奇！！回答我！");
-                variables.put("text2", "为什么你要加速时间！！");
-                variables.put("text3", params.getFirst());
-                images.put("background", bgPath.toAbsolutePath().toString());
+            variables.put("text1", "普奇！！回答我！");
+            variables.put("text2", "为什么你要加速时间！！");
+            variables.put("text3", params.getFirst());
+            images.put("background", bgPath.toAbsolutePath().toString());
 
-                String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
-                html = HtmlTemplateUtil.replaceVariables(html, variables);
-                html = HtmlTemplateUtil.replaceImages(html, images);
-                base64 = htmlRenderer.renderElement(html, "#wrap");
-            } catch (Exception e) {
-                throw new NullBotMsgException("[普奇] ❌处理时出错: " + e.getMessage());
-            }
-            String response = MsgUtils.builder().img("base64://" + base64).build();
-            bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[Pucci] 处理完成 - {}", params.getFirst());
-        }else
-            throw new NullBotLogException("[普奇] ❌未设计 - 非群消息事件响应方式");
+            String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+            html = HtmlTemplateUtil.replaceVariables(html, variables);
+            html = HtmlTemplateUtil.replaceImages(html, images);
+            base64 = htmlRenderer.renderElement(html, "#wrap");
+
+        } catch (Exception e) {
+            throw new NullBotMsgException("[普奇] ❌处理时出错: " + e.getMessage());
+        }
+        String response = MsgUtils.builder().img("base64://" + base64).build();
+        bot.sendGroupMsg(groupId, response, false);
+        log.info("\t\t\t\t├─[Pucci] 处理完成 - {}", params.getFirst());
     }
 
     @Override
