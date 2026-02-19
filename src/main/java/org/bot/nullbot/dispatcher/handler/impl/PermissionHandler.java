@@ -61,7 +61,7 @@ public class PermissionHandler implements Handler
         if (inMaintenance && userAccess < 2) {
             log.info("\t\t├─[PermissionHandler] 系统已锁定");
             bot.sendGroupMsg(groupId, """
-                        [访问] \uD83D\uDD10系统已锁定
+                        [访问] 🔐系统已锁定
                         - 操作需限权等级II""", false);
             return;
         }
@@ -79,7 +79,7 @@ public class PermissionHandler implements Handler
             } else {
                 log.info("\t\t├─[PermissionHandler] 用户限权不足");
                 bot.sendGroupMsg(groupId, """
-                        [访问] \uD83D\uDEAB限权不足
+                        [访问] 🚫限权不足
                         - 需要限权等级: %s
                         - 你的限权等级: %s""".formatted(commandAccess, userAccess), false);
                 return;
@@ -108,7 +108,7 @@ public class PermissionHandler implements Handler
         if (userAccess < 1) {
             log.info("\t\t├─[PermissionHandler] 修改限权不足");
             bot.sendGroupMsg(groupId, """
-                    [访问] \uD83D\uDEAB限权不足
+                    [访问] 🚫限权不足
                     - 需要限权等级: 1
                     - 你的限权等级: %s""".formatted(userAccess), false);
             return;

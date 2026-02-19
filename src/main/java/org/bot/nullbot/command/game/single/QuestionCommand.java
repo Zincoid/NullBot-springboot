@@ -35,7 +35,7 @@ public class QuestionCommand implements Command
     private final Map<Long, LocalDateTime> bannedUsers = new ConcurrentHashMap<>();
     private final Set<Long> inGameUsers = new ConcurrentHashSet<>();
 
-    private static final int BLOCKING_TIME = 30;  // 封禁时间 单位: Minute
+    private static final int BLOCKING_TIME = 1;  // 封禁时间 单位: Minute
     private static final int QUESTION_TIMEOUT = 60;  // 回答时间 单位: Second
 
     @Override
@@ -58,11 +58,11 @@ public class QuestionCommand implements Command
                 try {
                     raw = deepSeekClient.chatSingle("""
                                     出一道单选题并给出题目和答案
-                                    问题主题:%s,生成种子:%s
+                                    问题主题:%s
                                     (注:将答案用{}包围放在开头,例如{正确选项字母},无需答案解析,选项要换行)
                                     (注:禁止生成中国国内政治事件和政治人物相关问题,
                                     当主题涉及或影射上述禁止内容时仅回复REFUSED)"""
-                                    .formatted(params.isEmpty() ? "二次元" : String.join(" ", params), UUID.randomUUID()),
+                                    .formatted(params.isEmpty() ? "二次元" : String.join(" ", params)),
                             true, 2500
                     );
                     // log.info("[Question] generated: {}", raw);  // DEBUG
@@ -76,9 +76,9 @@ public class QuestionCommand implements Command
                 if (raw.contains("REFUSED")) {
                     banUser(userId, BLOCKING_TIME);
                     throw new NullBotMsgException("""
-                            [问答] ❌生成问题敏感
+                            [问答] 🚫生成问题敏感
                             - 用户: [CQ:at,qq=%s]
-                            - 已封禁: %s Min""".formatted(userId, BLOCKING_TIME)
+                            - 处罚: 封禁%s分钟""".formatted(userId, BLOCKING_TIME)
                     );
                 }
 
@@ -131,7 +131,7 @@ public class QuestionCommand implements Command
         return true;
     }
 
-    public void unBanUser(Long userId) {
+    public void unbanUser(Long userId) {
         bannedUsers.remove(userId);
     }
 
