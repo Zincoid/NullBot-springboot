@@ -29,6 +29,7 @@ public class QuestionCommand implements Command
     private final DeepSeekClient deepSeekClient;
     private final BotNextInputer botNextInputer;
 
+    private boolean thinking = true;
     private final Map<Long, LocalDateTime> bannedUsers = new ConcurrentHashMap<>();
     private final Set<Long> inGameUsers = new ConcurrentHashSet<>();
 
@@ -58,7 +59,7 @@ public class QuestionCommand implements Command
                                     (注:禁止生成中国国内政治事件和政治人物相关问题,
                                     当主题涉及或影射上述禁止内容时仅回复REFUSED)"""
                                 .formatted(params.isEmpty() ? "二次元" : String.join(" ", params)),
-                        true, 2500
+                        thinking, 2500
                 );
                 // log.info("[Question] generated: {}", raw);  // DEBUG
             } catch (Exception e) {
@@ -110,6 +111,8 @@ public class QuestionCommand implements Command
             inGameUsers.remove(userId);
         }
     }
+
+    public boolean switchThinking(Long userId) { return thinking = !thinking; }
 
     public void banUser(Long userId, int time) {
         bannedUsers.put(userId, LocalDateTime.now().plusMinutes(time));
