@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,7 +77,7 @@ public class QuestionCommand implements Command
                     throw new NullBotMsgException("""
                             [问答] 🚫生成问题敏感
                             - 用户: [CQ:at,qq=%s]
-                            - 处罚: 封禁%s分钟""".formatted(userId, BLOCKING_TIME)
+                            - 处罚: 封禁功能%s分钟""".formatted(userId, BLOCKING_TIME)
                     );
                 }
 
