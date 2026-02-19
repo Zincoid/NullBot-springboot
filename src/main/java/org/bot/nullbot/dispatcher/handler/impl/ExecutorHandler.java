@@ -34,9 +34,9 @@ public class ExecutorHandler implements Handler
             } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
                 groupId = groupMsgDeleteNoticeEvent.getGroupId();
                 command.execute(bot, groupMsgDeleteNoticeEvent, event.getCommandParameters());
-            } else {
+            } else
                 log.warn("\t\t  [ExecutorHandler] 不可执行的事件类型");
-            }
+
         } catch (NullBotMsgException e) {
             if (groupId != 0L) {
                 bot.sendGroupMsg(groupId, e.getMessage(), false);
