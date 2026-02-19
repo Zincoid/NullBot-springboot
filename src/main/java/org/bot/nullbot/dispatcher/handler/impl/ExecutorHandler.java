@@ -35,18 +35,18 @@ public class ExecutorHandler implements Handler
                 groupId = groupMsgDeleteNoticeEvent.getGroupId();
                 command.execute(bot, groupMsgDeleteNoticeEvent, event.getCommandParameters());
             } else
-                log.warn("\t\t  [ExecutorHandler] 不可执行的事件类型");
+                log.warn("\t\t  [ExecutorHandler] 不支持的事件类型");
 
         } catch (NullBotMsgException e) {
             if (groupId != 0L) {
                 bot.sendGroupMsg(groupId, e.getMessage(), false);
-                log.warn("\t\t  [ExecutorHandler] MsgException - 指令警告: {}", e.getMessage());
+                log.warn("\t\t  [ExecutorHandler] 消息警告: {}", e.getMessage());
             } else
-                log.error("\t\t  [ExecutorHandler] MsgException - 群信息获取失败");
+                log.error("\t\t  [ExecutorHandler] 消息警告: 来源群获取失败");
         } catch (NullBotLogException e) {
-            log.warn("\t\t  [ExecutorHandler] LogException - 指令警告: {}", e.getMessage());
+            log.warn("\t\t  [ExecutorHandler] 日志警告: {}", e.getMessage());
         } catch (Exception e) {
-            log.error("\t\t  [ExecutorHandler] Exception - 错误: {}", e.getMessage());
+            log.error("\t\t  [ExecutorHandler] 未知错误: {}", e.getMessage());
             throw e;
         }
 
