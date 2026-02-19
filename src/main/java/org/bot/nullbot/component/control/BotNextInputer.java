@@ -44,12 +44,11 @@ public class BotNextInputer
 
     /* 响应输入事件 */
     public boolean response(Long userId, String message) {
-        InputEntry inputEntry = inputEntries.remove(userId);
-        CompletableFuture<String> future = inputEntry.future;
-        if (future != null && !future.isDone()) {
-            if (!inputEntry.pattern.matcher(message).matches())
+        InputEntry entry = inputEntries.remove(userId);
+        if (entry != null && !entry.future.isDone()) {
+            if (!entry.pattern.matcher(message).matches())
                 return false;
-            future.complete(message);
+            entry.future.complete(message);
             log.info("▽ [BotNextInputer] 用户 {} 已响应 - {}", userId, message);
             return true;
         }
