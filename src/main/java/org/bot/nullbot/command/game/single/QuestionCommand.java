@@ -77,8 +77,8 @@ public class QuestionCommand implements Command
                     banUser(userId, BLOCKING_TIME);
                     throw new NullBotMsgException("""
                             [问答] ❌生成问题敏感
-                            - 已封禁: %s Min
-                            - 用户: [CQ:at,qq=%s]""".formatted(BLOCKING_TIME, userId)
+                            - 用户: [CQ:at,qq=%s]
+                            - 已封禁: %s Min""".formatted(userId, BLOCKING_TIME)
                     );
                 }
 
