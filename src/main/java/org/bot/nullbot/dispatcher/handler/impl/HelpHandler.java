@@ -2,6 +2,7 @@ package org.bot.nullbot.dispatcher.handler.impl;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dispatcher.CommandHandlerChain;
@@ -29,6 +30,10 @@ public class HelpHandler implements Handler
                 }
             }
             log.info("\t\t├─[HelpHandler] 非帮助命令");
+            chain.doHandle(bot, event, command);
+        } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
+            bot.sendPrivateMsg(privateMessageEvent.getUserId(), "[帮助] ⚠️暂无私信帮助功能", false);
+            log.info("\t\t├─[HelpHandler] 暂无私信帮助功能");
             chain.doHandle(bot, event, command);
         } else {
             log.info("\t\t├─[HelpHandler] 默认无帮助的事件");
