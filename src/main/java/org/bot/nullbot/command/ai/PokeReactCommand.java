@@ -23,8 +23,7 @@ public class PokeReactCommand implements Command
 
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
-            if(!Objects.equals(event.getTargetId(), event.getSelfId()))
-                return;  // 仅检测戳Bot
+            if(!Objects.equals(event.getTargetId(), event.getSelfId())) return;  // 仅检测戳Bot
             Long groupId = event.getGroupId();
             Long userId = event.getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
