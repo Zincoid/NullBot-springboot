@@ -112,7 +112,7 @@ public class QuestionCommand implements Command
         }
     }
 
-    public boolean switchThinking(Long userId) { return thinking = !thinking; }
+    public boolean switchThinking() { return thinking = !thinking; }
 
     public void banUser(Long userId, int time) {
         bannedUsers.put(userId, LocalDateTime.now().plusMinutes(time));
