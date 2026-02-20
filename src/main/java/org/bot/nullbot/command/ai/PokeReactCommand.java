@@ -24,12 +24,17 @@ public class PokeReactCommand implements Command
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
             if(!Objects.equals(event.getTargetId(), event.getSelfId())) return;  // 仅检测戳Bot
-            Long groupId = event.getGroupId();
-            Long userId = event.getUserId();
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             String response;
             try {
-                response = deepSeekClient.chat(null, groupId, userId, userName, "揉了你一下", bot, event);
+                response = deepSeekClient.chat(
+                        null,
+                        event.getGroupId(),
+                        event.getUserId(),
+                        bot.getStrangerInfo(event.getUserId(), true).getData().getNickname(),
+                        "揉了你一下",
+                        bot,
+                        event
+                );
             } catch (Exception e) {
                 throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
             }

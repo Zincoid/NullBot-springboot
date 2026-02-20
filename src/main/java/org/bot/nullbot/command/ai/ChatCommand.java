@@ -26,21 +26,23 @@ public class ChatCommand implements Command
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        Long userId = event.getUserId();
-        Long groupId = event.getGroupId();
-
         String message = MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg());
-        String userName = event.getSender().getNickname();
-        Integer messageId = event.getMessageId();
-
         String response;
         try {
-            response = deepSeekClient.chat(messageId, groupId, userId, userName, message, bot, event);
+            response = deepSeekClient.chat(
+                    event.getMessageId(),
+                    event.getGroupId(),
+                    event.getUserId(),
+                    event.getSender().getNickname(),
+                    message,
+                    bot,
+                    event
+            );
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
         }
         if (message.contains(commandPrefix))
-            bot.sendGroupMsg(groupId, """
+            bot.sendGroupMsg(event.getGroupId(), """
                                 [AI] ⚠️检测到指令前缀
                                 - 使用指令时请不要@Null
                                 - @Null仅触发AI对话
