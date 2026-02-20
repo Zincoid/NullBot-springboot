@@ -40,6 +40,7 @@ public class PermissionHandler implements Handler
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
+
         Class<? extends Command> commandClass = command.getClass();
         List<String> params = event.getCommandParameters();
         Long groupId;
@@ -64,6 +65,8 @@ public class PermissionHandler implements Handler
         int groupAccess = groupService.getGroupAccess(groupId);
         int userAccess = userService.getUserAccess(userId);
 
+        // =================== 系统锁定验证 ===================
+
         if (inMaintenance && userAccess < 2) {
             log.info("\t\t├─[PermissionHandler] 系统已锁定");
             bot.sendGroupMsg(groupId, """
@@ -71,6 +74,8 @@ public class PermissionHandler implements Handler
                         - 操作需限权等级II""", false);
             return;
         }
+
+        // =================== 指令限权验证 ===================
 
         if (groupAccess >= commandAccess) {
             log.info("\t\t├─[PermissionHandler] 群限权满足");
@@ -94,6 +99,8 @@ public class PermissionHandler implements Handler
             log.info("\t\t├─[PermissionHandler] 无需验证用户限权");
         }
 
+        // =================== 群组禁用验证 ===================
+
         if (!params.isEmpty() && "-x".equals(params.getFirst())) {
             if (userAccess < 1) {
                 log.info("\t\t├─[PermissionHandler] 修改限权不足");
@@ -116,6 +123,8 @@ public class PermissionHandler implements Handler
             bot.sendGroupMsg(groupId, "[访问] ⛔️停用中", false);
             return;
         }
+
+        // =================== 用户禁用验证 ===================
 
         if (!params.isEmpty() && "-b".equals(params.getFirst())) {
             if (userAccess < 1) {
