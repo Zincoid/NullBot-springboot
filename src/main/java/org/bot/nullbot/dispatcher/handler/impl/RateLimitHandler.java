@@ -65,7 +65,7 @@ public class RateLimitHandler implements Handler
                 // bot.sendGroupNotice(pokeNoticeEvent.getGroupId(), MsgUtils.builder().poke(pokeNoticeEvent.getUserId()).build());
             }
         } else {
-            log.info("\t\t├─[RateLimitHandler] 默认不限速的事件");
+            log.info("\t\t├─[RateLimitHandler] 默认不限速的事件类型");
             chain.doHandle(bot, event, command);
         }
     }
