@@ -2,6 +2,7 @@ package org.bot.nullbot.dispatcher.handler.impl;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
@@ -25,29 +26,32 @@ public class StatisticHandler implements Handler
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         String commandType = command.getClass().getSimpleName().replace("Command", "");
+        Long groupId;
+        Long userId;
 
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            statisticService.increaseOnDate();
-            statisticService.increase(groupMessageEvent.getGroupId(), groupMessageEvent.getUserId(), groupMessageEvent.getSender().getNickname(), commandType);
-            log.info("\t\t├─[StatisticHandler] 基本指令记录完成");
-            chain.doHandle(bot, event, command);
+            groupId = groupMessageEvent.getGroupId();
+            userId = groupMessageEvent.getUserId();
         } else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            Long userId = pokeNoticeEvent.getUserId();
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            statisticService.increaseOnDate();
-            statisticService.increase(pokeNoticeEvent.getGroupId(), userId, userName, commandType);
-            log.info("\t\t├─[StatisticHandler] 戳一戳指令记录完成");
-            chain.doHandle(bot, event, command);
+            groupId = pokeNoticeEvent.getGroupId();
+            userId = pokeNoticeEvent.getUserId();
         } else if(event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
-            Long userId = groupMsgDeleteNoticeEvent.getUserId();
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            statisticService.increaseOnDate();
-            statisticService.increase(groupMsgDeleteNoticeEvent.getGroupId(), userId, userName, commandType);
-            log.info("\t\t├─[StatisticHandler] 撤回反应指令记录完成");
-            chain.doHandle(bot, event, command);
+            groupId = groupMsgDeleteNoticeEvent.getGroupId();
+            userId = groupMsgDeleteNoticeEvent.getUserId();
+        } else if(event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
+            groupId = 0L;  // 群号 0 代表私聊
+            userId = privateMessageEvent.getUserId();
         } else {
             log.info("\t\t├─[StatisticHandler] 默认不记录的事件");
             chain.doHandle(bot, event, command);
+            return;
         }
+
+        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        statisticService.increase(groupId, userId, userName, commandType);
+        statisticService.increaseOnDate();
+        log.info("\t\t├─[StatisticHandler] 指令记录完成");
+
+        chain.doHandle(bot, event, command);
     }
 }

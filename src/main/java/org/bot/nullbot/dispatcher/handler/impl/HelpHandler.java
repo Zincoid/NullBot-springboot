@@ -20,27 +20,21 @@ public class HelpHandler implements Handler
 {
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            List<String> params = event.getCommandParameters();
-            if (!params.isEmpty() && ("-help".equalsIgnoreCase(params.getFirst()) || "-h".equalsIgnoreCase(params.getFirst()))) {
-                log.info("\t\t├─[HelpHandler] 已输出群聊帮助");
+        List<String> params = event.getCommandParameters();
+        if (!params.isEmpty() && ("-help".equalsIgnoreCase(params.getFirst()) || "-h".equalsIgnoreCase(params.getFirst()))) {
+            if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+                log.info("\t\t├─[HelpHandler] 已输出群消息帮助");
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), command.getHelp(), false);
-                return;
-            }
-            log.info("\t\t├─[HelpHandler] 非群聊帮助命令");
-            chain.doHandle(bot, event, command);
-        } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
-            List<String> params = event.getCommandParameters();
-            if (!params.isEmpty() && ("-help".equalsIgnoreCase(params.getFirst()) || "-h".equalsIgnoreCase(params.getFirst()))) {
+            } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
                 log.info("\t\t├─[HelpHandler] 暂无私信帮助功能");
                 bot.sendPrivateMsg(privateMessageEvent.getUserId(), "[帮助] ⚠️暂无私信帮助功能", false);
-                return;
+            } else {
+                log.info("\t\t├─[HelpHandler] 默认无帮助的事件");
             }
-            log.info("\t\t├─[HelpHandler] 非私聊帮助命令");
-            chain.doHandle(bot, event, command);
-        } else {
-            log.info("\t\t├─[HelpHandler] 默认无帮助的事件");
-            chain.doHandle(bot, event, command);
+            return;
         }
+
+        log.info("\t\t├─[HelpHandler] 非帮助命令");
+        chain.doHandle(bot, event, command);
     }
 }
