@@ -38,21 +38,25 @@ public class BanChatCommand implements Command
     private void banChat(Bot bot, List<String> params, Long groupId) {
         if (params.size() < 2)
             throw new NullBotMsgException("[停用AI] ❌参数不足");
+        long userId;
+        int banTime;
         try {
-            long userId = Long.parseLong(params.get(0));
-            int banTime = Integer.parseInt(params.get(1));
-            if (!userService.existUser(userId))
-                throw new NullBotMsgException("[停用AI] ❌用户不存在");
-            permissionHandler.setUserBan(userId, ChatCommand.class.getSimpleName(), banTime);
-            permissionHandler.setUserBan(userId, PokeReactCommand.class.getSimpleName(), banTime);
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            bot.sendGroupMsg(groupId, """
-                    [停用AI] ✅已设置！
-                    %s -> %s Min""".formatted(userName, banTime), false);
-            log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} min", userId, banTime);
+            userId = Long.parseLong(params.get(0));
+            banTime = Integer.parseInt(params.get(1));
         } catch (NumberFormatException e) {
             throw new NullBotMsgException("[停用AI] ❌参数格式错误");
         }
+        if (!userService.existUser(userId))
+            throw new NullBotMsgException("[停用AI] ❌用户不存在");
+
+        permissionHandler.setUserBan(userId, ChatCommand.class.getSimpleName(), banTime);
+        permissionHandler.setUserBan(userId, PokeReactCommand.class.getSimpleName(), banTime);
+
+        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        bot.sendGroupMsg(groupId, """
+                [停用AI] ✅已设置！
+                %s -> %s Min""".formatted(userName, banTime), false);
+        log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} min", userId, banTime);
     }
 
     @Override

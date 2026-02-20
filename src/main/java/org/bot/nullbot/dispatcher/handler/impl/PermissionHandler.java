@@ -159,8 +159,8 @@ public class PermissionHandler implements Handler
             long seconds = totalSeconds % 60;
             log.info("\t\t├─[PermissionHandler] 用户指令 {}-{} 停用至 {}", userId, commandClass, until.format(formatter));
             bot.sendGroupMsg(groupId, """
-                    [访问] ⛔️你已被禁用该指令！
-                    - 解封于 %s h %s m %s s 后""".formatted(hours, minutes, seconds), false);
+                    [访问] ⛔️你已被禁用该指令
+                    - 将于 %sh %sm %ss 后解封""".formatted(hours, minutes, seconds), false);
             return;
         }
 
