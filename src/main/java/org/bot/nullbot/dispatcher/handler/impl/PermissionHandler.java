@@ -89,7 +89,17 @@ public class PermissionHandler implements Handler
         }
 
         if (!params.isEmpty() && "-x".equals(params.getFirst())) {
-            onBanningRefresh(bot, userAccess, groupId, commandClass);
+            if (userAccess < 1) {
+                log.info("\t\t├─[PermissionHandler] 修改限权不足");
+                bot.sendGroupMsg(groupId, """
+                    [访问] 🚫限权不足
+                    - 需要限权等级: 1
+                    - 你的限权等级: %s""".formatted(userAccess), false);
+                return;
+            }
+            boolean banned = switchCmdBanning(groupId, commandClass);
+            log.info("\t\t├─[PermissionHandler] 群组 {} - {} {}", groupId, commandClass, banned ? "已停用" : "已启用");
+            bot.sendGroupMsg(groupId, "[访问] %s".formatted(banned ? "⛔️已停用" : "✅已启用"), false);
             return;
         }
 
@@ -104,24 +114,14 @@ public class PermissionHandler implements Handler
 
     // =================== 工具方法 ===================
 
-    private void onBanningRefresh(Bot bot, int userAccess, Long groupId, String commandClass) {
-        if (userAccess < 1) {
-            log.info("\t\t├─[PermissionHandler] 修改限权不足");
-            bot.sendGroupMsg(groupId, """
-                    [访问] 🚫限权不足
-                    - 需要限权等级: 1
-                    - 你的限权等级: %s""".formatted(userAccess), false);
-            return;
-        }
-        List<String> banned = banMap.computeIfAbsent(groupId, k -> new ArrayList<>());
-        if (banned.contains(commandClass)) {
-            banned.remove(commandClass);
-            log.info("\t\t├─[PermissionHandler] 群组 {} - {} 已启用", groupId, commandClass);
-            bot.sendGroupMsg(groupId, "[访问] ✅已启用", false);
+    private boolean switchCmdBanning(Long groupId, String commandClass) {
+        List<String> bannedCmds = banMap.computeIfAbsent(groupId, k -> new ArrayList<>());
+        if (bannedCmds.contains(commandClass)) {
+            bannedCmds.remove(commandClass);
+            return false;
         } else {
-            banned.add(commandClass);
-            log.info("\t\t├─[PermissionHandler] 群组 {} - {} 已停用", groupId, commandClass);
-            bot.sendGroupMsg(groupId, "[访问] ⛔️已停用", false);
+            bannedCmds.add(commandClass);
+            return true;
         }
     }
 
