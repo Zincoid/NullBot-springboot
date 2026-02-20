@@ -3,6 +3,7 @@ package org.bot.nullbot.command.assist;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
@@ -26,13 +27,22 @@ public class HelpCommand implements Command
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        bot.sendGroupMsg(event.getGroupId(), buildHelpMsg(), false);
+        log.info("\t\t\t\t├─[Help] 群聊已获取帮助");
+    }
+
+    @Override
+    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) throws Exception {
+        bot.sendPrivateMsg(event.getUserId(), buildHelpMsg(), false);
+        log.info("\t\t\t\t├─[Help] 私聊已获取帮助");
+    }
+
+    private String buildHelpMsg() {
         try {
             String helpPath = resourceLoader
                     .getCached("static/help/help.jpg", fileStorageProperties.getTempPath())
                     .toAbsolutePath().toString();
-            String response = MsgUtils.builder().img(helpPath).build();
-            bot.sendGroupMsg(event.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[Help] 已获取帮助");
+            return MsgUtils.builder().img(helpPath).build();
         } catch (IOException e) {
             throw new NullBotMsgException("[帮助] ❌资源缺失");
         }
