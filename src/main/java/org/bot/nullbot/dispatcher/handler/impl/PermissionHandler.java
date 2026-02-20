@@ -15,6 +15,7 @@ import org.bot.nullbot.service.UserService;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -150,11 +151,16 @@ public class PermissionHandler implements Handler
         }
 
         if (isUserBanned(userId, commandClass)) {
-            String until = getUserBannedUntil(userId, commandClass).format(formatter);
-            log.info("\t\t├─[PermissionHandler] 用户指令 {}-{} 停用中", userId, commandClass);
+            LocalDateTime until = getUserBannedUntil(userId, commandClass);
+            Duration duration = Duration.between(LocalDateTime.now(), until).abs();
+            long totalSeconds = duration.getSeconds();
+            long hours = totalSeconds / 3600;
+            long minutes = (totalSeconds % 3600) / 60;
+            long seconds = totalSeconds % 60;
+            log.info("\t\t├─[PermissionHandler] 用户指令 {}-{} 停用至 {}", userId, commandClass, until.format(formatter));
             bot.sendGroupMsg(groupId, """
                     [访问] ⛔️你已被禁用该指令！
-                    - 解封于 %s""".formatted(until), false);
+                    - 解封于 %s h %s m %s s 后""".formatted(hours, minutes, seconds), false);
             return;
         }
 
