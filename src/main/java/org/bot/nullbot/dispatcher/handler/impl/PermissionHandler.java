@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class PermissionHandler implements Handler
 {
-    private final Map<Long, List<String>> banMap = new ConcurrentHashMap<>();  // GroupId -> Commands
+    private final Map<Long, List<String>> bannedCmds = new ConcurrentHashMap<>();  // GroupId -> Commands
     private boolean inMaintenance = false;
 
     private final GroupService groupService;
@@ -103,7 +103,7 @@ public class PermissionHandler implements Handler
             return;
         }
 
-        if (banMap.computeIfAbsent(groupId, k -> new ArrayList<>()).contains(commandClass)) {
+        if (bannedCmds.computeIfAbsent(groupId, k -> new ArrayList<>()).contains(commandClass)) {
             log.info("\t\t├─[PermissionHandler] 群组 {} - {} 停用中", groupId, commandClass);
             bot.sendGroupMsg(groupId, "[访问] ⛔️停用中", false);
             return;
@@ -115,7 +115,7 @@ public class PermissionHandler implements Handler
     // =================== 工具方法 ===================
 
     private boolean switchCmdBanning(Long groupId, String commandClass) {
-        List<String> bannedCmds = banMap.computeIfAbsent(groupId, k -> new ArrayList<>());
+        List<String> bannedCmds = this.bannedCmds.computeIfAbsent(groupId, k -> new ArrayList<>());
         if (bannedCmds.contains(commandClass)) {
             bannedCmds.remove(commandClass);
             return false;
