@@ -40,7 +40,7 @@ public class PermissionHandler implements Handler
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
-        String commandClass = command.getClass().getSimpleName();
+        Class<? extends Command> commandClass = command.getClass();
         List<String> params = event.getCommandParameters();
         Long groupId;
         Long userId;
@@ -175,28 +175,30 @@ public class PermissionHandler implements Handler
 
     // =================== 封禁方法 ===================
 
-    public boolean switchCmdBan(Long groupId, String commandClass) {
+    public boolean switchCmdBan(Long groupId, Class<? extends Command> commandClass) {
+        String cmdName = commandClass.getSimpleName();
         List<String> banList = bannedCmds.computeIfAbsent(groupId, k -> new ArrayList<>());
-        if (banList.contains(commandClass)) {
-            banList.remove(commandClass);
+        if (banList.contains(cmdName)) {
+            banList.remove(cmdName);
             return false;
         } else {
-            banList.add(commandClass);
+            banList.add(cmdName);
             return true;
         }
     }
 
-    public boolean isCmdBanned(Long groupId, String commandClass) {
-        return bannedCmds.computeIfAbsent(groupId, k -> new ArrayList<>()).contains(commandClass);
+    public boolean isCmdBanned(Long groupId, Class<? extends Command> commandClass) {
+        return bannedCmds.computeIfAbsent(groupId, k -> new ArrayList<>())
+                .contains(commandClass.getSimpleName());
     }
 
-    public void setUserBan(Long userId, String commandClass, int time) {
-        String id = "%s-%s".formatted(userId, commandClass);
+    public void setUserBan(Long userId, Class<? extends Command> commandClass, int time) {
+        String id = "%s-%s".formatted(userId, commandClass.getSimpleName());
         bannedUsers.put(id, LocalDateTime.now().plusMinutes(time));
     }
 
-    public boolean isUserBanned(Long userId, String commandClass) {
-        String id = "%s-%s".formatted(userId, commandClass);
+    public boolean isUserBanned(Long userId, Class<? extends Command> commandClass) {
+        String id = "%s-%s".formatted(userId, commandClass.getSimpleName());
         LocalDateTime banUntil = bannedUsers.get(id);
         if (banUntil == null) return false; // 用户未被封禁
         if (LocalDateTime.now().isAfter(banUntil)) {
@@ -206,8 +208,8 @@ public class PermissionHandler implements Handler
         return true;
     }
 
-    public LocalDateTime getUserBannedUntil(Long userId, String commandClass) {
-        String id = "%s-%s".formatted(userId, commandClass);
+    public LocalDateTime getUserBannedUntil(Long userId, Class<? extends Command> commandClass) {
+        String id = "%s-%s".formatted(userId, commandClass.getSimpleName());
         return bannedUsers.get(id);
     }
 }

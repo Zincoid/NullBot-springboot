@@ -49,8 +49,8 @@ public class BanChatCommand implements Command
         if (!userService.existUser(userId))
             throw new NullBotMsgException("[停用AI] ❌用户不存在");
 
-        permissionHandler.setUserBan(userId, ChatCommand.class.getSimpleName(), banTime);
-        permissionHandler.setUserBan(userId, PokeReactCommand.class.getSimpleName(), banTime);
+        permissionHandler.setUserBan(userId, ChatCommand.class, banTime);
+        permissionHandler.setUserBan(userId, PokeReactCommand.class, banTime);
 
         String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
         bot.sendGroupMsg(groupId, """

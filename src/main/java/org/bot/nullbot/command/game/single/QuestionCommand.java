@@ -66,7 +66,7 @@ public class QuestionCommand implements Command
             }
 
             if (raw.contains("REFUSED")) {
-                permissionHandler.setUserBan(userId, this.getClass().getSimpleName(), BLOCKING_TIME);
+                permissionHandler.setUserBan(userId, this.getClass(), BLOCKING_TIME);
                 throw new NullBotMsgException("""
                             [问答] 🚫生成问题敏感
                             - 用户: [CQ:at,qq=%s]
