@@ -41,12 +41,14 @@ public class BanChatCommand implements Command
         try {
             long userId = Long.parseLong(params.get(0));
             int banTime = Integer.parseInt(params.get(1));
+            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             if (!userService.existUser(userId))
                 throw new NullBotMsgException("[停用AI] ❌用户不存在");
             permissionHandler.setUserBan(userId, ChatCommand.class.getSimpleName(), banTime);
             permissionHandler.setUserBan(userId, PokeReactCommand.class.getSimpleName(), banTime);
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            bot.sendGroupMsg(groupId, "[停用AI] ✅已设置！\n" + userName + " -> " + banTime + " Min", false);
+            bot.sendGroupMsg(groupId, """
+                    [停用AI] ⛔️已封禁
+                    - 详情: %s -> %s Min""".formatted(userName, banTime), false);
             log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} min", userId, banTime);
         } catch (NumberFormatException e) {
             throw new NullBotMsgException("[停用AI] ❌参数格式错误");

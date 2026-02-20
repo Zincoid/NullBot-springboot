@@ -9,14 +9,12 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.dispatcher.handler.impl.PermissionHandler;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,9 +26,9 @@ public class QuestionCommand implements Command
 {
     private final DeepSeekClient deepSeekClient;
     private final BotNextInputer botNextInputer;
+    private final PermissionHandler permissionHandler;
 
     private boolean thinking = true;
-    private final Map<Long, LocalDateTime> bannedUsers = new ConcurrentHashMap<>();
     private final Set<Long> inGameUsers = new ConcurrentHashSet<>();
 
     private static final int BLOCKING_TIME = 1;  // 封禁时间 单位: Minute
@@ -42,8 +40,6 @@ public class QuestionCommand implements Command
         Long userId = event.getUserId();
         String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
 
-        if (isUserBanned(userId))
-            throw new NullBotMsgException("[问答] ⛔️你已被封禁");
         if (inGameUsers.contains(userId))
             throw new NullBotMsgException("[问答] ⚠️已在游戏中");
 
@@ -70,7 +66,7 @@ public class QuestionCommand implements Command
             }
 
             if (raw.contains("REFUSED")) {
-                banUser(userId, BLOCKING_TIME);
+                permissionHandler.setUserBan(userId, this.getClass().getSimpleName(), BLOCKING_TIME);
                 throw new NullBotMsgException("""
                             [问答] 🚫生成问题敏感
                             - 用户: [CQ:at,qq=%s]
@@ -113,24 +109,6 @@ public class QuestionCommand implements Command
     }
 
     public boolean switchThinking() { return thinking = !thinking; }
-
-    public void banUser(Long userId, int time) {
-        bannedUsers.put(userId, LocalDateTime.now().plusMinutes(time));
-    }
-
-    public void unbanUser(Long userId) {
-        bannedUsers.remove(userId);
-    }
-
-    public boolean isUserBanned(Long userId) {
-        LocalDateTime banUntil = bannedUsers.get(userId);
-        if (banUntil == null) return false; // 用户未被封禁
-        if (LocalDateTime.now().isAfter(banUntil)) {
-            bannedUsers.remove(userId);  // 封禁时间已过 自动清理
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public String getHelp() {
