@@ -2,6 +2,7 @@ package org.bot.nullbot.entity;
 
 import com.mikuac.shiro.dto.event.Event;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
@@ -33,6 +34,8 @@ public class CommandEvent<T extends Event>
             parseGroupPokeNoticeEvent();
         else if (event instanceof GroupMsgDeleteNoticeEvent)
             parseGroupMsgDeleteNoticeEvent();
+        else if (event instanceof PrivateMessageEvent privateMessageEvent)
+            parsePrivateMessageEvent(privateMessageEvent);
     }
 
     // 自定 创建事件 (嵌入调用 关键词/AT检测 自动回复等)
@@ -47,9 +50,15 @@ public class CommandEvent<T extends Event>
 
     // =================== 工具方法 ===================
 
-    private void parseGroupMessageEvent(GroupMessageEvent event, int i)
-    {
+    private void parseGroupMessageEvent(GroupMessageEvent event, int i) {
         String command = event.getArrayMsg().get(i).getData().get("text").substring(1);
+        List<String> information = List.of(command.split(" "));
+        commandType = information.getFirst();
+        commandParameters = information.subList(1, information.size());
+    }
+
+    private void parsePrivateMessageEvent(PrivateMessageEvent event) {
+        String command = event.getMessage().substring(1);
         List<String> information = List.of(command.split(" "));
         commandType = information.getFirst();
         commandParameters = information.subList(1, information.size());
@@ -67,8 +76,7 @@ public class CommandEvent<T extends Event>
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "CommandEvent{" +
                 ", commandType='" + commandType + '\'' +
                 ", commandParameters=" + commandParameters +

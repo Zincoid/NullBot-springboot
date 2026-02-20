@@ -4,6 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.GroupInfoResp;
 import com.mikuac.shiro.dto.action.response.StrangerInfoResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,8 @@ public class RegisterHandler implements Handler
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
-        Long groupId;
-        Long userId;
+        Long groupId = 0L;
+        Long userId = 0L;
 
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             groupId = groupMessageEvent.getGroupId();
@@ -42,16 +43,22 @@ public class RegisterHandler implements Handler
         } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
             groupId = groupMsgDeleteNoticeEvent.getGroupId();
             userId = groupMsgDeleteNoticeEvent.getUserId();
+        } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
+            userId = privateMessageEvent.getUserId();
         } else {
             log.info("\t\t├─[RegisterHandler] 默认不注册的事件");
             chain.doHandle(bot, event, command);
             return;
         }
 
-        GroupInfoResp groupData = bot.getGroupInfo(groupId, true).getData();
-        if (groupData != null) registerGroup(groupId, groupData.getGroupName());
-        StrangerInfoResp userData = bot.getStrangerInfo(userId, true).getData();
-        if (userData != null) registerUser(userId, userData.getNickname());
+        if (groupId != 0L) {
+            GroupInfoResp groupData = bot.getGroupInfo(groupId, true).getData();
+            if (groupData != null) registerGroup(groupId, groupData.getGroupName());
+        }
+        if (userId != 0L) {
+            StrangerInfoResp userData = bot.getStrangerInfo(userId, true).getData();
+            if (userData != null) registerUser(userId, userData.getNickname());
+        }
 
         chain.doHandle(bot, event, command);
     }

@@ -2,6 +2,7 @@ package org.bot.nullbot.dispatcher.handler.impl;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class ExecutorHandler implements Handler
         log.info("\t\t└─[ExecutorHandler] 执行开始");
 
         Long groupId = 0L;
+        Long userId = 0L;
         try {
             if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
                 groupId = groupMessageEvent.getGroupId();
@@ -34,15 +36,21 @@ public class ExecutorHandler implements Handler
             } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
                 groupId = groupMsgDeleteNoticeEvent.getGroupId();
                 command.execute(bot, groupMsgDeleteNoticeEvent, event.getCommandParameters());
+            } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
+                userId = privateMessageEvent.getUserId();
+                command.execute(bot, privateMessageEvent, event.getCommandParameters());
             } else
                 log.warn("\t\t  [ExecutorHandler] 不支持的事件类型");
 
         } catch (NullBotMsgException e) {
             if (groupId != 0L) {
                 bot.sendGroupMsg(groupId, e.getMessage(), false);
-                log.warn("\t\t  [ExecutorHandler] 消息警告: {}", e.getMessage());
-            } else
-                log.error("\t\t  [ExecutorHandler] 消息警告: 来源群获取失败");
+                log.warn("\t\t  [ExecutorHandler] 群聊警告: {}", e.getMessage());
+            }
+            if (userId != 0L) {
+                bot.sendPrivateMsg(userId, e.getMessage(), false);
+                log.warn("\t\t  [ExecutorHandler] 私聊警告: {}", e.getMessage());
+            }
         } catch (NullBotLogException e) {
             log.warn("\t\t  [ExecutorHandler] 日志警告: {}", e.getMessage());
         } catch (Exception e) {

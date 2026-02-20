@@ -39,8 +39,11 @@ public class CommandListener
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
             log.info("◉ [PrivateAction:Command] 来自 {}({}) -> {}", event.getPrivateSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
+            return;
         }
 
+        // 默认通知管理员
+        log.info("◉ [PrivateAction:Notice] 来自 {}({}) -> {}", event.getPrivateSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
         bot.sendPrivateMsg(adminId, "\uD83D\uDCE9来自%s(%s)的私信:\n%s".formatted(
                 event.getPrivateSender().getNickname(),
                 event.getUserId(),
@@ -69,7 +72,7 @@ public class CommandListener
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
             log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
-        } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply){  // 检测引用命令
+        } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {  // 检测引用命令
             String slashCommand = event.getArrayMsg().get(1).getData().get("text");
             if(slashCommand != null && slashCommand.startsWith(commandPrefix)){
                 log.info("◉ [GroupAction:ReplyCommand] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
