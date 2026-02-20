@@ -43,7 +43,7 @@ public class ImageSaveCommand implements Command
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        String userName = event.getSender().getNickname();
 
         for (Map.Entry<String, String> entry : imageMap.entrySet()) {
             String originName = entry.getKey();

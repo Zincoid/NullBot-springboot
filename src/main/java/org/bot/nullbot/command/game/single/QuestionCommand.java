@@ -38,7 +38,7 @@ public class QuestionCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        String userName = event.getSender().getNickname();
 
         if (inGameUsers.contains(userId))
             throw new NullBotMsgException("[问答] ⚠️已在游戏中");

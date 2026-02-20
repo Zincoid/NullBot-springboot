@@ -38,7 +38,7 @@ public class PlusExpCommand implements Command
             throw new NullBotMsgException("[加经验] ❌用户不存在");
 
         int i = userService.plusExperience(userId, exp);
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        String userName = event.getSender().getNickname();
         StringBuilder sb = new StringBuilder(userName + " 获得 " + exp + "Exp！");
         while (i > 0) {
             sb.append("\n- LEVEL UP！");

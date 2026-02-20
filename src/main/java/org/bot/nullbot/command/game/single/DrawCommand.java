@@ -27,7 +27,7 @@ public class DrawCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        String userName = event.getSender().getNickname();
 
         if (params.isEmpty()) {
             ItemPO item = itemService.drawAndKeepRandomItem(userId);

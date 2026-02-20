@@ -28,7 +28,7 @@ public class CheckInCommand implements Command
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long userId = event.getUserId();
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        String userName = event.getSender().getNickname();
         LocalDateTime expireTime = checkInExpireMap.get(userId);
         if (expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
             userService.increaseDrawTimes(userId, 25);

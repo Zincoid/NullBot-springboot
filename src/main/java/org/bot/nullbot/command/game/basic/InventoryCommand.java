@@ -36,7 +36,7 @@ public class InventoryCommand implements Command
                 throw new NullBotMsgException("[库存] ❌页码格式错误");
             }
         Long userId = event.getUserId();
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        String userName = event.getSender().getNickname();
         InventoryPage inventoryPage = inventoryService.getInventoriesPage(userId, p, 10);
         UserPO user = userService.getUser(userId);
         int totalAmount = inventoryService.getTotalAmountByUserId(userId);

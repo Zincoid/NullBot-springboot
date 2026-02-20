@@ -29,7 +29,7 @@ public class MatchCommand implements Command
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        String userName = event.getSender().getNickname();
         String gameType = params.getFirst();
 
         MatchResult result = matcher.joinMatch(userId, groupId, userName, gameType);

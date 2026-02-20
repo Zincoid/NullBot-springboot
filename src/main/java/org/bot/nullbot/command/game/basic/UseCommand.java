@@ -59,7 +59,7 @@ public class UseCommand implements Command
 
         // 发送通知
         String itemName = itemService.getItem(itemId).getName();
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        String userName = event.getSender().getNickname();
         bot.sendGroupMsg(event.getGroupId(), "[使用] ✅" + userName + " 已使用 " + itemName + "！", false);
         log.info("\t\t\t\t├─[Use] 已使用");
     }

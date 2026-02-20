@@ -41,9 +41,9 @@ public class VideoSaveCommand implements Command
         if(videoMap.isEmpty())
             throw new NullBotMsgException("[保存视频] ❌未包含视频");
 
-        Long userId = event.getUserId();
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
         Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        String userName = event.getSender().getNickname();
 
         for (Map.Entry<String, String> entry : videoMap.entrySet()) {
             String fileName = entry.getKey();

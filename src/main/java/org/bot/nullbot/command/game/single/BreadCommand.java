@@ -36,7 +36,7 @@ public class BreadCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        String userName = event.getSender().getNickname();
         if (params.isEmpty())
             throw new NullBotMsgException("[面包] ❌无操作");
         switch (params.getFirst()) {
