@@ -103,13 +103,13 @@ public class PermissionHandler implements Handler
                 return;
             }
             boolean banned = switchCmdBan(groupId, commandClass);
-            log.info("\t\t├─[PermissionHandler] 群组 {} - {} {}", groupId, commandClass, banned ? "已停用" : "已启用");
+            log.info("\t\t├─[PermissionHandler] 群组指令 {}-{} {}", groupId, commandClass, banned ? "已停用" : "已启用");
             bot.sendGroupMsg(groupId, "[访问] %s".formatted(banned ? "⛔️已停用" : "✅已启用"), false);
             return;
         }
 
         if (isCmdBanned(groupId, commandClass)) {
-            log.info("\t\t├─[PermissionHandler] 群组 {} - {} 停用中", groupId, commandClass);
+            log.info("\t\t├─[PermissionHandler] 群组指令 {}-{} 停用中", groupId, commandClass);
             bot.sendGroupMsg(groupId, "[访问] ⛔️停用中", false);
             return;
         }
@@ -124,7 +124,7 @@ public class PermissionHandler implements Handler
                 return;
             }
             if (params.size() < 3) {
-                log.info("\t\t├─[PermissionHandler] 群组 {} - 封禁参数不足", groupId);
+                log.info("\t\t├─[PermissionHandler] 封禁参数不足");
                 bot.sendGroupMsg(groupId, "[访问] ❌封禁参数不足", false);
                 return;
             }
@@ -134,19 +134,24 @@ public class PermissionHandler implements Handler
                 targetId = Long.parseLong(params.get(1));
                 banTime = Integer.parseInt(params.get(2));
             } catch (NumberFormatException e) {
-                log.info("\t\t├─[PermissionHandler] 群组 {} - 封禁参数非法", groupId);
+                log.info("\t\t├─[PermissionHandler] 封禁参数非法");
                 bot.sendGroupMsg(groupId, "[访问] ❌封禁参数非法", false);
                 return;
             }
+            if (!userService.existUser(targetId)) {
+                log.info("\t\t├─[PermissionHandler] 封禁用户未注册");
+                bot.sendGroupMsg(groupId, "[访问] ❌封禁用户未注册", false);
+                return;
+            }
             setUserBan(targetId, commandClass, banTime);
-            log.info("\t\t├─[PermissionHandler] 用户 {} - {} 已封禁 {} Min", targetId, commandClass, banTime);
+            log.info("\t\t├─[PermissionHandler] 用户指令 {}-{} 已封禁 {} Min", targetId, commandClass, banTime);
             bot.sendGroupMsg(groupId, "[访问] ⛔️已封禁用户指令", false);
             return;
         }
 
         if (isUserBanned(userId, commandClass)) {
             String until = getUserBannedUntil(userId, commandClass).format(formatter);
-            log.info("\t\t├─[PermissionHandler] 用户 {} - {} 停用中", userId, commandClass);
+            log.info("\t\t├─[PermissionHandler] 用户指令 {}-{} 停用中", userId, commandClass);
             bot.sendGroupMsg(groupId, """
                     [访问] ⛔️你已被禁用该指令！
                     - 解封于 %s""".formatted(until), false);
@@ -156,9 +161,15 @@ public class PermissionHandler implements Handler
         chain.doHandle(bot, event, command);
     }
 
+    // =================== 锁定方法 ===================
+
+    public boolean switchInMaintenance() {
+        return inMaintenance = !inMaintenance;
+    }
+
     // =================== 封禁方法 ===================
 
-    private boolean switchCmdBan(Long groupId, String commandClass) {
+    public boolean switchCmdBan(Long groupId, String commandClass) {
         List<String> banList = bannedCmds.computeIfAbsent(groupId, k -> new ArrayList<>());
         if (banList.contains(commandClass)) {
             banList.remove(commandClass);
@@ -169,16 +180,16 @@ public class PermissionHandler implements Handler
         }
     }
 
-    private boolean isCmdBanned(Long groupId, String commandClass) {
+    public boolean isCmdBanned(Long groupId, String commandClass) {
         return bannedCmds.computeIfAbsent(groupId, k -> new ArrayList<>()).contains(commandClass);
     }
 
-    private void setUserBan(Long userId, String commandClass, int time) {
+    public void setUserBan(Long userId, String commandClass, int time) {
         String id = "%s-%s".formatted(userId, commandClass);
         bannedUsers.put(id, LocalDateTime.now().plusMinutes(time));
     }
 
-    private boolean isUserBanned(Long userId, String commandClass) {
+    public boolean isUserBanned(Long userId, String commandClass) {
         String id = "%s-%s".formatted(userId, commandClass);
         LocalDateTime banUntil = bannedUsers.get(id);
         if (banUntil == null) return false; // 用户未被封禁
@@ -192,11 +203,5 @@ public class PermissionHandler implements Handler
     public LocalDateTime getUserBannedUntil(Long userId, String commandClass) {
         String id = "%s-%s".formatted(userId, commandClass);
         return bannedUsers.get(id);
-    }
-
-    // =================== 锁定方法 ===================
-
-    public boolean switchInMaintenance() {
-        return inMaintenance = !inMaintenance;
     }
 }

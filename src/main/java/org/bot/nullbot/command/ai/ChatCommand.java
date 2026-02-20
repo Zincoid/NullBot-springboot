@@ -6,15 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @CommandMapping({"Chat", "对话"})
@@ -25,23 +22,12 @@ public class ChatCommand implements Command
 {
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
-
     private final DeepSeekClient deepSeekClient;
-    private final ChatStorage chatStorage;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long userId = event.getUserId();
         Long groupId = event.getGroupId();
-
-        if(chatStorage.isUserBanned(userId)) {
-            LocalDateTime until = chatStorage.getUserBannedUntil(userId);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            String formattedUntil = until != null ? until.format(formatter) : "";
-            bot.sendGroupMsg(groupId, "[AI] ⛔️你已被停用至！\n" + formattedUntil, false);
-            log.info("\t\t\t\t├─[Chat] 已被停用至 - {}", until);
-            return;
-        }
 
         String message = MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg());
         String userName = event.getSender().getNickname();
@@ -53,7 +39,6 @@ public class ChatCommand implements Command
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
         }
-
         if (message.contains(commandPrefix))
             bot.sendGroupMsg(groupId, """
                                 [AI] ⚠️检测到指令前缀
@@ -62,7 +47,6 @@ public class ChatCommand implements Command
                                 - Null仅可执行部分指令""",
                     false
             );
-
         log.info("\t\t\t\t├─[Chat] 已回复: {}", response.replaceAll("\\R", " "));
     }
 

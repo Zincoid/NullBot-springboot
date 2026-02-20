@@ -6,7 +6,6 @@ import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,6 @@ public class ChatStorage
     private final Map<Long, ReentrantLock> groupLocks = new ConcurrentHashMap<>();
     private final Map<Long, ReentrantLock> userLocks = new ConcurrentHashMap<>();
 
-    private final Map<Long, LocalDateTime> bannedUsers = new ConcurrentHashMap<>();
     private final List<String> errorMessages = new CopyOnWriteArrayList<>();
 
     private final SettingService settingService;
@@ -64,24 +62,6 @@ public class ChatStorage
     public ReentrantLock getUserLock(Long userId) {
         return userLocks.computeIfAbsent(userId, k -> new ReentrantLock(true)); // 用户公平锁
     }
-
-    // =================== 封禁功能相关 ===================
-
-    public void banUser(Long userId, int time) {
-        bannedUsers.put(userId, LocalDateTime.now().plusMinutes(time));
-    }
-
-    public boolean isUserBanned(Long userId) {
-        LocalDateTime banUntil = bannedUsers.get(userId);
-        if (banUntil == null) return false; // 用户未被封禁
-        if (LocalDateTime.now().isAfter(banUntil)) {
-            bannedUsers.remove(userId);  // 封禁时间已过 自动清理
-            return false;
-        }
-        return true;
-    }
-
-    public LocalDateTime getUserBannedUntil(Long userId) { return bannedUsers.get(userId); }
 
     // =================== 撤回功能相关 ===================
 

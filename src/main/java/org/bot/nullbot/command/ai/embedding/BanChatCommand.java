@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.storage.ChatStorage;
+import org.bot.nullbot.command.ai.ChatCommand;
+import org.bot.nullbot.command.ai.PokeReactCommand;
+import org.bot.nullbot.dispatcher.handler.impl.PermissionHandler;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.UserService;
 import org.springframework.stereotype.Component;
@@ -21,7 +23,7 @@ import java.util.List;
 public class BanChatCommand implements Command
 {
     private final UserService userService;
-    private final ChatStorage chatStorage;
+    private final PermissionHandler permissionHandler;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -38,13 +40,14 @@ public class BanChatCommand implements Command
             throw new NullBotMsgException("[停用AI] ❌参数不足");
         try {
             long userId = Long.parseLong(params.get(0));
-            int time = Integer.parseInt(params.get(1));
-            if(!userService.existUser(userId))
+            int banTime = Integer.parseInt(params.get(1));
+            if (!userService.existUser(userId))
                 throw new NullBotMsgException("[停用AI] ❌用户不存在");
-            chatStorage.banUser(userId, time);
+            permissionHandler.setUserBan(userId, ChatCommand.class.getSimpleName(), banTime);
+            permissionHandler.setUserBan(userId, PokeReactCommand.class.getSimpleName(), banTime);
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            bot.sendGroupMsg(groupId, "[停用AI] ✅已设置！\n" + userName + " -> " + time + " Min", false);
-            log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} min", userId, time);
+            bot.sendGroupMsg(groupId, "[停用AI] ✅已设置！\n" + userName + " -> " + banTime + " Min", false);
+            log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} min", userId, banTime);
         } catch (NumberFormatException e) {
             throw new NullBotMsgException("[停用AI] ❌参数格式错误");
         }
