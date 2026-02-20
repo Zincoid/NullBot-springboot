@@ -56,7 +56,7 @@ public class CommandProcessor
 
             // 在 Command 组件中使用
             // if (bot == null) {
-            //     logger.info("[Test] 测试结果");
+            //     log.info("[Test] 测试结果");
             // }
 
         } else
