@@ -118,6 +118,10 @@ public class QuestionCommand implements Command
         bannedUsers.put(userId, LocalDateTime.now().plusMinutes(time));
     }
 
+    public void unbanUser(Long userId) {
+        bannedUsers.remove(userId);
+    }
+
     public boolean isUserBanned(Long userId) {
         LocalDateTime banUntil = bannedUsers.get(userId);
         if (banUntil == null) return false; // 用户未被封禁
@@ -126,10 +130,6 @@ public class QuestionCommand implements Command
             return false;
         }
         return true;
-    }
-
-    public void unbanUser(Long userId) {
-        bannedUsers.remove(userId);
     }
 
     @Override
