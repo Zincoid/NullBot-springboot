@@ -122,9 +122,9 @@ public class MonitorListener
     {
         if (!settingService.isMessageCollect(event.getGroupId())) return;
         if (!(event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话"))) {  // Chat 命令会自动记录消息 跳过
-            log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
+            log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
-            chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getSender().getUserId(), event.getSender().getNickname()));
+            chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getUserId(), event.getSender().getNickname()));
             chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
             log.info("└─[Recorded] {} Message(s)", chatMessages.size());
         }
@@ -135,13 +135,13 @@ public class MonitorListener
     {
         if (!settingService.isKeywordDetect(event.getGroupId())) return;
         if (event.getMessage().contains("男娘")) {
-            log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
+            log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
             bot.sendGroupMsg(event.getGroupId(), "哪有男娘？", false);
             // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("哪有男娘？"), event, false, false));
         }
         if (event.getMessage().contains("受着")) {
-            log.info("◉ [GroupMonitor:Keyword] 检测到\"受着\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage());
-            commandProcessor.processQQ(bot, new CommandEvent<>("UserBan", List.of(event.getSender().getUserId().toString(), "1"), event, false, false));
+            log.info("◉ [GroupMonitor:Keyword] 检测到\"受着\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
+            commandProcessor.processQQ(bot, new CommandEvent<>("UserBan", List.of(event.getUserId().toString(), "1"), event, false, false));
             // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("你也受着"), event, false, false));
         }
     }

@@ -66,6 +66,7 @@ shiro:
 
 nullbot:
   bot-id:
+  admin-id:
   default:  # 默认群设置
     # Limit
     limit-scope: Group

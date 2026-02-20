@@ -34,7 +34,7 @@ public class RecallAICommand implements Command
         }
 
         Long groupId = event.getGroupId();
-        Long userId = event.getSender().getUserId();
+        Long userId = event.getUserId();
 
         List<ChatMessage> messages = chatStorage.getAIMessagesForRecall(groupId, userId, n);
         for (ChatMessage message : messages) bot.deleteMsg(message.getMessageId());

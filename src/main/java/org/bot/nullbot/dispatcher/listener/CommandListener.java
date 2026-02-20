@@ -2,9 +2,11 @@ package org.bot.nullbot.dispatcher.listener;
 
 import com.mikuac.shiro.annotation.GroupMessageHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
+import com.mikuac.shiro.annotation.PrivateMessageHandler;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.enums.AtEnum;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,25 @@ public class CommandListener
 
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
+    @Value("${nullbot.admin-id}")
+    private Long adminId;
 
+    @PrivateMessageHandler
+    @Async("ThreadExecutor")
+    public void onPrivateMessageInteraction(Bot bot, PrivateMessageEvent event) throws Exception
+    {
+        if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
+            log.info("◉ [PrivateAction:Command] 来自 {}({}) -> {}", event.getPrivateSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
+            commandProcessor.processQQ(bot, new CommandEvent<>(event));
+        }
+
+        bot.sendPrivateMsg(adminId, "\uD83D\uDCE9来自%s(%s)的私信:\n%s".formatted(
+                event.getPrivateSender().getNickname(),
+                event.getUserId(),
+                event.getMessage()
+        ), false);
+        bot.sendPrivateMsg(event.getUserId(), "✉️已通知管理员", false);
+    }
 
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)
@@ -47,12 +67,12 @@ public class CommandListener
         monitorListener.onGroupImageCollection(event);
 
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
-            log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage().replaceAll("\\R", " "));
+            log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
         } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply){  // 检测引用命令
             String slashCommand = event.getArrayMsg().get(1).getData().get("text");
             if(slashCommand != null && slashCommand.startsWith(commandPrefix)){
-                log.info("◉ [GroupAction:ReplyCommand] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getMessage().replaceAll("\\R", " "));
+                log.info("◉ [GroupAction:ReplyCommand] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
                 commandProcessor.processQQ(bot, new CommandEvent<>(event));
             }
         }
@@ -69,7 +89,7 @@ public class CommandListener
         //     monitorListener.onGroupMessageCollection(bot, event);  // 无需调用 AI自动记录
         monitorListener.onGroupImageCollection(event);
 
-        log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
+        log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
         commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", true, true));
     }
 

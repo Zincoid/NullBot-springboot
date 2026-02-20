@@ -26,26 +26,26 @@ public class StatisticHandler implements Handler
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         String commandType = command.getClass().getSimpleName().replace("Command", "");
 
-        if(event.getEvent() instanceof GroupMessageEvent groupMessageEvent){
+        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             statisticService.increaseOnDate();
-            statisticService.increase(groupMessageEvent.getGroupId(), groupMessageEvent.getSender().getUserId(), groupMessageEvent.getSender().getNickname(), commandType);
+            statisticService.increase(groupMessageEvent.getGroupId(), groupMessageEvent.getUserId(), groupMessageEvent.getSender().getNickname(), commandType);
             log.info("\t\t├─[StatisticHandler] 基本指令记录完成");
             chain.doHandle(bot, event, command);
-        }else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent){
+        } else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
             Long userId = pokeNoticeEvent.getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             statisticService.increaseOnDate();
             statisticService.increase(pokeNoticeEvent.getGroupId(), userId, userName, commandType);
             log.info("\t\t├─[StatisticHandler] 戳一戳指令记录完成");
             chain.doHandle(bot, event, command);
-        }else if(event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent){
+        } else if(event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
             Long userId = groupMsgDeleteNoticeEvent.getUserId();
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             statisticService.increaseOnDate();
             statisticService.increase(groupMsgDeleteNoticeEvent.getGroupId(), userId, userName, commandType);
             log.info("\t\t├─[StatisticHandler] 撤回反应指令记录完成");
             chain.doHandle(bot, event, command);
-        }else{
+        } else {
             log.info("\t\t├─[StatisticHandler] 默认不记录的事件");
             chain.doHandle(bot, event, command);
         }

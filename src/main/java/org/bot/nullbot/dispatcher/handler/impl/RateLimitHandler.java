@@ -42,7 +42,7 @@ public class RateLimitHandler implements Handler
             if (
                     commandRateLimiter.tryConsume(
                             groupMessageEvent.getGroupId(),
-                            groupMessageEvent.getSender().getUserId(),
+                            groupMessageEvent.getUserId(),
                             event.getCommandType())
             ) {
                 log.info("\t\t├─[RateLimitHandler] 基本消息未达到速率限制");
