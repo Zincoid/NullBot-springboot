@@ -104,13 +104,15 @@ public class PermissionHandler implements Handler
                 return;
             }
             boolean banned = switchCmdBan(groupId, commandClass);
-            log.info("\t\t├─[PermissionHandler] 群组指令 {}-{} {}", groupId, commandClass, banned ? "已停用" : "已启用");
+            log.info("\t\t├─[PermissionHandler] 群组指令 {}-{} {}",
+                    groupId, commandClass.getSimpleName(), banned ? "已停用" : "已启用");
             bot.sendGroupMsg(groupId, "[访问] %s".formatted(banned ? "⛔️已停用" : "✅已启用"), false);
             return;
         }
 
         if (isCmdBanned(groupId, commandClass)) {
-            log.info("\t\t├─[PermissionHandler] 群组指令 {}-{} 停用中", groupId, commandClass);
+            log.info("\t\t├─[PermissionHandler] 群组指令 {}-{} 停用中",
+                    groupId, commandClass.getSimpleName());
             bot.sendGroupMsg(groupId, "[访问] ⛔️停用中", false);
             return;
         }
@@ -145,7 +147,8 @@ public class PermissionHandler implements Handler
                 return;
             }
             setUserBan(targetId, commandClass, banTime);
-            log.info("\t\t├─[PermissionHandler] 用户指令 {}-{} 已封禁 {} Min", targetId, commandClass, banTime);
+            log.info("\t\t├─[PermissionHandler] 用户指令 {}-{} 已封禁 {} Min",
+                    targetId, commandClass.getSimpleName(), banTime);
             bot.sendGroupMsg(groupId, "[访问] ⛔️已封禁用户指令", false);
             return;
         }
@@ -157,7 +160,8 @@ public class PermissionHandler implements Handler
             long hours = totalSeconds / 3600;
             long minutes = (totalSeconds % 3600) / 60;
             long seconds = totalSeconds % 60;
-            log.info("\t\t├─[PermissionHandler] 用户指令 {}-{} 停用至 {}", userId, commandClass, until.format(formatter));
+            log.info("\t\t├─[PermissionHandler] 用户指令 {}-{} 停用至 {}",
+                    userId, commandClass.getSimpleName(), until.format(formatter));
             bot.sendGroupMsg(groupId, """
                     [访问] ⛔️你已被禁用该指令
                     - 将于 %sh %sm %ss 后解封""".formatted(hours, minutes, seconds), false);
