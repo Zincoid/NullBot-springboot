@@ -28,13 +28,13 @@ public class HelpCommand implements Command
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         bot.sendGroupMsg(event.getGroupId(), buildHelpMsg(), false);
-        log.info("\t\t\t\t├─[Help] 群聊已获取帮助");
+        log.info("\t\t\t\t├─[Help] 已获取群聊帮助");
     }
 
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, List<String> params) throws Exception {
         bot.sendPrivateMsg(event.getUserId(), buildHelpMsg(), false);
-        log.info("\t\t\t\t├─[Help] 私聊已获取帮助");
+        log.info("\t\t\t\t├─[Help] 已获取私聊帮助");
     }
 
     private String buildHelpMsg() {
