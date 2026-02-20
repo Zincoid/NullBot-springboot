@@ -11,6 +11,7 @@ import com.mikuac.shiro.enums.AtEnum;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.annotation.FunctionControl;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.util.MessageParseUtil;
@@ -32,6 +33,7 @@ public class CommandListener
     @Value("${nullbot.admin-id}")
     private Long adminId;
 
+    @FunctionControl(config = "PrivateCmd")
     @PrivateMessageHandler
     @Async("ThreadExecutor")
     public void onPrivateMessageInteraction(Bot bot, PrivateMessageEvent event) throws Exception
