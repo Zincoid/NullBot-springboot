@@ -2,6 +2,7 @@ package org.bot.nullbot.command.ai;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
@@ -49,7 +50,26 @@ public class ChatCommand implements Command
                                 - Null仅可执行部分指令""",
                     false
             );
-        log.info("\t\t\t\t├─[Chat] 已回复: {}", response.replaceAll("\\R", " "));
+        log.info("\t\t\t\t├─[Chat] 群聊已回复: {}", response.replaceAll("\\R", " "));
+    }
+
+    @Override
+    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
+        String message = MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg());
+        String response;
+        try {
+            response = deepSeekClient.chatPrivate(
+                    event.getMessageId(),
+                    event.getUserId(),
+                    event.getPrivateSender().getNickname(),
+                    message,
+                    bot,
+                    event
+            );
+        } catch (Exception e) {
+            throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
+        }
+        log.info("\t\t\t\t├─[Chat] 私聊已回复: {}", response.replaceAll("\\R", " "));
     }
 
     @Override

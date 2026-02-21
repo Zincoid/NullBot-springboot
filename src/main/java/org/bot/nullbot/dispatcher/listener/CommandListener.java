@@ -44,14 +44,18 @@ public class CommandListener
             return;
         }
 
+        // 默认触发 AI 对话
+        log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", event.getPrivateSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
+        commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", false, false));
+
         // 默认通知管理员
-        log.info("◉ [PrivateAction:Notice] 来自 {}({}) -> {}", event.getPrivateSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
-        bot.sendPrivateMsg(adminId, "\uD83D\uDCE9来自%s(%s)的私信:\n%s".formatted(
-                event.getPrivateSender().getNickname(),
-                event.getUserId(),
-                event.getMessage()
-        ), false);
-        bot.sendPrivateMsg(event.getUserId(), "✉️已通知管理员", false);
+        // log.info("◉ [PrivateAction:Notice] 来自 {}({}) -> {}", event.getPrivateSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
+        // bot.sendPrivateMsg(adminId, "\uD83D\uDCE9来自%s(%s)的私信:\n%s".formatted(
+        //         event.getPrivateSender().getNickname(),
+        //         event.getUserId(),
+        //         event.getMessage()
+        // ), false);
+        // bot.sendPrivateMsg(event.getUserId(), "✉️已通知管理员", false);
     }
 
     @GroupMessageHandler
