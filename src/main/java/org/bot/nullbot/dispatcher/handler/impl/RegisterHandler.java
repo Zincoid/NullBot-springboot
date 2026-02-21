@@ -71,7 +71,7 @@ public class RegisterHandler implements Handler
             log.info("\t\t├─[RegisterHandler] 新群聊注册完成");
         } else {
             groupService.updateGroupName(groupId, groupName);
-            log.info("\t\t├─[RegisterHandler] 群聊已注册 -> 更新完成");
+            log.info("\t\t├─[RegisterHandler] 群聊信息已更新");
         }
     }
 
@@ -82,7 +82,7 @@ public class RegisterHandler implements Handler
             log.info("\t\t├─[RegisterHandler] 新用户注册完成");
         } else {
             userService.updateUserName(userId, userName);
-            log.info("\t\t├─[RegisterHandler] 用户已注册 -> 更新完成");
+            log.info("\t\t├─[RegisterHandler] 用户信息已更新");
         }
     }
 }
