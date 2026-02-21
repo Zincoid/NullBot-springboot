@@ -3,6 +3,7 @@ package org.bot.nullbot.command.ai.embedding;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +29,20 @@ public class MemeCommand implements Command
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        meme(bot, params, event.getGroupId());
+        meme(bot, params, event.getGroupId(), false);
     }
 
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
-        meme(bot, params, event.getGroupId());
+        meme(bot, params, event.getGroupId(), false);
     }
 
-    private void meme(Bot bot, List<String> params, Long groupId) {
+    @Override
+    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
+        meme(bot, params, event.getUserId(), true);
+    }
+
+    private void meme(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
         if(params.isEmpty())
             throw new NullBotMsgException("[表情] ❌参数不足");
 
@@ -49,10 +55,11 @@ public class MemeCommand implements Command
             throw new NullBotLogException("[表情] ❌" + memeName + " 不存在");
         }
 
-        String response = MsgUtils.builder()
-                .img(memePath)
-                .build();
-        bot.sendGroupMsg(groupId, response, false);
+        String response = MsgUtils.builder().img(memePath).build();
+        if (isPrivate)
+            bot.sendPrivateMsg(targetId, response, false);
+        else
+            bot.sendGroupMsg(targetId, response, false);
         log.info("\t\t\t\t├─[Meme] 已发送表情: {}", memeName);
     }
 

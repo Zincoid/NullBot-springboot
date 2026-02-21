@@ -2,6 +2,7 @@ package org.bot.nullbot.dispatcher.listener;
 
 import com.mikuac.shiro.annotation.GroupMsgDeleteNoticeHandler;
 import com.mikuac.shiro.annotation.GroupPokeNoticeHandler;
+import com.mikuac.shiro.annotation.PrivatePokeNoticeHandler;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -156,6 +157,17 @@ public class MonitorListener
         if (!settingService.isPokeDetect(event.getGroupId())) return;
         if (Objects.equals(event.getTargetId(), event.getSelfId())) {
             log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (已限制为戳Bot自己)", event.getGroupId(), event.getUserId(), event.getTargetId());
+            commandProcessor.processQQ(bot, new CommandEvent<>(event));
+        }
+    }
+
+    @FunctionControl(config = "PrivateCmd")
+    @PrivatePokeNoticeHandler
+    @Async("ThreadExecutor")
+    public void onPrivatePokeDetection(Bot bot, PokeNoticeEvent event) throws Exception
+    {
+        if (Objects.equals(event.getTargetId(), event.getSelfId())) {
+            log.info("◉ [PrivateAction:Poke] 来自私信 -> From {} to {} (已限制为戳Bot自己)", event.getUserId(), event.getTargetId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
         }
     }
