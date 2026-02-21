@@ -79,15 +79,13 @@ public class DeepSeekClient
 
         Set<String> privateCmds = new HashSet<>(Arrays.asList(
                 // 普通命令
-                "aud", "vid", "img", "say",
-                "Help", "Anime",
+                "Help",
 
                 // 合成命令
                 "Tts",
 
                 // 加密命令
-                "eb0f8545", "4ed1314d",
-                "65275d24", "db3fbe2b"
+                "65275d24"
         ));
 
         GROUP_AI_CMD_WHITE_LIST = Collections.unmodifiableSet(groupCmds);
