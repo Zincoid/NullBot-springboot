@@ -46,7 +46,10 @@ public class CommandListener
         String userName = event.getPrivateSender().getNickname();
         String message = event.getMessage();
 
-        if (message.startsWith("#")) {  // 检测授权命令
+        if (message.startsWith(commandPrefix)) {  // 检测普通命令
+            log.info("◉ [PrivateAction:Command] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
+            commandProcessor.processQQ(bot, new CommandEvent<>(event));
+        } else if (message.startsWith("#")) {  // 检测授权命令
             log.info("◉ [PrivateAction:Authorize] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
             if (securityCodeScheduler.validateCode("access", message.substring(1))) {
                 permissionHandler.addAllowedPrivateUser(userId);
@@ -56,18 +59,10 @@ public class CommandListener
             }
             log.info("└─[Fail] {}({}) 授权码错误", userName, userId);
             bot.sendPrivateMsg(userId, "❌授权码错误", false);
-            return;
+        } else {  // 默认触发 AI 对话
+            log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
+            commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", false, false));
         }
-
-        if (message.startsWith(commandPrefix)) {  // 检测普通命令
-            log.info("◉ [PrivateAction:Command] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
-            commandProcessor.processQQ(bot, new CommandEvent<>(event));
-            return;
-        }
-
-        // 默认触发 AI 对话
-        log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
-        commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", false, false));
 
         // 默认通知管理员
         // log.info("◉ [PrivateAction:Notice] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
