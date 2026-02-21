@@ -57,8 +57,8 @@ public class CommandListener
                 bot.sendPrivateMsg(userId, "✅已授权", false);
                 return;
             }
-            log.info("└─[Fail] {}({}) 授权码错误", userName, userId);
-            bot.sendPrivateMsg(userId, "❌授权码错误", false);
+            log.info("└─[Fail] {}({}) 访问码错误", userName, userId);
+            bot.sendPrivateMsg(userId, "❌访问码错误", false);
         } else {  // 默认触发 AI 对话
             log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
             commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", false, false));
