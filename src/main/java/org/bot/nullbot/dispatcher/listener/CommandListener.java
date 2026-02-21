@@ -12,7 +12,9 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.FunctionControl;
+import org.bot.nullbot.component.security.SecurityCodeScheduler;
 import org.bot.nullbot.dispatcher.CommandProcessor;
+import org.bot.nullbot.dispatcher.handler.impl.PermissionHandler;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +29,8 @@ public class CommandListener
 {
     private final CommandProcessor commandProcessor;
     private final MonitorListener monitorListener;
+    private final SecurityCodeScheduler securityCodeScheduler;
+    private final PermissionHandler  permissionHandler;
 
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
@@ -38,24 +42,41 @@ public class CommandListener
     @Async("ThreadExecutor")
     public void onPrivateMessageInteraction(Bot bot, PrivateMessageEvent event) throws Exception
     {
-        if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
-            log.info("◉ [PrivateAction:Command] 来自 {}({}) -> {}", event.getPrivateSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
+        Long userId = event.getUserId();
+        String userName = event.getPrivateSender().getNickname();
+        String message = event.getMessage();
+
+        if (message.startsWith("#")) {  // 检测授权命令
+            log.info("◉ [PrivateAction:Authorize] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
+            if (securityCodeScheduler.validateCode("access", message.substring(1))) {
+                permissionHandler.addAllowedPrivateUser(userId);
+                log.info("└─[Success] {}({}) 已授权", userName, userId);
+                bot.sendPrivateMsg(userId, "✅已授权", false);
+                return;
+            }
+            log.info("└─[Fail] {}({}) 授权码错误", userName, userId);
+            bot.sendPrivateMsg(userId, "❌授权码错误", false);
+            return;
+        }
+
+        if (message.startsWith(commandPrefix)) {  // 检测普通命令
+            log.info("◉ [PrivateAction:Command] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
             return;
         }
 
         // 默认触发 AI 对话
-        log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", event.getPrivateSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
+        log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
         commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", false, false));
 
         // 默认通知管理员
-        // log.info("◉ [PrivateAction:Notice] 来自 {}({}) -> {}", event.getPrivateSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
+        // log.info("◉ [PrivateAction:Notice] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
         // bot.sendPrivateMsg(adminId, "\uD83D\uDCE9来自%s(%s)的私信:\n%s".formatted(
-        //         event.getPrivateSender().getNickname(),
-        //         event.getUserId(),
-        //         event.getMessage()
+        //         userName,
+        //         userId,
+        //         message
         // ), false);
-        // bot.sendPrivateMsg(event.getUserId(), "✉️已通知管理员", false);
+        // bot.sendPrivateMsg(userId, "✉️已通知管理员", false);
     }
 
     @GroupMessageHandler

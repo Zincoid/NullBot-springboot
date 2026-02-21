@@ -1,5 +1,6 @@
 package org.bot.nullbot.dispatcher.handler.impl;
 
+import cn.hutool.core.collection.ConcurrentHashSet;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
@@ -22,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Order(0)
@@ -34,6 +36,7 @@ public class PermissionHandler implements Handler
 
     private final Map<Long, List<String>> bannedCmds = new ConcurrentHashMap<>();  // GroupId -> CommandClasses
     private final Map<String, LocalDateTime> bannedUsers = new ConcurrentHashMap<>();  // UserId + CommandClass -> BanUntil
+    private final Set<Long> allowedPrivateUsers = new ConcurrentHashSet<>();  // UserId
     private boolean inMaintenance = false;
 
     private final GroupService groupService;
@@ -66,8 +69,15 @@ public class PermissionHandler implements Handler
         }
 
         if (groupId == 0L) {
-            log.info("\t\t├─[PermissionHandler] 私信事件放行");
-            chain.doHandle(bot, event, command);
+            if (allowedPrivateUsers.contains(userId)) {
+                log.info("\t\t├─[PermissionHandler] 私信事件放行");
+                chain.doHandle(bot, event, command);
+                return;
+            }
+            log.info("\t\t├─[PermissionHandler] 私信用户未授权");
+            bot.sendPrivateMsg(userId, """
+                    [访问] 🚫私聊未授权
+                    - 授权请输入: #授权码""", false);
             return;
         }
 
@@ -190,13 +200,23 @@ public class PermissionHandler implements Handler
         chain.doHandle(bot, event, command);
     }
 
-    // =================== 锁定方法 ===================
+    // =================== 系统锁定方法 ===================
 
     public boolean switchInMaintenance() {
         return inMaintenance = !inMaintenance;
     }
 
-    // =================== 封禁方法 ===================
+    // =================== 私聊授权方法 ===================
+
+    public void addAllowedPrivateUser(Long userId) {
+        allowedPrivateUsers.add(userId);
+    }
+
+    public void removeAllowedPrivateUser(Long userId) {
+        allowedPrivateUsers.remove(userId);
+    }
+
+    // =================== 群聊封禁方法 ===================
 
     public boolean switchCmdBan(Long groupId, Class<? extends Command> commandClass) {
         String cmdName = commandClass.getSimpleName();
