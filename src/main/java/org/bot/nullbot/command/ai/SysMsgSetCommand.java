@@ -42,7 +42,7 @@ public class SysMsgSetCommand implements Command
                         - 仅限权等级I及以上用户可重置提示词
                         - 你的限权等级: %s""".formatted(userAccess));
             deepSeekClient.clearGroupHistory(groupId, userId);
-            sysMsgStorage.reset(groupId);
+            sysMsgStorage.resetGroup(groupId);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅已重置！", false);
             log.info("\t\t\t\t├─[SysMsgSet] 提示词已重置 - {}", groupId);
             return;
