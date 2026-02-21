@@ -31,8 +31,8 @@ public class RegisterHandler implements Handler
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
-        Long groupId = 0L;
-        Long userId = 0L;
+        Long groupId;
+        Long userId;
 
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             groupId = groupMessageEvent.getGroupId();
@@ -44,6 +44,7 @@ public class RegisterHandler implements Handler
             groupId = groupMsgDeleteNoticeEvent.getGroupId();
             userId = groupMsgDeleteNoticeEvent.getUserId();
         } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
+            groupId = 0L;  // 群号 0 代表私聊
             userId = privateMessageEvent.getUserId();
         } else {
             log.info("\t\t├─[RegisterHandler] 默认不注册的事件");

@@ -50,7 +50,7 @@ public class PermissionHandler implements Handler
             groupId = groupMessageEvent.getGroupId();
             userId = groupMessageEvent.getUserId();
         } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            groupId = pokeNoticeEvent.getGroupId() == null ? 0L : pokeNoticeEvent.getGroupId();
+            groupId = pokeNoticeEvent.getGroupId() == null ? 0L : pokeNoticeEvent.getGroupId();  // 群号 0 代表私聊
             userId = pokeNoticeEvent.getUserId();
         } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent  groupMsgDeleteNoticeEvent) {
             groupId = groupMsgDeleteNoticeEvent.getGroupId();
@@ -61,7 +61,7 @@ public class PermissionHandler implements Handler
             return;
         }
 
-        if (groupId == 0L) {  // 群号 0 代表私聊
+        if (groupId == 0L) {
             log.info("\t\t├─[PermissionHandler] 私信事件放行");
             chain.doHandle(bot, event, command);
             return;
