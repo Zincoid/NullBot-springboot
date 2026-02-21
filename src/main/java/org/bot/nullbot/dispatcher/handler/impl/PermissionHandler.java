@@ -77,11 +77,11 @@ public class PermissionHandler implements Handler
                 return;
             }
             if (allowedPrivateUsers.contains(userId)) {
-                log.info("\t\t├─[PermissionHandler] 私信事件放行");
+                log.info("\t\t├─[PermissionHandler] 私聊用户已授权");
                 chain.doHandle(bot, event, command);
                 return;
             }
-            log.info("\t\t├─[PermissionHandler] 私信用户未授权");
+            log.info("\t\t├─[PermissionHandler] 私聊用户未授权");
             bot.sendPrivateMsg(userId, """
                     [访问] 🚫私聊未授权
                     - 授权请输入#访问码""", false);
