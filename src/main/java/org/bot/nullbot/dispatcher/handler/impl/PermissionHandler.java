@@ -50,13 +50,19 @@ public class PermissionHandler implements Handler
             groupId = groupMessageEvent.getGroupId();
             userId = groupMessageEvent.getUserId();
         } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            groupId = pokeNoticeEvent.getGroupId();
+            groupId = pokeNoticeEvent.getGroupId() == null ? 0L : pokeNoticeEvent.getGroupId();
             userId = pokeNoticeEvent.getUserId();
         } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent  groupMsgDeleteNoticeEvent) {
             groupId = groupMsgDeleteNoticeEvent.getGroupId();
             userId = groupMsgDeleteNoticeEvent.getUserId();
         } else {
             log.info("\t\t├─[PermissionHandler] 默认通过的事件类型");
+            chain.doHandle(bot, event, command);
+            return;
+        }
+
+        if (groupId == 0L) {
+            log.info("\t\t├─[PermissionHandler] 私信事件放行");
             chain.doHandle(bot, event, command);
             return;
         }
