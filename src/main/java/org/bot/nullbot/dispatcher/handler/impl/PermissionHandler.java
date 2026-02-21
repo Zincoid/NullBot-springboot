@@ -68,7 +68,14 @@ public class PermissionHandler implements Handler
             return;
         }
 
+        // =================== 私聊独立验证 ===================
+
         if (groupId == 0L) {
+            if (inMaintenance) {
+                log.info("\t\t├─[PermissionHandler] 系统已锁定");
+                bot.sendGroupMsg(groupId, "[访问] 🔐系统已锁定", false);
+                return;
+            }
             if (allowedPrivateUsers.contains(userId)) {
                 log.info("\t\t├─[PermissionHandler] 私信事件放行");
                 chain.doHandle(bot, event, command);
@@ -80,6 +87,8 @@ public class PermissionHandler implements Handler
                     - 授权请输入#访问码""", false);
             return;
         }
+
+        // =================== 限权信息查询 ===================
 
         int commandAccess = command.getAccess();
         int groupAccess = groupService.getGroupAccess(groupId);
