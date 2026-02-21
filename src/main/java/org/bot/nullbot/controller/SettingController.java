@@ -41,7 +41,7 @@ public class SettingController
     public WebResult setSetting(@RequestBody SettingInfo setting){
         if(settingService.setSetting(setting)) {
             commandRateLimiter.reset(setting.getGroupId());
-            deepSeekClient.clearHistory(setting.getGroupId(), null);
+            deepSeekClient.clearGroupHistory(setting.getGroupId(), null);
             return WebResult.success().addMsg("更新成功");
         }
         else

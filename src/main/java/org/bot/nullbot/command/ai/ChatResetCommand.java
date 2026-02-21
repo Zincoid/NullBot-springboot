@@ -24,7 +24,7 @@ public class ChatResetCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        ChatScope chatScope = deepSeekClient.clearHistory(groupId, userId);
+        ChatScope chatScope = deepSeekClient.clearGroupHistory(groupId, userId);
         Long id = switch (chatScope) {
             case Group, Monitor ->  groupId;
             case Personal -> userId;

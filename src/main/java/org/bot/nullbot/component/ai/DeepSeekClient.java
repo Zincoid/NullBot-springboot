@@ -103,10 +103,10 @@ public class DeepSeekClient
                 .build();
     }
 
-    // =================== 主调用方法 ===================
+    // =================== 群聊调用方法 ===================
 
     /**
-     * 与 DeepSeek 进行对话 (连续对话)
+     * 与 DeepSeek 进行对话 (连续对话) (群聊)
      * @param messageId 消息ID 在此仅记录用 (用于撤回检测)
      * @param groupId 群ID 用于区分不同的对话历史
      * @param userId 用户ID 用于区分不同的对话历史，帮助AI区分用户
@@ -116,8 +116,8 @@ public class DeepSeekClient
      * @param event 命令事件实体 (用于执行嵌入命令)
      * @return AI回复内容
      */
-    public String chat(Integer messageId, Long groupId, Long userId, String userName,
-                       String userMessage, Bot bot, Event event) throws Exception
+    public String chatGroup(Integer messageId, Long groupId, Long userId, String userName,
+                            String userMessage, Bot bot, Event event) throws Exception
     {
         ChatOption option = settingService.getChatOption(groupId);
 
@@ -152,9 +152,9 @@ public class DeepSeekClient
             // 用户消息添加到历史
             chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
             // 构建完整消息列表
-            List<Map<String, String>> _messages = buildMessages(chatMessages, groupId, option);
+            List<Map<String, String>> _messages = buildMessages(chatMessages, groupId, option.isCustom(), option.isEmbedding(), option.isVoice());
             // 发送对话请求到API
-            String originalResponse = sendRequest(_messages, option);
+            String originalResponse = sendRequest(_messages, option.isThinking());
 
             // 限制历史记录长度
             if (option.getChatScope() == ChatScope.Monitor)
@@ -165,7 +165,7 @@ public class DeepSeekClient
             // 内嵌指令执行部分
             String response;
             if (!option.isCustom() && option.isEmbedding()) {
-                response = executeEmbeddingChain(originalResponse, chatMessages, groupId, bot, event, option);
+                response = executeEmbeddingChain(originalResponse, chatMessages, groupId, bot, event, option.isEmbeddingAuth(), embeddingLimit);
             } else
                 response = executeBasic(originalResponse, chatMessages, groupId, bot);
             return response;
@@ -178,12 +178,12 @@ public class DeepSeekClient
     }
 
     /**
-     * 清空对话历史
+     * 清空对话历史 (群聊)
      * @param groupId 群ID
      * @param userId 用户ID
      * @return 清除模式
      */
-    public ChatScope clearHistory(Long groupId, Long userId) {
+    public ChatScope clearGroupHistory(Long groupId, Long userId) {
         ChatScope chatScope = settingService.getChatOption(groupId).getChatScope();
         switch (chatScope) {
             case Group -> chatStorage.clearGroupHistory(groupId);
@@ -194,12 +194,12 @@ public class DeepSeekClient
     }
 
     /**
-     * 获取对话历史
+     * 获取对话历史 (群聊)
      *  @param groupId 群ID
      *  @param userId 用户ID
      *  @return 历史记录
      */
-    public String getHistory(Long groupId, Long userId) {
+    public String getGroupHistory(Long groupId, Long userId) {
         ChatOption option = settingService.getChatOption(groupId);
         List<ChatMessage> history = switch (option.getChatScope()) {
             case Group -> chatStorage.getGroupHistory(groupId);
@@ -222,7 +222,47 @@ public class DeepSeekClient
         return sb.toString().trim();
     }
 
-    // =================== 次调用方法 ===================
+    // =================== 私聊调用方法 ===================
+
+    /**
+     * 与 DeepSeek 进行对话 (连续对话) (私聊)
+     * @param messageId 消息ID 在此仅记录用 (用于撤回检测)
+     * @param userId 用户ID 用于区分不同的对话历史，帮助AI区分用户
+     * @param userName 用户昵称 用于帮助AI区分用户
+     * @param userMessage 用户当前消息
+     * @param bot 机器人实体 (用于执行嵌入命令和回复)
+     * @param event 命令事件实体 (用于执行嵌入命令)
+     * @return AI回复内容
+     */
+    public String chatPrivate(Integer messageId, Long userId, String userName,
+                       String userMessage, Bot bot, Event event) throws Exception
+    {
+        ReentrantLock lock = chatStorage.getUserLock(userId);
+        lock.lock();  // 锁定历史存储
+
+        List<ChatMessage> chatMessages = List.of();
+        try {
+            // 获取历史聊天记录
+            chatMessages = chatStorage.getUserHistory(userId);
+            // 用户消息添加到历史
+            chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
+            // 构建完整消息列表
+            List<Map<String, String>> _messages = buildMessages(chatMessages, 0L, false, true, true);
+            // 发送对话请求到API
+            String originalResponse = sendRequest(_messages, false);
+            // 限制历史记录长度
+            chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxHistoryLength());
+            // 内嵌指令执行部分
+            return executeEmbeddingChain(originalResponse, chatMessages, 0L, bot, event, false, false);
+        } catch (Exception e) {
+            chatMessages.removeLast();  // 请求失败移除新增的用户消息
+            throw e;
+        } finally {
+            lock.unlock();  // 解锁历史存储
+        }
+    }
+
+    // =================== 单次调用方法 ===================
 
     /**
      * 与 DeepSeek 进行对话 (非连续对话)
@@ -270,12 +310,15 @@ public class DeepSeekClient
      * 添加系统信息构建发送给 API 的消息列表
      * @param chatMessages 信息列表
      * @param groupId 群ID
-     * @param option 配置
+     * @param custom 自定义模式
+     * @param embedding 嵌入指令模式
+     * @param voice 语言模式
      * @return 发送给 API 的消息列表
      */
-    private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages, Long groupId, ChatOption option) {
+    private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages, Long groupId,
+                                                    boolean custom, boolean embedding, boolean voice) {
         String systemMessage;
-        if (option.isCustom())
+        if (custom)
             systemMessage = sysMsgStorage.getCustomMessage(groupId);
         else
             systemMessage = sysMsgStorage.getDefaultMessage(groupId);
@@ -286,7 +329,7 @@ public class DeepSeekClient
 
         // 过滤 可用指令
         Set<String> commands;
-        if (option.isVoice())
+        if (voice)
             commands = AI_COMMAND_WHITE_LIST;
         else
             commands = AI_COMMAND_WHITE_LIST.stream()
@@ -294,7 +337,7 @@ public class DeepSeekClient
                     .collect(Collectors.toSet());
 
         // 添加 指令模式提示词
-        if(!option.isCustom() && option.isEmbedding()) {
+        if(!custom && embedding) {
             systemMessage = systemMessage +
                     "\n你可以使用 {指令} 在回复中嵌入指令来进行各种操作，被指令分隔的消息会以多条消息的形式发送到群聊中，如果你想分开发送消息也可以使用空指令 {} 来分割。" +
                     "\n指令使用示例如下：" +
@@ -309,8 +352,6 @@ public class DeepSeekClient
 
         systemMessage = systemMessage + "当前时间：" + LocalDateTime.now();
 
-        // log.info("[系统提示词] {}", systemMessage);
-
         List<Map<String, String>> _messages = new ArrayList<>();
         _messages.add(new ChatMessage(null, "system", systemMessage, null, null).toMapForAI());  // 系统消息
         for (ChatMessage msg : chatMessages) _messages.add(msg.toMapForAI());  // 历史消息
@@ -321,13 +362,13 @@ public class DeepSeekClient
     /**
      * 发送 HTTP 请求到 API
      * @param _messages 请求消息列表 (包括历史)
-     * @param option 配置
+     * @param thinking 思考模式
      * @return AI 回复内容
      */
-    private String sendRequest(List<Map<String, String>> _messages, ChatOption option) throws Exception {
+    private String sendRequest(List<Map<String, String>> _messages, boolean thinking) throws Exception {
         // 构建 JSON
         ObjectNode requestBody = objectMapper.createObjectNode();
-        requestBody.put("model", option.isThinking() ? "deepseek-reasoner" : "deepseek-chat");
+        requestBody.put("model", thinking ? "deepseek-reasoner" : "deepseek-chat");
         requestBody.put("max_tokens", deepSeekProperties.getMaxTokens());
         requestBody.set("messages", objectMapper.valueToTree(_messages));
 
@@ -362,16 +403,16 @@ public class DeepSeekClient
 
     /**
      * 非指令嵌入模式应答处理
-     * @param originalResponse 原始响应文本
+     * @param response 原始响应文本
      * @param chatMessages 历史存储
      * @param groupId 群ID
      * @param bot 机器人实体
      * @return 处理过的消息 (已过滤)
      */
-    String executeBasic(String originalResponse, List<ChatMessage> chatMessages, Long groupId,
+    String executeBasic(String response, List<ChatMessage> chatMessages, Long groupId,
                         Bot bot) throws IOException {
         // 处理消息
-        String response = originalResponse.replaceAll("(\r?\n)+", "\n").trim();
+        response = response.replaceAll("(\r?\n)+", "\n").trim();
         if (messageFilter(response)) response = buildFilteredMsg();
         // 发送消息
         ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
@@ -388,17 +429,18 @@ public class DeepSeekClient
 
     /**
      * 指令嵌入模式应答处理 (链式)
-     * @param originalResponse 原始响应文本
+     * @param response 原始响应文本
      * @param chatMessages 历史存储
-     * @param groupId 群ID
+     * @param targetId 群ID
      * @param bot 机器人实体
      * @param event 指令事件
-     * @param option 配置
+     * @param embeddingAuth 嵌入指令验证
+     * @param embeddingLimit 嵌入指令限速
      * @return 处理过的消息 (未过滤)
      */
-    String executeEmbeddingChain(String originalResponse, List<ChatMessage> chatMessages, Long groupId,
-                                 Bot bot, Event event, ChatOption option) throws IOException {
-        String response = originalResponse.replaceAll("(\r?\n)+", "\n").trim();
+    String executeEmbeddingChain(String response, List<ChatMessage> chatMessages, Long targetId,
+                                 Bot bot, Event event, boolean embeddingAuth, boolean embeddingLimit) throws IOException {
+        response = response.replaceAll("(\r?\n)+", "\n").trim();
         // 使用正则匹配所有{指令}和文本部分
         Pattern pattern = Pattern.compile("(\\{.*?}|[^{]+)");
         Matcher matcher = pattern.matcher(response);
@@ -410,8 +452,7 @@ public class DeepSeekClient
                 if (command.isEmpty()) continue;
                 eventPublisher.publishEvent(new EmbeddedCommandEvent(
                         bot,
-                        new CommandEvent<>(event, command,
-                                option.isEmbeddingAuth(), embeddingLimit)
+                        new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)
                 ));
                 // 记录指令
                 chatMessages.add(new ChatMessage(
@@ -426,7 +467,7 @@ public class DeepSeekClient
                 String text = segment.trim();
                 if (!text.isEmpty()) {
                     if (messageFilter(text)) text = buildFilteredMsg();
-                    ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, text, false);
+                    ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(targetId, text, false);
                     // 记录消息
                     chatMessages.add(new ChatMessage(
                             msgIdActionData.getData().getMessageId(),
@@ -443,7 +484,7 @@ public class DeepSeekClient
 
     /**
      * 指令嵌入模式应答处理 (非链式)
-     * @param originalResponse 原始响应文本
+     * @param response 原始响应文本
      * @param chatMessages 历史存储
      * @param groupId 群ID
      * @param bot 机器人实体
@@ -452,22 +493,22 @@ public class DeepSeekClient
      * @return 处理过的消息 (已过滤)
      */
     @Deprecated
-    String executeEmbedding(String originalResponse, List<ChatMessage> chatMessages, Long groupId,
+    String executeEmbedding(String response, List<ChatMessage> chatMessages, Long groupId,
                             Bot bot, Event event, ChatOption option) throws IOException {
-        Matcher m = Pattern.compile("\\{(.*?)}").matcher(originalResponse);
+        Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
         // 执行指令
         while (m.find()) {
             String command = m.group(1);
             eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event, command, option.isEmbeddingAuth(), embeddingLimit)));
         }
         // 处理消息
-        String response = originalResponse.replaceAll("\\{.*?}", "").replaceAll("(\r?\n)+", "\n").trim();
-        if (messageFilter(response)) response =  buildFilteredMsg();
+        String _response = response.replaceAll("\\{.*?}", "").replaceAll("(\r?\n)+", "\n").trim();
+        if (messageFilter(_response)) _response =  buildFilteredMsg();
         // 发送消息
-        ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
+        ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, _response, false);
         // 记录消息
-        chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", originalResponse, botId, "Null"));
-        return response;
+        chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", response, botId, "Null"));
+        return _response;
     }
 
     // =================== 工具方法 ===================

@@ -23,7 +23,7 @@ public class ChatHistoryCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String history = deepSeekClient.getHistory(groupId, userId);
+        String history = deepSeekClient.getGroupHistory(groupId, userId);
         bot.sendGroupMsg(groupId, "[聊天历史] ✅已获取！\n" + history, false);
         log.info("\t\t\t\t├─[ChatHistory] 已获取 - 历史聊天记录");
     }

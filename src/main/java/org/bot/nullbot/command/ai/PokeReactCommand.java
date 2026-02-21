@@ -26,7 +26,7 @@ public class PokeReactCommand implements Command
             if(!Objects.equals(event.getTargetId(), event.getSelfId())) return;  // 仅检测戳Bot
             String response;
             try {
-                response = deepSeekClient.chat(
+                response = deepSeekClient.chatGroup(
                         null,
                         event.getGroupId(),
                         event.getUserId(),

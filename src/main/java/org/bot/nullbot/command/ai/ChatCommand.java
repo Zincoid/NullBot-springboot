@@ -29,7 +29,7 @@ public class ChatCommand implements Command
         String message = MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg());
         String response;
         try {
-            response = deepSeekClient.chat(
+            response = deepSeekClient.chatGroup(
                     event.getMessageId(),
                     event.getGroupId(),
                     event.getUserId(),
