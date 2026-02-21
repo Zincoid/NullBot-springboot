@@ -33,13 +33,17 @@ public class MemeCommand implements Command
     }
 
     @Override
-    public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
-        meme(bot, params, event.getGroupId(), false);
+    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
+        meme(bot, params, event.getUserId(), true);
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        meme(bot, params, event.getUserId(), true);
+    public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
+        Long groupId = event.getGroupId();
+        if (groupId != null)
+            meme(bot, params, event.getGroupId(), false);
+        else
+            meme(bot, params, event.getUserId(), true);
     }
 
     private void meme(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
