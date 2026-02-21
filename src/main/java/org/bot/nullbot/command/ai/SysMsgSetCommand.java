@@ -29,12 +29,12 @@ public class SysMsgSetCommand implements Command
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        if (params.isEmpty())
+            throw new NullBotMsgException("[提示词设置] ❌参数不足");
+
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String option = params.getFirst();
-
-        if (params.isEmpty())
-            throw new NullBotMsgException("[提示词设置] ❌参数不足");
 
         if ("-reset".equals(option)) {
             int userAccess = userService.getUserAccess(userId);
@@ -86,11 +86,11 @@ public class SysMsgSetCommand implements Command
 
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        Long userId = event.getUserId();
-        String option = params.getFirst();
-
         if (params.isEmpty())
             throw new NullBotMsgException("[提示词设置] ❌参数不足");
+
+        Long userId = event.getUserId();
+        String option = params.getFirst();
 
         if ("-reset".equals(option)) {
             deepSeekClient.clearUserHistory(userId);

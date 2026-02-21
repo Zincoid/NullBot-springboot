@@ -34,10 +34,12 @@ public class HelpCommand implements Command
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, List<String> params) throws Exception {
         bot.sendPrivateMsg(event.getUserId(), """
-                注: 私聊目前仅实现AI聊天及以下指令功能且AI永久处于无验证/无限速/指令/语音模式下。
-                1. SysMsgSet 提示词设置
-                2. Tts 语言合成 (仅synth操作)
-                3. Help 帮助""", true);
+                [ ====== 可用指令 ====== ]
+                1. SysMsgSet  提示词设置
+                2. Tts  语言合成 (仅synth)
+                3. Help  帮助
+                
+                注: 私聊目前仅实现AI聊天及以上指令且AI永久处于无验证/无限速/指令/语音模式下。""", true);
         log.info("\t\t\t\t├─[Help] 已获取私聊帮助");
     }
 
