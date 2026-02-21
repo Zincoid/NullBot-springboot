@@ -152,7 +152,7 @@ public class DeepSeekClient
             // 用户消息历史记录
             chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
             // 构建完整消息列表
-            List<Map<String, String>> _messages = buildMessages(chatMessages, groupId, option.isCustom(), option.isEmbedding(), option.isVoice());
+            List<Map<String, String>> _messages = buildMessages(chatMessages, groupId, false, option.isCustom(), option.isEmbedding(), option.isVoice());
             // 发送对话请求到 API
             String originalResponse = sendRequest(_messages, option.isThinking());
             // 限制历史记录长度
@@ -245,7 +245,7 @@ public class DeepSeekClient
             // 用户消息历史记录
             chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
             // 构建完整消息列表
-            List<Map<String, String>> _messages = buildMessages(chatMessages, 0L, false, true, true);
+            List<Map<String, String>> _messages = buildMessages(chatMessages, userId, true, false, true, true);
             // 发送对话请求到 API
             String originalResponse = sendRequest(_messages, false);
             // 限制历史记录长度
@@ -306,20 +306,22 @@ public class DeepSeekClient
 
     /**
      * 添加系统信息构建发送给 API 的消息列表
+     *
      * @param chatMessages 信息列表
-     * @param groupId 群ID
+     * @param targetId 目标ID
+     * @param isPrivate 是否为私信
      * @param custom 自定义模式
      * @param embedding 嵌入指令模式
-     * @param voice 语言模式
+     * @param voice 语音模式
      * @return 发送给 API 的消息列表
      */
-    private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages, Long groupId,
+    private List<Map<String, String>> buildMessages(List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
                                                     boolean custom, boolean embedding, boolean voice) {
         String systemMessage;
         if (custom)
-            systemMessage = sysMsgStorage.getCustomMessage(groupId);
+            systemMessage = sysMsgStorage.getCustomMessage(targetId);
         else
-            systemMessage = sysMsgStorage.getDefaultMessage(groupId);
+            systemMessage = sysMsgStorage.getDefaultMessage(targetId);
 
         systemMessage = systemMessage +
                 "\n你在一个群聊中接收对话，不同用户的消息会带有消息ID和用户标识，格式为[Message ID][Username(UserId)]。" +
