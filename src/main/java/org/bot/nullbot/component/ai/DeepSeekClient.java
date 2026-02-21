@@ -149,25 +149,23 @@ public class DeepSeekClient
                 case Personal -> chatStorage.getUserHistory(userId);
                 case Monitor -> chatStorage.getMonitorHistory(groupId);
             };
-            // 用户消息添加到历史
+            // 用户消息历史记录
             chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
             // 构建完整消息列表
             List<Map<String, String>> _messages = buildMessages(chatMessages, groupId, option.isCustom(), option.isEmbedding(), option.isVoice());
-            // 发送对话请求到API
+            // 发送对话请求到 API
             String originalResponse = sendRequest(_messages, option.isThinking());
-
             // 限制历史记录长度
             if (option.getChatScope() == ChatScope.Monitor)
                 chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
             else
                 chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxHistoryLength());
-
             // 内嵌指令执行部分
             String response;
             if (!option.isCustom() && option.isEmbedding()) {
-                response = executeEmbeddingChain(originalResponse, chatMessages, groupId, bot, event, option.isEmbeddingAuth(), embeddingLimit);
+                response = executeEmbeddingChain(originalResponse, chatMessages, groupId, false, bot, event, option.isEmbeddingAuth(), embeddingLimit);
             } else
-                response = executeBasic(originalResponse, chatMessages, groupId, bot);
+                response = executeBasic(originalResponse, chatMessages, groupId, false, bot);
             return response;
         } catch (Exception e) {
             if(option.getChatScope() != ChatScope.Monitor) chatMessages.removeLast();  // 非监听模式请求失败移除新增的用户消息
@@ -244,16 +242,16 @@ public class DeepSeekClient
         try {
             // 获取历史聊天记录
             chatMessages = chatStorage.getUserHistory(userId);
-            // 用户消息添加到历史
+            // 用户消息历史记录
             chatMessages.add(new ChatMessage(messageId, "user", userMessage, userId, userName));
             // 构建完整消息列表
             List<Map<String, String>> _messages = buildMessages(chatMessages, 0L, false, true, true);
-            // 发送对话请求到API
+            // 发送对话请求到 API
             String originalResponse = sendRequest(_messages, false);
             // 限制历史记录长度
             chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxHistoryLength());
             // 内嵌指令执行部分
-            return executeEmbeddingChain(originalResponse, chatMessages, 0L, bot, event, false, false);
+            return executeEmbeddingChain(originalResponse, chatMessages, userId, true, bot, event, false, false);
         } catch (Exception e) {
             chatMessages.removeLast();  // 请求失败移除新增的用户消息
             throw e;
@@ -405,17 +403,22 @@ public class DeepSeekClient
      * 非指令嵌入模式应答处理
      * @param response 原始响应文本
      * @param chatMessages 历史存储
-     * @param groupId 群ID
+     * @param targetId 目标ID
+     * @param isPrivate 是否为私信
      * @param bot 机器人实体
      * @return 处理过的消息 (已过滤)
      */
-    String executeBasic(String response, List<ChatMessage> chatMessages, Long groupId,
+    String executeBasic(String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
                         Bot bot) throws IOException {
         // 处理消息
         response = response.replaceAll("(\r?\n)+", "\n").trim();
         if (messageFilter(response)) response = buildFilteredMsg();
         // 发送消息
-        ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, response, false);
+        ActionData<MsgId> msgIdActionData;
+        if (isPrivate)
+            msgIdActionData = bot.sendPrivateMsg(targetId, response, false);
+        else
+            msgIdActionData = bot.sendGroupMsg(targetId, response, false);
         // 记录消息
         chatMessages.add(new ChatMessage(
                 msgIdActionData.getData().getMessageId(),
@@ -431,14 +434,15 @@ public class DeepSeekClient
      * 指令嵌入模式应答处理 (链式)
      * @param response 原始响应文本
      * @param chatMessages 历史存储
-     * @param targetId 群ID
+     * @param targetId 目标ID
+     * @param isPrivate 是否为私信
      * @param bot 机器人实体
      * @param event 指令事件
      * @param embeddingAuth 嵌入指令验证
      * @param embeddingLimit 嵌入指令限速
      * @return 处理过的消息 (未过滤)
      */
-    String executeEmbeddingChain(String response, List<ChatMessage> chatMessages, Long targetId,
+    String executeEmbeddingChain(String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
                                  Bot bot, Event event, boolean embeddingAuth, boolean embeddingLimit) throws IOException {
         response = response.replaceAll("(\r?\n)+", "\n").trim();
         // 使用正则匹配所有{指令}和文本部分
@@ -467,7 +471,11 @@ public class DeepSeekClient
                 String text = segment.trim();
                 if (!text.isEmpty()) {
                     if (messageFilter(text)) text = buildFilteredMsg();
-                    ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(targetId, text, false);
+                    ActionData<MsgId> msgIdActionData;
+                    if (isPrivate)
+                        msgIdActionData = bot.sendPrivateMsg(targetId, text, false);
+                    else
+                        msgIdActionData = bot.sendGroupMsg(targetId, text, false);
                     // 记录消息
                     chatMessages.add(new ChatMessage(
                             msgIdActionData.getData().getMessageId(),
@@ -486,14 +494,15 @@ public class DeepSeekClient
      * 指令嵌入模式应答处理 (非链式)
      * @param response 原始响应文本
      * @param chatMessages 历史存储
-     * @param groupId 群ID
+     * @param targetId 目标ID
+     * @param isPrivate 是否为私信
      * @param bot 机器人实体
      * @param event 指令事件
      * @param option 配置
      * @return 处理过的消息 (已过滤)
      */
     @Deprecated
-    String executeEmbedding(String response, List<ChatMessage> chatMessages, Long groupId,
+    String executeEmbedding(String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
                             Bot bot, Event event, ChatOption option) throws IOException {
         Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
         // 执行指令
@@ -505,7 +514,11 @@ public class DeepSeekClient
         String _response = response.replaceAll("\\{.*?}", "").replaceAll("(\r?\n)+", "\n").trim();
         if (messageFilter(_response)) _response =  buildFilteredMsg();
         // 发送消息
-        ActionData<MsgId> msgIdActionData = bot.sendGroupMsg(groupId, _response, false);
+        ActionData<MsgId> msgIdActionData;
+        if (isPrivate)
+            msgIdActionData = bot.sendPrivateMsg(targetId, _response, false);
+        else
+            msgIdActionData = bot.sendGroupMsg(targetId, _response, false);
         // 记录消息
         chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", response, botId, "Null"));
         return _response;
