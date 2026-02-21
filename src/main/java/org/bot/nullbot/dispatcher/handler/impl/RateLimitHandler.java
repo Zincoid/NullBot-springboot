@@ -52,6 +52,11 @@ public class RateLimitHandler implements Handler
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "请求太多啦！", false);
             }
         } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
+            if (pokeNoticeEvent.getGroupId() == null) {
+                log.info("\t\t├─[PermissionHandler] 私信戳戳事件不限速");
+                chain.doHandle(bot, event, command);
+                return;
+            }
             if (
                     commandRateLimiter.tryConsume(
                             pokeNoticeEvent.getGroupId(),
@@ -62,7 +67,6 @@ public class RateLimitHandler implements Handler
                 chain.doHandle(bot, event, command);
             } else {
                 log.info("\t\t├─[RateLimitHandler] 戳一戳达到速率限制");
-                // bot.sendGroupNotice(pokeNoticeEvent.getGroupId(), MsgUtils.builder().poke(pokeNoticeEvent.getUserId()).build());
             }
         } else {
             log.info("\t\t├─[RateLimitHandler] 默认不限速的事件类型");

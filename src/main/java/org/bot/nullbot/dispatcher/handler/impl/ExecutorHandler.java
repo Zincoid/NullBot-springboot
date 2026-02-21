@@ -24,14 +24,15 @@ public class ExecutorHandler implements Handler
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         log.info("\t\t└─[ExecutorHandler] 执行开始");
 
-        Long groupId = 0L;
-        Long userId = 0L;
+        Long groupId = 0L;  // 群号 0 代表私聊
+        Long userId = 0L;  // 用户 0 代表群聊
         try {
             if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
                 groupId = groupMessageEvent.getGroupId();
                 command.execute(bot, groupMessageEvent, event.getCommandParameters());
             } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-                groupId = pokeNoticeEvent.getGroupId();
+                groupId = pokeNoticeEvent.getGroupId() == null ? 0L : pokeNoticeEvent.getGroupId();
+                if (groupId == 0L) userId = pokeNoticeEvent.getUserId();
                 command.execute(bot, pokeNoticeEvent, event.getCommandParameters());
             } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
                 groupId = groupMsgDeleteNoticeEvent.getGroupId();

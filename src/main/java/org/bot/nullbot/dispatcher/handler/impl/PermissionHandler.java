@@ -61,7 +61,7 @@ public class PermissionHandler implements Handler
             return;
         }
 
-        if (groupId == 0L) {
+        if (groupId == 0L) {  // 群号 0 代表私聊
             log.info("\t\t├─[PermissionHandler] 私信事件放行");
             chain.doHandle(bot, event, command);
             return;
