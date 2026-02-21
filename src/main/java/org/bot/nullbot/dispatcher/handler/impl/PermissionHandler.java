@@ -73,7 +73,7 @@ public class PermissionHandler implements Handler
         if (groupId == 0L) {
             if (inMaintenance) {
                 log.info("\t\t├─[PermissionHandler] 系统已锁定");
-                bot.sendGroupMsg(groupId, "[访问] 🔐系统已锁定", false);
+                bot.sendPrivateMsg(userId, "[访问] 🔐系统已锁定", false);
                 return;
             }
             if (allowedPrivateUsers.contains(userId)) {
