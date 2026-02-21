@@ -33,7 +33,7 @@ public class StatisticHandler implements Handler
             groupId = groupMessageEvent.getGroupId();
             userId = groupMessageEvent.getUserId();
         } else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            groupId = pokeNoticeEvent.getGroupId();
+            groupId = pokeNoticeEvent.getGroupId() == null ? 0L : pokeNoticeEvent.getGroupId();  // 群号 0 代表私聊
             userId = pokeNoticeEvent.getUserId();
         } else if(event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
             groupId = groupMsgDeleteNoticeEvent.getGroupId();
