@@ -4,6 +4,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.GetMsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
@@ -165,6 +166,31 @@ public class TtsCommand implements Command
                     .build();
             bot.sendGroupMsg(event.getGroupId(), response, false);
             log.info("\t\t\t\t├─[Tts] 已回复合成语音: {}", targetText.replaceAll("\\R", " "));
+            return;
+        }
+
+        throw new NullBotMsgException("[语音合成] ❌无此操作");
+    }
+
+    @Override
+    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
+        if (params.size() < 2)
+            throw new NullBotMsgException("[语音合成] ❌参数不足");
+
+        String option = params.getFirst();
+        if ("-synth".equals(option)) {
+            String targetText = String.join(" ", params.subList(1, params.size()));
+            String base64;
+            try {
+                base64 = ttsClient.synthesize(targetText);
+            } catch (Exception e) {
+                throw new NullBotMsgException("[语音合成] ❌合成时出错: " + e.getMessage());
+            }
+            String response = MsgUtils.builder()
+                    .voice("base64://" + base64)
+                    .build();
+            bot.sendPrivateMsg(event.getUserId(), response, false);
+            log.info("\t\t\t\t├─[Tts] 已私信合成语音: {}", targetText.replaceAll("\\R", " "));
             return;
         }
 
