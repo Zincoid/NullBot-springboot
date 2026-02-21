@@ -23,22 +23,35 @@ public class PokeReactCommand implements Command
 
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
-            if(!Objects.equals(event.getTargetId(), event.getSelfId())) return;  // 仅检测戳Bot
-            String response;
-            try {
+        if (!Objects.equals(event.getTargetId(), event.getSelfId())) return;  // 仅检测戳Bot
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+        String response;
+        try {
+            if (groupId != null)
                 response = deepSeekClient.chatGroup(
                         null,
-                        event.getGroupId(),
-                        event.getUserId(),
-                        bot.getStrangerInfo(event.getUserId(), true).getData().getNickname(),
+                        groupId,
+                        userId,
+                        userName,
                         "揉了你一下",
                         bot,
                         event
                 );
-            } catch (Exception e) {
-                throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
-            }
-            log.info("\t\t\t\t├─[PokeReact] 已回复戳一戳: {}", response.replaceAll("\\R", " "));
+            else
+                response = deepSeekClient.chatPrivate(
+                        null,
+                        userId,
+                        userName,
+                        "揉了你一下",
+                        bot,
+                        event
+                );
+        } catch (Exception e) {
+            throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
+        }
+        log.info("\t\t\t\t├─[PokeReact] 已回复{}戳戳: {}", groupId != null ? "群聊" : "私聊", response.replaceAll("\\R", " "));
     }
 
     // 特殊命令 无帮助
