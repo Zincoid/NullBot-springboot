@@ -32,13 +32,13 @@ public class StatisticHandler implements Handler
         if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
             groupId = groupMessageEvent.getGroupId();
             userId = groupMessageEvent.getUserId();
-        } else if(event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
+        } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
             groupId = pokeNoticeEvent.getGroupId() == null ? 0L : pokeNoticeEvent.getGroupId();  // 群号 0 代表私聊
             userId = pokeNoticeEvent.getUserId();
-        } else if(event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
+        } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
             groupId = groupMsgDeleteNoticeEvent.getGroupId();
             userId = groupMsgDeleteNoticeEvent.getUserId();
-        } else if(event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
+        } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
             groupId = 0L;  // 群号 0 代表私聊
             userId = privateMessageEvent.getUserId();
         } else {

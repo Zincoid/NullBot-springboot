@@ -2,6 +2,7 @@ package org.bot.nullbot.dispatcher.handler.impl;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,9 @@ public class PermissionHandler implements Handler
         } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent  groupMsgDeleteNoticeEvent) {
             groupId = groupMsgDeleteNoticeEvent.getGroupId();
             userId = groupMsgDeleteNoticeEvent.getUserId();
+        } else if(event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
+            groupId = 0L;  // 群号 0 代表私聊
+            userId = privateMessageEvent.getUserId();
         } else {
             log.info("\t\t├─[PermissionHandler] 默认通过的事件类型");
             chain.doHandle(bot, event, command);
