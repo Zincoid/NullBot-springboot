@@ -49,7 +49,7 @@ public class AdminServiceImpl implements AdminService
         newAdmin.setPassword(passwordEncoder.encode(registDTO.getPassword()));
         try {
             boolean inserted = adminMapper.insert(newAdmin) == 1;
-            if (inserted) securityCodeScheduler.useCode("regist");
+            if (inserted) securityCodeScheduler.refreshCode("regist", true);
             return inserted;
         } catch (Exception e) {
             return false;

@@ -71,7 +71,9 @@ public class SecurityCodeScheduler
      * @param codeId 安全码标识
      * @return 初始安全码
      */
-    public String createCode(String codeId) { return createCode(codeId, -1, false); }
+    public String createCode(String codeId) {
+        return createCode(codeId, -1, false);
+    }
 
     /**
      * 创建安全码
@@ -82,25 +84,22 @@ public class SecurityCodeScheduler
      */
     public String createCode(String codeId, long refreshInterval, boolean logging) {
         if (!StringUtils.hasLength(codeId)) throw new IllegalArgumentException("码标识不合法");
-        if (codeEntries.containsKey(codeId)) removeCode(codeId);  // 停止原有任务
+        if (codeEntries.containsKey(codeId)) removeCode(codeId);  // 移除原有任务
         String initCode = UUID.randomUUID().toString();
-        long interval = refreshInterval > 0 ? refreshInterval : DEFAULT_REFRESH_INTERVAL;
+        refreshInterval = refreshInterval > 0 ? refreshInterval : DEFAULT_REFRESH_INTERVAL;
         ScheduledFuture<?> future = scheduler.schedule(  // 创建调度任务
-                () -> {
-                    refreshCode(codeId);
-                    scheduleNext(codeId);
-                },
-                interval,
+                () -> refreshCode(codeId, true),
+                refreshInterval,
                 TimeUnit.MILLISECONDS
         );
-        codeEntries.put(codeId, new CodeEntry(initCode, future, interval, logging));  // 存储
+        codeEntries.put(codeId, new CodeEntry(initCode, future, refreshInterval, logging));  // 存储
         log.info("▽ [SecurityCodeScheduler] 安全码已创建 - CodeId: {}, InitCode: {}", codeId, initCode);
         if (logging) botOperator.sendLogGroupMsg("""
                 [安全码调度] 🔑已初始化
                 - CodeID: %s
                 - Interval: %sms
                 - InitCode: %s"""
-                .formatted(codeId, interval, initCode)
+                .formatted(codeId, refreshInterval, initCode)
         );
         return initCode;
     }
@@ -112,8 +111,74 @@ public class SecurityCodeScheduler
     public void removeCode(String codeId) {
         codeExistenceValidation(codeId);
         CodeEntry entry = codeEntries.remove(codeId);
-        if (entry.future != null) entry.future.cancel(false);
+        if (entry.future != null)
+            entry.future.cancel(false);
         log.info("▽ [SecurityCodeScheduler] 安全码已移除 - CodeId: {}", codeId);
+    }
+
+    /**
+     * 刷新安全码
+     * @param codeId 安全码标识
+     * @param resetTimer 是否重置刷新计时
+     * @return 新的安全码值
+     */
+    public String refreshCode(String codeId, boolean resetTimer) {
+        codeExistenceValidation(codeId);
+        CodeEntry entry = codeEntries.get(codeId);
+        if (resetTimer && entry.future != null)
+            entry.future.cancel(false);  // 取消当前调度
+        String newCode = UUID.randomUUID().toString();  // 生成新安全码
+        codeEntries.put(codeId, new CodeEntry(  // 更新
+                newCode,
+                resetTimer ? scheduler.schedule(  // 重新调度
+                        () -> refreshCode(codeId, true),
+                        entry.refreshInterval,
+                        TimeUnit.MILLISECONDS
+                ) : entry.future,
+                entry.refreshInterval,
+                entry.logging
+        ));
+        log.info("▽ [SecurityCodeScheduler] 安全码已刷新 - CodeId: {}, NewCode: {}", codeId, newCode);
+        if (entry.logging) botOperator.sendLogGroupMsg("""
+                [安全码调度] 🔑已刷新
+                - CodeID: %s
+                - NextOn: %s
+                - NewCode: %s"""
+                .formatted(codeId, resetTimer ? LocalDateTime.now().plus(Duration.ofMillis(entry.refreshInterval)).format(formatter) : "Original", newCode)
+        );
+        return newCode;
+    }
+
+    /**
+     * 验证安全码
+     * @param codeId 安全码标识
+     * @param codeToCheck 待检查安全码值
+     * @return 是否有效
+     */
+    public boolean validateCode(String codeId, String codeToCheck) {
+        codeExistenceValidation(codeId);
+        return codeEntries.get(codeId).code.equals(codeToCheck);
+    }
+
+    // =================== 辅助方法 ===================
+
+    /**
+     * 更新安全码刷新间隔
+     * @param codeId 安全码标识
+     * @param newInterval 新的刷新间隔 (ms) 非正则使用默认值
+     */
+    public void updateInterval(String codeId, long newInterval) {
+        codeExistenceValidation(codeId);
+        newInterval = newInterval > 0 ? newInterval : DEFAULT_REFRESH_INTERVAL;
+        CodeEntry entry = codeEntries.get(codeId);
+        if (entry.future != null) entry.future.cancel(false);  // 取消当前调度
+        ScheduledFuture<?> newFuture = scheduler.schedule(  // 重新调度
+                () -> refreshCode(codeId, true),
+                newInterval,
+                TimeUnit.MILLISECONDS
+        );
+        codeEntries.put(codeId, new CodeEntry(entry.code, newFuture, newInterval, entry.logging));  // 更新
+        log.info("▽ [SecurityCodeScheduler] 安全码刷新间隔已更新 - CodeId: {}, NewInterval: {} ms", codeId, newInterval);
     }
 
     /**
@@ -137,108 +202,10 @@ public class SecurityCodeScheduler
         return result;
     }
 
-    /**
-     * 使用安全码 (刷新并重置刷新计时)
-     * @param codeId 安全码标识
-     * @return 使用的安全码值
-     */
-    public String useCode(String codeId) {
-        codeExistenceValidation(codeId);
-        CodeEntry entry = codeEntries.get(codeId);
-        if (entry.future != null) entry.future.cancel(false);  // 取消当前调度
-        String usedCode = entry.code;
-        String newCode = UUID.randomUUID().toString();  // 生成新安全码
-        ScheduledFuture<?> newFuture = scheduler.schedule(  // 重新调度
-                () -> {
-                    refreshCode(codeId);
-                    scheduleNext(codeId);
-                },
-                entry.refreshInterval,
-                TimeUnit.MILLISECONDS
-        );
-        codeEntries.put(codeId, new CodeEntry(newCode, newFuture, entry.refreshInterval, entry.logging));  // 更新
-        log.info("▽ [SecurityCodeScheduler] 安全码已使用并刷新 - UsedCodeId: {}, UsedCode: {}", codeId, usedCode);
-        if (entry.logging) botOperator.sendLogGroupMsg("""
-                [安全码调度] 🔑已使用并刷新
-                - CodeID: %s
-                - NextOn: %s
-                - NewCode: %s"""
-                .formatted(codeId, LocalDateTime.now().plus(Duration.ofMillis(entry.refreshInterval)).format(formatter), newCode)
-        );
-        return usedCode;
-    }
-
-    /**
-     * 刷新安全码
-     * @param codeId 安全码标识
-     * @return 新的安全码值
-     */
-    public String refreshCode(String codeId) {
-        codeExistenceValidation(codeId);
-        CodeEntry entry = codeEntries.get(codeId);
-        String newCode = UUID.randomUUID().toString();  // 生成新安全码
-        codeEntries.put(codeId, new CodeEntry(newCode, entry.future, entry.refreshInterval, entry.logging));  // 更新
-        log.info("▽ [SecurityCodeScheduler] 安全码已刷新 - CodeId: {}, Code: {}", codeId, newCode);
-        if (entry.logging) botOperator.sendLogGroupMsg("""
-                [安全码调度] 🔑已刷新
-                - CodeID: %s
-                - NextOn: %s
-                - NewCode: %s"""
-                .formatted(codeId, LocalDateTime.now().plus(Duration.ofMillis(entry.refreshInterval)).format(formatter), newCode)
-        );
-        return newCode;
-    }
-
-    /**
-     * 验证安全码
-     * @param codeId 安全码标识
-     * @param codeToCheck 待检查安全码值
-     * @return 是否有效
-     */
-    public boolean validateCode(String codeId, String codeToCheck) {
-        codeExistenceValidation(codeId);
-        return codeEntries.get(codeId).code.equals(codeToCheck);
-    }
-
-    /**
-     * 更新安全码刷新间隔
-     * @param codeId 安全码标识
-     * @param newInterval 新的刷新间隔 (ms)
-     */
-    public void updateInterval(String codeId, long newInterval) {
-        codeExistenceValidation(codeId);
-        if (newInterval <= 0) throw new IllegalArgumentException("参数格式错误");
-        CodeEntry entry = codeEntries.get(codeId);
-        if (entry.future != null) entry.future.cancel(false);  // 取消当前调度
-        ScheduledFuture<?> newFuture = scheduler.schedule(  // 重新调度
-                () -> {
-                    refreshCode(codeId);
-                    scheduleNext(codeId);
-                },
-                newInterval,
-                TimeUnit.MILLISECONDS
-        );
-        codeEntries.put(codeId, new CodeEntry(entry.code, newFuture, newInterval, entry.logging));  // 更新
-        log.info("▽ [SecurityCodeScheduler] 安全码刷新间隔已更新 - CodeId: {}, NewInterval: {} ms", codeId, newInterval);
-    }
-
     // =================== 工具方法 ===================
 
     private void codeExistenceValidation(String codeId) {
-        if (!codeEntries.containsKey(codeId)) throw new IllegalArgumentException("安全码不存在");
-    }
-
-    private void scheduleNext(String codeId) {
-        codeExistenceValidation(codeId);
-        CodeEntry entry = codeEntries.get(codeId);
-        ScheduledFuture<?> nextFuture = scheduler.schedule(  // 新调度
-                () -> {
-                    refreshCode(codeId);
-                    scheduleNext(codeId);
-                },
-                entry.refreshInterval,
-                TimeUnit.MILLISECONDS
-        );
-        codeEntries.put(codeId, new CodeEntry(entry.code, nextFuture, entry.refreshInterval, entry.logging));  // 更新
+        if (!codeEntries.containsKey(codeId))
+            throw new IllegalArgumentException("安全码不存在");
     }
 }
