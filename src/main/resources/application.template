@@ -65,8 +65,9 @@ shiro:
 #    thread-name-prefix: "ShiroTaskPool-"
 
 nullbot:
-  bot-id:
-  admin-id:
+  bot-id:  # 机器人账号
+  admin-id:  # 管理账号
+  log-id:  # 管理群聊
   default:  # 默认群设置
     # Limit
     limit-scope: Group
