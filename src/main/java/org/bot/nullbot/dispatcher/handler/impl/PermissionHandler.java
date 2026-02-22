@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class PermissionHandler implements Handler
 {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
 
     private final Map<Long, List<String>> bannedCmds = new ConcurrentHashMap<>();  // GroupId -> CommandClasses
     private final Map<String, LocalDateTime> bannedUsers = new ConcurrentHashMap<>();  // UserId + CommandClass -> BanUntil
