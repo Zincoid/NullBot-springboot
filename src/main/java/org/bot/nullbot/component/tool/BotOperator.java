@@ -15,6 +15,9 @@ public class BotOperator
 {
     @Value("${nullbot.bot-id}")
     private Long botId;
+    @Value("${nullbot.log-id}")
+    private Long logId;
+
     private final BotContainer botContainer;
 
     private static final int DEFAULT_MAX_RETRIES = 10;
@@ -40,6 +43,10 @@ public class BotOperator
     }
 
     // =================== 默认方法 ===================
+
+    public void sendLogGroupMsg(String message) {
+        sendGroupMsg(logId ,message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
+    }
 
     public void sendAllGroupMsg(String message) {
         sendAllGroupMsg(message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);

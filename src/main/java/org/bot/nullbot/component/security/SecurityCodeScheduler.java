@@ -5,7 +5,6 @@ import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.tool.BotOperator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -23,10 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SecurityCodeScheduler
 {
-    @Value("${nullbot.log-id}")
-    private Long logId;
-    private final BotOperator botOperator;
-
+    private final BotOperator botOperator;  // 通知工具
     private final ScheduledExecutorService scheduler;  // 调度器
     private final ConcurrentHashMap<String, CodeEntry> codeEntries;  // 存储安全码及调度任务
 
@@ -99,7 +95,7 @@ public class SecurityCodeScheduler
         );
         codeEntries.put(codeId, new CodeEntry(initCode, future, interval, logging));  // 存储
         log.info("▽ [SecurityCodeScheduler] 安全码已创建 - CodeId: {}, InitCode: {}", codeId, initCode);
-        if (logging) botOperator.sendGroupMsg(logId, """
+        if (logging) botOperator.sendLogGroupMsg("""
                 [安全码调度] 🔑已初始化
                 - CodeID: %s
                 - Interval: %sms
@@ -162,7 +158,7 @@ public class SecurityCodeScheduler
         );
         codeEntries.put(codeId, new CodeEntry(newCode, newFuture, entry.refreshInterval, entry.logging));  // 更新
         log.info("▽ [SecurityCodeScheduler] 安全码已使用并刷新 - UsedCodeId: {}, UsedCode: {}", codeId, usedCode);
-        if (entry.logging) botOperator.sendGroupMsg(logId, """
+        if (entry.logging) botOperator.sendLogGroupMsg("""
                 [安全码调度] 🔑已使用并刷新
                 - CodeID: %s
                 - NextOn: %s
@@ -183,7 +179,7 @@ public class SecurityCodeScheduler
         String newCode = UUID.randomUUID().toString();  // 生成新安全码
         codeEntries.put(codeId, new CodeEntry(newCode, entry.future, entry.refreshInterval, entry.logging));  // 更新
         log.info("▽ [SecurityCodeScheduler] 安全码已刷新 - CodeId: {}, Code: {}", codeId, newCode);
-        if (entry.logging) botOperator.sendGroupMsg(logId, """
+        if (entry.logging) botOperator.sendLogGroupMsg("""
                 [安全码调度] 🔑已刷新
                 - CodeID: %s
                 - NextOn: %s
