@@ -46,6 +46,8 @@ public class SettingServiceImpl implements SettingService
     public int getLimitCapacity(Long groupId) { return getSetting(groupId).getLimitCapacity(); }
     @Override
     public int getLimitRefill(Long groupId) { return getSetting(groupId).getLimitRefill(); }
+    @Override
+    public int getLimitInterval(Long groupId) { return getSetting(groupId).getLimitInterval(); }
 
     // 修改方法
     @Override
@@ -62,6 +64,13 @@ public class SettingServiceImpl implements SettingService
     public boolean setLimitRefill(Long groupId, int limitRefill) {
         SettingInfo setting = getSetting(groupId);
         setting.setLimitRefill(limitRefill);
+        return true;
+    }
+
+    @Override
+    public boolean setLimitInterval(Long groupId, int limitInterval) {
+        SettingInfo setting = getSetting(groupId);
+        setting.setLimitInterval(limitInterval);
         return true;
     }
 

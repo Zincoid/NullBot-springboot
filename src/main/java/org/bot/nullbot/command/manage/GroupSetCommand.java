@@ -66,8 +66,17 @@ public class GroupSetCommand implements Command
                     int refill = Integer.parseInt(params.get(2));
                     settingService.setLimitRefill(groupId, refill);
                     commandRateLimiter.reset(groupId);
-                    bot.sendGroupMsg(groupId, "[Limit] ✅限速补充已更新", false);
-                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速补充 -> {}", groupId, refill);
+                    bot.sendGroupMsg(groupId, "[Limit] ✅补充数量已更新", false);
+                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 补充数量 -> {}", groupId, refill);
+                    return;
+                }
+                if ("itv".equals(setting)) {
+                    if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
+                    int interval = Integer.parseInt(params.get(2));
+                    settingService.setLimitInterval(groupId, interval);
+                    commandRateLimiter.reset(groupId);
+                    bot.sendGroupMsg(groupId, "[Limit] ✅限速间隔已更新", false);
+                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速间隔 -> {}", groupId, interval);
                     return;
                 }
                 throw new NullBotMsgException("[群设置] ❌无此Limit设置");

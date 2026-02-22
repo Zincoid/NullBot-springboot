@@ -13,7 +13,8 @@ public class DefaultProperties
 {
     private LimitScope limitScope;  // 限速范围
     private int limitCapacity;  //  限速容量
-    private int limitRefill;  // 限速补充 (每分钟)
+    private int limitRefill;  // 限速补充量
+    private int limitInterval;  // 限速补充间隔 (单位: Min)
 
     private ChatScope chatScope;  // 会话范围
     private boolean antiInjection;  // 防注入模式

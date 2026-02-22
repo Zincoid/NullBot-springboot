@@ -73,6 +73,7 @@ nullbot:
     limit-scope: Group
     limit-capacity: 25
     limit-refill: 10
+    limit-interval: 1  # 单位: Min
     # AI - Basic
     chat-scope: group
     anti-injection: true

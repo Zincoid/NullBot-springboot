@@ -18,6 +18,7 @@ public class SettingInfo
     private LimitScope limitScope;
     private int limitCapacity;
     private int limitRefill;
+    private int limitInterval;
 
     private ChatScope chatScope;
     private boolean antiInjection;
@@ -45,6 +46,7 @@ public class SettingInfo
         this.limitScope = props.getLimitScope();
         this.limitCapacity = props.getLimitCapacity();
         this.limitRefill = props.getLimitRefill();
+        this.limitInterval = props.getLimitInterval();
 
         this.chatScope = props.getChatScope();
         this.antiInjection = props.isAntiInjection();
@@ -95,7 +97,8 @@ public class SettingInfo
                  ◉ Limit 设置
                 ├ 限速范围 - %s
                 ├ 限速容量 - %s
-                └ 限速补充 - %s
+                ├ 补充数量 - %s
+                └ 补充间隔 - %s Min
                  ◉ AI 设置
                 ├ 会话范围 - %s
                 ├ 防注模式 - %s
@@ -118,6 +121,7 @@ public class SettingInfo
                 limitScope,
                 limitCapacity,
                 limitRefill,
+                limitInterval,
                 chatScope,
                 antiInjection ? "ON" : "OFF",
                 thinking ? "ON" : "OFF",

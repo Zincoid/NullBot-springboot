@@ -54,7 +54,7 @@ public class CommandRateLimiter
     return buckets.computeIfAbsent(key, k -> Bucket.builder()
             .addLimit(limit -> limit
                     .capacity(settingService.getLimitCapacity(groupId))
-                    .refillGreedy(settingService.getLimitRefill(groupId), Duration.ofMinutes(1)))
+                    .refillGreedy(settingService.getLimitRefill(groupId), Duration.ofMinutes(settingService.getLimitInterval(groupId))))
             .build());
     }
 }
