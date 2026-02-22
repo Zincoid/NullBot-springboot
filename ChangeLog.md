@@ -495,4 +495,4 @@
 
 ### 2026.2.22
 - 增强 BotOperator 组件 - 支持失败重试 添加管理群通知方法；
-- 增强 SecurityCodeScheduler 组件 - 支持输出日志至指定管理群。
+- 增强 SecurityCodeScheduler 组件 - 支持输出日志至指定管理群并优化组件结构。
