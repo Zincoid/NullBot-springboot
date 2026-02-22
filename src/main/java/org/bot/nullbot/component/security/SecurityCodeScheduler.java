@@ -4,9 +4,16 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.component.tool.BotOperator;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.Map;
@@ -16,9 +23,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SecurityCodeScheduler
 {
+    @Value("${nullbot.log-id}")
+    private Long logId;
+    private final BotOperator botOperator;
+
     private final ScheduledExecutorService scheduler;  // 调度器
     private final ConcurrentHashMap<String, CodeEntry> codeEntries;  // 存储安全码及调度任务
 
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
     private static final long DEFAULT_REFRESH_INTERVAL = 600_000;  // 默认刷新间隔: 10 Min
     // private static final long DEFAULT_REFRESH_INTERVAL = 10_000;  // 测试刷新间隔: 10 Sec
 
@@ -27,18 +39,27 @@ public class SecurityCodeScheduler
         private final String code;
         private final ScheduledFuture<?> future;
         private final long refreshInterval;
+        private final boolean logging;
     }
 
-    public SecurityCodeScheduler() {
+    public SecurityCodeScheduler(BotOperator botOperator) {
+        this.botOperator = botOperator;
         scheduler = Executors.newScheduledThreadPool(5);
         codeEntries = new ConcurrentHashMap<>();
     }
 
     @PostConstruct
-    public void init() {  // 初始化安全码
-        createCode("regist");
-        createCode("access");
+    public void init() {  // 初始化安全码 (废弃 无法发送群日志)
+        // createCode("regist");
+        // createCode("access", 86_400_000, true);
         log.info("▽ [SecurityCodeScheduler] 安全码调度器已初始化");
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void initCode() {  // 初始化安全码
+        createCode("regist");
+        createCode("access", 86_400_000, true);
+        log.info("▽ [SecurityCodeScheduler] 默认安全码已初始化");
     }
 
     @PreDestroy
@@ -50,23 +71,24 @@ public class SecurityCodeScheduler
     // =================== 调用方法 ===================
 
     /**
-     * 创建安全码 (使用默认刷新间隔)
+     * 创建安全码 (使用默认刷新间隔 无群日志)
      * @param codeId 安全码标识
      * @return 初始安全码
      */
-    public String createCode(String codeId) { return createCode(codeId, null); }
+    public String createCode(String codeId) { return createCode(codeId, -1, false); }
 
     /**
      * 创建安全码
      * @param codeId 安全码标识
-     * @param refreshInterval 刷新间隔 (ms) 为空则使用默认值
+     * @param refreshInterval 刷新间隔 (ms) 非正则使用默认值
+     * @param logging 是否启用群日志
      * @return 初始安全码
      */
-    public String createCode(String codeId, Long refreshInterval) {
+    public String createCode(String codeId, long refreshInterval, boolean logging) {
         if (!StringUtils.hasLength(codeId)) throw new IllegalArgumentException("码标识不合法");
         if (codeEntries.containsKey(codeId)) removeCode(codeId);  // 停止原有任务
         String initCode = UUID.randomUUID().toString();
-        long interval = (refreshInterval != null && refreshInterval > 0) ? refreshInterval : DEFAULT_REFRESH_INTERVAL;
+        long interval = refreshInterval > 0 ? refreshInterval : DEFAULT_REFRESH_INTERVAL;
         ScheduledFuture<?> future = scheduler.schedule(  // 创建调度任务
                 () -> {
                     refreshCode(codeId);
@@ -75,8 +97,15 @@ public class SecurityCodeScheduler
                 interval,
                 TimeUnit.MILLISECONDS
         );
-        codeEntries.put(codeId, new CodeEntry(initCode, future, interval));  // 存储
+        codeEntries.put(codeId, new CodeEntry(initCode, future, interval, logging));  // 存储
         log.info("▽ [SecurityCodeScheduler] 安全码已创建 - CodeId: {}, InitCode: {}", codeId, initCode);
+        if (logging) botOperator.sendGroupMsg(logId, """
+                [安全码调度] 🔑已初始化
+                - CodeID: %s
+                - Interval: %sms
+                - InitCode: %s"""
+                .formatted(codeId, interval, initCode)
+        );
         return initCode;
     }
 
@@ -131,8 +160,15 @@ public class SecurityCodeScheduler
                 entry.refreshInterval,
                 TimeUnit.MILLISECONDS
         );
-        codeEntries.put(codeId, new CodeEntry(newCode, newFuture, entry.refreshInterval));  // 更新
+        codeEntries.put(codeId, new CodeEntry(newCode, newFuture, entry.refreshInterval, entry.logging));  // 更新
         log.info("▽ [SecurityCodeScheduler] 安全码已使用并刷新 - UsedCodeId: {}, UsedCode: {}", codeId, usedCode);
+        if (entry.logging) botOperator.sendGroupMsg(logId, """
+                [安全码调度] 🔑已使用并刷新
+                - CodeID: %s
+                - NextOn: %s
+                - NewCode: %s"""
+                .formatted(codeId, LocalDateTime.now().plus(Duration.ofMillis(entry.refreshInterval)).format(formatter), newCode)
+        );
         return usedCode;
     }
 
@@ -145,8 +181,15 @@ public class SecurityCodeScheduler
         codeExistenceValidation(codeId);
         CodeEntry entry = codeEntries.get(codeId);
         String newCode = UUID.randomUUID().toString();  // 生成新安全码
-        codeEntries.put(codeId, new CodeEntry(newCode, entry.future, entry.refreshInterval));  // 更新
+        codeEntries.put(codeId, new CodeEntry(newCode, entry.future, entry.refreshInterval, entry.logging));  // 更新
         log.info("▽ [SecurityCodeScheduler] 安全码已刷新 - CodeId: {}, Code: {}", codeId, newCode);
+        if (entry.logging) botOperator.sendGroupMsg(logId, """
+                [安全码调度] 🔑已刷新
+                - CodeID: %s
+                - NextOn: %s
+                - NewCode: %s"""
+                .formatted(codeId, LocalDateTime.now().plus(Duration.ofMillis(entry.refreshInterval)).format(formatter), newCode)
+        );
         return newCode;
     }
 
@@ -179,7 +222,7 @@ public class SecurityCodeScheduler
                 newInterval,
                 TimeUnit.MILLISECONDS
         );
-        codeEntries.put(codeId, new CodeEntry(entry.code, newFuture, newInterval));  // 更新
+        codeEntries.put(codeId, new CodeEntry(entry.code, newFuture, newInterval, entry.logging));  // 更新
         log.info("▽ [SecurityCodeScheduler] 安全码刷新间隔已更新 - CodeId: {}, NewInterval: {} ms", codeId, newInterval);
     }
 
@@ -200,6 +243,6 @@ public class SecurityCodeScheduler
                 entry.refreshInterval,
                 TimeUnit.MILLISECONDS
         );
-        codeEntries.put(codeId, new CodeEntry(entry.code, nextFuture, entry.refreshInterval));  // 更新
+        codeEntries.put(codeId, new CodeEntry(entry.code, nextFuture, entry.refreshInterval, entry.logging));  // 更新
     }
 }
