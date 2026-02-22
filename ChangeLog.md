@@ -492,3 +492,7 @@
 - 增强 DeepSeekClient 以及 责任链结构 - 实现 AI 私聊功能；
 - 增强 SysMsgStorage 组件及相关指令 - 支持用户自定义私聊 AI 提示词；
 - 增强 PermissionHandler - 针对私信指令添加授权验证和系统锁定时禁用功能。
+
+### 2026.2.22
+- 增强 BotOperator 组件 - 支持失败重试；
+- 增强 SecurityCodeScheduler 组件 - 支持输出日志至指定管理群。
