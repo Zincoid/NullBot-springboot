@@ -2,6 +2,7 @@ package org.bot.nullbot.component.control;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.enums.BniMode;
 import org.springframework.stereotype.Component;
 
@@ -17,24 +18,24 @@ import java.util.regex.Pattern;
 public class BotNextInputer
 {
     private final Map<String, InputEntry> inputEntries = new ConcurrentHashMap<>();
-    private final Map<String, List<String>> inputCaches = new ConcurrentHashMap<>();
+    private final Map<String, List<Pair<Long, String>>> inputCaches = new ConcurrentHashMap<>();
 
     @AllArgsConstructor
     private static class InputEntry {
         private final Pattern pattern;
-        private final CompletableFuture<List<String>> future;
+        private final CompletableFuture<List<Pair<Long, String>>> future;
     }
 
     // =================== 调用方法 ===================
 
     /* 注册输入事件 - 阻塞直到收到响应或超时 (视模式而定) */
-    public List<String> request(BniMode mode, Long targetId, long timeout, String pattern) {
+    public List<Pair<Long, String>> request(BniMode mode, Long targetId, long timeout, String pattern) {
         String id = switch (mode) {
             case PS -> "PS_%s".formatted(targetId);  // 个人单值模式 targetId为用户ID 超时返回空列表
             case GS -> "GS_%s".formatted(targetId);  // 群组单值模式 targetId为群聊ID 超时返回空列表
-            case GM -> "GM_%s".formatted(targetId);  // 群组多值模式 targetId为群聊ID 超时返回已输入的 (用户ID:输入值) 列表
+            case GM -> "GM_%s".formatted(targetId);  // 群组多值模式 targetId为群聊ID 超时返回已输入值列表
         };
-        CompletableFuture<List<String>> future = new CompletableFuture<>();
+        CompletableFuture<List<Pair<Long, String>>> future = new CompletableFuture<>();
         inputEntries.put(id, new InputEntry(Pattern.compile(pattern), future));
         if (mode == BniMode.GM) inputCaches.put(id, Collections.synchronizedList(new ArrayList<>()));
         try {
@@ -73,9 +74,9 @@ public class BotNextInputer
         if (entry != null && !entry.future.isDone()) {
             if (!entry.pattern.matcher(message).matches()) return false;
             if (mode == BniMode.GM)
-                inputCaches.get(id).add("%s:%s".formatted(userId, message));
+                inputCaches.get(id).add(Pair.of(userId, message));
             else
-                entry.future.complete(Collections.singletonList(message));
+                entry.future.complete(Collections.singletonList(Pair.of(userId, message)));
             log.info("▽ [BotNextInputer] 群聊 {} 用户 {} 已响应 (Mode: {}) - {}", groupId, userId, mode, message);
             return true;
         }
@@ -85,12 +86,12 @@ public class BotNextInputer
     // =================== 工具方法 ===================
 
     public boolean isWaiting(String id) {
-        CompletableFuture<List<String>> future = inputEntries.get(id).future;
+        CompletableFuture<List<Pair<Long, String>>> future = inputEntries.get(id).future;
         return future != null && !future.isDone();
     }
 
     public boolean cancelWait(String id) {
-        CompletableFuture<List<String>> future = inputEntries.remove(id).future;
+        CompletableFuture<List<Pair<Long, String>>> future = inputEntries.remove(id).future;
         if (future != null && !future.isDone()) {
             future.complete(new ArrayList<>());
             return true;

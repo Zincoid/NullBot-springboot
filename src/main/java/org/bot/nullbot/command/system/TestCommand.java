@@ -4,6 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.BotNextInputer;
@@ -34,7 +35,7 @@ public class TestCommand implements Command
             default -> throw new NullBotMsgException("[测试] 无此模式");
         };
         bot.sendGroupMsg(groupId, "[测试] 等待输入...", false);
-        List<String> inputs = botNextInputer.request(mode, mode == BniMode.PS ? userId : groupId, 10, ".*");
+        List<Pair<Long, String>> inputs = botNextInputer.request(mode, mode == BniMode.PS ? userId : groupId, 10, ".*");
         if (mode != BniMode.GM && inputs.isEmpty()) {
             bot.sendGroupMsg(groupId, "[测试] 输入超时！", false);
             return;

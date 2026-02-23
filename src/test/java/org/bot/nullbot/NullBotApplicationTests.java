@@ -9,6 +9,7 @@ import jakarta.annotation.Resource;
 // import jdash.common.LevelSearchFilter;
 // import jdash.common.LevelSearchMode;
 // import jdash.common.entity.GDLevel;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.component.game.handler.TicTacToeMatchHandler;
@@ -378,7 +379,7 @@ class NullBotApplicationTests
             }
         }).start();
 
-        List<String> inputs = botNextInputer.request(BniMode.PS, 0L, 5, "[1-9]\\d*");
+        List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.PS, 0L, 5, "[1-9]\\d*");
         System.out.println("已响应: " + inputs);
     }
 }

@@ -5,6 +5,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
@@ -92,12 +93,12 @@ public class QuestionCommand implements Command
                     .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
 
             bot.sendGroupMsg(groupId, question, false);
-            List<String> inputs = botNextInputer.request(BniMode.PS, userId, QUESTION_TIMEOUT, "[a-zA-Z]");
+            List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.PS, userId, QUESTION_TIMEOUT, "[a-zA-Z]");
 
             String response;
             if (inputs.isEmpty())
                 response = "%s回答超时！答案是...%s！".formatted(userName, answer);
-            else if (answer.equals(inputs.getFirst().toUpperCase()))
+            else if (answer.equals(inputs.getFirst().getRight().toUpperCase()))
                 response = "%s回答正确！".formatted(userName);
             else
                 response = "%s回答错误！答案是...%s！".formatted(userName, answer);

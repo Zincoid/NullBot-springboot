@@ -5,6 +5,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.BotNextInputer;
@@ -58,11 +59,11 @@ public class EndfieldCommand implements Command
                         请发送序号来选择内容""".formatted(helpPaths.size(), helpList), false);
             log.info("\t\t\t\t├─[Endfield] 找到 {} 个匹配项", helpPaths.size());
 
-            List<String> inputs = botNextInputer.request(BniMode.PS, userId, 20, "[1-9]\\d*");
+            List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.PS, userId, 20, "[1-9]\\d*");
             if (inputs.isEmpty())
                 throw new NullBotMsgException("[终末地] ⌛️输入超时");
             try {
-                i = Integer.parseInt(inputs.getFirst()) - 1;
+                i = Integer.parseInt(inputs.getFirst().getRight()) - 1;
             } catch (NumberFormatException e) {
                 throw new NullBotMsgException("[终末地] ❌格式错误");
             }
