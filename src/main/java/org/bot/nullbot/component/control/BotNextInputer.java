@@ -57,7 +57,7 @@ public class BotNextInputer
         }
     }
 
-    /* 响应输入事件 */
+    /* 响应输入事件 -  自动匹配所有模式输入事件 */
     public boolean response(Long groupId, Long userId, String message) {
         boolean hasResponse = false;
         if (inputEntries.containsKey("PS_%s".formatted(userId)))
@@ -69,7 +69,7 @@ public class BotNextInputer
         return hasResponse;
     }
 
-    /* 响应输入事件 (按模式) */
+    /* 响应输入事件 (按模式) - 按模式匹配输入事件 */
     private boolean _response(BniMode mode, Long groupId, Long userId, String message) {
         String id = switch (mode) {
             case PS -> "PS_%s".formatted(userId);
