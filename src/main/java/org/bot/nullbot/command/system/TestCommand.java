@@ -27,20 +27,25 @@ public class TestCommand implements Command
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         if (params.isEmpty())
-            throw new NullBotMsgException("[测试] 参数不足");
+            throw new NullBotMsgException("[测试] ❌参数不足");
         BniMode mode = switch (params.getFirst()) {
             case "PS" -> BniMode.PS;
             case "GS" -> BniMode.GS;
             case "GM" -> BniMode.GM;
-            default -> throw new NullBotMsgException("[测试] 无此模式");
+            default -> throw new NullBotMsgException("[测试] ❌无此模式");
         };
-        bot.sendGroupMsg(groupId, "[测试] 等待输入...", false);
-        List<Pair<Long, String>> inputs = botNextInputer.request(mode, mode == BniMode.PS ? userId : groupId, 10, ".*");
+        bot.sendGroupMsg(groupId, "[测试] ⏳等待输入中...", false);
+        List<Pair<Long, String>> inputs;
+        try {
+            inputs = botNextInputer.request(mode, mode == BniMode.PS ? userId : groupId, 10, ".*");
+        } catch (Exception e) {
+            throw new NullBotMsgException("[测试] ❌" + e.getMessage());
+        }
         if (mode != BniMode.GM && inputs.isEmpty()) {
-            bot.sendGroupMsg(groupId, "[测试] 输入超时！", false);
+            bot.sendGroupMsg(groupId, "[测试] ⚠️输入超时", false);
             return;
         }
-        bot.sendGroupMsg(groupId, "[测试] 输入内容: " + inputs, false);
+        bot.sendGroupMsg(groupId, "[测试] ✅输入结束\n" + inputs, false);
     }
 
     @Override

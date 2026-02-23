@@ -35,6 +35,8 @@ public class BotNextInputer
             case GS -> "GS_%s".formatted(targetId);  // 群组单值模式 targetId为群聊ID 超时返回空列表
             case GM -> "GM_%s".formatted(targetId);  // 群组多值模式 targetId为群聊ID 超时返回已输入值列表
         };
+        if (inputEntries.containsKey(id))
+            throw new RuntimeException("处于输入状态");
         if (mode == BniMode.GM)
             inputCaches.put(id, Collections.synchronizedList(new ArrayList<>()));
         CompletableFuture<List<Pair<Long, String>>> future = new CompletableFuture<>();
@@ -49,7 +51,7 @@ public class BotNextInputer
                     .get();
         } catch (Exception e) {
             log.error("▽ [BotNextInputer] 输入事件异常 (Mode: {})", mode, e);
-            throw new RuntimeException("BotNextInputer 错误: 输入事件异常");
+            throw new RuntimeException("输入事件异常");
         } finally {
             inputEntries.remove(id);
         }

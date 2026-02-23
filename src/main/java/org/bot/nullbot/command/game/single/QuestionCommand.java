@@ -93,7 +93,13 @@ public class QuestionCommand implements Command
                     .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
 
             bot.sendGroupMsg(groupId, question, false);
-            List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.PS, userId, QUESTION_TIMEOUT, "[a-zA-Z]");
+
+            List<Pair<Long, String>> inputs;
+            try {
+                inputs = botNextInputer.request(BniMode.PS, userId, QUESTION_TIMEOUT, "[a-zA-Z]");
+            } catch (Exception e) {
+                throw new NullBotMsgException("[问答] ❌" + e.getMessage());
+            }
 
             String response;
             if (inputs.isEmpty())

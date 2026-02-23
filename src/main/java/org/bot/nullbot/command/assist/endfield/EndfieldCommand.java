@@ -59,7 +59,12 @@ public class EndfieldCommand implements Command
                         请发送序号来选择内容""".formatted(helpPaths.size(), helpList), false);
             log.info("\t\t\t\t├─[Endfield] 找到 {} 个匹配项", helpPaths.size());
 
-            List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.PS, userId, 20, "[1-9]\\d*");
+            List<Pair<Long, String>> inputs;
+            try {
+                inputs = botNextInputer.request(BniMode.PS, userId, 20, "[1-9]\\d*");
+            } catch (Exception e) {
+                throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
+            }
             if (inputs.isEmpty())
                 throw new NullBotMsgException("[终末地] ⌛️输入超时");
             try {
