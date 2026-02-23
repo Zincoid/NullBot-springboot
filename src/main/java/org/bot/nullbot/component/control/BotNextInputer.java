@@ -59,20 +59,23 @@ public class BotNextInputer
 
     /* 响应输入事件 */
     public boolean response(Long groupId, Long userId, String message) {
-        BniMode mode;
-        String id;
-        if (inputEntries.containsKey("PS_%s".formatted(userId))) {
-            mode = BniMode.PS;
-            id = "PS_%s".formatted(userId);
-        } else if (inputEntries.containsKey("GS_%s".formatted(groupId))) {
-            mode = BniMode.GS;
-            id = "GS_%s".formatted(groupId);
-        } else if (inputEntries.containsKey("GM_%s".formatted(groupId))) {
-            mode = BniMode.GM;
-            id = "GM_%s".formatted(groupId);
-        } else
-            return false;
+        boolean hasResponse = false;
+        if (inputEntries.containsKey("PS_%s".formatted(userId)))
+            if (_response(BniMode.PS, groupId, userId, message)) hasResponse = true;
+        if (inputEntries.containsKey("GS_%s".formatted(groupId)))
+            if (_response(BniMode.GS, groupId, userId, message)) hasResponse = true;
+        if (inputEntries.containsKey("GM_%s".formatted(groupId)))
+            if (_response(BniMode.GM, groupId, userId, message)) hasResponse = true;
+        return hasResponse;
+    }
 
+    /* 响应输入事件 (按模式) */
+    private boolean _response(BniMode mode, Long groupId, Long userId, String message) {
+        String id = switch (mode) {
+            case PS -> "PS_%s".formatted(userId);
+            case GS -> "GS_%s".formatted(groupId);
+            case GM -> "GM_%s".formatted(groupId);
+        };
         InputEntry entry = inputEntries.get(id);
         if (entry != null && !entry.future.isDone()) {
             if (!entry.pattern.matcher(message).matches()) return false;
