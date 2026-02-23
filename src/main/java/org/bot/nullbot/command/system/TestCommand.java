@@ -26,7 +26,7 @@ public class TestCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        if (params.isEmpty())
+        if (params.size() < 2)
             throw new NullBotMsgException("[测试] ❌参数不足");
         BniMode mode = switch (params.getFirst()) {
             case "PS" -> BniMode.PS;
@@ -34,10 +34,16 @@ public class TestCommand implements Command
             case "GM" -> BniMode.GM;
             default -> throw new NullBotMsgException("[测试] ❌无此模式");
         };
+        long timeout;
+        try {
+            timeout = Long.parseLong(params.get(1));
+        } catch (NumberFormatException e) {
+            throw new NullBotMsgException("[测试] ❌格式错误");
+        }
         bot.sendGroupMsg(groupId, "[测试] ⏳等待输入中...", false);
         List<Pair<Long, String>> inputs;
         try {
-            inputs = botNextInputer.request(mode, mode == BniMode.PS ? userId : groupId, 10, ".*");
+            inputs = botNextInputer.request(mode, mode == BniMode.PS ? userId : groupId, timeout, ".*");
         } catch (Exception e) {
             throw new NullBotMsgException("[测试] ❌" + e.getMessage());
         }
