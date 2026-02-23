@@ -75,7 +75,7 @@ nullbot:
     limit-refill: 10
     limit-interval: 1  # 单位: Min
     # AI - Basic
-    chat-scope: group
+    chat-scope: Group
     anti-injection: true
     thinking: false
     voice: false
