@@ -10,6 +10,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.dispatcher.handler.impl.PermissionHandler;
+import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -91,12 +92,12 @@ public class QuestionCommand implements Command
                     .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
 
             bot.sendGroupMsg(groupId, question, false);
-            String next = botNextInputer.request(userId, QUESTION_TIMEOUT, "[a-zA-Z]");
+            List<String> inputs = botNextInputer.request(BniMode.PS, userId, QUESTION_TIMEOUT, "[a-zA-Z]");
 
             String response;
-            if (next == null)
+            if (inputs.isEmpty())
                 response = "%s回答超时！答案是...%s！".formatted(userName, answer);
-            else if (answer.equals(next.toUpperCase()))
+            else if (answer.equals(inputs.getFirst().toUpperCase()))
                 response = "%s回答正确！".formatted(userName);
             else
                 response = "%s回答错误！答案是...%s！".formatted(userName, answer);

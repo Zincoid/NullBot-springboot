@@ -52,7 +52,7 @@ public class MonitorListener
     // =================== 输入监听方法 ===================
 
     public boolean onGroupNextInputDetection(GroupMessageEvent event) {
-        return botNextInputer.response(event.getUserId(), event.getMessage());
+        return botNextInputer.response(event.getGroupId(), event.getUserId(), event.getMessage());
     }
 
     // =================== 串行监听方法 ===================

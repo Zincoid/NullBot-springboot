@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.enums.BniMode;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,13 +25,21 @@ public class TestCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
+        if (params.isEmpty())
+            throw new NullBotMsgException("[测试] 参数不足");
+        BniMode mode = switch (params.getFirst()) {
+            case "PS" -> BniMode.PS;
+            case "GS" -> BniMode.GS;
+            case "GM" -> BniMode.GM;
+            default -> throw new NullBotMsgException("[测试] 无此模式");
+        };
         bot.sendGroupMsg(groupId, "[测试] 等待输入...", false);
-        String next = botNextInputer.request(userId, 10, ".*");
-        if (next == null) {
+        List<String> inputs = botNextInputer.request(mode, mode == BniMode.PS ? userId : groupId, 10, ".*");
+        if (mode != BniMode.GM && inputs.isEmpty()) {
             bot.sendGroupMsg(groupId, "[测试] 输入超时！", false);
             return;
         }
-        bot.sendGroupMsg(groupId, "[测试] 输入内容: " + next, false);
+        bot.sendGroupMsg(groupId, "[测试] 输入内容: " + inputs, false);
     }
 
     @Override

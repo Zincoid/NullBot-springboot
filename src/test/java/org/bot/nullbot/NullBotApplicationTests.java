@@ -19,6 +19,7 @@ import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.game.Matcher;
 import org.bot.nullbot.entity.svg.SvgCanvas;
+import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.HtmlTemplateUtil;
 import org.bot.nullbot.util.MessageParseUtil;
@@ -74,7 +75,7 @@ class NullBotApplicationTests
     }
 
     @Test
-    void parseTest() throws IOException {
+    void parseTest() {
         Bot bot = botContainer.robots.get(botId);
         System.out.println(bot.getStrangerInfo(2660181154L, true).getData().getNickname());
         System.out.println(MessageParseUtil.parseRawSaying(bot, "[CQ:at,qq=2660181154] 你好！"));
@@ -369,15 +370,15 @@ class NullBotApplicationTests
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                botNextInputer.response(0L, "test");
-                botNextInputer.response(0L, "A");
-                botNextInputer.response(0L, "11");
+                botNextInputer.response(0L, 1L, "test");
+                botNextInputer.response(0L, 0L, "A");
+                botNextInputer.response(0L, 2L, "11");
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }).start();
 
-        String next = botNextInputer.request(0L, 5, "[1-9]\\d*");
-        System.out.println("已响应: " + next);
+        List<String> inputs = botNextInputer.request(BniMode.PS, 0L, 5, "[1-9]\\d*");
+        System.out.println("已响应: " + inputs);
     }
 }
