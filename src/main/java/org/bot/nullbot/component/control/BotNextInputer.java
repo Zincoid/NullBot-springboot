@@ -36,7 +36,7 @@ public class BotNextInputer
             case GM -> "GM_%s".formatted(targetId);  // 群组多值模式 targetId为群聊ID 超时返回已输入值列表
         };
         if (inputEntries.containsKey(id))
-            throw new RuntimeException("处于输入状态");
+            throw new RuntimeException("输入事件冲突");
         if (mode == BniMode.GM)
             inputCaches.put(id, Collections.synchronizedList(new ArrayList<>()));
         CompletableFuture<List<Pair<Long, String>>> future = new CompletableFuture<>();
