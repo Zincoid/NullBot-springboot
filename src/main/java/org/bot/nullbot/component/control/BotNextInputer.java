@@ -32,7 +32,7 @@ public class BotNextInputer
         String id = switch (mode) {
             case PS -> "PS_%s".formatted(targetId);  // 个人单值模式 targetId为用户ID 超时返回空列表
             case GS -> "GS_%s".formatted(targetId);  // 群组单值模式 targetId为群聊ID 超时返回空列表
-            case GM -> "GM_%s".formatted(targetId);  // 群组多值模式 targetId为群聊ID 超时返回已输入值列表
+            case GM -> "GM_%s".formatted(targetId);  // 群组多值模式 targetId为群聊ID 超时返回已输入的 (用户ID:输入值) 列表
         };
         CompletableFuture<List<String>> future = new CompletableFuture<>();
         inputEntries.put(id, new InputEntry(Pattern.compile(pattern), future));
@@ -73,7 +73,7 @@ public class BotNextInputer
         if (entry != null && !entry.future.isDone()) {
             if (!entry.pattern.matcher(message).matches()) return false;
             if (mode == BniMode.GM)
-                inputCaches.get(id).add(message);
+                inputCaches.get(id).add("%s:%s".formatted(userId, message));
             else
                 entry.future.complete(Collections.singletonList(message));
             log.info("▽ [BotNextInputer] 群聊 {} 用户 {} 已响应 (Mode: {}) - {}", groupId, userId, mode, message);
