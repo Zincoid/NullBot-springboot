@@ -35,9 +35,10 @@ public class BotNextInputer
             case GS -> "GS_%s".formatted(targetId);  // 群组单值模式 targetId为群聊ID 超时返回空列表
             case GM -> "GM_%s".formatted(targetId);  // 群组多值模式 targetId为群聊ID 超时返回已输入值列表
         };
+        if (mode == BniMode.GM)
+            inputCaches.put(id, Collections.synchronizedList(new ArrayList<>()));
         CompletableFuture<List<Pair<Long, String>>> future = new CompletableFuture<>();
         inputEntries.put(id, new InputEntry(Pattern.compile(pattern), future));
-        if (mode == BniMode.GM) inputCaches.put(id, Collections.synchronizedList(new ArrayList<>()));
         try {
             log.info("▽ [BotNextInputer] 等待 {} 输入 (Mode: {}, Timeout: {} Sec)", targetId, mode, timeout);
             return future.orTimeout(timeout, TimeUnit.SECONDS)
