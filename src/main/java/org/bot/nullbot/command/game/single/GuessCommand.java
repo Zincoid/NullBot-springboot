@@ -44,7 +44,7 @@ public class GuessCommand implements Command
         String userName = event.getSender().getNickname();
         String param = params.getFirst();
 
-        GuessInfo guessInfo = guessStorage.getGuessInfo(groupId);
+        GuessInfo guessInfo = guessStorage.getGuess(groupId);
         if (guessInfo == null) {
             // 初始化猜迷
             String acgPath = fileStorageProperties.getImagePath() + "/acg/" + param;
@@ -61,7 +61,7 @@ public class GuessCommand implements Command
             String characterName = characterPath
                     .split("/")[characterPath.split("/").length-1]
                     .split("_")[0];
-            guessStorage.initGuessInfo(groupId, characterName, characterPath);
+            guessStorage.initGuess(groupId, characterName, characterPath);
 
             // 获取猜谜图
             String response = MsgUtils.builder()
