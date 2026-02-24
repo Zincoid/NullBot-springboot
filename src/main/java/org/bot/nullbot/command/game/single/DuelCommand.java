@@ -80,6 +80,8 @@ public class DuelCommand implements Command
                         right.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList()
                 ), false
         );
+
+        duelStorage.removeDuel(groupId);
     }
 
     private String icon(int id) {
