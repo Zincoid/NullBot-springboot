@@ -1,5 +1,6 @@
 package org.bot.nullbot.command.game.single;
 
+import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
@@ -39,9 +40,17 @@ public class DuelCommand implements Command
             throw new NullBotMsgException("[斗蛐蛐] ⚠️已在游戏中");
 
         DuelInfo duel = duelStorage.initDuel(groupId);
-        bot.sendGroupMsg(groupId, """
-                [斗蛐蛐] 测试:录入30秒(L/R)
-                %s""".formatted(duel), false);
+        MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] 测试:计时30秒(多人)\n");
+        builder.text("- Left:\n");
+        for (Map.Entry<Integer, Integer> enemy : duel.getLeft().entrySet()) {
+            builder.img(getIconPath(enemy.getKey())).text("*" + enemy.getValue() + "\n");
+        }
+        builder.text("- Right:\n");
+        for (Map.Entry<Integer, Integer> enemy : duel.getRight().entrySet()) {
+            builder.img(getIconPath(enemy.getKey())).text("*" + enemy.getValue() + "\n");
+        }
+        builder.text("请发送L或R进行选择");
+        bot.sendGroupMsg(groupId, builder.build(), false);
 
         List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.GM, groupId, 30, "[LlRr]");
 
@@ -72,13 +81,17 @@ public class DuelCommand implements Command
         );
     }
 
+    private String getIconPath(int id) {
+        return fileStorageProperties.getResourcePath() + "/duel/icon/" + id + ".png";
+    }
+
     @Override
     public String getHelp() {
         return String.format("""
                 ◉ Duel 命令
-                功能:
+                功能: 明日方舟斗蛐蛐
                 限权: %d 级
-                格式:
+                格式: Duel
                 别名: 斗蛐蛐""", getAccess()
         );
     }
