@@ -59,7 +59,7 @@ public class PermissionHandler implements Handler
         } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent  groupMsgDeleteNoticeEvent) {
             groupId = groupMsgDeleteNoticeEvent.getGroupId();
             userId = groupMsgDeleteNoticeEvent.getUserId();
-        } else if(event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
+        } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
             groupId = 0L;  // 群号 0 代表私聊
             userId = privateMessageEvent.getUserId();
         } else {
