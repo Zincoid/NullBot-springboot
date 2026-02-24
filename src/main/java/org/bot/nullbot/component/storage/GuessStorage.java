@@ -13,12 +13,10 @@ public class GuessStorage
 {
     private final Map<Long, GuessInfo> guesses = new ConcurrentHashMap<>();
 
+    public void initGuessInfo(Long groupId, String characterName, String characterPath) { guesses.put(groupId, new GuessInfo(characterName, characterPath, 0)); }
     public GuessInfo getGuessInfo(Long groupId) {
         return guesses.getOrDefault(groupId, null);
     }
-
-    public void initGuessInfo(Long groupId, String characterName, String characterPath) { guesses.put(groupId, new GuessInfo(characterName, characterPath, 0)); }
-
     public void removeGuess(Long groupId) {
         guesses.remove(groupId);
     }
