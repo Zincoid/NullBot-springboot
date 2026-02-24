@@ -31,6 +31,8 @@ public class DuelCommand implements Command
     private final DuelStorage duelStorage;
     private final BotNextInputer botNextInputer;
 
+    private static final int SELECTION_TIME = 30;  // 抉择时间 单位: Second
+
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
@@ -40,7 +42,7 @@ public class DuelCommand implements Command
             throw new NullBotMsgException("[斗蛐蛐] ⚠️已在游戏中");
 
         DuelInfo duel = duelStorage.initDuel(groupId);
-        MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] 测试:计时30秒(多人)\n");
+        MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] 多人测试\n");
         builder.text("- Left:\n");
         for (Map.Entry<Integer, Integer> enemy : duel.getLeft().entrySet()) {
             builder.img(getIconPath(enemy.getKey())).text("*" + enemy.getValue() + "\n");
@@ -49,10 +51,10 @@ public class DuelCommand implements Command
         for (Map.Entry<Integer, Integer> enemy : duel.getRight().entrySet()) {
             builder.img(getIconPath(enemy.getKey())).text("*" + enemy.getValue() + "\n");
         }
-        builder.text("请发送L或R进行选择");
+        builder.text("请发送L或R进行选择(%s秒内)".formatted(SELECTION_TIME));
         bot.sendGroupMsg(groupId, builder.build(), false);
 
-        List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.GM, groupId, 30, "[LlRr]");
+        List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.GM, groupId, SELECTION_TIME, "[LlRr]");
 
         Map<Long, Pair<Long, String>> lastInputMap = new LinkedHashMap<>();
         for (Pair<Long, String> input : inputs) lastInputMap.put(input.getKey(), input);
@@ -69,10 +71,10 @@ public class DuelCommand implements Command
         }
 
         bot.sendGroupMsg(groupId, """
-                [斗蛐蛐] 测试:判断结果
+                [斗蛐蛐] 测试结果
                 - %s侧胜出
-                - Winner: %s
-                - Loser: %s"""
+                - 赢家: %s
+                - 输家: %s"""
                 .formatted(
                         duel.getWinner(),
                         left.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList(),
