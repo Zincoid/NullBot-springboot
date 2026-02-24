@@ -19,12 +19,10 @@ import org.bot.nullbot.component.render.WebScreenCapturer;
 import org.bot.nullbot.dispatcher.CommandProcessor;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.game.Matcher;
+import org.bot.nullbot.entity.info.DuelInfo;
 import org.bot.nullbot.entity.svg.SvgCanvas;
 import org.bot.nullbot.enums.BniMode;
-import org.bot.nullbot.util.FileUtil;
-import org.bot.nullbot.util.HtmlTemplateUtil;
-import org.bot.nullbot.util.MessageParseUtil;
-import org.bot.nullbot.util.ResourceUtil;
+import org.bot.nullbot.util.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -381,5 +379,19 @@ class NullBotApplicationTests
 
         List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.PS, 0L, 5, "[1-9]\\d*");
         System.out.println("已响应: " + inputs);
+    }
+
+    @Test
+    void RandomDuelTest() throws InterruptedException {
+        while (true) {
+            DuelInfo duelInfo = null;
+            try {
+                duelInfo = DuelUtil.getRandom("Y:\\Materials\\BOT\\bet\\usable\\duel\\test.csv");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+            System.out.println(duelInfo);
+            Thread.sleep(1000);
+        }
     }
 }
