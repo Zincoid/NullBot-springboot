@@ -36,21 +36,17 @@ public class DuelCommand implements Command
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
-        Long userId = event.getUserId();
-
         if (duelStorage.getDuel(groupId) != null)
             throw new NullBotMsgException("[斗蛐蛐] ⚠️已在游戏中");
 
         DuelInfo duel = duelStorage.initDuel(groupId);
         MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] 多人测试\n");
         builder.text("- Left:\n");
-        for (Map.Entry<Integer, Integer> enemy : duel.getLeft().entrySet()) {
+        for (Map.Entry<Integer, Integer> enemy : duel.getLeft().entrySet())
             builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + "\n");
-        }
         builder.text("- Right:\n");
-        for (Map.Entry<Integer, Integer> enemy : duel.getRight().entrySet()) {
+        for (Map.Entry<Integer, Integer> enemy : duel.getRight().entrySet())
             builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + "\n");
-        }
         builder.text("请发送L或R进行选择(%s秒内)".formatted(SELECTION_TIME));
         bot.sendGroupMsg(groupId, builder.build(), false);
 
