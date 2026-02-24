@@ -45,11 +45,11 @@ public class DuelCommand implements Command
         MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] 多人测试\n");
         builder.text("- Left:\n");
         for (Map.Entry<Integer, Integer> enemy : duel.getLeft().entrySet()) {
-            builder.img(getIconPath(enemy.getKey())).text("*" + enemy.getValue() + "\n");
+            builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + "\n");
         }
         builder.text("- Right:\n");
         for (Map.Entry<Integer, Integer> enemy : duel.getRight().entrySet()) {
-            builder.img(getIconPath(enemy.getKey())).text("*" + enemy.getValue() + "\n");
+            builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + "\n");
         }
         builder.text("请发送L或R进行选择(%s秒内)".formatted(SELECTION_TIME));
         bot.sendGroupMsg(groupId, builder.build(), false);
@@ -63,11 +63,10 @@ public class DuelCommand implements Command
         List<Long> left = new ArrayList<>();
         List<Long> right = new ArrayList<>();
         for (Pair<Long, String> pair : inputs) {
-            if (pair.getRight().equalsIgnoreCase("L")) {
+            if (pair.getRight().equalsIgnoreCase("L"))
                 left.add(pair.getLeft());
-            } else if (pair.getRight().equalsIgnoreCase("R")) {
+            else if (pair.getRight().equalsIgnoreCase("R"))
                 right.add(pair.getLeft());
-            }
         }
 
         bot.sendGroupMsg(groupId, """
@@ -83,7 +82,7 @@ public class DuelCommand implements Command
         );
     }
 
-    private String getIconPath(int id) {
+    private String icon(int id) {
         return fileStorageProperties.getResourcePath() + "/duel/icon/" + id + ".png";
     }
 
