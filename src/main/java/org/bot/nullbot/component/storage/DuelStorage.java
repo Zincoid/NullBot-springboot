@@ -19,7 +19,12 @@ public class DuelStorage
         dataPath = fileStorageProperties.getResourcePath() + "/duel/data.csv";
     }
 
-    public void initDuel(Long groupId) { duels.put(groupId, DuelUtil.getRandom(dataPath)); }
+    public DuelInfo initDuel(Long groupId) {
+        DuelInfo duel = DuelUtil.getRandom(dataPath);
+        duels.put(groupId, duel);
+        return duel;
+    }
+
     public DuelInfo getDuel(Long groupId) {
         return duels.getOrDefault(groupId, null);
     }
