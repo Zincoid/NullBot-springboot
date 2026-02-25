@@ -41,8 +41,8 @@ public class DuelCommand implements Command
 
         DuelInfo duel = duelStorage.initDuel(groupId);
 
-        MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] ⚔️请交战双方无序入场\n");
-        builder.text("[ ====== 左方选手 ====== ]\n");
+        MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] ⚔️请交战双方无序入场");
+        builder.text("\n[ ====== 左方选手 ====== ]\n");
         for (Map.Entry<Integer, Integer> enemy : duel.getLeft().entrySet())
             builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + " ");
         builder.text("\n[ ====== 右方选手 ====== ]\n");
