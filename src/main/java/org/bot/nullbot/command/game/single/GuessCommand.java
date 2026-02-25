@@ -79,8 +79,8 @@ public class GuessCommand implements Command
             if (inputs.isEmpty()) {
                 guessStorage.removeGuess(groupId);
                 bot.sendGroupMsg(groupId, """
-                        已结束\uD83D\uDCA6 答案是...
-                        %s！""".formatted(guess.getName()), false);
+                        已经结束啦\uD83D\uDCA6
+                        答案是...%s！""".formatted(guess.getName()), false);
                 log.info("\t\t\t\t├─[Guess] 群聊 {} 已结束", groupId);
                 return;
             }
@@ -110,7 +110,7 @@ public class GuessCommand implements Command
 
         if (guess.getTimes() >= MAX_RETRIES) {
             bot.sendGroupMsg(groupId, """
-                    已经错%s次啦！
+                    已经错%s次啦\uD83D\uDCA6
                     答案是...%s！""".formatted(MAX_RETRIES, guess.getName()), false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
         }
