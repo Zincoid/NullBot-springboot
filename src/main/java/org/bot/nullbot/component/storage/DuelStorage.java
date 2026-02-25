@@ -28,7 +28,5 @@ public class DuelStorage
     public DuelInfo getDuel(Long groupId) {
         return duels.getOrDefault(groupId, null);
     }
-    public void removeDuel(Long groupId) {
-        duels.remove(groupId);
-    }
+    public DuelInfo removeDuel(Long groupId) { return duels.remove(groupId); }
 }
