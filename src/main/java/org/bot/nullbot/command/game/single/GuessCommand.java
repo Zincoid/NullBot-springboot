@@ -35,17 +35,16 @@ public class GuessCommand implements Command
     private final GuessStorage guessStorage;
     private final UserService userService;
 
-    private static final int GUESS_TIMEOUT = 99;  // 超时时间 单位: Second
+    private static final int WAIT_TIMEOUT = 99;  // 超时时间 单位: Second
+    private static final int MAX_RETRIES = 10;  // 最大尝试次数
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) throws Exception {
+        Long groupId = event.getGroupId();
         if (params.isEmpty())
             throw new NullBotMsgException("[猜角色] ❌参数不足");
 
-        Long groupId = event.getGroupId();
-        String param = params.getFirst();
-
-        if ("-f".equals(param)) {
+        if ("-f".equals(params.getFirst())) {
             if (guessStorage.getGuess(groupId) == null)
                 throw new NullBotMsgException("[猜角色] ❌未在游戏中");
             botNextInputer.cancelWait(BniMode.GS, groupId);
@@ -58,28 +57,29 @@ public class GuessCommand implements Command
 
         GuessInfo guess;
         try {
-            guess = guessStorage.initGuess(groupId, param);
+            guess = guessStorage.initGuess(groupId, params.getFirst());
         } catch (Exception e) {
             throw new NullBotMsgException("[猜角色] ❌" + e.getMessage());
         }
 
-        String startMsg = MsgUtils.builder()
-                .text("[猜角色] ✨题目如下\n")
+        String startMsg = MsgUtils.builder().text("[猜角色] ✨题目是\n")
                 .img("base64://" + crop(guess.getPath(),
                         settingService.getGuessRatio(groupId),
                         settingService.getGuessPadding(groupId)))
-                .text("注: 发送\"#内容\"来猜测(%s秒内)".formatted(GUESS_TIMEOUT))
+                .text("注: 请发送\"#内容\"")
                 .build();
         bot.sendGroupMsg(groupId, startMsg, false);
         log.info("\t\t\t\t├─[Guess] 群聊 {} 初始化猜谜 -> {}", groupId, guess.getName());
 
-        do {
+        while (guess.getTimes() < MAX_RETRIES) {
             List<Pair<Long, String>> inputs = botNextInputer
-                    .request(BniMode.GS, groupId, GUESS_TIMEOUT, "#.+");
+                    .request(BniMode.GS, groupId, WAIT_TIMEOUT, "#.+");
 
             if (inputs.isEmpty()) {
                 guessStorage.removeGuess(groupId);
-                bot.sendGroupMsg(groupId, "已结束\uD83D\uDCA6 答案是...\n" + guess.getName() + "！", false);
+                bot.sendGroupMsg(groupId, """
+                        已结束\uD83D\uDCA6 答案是...
+                        %s！""".formatted(guess.getName()), false);
                 log.info("\t\t\t\t├─[Guess] 群聊 {} 已结束", groupId);
                 return;
             }
@@ -88,19 +88,17 @@ public class GuessCommand implements Command
             String answererName = bot.getStrangerInfo(answererId, true).getData().getNickname();
             String answer = inputs.getFirst().getRight().substring(1);
 
-            guessStorage.increaseTimes(groupId);
             if (guess.getName().equals(answer)) {
                 userService.plusExperience(answererId, 20);  // 给赢家 20 Exp
                 userService.increaseDrawTimes(answererId, 5);  // 给赢家 5 抽
-                String response = MsgUtils.builder()
-                        .text("""
+                String endMsg = MsgUtils.builder().text("""
                                 %s猜对啦✨
                                 答案是...%s！
                                 - 获得 5抽数 和 20Exp！
                                 - 一共猜了%s次！""".formatted(answererName, answer, guess.getTimes()))
                         .img(guess.getPath())
                         .build();
-                bot.sendGroupMsg(groupId, response, false);
+                bot.sendGroupMsg(groupId, endMsg, false);
                 guessStorage.removeGuess(groupId);
                 log.info("\t\t\t\t├─[Guess] 用户 {} 猜测正确", answererId);
                 break;
@@ -108,12 +106,16 @@ public class GuessCommand implements Command
                 bot.sendGroupMsg(groupId, "猜错啦！", false);
                 log.info("\t\t\t\t├─[Guess] 用户 {} 猜测错误", answererId);
             }
-        } while (guess.getTimes() < 10);
 
-        if (guess.getTimes() >= 10) {
-            bot.sendGroupMsg(groupId, "错了10次啦！答案是...\n" + guess.getName() + "！", false);
+            guessStorage.increaseTimes(groupId);
+        }
+
+        if (guess.getTimes() >= MAX_RETRIES) {
+            bot.sendGroupMsg(groupId, """
+                    已经错%s次啦！
+                    答案是...%s！""".formatted(MAX_RETRIES, guess.getName()), false);
             guessStorage.removeGuess(groupId);
-            log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数", groupId);
+            log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
         }
 
         guessStorage.removeGuess(groupId);
@@ -155,7 +157,8 @@ public class GuessCommand implements Command
                 奖励: 5抽数 & 20Exp
                 限权: %d 级
                 格式: Guess [类别|-f(放弃)]
-                别名: 猜角色/猜""", getAccess()
+                别名: 猜角色/猜
+                注意: 回答格式为#加你的猜测""", getAccess()
         );
     }
 
