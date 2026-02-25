@@ -133,7 +133,7 @@ public class GuessCommand implements Command
         // 随机选择裁剪起点
         int x = xMin + (xMax > xMin ? (int)(Math.random() * (xMax - xMin)) : 0);
         int y = yMin + (yMax > yMin ? (int)(Math.random() * (yMax - yMin)) : 0);
-        // 裁剪并转换为 base64
+        // 裁剪并转换 Base64
         return Base64Util.imageToBase64(img.getSubimage(x, y, w, h));
     }
 
