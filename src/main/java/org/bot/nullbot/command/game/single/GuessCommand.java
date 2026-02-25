@@ -72,6 +72,7 @@ public class GuessCommand implements Command
         log.info("\t\t\t\t├─[Guess] 群聊 {} 初始化猜谜 -> {}", groupId, guess.getName());
 
         while (guess.getTimes() < MAX_RETRIES) {
+            guessStorage.increaseTimes(groupId);
             List<Pair<Long, String>> inputs = botNextInputer
                     .request(BniMode.GS, groupId, WAIT_TIMEOUT, "#.+");
 
@@ -99,22 +100,18 @@ public class GuessCommand implements Command
                         .img(guess.getPath())
                         .build();
                 bot.sendGroupMsg(groupId, endMsg, false);
-                guessStorage.removeGuess(groupId);
                 log.info("\t\t\t\t├─[Guess] 用户 {} 猜测正确", answererId);
                 break;
             } else {
                 bot.sendGroupMsg(groupId, "猜错啦！", false);
                 log.info("\t\t\t\t├─[Guess] 用户 {} 猜测错误", answererId);
             }
-
-            guessStorage.increaseTimes(groupId);
         }
 
         if (guess.getTimes() >= MAX_RETRIES) {
             bot.sendGroupMsg(groupId, """
                     已经错%s次啦！
                     答案是...%s！""".formatted(MAX_RETRIES, guess.getName()), false);
-            guessStorage.removeGuess(groupId);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
         }
 
