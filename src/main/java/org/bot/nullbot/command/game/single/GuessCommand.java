@@ -86,7 +86,7 @@ public class GuessCommand implements Command
 
             Long answererId = inputs.getFirst().getLeft();
             String answererName = bot.getStrangerInfo(answererId, true).getData().getNickname();
-            String answer = inputs.getFirst().getRight().substring(1);
+            String answer = inputs.getFirst().getRight().substring(1).trim();
 
             if (guess.getName().equals(answer)) {
                 userService.plusExperience(answererId, 20);  // 给赢家 20 Exp
