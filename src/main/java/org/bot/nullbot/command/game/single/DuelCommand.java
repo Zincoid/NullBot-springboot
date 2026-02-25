@@ -65,6 +65,17 @@ public class DuelCommand implements Command
                 right.add(pair.getLeft());
         }
 
+        List<Long> winners;
+        List<Long> losers;
+        if ("L".equals(duel.getWinner())) {
+            winners = left;
+            losers = right;
+        } else if ("R".equals(duel.getWinner())) {
+            winners = right;
+            losers = left;
+        } else
+            throw new NullBotMsgException("[斗蛐蛐] ❌数据异常");
+
         bot.sendGroupMsg(groupId, """
                 [斗蛐蛐] 测试结果
                 - %s侧胜出
@@ -72,8 +83,8 @@ public class DuelCommand implements Command
                 - 输家: %s"""
                 .formatted(
                         duel.getWinner(),
-                        left.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList(),
-                        right.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList()
+                        winners.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList(),
+                        losers.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList()
                 ), false
         );
 
