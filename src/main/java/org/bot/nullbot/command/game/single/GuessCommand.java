@@ -57,15 +57,7 @@ public class GuessCommand implements Command
         try {
             GuessInfo guess = guessStorage.initGuess(groupId, params.getFirst());
 
-            String startMsg = MsgUtils.builder()
-                    .text("[猜角色] ✨题目是\n")
-                    .img("base64://" + crop(guess.getPath(),
-                            settingService.getGuessRatio(groupId),
-                            settingService.getGuessPadding(groupId),
-                            0.25, 100))
-                    .text("注: 请发送\"#内容\"")
-                    .build();
-            bot.sendGroupMsg(groupId, startMsg, false);
+            bot.sendGroupMsg(groupId, buildStartMsg(groupId, guess), false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 初始化猜谜 -> {}", groupId, guess.getName());
 
             while (guess.getTimes() < MAX_RETRIES) {
@@ -73,21 +65,21 @@ public class GuessCommand implements Command
                 List<Pair<Long, String>> inputs = botNextInputer
                         .request(BniMode.GS, groupId, WAIT_TIMEOUT, "#.+");
 
-                if (inputs.isEmpty() || "#".equals(inputs.getFirst().getRight().substring(1).trim())) {
-                    String endMsg = MsgUtils.builder()
-                            .text("""
-                                已经结束啦\uD83D\uDCA6
-                                答案是...%s！""".formatted(guess.getName()))
-                            .img(guess.getPath())
-                            .build();
-                    bot.sendGroupMsg(groupId, endMsg, false);
-                    log.info("\t\t\t\t├─[Guess] 群聊 {} 已结束", groupId);
+                if (inputs.isEmpty()) {
+                    bot.sendGroupMsg(groupId, buildEndMsg(guess), false);
+                    log.info("\t\t\t\t├─[Guess] 群聊 {} 游戏已结束 (超时/指令方法)", groupId);
                     return;
                 }
 
                 Long answererId = inputs.getFirst().getLeft();
                 String answererName = bot.getStrangerInfo(answererId, true).getData().getNickname();
                 String answer = inputs.getFirst().getRight().substring(1).trim();
+
+                if ("#".equals(answer)) {
+                    bot.sendGroupMsg(groupId, buildEndMsg(guess), false);
+                    log.info("\t\t\t\t├─[Guess] 群聊 {} 游戏已结束 (输入方法)", groupId);
+                    return;
+                }
 
                 if (guess.getName().equals(answer)) {
                     try {
@@ -96,15 +88,7 @@ public class GuessCommand implements Command
                     } catch (Exception e) {
                         throw new RuntimeException("给予奖励时出错: 用户可能未注册(请调用一次任意指令完成注册)");
                     }
-                    String correctMsg = MsgUtils.builder()
-                            .text("""
-                                %s猜对啦✨
-                                答案是...%s！
-                                - 获得 5抽数 和 20Exp！
-                                - 一共猜了%s次！""".formatted(answererName, answer, guess.getTimes()))
-                            .img(guess.getPath())
-                            .build();
-                    bot.sendGroupMsg(groupId, correctMsg, false);
+                    bot.sendGroupMsg(groupId, buildCorrectMsg(answererName, answer, guess), false);
                     log.info("\t\t\t\t├─[Guess] 用户 {} 猜测正确", answererId);
                     return;
                 } else {
@@ -112,14 +96,7 @@ public class GuessCommand implements Command
                     log.info("\t\t\t\t├─[Guess] 用户 {} 猜测错误", answererId);
                 }
             }
-
-            String failMsg = MsgUtils.builder()
-                    .text("""
-                        已经错%s次啦\uD83D\uDCA6
-                        答案是...%s！""".formatted(MAX_RETRIES, guess.getName()))
-                    .img(guess.getPath())
-                    .build();
-            bot.sendGroupMsg(groupId, failMsg, false);
+            bot.sendGroupMsg(groupId, buildFailedMag(guess), false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
 
         } catch (Exception e) {
@@ -128,6 +105,50 @@ public class GuessCommand implements Command
             guessStorage.removeGuess(groupId);
         }
     }
+
+    private String buildStartMsg(Long groupId, GuessInfo guess) throws Exception {
+        return MsgUtils.builder()
+                .text("[猜角色] ✨题目是\n")
+                .img("base64://" + crop(guess.getPath(),
+                        settingService.getGuessRatio(groupId),
+                        settingService.getGuessPadding(groupId),
+                        0.25, 100))
+                .text("注: 请发送\"#内容\"")
+                .build();
+    }
+
+    private String buildCorrectMsg(String name, String answer, GuessInfo guess) {
+        return MsgUtils.builder()
+                .text("""
+                        %s猜对啦✨
+                        答案是...%s！
+                        - 获得 5抽数 和 20Exp！
+                        - 一共猜了%s次！""".formatted(name, answer, guess.getTimes())
+                )
+                .img(guess.getPath())
+                .build();
+    }
+
+    private String buildFailedMag(GuessInfo guess) {
+        return MsgUtils.builder()
+                .text("""
+                        已经错%s次啦\uD83D\uDCA6
+                        答案是...%s！""".formatted(MAX_RETRIES, guess.getName())
+                )
+                .img(guess.getPath())
+                .build();
+    }
+
+    private String buildEndMsg(GuessInfo guess) {
+        return MsgUtils.builder()
+                .text("""
+                        游戏结束啦\uD83D\uDCA6
+                        答案是...%s！""".formatted(guess.getName())
+                )
+                .img(guess.getPath())
+                .build();
+    }
+
 
     private static String crop(String imagePath, double subSizeRatio, int padding,
                                double transparentRatio, int maxAttempts) throws Exception {
