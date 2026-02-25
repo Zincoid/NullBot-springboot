@@ -119,26 +119,21 @@ public class GuessCommand implements Command
 
     public static String crop(String p, double r, int pad) throws Exception {
         BufferedImage img = ImageIO.read(new File(p));
-
-        // 计算裁剪尺寸，确保在padding内部
+        // 计算裁剪尺寸 确保在 padding 内部
         int w = Math.max(1, (int)(img.getWidth() * r));
         int h = Math.max(1, (int)(img.getHeight() * r));
-
-        // 调整裁剪尺寸以适应padding
+        // 调整裁剪尺寸以适应 padding
         w = Math.min(w, img.getWidth() - 2 * pad);
         h = Math.min(h, img.getHeight() - 2 * pad);
-
         // 计算可裁剪范围
         int xMin = Math.max(0, pad);
         int xMax = Math.max(xMin, img.getWidth() - w - pad);
         int yMin = Math.max(0, pad);
         int yMax = Math.max(yMin, img.getHeight() - h - pad);
-
         // 随机选择裁剪起点
         int x = xMin + (xMax > xMin ? (int)(Math.random() * (xMax - xMin)) : 0);
         int y = yMin + (yMax > yMin ? (int)(Math.random() * (yMax - yMin)) : 0);
-
-        // 裁剪并转换为base64
+        // 裁剪并转换为 base64
         return Base64Util.imageToBase64(img.getSubimage(x, y, w, h));
     }
 
