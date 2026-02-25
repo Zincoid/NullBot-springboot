@@ -5,15 +5,16 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.component.storage.GuessStorage;
-import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.info.GuessInfo;
+import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.service.UserService;
-import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -29,10 +30,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GuessCommand implements Command
 {
-    private final FileStorageProperties fileStorageProperties;
+    private final BotNextInputer botNextInputer;
     private final SettingService settingService;
     private final GuessStorage guessStorage;
     private final UserService userService;
+
+    private static final int GUESS_TIMEOUT = 99;  // 超时时间 单位: Second
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) throws Exception {
@@ -40,68 +43,80 @@ public class GuessCommand implements Command
             throw new NullBotMsgException("[猜角色] ❌参数不足");
 
         Long groupId = event.getGroupId();
-        Long userId = event.getUserId();
-        String userName = event.getSender().getNickname();
         String param = params.getFirst();
 
-        GuessInfo guessInfo = guessStorage.getGuess(groupId);
-        if (guessInfo == null) {
-            // 初始化猜迷
-            String acgPath = fileStorageProperties.getImagePath() + "/acg/" + param;
+        if ("-f".equals(param)) {
+            if (guessStorage.getGuess(groupId) == null)
+                throw new NullBotMsgException("[猜角色] ❌未在游戏中");
+            botNextInputer.cancelWait(BniMode.GS, groupId);
+            log.info("\t\t\t\t├─[Guess] 群聊 {} 放弃猜测", groupId);
+            return;
+        }
 
-            String characterPath;
-            try {
-                characterPath = FileUtil.getRandomFilePath(acgPath);
-            } catch (Exception e) {
-                throw new NullBotMsgException("[猜角色] ❌不存在该类别");  // 目录异常
-            }
-            if (characterPath == null)
-                throw new NullBotMsgException("[猜角色] ❌该类别下暂无角色");
+        if (guessStorage.getGuess(groupId) != null)
+            throw new NullBotMsgException("[猜角色] ⚠️已在游戏中");
 
-            String characterName = characterPath
-                    .split("/")[characterPath.split("/").length-1]
-                    .split("_")[0];
-            guessStorage.initGuess(groupId, characterName, characterPath);
+        GuessInfo guess;
+        try {
+            guess = guessStorage.initGuess(groupId, param);
+        } catch (Exception e) {
+            throw new NullBotMsgException("[猜角色] ❌" + e.getMessage());
+        }
 
-            // 获取猜谜图
-            String response = MsgUtils.builder()
-                    .text("本群题目✨是\n")
-                    .img("base64://" + crop(characterPath,
-                            settingService.getGuessRatio(groupId),
-                            settingService.getGuessPadding(groupId)))
-                    .build();
-            bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[Guess] 初始化群猜谜 - {} -> {}", groupId, characterName);
-        } else {
-            // 判断对错
-            if ("-f".equals(param)) {
-                bot.sendGroupMsg(groupId, "已放弃\uD83D\uDCA6 答案是...\n" + guessInfo.getName() + "！", false);
+        String startMsg = MsgUtils.builder()
+                .text("[猜角色] ✨题目如下\n")
+                .img("base64://" + crop(guess.getPath(),
+                        settingService.getGuessRatio(groupId),
+                        settingService.getGuessPadding(groupId)))
+                .text("注: 发送\"#内容\"来猜测(%s秒内)".formatted(GUESS_TIMEOUT))
+                .build();
+        bot.sendGroupMsg(groupId, startMsg, false);
+        log.info("\t\t\t\t├─[Guess] 群聊 {} 初始化猜谜 -> {}", groupId, guess.getName());
+
+        do {
+            List<Pair<Long, String>> inputs = botNextInputer
+                    .request(BniMode.GS, groupId, GUESS_TIMEOUT, "#.+");
+
+            if (inputs.isEmpty()) {
                 guessStorage.removeGuess(groupId);
-                log.info("\t\t\t\t├─[Guess] 放弃猜测 - {}", userId);
+                bot.sendGroupMsg(groupId, "已结束\uD83D\uDCA6 答案是...\n" + guess.getName() + "！", false);
+                log.info("\t\t\t\t├─[Guess] 群聊 {} 已结束", groupId);
                 return;
             }
+
+            Long answererId = inputs.getFirst().getLeft();
+            String answererName = bot.getStrangerInfo(answererId, true).getData().getNickname();
+            String answer = inputs.getFirst().getRight().substring(1);
+
             guessStorage.increaseTimes(groupId);
-            if (guessInfo.getName().equals(param)) {
-                userService.plusExperience(userId, 20);  // 给赢家20Exp
-                userService.increaseDrawTimes(userId, 5);  // 给赢家5抽
+            if (guess.getName().equals(answer)) {
+                userService.plusExperience(answererId, 20);  // 给赢家 20 Exp
+                userService.increaseDrawTimes(answererId, 5);  // 给赢家 5 抽
                 String response = MsgUtils.builder()
-                        .text(userName + "猜对啦✨\n答案是..." + guessInfo.getName() + "！\n- 获得 5抽数 和 20Exp！\n- 一共猜了" + guessInfo.getTimes() + "次！")
-                        .img(guessInfo.getPath())
+                        .text("""
+                                %s猜对啦✨
+                                答案是...%s！
+                                - 获得 5抽数 和 20Exp！
+                                - 一共猜了%s次！""".formatted(answererName, answer, guess.getTimes()))
+                        .img(guess.getPath())
                         .build();
                 bot.sendGroupMsg(groupId, response, false);
                 guessStorage.removeGuess(groupId);
-                log.info("\t\t\t\t├─[Guess] 猜测正确 - {}", userId);
+                log.info("\t\t\t\t├─[Guess] 用户 {} 猜测正确", answererId);
+                break;
             } else {
-                if (guessInfo.getTimes() >= 10) {
-                    bot.sendGroupMsg(groupId, "错了10次啦！答案是...\n" + guessInfo.getName() + "！", false);
-                    guessStorage.removeGuess(groupId);
-                    log.info("\t\t\t\t├─[Guess] 猜测错误 已超过最大尝试次数 - {}", userId);
-                } else {
-                    bot.sendGroupMsg(groupId, "猜错啦！", false);
-                    log.info("\t\t\t\t├─[Guess] 猜测错误 - {}", userId);
-                }
+                bot.sendGroupMsg(groupId, "猜错啦！", false);
+                log.info("\t\t\t\t├─[Guess] 用户 {} 猜测错误", answererId);
             }
+        } while (guess.getTimes() < 10);
+
+        if (guess.getTimes() >= 10) {
+            bot.sendGroupMsg(groupId, "错了10次啦！答案是...\n" + guess.getName() + "！", false);
+            guessStorage.removeGuess(groupId);
+            log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数", groupId);
         }
+
+        guessStorage.removeGuess(groupId);
     }
 
     public static String crop(String p, double r, int pad) throws Exception {
