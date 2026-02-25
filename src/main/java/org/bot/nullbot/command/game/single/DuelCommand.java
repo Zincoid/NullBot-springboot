@@ -40,14 +40,14 @@ public class DuelCommand implements Command
             throw new NullBotMsgException("[斗蛐蛐] ⚠️已在游戏中");
 
         DuelInfo duel = duelStorage.initDuel(groupId);
-        MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] 多人测试\n");
-        builder.text("- Left:\n");
+        MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] ⚔️请交战双方无序入场\n");
+        builder.text("[ ====== 左方选手 ====== ]\n");
         for (Map.Entry<Integer, Integer> enemy : duel.getLeft().entrySet())
-            builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + "\n");
-        builder.text("- Right:\n");
+            builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + " ");
+        builder.text("\n[ ====== 右方选手 ====== ]\n");
         for (Map.Entry<Integer, Integer> enemy : duel.getRight().entrySet())
-            builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + "\n");
-        builder.text("请发送L或R进行选择(%s秒内)".formatted(SELECTION_TIME));
+            builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + " ");
+        builder.text("\n\n请发送L或R进行选择(%s秒内)".formatted(SELECTION_TIME));
         bot.sendGroupMsg(groupId, builder.build(), false);
 
         List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.GM, groupId, SELECTION_TIME, "[LlRr]");
@@ -76,16 +76,17 @@ public class DuelCommand implements Command
         } else
             throw new NullBotMsgException("[斗蛐蛐] ❌数据异常");
 
+        List<String> winnerNames = winners.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList();
+        List<String> loserNames = losers.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList();
+
         bot.sendGroupMsg(groupId, """
-                [斗蛐蛐] 测试结果
-                - %s侧胜出
-                - 赢家: %s
-                - 输家: %s"""
-                .formatted(
-                        duel.getWinner(),
-                        winners.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList(),
-                        losers.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList()
-                ), false
+                [斗蛐蛐] ⌛️计时结束 - %s侧胜出
+                [ ======= 赢家 ======= ]
+                %s
+                [ ======= 输家 ======= ]
+                %s""".formatted(duel.getWinner(),
+                String.join(", ", winnerNames),
+                String.join(", ", loserNames)), false
         );
 
         duelStorage.removeDuel(groupId);
