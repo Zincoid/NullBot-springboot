@@ -57,7 +57,8 @@ public class GuessCommand implements Command
         try {
             GuessInfo guess = guessStorage.initGuess(groupId, params.getFirst());
 
-            String startMsg = MsgUtils.builder().text("[猜角色] ✨题目是\n")
+            String startMsg = MsgUtils.builder()
+                    .text("[猜角色] ✨题目是\n")
                     .img("base64://" + crop(guess.getPath(),
                             settingService.getGuessRatio(groupId),
                             settingService.getGuessPadding(groupId)))
@@ -75,7 +76,9 @@ public class GuessCommand implements Command
                             .text("""
                                 已经结束啦\uD83D\uDCA6
                                 答案是...%s！""".formatted(guess.getName())
-                            ).img(guess.getPath()).build();
+                            )
+                            .img(guess.getPath())
+                            .build();
                     bot.sendGroupMsg(groupId, endMsg, false);
                     log.info("\t\t\t\t├─[Guess] 群聊 {} 已结束", groupId);
                     return;
@@ -94,7 +97,9 @@ public class GuessCommand implements Command
                                 答案是...%s！
                                 - 获得 5抽数 和 20Exp！
                                 - 一共猜了%s次！""".formatted(answererName, answer, guess.getTimes())
-                            ).img(guess.getPath()).build();
+                            )
+                            .img(guess.getPath())
+                            .build();
                     bot.sendGroupMsg(groupId, correctMsg, false);
                     log.info("\t\t\t\t├─[Guess] 用户 {} 猜测正确", answererId);
                     return;
@@ -108,7 +113,9 @@ public class GuessCommand implements Command
                     .text("""
                             已经错%s次啦\uD83D\uDCA6
                             答案是...%s！""".formatted(MAX_RETRIES, guess.getName())
-                    ).img(guess.getPath()).build();
+                    )
+                    .img(guess.getPath())
+                    .build();
             bot.sendGroupMsg(groupId, failMsg, false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
 
