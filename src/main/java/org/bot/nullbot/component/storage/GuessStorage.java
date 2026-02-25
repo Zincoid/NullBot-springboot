@@ -26,10 +26,10 @@ public class GuessStorage
         try {
             characterPath = FileUtil.getRandomFilePath(dataPath + "/" + category);
         } catch (Exception e) {
-            throw new IllegalArgumentException("不存在该类别");  // 目录异常
+            throw new IllegalArgumentException("该类别不存在");  // 目录异常
         }
         if (characterPath == null)
-            throw new IllegalArgumentException("该类别下暂无角色");
+            throw new IllegalArgumentException("该类别下暂无图片");
         String characterName = characterPath
                 .split("/")[characterPath.split("/").length-1]
                 .split("_")[0];
