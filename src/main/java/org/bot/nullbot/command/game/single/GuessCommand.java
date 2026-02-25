@@ -15,6 +15,7 @@ import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.service.UserService;
+import org.bot.nullbot.util.Base64Util;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -138,10 +139,7 @@ public class GuessCommand implements Command
         int y = yMin + (yMax > yMin ? (int)(Math.random() * (yMax - yMin)) : 0);
 
         // 裁剪并转换为base64
-        BufferedImage crop = img.getSubimage(x, y, w, h);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(crop, "png", baos);
-        return Base64.getEncoder().encodeToString(baos.toByteArray());
+        return Base64Util.imageToBase64(img.getSubimage(x, y, w, h));
     }
 
     @Override
