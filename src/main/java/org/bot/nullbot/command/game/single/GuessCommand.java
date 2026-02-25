@@ -92,21 +92,23 @@ public class GuessCommand implements Command
                 String answer = inputs.getFirst().getRight().substring(1).trim();
 
                 if (guess.getName().equals(answer)) {
-                    try {
+                    boolean rewarded = false;
+                    if (userService.existUser(answererId)) {
                         userService.plusExperience(answererId, 20);  // 给赢家 20 Exp
                         userService.increaseDrawTimes(answererId, 5);  // 给赢家 5 抽
-                    } catch (Exception e) {
-                        throw new RuntimeException("给予奖励时出错: 用户可能未注册(请调用一次任意指令完成注册)");
+                        rewarded = true;
                     }
+
                     String correctMsg = MsgUtils.builder()
                             .text("""
                                 %s猜对啦✨
                                 答案是...%s！
-                                - 获得 5抽数 和 20Exp！
+                                - %s
                                 - 一共猜了%s次！"""
                                     .formatted(
                                             bot.getStrangerInfo(answererId, true).getData().getNickname(),
                                             answer,
+                                            rewarded ? "获得 5抽数 和 20Exp！" : "无奖励: 用户未注册(请调用任意指令完成注册, 例如戳一戳Null)",
                                             guess.getTimes()
                                     )
                             )
