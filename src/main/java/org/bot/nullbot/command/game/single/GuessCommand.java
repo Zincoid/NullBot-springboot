@@ -77,8 +77,7 @@ public class GuessCommand implements Command
                     String endMsg = MsgUtils.builder()
                             .text("""
                                 已经结束啦\uD83D\uDCA6
-                                答案是...%s！""".formatted(guess.getName())
-                            )
+                                答案是...%s！""".formatted(guess.getName()))
                             .img(guess.getPath())
                             .build();
                     bot.sendGroupMsg(groupId, endMsg, false);
@@ -102,8 +101,7 @@ public class GuessCommand implements Command
                                 %s猜对啦✨
                                 答案是...%s！
                                 - 获得 5抽数 和 20Exp！
-                                - 一共猜了%s次！""".formatted(answererName, answer, guess.getTimes())
-                            )
+                                - 一共猜了%s次！""".formatted(answererName, answer, guess.getTimes()))
                             .img(guess.getPath())
                             .build();
                     bot.sendGroupMsg(groupId, correctMsg, false);
@@ -118,8 +116,7 @@ public class GuessCommand implements Command
             String failMsg = MsgUtils.builder()
                     .text("""
                         已经错%s次啦\uD83D\uDCA6
-                        答案是...%s！""".formatted(MAX_RETRIES, guess.getName())
-                    )
+                        答案是...%s！""".formatted(MAX_RETRIES, guess.getName()))
                     .img(guess.getPath())
                     .build();
             bot.sendGroupMsg(groupId, failMsg, false);
