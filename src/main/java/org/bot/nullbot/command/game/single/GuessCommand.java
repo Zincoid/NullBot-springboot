@@ -73,7 +73,7 @@ public class GuessCommand implements Command
                 List<Pair<Long, String>> inputs = botNextInputer
                         .request(BniMode.GS, groupId, WAIT_TIMEOUT, "#.+");
 
-                if (inputs.isEmpty() || "#".equals(inputs.getFirst().getRight().substring(1).trim())) {
+                if (inputs.isEmpty() || "##".equals(inputs.getFirst().getRight())) {
                     String endMsg = MsgUtils.builder()
                             .text("""
                                 游戏结束啦\uD83D\uDCA6
