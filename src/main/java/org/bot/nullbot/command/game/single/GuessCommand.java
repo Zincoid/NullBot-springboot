@@ -61,8 +61,10 @@ public class GuessCommand implements Command
                     .text("[猜角色] ✨题目是\n")
                     .img("base64://" + crop(guess.getPath(),
                             settingService.getGuessRatio(groupId),
-                            settingService.getGuessPadding(groupId)))
-                    .text("注: 请发送\"#内容\"").build();
+                            settingService.getGuessPadding(groupId),
+                            0.25, 100))
+                    .text("注: 请发送\"#内容\"")
+                    .build();
             bot.sendGroupMsg(groupId, startMsg, false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 初始化猜谜 -> {}", groupId, guess.getName());
 
@@ -89,8 +91,12 @@ public class GuessCommand implements Command
                 String answer = inputs.getFirst().getRight().substring(1).trim();
 
                 if (guess.getName().equals(answer)) {
-                    userService.plusExperience(answererId, 20);  // 给赢家 20 Exp
-                    userService.increaseDrawTimes(answererId, 5);  // 给赢家 5 抽
+                    try {
+                        userService.plusExperience(answererId, 20);  // 给赢家 20 Exp
+                        userService.increaseDrawTimes(answererId, 5);  // 给赢家 5 抽
+                    } catch (Exception e) {
+                        throw new RuntimeException("给予奖励时出错: 用户可能未注册(请调用一次任意指令完成注册)");
+                    }
                     String correctMsg = MsgUtils.builder()
                             .text("""
                                 %s猜对啦✨
@@ -126,25 +132,66 @@ public class GuessCommand implements Command
         }
     }
 
-    public static String crop(String p, double r, int pad) throws Exception {
-        BufferedImage img = ImageIO.read(new File(p));
-        // 计算裁剪尺寸 确保在 padding 内部
-        int w = Math.max(1, (int)(img.getWidth() * r));
-        int h = Math.max(1, (int)(img.getHeight() * r));
-        // 调整裁剪尺寸以适应 padding
-        w = Math.min(w, img.getWidth() - 2 * pad);
-        h = Math.min(h, img.getHeight() - 2 * pad);
+    private static String crop(String imagePath, double subSizeRatio, int padding,
+                               double transparentRatio, int maxAttempts) throws Exception {
+        BufferedImage img = ImageIO.read(new File(imagePath));
+        // 计算裁剪尺寸 确保在padding内部
+        int w = Math.max(1, (int)(img.getWidth() * subSizeRatio));
+        int h = Math.max(1, (int)(img.getHeight() * subSizeRatio));
+        w = Math.min(w, img.getWidth() - 2 * padding);
+        h = Math.min(h, img.getHeight() - 2 * padding);
         // 计算可裁剪范围
-        int xMin = Math.max(0, pad);
-        int xMax = Math.max(xMin, img.getWidth() - w - pad);
-        int yMin = Math.max(0, pad);
-        int yMax = Math.max(yMin, img.getHeight() - h - pad);
-        // 随机选择裁剪起点
-        int x = xMin + (xMax > xMin ? (int)(Math.random() * (xMax - xMin)) : 0);
-        int y = yMin + (yMax > yMin ? (int)(Math.random() * (yMax - yMin)) : 0);
-        // 裁剪并转换 Base64
-        return Base64Util.imageToBase64(img.getSubimage(x, y, w, h));
+        int xMin = Math.max(0, padding);
+        int xMax = Math.max(xMin, img.getWidth() - w - padding);
+        int yMin = Math.max(0, padding);
+        int yMax = Math.max(yMin, img.getHeight() - h - padding);
+        // 没有Alpha通道 直接返回随机裁剪
+        if (!img.getColorModel().hasAlpha()) {
+            int x = xMin + (xMax > xMin ? (int)(Math.random() * (xMax - xMin)) : 0);
+            int y = yMin + (yMax > yMin ? (int)(Math.random() * (yMax - yMin)) : 0);
+            return Base64Util.imageToBase64(img.getSubimage(x, y, w, h));
+        }
+        int attempts = 0;
+        while (attempts < maxAttempts) {
+            // 随机选择裁剪起点
+            int x = xMin + (xMax > xMin ? (int)(Math.random() * (xMax - xMin)) : 0);
+            int y = yMin + (yMax > yMin ? (int)(Math.random() * (yMax - yMin)) : 0);
+            BufferedImage subImg = img.getSubimage(x, y, w, h);
+            // 计算透明像素比例
+            int transparentCount = 0;
+            int[] pixels = subImg.getRGB(0, 0, w, h, null, 0, w);
+            for (int pixel : pixels)
+                if (((pixel >> 24) & 0xff) == 0)  // 计入透明像素的阈值
+                    transparentCount++;
+            double ratio = (double) transparentCount / (w * h);
+            if (ratio <= transparentRatio)
+                return Base64Util.imageToBase64(subImg);
+            attempts++;
+        }
+        throw new RuntimeException("经过%s次尝试后仍未找到透明像素比例小于%s的切图".formatted(
+                maxAttempts, transparentRatio
+        ));
     }
+
+    // private static String crop(String p, double r, int pad) throws Exception {
+    //     BufferedImage img = ImageIO.read(new File(p));
+    //     // 计算裁剪尺寸 确保在 padding 内部
+    //     int w = Math.max(1, (int)(img.getWidth() * r));
+    //     int h = Math.max(1, (int)(img.getHeight() * r));
+    //     // 调整裁剪尺寸以适应 padding
+    //     w = Math.min(w, img.getWidth() - 2 * pad);
+    //     h = Math.min(h, img.getHeight() - 2 * pad);
+    //     // 计算可裁剪范围
+    //     int xMin = Math.max(0, pad);
+    //     int xMax = Math.max(xMin, img.getWidth() - w - pad);
+    //     int yMin = Math.max(0, pad);
+    //     int yMax = Math.max(yMin, img.getHeight() - h - pad);
+    //     // 随机选择裁剪起点
+    //     int x = xMin + (xMax > xMin ? (int)(Math.random() * (xMax - xMin)) : 0);
+    //     int y = yMin + (yMax > yMin ? (int)(Math.random() * (yMax - yMin)) : 0);
+    //     // 裁剪并转换 Base64
+    //     return Base64Util.imageToBase64(img.getSubimage(x, y, w, h));
+    // }
 
     @Override
     public String getHelp() {
