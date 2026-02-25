@@ -84,7 +84,7 @@ public class PermissionHandler implements Handler
             log.info("\t\t├─[PermissionHandler] 私聊用户未授权");
             bot.sendPrivateMsg(userId, """
                     [访问] 🚫私聊未授权
-                    - 授权请输入#访问码""", false);
+                    - 请输入"#访问码\"""", false);
             return;
         }
 
