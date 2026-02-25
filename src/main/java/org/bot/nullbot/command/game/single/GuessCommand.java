@@ -61,8 +61,7 @@ public class GuessCommand implements Command
                     .img("base64://" + crop(guess.getPath(),
                             settingService.getGuessRatio(groupId),
                             settingService.getGuessPadding(groupId)))
-                    .text("注: 请发送\"#内容\"")
-                    .build();
+                    .text("注: 请发送\"#内容\"").build();
             bot.sendGroupMsg(groupId, startMsg, false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 初始化猜谜 -> {}", groupId, guess.getName());
 
@@ -72,11 +71,11 @@ public class GuessCommand implements Command
                         .request(BniMode.GS, groupId, WAIT_TIMEOUT, "#.+");
 
                 if (inputs.isEmpty() || "#".equals(inputs.getFirst().getRight().substring(1).trim())) {
-                    String endMsg = MsgUtils.builder().text("""
+                    String endMsg = MsgUtils.builder()
+                            .text("""
                                 已经结束啦\uD83D\uDCA6
-                                答案是...%s！""".formatted(guess.getName()))
-                            .img(guess.getPath())
-                            .build();
+                                答案是...%s！""".formatted(guess.getName())
+                            ).img(guess.getPath()).build();
                     bot.sendGroupMsg(groupId, endMsg, false);
                     log.info("\t\t\t\t├─[Guess] 群聊 {} 已结束", groupId);
                     return;
@@ -89,13 +88,13 @@ public class GuessCommand implements Command
                 if (guess.getName().equals(answer)) {
                     userService.plusExperience(answererId, 20);  // 给赢家 20 Exp
                     userService.increaseDrawTimes(answererId, 5);  // 给赢家 5 抽
-                    String correctMsg = MsgUtils.builder().text("""
+                    String correctMsg = MsgUtils.builder()
+                            .text("""
                                 %s猜对啦✨
                                 答案是...%s！
                                 - 获得 5抽数 和 20Exp！
-                                - 一共猜了%s次！""".formatted(answererName, answer, guess.getTimes()))
-                            .img(guess.getPath())
-                            .build();
+                                - 一共猜了%s次！""".formatted(answererName, answer, guess.getTimes())
+                            ).img(guess.getPath()).build();
                     bot.sendGroupMsg(groupId, correctMsg, false);
                     log.info("\t\t\t\t├─[Guess] 用户 {} 猜测正确", answererId);
                     return;
@@ -105,11 +104,11 @@ public class GuessCommand implements Command
                 }
             }
 
-            String failMsg = MsgUtils.builder().text("""
+            String failMsg = MsgUtils.builder()
+                    .text("""
                             已经错%s次啦\uD83D\uDCA6
-                            答案是...%s！""".formatted(MAX_RETRIES, guess.getName()))
-                    .img(guess.getPath())
-                    .build();
+                            答案是...%s！""".formatted(MAX_RETRIES, guess.getName())
+                    ).img(guess.getPath()).build();
             bot.sendGroupMsg(groupId, failMsg, false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
 
