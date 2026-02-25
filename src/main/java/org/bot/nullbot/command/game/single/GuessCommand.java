@@ -75,19 +75,18 @@ public class GuessCommand implements Command
             List<Pair<Long, String>> inputs = botNextInputer
                     .request(BniMode.GS, groupId, WAIT_TIMEOUT, "#.+");
 
-            if (inputs.isEmpty()) {
-                finish(bot, groupId, guess);
+            if (inputs.isEmpty() || "#".equals(inputs.getFirst().getRight().substring(1).trim())) {
+                guessStorage.removeGuess(groupId);
+                bot.sendGroupMsg(groupId, """
+                        已经结束啦\uD83D\uDCA6
+                        答案是...%s！""".formatted(guess.getName()), false);
+                log.info("\t\t\t\t├─[Guess] 群聊 {} 已结束", groupId);
                 return;
             }
 
             Long answererId = inputs.getFirst().getLeft();
             String answererName = bot.getStrangerInfo(answererId, true).getData().getNickname();
             String answer = inputs.getFirst().getRight().substring(1).trim();
-
-            if ("#".equals(answer)) {
-                finish(bot, groupId, guess);
-                return;
-            }
 
             if (guess.getName().equals(answer)) {
                 userService.plusExperience(answererId, 20);  // 给赢家 20 Exp
@@ -114,14 +113,6 @@ public class GuessCommand implements Command
                     已经错%s次啦\uD83D\uDCA6
                     答案是...%s！""".formatted(MAX_RETRIES, guess.getName()), false);
         log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
-    }
-
-    private void finish(Bot bot, Long groupId, GuessInfo guess) {
-        guessStorage.removeGuess(groupId);
-        bot.sendGroupMsg(groupId, """
-                已经结束啦\uD83D\uDCA6
-                答案是...%s！""".formatted(guess.getName()), false);
-        log.info("\t\t\t\t├─[Guess] 群聊 {} 已结束", groupId);
     }
 
     public static String crop(String p, double r, int pad) throws Exception {
