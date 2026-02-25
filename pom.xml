@@ -270,6 +270,13 @@
 <!--            <version>5.2.0</version>-->
 <!--        </dependency>-->
 
+        <!-- 第三方 ImageIO 插件 -->
+        <dependency>
+            <groupId>org.sejda.imageio</groupId>
+            <artifactId>webp-imageio</artifactId>
+            <version>0.1.6</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
