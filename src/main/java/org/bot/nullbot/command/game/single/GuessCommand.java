@@ -34,7 +34,9 @@ public class GuessCommand implements Command
     private final GuessStorage guessStorage;
     private final UserService userService;
 
-    private static final int WAIT_TIMEOUT = 99;  // 超时时间 单位: Second
+    private static final double MAX_TRANSPARENT_RATIO = 0.75;  // 最大透明比例
+    private static final int MAX_CROP_ATTEMPTS = 100;  // 最大切图次数
+    private static final int WAIT_TIMEOUT = 99;  // 等待超时时间 (单位: Second)
     private static final int MAX_RETRIES = 10;  // 最大尝试次数
 
     @Override
@@ -62,7 +64,7 @@ public class GuessCommand implements Command
                     .img("base64://" + crop(guess.getPath(),
                             settingService.getGuessRatio(groupId),
                             settingService.getGuessPadding(groupId),
-                            0.25, 100))
+                            MAX_TRANSPARENT_RATIO, MAX_CROP_ATTEMPTS))
                     .text("注: 请发送\"#内容\"")
                     .build();
             bot.sendGroupMsg(groupId, startMsg, false);
