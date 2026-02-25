@@ -99,23 +99,21 @@ public class GuessCommand implements Command
                                 - 一共猜了%s次！""".formatted(answererName, answer, guess.getTimes()))
                         .img(guess.getPath())
                         .build();
+                guessStorage.removeGuess(groupId);
                 bot.sendGroupMsg(groupId, endMsg, false);
                 log.info("\t\t\t\t├─[Guess] 用户 {} 猜测正确", answererId);
-                break;
+                return;
             } else {
                 bot.sendGroupMsg(groupId, "猜错啦！", false);
                 log.info("\t\t\t\t├─[Guess] 用户 {} 猜测错误", answererId);
             }
         }
 
-        if (guess.getTimes() >= MAX_RETRIES) {
-            bot.sendGroupMsg(groupId, """
+        guessStorage.removeGuess(groupId);
+        bot.sendGroupMsg(groupId, """
                     已经错%s次啦\uD83D\uDCA6
                     答案是...%s！""".formatted(MAX_RETRIES, guess.getName()), false);
-            log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
-        }
-
-        guessStorage.removeGuess(groupId);
+        log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
     }
 
     public static String crop(String p, double r, int pad) throws Exception {
