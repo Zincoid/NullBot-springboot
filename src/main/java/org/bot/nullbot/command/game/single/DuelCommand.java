@@ -40,6 +40,7 @@ public class DuelCommand implements Command
             throw new NullBotMsgException("[斗蛐蛐] ⚠️已在游戏中");
 
         DuelInfo duel = duelStorage.initDuel(groupId);
+
         MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] ⚔️请交战双方无序入场\n");
         builder.text("[ ====== 左方选手 ====== ]\n");
         for (Map.Entry<Integer, Integer> enemy : duel.getLeft().entrySet())
@@ -47,10 +48,11 @@ public class DuelCommand implements Command
         builder.text("\n[ ====== 右方选手 ====== ]\n");
         for (Map.Entry<Integer, Integer> enemy : duel.getRight().entrySet())
             builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + " ");
-        builder.text("\n\n请发送L或R进行选择(%s秒内)".formatted(SELECTION_TIME));
+        builder.text("\n\n注: 发送L或R进行选择(%s秒内)".formatted(SELECTION_TIME));
         bot.sendGroupMsg(groupId, builder.build(), false);
 
-        List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.GM, groupId, SELECTION_TIME, "[LlRr]");
+        List<Pair<Long, String>> inputs = botNextInputer
+                .request(BniMode.GM, groupId, SELECTION_TIME, "[LlRr]");
 
         Map<Long, Pair<Long, String>> lastInputMap = new LinkedHashMap<>();
         for (Pair<Long, String> input : inputs) lastInputMap.put(input.getKey(), input);
@@ -58,12 +60,11 @@ public class DuelCommand implements Command
 
         List<Long> left = new ArrayList<>();
         List<Long> right = new ArrayList<>();
-        for (Pair<Long, String> pair : inputs) {
+        for (Pair<Long, String> pair : inputs)
             if (pair.getRight().equalsIgnoreCase("L"))
                 left.add(pair.getLeft());
             else if (pair.getRight().equalsIgnoreCase("R"))
                 right.add(pair.getLeft());
-        }
 
         List<Long> winners;
         List<Long> losers;
@@ -76,8 +77,12 @@ public class DuelCommand implements Command
         } else
             throw new NullBotMsgException("[斗蛐蛐] ❌数据异常");
 
-        List<String> winnerNames = winners.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList();
-        List<String> loserNames = losers.stream().map(u -> bot.getStrangerInfo(u, true).getData().getNickname()).toList();
+        List<String> winnerNames = winners.stream()
+                .map(u -> bot.getStrangerInfo(u, true).getData().getNickname())
+                .toList();
+        List<String> loserNames = losers.stream()
+                .map(u -> bot.getStrangerInfo(u, true).getData().getNickname())
+                .toList();
 
         bot.sendGroupMsg(groupId, """
                 [斗蛐蛐] ⌛️计时结束 - %s侧胜出
@@ -85,8 +90,8 @@ public class DuelCommand implements Command
                 %s
                 [ ======= 输家 ======= ]
                 %s""".formatted(duel.getWinner(),
-                String.join(", ", winnerNames),
-                String.join(", ", loserNames)), false
+                winnerNames.isEmpty() ? "无" : String.join(", ", winnerNames),
+                loserNames.isEmpty() ? "无" : String.join(", ", loserNames)), false
         );
 
         duelStorage.removeDuel(groupId);
