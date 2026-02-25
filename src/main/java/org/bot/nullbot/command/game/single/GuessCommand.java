@@ -76,7 +76,7 @@ public class GuessCommand implements Command
                 if (inputs.isEmpty() || "#".equals(inputs.getFirst().getRight().substring(1).trim())) {
                     String endMsg = MsgUtils.builder()
                             .text("""
-                                已经结束啦\uD83D\uDCA6
+                                游戏结束啦\uD83D\uDCA6
                                 答案是...%s！""".formatted(guess.getName()))
                             .img(guess.getPath())
                             .build();
@@ -86,7 +86,6 @@ public class GuessCommand implements Command
                 }
 
                 Long answererId = inputs.getFirst().getLeft();
-                String answererName = bot.getStrangerInfo(answererId, true).getData().getNickname();
                 String answer = inputs.getFirst().getRight().substring(1).trim();
 
                 if (guess.getName().equals(answer)) {
@@ -101,7 +100,12 @@ public class GuessCommand implements Command
                                 %s猜对啦✨
                                 答案是...%s！
                                 - 获得 5抽数 和 20Exp！
-                                - 一共猜了%s次！""".formatted(answererName, answer, guess.getTimes()))
+                                - 一共猜了%s次！"""
+                                    .formatted(
+                                            bot.getStrangerInfo(answererId, true).getData().getNickname(),
+                                            answer,
+                                            guess.getTimes()
+                                    ))
                             .img(guess.getPath())
                             .build();
                     bot.sendGroupMsg(groupId, correctMsg, false);
