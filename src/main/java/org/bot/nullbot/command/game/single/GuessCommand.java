@@ -20,9 +20,7 @@ import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.Base64;
 import java.util.List;
 
 @CommandMapping({"Guess", "猜角色", "猜"})
