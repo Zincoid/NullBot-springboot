@@ -154,7 +154,7 @@ public class GuessCommand implements Command
                 功能: 猜角色
                 奖励: 5抽数 & 20Exp
                 限权: %d 级
-                格式: Guess [人物来源|人物名|-f(放弃)]
+                格式: Guess [类别|-f(放弃)]
                 别名: 猜角色/猜""", getAccess()
         );
     }
@@ -164,8 +164,8 @@ public class GuessCommand implements Command
         return """
                 ◉ Guess 命令
                 功能: 猜角色
-                格式: Guess [人物来源|-f(放弃)]
-                人物来源: 明日方舟
+                格式: Guess [类别|-f(放弃)]
+                类别: 明日方舟
                 示例: Guess 明日方舟""";
     }
 }
