@@ -111,8 +111,8 @@ public class GuessCommand implements Command
 
             String failMsg = MsgUtils.builder()
                     .text("""
-                            已经错%s次啦\uD83D\uDCA6
-                            答案是...%s！""".formatted(MAX_RETRIES, guess.getName())
+                        已经错%s次啦\uD83D\uDCA6
+                        答案是...%s！""".formatted(MAX_RETRIES, guess.getName())
                     )
                     .img(guess.getPath())
                     .build();
