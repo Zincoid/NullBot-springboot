@@ -91,12 +91,22 @@ public class BotNextInputer
 
     // =================== 工具方法 ===================
 
-    public boolean isWaiting(String id) {
+    public boolean isWaiting(BniMode mode, Long targetId) {
+        String id = switch (mode) {
+            case PS -> "PS_%s".formatted(targetId);
+            case GS -> "GS_%s".formatted(targetId);
+            case GM -> "GM_%s".formatted(targetId);
+        };
         CompletableFuture<List<Pair<Long, String>>> future = inputEntries.get(id).future;
         return future != null && !future.isDone();
     }
 
-    public boolean cancelWait(String id) {
+    public boolean cancelWait(BniMode mode, Long targetId) {
+        String id = switch (mode) {
+            case PS -> "PS_%s".formatted(targetId);
+            case GS -> "GS_%s".formatted(targetId);
+            case GM -> "GM_%s".formatted(targetId);
+        };
         CompletableFuture<List<Pair<Long, String>>> future = inputEntries.remove(id).future;
         if (future != null && !future.isDone()) {
             future.complete(new ArrayList<>());
