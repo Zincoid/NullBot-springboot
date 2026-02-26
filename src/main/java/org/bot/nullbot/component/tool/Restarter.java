@@ -10,7 +10,7 @@ import java.io.File;
 @Slf4j
 public class Restarter
 {
-    private static final String SESSION_NAME = "nullbot";
+    private static final String SCREEN_SESSION_NAME = "nullbot";
     private static final String JAR_PATH = "/root/Nullbot/jar/NullBot-springboot-0.0.1-SNAPSHOT.jar";
     private static final String LOG_PATH = "/root/Nullbot/output.log";
 
@@ -37,8 +37,8 @@ public class Restarter
             // String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             String javaBin = "java";
             String javaCommand = "%s -jar %s 2>&1 | tee %s".formatted(javaBin, jarPath, LOG_PATH);
-            String[] runScreenCmd = {"screen", "-dmS", SESSION_NAME, "bash", "-c", javaCommand};
-            String[] killScreenCmd = {"screen", "-S", SESSION_NAME, "-X", "quit"};
+            String[] runScreenCmd = {"screen", "-dmS", SCREEN_SESSION_NAME, "bash", "-c", javaCommand};
+            String[] killScreenCmd = {"screen", "-S", SCREEN_SESSION_NAME, "-X", "quit"};
 
             // 执行 重启命令
             log.info("▽ [Restarter] 将于3秒后重启...");
