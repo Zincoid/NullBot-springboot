@@ -45,9 +45,10 @@ public class EndfieldCommand implements Command
                 fileStorageProperties.getResourcePath() + "/endfield",
                 keyword
         ));
-        helpPaths.sort(Comparator.naturalOrder());  // 排序
         if (helpPaths.isEmpty())
             throw new NullBotMsgException("[终末地] ❌无查询项");
+        helpPaths.sort(Comparator.naturalOrder());  // 排序
+
         int i = 0;
         if (helpPaths.size() > 1) {
             List<String> helpNames = IntStream.range(0, helpPaths.size())
