@@ -20,7 +20,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @CommandMapping({"Endfield", "endfield", "end", "终末地查询", "终末地"})
@@ -38,7 +41,11 @@ public class EndfieldCommand implements Command
         Long userId = event.getUserId();
         String keyword = params.isEmpty() ? "" : params.getFirst();
 
-        List<String> helpPaths = FileUtil.getFilePathsByKeyword(fileStorageProperties.getResourcePath() + "/endfield", keyword);
+        List<String> helpPaths = new ArrayList<>(FileUtil.getFilePathsByKeyword(
+                fileStorageProperties.getResourcePath() + "/endfield",
+                keyword
+        ));
+        helpPaths.sort(Comparator.naturalOrder());  // 排序
         if (helpPaths.isEmpty())
             throw new NullBotMsgException("[终末地] ❌无查询项");
         int i = 0;
