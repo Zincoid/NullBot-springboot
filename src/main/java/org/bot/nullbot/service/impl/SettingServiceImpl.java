@@ -1,8 +1,6 @@
 package org.bot.nullbot.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.component.ai.DeepSeekClient;
-import org.bot.nullbot.component.control.CommandRateLimiter;
 import org.bot.nullbot.component.control.SettingManager;
 import org.bot.nullbot.entity.ChatOption;
 import org.bot.nullbot.entity.info.SettingInfo;
@@ -141,15 +139,18 @@ public class SettingServiceImpl implements SettingService
 
     // 查询方法
     @Override
-    public double getGuessRatio(Long groupId) { return getSetting(groupId).getGuessRatio(); }
+    public double getGuessCropRatio(Long groupId) { return getSetting(groupId).getGuessCropRatio(); }
+    @Override
+    public double getGuessTransparentRatio(Long groupId) { return getSetting(groupId).getGuessTransparentRatio(); }
     @Override
     public int getGuessPadding(Long groupId) {return getSetting(groupId).getGuessPadding(); }
 
     // 修改方法
     @Override
-    public boolean setGuessParams(Long groupId, double ratio, int padding) {
+    public boolean setGuessParams(Long groupId, double cropRatio, double transparentRatio, int padding) {
         SettingInfo setting = getSetting(groupId);
-        setting.setGuessRatio(ratio);
+        setting.setGuessCropRatio(cropRatio);
+        setting.setGuessTransparentRatio(transparentRatio);
         setting.setGuessPadding(padding);
         return true;
     }

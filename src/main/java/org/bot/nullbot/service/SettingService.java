@@ -77,9 +77,11 @@ public interface SettingService
 
     boolean switchRecallDetect(Long groupId);
 
-    double getGuessRatio(Long groupId);
+    double getGuessCropRatio(Long groupId);
+
+    double getGuessTransparentRatio(Long groupId);
 
     int getGuessPadding(Long groupId);
 
-    boolean setGuessParams(Long groupId, double ratio, int padding);
+    public boolean setGuessParams(Long groupId, double cropRatio, double transparentRatio, int padding);
 }

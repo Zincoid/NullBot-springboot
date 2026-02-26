@@ -34,10 +34,9 @@ public class GuessCommand implements Command
     private final SettingService settingService;
     private final UserService userService;
 
-    private static final double MAX_TRANSPARENT_RATIO = 0.75;  // 最大透明比例
-    private static final int MAX_CROP_ATTEMPTS = 100;  // 最大切图次数
+    private static final int MAX_CROP_ATTEMPTS = 100;  // 切图尝试限制
     private static final int WAIT_TIMEOUT = 99;  // 等待超时时间 (单位: Second)
-    private static final int MAX_RETRIES = 10;  // 最大尝试次数
+    private static final int MAX_RETRIES = 10;  // 最大回答次数
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) throws Exception {
@@ -62,9 +61,10 @@ public class GuessCommand implements Command
             String startMsg = MsgUtils.builder()
                     .text("[猜角色] ✨题目是\n")
                     .img("base64://" + crop(guess.getPath(),
-                            settingService.getGuessRatio(groupId),
+                            settingService.getGuessCropRatio(groupId),
                             settingService.getGuessPadding(groupId),
-                            MAX_TRANSPARENT_RATIO, MAX_CROP_ATTEMPTS))
+                            settingService.getGuessTransparentRatio(groupId),
+                            MAX_CROP_ATTEMPTS))
                     .text("注: 请发送\"#内容\"")
                     .build();
             bot.sendGroupMsg(groupId, startMsg, false);
@@ -140,12 +140,12 @@ public class GuessCommand implements Command
         }
     }
 
-    private static String crop(String imagePath, double subSizeRatio, int padding,
+    private static String crop(String imagePath, double cropRatio, int padding,
                                double transparentRatio, int maxAttempts) throws Exception {
         BufferedImage img = ImageIO.read(new File(imagePath));
         // 计算裁剪尺寸 确保在padding内部
-        int w = Math.max(1, (int)(img.getWidth() * subSizeRatio));
-        int h = Math.max(1, (int)(img.getHeight() * subSizeRatio));
+        int w = Math.max(1, (int)(img.getWidth() * cropRatio));
+        int h = Math.max(1, (int)(img.getHeight() * cropRatio));
         w = Math.min(w, img.getWidth() - 2 * padding);
         h = Math.min(h, img.getHeight() - 2 * padding);
         // 计算可裁剪范围

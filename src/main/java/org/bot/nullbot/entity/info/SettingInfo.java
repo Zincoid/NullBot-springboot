@@ -37,36 +37,38 @@ public class SettingInfo
     private boolean pokeDetect;
     private boolean recallDetect;
 
-    private double guessRatio;
+    private double guessCropRatio;
+    private double guessTransparentRatio;
     private int guessPadding;
 
-    public SettingInfo(Long groupId, DefaultProperties props) {
+    public SettingInfo(Long groupId, DefaultProperties defaultProperties) {
         this.groupId = groupId;
 
-        this.limitScope = props.getLimitScope();
-        this.limitCapacity = props.getLimitCapacity();
-        this.limitRefill = props.getLimitRefill();
-        this.limitInterval = props.getLimitInterval();
+        this.limitScope = defaultProperties.getLimitScope();
+        this.limitCapacity = defaultProperties.getLimitCapacity();
+        this.limitRefill = defaultProperties.getLimitRefill();
+        this.limitInterval = defaultProperties.getLimitInterval();
 
-        this.chatScope = props.getChatScope();
-        this.antiInjection = props.isAntiInjection();
-        this.thinking = props.isThinking();
-        this.voice = props.isVoice();
-        this.embedding = props.isEmbedding();
-        this.embeddingAuth = props.isEmbeddingAuth();
-        this.custom = props.isCustom();
+        this.chatScope = defaultProperties.getChatScope();
+        this.antiInjection = defaultProperties.isAntiInjection();
+        this.thinking = defaultProperties.isThinking();
+        this.voice = defaultProperties.isVoice();
+        this.embedding = defaultProperties.isEmbedding();
+        this.embeddingAuth = defaultProperties.isEmbeddingAuth();
+        this.custom = defaultProperties.isCustom();
 
-        this.autoReply = props.isAutoReply();
-        this.replyFrequency = props.getReplyFrequency();
+        this.autoReply = defaultProperties.isAutoReply();
+        this.replyFrequency = defaultProperties.getReplyFrequency();
 
-        this.imageCollect = props.isImageCollect();
-        this.messageCollect = props.isMessageCollect();
-        this.keywordDetect = props.isKeywordDetect();
-        this.pokeDetect = props.isPokeDetect();
-        this.recallDetect = props.isRecallDetect();
+        this.imageCollect = defaultProperties.isImageCollect();
+        this.messageCollect = defaultProperties.isMessageCollect();
+        this.keywordDetect = defaultProperties.isKeywordDetect();
+        this.pokeDetect = defaultProperties.isPokeDetect();
+        this.recallDetect = defaultProperties.isRecallDetect();
 
-        this.guessRatio = props.getGuessRatio();
-        this.guessPadding = props.getGuessPadding();
+        this.guessCropRatio = defaultProperties.getGuessCropRatio();
+        this.guessTransparentRatio = defaultProperties.getGuessTransparentRatio();
+        this.guessPadding = defaultProperties.getGuessPadding();
     }
 
     public LimitScope switchLimitScope() { return limitScope = limitScope.next(); }
@@ -117,6 +119,7 @@ public class SettingInfo
                 └ 撤回检测 - %s
                  ◉ Guess 设置
                 ├ 切割比例 - %s
+                ├ 透明比例 - %s
                 └ 切割边距 - %s""",
                 limitScope,
                 limitCapacity,
@@ -136,7 +139,8 @@ public class SettingInfo
                 keywordDetect ? "ON" : "OFF",
                 pokeDetect ? "ON" : "OFF",
                 recallDetect ? "ON" : "OFF",
-                guessRatio,
+                guessCropRatio,
+                guessTransparentRatio,
                 guessPadding
         );
     }

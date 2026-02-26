@@ -34,6 +34,7 @@ public class DefaultProperties
     private boolean pokeDetect;  // 戳一戳检测
     private boolean recallDetect;  // 防撤回
 
-    private double guessRatio;  // 猜 切割比例
-    private int guessPadding;  // 猜 内边距
+    private double guessCropRatio;  // 猜角色 切割比例
+    private double guessTransparentRatio;  // 猜角色 透明比例
+    private int guessPadding;  // 猜角色 切割边距
 }

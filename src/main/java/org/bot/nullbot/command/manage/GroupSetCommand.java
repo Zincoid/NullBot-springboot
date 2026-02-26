@@ -140,12 +140,13 @@ public class GroupSetCommand implements Command
             }
 
             if ("-guess".equals(option)) {
-                if(params.size() < 3) throw new NullBotMsgException("[群设置] ❌Guess设置参数不足");
-                double ratio = Double.parseDouble(params.get(1));
-                int padding = Integer.parseInt(params.get(2));
-                if(settingService.setGuessParams(groupId, ratio, padding)) {
+                if(params.size() < 4) throw new NullBotMsgException("[群设置] ❌Guess设置参数不足");
+                double cropRatio = Double.parseDouble(params.get(1));
+                double transparentRatio = Double.parseDouble(params.get(2));
+                int padding = Integer.parseInt(params.get(3));
+                if(settingService.setGuessParams(groupId, cropRatio, transparentRatio, padding)) {
                     bot.sendGroupMsg(groupId, "[猜] ✅参数已更新", false);
-                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} Guess参数 -> {} {}", groupId, ratio, padding);
+                    log.info("\t\t\t\t├─[GroupSet] 已更改群 {} Guess参数 -> {} {} {}", groupId, cropRatio, transparentRatio, padding);
                     return;
                 }
                 throw new NullBotMsgException("[群设置] ❌Guess参数更新失败");
@@ -200,7 +201,7 @@ public class GroupSetCommand implements Command
                    pok - 戳戳检测
                    rcl - 撤回检测
                 
-                • [-guess] [切割比例] [内边距]
+                • [-guess] [切割比例] [透明比例] [切割边距]
                    设置 Guess 游戏难度
                 
                 注意:
@@ -221,15 +222,15 @@ public class GroupSetCommand implements Command
                 • [-view]
                    获取群设置
                 
-                • [-guess] [切割比例] [内边距]
+                • [-guess] [切割比例] [透明比例] [切割边距]
                    设置 Guess 游戏难度
                 
                 示例:
                 GroupSet -view
-                GroupSet -guess 0.1 250
+                GroupSet -guess 0.1 0.75 250
                 
                 注意:
-                你不可执行 [-limit] 和 [-ai] 和 [-monitor] 相关设置指令！
-                针对Guess游戏 - 切割比例越小越难 内边距越小越难""";
+                你不可执行 [-limit] 和 [-ai] 和 [-monitor] 相关设置指令
+                针对Guess游戏 - 切割比例和切割边距越小越难 透明比例越大越难""";
     }
 }

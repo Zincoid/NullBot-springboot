@@ -92,7 +92,8 @@ nullbot:
     poke-detect: true
     recall-detect: false
     # Guess
-    guess-ratio: 0.1
+    guess-crop-ratio: 0.1
+    guess-transparent-ratio: 0.75
     guess-padding: 250
   command:
     prefix: /
