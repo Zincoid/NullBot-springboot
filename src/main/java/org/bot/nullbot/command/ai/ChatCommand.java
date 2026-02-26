@@ -40,7 +40,7 @@ public class ChatCommand implements Command
                     event
             );
         } catch (Exception e) {
-            throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
+            throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
         if (message.contains(commandPrefix))
             bot.sendGroupMsg(event.getGroupId(), """
@@ -67,7 +67,7 @@ public class ChatCommand implements Command
                     event
             );
         } catch (Exception e) {
-            throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
+            throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
         log.info("\t\t\t\t├─[Chat] 私聊已回复: {}", response.replaceAll("\\R", " "));
     }

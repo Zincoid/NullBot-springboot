@@ -49,7 +49,7 @@ public class PokeReactCommand implements Command
                         event
                 );
         } catch (Exception e) {
-            throw new NullBotMsgException("[AI] ❌出错:\n" + e.getMessage());
+            throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
         log.info("\t\t\t\t├─[PokeReact] 已回复{}戳戳: {}", groupId != null ? "群聊" : "私聊", response.replaceAll("\\R", " "));
     }
