@@ -28,13 +28,19 @@ public class RestartCommand implements Command
         switch (option)
         {
             case "-app" -> {
-                bot.sendGroupMsg(groupId, "[重启] ⚠️指令已下发\n- 方式: [APP]\n- 请稍候...", false);
-                log.info("\t\t\t\t├─[Restart] APP重启指令已下发");
+                bot.sendGroupMsg(groupId, """
+                        [重启] ⚠️指令已下发
+                        - 模式: APPLICATION
+                        - 将于3s后重启, 请稍候...""", false);
+                log.info("\t\t\t\t├─[Restart] APP 重启指令已下发");
                 systemService.restart();
             }
             case "-jar" -> {
-                bot.sendGroupMsg(groupId, "[重启] ⚠️指令已下发\n- 方式: [JAR]\n- 请稍候...", false);
-                log.info("\t\t\t\t├─[Restart] JAR重启指令已下发");
+                bot.sendGroupMsg(groupId, """
+                        [重启] ⚠️指令已下发
+                        - 模式: JAR FILE
+                        - 将于3s后重启, 请稍候...""", false);
+                log.info("\t\t\t\t├─[Restart] JAR 重启指令已下发");
                 try {
                     if (params.size() > 1)
                         systemService.restartViaJar(params.get(1));
