@@ -461,22 +461,10 @@ public class DeepSeekClient
         response = response.replaceAll("(\r?\n)+", "\n").trim();
         if (messageFilter(response)) response = buildFilteredMsg();
         // 发送消息
-        ActionData<MsgId> msgIdActionData;
-        if (isPrivate)
-            msgIdActionData = bot.sendPrivateMsg(
-                    targetId,
-                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(response)).build() : response,
-                    false
-            );
-        else
-            msgIdActionData = bot.sendGroupMsg(
-                    targetId,
-                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(response)).build() : response,
-                    false
-            );
+        Integer messageId = sendMsg(bot, targetId, response, isPrivate, voice);
         // 记录消息
         chatMessages.add(new ChatMessage(
-                msgIdActionData.getData().getMessageId(),
+                messageId,
                 "assistant",
                 response,
                 botId,
@@ -500,8 +488,9 @@ public class DeepSeekClient
      */
     String executeEmbeddingChain(String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
                                  Bot bot, Event event, boolean voice, boolean embeddingAuth, boolean embeddingLimit) throws IOException {
+        // 处理消息
         response = response.replaceAll("(\r?\n)+", "\n").trim();
-        // 使用正则匹配所有{指令}和文本部分
+        // 正则匹配所有 {指令} 和 文本部分
         Pattern pattern = Pattern.compile("(\\{.*?}|[^{]+)");
         Matcher matcher = pattern.matcher(response);
         while (matcher.find()) {
@@ -515,41 +504,15 @@ public class DeepSeekClient
                         new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)
                 ));
                 // 记录指令
-                chatMessages.add(new ChatMessage(
-                        null,
-                        "assistant",
-                        segment,  // 只存储当前片段
-                        botId,
-                        "Null"
-                ));
+                chatMessages.add(new ChatMessage(null, "assistant", segment, botId, "Null"));
             } else {
                 // 发送消息
                 String text = segment.trim();
-                if (!text.isEmpty()) {
-                    if (messageFilter(text)) text = buildFilteredMsg();
-
-                    ActionData<MsgId> msgIdActionData;
-                    if (isPrivate)
-                        msgIdActionData = bot.sendPrivateMsg(
-                                targetId,
-                                voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(text)).build() : text,
-                                false
-                        );
-                    else
-                        msgIdActionData = bot.sendGroupMsg(
-                                targetId,
-                                voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(text)).build() : text,
-                                false
-                        );
-                    // 记录消息
-                    chatMessages.add(new ChatMessage(
-                            msgIdActionData.getData().getMessageId(),
-                            "assistant",
-                            text,  // 只存储当前片段
-                            botId,
-                            "Null"
-                    ));
-                }
+                if (text.isEmpty()) continue;
+                if (messageFilter(text)) text = buildFilteredMsg();
+                Integer messageId = sendMsg(bot, targetId, text, isPrivate, voice);
+                // 记录消息
+                chatMessages.add(new ChatMessage(messageId, "assistant", text, botId, "Null"));
             }
         }
         return response;
@@ -581,25 +544,39 @@ public class DeepSeekClient
         String _response = response.replaceAll("\\{.*?}", "").replaceAll("(\r?\n)+", "\n").trim();
         if (messageFilter(_response)) _response =  buildFilteredMsg();
         // 发送消息
+        Integer messageId = sendMsg(bot, targetId, _response, isPrivate, voice);
+        // 记录消息
+        chatMessages.add(new ChatMessage(messageId, "assistant", response, botId, "Null"));
+        return _response;
+    }
+
+    // =================== 工具方法 ===================
+
+    /**
+     * 发送消息
+     * @param bot 机器人实体
+     * @param targetId 目标ID
+     * @param message 消息
+     * @param isPrivate 是否为私信
+     * @param voice 语音模式
+     * @return 发送的消息ID
+     */
+    private Integer sendMsg(Bot bot, Long targetId, String message, boolean isPrivate, boolean voice) {
         ActionData<MsgId> msgIdActionData;
         if (isPrivate)
             msgIdActionData = bot.sendPrivateMsg(
                     targetId,
-                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(_response)).build() : _response,
+                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(message)).build() : message,
                     false
             );
         else
             msgIdActionData = bot.sendGroupMsg(
                     targetId,
-                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(_response)).build() : _response,
+                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(message)).build() : message,
                     false
             );
-        // 记录消息
-        chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", response, botId, "Null"));
-        return _response;
+        return msgIdActionData.getData().getMessageId();
     }
-
-    // =================== 工具方法 ===================
 
     /**
      * 异常消息过滤器
