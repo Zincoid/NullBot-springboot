@@ -554,17 +554,19 @@ public class DeepSeekClient
      * @param isPrivate 是否为私信
      * @param bot 机器人实体
      * @param event 指令事件
-     * @param option 配置
+     * @param embeddingAuth 嵌入指令验证
+     * @param embeddingLimit 嵌入指令限速
+     * @param voice 语音模式
      * @return 处理过的消息 (已过滤)
      */
     @Deprecated
     String executeEmbedding(String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
-                            Bot bot, Event event, ChatOption option) throws IOException {
+                            Bot bot, Event event, boolean voice, boolean embeddingAuth, boolean embeddingLimit) throws IOException {
         Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
         // 执行指令
         while (m.find()) {
             String command = m.group(1);
-            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event, command, option.isEmbeddingAuth(), embeddingLimit)));
+            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)));
         }
         // 处理消息
         String _response = response.replaceAll("\\{.*?}", "").replaceAll("(\r?\n)+", "\n").trim();
@@ -572,9 +574,17 @@ public class DeepSeekClient
         // 发送消息
         ActionData<MsgId> msgIdActionData;
         if (isPrivate)
-            msgIdActionData = bot.sendPrivateMsg(targetId, _response, false);
+            msgIdActionData = bot.sendPrivateMsg(
+                    targetId,
+                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(_response)).build() : _response,
+                    false
+            );
         else
-            msgIdActionData = bot.sendGroupMsg(targetId, _response, false);
+            msgIdActionData = bot.sendGroupMsg(
+                    targetId,
+                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(_response)).build() : _response,
+                    false
+            );
         // 记录消息
         chatMessages.add(new ChatMessage(msgIdActionData.getData().getMessageId(), "assistant", response, botId, "Null"));
         return _response;
