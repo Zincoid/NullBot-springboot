@@ -20,6 +20,7 @@ public class Restarter
     }
 
     public void restartViaJar() {
+        log.info("▽ [Restarter] 通过默认JAR路径重启应用...");
         restartViaJar(JAR_PATH);
     }
 
@@ -35,8 +36,8 @@ public class Restarter
             // 构建 重启命令
             // String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             String javaBin = "java";
-            String javaCommand = String.format("%s -jar %s 2>&1 | tee %s", javaBin, jarPath, LOG_PATH);
-            String[] screenCommand = {"screen", "-dmS", SESSION_NAME, "bash", "-c", javaCommand};
+            String javaCommand = "%s -jar %s 2>&1 | tee %s".formatted(javaBin, jarPath, LOG_PATH);
+            String[] runScreenCmd = {"screen", "-dmS", SESSION_NAME, "bash", "-c", javaCommand};
             String[] killScreenCmd = {"screen", "-S", SESSION_NAME, "-X", "quit"};
 
             // 执行 重启命令
@@ -44,7 +45,7 @@ public class Restarter
             Thread.sleep(3000);
             new ProcessBuilder(killScreenCmd).start().waitFor();
             Thread.sleep(1000);
-            new ProcessBuilder(screenCommand).directory(new File("/root")).start();
+            new ProcessBuilder(runScreenCmd).start().waitFor();
             Thread.sleep(1000);
             System.exit(0);
 
