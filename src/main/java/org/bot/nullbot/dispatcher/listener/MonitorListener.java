@@ -125,7 +125,7 @@ public class MonitorListener
         if (!(event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话"))) {  // Chat 命令会自动记录消息 跳过
             log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
             List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
-            chatMessages.add(new ChatMessage(event.getMessageId() ,"user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()), event.getUserId(), event.getSender().getNickname()));
+            chatMessages.add(new ChatMessage(event.getMessageId() , event.getUserId(), event.getSender().getNickname(), "user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg())));
             chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
             log.info("└─[Recorded] {} Message(s)", chatMessages.size());
         }

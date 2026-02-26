@@ -159,7 +159,7 @@ public class DeepSeekClient
                 case Monitor -> chatStorage.getMonitorHistory(groupId);
             };
             // 用户消息历史记录
-            chatMessages.add(new ChatMessage(messageId, "user", message, userId, userName));
+            chatMessages.add(new ChatMessage(messageId, userId, userName, "user", message));
             // 构建完整消息列表
             List<Map<String, String>> _messages = buildGroupMsgs(chatMessages, groupId, option.isCustom(), option.isEmbedding());
             // 发送对话请求到 API
@@ -257,7 +257,7 @@ public class DeepSeekClient
             // 获取历史聊天记录
             chatMessages = chatStorage.getUserHistory(userId);
             // 用户消息历史记录
-            chatMessages.add(new ChatMessage(messageId, "user", message, userId, userName));
+            chatMessages.add(new ChatMessage(messageId, userId, userName, "user", message));
             // 构建完整消息列表
             List<Map<String, String>> _messages = buildPrivateMsgs(chatMessages, userId);
             // 发送对话请求到 API
@@ -364,7 +364,7 @@ public class DeepSeekClient
         systemMessage = systemMessage + "\n当前时间：%s".formatted(LocalDateTime.now());
 
         List<Map<String, String>> _messages = new ArrayList<>();
-        _messages.add(new ChatMessage(null, "system", systemMessage, null, null).toMapForAI());  // 系统消息
+        _messages.add(new ChatMessage(null, null, null, "system", systemMessage).toMapForAI());  // 系统消息
         for (ChatMessage msg : chatMessages) _messages.add(msg.toMapForAI());  // 历史消息
 
         return _messages;
@@ -397,7 +397,7 @@ public class DeepSeekClient
         systemMessage = systemMessage + "\n当前时间：%s".formatted(LocalDateTime.now());
 
         List<Map<String, String>> _messages = new ArrayList<>();
-        _messages.add(new ChatMessage(null, "system", systemMessage, null, null).toMapForAI());  // 系统消息
+        _messages.add(new ChatMessage(null, null, null, "system", systemMessage).toMapForAI());  // 系统消息
         for (ChatMessage msg : chatMessages) _messages.add(msg.toMapForAI());  // 历史消息
 
         return _messages;
@@ -465,10 +465,8 @@ public class DeepSeekClient
         // 记录消息
         chatMessages.add(new ChatMessage(
                 messageId,
-                "assistant",
-                response,
-                botId,
-                "Null"
+                botId, "Null", "assistant",
+                response
         ));
         return response;
     }
@@ -504,7 +502,7 @@ public class DeepSeekClient
                         new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)
                 ));
                 // 记录指令
-                chatMessages.add(new ChatMessage(null, "assistant", segment, botId, "Null"));
+                chatMessages.add(new ChatMessage(null, botId, "Null", "assistant", segment));
             } else {
                 // 发送消息
                 String text = segment.trim();
@@ -512,7 +510,7 @@ public class DeepSeekClient
                 if (messageFilter(text)) text = buildFilteredMsg();
                 Integer messageId = sendMsg(bot, targetId, text, isPrivate, voice);
                 // 记录消息
-                chatMessages.add(new ChatMessage(messageId, "assistant", text, botId, "Null"));
+                chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", text));
             }
         }
         return response;
@@ -546,7 +544,7 @@ public class DeepSeekClient
         // 发送消息
         Integer messageId = sendMsg(bot, targetId, _response, isPrivate, voice);
         // 记录消息
-        chatMessages.add(new ChatMessage(messageId, "assistant", response, botId, "Null"));
+        chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", response));
         return _response;
     }
 
