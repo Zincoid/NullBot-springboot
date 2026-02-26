@@ -179,7 +179,7 @@ public class DeepSeekClient
                         option.isVoice(), option.isEmbeddingAuth(), embeddingLimit
                 );
             } else
-                response = executeBasic(originalResponse, chatMessages, groupId, false, bot);
+                response = executeBasic(originalResponse, chatMessages, groupId, false, bot, option.isVoice());
             return response;
         } catch (Exception e) {
             if(option.getChatScope() != ChatScope.Monitor) chatMessages.removeLast();  // 非监听模式请求失败移除新增的用户消息
@@ -452,19 +452,28 @@ public class DeepSeekClient
      * @param targetId 目标ID
      * @param isPrivate 是否为私信
      * @param bot 机器人实体
+     * @param voice 语音模式
      * @return 处理过的消息 (已过滤)
      */
     String executeBasic(String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
-                        Bot bot) throws IOException {
+                        Bot bot, boolean voice) throws IOException {
         // 处理消息
         response = response.replaceAll("(\r?\n)+", "\n").trim();
         if (messageFilter(response)) response = buildFilteredMsg();
         // 发送消息
         ActionData<MsgId> msgIdActionData;
         if (isPrivate)
-            msgIdActionData = bot.sendPrivateMsg(targetId, response, false);
+            msgIdActionData = bot.sendPrivateMsg(
+                    targetId,
+                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(response)).build() : response,
+                    false
+            );
         else
-            msgIdActionData = bot.sendGroupMsg(targetId, response, false);
+            msgIdActionData = bot.sendGroupMsg(
+                    targetId,
+                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(response)).build() : response,
+                    false
+            );
         // 记录消息
         chatMessages.add(new ChatMessage(
                 msgIdActionData.getData().getMessageId(),
