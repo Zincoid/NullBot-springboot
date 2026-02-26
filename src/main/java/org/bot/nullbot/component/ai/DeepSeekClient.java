@@ -463,11 +463,7 @@ public class DeepSeekClient
         // 发送消息
         Integer messageId = sendMsg(bot, targetId, response, isPrivate, voice);
         // 记录消息
-        chatMessages.add(new ChatMessage(
-                messageId,
-                botId, "Null", "assistant",
-                response
-        ));
+        chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", response));
         return response;
     }
 
@@ -532,16 +528,20 @@ public class DeepSeekClient
     @Deprecated
     String executeEmbedding(String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
                             Bot bot, Event event, boolean voice, boolean embeddingAuth, boolean embeddingLimit) throws IOException {
+        // 处理消息
+        response = response.replaceAll("(\r?\n)+", "\n").trim();
         Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
         // 执行指令
         while (m.find()) {
             String command = m.group(1);
-            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)));
+            eventPublisher.publishEvent(new EmbeddedCommandEvent(
+                    bot,
+                    new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)
+            ));
         }
-        // 处理消息
-        String _response = response.replaceAll("\\{.*?}", "").replaceAll("(\r?\n)+", "\n").trim();
-        if (messageFilter(_response)) _response =  buildFilteredMsg();
         // 发送消息
+        String _response = response.replaceAll("\\{.*?}", "").trim();
+        if (messageFilter(_response)) _response =  buildFilteredMsg();
         Integer messageId = sendMsg(bot, targetId, _response, isPrivate, voice);
         // 记录消息
         chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", response));
