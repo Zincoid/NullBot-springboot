@@ -52,11 +52,18 @@ public class BanChatCommand implements Command
         permissionHandler.setUserBan(userId, ChatCommand.class, banTime);
         permissionHandler.setUserBan(userId, PokeReactCommand.class, banTime);
 
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-        bot.sendGroupMsg(groupId, """
-                [停用AI] ✅已设置！
-                %s -> %s Min""".formatted(userName, banTime), false);
-        log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} min", userId, banTime);
+        if (banTime > 0) {
+            bot.sendGroupMsg(groupId, """
+                    [停用AI] ⛔️已封禁
+                    - 用户: [CQ:at,qq=%s]
+                    - 时长: %s Min""".formatted(userId, banTime), false);
+            log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} Min", userId, banTime);
+        } else {
+            bot.sendGroupMsg(groupId, """
+                    [停用AI] ✅已解封
+                    - 用户: [CQ:at,qq=%s]""".formatted(userId), false);
+            log.info("\t\t\t\t├─[BanChat] 已解封对话 - {}", userId);
+        }
     }
 
     @Override
