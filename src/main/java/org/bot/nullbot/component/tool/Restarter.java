@@ -11,8 +11,8 @@ import java.io.File;
 public class Restarter
 {
     private static final String SCREEN_SESSION_NAME = "nullbot";
-    private static final String JAR_PATH = "/root/Nullbot/jar/NullBot-springboot-0.0.1-SNAPSHOT.jar";
-    private static final String LOG_PATH = "/root/Nullbot/output.log";
+    private static final String DEFAULT_JAR_PATH = "/root/Nullbot/jar/NullBot-springboot-0.0.1-SNAPSHOT.jar";
+    private static final String DEFAULT_LOG_PATH = "/root/Nullbot/output.log";
 
     public void restart() {
         log.info("▽ [Restarter] 正在重启应用...");
@@ -21,7 +21,7 @@ public class Restarter
 
     public void restartViaJar() {
         log.info("▽ [Restarter] 通过默认JAR路径重启应用...");
-        restartViaJar(JAR_PATH);
+        restartViaJar(DEFAULT_JAR_PATH);
     }
 
     public void restartViaJar(String jarPath) {
@@ -36,8 +36,8 @@ public class Restarter
             // 构建 重启命令
             // String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             String javaBin = "java";
-            String javaCommand = "%s -jar %s 2>&1 | tee %s".formatted(javaBin, jarPath, LOG_PATH);
-            String[] runScreenCmd = {"screen", "-dmS", SCREEN_SESSION_NAME, "bash", "-c", javaCommand};
+            String javaCmd = "%s -jar %s 2>&1 | tee %s".formatted(javaBin, jarPath, DEFAULT_LOG_PATH);
+            String[] runScreenCmd = {"screen", "-dmS", SCREEN_SESSION_NAME, "bash", "-c", javaCmd};
             String[] killScreenCmd = {"screen", "-S", SCREEN_SESSION_NAME, "-X", "quit"};
 
             // 执行 重启命令
