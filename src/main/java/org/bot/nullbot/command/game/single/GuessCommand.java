@@ -30,8 +30,8 @@ import java.util.List;
 public class GuessCommand implements Command
 {
     private final BotNextInputer botNextInputer;
-    private final SettingService settingService;
     private final GuessStorage guessStorage;
+    private final SettingService settingService;
     private final UserService userService;
 
     private static final double MAX_TRANSPARENT_RATIO = 0.75;  // 最大透明比例
