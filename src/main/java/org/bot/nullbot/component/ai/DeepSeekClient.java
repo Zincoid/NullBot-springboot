@@ -353,9 +353,7 @@ public class DeepSeekClient
         if (voice)
             commands = GROUP_AI_CMD_WHITE_LIST;
         else
-            commands = GROUP_AI_CMD_WHITE_LIST.stream()
-                    .filter(cmd -> !cmd.equals("Tts"))
-                    .collect(Collectors.toSet());
+            commands = GROUP_AI_CMD_WHITE_LIST.stream().filter(cmd -> !cmd.equals("Tts")).collect(Collectors.toSet());
 
         // 添加 指令模式提示词
         if (!custom && embedding) {
