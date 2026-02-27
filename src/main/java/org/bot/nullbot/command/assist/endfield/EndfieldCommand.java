@@ -41,7 +41,8 @@ public class EndfieldCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String keyword = params.isEmpty() ? "" : params.getFirst();
+        String keyword = params.isEmpty() || (params.size() == 1 && "-c".equals(params.get(0)))
+                ? "" : params.getFirst();
         boolean continuousQuery = (params.size() > 1 && "-c".equals(params.get(1)))
                 || (params.size() == 1 && "-c".equals(params.get(0)));  // 连续查询模式
 
