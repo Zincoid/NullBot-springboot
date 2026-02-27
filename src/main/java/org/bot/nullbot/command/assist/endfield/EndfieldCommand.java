@@ -121,8 +121,8 @@ public class EndfieldCommand implements Command
         String content = String.join("\n", helpNames);
         String footer = """
                 [第 %s/%s 页 (每页%s条)]
-                选择 - 直接发送条目序号 (下同)
-                翻页和终止 - Up/Down & End""".formatted(current, pages, pageSize);
+                操作 - Up/Down/End
+                选择 - 发送序号 (上同)""".formatted(current, pages, pageSize);
         bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD0D共%s个结果\n%s\n\n%s"
                 .formatted(total, content, footer), false);
         log.info("\t\t\t\t├─[Endfield] 已获取查询页 - {}/{}", current, pages);
