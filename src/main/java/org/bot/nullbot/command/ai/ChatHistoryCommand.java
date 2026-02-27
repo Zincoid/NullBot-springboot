@@ -78,8 +78,13 @@ public class ChatHistoryCommand implements Command
                     .formatted(total, content, footer), false);
             log.info("\t\t\t\t├─[ChatHistory] 已获取聊天历史 - {}/{}", current, pages);
 
-            List<Pair<Long, String>> inputs = botNextInputer
-                    .request(BniMode.PS, userId, WAIT_TIMEOUT, "(?i)up|down|end");
+            List<Pair<Long, String>> inputs;
+            try {
+                inputs = botNextInputer
+                        .request(BniMode.PS, userId, WAIT_TIMEOUT, "(?i)up|down|end");
+            } catch (Exception e) {
+                throw new NullBotMsgException("[聊天历史] ❌" + e.getMessage());
+            }
             operation = inputs.isEmpty() ? "END" : inputs.getFirst().getRight().toUpperCase();
         }
 
