@@ -75,10 +75,9 @@ public class EndfieldCommand implements Command
                     } catch (NumberFormatException e) {
                         throw new NullBotMsgException("[终末地] ❌格式错误");
                     }
-                    if (i < 0 || i > helpPaths.size() - 1)
+                    if (i < 0 || i > total - 1)
                         throw new NullBotMsgException("[终末地] ❌范围错误");
-                    String helpPath = helpPaths.get(i);
-                    sendResource(bot, groupId, helpPath);
+                    sendResource(bot, groupId, helpPaths.get(i));
                     return;
                 }
             }
