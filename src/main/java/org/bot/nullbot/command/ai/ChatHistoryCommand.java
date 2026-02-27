@@ -77,7 +77,8 @@ public class ChatHistoryCommand implements Command
                 throw new NullBotMsgException("[聊天历史] ❌" + e.getMessage());
             }
 
-            if (inputs.isEmpty()) throw new NullBotMsgException("[聊天历史] ⌛️输入超时");
+            if (inputs.isEmpty())
+                throw new NullBotMsgException("[聊天历史] ⌛️输入超时");
             operation = inputs.getFirst().getRight().toUpperCase();
         }
     }

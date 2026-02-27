@@ -47,7 +47,8 @@ public class EndfieldCommand implements Command
 
         List<String> helpPaths = new ArrayList<>(FileUtil.getFilePathsByKeyword(
                 fileStorageProperties.getResourcePath() + "/endfield", keyword));
-        if (helpPaths.isEmpty()) throw new NullBotMsgException("[终末地] ❌无查询项");
+        if (helpPaths.isEmpty())
+            throw new NullBotMsgException("[终末地] ❌无查询项");
 
         helpPaths.sort(Comparator.naturalOrder());  // 排序
         int total = helpPaths.size();
@@ -98,7 +99,8 @@ public class EndfieldCommand implements Command
                 throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
             }
 
-            if (inputs.isEmpty()) throw new NullBotMsgException("[终末地] ⌛️输入超时");
+            if (inputs.isEmpty())
+                throw new NullBotMsgException("[终末地] ⌛️输入超时");
             operation = inputs.getFirst().getRight().toUpperCase();
         }
     }
