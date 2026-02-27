@@ -53,8 +53,8 @@ public class ChatHistoryCommand implements Command
         String operation = "INIT";
         while (!"END".equals(operation)) {
             switch (operation) {
-                case "UP" -> current--;
-                case "DOWN" -> current++;
+                case "UP" -> { if (current > 0) current--; }
+                case "DOWN" -> { if (current < pages) current++; }
             }
             int fromIndex = (current - 1) * PAGE_SIZE;
             int toIndex = Math.min(fromIndex + PAGE_SIZE, total);
@@ -74,7 +74,7 @@ public class ChatHistoryCommand implements Command
             String footer = """
                     [第%s页 / 共%s页 (每页%s条)]
                     注: 发送 UP/DOWN/END 操作""".formatted(current, pages, PAGE_SIZE);
-            bot.sendGroupMsg(groupId, "[聊天历史] ✅共%s条记录\n%s\n%s"
+            bot.sendGroupMsg(groupId, "[聊天历史] \uD83D\uDD0D共%s条记录\n%s\n%s"
                     .formatted(total, content, footer), false);
             log.info("\t\t\t\t├─[ChatHistory] 已获取聊天历史 - {}/{}", current, pages);
 
