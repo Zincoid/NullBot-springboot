@@ -41,10 +41,17 @@ public class EndfieldCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String keyword = params.isEmpty() || (params.size() == 1 && "-c".equals(params.get(0)))
-                ? "" : params.getFirst();
-        boolean continuousQuery = (params.size() > 1 && "-c".equals(params.get(1)))
-                || (params.size() == 1 && "-c".equals(params.get(0)));  // 连续查询模式
+
+        boolean continuousQuery = false;  // 连续查询模式
+        String keyword = params.isEmpty() ? "" : params.getFirst();
+        if ("-c".equals(keyword)) {
+            continuousQuery = true;
+            if (params.size() > 1)
+                keyword = params.get(1);
+            else  {
+                keyword = "";
+            }
+        }
 
         List<String> helpPaths = new ArrayList<>(FileUtil.getFilePathsByKeyword(
                 fileStorageProperties.getResourcePath() + "/endfield", keyword));
@@ -152,7 +159,7 @@ public class EndfieldCommand implements Command
                 ◉ Endfield 命令
                 功能: 获取终末地攻略
                 限权: %d 级
-                格式: Endfield [可选: 关键字] [-c(连查模式)]
+                格式: Endfield [可选: -c(连查模式)] [可选: 关键字]
                 别名: endfield/end/终末地查询/终末地""", getAccess()
         );
     }
