@@ -34,6 +34,7 @@ public class EndfieldCommand implements Command
     private final FileStorageProperties fileStorageProperties;
     private final BotNextInputer botNextInputer;
 
+    private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
 
     @Override
@@ -50,39 +51,62 @@ public class EndfieldCommand implements Command
             throw new NullBotMsgException("[终末地] ❌无查询项");
         helpPaths.sort(Comparator.naturalOrder());  // 排序
 
+        int total = helpPaths.size();
+        int pages = (total + PAGE_SIZE - 1) / PAGE_SIZE;
+        int current = 1;
+
         int i = 0;
         if (helpPaths.size() > 1) {
-            List<String> helpNames = IntStream.range(0, helpPaths.size())
-                    .mapToObj(j -> {
-                        String path = helpPaths.get(j);
-                        String fileNameWithExt = new File(path).getName();
-                        int dotIndex = fileNameWithExt.lastIndexOf('.');
-                        String fileName = dotIndex > 0 ? fileNameWithExt.substring(0, dotIndex) : fileNameWithExt;
-                        return (j + 1) + ". " + fileName;
-                    }).toList();
-            String helpList = String.join("\n", helpNames);
-            bot.sendGroupMsg(groupId, """
+            String operation = "INIT";
+            boolean stop = false;
+            while (!stop) {
+                switch (operation) {
+                    case "INIT" -> {}
+                    case "UP" -> { if (current > 1) current--; }
+                    case "DOWN" -> { if (current < pages) current++; }
+                    case "END" -> throw new NullBotMsgException("[终末地] ⛔️查询终止");
+                    default -> {
+                        try {
+                            i = Integer.parseInt(operation) - 1;
+                        } catch (NumberFormatException e) {
+                            throw new NullBotMsgException("[终末地] ❌格式错误");
+                        }
+                        if (i < 0 || i > helpPaths.size() - 1)
+                            throw new NullBotMsgException("[终末地] ❌范围错误");
+                        stop = true;
+                    }
+                }
+                if (stop) break;
+                int fromIndex = (current - 1) * PAGE_SIZE;
+                int toIndex = Math.min(fromIndex + PAGE_SIZE, total);
+                List<String> helpNames = IntStream.range(fromIndex, toIndex)
+                        .mapToObj(j -> {
+                            String path = helpPaths.get(j);
+                            String fileNameWithExt = new File(path).getName();
+                            int dotIndex = fileNameWithExt.lastIndexOf('.');
+                            String fileName = dotIndex > 0 ? fileNameWithExt.substring(0, dotIndex) : fileNameWithExt;
+                            return (j + 1) + ". " + fileName;
+                        }).toList();
+                String helpList = String.join("\n", helpNames);
+                bot.sendGroupMsg(groupId, """
                         [终末地] \uD83D\uDD0D共%s个结果
                         %s
                         
-                        请发送序号来选择内容""".formatted(helpPaths.size(), helpList), false);
-            log.info("\t\t\t\t├─[Endfield] 找到 {} 个匹配项", helpPaths.size());
+                        [第 %s/%s 页 (每页%s条)]
+                        翻页 - Up/Down
+                        选择 - 发送条目序号""".formatted(helpPaths.size(), helpList, current, pages, PAGE_SIZE), false);
+                log.info("\t\t\t\t├─[Endfield] 已获取查询页 - {}/{}", current, pages);
 
-            List<Pair<Long, String>> inputs;
-            try {
-                inputs = botNextInputer.request(BniMode.PS, userId, WAIT_TIMEOUT, "[1-9]\\d*");
-            } catch (Exception e) {
-                throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
+                List<Pair<Long, String>> inputs;
+                try {
+                    inputs = botNextInputer.request(BniMode.PS, userId, WAIT_TIMEOUT, "[1-9]\\d*|(?i)up|down|end");
+                } catch (Exception e) {
+                    throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
+                }
+                if (inputs.isEmpty())
+                    throw new NullBotMsgException("[终末地] ⌛️输入超时");
+                operation = inputs.getFirst().getRight().toUpperCase();
             }
-            if (inputs.isEmpty())
-                throw new NullBotMsgException("[终末地] ⌛️输入超时");
-            try {
-                i = Integer.parseInt(inputs.getFirst().getRight()) - 1;
-            } catch (NumberFormatException e) {
-                throw new NullBotMsgException("[终末地] ❌格式错误");
-            }
-            if (i < 0 || i > helpPaths.size() - 1)
-                throw new NullBotMsgException("[终末地] ❌范围错误");
         }
 
         String helpPath = helpPaths.get(i);

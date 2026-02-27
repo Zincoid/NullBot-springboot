@@ -73,8 +73,8 @@ public class ChatHistoryCommand implements Command
             String content = String.join("\n", contentPage);
             String footer = """
                     [第%s页 / 共%s页 (每页%s条)]
-                    注: 发送 Up/Down/End 以操作""".formatted(current, pages, PAGE_SIZE);
-            bot.sendGroupMsg(groupId, "[聊天历史] \uD83D\uDD0D共%s条存储记录\n%s\n%s"
+                    翻页和终止 - Up/Down/End""".formatted(current, pages, PAGE_SIZE);
+            bot.sendGroupMsg(groupId, "[聊天历史] \uD83D\uDD0D共%s条存储记录\n%s\n\n%s"
                     .formatted(total, content, footer), false);
             log.info("\t\t\t\t├─[ChatHistory] 已获取聊天历史 - {}/{}", current, pages);
 
@@ -88,8 +88,8 @@ public class ChatHistoryCommand implements Command
             operation = inputs.isEmpty() ? "END" : inputs.getFirst().getRight().toUpperCase();
         }
 
-        bot.sendGroupMsg(groupId, "[聊天历史] ⛔️查询结束", false);
-        log.info("\t\t\t\t├─[ChatHistory] 用户 {} 查询结束", userId);
+        bot.sendGroupMsg(groupId, "[聊天历史] ⛔️查询终止", false);
+        log.info("\t\t\t\t├─[ChatHistory] 用户 {} 查询终止", userId);
     }
 
     @Override
