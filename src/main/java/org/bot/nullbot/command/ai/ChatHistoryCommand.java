@@ -4,6 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
@@ -49,21 +50,10 @@ public class ChatHistoryCommand implements Command
         }
 
         String operation = "INIT";
-        while (true) {
+        while (!"END".equals(operation)) {
             switch (operation) {
-                case "INIT" -> {
-
-                }
-                case "UP" -> {
-                }
-                case "DOWN" -> {
-
-                }
-                case "END" -> {
-                    bot.sendGroupMsg(groupId, "[聊天历史] ✅共%s条记录\n%s\n%s".formatted(total, content, footer), false);
-                    log.info("\t\t\t\t├─[ChatHistory] 用户 {} 查询结束", userId);
-                    return;
-                }
+                case "UP" -> current--;
+                case "DOWN" -> current++;
             }
             int fromIndex = (current - 1) * PAGE_SIZE;
             int toIndex = Math.min(fromIndex + PAGE_SIZE, total);
@@ -82,8 +72,12 @@ public class ChatHistoryCommand implements Command
             bot.sendGroupMsg(groupId, "[聊天历史] ✅共%s条记录\n%s\n%s".formatted(total, content, footer), false);
             log.info("\t\t\t\t├─[ChatHistory] 已获取聊天历史 - {}/{}", current, pages);
 
-            botNextInputer.request(BniMode.PS, userId, WAIT_TIMEOUT, )
+            List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.PS, userId, WAIT_TIMEOUT, "UP|DOWN|END");
+            operation = inputs.isEmpty() ? "END" : inputs.getFirst().getRight();
         }
+
+        bot.sendGroupMsg(groupId, "[聊天历史] ⛔️查询结束", false);
+        log.info("\t\t\t\t├─[ChatHistory] 用户 {} 查询结束", userId);
     }
 
     @Override
