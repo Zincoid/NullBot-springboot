@@ -92,19 +92,19 @@ public class EndfieldCommand implements Command
                         String fileName = dotIndex > 0 ? fileNameWithExt.substring(0, dotIndex) : fileNameWithExt;
                         return (j + 1) + ". " + fileName;
                     }).toList();
-            String helpList = String.join("\n", helpNames);
-            bot.sendGroupMsg(groupId, """
-                        [终末地] \uD83D\uDD0D共%s个结果
-                        %s
-                        
-                        [第 %s/%s 页 (每页%s条)]
-                        翻页 - Up/Down
-                        选择 - 发送条目序号""".formatted(helpPaths.size(), helpList, current, pages, PAGE_SIZE), false);
+            String content = String.join("\n", helpNames);
+            String footer = """
+                    [第 %s/%s 页 (每页%s条)]
+                    翻页 - Up/Down
+                    选择 - 发送条目序号""".formatted(current, pages, PAGE_SIZE);
+            bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD0D共%s个结果\n%s\n\n%s"
+                    .formatted(total, content, footer), false);
             log.info("\t\t\t\t├─[Endfield] 已获取查询页 - {}/{}", current, pages);
 
             List<Pair<Long, String>> inputs;
             try {
-                inputs = botNextInputer.request(BniMode.PS, userId, WAIT_TIMEOUT, "[1-9]\\d*|(?i)up|down|end");
+                inputs = botNextInputer
+                        .request(BniMode.PS, userId, WAIT_TIMEOUT, "[1-9]\\d*|(?i)up|down|end");
             } catch (Exception e) {
                 throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
             }
