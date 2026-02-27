@@ -37,13 +37,13 @@ public class EndfieldCommand implements Command
     private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
 
-    private boolean continuousQuery = true;  // 连续查询模式
-
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String keyword = params.isEmpty() ? "" : params.getFirst();
+        boolean continuousQuery = (params.size() > 1 && "-c".equals(params.get(1)))
+                || (params.size() == 1 && "-c".equals(params.get(0)));  // 连续查询模式
 
         List<String> helpPaths = new ArrayList<>(FileUtil.getFilePathsByKeyword(
                 fileStorageProperties.getResourcePath() + "/endfield", keyword));
@@ -145,15 +145,13 @@ public class EndfieldCommand implements Command
         }
     }
 
-    public boolean switchContinuous() { return continuousQuery = !continuousQuery; }
-
     @Override
     public String getHelp() {
         return String.format("""
                 ◉ Endfield 命令
                 功能: 获取终末地攻略
                 限权: %d 级
-                格式: Endfield [可选: 关键字]
+                格式: Endfield [可选: 关键字] [-c(连查模式)]
                 别名: endfield/end/终末地查询/终末地""", getAccess()
         );
     }
