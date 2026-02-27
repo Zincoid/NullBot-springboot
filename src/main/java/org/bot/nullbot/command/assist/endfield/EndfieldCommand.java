@@ -48,9 +48,8 @@ public class EndfieldCommand implements Command
             continuousQuery = true;
             if (params.size() > 1)
                 keyword = params.get(1);
-            else  {
+            else
                 keyword = "";
-            }
         }
 
         List<String> helpPaths = new ArrayList<>(FileUtil.getFilePathsByKeyword(
