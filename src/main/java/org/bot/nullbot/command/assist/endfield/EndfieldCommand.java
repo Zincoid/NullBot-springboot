@@ -44,17 +44,8 @@ public class EndfieldCommand implements Command
         String keyword = params.isEmpty() ? "" : params.getFirst();
 
         List<String> helpPaths = new ArrayList<>(FileUtil.getFilePathsByKeyword(
-                fileStorageProperties.getResourcePath() + "/endfield",
-                keyword
-        ));
-
-        if (helpPaths.isEmpty())
-            throw new NullBotMsgException("[终末地] ❌无查询项");
-
-        if (helpPaths.size() == 1) {
-            sendResource(bot, groupId, helpPaths.getFirst());
-            return;
-        }
+                fileStorageProperties.getResourcePath() + "/endfield", keyword));
+        if (helpPaths.isEmpty()) throw new NullBotMsgException("[终末地] ❌无查询项");
 
         helpPaths.sort(Comparator.naturalOrder());  // 排序
         int total = helpPaths.size();
@@ -64,10 +55,19 @@ public class EndfieldCommand implements Command
         String operation = "INIT";
         while (true) {
             switch (operation) {
-                case "INIT" -> {}
+                case "INIT" -> {
+                    if (total == 1) {
+                        sendResource(bot, groupId, helpPaths.getFirst());
+                        return;
+                    }
+                }
                 case "UP" -> { if (current > 1) current--; }
                 case "DOWN" -> { if (current < pages) current++; }
-                case "END" -> throw new NullBotMsgException("[终末地] ⛔️查询终止");
+                case "END" -> {
+                    bot.sendGroupMsg(groupId, "[终末地] ⛔️查询终止", false);
+                    log.info("\t\t\t\t├─[Endfield] 用户 {} 查询终止", userId);
+                    return;
+                }
                 default -> {
                     int i;
                     try {
