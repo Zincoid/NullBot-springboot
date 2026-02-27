@@ -51,10 +51,15 @@ public class ChatHistoryCommand implements Command
         }
 
         String operation = "INIT";
-        while (!"END".equals(operation)) {
+        while (true) {
             switch (operation) {
                 case "UP" -> { if (current > 1) current--; }
                 case "DOWN" -> { if (current < pages) current++; }
+                case "END" -> {
+                    bot.sendGroupMsg(groupId, "[聊天历史] ⛔️查询终止", false);
+                    log.info("\t\t\t\t├─[ChatHistory] 用户 {} 查询终止", userId);
+                    return;
+                }
             }
             int fromIndex = (current - 1) * PAGE_SIZE;
             int toIndex = Math.min(fromIndex + PAGE_SIZE, total);
@@ -85,11 +90,11 @@ public class ChatHistoryCommand implements Command
             } catch (Exception e) {
                 throw new NullBotMsgException("[聊天历史] ❌" + e.getMessage());
             }
-            operation = inputs.isEmpty() ? "END" : inputs.getFirst().getRight().toUpperCase();
-        }
 
-        bot.sendGroupMsg(groupId, "[聊天历史] ⛔️查询终止", false);
-        log.info("\t\t\t\t├─[ChatHistory] 用户 {} 查询终止", userId);
+            if (inputs.isEmpty())
+                throw new NullBotMsgException("[聊天历史] ⌛️输入超时");
+            operation = inputs.getFirst().getRight().toUpperCase();
+        }
     }
 
     @Override
