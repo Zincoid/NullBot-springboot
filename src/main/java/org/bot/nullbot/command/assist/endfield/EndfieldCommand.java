@@ -54,39 +54,41 @@ public class EndfieldCommand implements Command
         int pages = (total + PAGE_SIZE - 1) / PAGE_SIZE;
         int current = 1;
 
+        if (total == 1) {  // 只有一个匹配项时直接发送
+            sendResource(bot, groupId, helpPaths.getFirst());
+            return;
+        }
+
         String operation = "INIT";
-        boolean sendPage = true;
         while (true) {
             switch (operation) {
-                case "INIT" -> {
-                    if (total == 1) {
-                        sendResource(bot, groupId, helpPaths.getFirst());
-                        return;
-                    }
+                case "INIT" -> sendPage(bot, groupId, helpPaths, PAGE_SIZE, current);
+                case "UP" -> {
+                    if (current > 1) sendPage(bot, groupId, helpPaths, PAGE_SIZE, --current);
+                    else bot.sendGroupMsg(groupId, "到顶啦！", false);
                 }
-                case "UP" -> { if (current > 1) current--; }
-                case "DOWN" -> { if (current < pages) current++; }
+                case "DOWN" -> {
+                    if (current < pages) sendPage(bot, groupId, helpPaths, PAGE_SIZE, ++current);
+                    else bot.sendGroupMsg(groupId, "到底啦！", false);
+                }
                 case "END" -> {
                     bot.sendGroupMsg(groupId, "[终末地] ⛔️查询终止", false);
                     log.info("\t\t\t\t├─[Endfield] 用户 {} 查询终止", userId);
                     return;
                 }
                 default -> {
-                    int i;
+                    int selection;
                     try {
-                        i = Integer.parseInt(operation) - 1;
+                        selection = Integer.parseInt(operation) - 1;
                     } catch (NumberFormatException e) {
                         throw new NullBotMsgException("[终末地] ❌格式错误");
                     }
-                    if (i < 0 || i > total - 1)
+                    if (selection < 0 || selection > total - 1)
                         throw new NullBotMsgException("[终末地] ❌范围错误");
-                    sendResource(bot, groupId, helpPaths.get(i));
+                    sendResource(bot, groupId, helpPaths.get(selection));
                     if (!continuousQuery) return;
-                    sendPage = false;
                 }
             }
-
-            if (sendPage) sendPage(bot, groupId, helpPaths, PAGE_SIZE, current);
 
             List<Pair<Long, String>> inputs;
             try {
@@ -95,11 +97,8 @@ public class EndfieldCommand implements Command
             } catch (Exception e) {
                 throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
             }
-
-            if (inputs.isEmpty())
-                throw new NullBotMsgException("[终末地] ⌛️输入超时");
+            if (inputs.isEmpty()) throw new NullBotMsgException("[终末地] ⌛️输入超时");
             operation = inputs.getFirst().getRight().toUpperCase();
-            sendPage = true;
         }
     }
 
@@ -142,6 +141,8 @@ public class EndfieldCommand implements Command
             log.info("\t\t\t\t├─[Endfield] 已获取图片内容");
         }
     }
+
+    public boolean switchContinuous() { return continuousQuery = !continuousQuery; }
 
     @Override
     public String getHelp() {
