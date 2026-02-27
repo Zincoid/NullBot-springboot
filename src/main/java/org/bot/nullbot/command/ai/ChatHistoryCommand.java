@@ -53,35 +53,21 @@ public class ChatHistoryCommand implements Command
         String operation = "INIT";
         while (true) {
             switch (operation) {
-                case "UP" -> { if (current > 1) current--; }
-                case "DOWN" -> { if (current < pages) current++; }
+                case "INIT" -> sendPage(bot, groupId, history, PAGE_SIZE, current);
+                case "UP" -> {
+                    if (current > 1) sendPage(bot, groupId, history, PAGE_SIZE, --current);
+                    else bot.sendGroupMsg(groupId, "到顶啦！", false);
+                }
+                case "DOWN" -> {
+                    if (current < pages) sendPage(bot, groupId, history, PAGE_SIZE, ++current);
+                    else bot.sendGroupMsg(groupId, "到底啦！", false);
+                }
                 case "END" -> {
                     bot.sendGroupMsg(groupId, "[聊天历史] ⛔️查询终止", false);
                     log.info("\t\t\t\t├─[ChatHistory] 用户 {} 查询终止", userId);
                     return;
                 }
             }
-            int fromIndex = (current - 1) * PAGE_SIZE;
-            int toIndex = Math.min(fromIndex + PAGE_SIZE, total);
-            List<ChatMessage> historyPage = history.subList(fromIndex, toIndex);
-            List<String> contentPage = historyPage.stream()
-                    .map(msg ->
-                            "user".equals(msg.getRole()) ?
-                                    "%s(%s): %s".formatted(
-                                            msg.getUserName(),
-                                            msg.getUserId(),
-                                            msg.getContent()
-                                    ) :
-                                    "Null: %s".formatted(msg.getContent())
-                    )
-                    .toList();
-            String content = String.join("\n", contentPage);
-            String footer = """
-                    [第%s页 / 共%s页 (每页%s条)]
-                    翻页和终止 - Up/Down/End""".formatted(current, pages, PAGE_SIZE);
-            bot.sendGroupMsg(groupId, "[聊天历史] \uD83D\uDD0D共%s条存储记录\n%s\n\n%s"
-                    .formatted(total, content, footer), false);
-            log.info("\t\t\t\t├─[ChatHistory] 已获取聊天历史 - {}/{}", current, pages);
 
             List<Pair<Long, String>> inputs;
             try {
@@ -90,9 +76,36 @@ public class ChatHistoryCommand implements Command
             } catch (Exception e) {
                 throw new NullBotMsgException("[聊天历史] ❌" + e.getMessage());
             }
+
             if (inputs.isEmpty()) throw new NullBotMsgException("[聊天历史] ⌛️输入超时");
             operation = inputs.getFirst().getRight().toUpperCase();
         }
+    }
+
+    private void sendPage(Bot bot, Long groupId, List<ChatMessage> history, int pageSize, int current) {
+        int total = history.size();
+        int pages = (total + pageSize - 1) / pageSize;
+        int fromIndex = (current - 1) * pageSize;
+        int toIndex = Math.min(fromIndex + pageSize, total);
+        List<ChatMessage> historyPage = history.subList(fromIndex, toIndex);
+        List<String> contentPage = historyPage.stream()
+                .map(msg ->
+                        "user".equals(msg.getRole()) ?
+                                "%s(%s): %s".formatted(
+                                        msg.getUserName(),
+                                        msg.getUserId(),
+                                        msg.getContent()
+                                ) :
+                                "Null: %s".formatted(msg.getContent())
+                )
+                .toList();
+        String content = String.join("\n", contentPage);
+        String footer = """
+                [第%s页 / 共%s页 (每页%s条)]
+                翻页和终止 - Up/Down/End""".formatted(current, pages, pageSize);
+        bot.sendGroupMsg(groupId, "[聊天历史] \uD83D\uDD0D共%s条存储记录\n%s\n\n%s"
+                .formatted(total, content, footer), false);
+        log.info("\t\t\t\t├─[ChatHistory] 已获取聊天历史 - {}/{}", current, pages);
     }
 
     @Override

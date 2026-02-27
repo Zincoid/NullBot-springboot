@@ -97,6 +97,7 @@ public class EndfieldCommand implements Command
             } catch (Exception e) {
                 throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
             }
+
             if (inputs.isEmpty()) throw new NullBotMsgException("[终末地] ⌛️输入超时");
             operation = inputs.getFirst().getRight().toUpperCase();
         }
