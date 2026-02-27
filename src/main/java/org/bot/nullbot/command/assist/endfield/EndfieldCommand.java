@@ -47,74 +47,80 @@ public class EndfieldCommand implements Command
                 fileStorageProperties.getResourcePath() + "/endfield",
                 keyword
         ));
+
         if (helpPaths.isEmpty())
             throw new NullBotMsgException("[终末地] ❌无查询项");
-        helpPaths.sort(Comparator.naturalOrder());  // 排序
 
+        if (helpPaths.size() == 1) {
+            sendResource(bot, groupId, helpPaths.getFirst());
+            return;
+        }
+
+        helpPaths.sort(Comparator.naturalOrder());  // 排序
         int total = helpPaths.size();
         int pages = (total + PAGE_SIZE - 1) / PAGE_SIZE;
         int current = 1;
 
-        int i = 0;
-        if (helpPaths.size() > 1) {
-            String operation = "INIT";
-            boolean stop = false;
-            while (!stop) {
-                switch (operation) {
-                    case "INIT" -> {}
-                    case "UP" -> { if (current > 1) current--; }
-                    case "DOWN" -> { if (current < pages) current++; }
-                    case "END" -> throw new NullBotMsgException("[终末地] ⛔️查询终止");
-                    default -> {
-                        try {
-                            i = Integer.parseInt(operation) - 1;
-                        } catch (NumberFormatException e) {
-                            throw new NullBotMsgException("[终末地] ❌格式错误");
-                        }
-                        if (i < 0 || i > helpPaths.size() - 1)
-                            throw new NullBotMsgException("[终末地] ❌范围错误");
-                        stop = true;
+        String operation = "INIT";
+        while (true) {
+            switch (operation) {
+                case "INIT" -> {}
+                case "UP" -> { if (current > 1) current--; }
+                case "DOWN" -> { if (current < pages) current++; }
+                case "END" -> throw new NullBotMsgException("[终末地] ⛔️查询终止");
+                default -> {
+                    int i;
+                    try {
+                        i = Integer.parseInt(operation) - 1;
+                    } catch (NumberFormatException e) {
+                        throw new NullBotMsgException("[终末地] ❌格式错误");
                     }
+                    if (i < 0 || i > helpPaths.size() - 1)
+                        throw new NullBotMsgException("[终末地] ❌范围错误");
+                    String helpPath = helpPaths.get(i);
+                    sendResource(bot, groupId, helpPath);
+                    return;
                 }
-                if (stop) break;
-                int fromIndex = (current - 1) * PAGE_SIZE;
-                int toIndex = Math.min(fromIndex + PAGE_SIZE, total);
-                List<String> helpNames = IntStream.range(fromIndex, toIndex)
-                        .mapToObj(j -> {
-                            String path = helpPaths.get(j);
-                            String fileNameWithExt = new File(path).getName();
-                            int dotIndex = fileNameWithExt.lastIndexOf('.');
-                            String fileName = dotIndex > 0 ? fileNameWithExt.substring(0, dotIndex) : fileNameWithExt;
-                            return (j + 1) + ". " + fileName;
-                        }).toList();
-                String helpList = String.join("\n", helpNames);
-                bot.sendGroupMsg(groupId, """
+            }
+
+            int fromIndex = (current - 1) * PAGE_SIZE;
+            int toIndex = Math.min(fromIndex + PAGE_SIZE, total);
+            List<String> helpNames = IntStream.range(fromIndex, toIndex)
+                    .mapToObj(j -> {
+                        String path = helpPaths.get(j);
+                        String fileNameWithExt = new File(path).getName();
+                        int dotIndex = fileNameWithExt.lastIndexOf('.');
+                        String fileName = dotIndex > 0 ? fileNameWithExt.substring(0, dotIndex) : fileNameWithExt;
+                        return (j + 1) + ". " + fileName;
+                    }).toList();
+            String helpList = String.join("\n", helpNames);
+            bot.sendGroupMsg(groupId, """
                         [终末地] \uD83D\uDD0D共%s个结果
                         %s
                         
                         [第 %s/%s 页 (每页%s条)]
                         翻页 - Up/Down
                         选择 - 发送条目序号""".formatted(helpPaths.size(), helpList, current, pages, PAGE_SIZE), false);
-                log.info("\t\t\t\t├─[Endfield] 已获取查询页 - {}/{}", current, pages);
+            log.info("\t\t\t\t├─[Endfield] 已获取查询页 - {}/{}", current, pages);
 
-                List<Pair<Long, String>> inputs;
-                try {
-                    inputs = botNextInputer.request(BniMode.PS, userId, WAIT_TIMEOUT, "[1-9]\\d*|(?i)up|down|end");
-                } catch (Exception e) {
-                    throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
-                }
-                if (inputs.isEmpty())
-                    throw new NullBotMsgException("[终末地] ⌛️输入超时");
-                operation = inputs.getFirst().getRight().toUpperCase();
+            List<Pair<Long, String>> inputs;
+            try {
+                inputs = botNextInputer.request(BniMode.PS, userId, WAIT_TIMEOUT, "[1-9]\\d*|(?i)up|down|end");
+            } catch (Exception e) {
+                throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
             }
+            if (inputs.isEmpty())
+                throw new NullBotMsgException("[终末地] ⌛️输入超时");
+            operation = inputs.getFirst().getRight().toUpperCase();
         }
+    }
 
-        String helpPath = helpPaths.get(i);
-        String helpName = new File(helpPath).getName().toLowerCase();
+    private void sendResource(Bot bot, Long groupId, String resourcePath) {
+        String helpName = new File(resourcePath).getName().toLowerCase();
         if (helpName.endsWith(".txt")) {
             // TXT文件类型 读取文本内容
             try {
-                String response = Files.readString(Paths.get(helpPath), StandardCharsets.UTF_8);
+                String response = Files.readString(Paths.get(resourcePath), StandardCharsets.UTF_8);
                 bot.sendGroupMsg(groupId, response, false);
                 log.info("\t\t\t\t├─[Endfield] 已获取文本内容");
             } catch (IOException e) {
@@ -122,7 +128,7 @@ public class EndfieldCommand implements Command
             }
         } else {
             // 其他文件类型 按图片处理
-            String response = MsgUtils.builder().img(helpPath).build();
+            String response = MsgUtils.builder().img(resourcePath).build();
             bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[Endfield] 已获取图片内容");
         }
