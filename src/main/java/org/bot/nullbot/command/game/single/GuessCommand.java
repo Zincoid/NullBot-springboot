@@ -34,9 +34,9 @@ public class GuessCommand implements Command
     private final SettingService settingService;
     private final UserService userService;
 
-    private static final int MAX_CROP_ATTEMPTS = 100;  // 切图尝试限制
     private static final int WAIT_TIMEOUT = 99;  // 等待超时时间 (单位: Second)
     private static final int MAX_RETRIES = 10;  // 最大回答次数
+    private static final int MAX_CROP_ATTEMPTS = 100;  // 切图尝试限制
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) throws Exception {

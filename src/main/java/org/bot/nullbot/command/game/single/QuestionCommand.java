@@ -33,8 +33,8 @@ public class QuestionCommand implements Command
     private boolean thinking = true;
     private final Set<Long> inGameUsers = new ConcurrentHashSet<>();
 
-    private static final int BLOCKING_TIME = 1;  // 封禁时间 单位: Minute
-    private static final int QUESTION_TIMEOUT = 60;  // 回答时间 单位: Second
+    private static final int BLOCKING_TIME = 1;  // 封禁时间 (单位: Minute)
+    private static final int WAIT_TIMEOUT = 60;  // 回答时间 (单位: Second)
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -90,13 +90,13 @@ public class QuestionCommand implements Command
                             请[CQ:at,qq=%s]回答问题！
                             %s
                             注: 请直接发送选项, 限时%s秒！"""
-                    .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), QUESTION_TIMEOUT);
+                    .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), WAIT_TIMEOUT);
 
             bot.sendGroupMsg(groupId, question, false);
 
             List<Pair<Long, String>> inputs;
             try {
-                inputs = botNextInputer.request(BniMode.PS, userId, QUESTION_TIMEOUT, "[a-zA-Z]");
+                inputs = botNextInputer.request(BniMode.PS, userId, WAIT_TIMEOUT, "[a-zA-Z]");
             } catch (Exception e) {
                 throw new NullBotMsgException("[问答] ❌" + e.getMessage());
             }

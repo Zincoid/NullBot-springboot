@@ -34,6 +34,8 @@ public class EndfieldCommand implements Command
     private final FileStorageProperties fileStorageProperties;
     private final BotNextInputer botNextInputer;
 
+    private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
+
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
@@ -68,7 +70,7 @@ public class EndfieldCommand implements Command
 
             List<Pair<Long, String>> inputs;
             try {
-                inputs = botNextInputer.request(BniMode.PS, userId, 20, "[1-9]\\d*");
+                inputs = botNextInputer.request(BniMode.PS, userId, WAIT_TIMEOUT, "[1-9]\\d*");
             } catch (Exception e) {
                 throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
             }

@@ -209,29 +209,15 @@ public class DeepSeekClient
      * 获取对话历史 (群聊)
      *  @param groupId 群聊ID
      *  @param userId 用户ID
-     *  @return 历史记录
+     *  @return 聊天记录列表
      */
-    public String getGroupHistory(Long groupId, Long userId) {
+    public List<ChatMessage>  getGroupHistory(Long groupId, Long userId) {
         ChatOption option = settingService.getChatOption(groupId);
-        List<ChatMessage> history = switch (option.getChatScope()) {
+        return switch (option.getChatScope()) {
             case Group -> chatStorage.getGroupHistory(groupId);
             case Personal -> chatStorage.getUserHistory(userId);
             case Monitor -> chatStorage.getMonitorHistory(groupId);
         };
-        if (history == null || history.isEmpty()) return "无对话历史";
-        StringBuilder sb = new StringBuilder();
-        for (ChatMessage msg : history) {
-            if("user".equals(msg.getRole()))
-                sb.append("\n---\n").append(msg.getUserName()).append("(").append(msg.getUserId()).append("): ").append(msg.getContent());
-            else {
-                String content = msg.getContent();
-                if(!option.isCustom() && option.isEmbedding())
-                    if(content.startsWith("{") && content.endsWith("}")) continue;
-                sb.append("\n---\n").append("Null: ").append(content);
-            }
-
-        }
-        return sb.toString().trim();
     }
 
     // =================== 私聊调用方法 ===================
