@@ -43,7 +43,8 @@ public class ChatHistoryCommand implements Command
 
         if (!params.isEmpty()) {
             try {
-                current = Math.max(1, Math.min(pages, Integer.parseInt(params.getFirst())));
+                current = Math.min(pages, Integer.parseInt(params.getFirst()));
+                current = Math.max(1, current);
             } catch (NumberFormatException e) {
                 throw new NullBotMsgException("[聊天历史] ❌页码格式错误");
             }
@@ -61,7 +62,11 @@ public class ChatHistoryCommand implements Command
             List<String> contentPage = historyPage.stream()
                     .map(msg ->
                             "user".equals(msg.getRole()) ?
-                                    "%s(%s): %s".formatted(msg.getUserName(), msg.getUserId(), msg.getContent()) :
+                                    "%s(%s): %s".formatted(
+                                            msg.getUserName(),
+                                            msg.getUserId(),
+                                            msg.getContent()
+                                    ) :
                                     "Null: %s".formatted(msg.getContent())
                     )
                     .toList();
@@ -69,10 +74,12 @@ public class ChatHistoryCommand implements Command
             String footer = """
                     [第%s页 / 共%s页 (每页%s条)]
                     注: 发送 UP/DOWN/END 操作""".formatted(current, pages, PAGE_SIZE);
-            bot.sendGroupMsg(groupId, "[聊天历史] ✅共%s条记录\n%s\n%s".formatted(total, content, footer), false);
+            bot.sendGroupMsg(groupId, "[聊天历史] ✅共%s条记录\n%s\n%s"
+                    .formatted(total, content, footer), false);
             log.info("\t\t\t\t├─[ChatHistory] 已获取聊天历史 - {}/{}", current, pages);
 
-            List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.PS, userId, WAIT_TIMEOUT, "UP|DOWN|END");
+            List<Pair<Long, String>> inputs = botNextInputer
+                    .request(BniMode.PS, userId, WAIT_TIMEOUT, "UP|DOWN|END");
             operation = inputs.isEmpty() ? "END" : inputs.getFirst().getRight();
         }
 
