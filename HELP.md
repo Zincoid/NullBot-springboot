@@ -1,6 +1,7 @@
 # 快捷运行
 screen -dmS napcat bash -c "xvfb-run -a /root/Napcat/opt/QQ/qq --no-sandbox -q 3408240018 > /root/Napcat/output.log 2>&1"  
 screen -dmS nullbot bash -c "java -jar /root/Nullbot/jar/NullBot-springboot-0.0.1-SNAPSHOT.jar 2>&1 | tee /root/Nullbot/output.log"  
+screen -dmS nullbot bash -c "java -jar /root/Nullbot/jar/NullBot-springboot-0.0.1-SNAPSHOT.jar"
 
 # 附加方法
 ### 限制Napcat

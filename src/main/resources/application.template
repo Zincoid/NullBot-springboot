@@ -30,7 +30,9 @@ jwt:
   password:
   tokenTTL: 24h
 
-#logging:
+logging:
+  file:
+    name: /root/Nullbot/output.log
 #  level:
 #    root: INFO
 #    org.bot.nullbot: WARN

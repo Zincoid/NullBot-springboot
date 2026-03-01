@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -17,11 +18,14 @@ import java.util.List;
 @Slf4j
 public class LogCommand implements Command
 {
+    @Value("${logging.file.name}")
+    private String logPath;
+
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         bot.uploadGroupFile(
                 event.getGroupId(),
-                "/root/Nullbot/output.log",
+                logPath,
                 "NULLBOT_%s.LOG".formatted(LocalDateTime.now())
         );
         log.info("\t\t\t\t├─[Log] 日志已发送");
