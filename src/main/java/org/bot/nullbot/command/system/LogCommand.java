@@ -22,7 +22,7 @@ public class LogCommand implements Command
         bot.uploadGroupFile(
                 event.getGroupId(),
                 "/root/Nullbot/output.log",
-                "Log_%s.log".formatted(LocalDateTime.now())
+                "NULLBOT_%s.LOG".formatted(LocalDateTime.now())
         );
         log.info("\t\t\t\t├─[Log] 日志已发送");
     }
