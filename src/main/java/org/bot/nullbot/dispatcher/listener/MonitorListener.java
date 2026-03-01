@@ -122,13 +122,13 @@ public class MonitorListener
     public void onGroupMessageCollection(Bot bot, GroupMessageEvent event)
     {
         if (!settingService.isMessageCollect(event.getGroupId())) return;
-        if (!(event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话"))) {  // Chat 命令会自动记录消息 跳过
-            log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
-            List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
-            chatMessages.add(new ChatMessage(event.getMessageId() , event.getUserId(), event.getSender().getNickname(), "user", MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg())));
-            chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
-            log.info("└─[Recorded] {} Message(s)", chatMessages.size());
-        }
+        if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // Chat 命令会自动记录消息 跳过
+        String parsedMsg = MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg());
+        log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsedMsg);
+        List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
+        chatMessages.add(new ChatMessage(event.getMessageId() , event.getUserId(), event.getSender().getNickname(), "user", parsedMsg));
+        chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
+        log.info("└─[Recorded] {} Message(s)", chatMessages.size());
     }
 
     @FunctionControl(config = "KeyDetect")

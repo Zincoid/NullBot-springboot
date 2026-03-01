@@ -72,7 +72,7 @@ public class SecurityCodeScheduler
      * @return 初始安全码
      */
     public String createCode(String codeId) {
-        return createCode(codeId, -1, false);
+        return createCode(codeId, -1, true);
     }
 
     /**
