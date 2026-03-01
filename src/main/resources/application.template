@@ -32,7 +32,7 @@ jwt:
 
 logging:
   file:
-    name: /root/Nullbot/output.log
+    name: /root/Nullbot/output.log  # 日志路径
 #  level:
 #    root: INFO
 #    org.bot.nullbot: WARN
