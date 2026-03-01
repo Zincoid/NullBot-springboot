@@ -9,10 +9,9 @@ import org.bot.nullbot.command.Command;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-@CommandMapping({"Log", "日志"})
+@CommandMapping({"Log", "log", "日志"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -26,7 +25,7 @@ public class LogCommand implements Command
         bot.uploadGroupFile(
                 event.getGroupId(),
                 logPath,
-                "NULLBOT_%s.LOG".formatted(LocalDateTime.now())
+                logPath.substring(logPath.lastIndexOf("/") + 1)
         );
         log.info("\t\t\t\t├─[Log] 日志已发送");
     }
