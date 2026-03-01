@@ -54,7 +54,7 @@ public class SecurityCodeScheduler
     @EventListener(ApplicationReadyEvent.class)
     public void initCode() {  // 初始化安全码
         createCode("regist");
-        createCode("access", 86_400_000, false);
+        createCode("access", 86_400_000, true);
         log.info("▽ [SecurityCodeScheduler] 默认安全码已初始化");
     }
 
@@ -72,7 +72,7 @@ public class SecurityCodeScheduler
      * @return 初始安全码
      */
     public String createCode(String codeId) {
-        return createCode(codeId, -1, true);
+        return createCode(codeId, -1, false);
     }
 
     /**
