@@ -48,7 +48,7 @@ public class GroupSetCommand implements Command
                 if ("scp".equals(setting)) {
                     LimitScope limitScope = settingService.switchLimitScope(groupId);
                     commandRateLimiter.reset(groupId);
-                    bot.sendGroupMsg(groupId, "[Limit] \uD83D\uDD04已切换: " + limitScope, false);
+                    bot.sendGroupMsg(groupId, "[限速] \uD83D\uDD04范围已切换: " + limitScope, false);
                     log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速范围 -> {}", groupId, limitScope);
                     return;
                 }
@@ -57,7 +57,7 @@ public class GroupSetCommand implements Command
                     int capacity = Integer.parseInt(params.get(2));
                     settingService.setLimitCapacity(groupId, capacity);
                     commandRateLimiter.reset(groupId);
-                    bot.sendGroupMsg(groupId, "[Limit] ✅限速容量已更新", false);
+                    bot.sendGroupMsg(groupId, "[限速] ✅限速容量已更新", false);
                     log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速容量 -> {}", groupId, capacity);
                     return;
                 }
@@ -66,7 +66,7 @@ public class GroupSetCommand implements Command
                     int refill = Integer.parseInt(params.get(2));
                     settingService.setLimitRefill(groupId, refill);
                     commandRateLimiter.reset(groupId);
-                    bot.sendGroupMsg(groupId, "[Limit] ✅补充数量已更新", false);
+                    bot.sendGroupMsg(groupId, "[限速] ✅补充数量已更新", false);
                     log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 补充数量 -> {}", groupId, refill);
                     return;
                 }
@@ -75,7 +75,7 @@ public class GroupSetCommand implements Command
                     int interval = Integer.parseInt(params.get(2));
                     settingService.setLimitInterval(groupId, interval);
                     commandRateLimiter.reset(groupId);
-                    bot.sendGroupMsg(groupId, "[Limit] ✅限速间隔已更新", false);
+                    bot.sendGroupMsg(groupId, "[限速] ✅补充间隔已更新", false);
                     log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速间隔 -> {}", groupId, interval);
                     return;
                 }
@@ -145,7 +145,7 @@ public class GroupSetCommand implements Command
                 double transparentRatio = Double.parseDouble(params.get(2));
                 int padding = Integer.parseInt(params.get(3));
                 if(settingService.setGuessParams(groupId, cropRatio, transparentRatio, padding)) {
-                    bot.sendGroupMsg(groupId, "[猜] ✅参数已更新", false);
+                    bot.sendGroupMsg(groupId, "[猜角色] ✅参数已更新", false);
                     log.info("\t\t\t\t├─[GroupSet] 已更改群 {} Guess参数 -> {} {} {}", groupId, cropRatio, transparentRatio, padding);
                     return;
                 }
@@ -177,8 +177,9 @@ public class GroupSetCommand implements Command
                    选项:
                    scp - 限速范围
                    其他:
-                   cap [Int] - 限速容量
-                   ref [Int] - 限速补充
+                   cap [上限量] - 限速容量
+                   ref [补充量] - 限速补充
+                   itv [分钟数] - 补充间隔
                 
                 • [-ai] [模式选项|其他]
                    模式选项:
