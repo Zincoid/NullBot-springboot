@@ -76,6 +76,7 @@ public class HelpCommand implements Command
         return """
                 ◉ Help 命令
                 功能: 发送帮助菜单
-                格式: Help""";
+                格式: Help
+                注意: 当有人想要了解你的功能时使用该指令""";
     }
 }
