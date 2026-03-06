@@ -42,7 +42,7 @@ public class HelpCommand implements Command
                 3. Tts  语言合成
                 - 参数: [-synth] [文本]
                 
-                注: 私聊目前仅实现AI聊天及以上指令且AI永久处于非防注入/无验证/无限速/指令/语音模式下""", true);
+                注: 私聊目前仅实现AI聊天及以上指令且AI永久处于无验证/无限速/非防注入/非语音/指令模式下""", true);
         log.info("\t\t\t\t├─[Help] 已获取私聊帮助");
     }
 
