@@ -3,6 +3,8 @@ package org.bot.nullbot.command.ai;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
+import com.mikuac.shiro.enums.MsgTypeEnum;
+import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
@@ -42,14 +44,21 @@ public class ChatCommand implements Command
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
-        if (message.contains(commandPrefix))
-            bot.sendGroupMsg(event.getGroupId(), """
+
+        for (ArrayMsg msg : event.getArrayMsg()) {
+            if (msg.getType() == MsgTypeEnum.text &&
+                    msg.getData().get("text").trim().startsWith(commandPrefix)) {
+                bot.sendGroupMsg(event.getGroupId(), """
                                 [AI] ⚠️检测到指令前缀
                                 - 使用指令时请不要@Null
                                 - @Null仅触发AI对话
                                 - Null仅可执行部分指令""",
-                    false
-            );
+                        false
+                );
+                break;
+            }
+        }
+
         log.info("\t\t\t\t├─[Chat] 群聊已回复: {}", response.replaceAll("\\R", " "));
     }
 
