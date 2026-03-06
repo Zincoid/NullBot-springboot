@@ -77,16 +77,14 @@ public class BotNextInputer
             case GM -> "GM_%s".formatted(groupId);
         };
         InputEntry entry = inputEntries.get(id);
-        if (entry != null && !entry.future.isDone()) {
-            if (!entry.pattern.matcher(message).matches()) return false;
-            if (mode == BniMode.GM)
-                inputCaches.get(id).add(Pair.of(userId, message));
-            else
-                entry.future.complete(Collections.singletonList(Pair.of(userId, message)));
-            log.info("▽ [BotNextInputer] 群聊 {} 用户 {} 已响应 (Mode: {}) - {}", groupId, userId, mode, message);
-            return true;
-        }
-        return false;
+        if (entry == null || entry.future == null || entry.future.isDone()) return false;
+        if (!entry.pattern.matcher(message).matches()) return false;
+        if (mode == BniMode.GM)
+            inputCaches.get(id).add(Pair.of(userId, message));
+        else
+            entry.future.complete(Collections.singletonList(Pair.of(userId, message)));
+        log.info("▽ [BotNextInputer] 群聊 {} 用户 {} 已响应 (Mode: {}) - {}", groupId, userId, mode, message);
+        return true;
     }
 
     // =================== 工具方法 ===================
@@ -97,8 +95,8 @@ public class BotNextInputer
             case GS -> "GS_%s".formatted(targetId);
             case GM -> "GM_%s".formatted(targetId);
         };
-        CompletableFuture<List<Pair<Long, String>>> future = inputEntries.get(id).future;
-        return future != null && !future.isDone();
+        InputEntry entry = inputEntries.get(id);
+        return entry != null && entry.future != null && !entry.future.isDone();
     }
 
     public boolean cancelWait(BniMode mode, Long targetId) {
@@ -107,11 +105,9 @@ public class BotNextInputer
             case GS -> "GS_%s".formatted(targetId);
             case GM -> "GM_%s".formatted(targetId);
         };
-        CompletableFuture<List<Pair<Long, String>>> future = inputEntries.remove(id).future;
-        if (future != null && !future.isDone()) {
-            future.complete(new ArrayList<>());
-            return true;
-        }
-        return false;
+        InputEntry entry = inputEntries.remove(id);
+        if (entry == null || entry.future == null || entry.future.isDone()) return false;
+        entry.future.complete(new ArrayList<>());
+        return true;
     }
 }
