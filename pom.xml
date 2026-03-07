@@ -11,8 +11,8 @@
     <groupId>org.bot</groupId>
     <artifactId>NullBot-springboot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>NullBot</name>
-    <description>NullBot</description>
+    <name>NullBot-springboot</name>
+    <description>NullBot-springboot</description>
     <url/>
     <licenses>
         <license/>
