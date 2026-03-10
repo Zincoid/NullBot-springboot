@@ -51,12 +51,12 @@ public class StatisticHandler implements Handler
         }
 
         WebSocketLogger.broadcast(
-                "[NullBot-%s-%s] 用户%s 调用 %s 指令"
-                .formatted(
-                        LocalDateTime.now(),
-                        groupId == 0 ? "私聊" : "群聊" + groupId,
+                groupId == 0 ? "私聊" : "群聊" + groupId,
+                "%s(%s) -> %s %s".formatted(
+                        bot.getStrangerInfo(userId, true).getData().getNickname(),
                         userId,
-                        commandType
+                        commandType,
+                        String.join(" ", event.getCommandParameters())
                 )
         );
 

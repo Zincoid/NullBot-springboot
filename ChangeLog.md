@@ -535,3 +535,7 @@
 - 优化 BotNextInputer 组件 - 部分代码优化；
 - 优化 @Null 时使用指令的提示检测；
 - 修正 私聊帮助文本。
+
+### 2026.3.11
+- 添加 Electron-Vue 项目 NullMonitor - 用于实时监控；
+- 新增 WebSocketLogger - 用于推送数据至监视器客户端。
