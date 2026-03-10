@@ -16,9 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 public class CommandEvent<T extends Event>
 {
+    private T event;
     private String commandType;
     private List<String> commandParameters;
-    private T event;
 
     private boolean authRequired = true;
     private boolean rateLimit = true;
@@ -38,7 +38,7 @@ public class CommandEvent<T extends Event>
             parsePrivateMessageEvent(privateMessageEvent);
     }
 
-    // 自定 创建事件 (嵌入调用 关键词/AT检测 自动回复等)
+    // 自定 创建事件 (嵌入调用 关键词等使用) (可优化?)
     public CommandEvent(T event, String command, boolean authRequired, boolean rateLimit) {
         this.event = event;
         this.authRequired = authRequired;

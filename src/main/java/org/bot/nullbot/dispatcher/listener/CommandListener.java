@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Shiro
 @Component
 @RequiredArgsConstructor
@@ -60,8 +62,9 @@ public class CommandListener
             log.info("└─[Fail] {}({}) 访问码错误", userName, userId);
             bot.sendPrivateMsg(userId, "❌访问码错误", false);
         } else {  // 默认触发 AI 对话
-            log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
-            commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", false, false));
+            String parsed = MessageParseUtil.parseArrayMsgForAI(bot, event.getArrayMsg());
+            log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", userName, userId, parsed.replaceAll("\\R", " "));
+            commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), false, false));
         }
 
         // 默认通知管理员
@@ -114,8 +117,9 @@ public class CommandListener
         //     monitorListener.onGroupMessageCollection(bot, event);  // 无需调用 AI自动记录
         monitorListener.onGroupImageCollection(event);
 
-        log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg()));
-        commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", true, true));
+        String parsed = MessageParseUtil.parseArrayMsgForAI(bot, event.getArrayMsg());
+        log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed.replaceAll("\\R", " "));
+        commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), true, true));
     }
 
     // 框架有BUG 回复消息中有@机器人和另一个人时会被判定为 AtEnum.NOT_NEED 的方法 暂时不知道怎么修

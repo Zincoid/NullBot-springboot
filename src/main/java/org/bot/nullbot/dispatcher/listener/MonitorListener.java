@@ -70,8 +70,9 @@ public class MonitorListener
 
         double freq = settingService.getReplyFrequency(event.getGroupId());
         if (freq > Math.random()) {
+            String parsed = MessageParseUtil.parseArrayMsgForAI(bot, event.getArrayMsg());
             log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至 群聊 {}", event.getGroupId());
-            commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", false, false));
+            commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), false, false));
             return true;
         } else
             return false;
@@ -123,7 +124,7 @@ public class MonitorListener
     {
         if (!settingService.isMessageCollect(event.getGroupId())) return;
         if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // Chat 命令会自动记录消息 跳过
-        String parsedMsg = MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg());
+        String parsedMsg = MessageParseUtil.parseArrayMsgForAI(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsedMsg);
         List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
         chatMessages.add(new ChatMessage(event.getMessageId() , event.getUserId(), event.getSender().getNickname(), "user", parsedMsg));
@@ -142,7 +143,7 @@ public class MonitorListener
         }
         if (event.getMessage().contains("受着")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"受着\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
-            commandProcessor.processQQ(bot, new CommandEvent<>("UserBan", List.of(event.getUserId().toString(), "1"), event, false, false));
+            commandProcessor.processQQ(bot, new CommandEvent<>(event, "UserBan", List.of(event.getUserId().toString(), "1"), false, false));
             // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("你也受着"), event, false, false));
         }
     }

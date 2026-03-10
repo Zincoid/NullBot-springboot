@@ -538,4 +538,6 @@
 
 ### 2026.3.11
 - 添加 Electron-Vue 项目 NullMonitor - 用于实时监控；
-- 新增 WebSocketLogger - 用于推送数据至监视器客户端。
+- 新增 WebSocketLogger - 用于推送数据至监视器客户端；
+- 优化 Chat 指令 - 调整消息传递格式为参数并修改相关使用；
+- 优化 文本。

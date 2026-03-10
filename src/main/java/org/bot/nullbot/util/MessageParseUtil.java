@@ -29,7 +29,7 @@ public class MessageParseUtil
         return qqNumbers;
     }
 
-    public static String parseGroupArrayMsgForAI(Bot bot, List<ArrayMsg> arrayMsgs) {
+    public static String parseArrayMsgForAI(Bot bot, List<ArrayMsg> arrayMsgs) {
         StringBuilder message = new StringBuilder();
         for (ArrayMsg msg : arrayMsgs) {
             Map<String, String> data = msg.getData();

@@ -29,7 +29,6 @@ public class ChatCommand implements Command
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        String message = MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg());
         String response;
         try {
             response = deepSeekClient.chatGroup(
@@ -37,7 +36,7 @@ public class ChatCommand implements Command
                     event.getGroupId(),
                     event.getUserId(),
                     event.getSender().getNickname(),
-                    message,
+                    String.join(" ", params),
                     bot,
                     event
             );
@@ -64,14 +63,13 @@ public class ChatCommand implements Command
 
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        String message = MessageParseUtil.parseGroupArrayMsgForAI(bot, event.getArrayMsg());
         String response;
         try {
             response = deepSeekClient.chatPrivate(
                     event.getMessageId(),
                     event.getUserId(),
                     event.getPrivateSender().getNickname(),
-                    message,
+                    String.join(" ", params),
                     bot,
                     event
             );
