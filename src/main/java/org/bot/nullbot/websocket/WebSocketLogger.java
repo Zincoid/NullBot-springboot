@@ -41,13 +41,14 @@ public class WebSocketLogger extends TextWebSocketHandler
 
     /**
      * 向所有连接的客户端广播日志消息
-     * @param log 日志内容（可以是 JSON 字符串）
+     * @param level 日志等级
+     * @param message 日志内容（可以是 JSON 字符串）
      */
-    public static void broadcast(String level, String log) {
+    public static void broadcast(String level, String message) {
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
                 try {
-                    String json = "{\"level\":\"" + level + "\",\"log\":\"" + log + "\"}";
+                    String json = "{\"level\":\"" + level + "\",\"message\":\"" + message + "\"}";
                     session.sendMessage(new TextMessage(json));
                 } catch (IOException e) {
                     e.printStackTrace();
