@@ -3,6 +3,7 @@ package org.bot.nullbot.config;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -18,5 +19,13 @@ public class WebConfig implements WebMvcConfigurer
                 .addPathPatterns("/**");
         // .excludePathPatterns("/xx");
         //  /* 一级路径 /** 任意级路径
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")  // 允许所有源 但支持凭证
+                .allowCredentials(true)
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 }
