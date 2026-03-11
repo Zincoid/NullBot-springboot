@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/nullbot/item")
 @Slf4j

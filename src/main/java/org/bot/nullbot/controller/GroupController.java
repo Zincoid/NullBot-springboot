@@ -7,7 +7,6 @@ import org.bot.nullbot.entity.page.GroupPage;
 import org.bot.nullbot.entity.po.GroupPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.GroupService;
-import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.CsvExportUtil;
 import org.bot.nullbot.util.CsvImportUtil;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/nullbot/group")
 @RequiredArgsConstructor

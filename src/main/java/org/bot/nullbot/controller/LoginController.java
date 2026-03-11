@@ -13,7 +13,6 @@ import org.bot.nullbot.service.AdminService;
 import org.bot.nullbot.util.WebUtil;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/nullbot")
 @Slf4j

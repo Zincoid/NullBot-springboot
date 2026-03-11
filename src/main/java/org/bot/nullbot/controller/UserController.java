@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.page.UserPage;
-import org.bot.nullbot.entity.po.SayingPO;
 import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.UserService;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/nullbot/user")
 @RequiredArgsConstructor
