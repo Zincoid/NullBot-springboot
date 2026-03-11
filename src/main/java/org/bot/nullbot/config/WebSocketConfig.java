@@ -37,12 +37,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer
                 .setHeartbeatValue(new long[]{10000, 10000})
                 .setTaskScheduler(taskScheduler());
         // 设置客户端发送消息的前缀 (如果需要从客户端接收消息)
-        registry.setApplicationDestinationPrefixes("/monitor");
+        registry.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/monitor")  // WebSocket 连接端点
+        registry.addEndpoint("/ws")  // WebSocket 连接端点
                 .setAllowedOriginPatterns("*")
                 .withSockJS();  // 支持 SockJS 回退
     }
