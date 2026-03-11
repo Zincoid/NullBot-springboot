@@ -142,7 +142,7 @@ public class SecurityCodeScheduler
                 entry.logging
         ));
         log.info("▽ [SecurityCodeScheduler] 安全码已刷新 - CodeId: {}, NewCode: {}", codeId, newCode);
-        webSocketSender.broadcast("INFO", "安全码 %s 已刷新 -> %s".formatted(codeId, newCode));
+        webSocketSender.broadcast("INFO", "安全码已刷新 -> %s: %s".formatted(codeId, newCode));
         if (entry.logging) botOperator.sendLogGroupMsg("""
                 [安全码调度] 🔑已刷新
                 - CodeID: %s
