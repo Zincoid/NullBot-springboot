@@ -60,7 +60,7 @@ public class StatisticHandler implements Handler
         // );
 
         webSocketSender.broadcast(
-                groupId == 0 ? "私聊" : "群聊" + groupId,
+                groupId == 0 ? "私聊" : "群聊 " + groupId,
                 "%s(%s) -> %s %s".formatted(
                         bot.getStrangerInfo(userId, true).getData().getNickname(),
                         userId,
