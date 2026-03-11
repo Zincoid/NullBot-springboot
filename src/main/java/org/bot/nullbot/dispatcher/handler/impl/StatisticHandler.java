@@ -12,7 +12,7 @@ import org.bot.nullbot.dispatcher.CommandHandlerChain;
 import org.bot.nullbot.dispatcher.handler.Handler;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.StatisticService;
-import org.bot.nullbot.websocket.LogWebSocketHandler;
+import org.bot.nullbot.websocket.WebSocketBroadcastService;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 public class StatisticHandler implements Handler
 {
     private final StatisticService statisticService;
+    private final WebSocketBroadcastService webSocketBroadcastService;
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
@@ -48,7 +49,17 @@ public class StatisticHandler implements Handler
             return;
         }
 
-        LogWebSocketHandler.broadcast(
+        // WebSocketBroadcastHandler.broadcast(
+        //         groupId == 0 ? "私聊" : "群聊" + groupId,
+        //         "%s(%s) -> %s %s".formatted(
+        //                 bot.getStrangerInfo(userId, true).getData().getNickname(),
+        //                 userId,
+        //                 commandType,
+        //                 String.join(" ", event.getCommandParameters())
+        //         )
+        // );
+
+        webSocketBroadcastService.broadcast(
                 groupId == 0 ? "私聊" : "群聊" + groupId,
                 "%s(%s) -> %s %s".formatted(
                         bot.getStrangerInfo(userId, true).getData().getNickname(),
