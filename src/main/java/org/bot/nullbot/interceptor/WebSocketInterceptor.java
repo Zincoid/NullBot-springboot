@@ -60,7 +60,7 @@ public class WebSocketInterceptor implements ChannelInterceptor
             log.info("└─[WebSocketInterceptor] 连接放行 - UserId: {}", userId);
             return message;
         }
-        log.info("└─[WebSocketInterceptor] 默认放行");
+        // log.info("└─[WebSocketInterceptor] 默认放行");
         return message;
     }
 }
