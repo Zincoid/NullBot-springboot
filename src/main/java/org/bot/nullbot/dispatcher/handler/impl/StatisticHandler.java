@@ -12,11 +12,9 @@ import org.bot.nullbot.dispatcher.CommandHandlerChain;
 import org.bot.nullbot.dispatcher.handler.Handler;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.StatisticService;
-import org.bot.nullbot.websocket.WebSocketLogger;
+import org.bot.nullbot.websocket.LogWebSocketHandler;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Order(3)
 @Component
@@ -50,7 +48,7 @@ public class StatisticHandler implements Handler
             return;
         }
 
-        WebSocketLogger.broadcast(
+        LogWebSocketHandler.broadcast(
                 groupId == 0 ? "私聊" : "群聊" + groupId,
                 "%s(%s) -> %s %s".formatted(
                         bot.getStrangerInfo(userId, true).getData().getNickname(),

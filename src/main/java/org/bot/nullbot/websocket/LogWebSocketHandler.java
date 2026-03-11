@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 @Slf4j
-public class WebSocketLogger extends TextWebSocketHandler
+public class LogWebSocketHandler extends TextWebSocketHandler
 {
     // 线程安全的会话集合
     private static final CopyOnWriteArraySet<WebSocketSession> sessions = new CopyOnWriteArraySet<>();
@@ -18,31 +18,31 @@ public class WebSocketLogger extends TextWebSocketHandler
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         sessions.add(session);
-        log.info("▽ [WebSocketLogger] 新连接加入 - 当前连接数: {}", sessions.size());
+        log.info("▽ [LogWebSocketHandler] 新连接加入 - 当前连接数: {}", sessions.size());
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-        // 可以处理客户端发送的消息 暂时忽略
-        log.info("▽ [WebSocketLogger] 接收到消息 - {}", message.getPayload());
+        log.info("▽ [LogWebSocketHandler] 接收到消息 - {}", message.getPayload());
+        // 处理客户端发送的消息 暂时忽略
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         sessions.remove(session);
-        log.info("▽ [WebSocketLogger] 有连接关闭 - 当前连接数：{}", sessions.size());
+        log.info("▽ [LogWebSocketHandler] 有连接关闭 - 当前连接数：{}", sessions.size());
     }
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
-        log.error("▽ [WebSocketLogger] 传输错误 - {}", exception.getMessage());
+        log.error("▽ [LogWebSocketHandler] 传输错误 - {}", exception.getMessage());
         sessions.remove(session);
     }
 
     /**
-     * 向所有连接的客户端广播日志消息
+     * 广播日志至所有连接客户端
      * @param level 日志等级
-     * @param message 日志内容（可以是 JSON 字符串）
+     * @param message 日志内容 (可用 Json 格式)
      */
     public static void broadcast(String level, String message) {
         for (WebSocketSession session : sessions) {
