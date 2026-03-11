@@ -1,17 +1,12 @@
 package org.bot.nullbot.websocket;
 
 import cn.hutool.jwt.JWT;
-import com.alibaba.fastjson.JSONObject;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.bot.nullbot.component.security.JwtTool;
 import org.bot.nullbot.entity.StompPrincipal;
 import org.bot.nullbot.entity.po.AdminPO;
-import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.AdminService;
-import org.bot.nullbot.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -21,16 +16,17 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class WebSocketInterceptor implements ChannelInterceptor
 {
-    private final JwtTool jwtTool;
     private final AdminService adminService;
-    private final UserService userService;
+    private final JwtTool jwtTool;
+
+    public WebSocketInterceptor(@Lazy AdminService adminService, JwtTool jwtTool) {
+        this.adminService = adminService;
+        this.jwtTool = jwtTool;
+    }
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
