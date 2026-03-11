@@ -11,7 +11,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 @Slf4j
 @Deprecated
-public class WebSocketBroadcastHandler extends TextWebSocketHandler
+public class WebSocketHandler extends TextWebSocketHandler
 {
     // 线程安全的会话集合
     private static final CopyOnWriteArraySet<WebSocketSession> sessions = new CopyOnWriteArraySet<>();
@@ -19,24 +19,24 @@ public class WebSocketBroadcastHandler extends TextWebSocketHandler
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         sessions.add(session);
-        log.info("▽ [WebSocketBroadcastHandler] 新连接加入 - 当前连接数: {}", sessions.size());
+        log.info("▽ [WebSocketHandler] 新连接加入 - 当前连接数: {}", sessions.size());
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-        log.info("▽ [WebSocketBroadcastHandler] 接收到消息 - {}", message.getPayload());
+        log.info("▽ [WebSocketHandler] 接收到消息 - {}", message.getPayload());
         // 处理客户端发送的消息 暂时忽略
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         sessions.remove(session);
-        log.info("▽ [WebSocketBroadcastHandler] 有连接关闭 - 当前连接数：{}", sessions.size());
+        log.info("▽ [WebSocketHandler] 有连接关闭 - 当前连接数：{}", sessions.size());
     }
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
-        log.error("▽ [WebSocketBroadcastHandler] 传输错误 - {}", exception.getMessage());
+        log.error("▽ [WebSocketHandler] 传输错误 - {}", exception.getMessage());
         sessions.remove(session);
     }
 

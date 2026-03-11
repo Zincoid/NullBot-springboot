@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class WebSocketBroadcastService
+public class WebSocketSender
 {
     private final SimpMessagingTemplate messagingTemplate;
 

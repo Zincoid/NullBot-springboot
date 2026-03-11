@@ -12,7 +12,7 @@ import org.springframework.web.socket.config.annotation.*;
 // {
 //     @Override
 //     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-//         registry.addHandler(new WebSocketBroadcastHandler(), "/monitor")  // WebSocket 连接端点
+//         registry.addHandler(new WebSocketHandler(), "/monitor")  // WebSocket 连接端点
 //                 .setAllowedOrigins("*");  // 允许所有跨域请求 生产环境应限制
 //     }
 // }
@@ -33,7 +33,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         // 启用简单消息代理 并设置心跳 (服务端每10秒发送心跳 期望客户端每10秒发送)
-        registry.enableSimpleBroker("/topic")  // 订阅地址前缀
+        registry.enableSimpleBroker("/topic", "/queue")  // 订阅地址前缀
                 .setHeartbeatValue(new long[]{10000, 10000})
                 .setTaskScheduler(taskScheduler());
         // 设置客户端发送消息的前缀 (如果需要从客户端接收消息)
