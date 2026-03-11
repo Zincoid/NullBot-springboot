@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class WebSocketController
 {
-    @MessageMapping("/command")  // 客户端发送到 /app/command 的消息会由这个方法处理
+    @MessageMapping("/command")  // 客户端发送到 /ws/command 的消息会由这个方法处理
     public void handleCommand(String command) {
         log.info("◉ [WebSocketController] 接收到客户端命令 - {}", command);
         // 处理命令...
