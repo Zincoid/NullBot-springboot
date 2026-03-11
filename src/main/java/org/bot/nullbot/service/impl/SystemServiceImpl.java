@@ -6,12 +6,32 @@ import org.bot.nullbot.component.tool.Invoker;
 import org.bot.nullbot.service.SystemService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SystemServiceImpl implements SystemService
 {
     private final Restarter restarter;
     private final Invoker invoker;
+
+    @Override
+    public String invoke(String command) throws Exception {
+        List<String> params = List.of(command.split(" "));
+        if(params.size() < 2)
+            throw new IllegalArgumentException("Not enough args...");
+        String beanName = params.get(0);
+        String methodName = params.get(1);
+        Object[] args = new Object[0];
+        if (params.size() > 2) args = params.subList(2, params.size()).toArray();
+        return invoke(beanName, methodName, args);
+    }
+
+    @Override
+    public String invoke(String beanName, String methodName, Object[] args) throws Exception {
+        Object result = invoker.invokeSpringMethod(beanName, methodName, args);
+        return result != null ? result.toString() : "null";
+    }
 
     @Override
     public void restart() {
@@ -26,11 +46,5 @@ public class SystemServiceImpl implements SystemService
     @Override
     public void restartViaJar(String jarPath) {
         restarter.restartViaJar(jarPath);
-    }
-
-    @Override
-    public String invoke(String beanName, String methodName, Object[] args) throws Exception {
-        Object result = invoker.invokeSpringMethod(beanName, methodName, args);
-        return result != null ? result.toString() : "null";
     }
 }

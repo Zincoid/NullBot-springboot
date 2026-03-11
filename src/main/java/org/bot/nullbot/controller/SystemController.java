@@ -6,8 +6,6 @@ import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.SystemService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/nullbot/system")
 @RequiredArgsConstructor
@@ -19,14 +17,7 @@ public class SystemController
     @GetMapping("/invoke")
     public WebResult invoke(@RequestParam(defaultValue = "") String command){
         try {
-            List<String> params = List.of(command.split(" "));
-            if(params.size() < 2)
-                return WebResult.fail().addMsg("调用失败").addData("result", "Not enough args...");
-            String beanName = params.get(0);
-            String methodName = params.get(1);
-            Object[] args = new Object[0];
-            if (params.size() > 2) args = params.subList(2, params.size()).toArray();
-            String result = systemService.invoke(beanName, methodName, args);
+            String result = systemService.invoke(command);
             return WebResult.success().addMsg("调用成功").addData("result", result);
         } catch (Exception e) {
             return WebResult.fail().addMsg("调用失败").addData("result", e.toString());
