@@ -44,6 +44,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")  // WebSocket 连接端点
                 .setAllowedOriginPatterns("*")
-                .withSockJS();  // 支持 SockJS 回退
+                // .withSockJS()  // 支持 SockJS 回退
+        ;
     }
 }
