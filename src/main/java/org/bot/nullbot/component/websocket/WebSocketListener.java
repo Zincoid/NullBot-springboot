@@ -1,4 +1,4 @@
-package org.bot.nullbot.websocket;
+package org.bot.nullbot.component.websocket;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

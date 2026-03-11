@@ -12,7 +12,7 @@ import org.bot.nullbot.dispatcher.CommandHandlerChain;
 import org.bot.nullbot.dispatcher.handler.Handler;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.service.StatisticService;
-import org.bot.nullbot.websocket.WebSocketSender;
+import org.bot.nullbot.component.websocket.WebSocketSender;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 

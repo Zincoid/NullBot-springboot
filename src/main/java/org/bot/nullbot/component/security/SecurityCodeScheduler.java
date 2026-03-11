@@ -5,7 +5,7 @@ import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.tool.BotOperator;
-import org.bot.nullbot.websocket.WebSocketSender;
+import org.bot.nullbot.component.websocket.WebSocketSender;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

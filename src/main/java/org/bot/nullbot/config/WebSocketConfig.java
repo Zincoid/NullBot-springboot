@@ -1,24 +1,14 @@
 package org.bot.nullbot.config;
 
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.websocket.WebSocketInterceptor;
+import org.bot.nullbot.interceptor.IpHandshakeInterceptor;
+import org.bot.nullbot.interceptor.WebSocketInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.*;
-
-// @Configuration
-// @EnableWebSocket
-// public class WebSocketConfig implements WebSocketConfigurer
-// {
-//     @Override
-//     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-//         registry.addHandler(new WebSocketHandler(), "/monitor")  // WebSocket 连接端点
-//                 .setAllowedOrigins("*");  // 允许所有跨域请求 生产环境应限制
-//     }
-// }
 
 @Configuration
 @RequiredArgsConstructor
@@ -50,6 +40,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")  // WebSocket 连接端点
                 .setAllowedOriginPatterns("*")
+                .addInterceptors(new IpHandshakeInterceptor())  // 注册握手拦截器
                 // .withSockJS()  // 支持 SockJS 回退
         ;
     }
@@ -59,3 +50,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer
         registration.interceptors(webSocketInterceptor);
     }
 }
+
+// @Configuration
+// @RequiredArgsConstructor
+// @EnableWebSocket
+// public class WebSocketConfig implements WebSocketConfigurer
+// {
+//     private final WebSocketHandler webSocketHandler;
+//
+//     @Override
+//     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+//         registry.addHandler(webSocketHandler, "/monitor")  // WebSocket 连接端点
+//                 .setAllowedOrigins("*");  // 允许所有跨域请求 生产环境应限制
+//     }
+// }

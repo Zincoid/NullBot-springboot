@@ -1,6 +1,7 @@
-package org.bot.nullbot.websocket;
+package org.bot.nullbot.component.websocket;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 @Slf4j
+@Component
 @Deprecated
 public class WebSocketHandler extends TextWebSocketHandler
 {

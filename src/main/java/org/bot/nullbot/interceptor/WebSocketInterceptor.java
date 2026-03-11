@@ -1,4 +1,4 @@
-package org.bot.nullbot.websocket;
+package org.bot.nullbot.interceptor;
 
 import cn.hutool.jwt.JWT;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class WebSocketInterceptor implements ChannelInterceptor
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
             String ip = (String) accessor.getSessionAttributes().get("clientIp");
-            log.info("◎ [WebSocketManagement] 来自 {} 的连接请求", ip);
+            log.info("◎ [WebSocketInterceptor] 来自 {} 的连接请求", ip);
             // 从 Header 中获取 Token (token: Bearer <token>)
             String authHeader = accessor.getFirstNativeHeader("token");
             if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer "))

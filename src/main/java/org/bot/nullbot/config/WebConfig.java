@@ -1,7 +1,7 @@
 package org.bot.nullbot.config;
 
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.interceptor.LoginInterceptor;
+import org.bot.nullbot.interceptor.WebInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -11,11 +11,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer
 {
-    private final LoginInterceptor loginInterceptor;
+    private final WebInterceptor webInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {  // 注册拦截器
-        registry.addInterceptor(loginInterceptor)
+        registry.addInterceptor(webInterceptor)
                 .addPathPatterns("/**");
         // .excludePathPatterns("/xx");
         //  /* 一级路径 /** 任意级路径

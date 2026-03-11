@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class LoginInterceptor implements HandlerInterceptor
+public class WebInterceptor implements HandlerInterceptor
 {
     private final JwtTool jwtTool;
     private static final List<String> GUEST_FORBIDDEN_URLS;
@@ -71,18 +71,18 @@ public class LoginInterceptor implements HandlerInterceptor
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
         String url = req.getRequestURL().toString();
         String ip = WebUtil.getClientIpAddress();
-        log.info("◎ [WebManagement] 来自 {} 的请求 - {}", ip, url);
+        log.info("◎ [WebInterceptor] 来自 {} 的请求 - {}", ip, url);
 
         if (url.contains("/nullbot/login") || url.contains("/nullbot/guest")) {
-            log.info("└─[LoginInterceptor] 登录放行");
+            log.info("└─[WebInterceptor] 登录放行");
             return true;
         }
         if (url.contains("/nullbot/regist")) {
-            log.info("└─[LoginInterceptor] 注册放行");
+            log.info("└─[WebInterceptor] 注册放行");
             return true;
         }
         if (url.contains("/nullbot/preview")) {
-            log.info("└─[LoginInterceptor] 预览放行");
+            log.info("└─[WebInterceptor] 预览放行");
             return true;
         }
 
@@ -92,7 +92,7 @@ public class LoginInterceptor implements HandlerInterceptor
         try {
             jwt = jwtTool.parseJwt(token);
         } catch (Exception e) {
-            log.info("└─[LoginInterceptor] 验证失败");
+            log.info("└─[WebInterceptor] 验证失败");
             WebResult error = WebResult.fail().addMsg(e.getMessage());
             res.getWriter().write(JSONObject.toJSONString(error));
             return false;
@@ -103,22 +103,22 @@ public class LoginInterceptor implements HandlerInterceptor
         if (userType == 0) {
             for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
                 if (url.contains(forbiddenUrl)) {
-                    log.info("└─[LoginInterceptor] 访客受限");
+                    log.info("└─[WebInterceptor] 访客受限");
                     WebResult error = WebResult.fail().addMsg("No Access");
                     res.getWriter().write(JSONObject.toJSONString(error));
                     return false;
                 }
             }
-            log.info("└─[LoginInterceptor] 访客放行");
+            log.info("└─[WebInterceptor] 访客放行");
             return true;
         }
 
         if (userType == 1) {
-            log.info("└─[LoginInterceptor] 管理放行");
+            log.info("└─[WebInterceptor] 管理放行");
             return true;
         }
 
-        log.info("└─[LoginInterceptor] 用户类型不存在");
+        log.info("└─[WebInterceptor] 用户类型不存在");
         return false;
     }
 }
