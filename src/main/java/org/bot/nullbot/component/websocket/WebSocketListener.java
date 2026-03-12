@@ -28,6 +28,7 @@ public class WebSocketListener
         if (user instanceof StompPrincipal stompUser) {
             // 构造发送的用户信息
             Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("sessionId", accessor.getSessionId());
             userInfo.put("userId", stompUser.getUserId());
             userInfo.put("userName", stompUser.getUserName());
             // 发送到用户私有队列 客户端需订阅 -> /user/queue/info
