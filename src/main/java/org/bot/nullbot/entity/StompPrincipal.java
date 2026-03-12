@@ -14,6 +14,6 @@ public class StompPrincipal implements Principal
 
     @Override
     public String getName() {
-        return userName;
+        return userId.toString();
     }
 }
