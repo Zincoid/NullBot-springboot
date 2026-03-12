@@ -7,6 +7,7 @@ import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.SystemService;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
@@ -34,11 +35,11 @@ public class WebSocketController {
 
     @MessageMapping("/info")
     @SendToUser("/queue/info")
-    public Map<String, Object> info(Principal principal, @Header("sessionId") String sessionId) {
-        log.info("◉ [WebSocketController] 获取信息 - SessionID: {}", sessionId);
+    public Map<String, Object> info(Principal principal, SimpMessageHeaderAccessor accessor) {
+        log.info("◉ [WebSocketController] 获取信息 - SessionID: {}", accessor.getSessionId());
         StompPrincipal stompUser = (StompPrincipal) principal;
         Map<String, Object> userInfo = new HashMap<>();
-        userInfo.put("sessionId", sessionId);
+        userInfo.put("sessionId", accessor.getSessionId());
         userInfo.put("userId", stompUser.getUserId());
         userInfo.put("userName", stompUser.getUserName());
         return userInfo;
