@@ -18,7 +18,8 @@ import java.util.Map;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-public class WebSocketController {
+public class WebSocketController
+{
     private final SystemService systemService;
 
     @MessageMapping("/invoke")
