@@ -548,4 +548,5 @@
 ### 2026.3.12
 - 后端 WebSocket 添加连接验证功能 - 通过 Token 进行拦截验证；
 - 后端 WebSocket 添加连接异常处理 - 在拦截器内捕获异常发送错误帧；
+- 后端 WebSocket 添加连接信息返回 - 在 WebSocketListener 内监听发送；
 - 调整 项目结构。
