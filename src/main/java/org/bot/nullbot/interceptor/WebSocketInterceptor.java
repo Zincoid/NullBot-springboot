@@ -38,9 +38,10 @@ public class WebSocketInterceptor implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
+            String ip = (String) accessor.getSessionAttributes().get("clientIp");
+            String sessionId = accessor.getSessionId();
+            log.info("◎ [WebSocketInterceptor] 来自 {} 的连接请求", ip);
             try {
-                String ip = (String) accessor.getSessionAttributes().get("clientIp");
-                log.info("◎ [WebSocketInterceptor] 来自 {} 的连接请求", ip);
                 String authHeader = accessor.getFirstNativeHeader("token");
                 if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer "))
                     throw new IllegalArgumentException("No Token");
@@ -60,11 +61,12 @@ public class WebSocketInterceptor implements ChannelInterceptor {
                 }
                 StompPrincipal user = new StompPrincipal(userId, admin.getUsername());
                 accessor.setUser(user);
-                log.info("└─[WebSocketInterceptor] 连接放行 - UserId: {}", userId);
+                accessor.getSessionAttributes().put("sessionId", sessionId);
+                log.info("└─[WebSocketInterceptor] 连接放行 - UserID: {}", userId);
                 return message;
             } catch (IllegalArgumentException e) {
                 // 发送错误帧给客户端
-                sendErrorMessage(accessor.getSessionId(), e.getMessage());
+                sendErrorMessage(sessionId, e.getMessage());
                 return null; // 阻止原消息继续传递
             }
         }
