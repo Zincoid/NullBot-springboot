@@ -36,7 +36,6 @@ public class EndfieldCommand implements Command
     private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
 
-
     private static final Set<String> ALLOWED_VERSIONS = Set.of("1.0", "1.1");  // 可用资源版本
     private static final String DEFAULT_VERSION = "1.1";  // 默认资源版本
     private static Map<Long, String> versions = new ConcurrentHashMap<>();  // 群聊私有版本记录
@@ -47,6 +46,8 @@ public class EndfieldCommand implements Command
         Long userId = event.getUserId();
 
         boolean continuousQuery = false;  // 连续查询模式
+        boolean globalQuery = false;  // 全局查询模式
+
         String keyword = params.isEmpty() ? "" : params.getFirst();
         if ("-c".equals(keyword)) {
             continuousQuery = true;
@@ -76,6 +77,15 @@ public class EndfieldCommand implements Command
             throw new NullBotMsgException("[终末地] ❌资源异常");
         }
 
+        if (helpPaths.isEmpty()) {
+            globalQuery = true;
+            for (String version : ALLOWED_VERSIONS) {
+                helpPaths.addAll(FileUtil.getFilePathsByKeyword(
+                        fileStorageProperties.getResourcePath() + "/endfield/" + version, keyword));
+            }
+
+        }
+
         if (helpPaths.isEmpty())
             throw new NullBotMsgException("[终末地] ❌无查询项");
 
@@ -84,7 +94,7 @@ public class EndfieldCommand implements Command
         int pages = (total + PAGE_SIZE - 1) / PAGE_SIZE;
         int current = 1;
 
-        if (total == 1) {  // 只有一个匹配项时直接发送
+        if (!globalQuery && total == 1) {  // 非全局查询且单匹配项时直接发送
             sendResource(bot, groupId, helpPaths.getFirst());
             return;
         }
@@ -92,13 +102,13 @@ public class EndfieldCommand implements Command
         String operation = "INIT";
         while (true) {
             switch (operation) {
-                case "INIT" -> sendPage(bot, groupId, helpPaths, PAGE_SIZE, current);
+                case "INIT" -> sendPage(bot, groupId, helpPaths, PAGE_SIZE, current, globalQuery);
                 case "UP" -> {
-                    if (current > 1) sendPage(bot, groupId, helpPaths, PAGE_SIZE, --current);
+                    if (current > 1) sendPage(bot, groupId, helpPaths, PAGE_SIZE, --current, globalQuery);
                     else bot.sendGroupMsg(groupId, "到顶啦！", false);
                 }
                 case "DOWN" -> {
-                    if (current < pages) sendPage(bot, groupId, helpPaths, PAGE_SIZE, ++current);
+                    if (current < pages) sendPage(bot, groupId, helpPaths, PAGE_SIZE, ++current, globalQuery);
                     else bot.sendGroupMsg(groupId, "到底啦！", false);
                 }
                 case "END" -> {
@@ -134,7 +144,8 @@ public class EndfieldCommand implements Command
         }
     }
 
-    private void sendPage(Bot bot, Long groupId, List<String> helpPaths, int pageSize, int current) {
+    private void sendPage(Bot bot, Long groupId, List<String> helpPaths, int pageSize, int current, boolean globalQuery) {
+        String version = getGroupVersion(groupId);
         int total = helpPaths.size();
         int pages = (total + pageSize - 1) / pageSize;
         int fromIndex = (current - 1) * pageSize;
@@ -143,16 +154,22 @@ public class EndfieldCommand implements Command
                 .mapToObj(j -> {
                     String path = helpPaths.get(j);
                     String fileNameWithExt = new File(path).getName();
+                    String fileVersion = path.split("/")[path.split("/").length - 2];
                     int dotIndex = fileNameWithExt.lastIndexOf('.');
                     String fileName = dotIndex > 0 ? fileNameWithExt.substring(0, dotIndex) : fileNameWithExt;
-                    return (j + 1) + ". " + fileName;
+                    return (j + 1) + ". " + (globalQuery ? "[" + fileVersion + "]" : "") + fileName;
                 }).toList();
         String content = String.join("\n", helpNames);
         String footer = """
                 [第 %s/%s 页 (每页%s条)]
-                [当前资源版本 - %s]
+                [当前资源版本 - %s]%s
                 操作 - Up/Down/End
-                选择 - 发送序号 (上同)""".formatted(current, pages, pageSize, getGroupVersion(groupId));
+                选择 - 发送序号 (上同)"""
+                .formatted(
+                        current, pages, pageSize,
+                        globalQuery ? "ALL" : version,
+                        globalQuery ? "\n[版本 %s 无匹配资源]".formatted(version) : ""
+                );
         bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD0D共%s个结果\n%s\n\n%s"
                 .formatted(total, content, footer), false);
         log.info("\t\t\t\t├─[Endfield] 已获取查询页 - {}/{}", current, pages);
