@@ -20,9 +20,11 @@ public class WebSocketListener
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         Principal user = accessor.getUser();
         if (user != null) {
-            log.info("▽ [WebSocketListener] 用户 {} 连接已建立 - SessionID: {}", user.getName(), accessor.getSessionId());
+            log.info("▽ [WebSocketListener] 用户 {} 连接已建立 - SessionID: {}",
+                    user.getName(), accessor.getSessionId());
         } else {
-            log.warn("▽ [WebSocketListener] 连接已建立但未获取到用户信息 - SessionID: {}", accessor.getSessionId());
+            log.warn("▽ [WebSocketListener] 连接已建立但未获取到用户信息 - SessionID: {}",
+                    accessor.getSessionId());
         }
     }
 

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.StompPrincipal;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.SystemService;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.annotation.SendToUser;
