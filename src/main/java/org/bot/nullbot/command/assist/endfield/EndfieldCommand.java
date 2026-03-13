@@ -20,10 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
@@ -38,8 +35,11 @@ public class EndfieldCommand implements Command
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
+
+
+    private static final Set<String> ALLOWED_VERSIONS = Set.of("1.0", "1.1");  // 可用资源版本
     private static final String DEFAULT_VERSION = "1.1";  // 默认资源版本
-    private static Map<Long, String> versions = new ConcurrentHashMap<>();  // 群资源版本记录
+    private static Map<Long, String> versions = new ConcurrentHashMap<>();  // 群聊私有版本记录
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -55,8 +55,13 @@ public class EndfieldCommand implements Command
             else
                 keyword = "";
         } else if ("-v".equals(keyword)) {
-            if (params.size() > 1) setGroupVersion(groupId, params.get(1));
-            bot.sendGroupMsg(groupId, "[终末地] ℹ️资源版本: " +
+            if (params.size() > 1) {
+                String newVersion = params.get(1);
+                if (!ALLOWED_VERSIONS.contains(newVersion))
+                    throw new NullBotMsgException("[终末地] ❌版本非法");
+                setGroupVersion(groupId, newVersion);
+            }
+            bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD79当前️资源版本 - " +
                     getGroupVersion(groupId), false);
             return;
         }
