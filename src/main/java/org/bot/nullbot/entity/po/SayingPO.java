@@ -27,6 +27,9 @@ public class SayingPO
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         String formattedTime = time != null ? time.format(formatter) : "";
-        return "[" + formattedTime + "][No." + id + "]\n" + text + "\n" + "\t—— " + userName + "(" + userId + ")";
+        return """
+            [%s][No.%d]
+            %s
+            \t—— %s(%d)""".formatted(formattedTime, id, text, userName, userId);
     }
 }
