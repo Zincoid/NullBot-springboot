@@ -83,7 +83,6 @@ public class EndfieldCommand implements Command
                 helpPaths.addAll(FileUtil.getFilePathsByKeyword(
                         fileStorageProperties.getResourcePath() + "/endfield/" + version, keyword));
             }
-
         }
 
         if (helpPaths.isEmpty())
