@@ -5,8 +5,10 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.websocket.WebSocketSender;
 import org.bot.nullbot.dispatcher.CommandHandlerChain;
 import org.bot.nullbot.dispatcher.handler.Handler;
 import org.bot.nullbot.entity.CommandEvent;
@@ -18,8 +20,11 @@ import org.springframework.stereotype.Component;
 @Order(4)
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ExecutorHandler implements Handler
 {
+    private final WebSocketSender webSocketSender;
+
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         log.info("\t\t└─[ExecutorHandler] 执行开始");
@@ -54,8 +59,10 @@ public class ExecutorHandler implements Handler
             }
         } catch (NullBotLogException e) {
             log.warn("\t\t  [ExecutorHandler] 日志警告: {}", e.getMessage());
+            webSocketSender.broadcast("WARN", "服务器日志警告: " + e.getMessage());
         } catch (Exception e) {
             log.error("\t\t  [ExecutorHandler] 未知错误: {}", e.getMessage());
+            webSocketSender.broadcast("ERROR", "服务器内部错误: " + e.getMessage());
             throw e;
         }
 

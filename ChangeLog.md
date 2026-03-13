@@ -553,4 +553,5 @@
 
 ### 2026.3.13 - v1.4.1
 - 后端 WebSocket 功能优化 - 安全码刷新日志受标志位控制；
-- 增强 Endfield 指令 - 添加版本分类功能。
+- 增强 Endfield 指令 - 添加版本分类功能；
+- 后端 WebSocket 功能增强 - 在 ExecutorHandler 中广播日志异常和未知异常。
