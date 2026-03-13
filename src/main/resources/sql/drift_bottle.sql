@@ -1,0 +1,12 @@
+# CREATE DATABASE NullBot;
+# USE NullBot;
+
+DROP TABLE IF EXISTS `drift_bottle`;
+
+CREATE TABLE `drift_bottle` (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id LONG NOT NULL,
+    user_name VARCHAR(50) NOT NULL,
+    text VARCHAR(2000) NOT NULL
+);
