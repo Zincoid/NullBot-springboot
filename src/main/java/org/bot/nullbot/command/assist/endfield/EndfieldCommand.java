@@ -36,6 +36,7 @@ public class EndfieldCommand implements Command
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
+    private static String version = "1.1";  // 资源版本
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -50,10 +51,22 @@ public class EndfieldCommand implements Command
                 keyword = params.get(1);
             else
                 keyword = "";
+        } else if ("-v".equals(keyword)) {
+            if (params.size() > 1) version = params.get(1);
+            bot.sendGroupMsg(groupId, "[终末地] ℹ️资源版本: " + version, false);
+            return;
         }
 
-        List<String> helpPaths = new ArrayList<>(FileUtil.getFilePathsByKeyword(
-                fileStorageProperties.getResourcePath() + "/endfield", keyword));
+        List<String> helpPaths = new ArrayList<>();
+        try {
+            helpPaths.addAll(FileUtil.getFilePathsByKeyword(
+                    fileStorageProperties.getResourcePath() + "/endfield/public", keyword));
+            helpPaths.addAll(FileUtil.getFilePathsByKeyword(
+                    fileStorageProperties.getResourcePath() + "/endfield/" + version, keyword));
+        } catch (Exception e) {
+            throw new NullBotMsgException("[终末地] ❌资源异常");
+        }
+
         if (helpPaths.isEmpty())
             throw new NullBotMsgException("[终末地] ❌无查询项");
 
@@ -158,7 +171,9 @@ public class EndfieldCommand implements Command
                 ◉ Endfield 命令
                 功能: 获取终末地攻略
                 限权: %d 级
-                格式: Endfield [可选: -c(连查模式)] [可选: 关键字]
+                格式:
+                1. Endfield [可选: -c(连查模式)] [可选: 关键字]
+                2. Endfield [-v] [可选: 版本]
                 别名: endfield/end/终末地查询/终末地""", getAccess()
         );
     }
