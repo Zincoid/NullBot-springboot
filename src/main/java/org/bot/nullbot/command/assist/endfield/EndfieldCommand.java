@@ -23,6 +23,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
 @CommandMapping({"Endfield", "endfield", "end", "终末地查询", "终末地"})
@@ -36,7 +38,8 @@ public class EndfieldCommand implements Command
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
-    private static String version = "1.1";  // 资源版本
+    private static final String DEFAULT_VERSION = "1.1";
+    private static Map<Long, String> versions = new ConcurrentHashMap<>();  // 资源版本
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -52,8 +55,9 @@ public class EndfieldCommand implements Command
             else
                 keyword = "";
         } else if ("-v".equals(keyword)) {
-            if (params.size() > 1) version = params.get(1);
-            bot.sendGroupMsg(groupId, "[终末地] ℹ️资源版本: " + version, false);
+            if (params.size() > 1) setGroupVersion(groupId, params.get(1));
+            bot.sendGroupMsg(groupId, "[终末地] ℹ️资源版本: " +
+                    getGroupVersion(groupId), false);
             return;
         }
 
@@ -62,7 +66,7 @@ public class EndfieldCommand implements Command
             helpPaths.addAll(FileUtil.getFilePathsByKeyword(
                     fileStorageProperties.getResourcePath() + "/endfield/public", keyword));
             helpPaths.addAll(FileUtil.getFilePathsByKeyword(
-                    fileStorageProperties.getResourcePath() + "/endfield/" + version, keyword));
+                    fileStorageProperties.getResourcePath() + "/endfield/" + getGroupVersion(groupId), keyword));
         } catch (Exception e) {
             throw new NullBotMsgException("[终末地] ❌资源异常");
         }
@@ -141,8 +145,9 @@ public class EndfieldCommand implements Command
         String content = String.join("\n", helpNames);
         String footer = """
                 [第 %s/%s 页 (每页%s条)]
+                [当前资源版本 - %s]
                 操作 - Up/Down/End
-                选择 - 发送序号 (上同)""".formatted(current, pages, pageSize);
+                选择 - 发送序号 (上同)""".formatted(current, pages, pageSize, getGroupVersion(groupId));
         bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD0D共%s个结果\n%s\n\n%s"
                 .formatted(total, content, footer), false);
         log.info("\t\t\t\t├─[Endfield] 已获取查询页 - {}/{}", current, pages);
@@ -163,6 +168,14 @@ public class EndfieldCommand implements Command
             bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[Endfield] 已获取图片内容");
         }
+    }
+
+    private void setGroupVersion(Long groupId, String version) {
+        versions.put(groupId, version);
+    }
+
+    private String getGroupVersion(Long groupId) {
+        return versions.computeIfAbsent(groupId, k -> DEFAULT_VERSION);
     }
 
     @Override
