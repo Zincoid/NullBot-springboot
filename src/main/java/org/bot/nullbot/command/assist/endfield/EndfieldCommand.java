@@ -38,8 +38,8 @@ public class EndfieldCommand implements Command
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
-    private static final String DEFAULT_VERSION = "1.1";
-    private static Map<Long, String> versions = new ConcurrentHashMap<>();  // 资源版本
+    private static final String DEFAULT_VERSION = "1.1";  // 默认资源版本
+    private static Map<Long, String> versions = new ConcurrentHashMap<>();  // 群资源版本记录
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
