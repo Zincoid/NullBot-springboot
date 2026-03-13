@@ -42,6 +42,8 @@ public class DriftBottleCommand implements Command
 
         if ("捡".equals(option)) {
             DriftBottlePO bottle = driftBottleService.pickUpRand();
+            if (bottle == null)
+                throw new NullBotMsgException("没有漂流瓶了！");
             bot.sendGroupMsg(groupId, bottle.toString(), false);
             log.info("\t\t\t\t├─[DriftBottle] 捡漂流瓶 - {} -> #{}", userId, bottle.getId());
             return;

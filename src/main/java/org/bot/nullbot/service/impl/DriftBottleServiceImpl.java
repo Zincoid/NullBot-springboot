@@ -33,7 +33,7 @@ public class DriftBottleServiceImpl implements DriftBottleService
     @Transactional
     public DriftBottlePO pickUpRand() {
         DriftBottlePO bottle = driftBottleMapper.getRand();
-        driftBottleMapper.deleteById(bottle.getId());
+        if (bottle != null) driftBottleMapper.deleteById(bottle.getId());
         return bottle;
     }
 }
