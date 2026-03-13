@@ -57,7 +57,7 @@ public class SecurityCodeScheduler
     @EventListener(ApplicationReadyEvent.class)
     public void initCode() {  // 初始化安全码
         createCode("regist");
-        createCode("access", 86_400_000, false);
+        createCode("access", 86_400_000, true);
         log.info("▽ [SecurityCodeScheduler] 默认安全码已初始化");
     }
 
@@ -142,14 +142,16 @@ public class SecurityCodeScheduler
                 entry.logging
         ));
         log.info("▽ [SecurityCodeScheduler] 安全码已刷新 - CodeId: {}, NewCode: {}", codeId, newCode);
-        webSocketSender.broadcast("INFO", "安全码已刷新 -> %s: %s".formatted(codeId, newCode));
-        if (entry.logging) botOperator.sendLogGroupMsg("""
+        if (entry.logging) {
+            webSocketSender.broadcast("INFO", "安全码已刷新 -> %s: %s".formatted(codeId, newCode));
+            botOperator.sendLogGroupMsg("""
                 [安全码调度] 🔑已刷新
                 - CodeID: %s
                 - NextOn: %s
                 - NewCode: %s"""
-                .formatted(codeId, resetTimer ? LocalDateTime.now().plus(Duration.ofMillis(entry.refreshInterval)).format(formatter) : "Original", newCode)
-        );
+                    .formatted(codeId, resetTimer ? LocalDateTime.now().plus(Duration.ofMillis(entry.refreshInterval)).format(formatter) : "Original", newCode)
+            );
+        }
         return newCode;
     }
 
