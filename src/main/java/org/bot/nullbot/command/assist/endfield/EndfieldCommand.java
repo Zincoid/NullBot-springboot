@@ -142,20 +142,21 @@ public class EndfieldCommand implements Command
         }
     }
 
-    private void sendPage(Bot bot, Long groupId, List<String> helpPaths, int pageSize, int current, boolean globalQuery) {
+    private void sendPage(Bot bot, Long groupId, List<String> helpPaths,
+                          int pageSize, int current, boolean globalQuery) {
         String version = getGroupVersion(groupId);
         int total = helpPaths.size();
         int pages = (total + pageSize - 1) / pageSize;
         int fromIndex = (current - 1) * pageSize;
         int toIndex = Math.min(fromIndex + pageSize, total);
         List<String> helpNames = IntStream.range(fromIndex, toIndex)
-                .mapToObj(j -> {
-                    String path = helpPaths.get(j);
-                    String fileNameWithExt = new File(path).getName();
-                    String fileVersion = path.split("/")[path.split("/").length - 2];
-                    int dotIndex = fileNameWithExt.lastIndexOf('.');
-                    String fileName = dotIndex > 0 ? fileNameWithExt.substring(0, dotIndex) : fileNameWithExt;
-                    return (j + 1) + ". " + (globalQuery ? "[" + fileVersion + "]" : "") + fileName;
+                .mapToObj(i -> {
+                    String[] split = helpPaths.get(i).split("/");
+                    String fileName = split[split.length - 1];
+                    String fileVer = split[split.length - 2];
+                    int dotIndex = fileName.lastIndexOf('.');
+                    String name = dotIndex > 0 ? fileName.substring(0, dotIndex) : fileName;
+                    return (i + 1) + ". " + (globalQuery ? "[" + fileVer + "]" + name : name);
                 }).toList();
         String content = String.join("\n", helpNames);
         String footer = """
@@ -175,16 +176,16 @@ public class EndfieldCommand implements Command
 
     private void sendResource(Bot bot, Long groupId, String resourcePath) {
         String helpName = new File(resourcePath).getName().toLowerCase();
-        if (helpName.endsWith(".txt")) {
+        if (helpName.endsWith(".txt")) {  // TXT文件类型 读取文本内容
             try {
-                String response = Files.readString(Paths.get(resourcePath), StandardCharsets.UTF_8);  // TXT文件类型 读取文本内容
+                String response = Files.readString(Paths.get(resourcePath), StandardCharsets.UTF_8);
                 bot.sendGroupMsg(groupId, response, false);
                 log.info("\t\t\t\t├─[Endfield] 已获取文本内容");
             } catch (IOException e) {
                 throw new NullBotMsgException("[终末地] ❌读取出错");
             }
-        } else {
-            String response = MsgUtils.builder().img(resourcePath).build();  // 其他文件类型 按图片处理
+        } else {  // 其他文件类型 按图片处理
+            String response = MsgUtils.builder().img(resourcePath).build();
             bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[Endfield] 已获取图片内容");
         }
