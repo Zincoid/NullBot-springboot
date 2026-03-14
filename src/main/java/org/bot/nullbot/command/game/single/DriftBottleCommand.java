@@ -36,7 +36,7 @@ public class DriftBottleCommand implements Command
             int thrown = driftBottleService.throwBottle(
                     userId,
                     bot.getStrangerInfo(userId, true).getData().getNickname(),
-                    message.substring(message.indexOf(" "))
+                    message.substring(message.indexOf(" ")).trim()
             );
             bot.sendGroupMsg(event.getGroupId(), thrown == 1 ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
             log.info("\t\t\t\t├─[DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown == 1 ? "已投出" : "出错");
