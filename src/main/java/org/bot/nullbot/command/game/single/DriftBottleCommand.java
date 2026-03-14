@@ -38,30 +38,24 @@ public class DriftBottleCommand implements Command
                     bot.getStrangerInfo(userId, true).getData().getNickname(),
                     message.substring(message.indexOf(" "))
             );
-            bot.sendGroupMsg(event.getGroupId(),
-                    thrown == 1 ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
-            log.info("\t\t\t\t├─[DriftBottle] 扔漂流瓶 - {} -> {}",
-                    userId, thrown == 1 ? "已投出" : "出错");
+            bot.sendGroupMsg(event.getGroupId(), thrown == 1 ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
+            log.info("\t\t\t\t├─[DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown == 1 ? "已投出" : "出错");
         } else {
             DriftBottlePO bottle = driftBottleService.pickUpRand();
-            if (bottle == null)
-                throw new NullBotMsgException("没有漂流瓶了！");
+            if (bottle == null) throw new NullBotMsgException("没有漂流瓶了！");
             bot.sendGroupMsg(groupId, bottle.toString(), false);
             List<Pair<Long, String>> inputs;
             try {
-                inputs = botNextInputer
-                        .request(BniMode.PS, userId, "扔回去", KEEP_TIME, true);
+                inputs = botNextInputer.request(BniMode.PS, userId, "扔回去", KEEP_TIME, true);
             } catch (Exception e) {
                 throw new NullBotMsgException("[漂流瓶] ❌" + e.getMessage());
             }
             if (!inputs.isEmpty()) {
                 int thrown = driftBottleService.throwBottle(bottle);
-                bot.sendGroupMsg(groupId,
-                        thrown == 1 ? "✉️ 已投回！" : "[漂流瓶] ❌出错", true);
-            }
-            log.info("\t\t\t\t├─[DriftBottle] {} - {} -> #{}",
-                    inputs.isEmpty() ? "捡漂流瓶" : "捡漂流瓶并投回",
-                    userId, bottle.getId());
+                bot.sendGroupMsg(groupId, thrown == 1 ? "✉️ 已投回！" : "[漂流瓶] ❌出错", true);
+                log.info("\t\t\t\t├─[DriftBottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());
+            } else
+                log.info("\t\t\t\t├─[DriftBottle] 捡漂流瓶并销毁 - {} -> #{}", userId, bottle.getId());
         }
     }
 
