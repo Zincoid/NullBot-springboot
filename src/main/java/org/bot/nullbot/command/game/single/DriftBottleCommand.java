@@ -31,13 +31,26 @@ public class DriftBottleCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        if (params.isEmpty()) {
+        String message = event.getMessage();
+        if (message.contains(" ")) {
+            int thrown = driftBottleService.throwBottle(
+                    userId,
+                    bot.getStrangerInfo(userId, true).getData().getNickname(),
+                    message.substring(message.indexOf(" "))
+            );
+            bot.sendGroupMsg(event.getGroupId(),
+                    thrown == 1 ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
+            log.info("\t\t\t\t├─[DriftBottle] 扔漂流瓶 - {} -> {}",
+                    userId, thrown == 1 ? "已投出" : "出错");
+        } else {
             DriftBottlePO bottle = driftBottleService.pickUpRand();
-            if (bottle == null) throw new NullBotMsgException("没有漂流瓶了！");
+            if (bottle == null)
+                throw new NullBotMsgException("没有漂流瓶了！");
             bot.sendGroupMsg(groupId, bottle.toString(), false);
             List<Pair<Long, String>> inputs;
             try {
-                inputs = botNextInputer.request(BniMode.PS, userId, "扔回去", KEEP_TIME, true);
+                inputs = botNextInputer
+                        .request(BniMode.PS, userId, "扔回去", KEEP_TIME, true);
             } catch (Exception e) {
                 throw new NullBotMsgException("[漂流瓶] ❌" + e.getMessage());
             }
@@ -49,14 +62,6 @@ public class DriftBottleCommand implements Command
             log.info("\t\t\t\t├─[DriftBottle] {} - {} -> #{}",
                     inputs.isEmpty() ? "捡漂流瓶" : "捡漂流瓶并投回",
                     userId, bottle.getId());
-        } else {
-            String text = String.join(" ", params);
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-            int thrown = driftBottleService.throwBottle(userId, userName, text);
-            bot.sendGroupMsg(event.getGroupId(),
-                    thrown == 1 ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
-            log.info("\t\t\t\t├─[DriftBottle] 扔漂流瓶 - {} -> {}",
-                    userId, thrown == 1 ? "已投出" : "出错");
         }
     }
 
