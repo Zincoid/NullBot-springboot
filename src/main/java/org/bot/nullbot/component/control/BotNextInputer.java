@@ -42,12 +42,10 @@ public class BotNextInputer
             case GM -> "GM_%s".formatted(targetId);  // 群组多值模式 targetId为群聊ID 超时返回已输入值列表
         };
         if (inputEntries.containsKey(id)) {
-            InputEntry existingEntry = inputEntries.get(id);
-            if (existingEntry.coverable) {
+            if (inputEntries.get(id).coverable) {
                 cancelWait(mode, targetId);
                 log.info("▽ [BotNextInputer] 已取消 {} 可覆盖的冲突输入 (Mode: {})", targetId, mode);
-            } else
-                throw new RuntimeException("输入事件冲突");
+            } else throw new RuntimeException("输入事件冲突");
         }
         if (mode == BniMode.GM)
             inputCaches.put(id, Collections.synchronizedList(new ArrayList<>()));
