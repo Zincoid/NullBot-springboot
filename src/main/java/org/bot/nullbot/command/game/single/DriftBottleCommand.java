@@ -4,9 +4,12 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.entity.po.DriftBottlePO;
+import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.DriftBottleService;
 import org.springframework.stereotype.Component;
@@ -20,36 +23,39 @@ import java.util.List;
 public class DriftBottleCommand implements Command
 {
     private final DriftBottleService driftBottleService;
+    private final BotNextInputer botNextInputer;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        if (params.isEmpty())
-            throw new NullBotMsgException("[漂流瓶] ❌无操作");
-        String option = params.getFirst();
-
-        if ("扔".equals(option)) {
-            if (params.size() < 2)
-                throw new NullBotMsgException("[漂流瓶] ❌无文本");
+        if (params.isEmpty()) {
+            DriftBottlePO bottle = driftBottleService.pickUpRand();
+            if (bottle == null) throw new NullBotMsgException("没有漂流瓶了！");
+            bot.sendGroupMsg(groupId, bottle.toString(), false);
+            List<Pair<Long, String>> inputs;
+            try {
+                inputs = botNextInputer.request(BniMode.PS, userId, 10, "扔回去");
+            } catch (Exception e) {
+                throw new NullBotMsgException("[漂流瓶] ❌" + e.getMessage());
+            }
+            if (!inputs.isEmpty()) {
+                int thrown = driftBottleService.throwBottle(bottle);
+                bot.sendGroupMsg(groupId,
+                        thrown == 1 ? "✉️ 已投回！" : "[漂流瓶] ❌出错", true);
+            }
+            log.info("\t\t\t\t├─[DriftBottle] {} - {} -> #{}",
+                    inputs.isEmpty() ? "捡漂流瓶" : "捡漂流瓶并投回",
+                    userId, bottle.getId());
+        } else {
             String text = String.join(" ", params.subList(1, params.size()));
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             int thrown = driftBottleService.throwBottle(userId, userName, text);
-            bot.sendGroupMsg(event.getGroupId(), thrown == 1 ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
-            log.info("\t\t\t\t├─[DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown == 1 ? "已投出" : "出错");
-            return;
+            bot.sendGroupMsg(event.getGroupId(),
+                    thrown == 1 ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
+            log.info("\t\t\t\t├─[DriftBottle] 扔漂流瓶 - {} -> {}",
+                    userId, thrown == 1 ? "已投出" : "出错");
         }
-
-        if ("捡".equals(option)) {
-            DriftBottlePO bottle = driftBottleService.pickUpRand();
-            if (bottle == null)
-                throw new NullBotMsgException("没有漂流瓶了！");
-            bot.sendGroupMsg(groupId, bottle.toString(), false);
-            log.info("\t\t\t\t├─[DriftBottle] 捡漂流瓶 - {} -> #{}", userId, bottle.getId());
-            return;
-        }
-
-        throw new NullBotMsgException("[漂流瓶] ❌非法操作");
     }
 
     @Override
@@ -58,10 +64,9 @@ public class DriftBottleCommand implements Command
                 ◉ DriftBottle 命令
                 功能: 扔或者捡一个漂流瓶
                 限权: %d 级
-                格式:
-                1. DriftBottle [扔] [文本]
-                2. DriftBottle [捡]
-                别名: 漂流瓶""", getAccess()
+                格式: DriftBottle [可选: 文本]
+                别名: 漂流瓶
+                注意: 可发送"扔回去"投回""", getAccess()
         );
     }
 }

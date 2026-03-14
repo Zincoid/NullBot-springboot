@@ -30,6 +30,7 @@ public class BotNextInputer
 
     /* 注册输入事件 - 阻塞直到收到响应或超时 (视模式而定) */
     public List<Pair<Long, String>> request(BniMode mode, Long targetId, long timeout, String pattern) {
+        // String uuid = UUID.randomUUID().toString().substring(0, 8);
         String id = switch (mode) {
             case PS -> "PS_%s".formatted(targetId);  // 个人单值模式 targetId为用户ID 超时返回空列表
             case GS -> "GS_%s".formatted(targetId);  // 群组单值模式 targetId为群聊ID 超时返回空列表

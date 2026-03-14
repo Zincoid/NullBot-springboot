@@ -16,6 +16,15 @@ public class DriftBottleServiceImpl implements DriftBottleService
     private final DriftBottleMapper driftBottleMapper;
 
     @Override
+    public int throwBottle(DriftBottlePO bottle) {
+        try {
+            return driftBottleMapper.insert(bottle);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    @Override
     public int throwBottle(Long userId, String userName, String text) {
         try {
             DriftBottlePO bottle = new DriftBottlePO();
