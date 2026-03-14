@@ -72,7 +72,7 @@ public class ChatHistoryCommand implements Command
             List<Pair<Long, String>> inputs;
             try {
                 inputs = botNextInputer
-                        .request(BniMode.PS, userId, WAIT_TIMEOUT, "(?i)up|down|end");
+                        .request(BniMode.PS, userId, "(?i)up|down|end", WAIT_TIMEOUT);
             } catch (Exception e) {
                 throw new NullBotMsgException("[聊天历史] ❌" + e.getMessage());
             }

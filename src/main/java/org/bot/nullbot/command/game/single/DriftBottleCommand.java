@@ -25,6 +25,8 @@ public class DriftBottleCommand implements Command
     private final DriftBottleService driftBottleService;
     private final BotNextInputer botNextInputer;
 
+    private static final int KEEP_TIME = 30;  // 漂流瓶保留时间
+
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
@@ -35,7 +37,7 @@ public class DriftBottleCommand implements Command
             bot.sendGroupMsg(groupId, bottle.toString(), false);
             List<Pair<Long, String>> inputs;
             try {
-                inputs = botNextInputer.request(BniMode.PS, userId, 10, "扔回去");
+                inputs = botNextInputer.request(BniMode.PS, userId, "扔回去", KEEP_TIME, true);
             } catch (Exception e) {
                 throw new NullBotMsgException("[漂流瓶] ❌" + e.getMessage());
             }
@@ -48,7 +50,7 @@ public class DriftBottleCommand implements Command
                     inputs.isEmpty() ? "捡漂流瓶" : "捡漂流瓶并投回",
                     userId, bottle.getId());
         } else {
-            String text = String.join(" ", params.subList(1, params.size()));
+            String text = String.join(" ", params);
             String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
             int thrown = driftBottleService.throwBottle(userId, userName, text);
             bot.sendGroupMsg(event.getGroupId(),
@@ -57,6 +59,8 @@ public class DriftBottleCommand implements Command
                     userId, thrown == 1 ? "已投出" : "出错");
         }
     }
+
+    public static int getKeepTime() { return KEEP_TIME; }
 
     @Override
     public String getHelp() {

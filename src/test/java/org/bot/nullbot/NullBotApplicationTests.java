@@ -377,7 +377,7 @@ class NullBotApplicationTests
             }
         }).start();
 
-        List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.PS, 0L, 5, "[1-9]\\d*");
+        List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.PS, 0L, "[1-9]\\d*", 5);
         System.out.println("已响应: " + inputs);
     }
 

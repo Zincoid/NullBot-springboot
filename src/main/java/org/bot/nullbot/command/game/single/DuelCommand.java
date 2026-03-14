@@ -53,7 +53,7 @@ public class DuelCommand implements Command
             bot.sendGroupMsg(groupId, builder.build(), false);
 
             List<Pair<Long, String>> inputs = botNextInputer
-                    .request(BniMode.GM, groupId, SELECTION_TIME, "[LlRr]");
+                    .request(BniMode.GM, groupId, "[LlRr]", SELECTION_TIME);
 
             Map<Long, Pair<Long, String>> lastInputMap = new LinkedHashMap<>();
             for (Pair<Long, String> input : inputs) lastInputMap.put(input.getKey(), input);

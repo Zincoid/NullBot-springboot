@@ -43,7 +43,7 @@ public class TestCommand implements Command
         bot.sendGroupMsg(groupId, "[测试] ⏳等待输入中...", false);
         List<Pair<Long, String>> inputs;
         try {
-            inputs = botNextInputer.request(mode, mode == BniMode.PS ? userId : groupId, timeout, ".*");
+            inputs = botNextInputer.request(mode, mode == BniMode.PS ? userId : groupId, ".*", timeout);
         } catch (Exception e) {
             throw new NullBotMsgException("[测试] ❌" + e.getMessage());
         }

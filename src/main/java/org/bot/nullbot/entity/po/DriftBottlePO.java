@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bot.nullbot.command.game.single.DriftBottleCommand;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,11 +29,12 @@ public class DriftBottlePO
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         String formattedTime = time != null ? time.format(formatter) : "";
         return """
+            [%ss后销毁 - 发送"扔回去"投回]
             漂流瓶 #%d
-            时间：%s
+            时间: %s
 
             %s
 
-            —— %s(%d)""".formatted(id, formattedTime, text, userName, userId);
+            —— %s(%d)""".formatted(DriftBottleCommand.getKeepTime(), id, formattedTime, text, userName, userId);
     }
 }

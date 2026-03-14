@@ -96,7 +96,7 @@ public class QuestionCommand implements Command
 
             List<Pair<Long, String>> inputs;
             try {
-                inputs = botNextInputer.request(BniMode.PS, userId, WAIT_TIMEOUT, "[a-zA-Z]");
+                inputs = botNextInputer.request(BniMode.PS, userId, "[a-zA-Z]", WAIT_TIMEOUT);
             } catch (Exception e) {
                 throw new NullBotMsgException("[问答] ❌" + e.getMessage());
             }

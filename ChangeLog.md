@@ -558,4 +558,5 @@
 - 优化 部分代码。
 
 ### 2026.3.14
-- 新增 DriftBottle 指令 - 扔或者捡一个漂流瓶。
+- 新增 DriftBottle 指令 - 扔或者捡一个漂流瓶；
+- 增强 BotNextInputer - 添加 coverable 可覆盖标志位并优化相关使用。

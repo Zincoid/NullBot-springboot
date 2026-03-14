@@ -22,26 +22,37 @@ public class BotNextInputer
 
     @AllArgsConstructor
     private static class InputEntry {
-        private final Pattern pattern;
         private final CompletableFuture<List<Pair<Long, String>>> future;
+        private final Pattern pattern;
+        private boolean coverable;
     }
 
     // =================== 调用方法 ===================
 
+    /* 注册输入事件 (默认非可覆盖模式) - 阻塞直到收到响应或超时 (视模式而定) */
+    public List<Pair<Long, String>> request(BniMode mode, Long targetId, String pattern, long timeout) {
+        return request(mode, targetId, pattern, timeout, false);
+    }
+
     /* 注册输入事件 - 阻塞直到收到响应或超时 (视模式而定) */
-    public List<Pair<Long, String>> request(BniMode mode, Long targetId, long timeout, String pattern) {
-        // String uuid = UUID.randomUUID().toString().substring(0, 8);
+    public List<Pair<Long, String>> request(BniMode mode, Long targetId, String pattern, long timeout, boolean coverable) {
         String id = switch (mode) {
             case PS -> "PS_%s".formatted(targetId);  // 个人单值模式 targetId为用户ID 超时返回空列表
             case GS -> "GS_%s".formatted(targetId);  // 群组单值模式 targetId为群聊ID 超时返回空列表
             case GM -> "GM_%s".formatted(targetId);  // 群组多值模式 targetId为群聊ID 超时返回已输入值列表
         };
-        if (inputEntries.containsKey(id))
-            throw new RuntimeException("输入事件冲突");
+        if (inputEntries.containsKey(id)) {
+            InputEntry existingEntry = inputEntries.get(id);
+            if (existingEntry.coverable) {
+                cancelWait(mode, targetId);
+                log.info("▽ [BotNextInputer] 已取消 {} 可覆盖的冲突输入 (Mode: {})", targetId, mode);
+            } else
+                throw new RuntimeException("输入事件冲突");
+        }
         if (mode == BniMode.GM)
             inputCaches.put(id, Collections.synchronizedList(new ArrayList<>()));
         CompletableFuture<List<Pair<Long, String>>> future = new CompletableFuture<>();
-        inputEntries.put(id, new InputEntry(Pattern.compile(pattern), future));
+        inputEntries.put(id, new InputEntry(future, Pattern.compile(pattern), coverable));
         try {
             log.info("▽ [BotNextInputer] 等待 {} 输入 (Mode: {}, Timeout: {} Sec)", targetId, mode, timeout);
             return future.orTimeout(timeout, TimeUnit.SECONDS)

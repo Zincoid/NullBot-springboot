@@ -73,7 +73,7 @@ public class GuessCommand implements Command
             while (guess.getTimes() < MAX_RETRIES) {
                 guessStorage.increaseTimes(groupId);
                 List<Pair<Long, String>> inputs = botNextInputer
-                        .request(BniMode.GS, groupId, WAIT_TIMEOUT, "#.+");
+                        .request(BniMode.GS, groupId, "#.+", WAIT_TIMEOUT);
 
                 if (inputs.isEmpty() || "##".equals(inputs.getFirst().getRight())) {
                     String endMsg = MsgUtils.builder()

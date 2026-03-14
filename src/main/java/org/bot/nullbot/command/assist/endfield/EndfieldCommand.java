@@ -131,7 +131,7 @@ public class EndfieldCommand implements Command
             List<Pair<Long, String>> inputs;
             try {
                 inputs = botNextInputer
-                        .request(BniMode.PS, userId, WAIT_TIMEOUT, "[1-9]\\d*|(?i)up|down|end");
+                        .request(BniMode.PS, userId, "[1-9]\\d*|(?i)up|down|end", WAIT_TIMEOUT);
             } catch (Exception e) {
                 throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
             }
