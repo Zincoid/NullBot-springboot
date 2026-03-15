@@ -11,13 +11,12 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.exception.NullBotMsgException;
-import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"Chat", "对话"})
+@CommandMapping({})  // 仅通过@Null或戳一戳或自动触发
 @Component
 @RequiredArgsConstructor
 @Slf4j
