@@ -560,3 +560,7 @@
 ### 2026.3.14
 - 增强 BotNextInputer - 添加 coverable 可覆盖标志位并优化相关使用；
 - 新增 DriftBottle 指令 - 扔或者捡一个漂流瓶。
+
+### 2026.3.16
+- 调整 ChatCommand 指令 - 移除无用的 CommandMapping 并简化相关代码；
+- 新增 onGroupBottleAutoThrow 监听方法 - 用于自动补充漂流瓶。
