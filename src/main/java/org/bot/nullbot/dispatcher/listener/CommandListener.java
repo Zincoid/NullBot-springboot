@@ -99,7 +99,7 @@ public class CommandListener
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
         } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {  // 检测引用命令
             String slashCommand = event.getArrayMsg().get(1).getData().get("text");
-            if(slashCommand != null && slashCommand.startsWith(commandPrefix)){
+            if (slashCommand != null && slashCommand.startsWith(commandPrefix)) {
                 log.info("◉ [GroupAction:ReplyCommand] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
                 commandProcessor.processQQ(bot, new CommandEvent<>(event));
             }
