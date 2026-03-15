@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({})  // 仅通过@Null或戳一戳或自动触发
+@CommandMapping({"Chat", "对话"})
 @Component
 @RequiredArgsConstructor
 @Slf4j

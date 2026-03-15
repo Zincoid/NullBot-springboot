@@ -134,7 +134,7 @@ public class MonitorListener
     public void onGroupMessageCollection(Bot bot, GroupMessageEvent event)
     {
         if (!settingService.isMessageCollect(event.getGroupId())) return;
-        // if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // Chat 命令会自动记录消息 跳过 (已移除)
+        if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // Chat 命令会自动记录消息 跳过
         String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
