@@ -44,8 +44,9 @@ public class ChatCommand implements Command
         }
 
         for (ArrayMsg msg : event.getArrayMsg()) {
-            if (msg.getType() == MsgTypeEnum.text &&
-                    msg.getData().get("text").trim().startsWith(commandPrefix)) {
+            if (msg.getType() != MsgTypeEnum.text) continue;
+            String text = msg.getData().get("text").trim();
+            if (text.startsWith(commandPrefix) && !text.startsWith(commandPrefix + "Chat") && !text.startsWith(commandPrefix + "对话")) {
                 bot.sendGroupMsg(event.getGroupId(), """
                                 [AI] ⚠️检测到指令前缀
                                 - 使用指令时请不要@Null
