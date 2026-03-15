@@ -61,7 +61,7 @@ public class FuncSetCommand implements Command
                 操作类型和参数:
                 - [-view] 获取全局设置
                 - [-change] [功能标志] 更改启用状态
-                标志: AIAutoReply/ImgCollect/MsgCollect/KeyDetect/PokeDetect/RecallDetect/PrivateCmd
+                标志: AIAutoReply/ImgCollect/MsgCollect/KeyDetect/PokeDetect/RecallDetect/PrivateCmd/BottleAutoThrow
                 别名: 功能控制""", getAccess()
         );
     }

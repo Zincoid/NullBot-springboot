@@ -106,7 +106,7 @@ public class CommandListener
             }
         }
 
-        // 串行调用 消息预处理 默认处理情况
+        // 串行调用 消息预处理 默认处理情况 (非指令时)
         monitorListener.onGroupBottleAutoThrow(bot, event);
     }
 
