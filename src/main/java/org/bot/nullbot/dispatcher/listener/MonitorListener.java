@@ -62,9 +62,8 @@ public class MonitorListener
     {
         double freq = 0.001;  // 暂时固定自动投出频率
         if (freq > Math.random()) {
-            String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
-            log.info("◉ [GroupMonitor:BottleAutoThrow] 漂流瓶自动投出: {} -> {}", event.getUserId(), parsed);
-            commandProcessor.processQQ(bot, new CommandEvent<>(event, "DriftBottle", List.of("-auto", parsed), false, false));
+            log.info("◉ [GroupMonitor:BottleAutoThrow] 用户 {} 自动投出漂流瓶", event.getUserId());
+            commandProcessor.processQQ(bot, new CommandEvent<>(event, "DriftBottle", List.of("-auto"), false, false));
         }
     }
 
