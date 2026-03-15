@@ -99,8 +99,8 @@ public class MonitorListener
         String userName = event.getSender().getNickname();
 
         boolean hasLogged = false;
-        for(ArrayMsg msg : event.getArrayMsg()){
-            if(msg.getType() == MsgTypeEnum.image){
+        for (ArrayMsg msg : event.getArrayMsg()) {
+            if (msg.getType() == MsgTypeEnum.image) {
                 if (!hasLogged) {
                     // log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> {}", groupId, userName, userId, event.getMessage());
                     log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
