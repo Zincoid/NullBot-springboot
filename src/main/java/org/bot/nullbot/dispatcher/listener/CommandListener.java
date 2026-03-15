@@ -62,7 +62,7 @@ public class CommandListener
             log.info("└─[Fail] {}({}) 访问码错误", userName, userId);
             bot.sendPrivateMsg(userId, "❌访问码错误", false);
         } else {  // 默认触发 AI 对话
-            String parsed = MessageParseUtil.parseArrayMsgForAI(bot, event.getArrayMsg());
+            String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
             log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", userName, userId, parsed.replaceAll("\\R", " "));
             commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), false, false));
         }
@@ -88,6 +88,7 @@ public class CommandListener
             monitorListener.onGroupImageCollection(event);
             return;
         }
+
         // 串行调用 消息预处理 默认处理情况
         monitorListener.onGroupKeywordDetection(bot, event);
         if (!monitorListener.onGroupAIAutoReply(bot, event))  // 触发自动发言会记录当前消息 忽略消息收集
@@ -104,6 +105,9 @@ public class CommandListener
                 commandProcessor.processQQ(bot, new CommandEvent<>(event));
             }
         }
+
+        // 串行调用 消息预处理 默认处理情况
+        monitorListener.onGroupBottleAutoThrow(bot, event);
     }
 
     @GroupMessageHandler
@@ -117,7 +121,7 @@ public class CommandListener
         //     monitorListener.onGroupMessageCollection(bot, event);  // 无需调用 AI自动记录
         monitorListener.onGroupImageCollection(event);
 
-        String parsed = MessageParseUtil.parseArrayMsgForAI(bot, event.getArrayMsg());
+        String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
         log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed.replaceAll("\\R", " "));
         commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), true, true));
     }

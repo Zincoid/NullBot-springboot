@@ -57,6 +57,17 @@ public class MonitorListener
 
     // =================== 串行监听方法 ===================
 
+    @FunctionControl(config = "BottleAutoThrow")
+    public void onGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception
+    {
+        double freq = 0.001;
+        if (freq > Math.random()) {
+            String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
+            log.info("◉ [GroupMonitor:BottleAutoThrow] 漂流瓶自动投出: {} -> {}", event.getUserId(), parsed);
+            commandProcessor.processQQ(bot, new CommandEvent<>(event, "DriftBottle", List.of(parsed), false, false));
+        }
+    }
+
     @FunctionControl(config = "AIAutoReply")
     public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception
     {
@@ -70,7 +81,7 @@ public class MonitorListener
 
         double freq = settingService.getReplyFrequency(event.getGroupId());
         if (freq > Math.random()) {
-            String parsed = MessageParseUtil.parseArrayMsgForAI(bot, event.getArrayMsg());
+            String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
             log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至 群聊 {}", event.getGroupId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), false, false));
             return true;
@@ -124,10 +135,10 @@ public class MonitorListener
     {
         if (!settingService.isMessageCollect(event.getGroupId())) return;
         if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // Chat 命令会自动记录消息 跳过
-        String parsedMsg = MessageParseUtil.parseArrayMsgForAI(bot, event.getArrayMsg());
-        log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsedMsg);
+        String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
+        log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
-        chatMessages.add(new ChatMessage(event.getMessageId() , event.getUserId(), event.getSender().getNickname(), "user", parsedMsg));
+        chatMessages.add(new ChatMessage(event.getMessageId() , event.getUserId(), event.getSender().getNickname(), "user", parsed));
         chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
         log.info("└─[Recorded] {} Message(s)", chatMessages.size());
     }
