@@ -32,15 +32,7 @@ public class DriftBottleCommand implements Command
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String message = event.getMessage();
-        if (message.contains(" ")) {
-            int thrown = driftBottleService.throwBottle(
-                    userId,
-                    bot.getStrangerInfo(userId, true).getData().getNickname(),
-                    message.substring(message.indexOf(" ")).trim()
-            );
-            bot.sendGroupMsg(event.getGroupId(), thrown == 1 ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
-            log.info("\t\t\t\t├─[DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown == 1 ? "已投出" : "出错");
-        } else {
+        if (params.isEmpty()) {
             DriftBottlePO bottle = driftBottleService.pickUpRand();
             if (bottle == null) throw new NullBotMsgException("没有漂流瓶了！");
             bot.sendGroupMsg(groupId, bottle.toString(), false);
@@ -56,6 +48,17 @@ public class DriftBottleCommand implements Command
                 log.info("\t\t\t\t├─[DriftBottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());
             } else
                 log.info("\t\t\t\t├─[DriftBottle] 捡漂流瓶并销毁 - {} -> #{}", userId, bottle.getId());
+        } else {
+            boolean autoThrow = "-auto".equals(params.getFirst());
+            int thrown = driftBottleService.throwBottle(
+                    userId,
+                    bot.getStrangerInfo(userId, true).getData().getNickname(),
+                    autoThrow ? message.trim() : message.substring(message.indexOf(" ")).trim()
+            );
+            if (!autoThrow) {
+                bot.sendGroupMsg(event.getGroupId(), thrown == 1 ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
+                log.info("\t\t\t\t├─[DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown == 1 ? "已投出" : "出错");
+            }
         }
     }
 

@@ -64,7 +64,7 @@ public class MonitorListener
         if (freq > Math.random()) {
             String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
             log.info("◉ [GroupMonitor:BottleAutoThrow] 漂流瓶自动投出: {} -> {}", event.getUserId(), parsed);
-            commandProcessor.processQQ(bot, new CommandEvent<>(event, "DriftBottle", List.of(parsed), false, false));
+            commandProcessor.processQQ(bot, new CommandEvent<>(event, "DriftBottle", List.of("-auto", parsed), false, false));
         }
     }
 
