@@ -92,7 +92,7 @@ public class MonitorListener
     @FunctionControl(config = "ImgCollect")
     public void onGroupImageCollection(GroupMessageEvent event)  // 群目录不存在时数据库无法插入详情文件条目 需手动SYNC
     {
-        if(!settingService.isImageCollect(event.getGroupId())) return;
+        if (!settingService.isImageCollect(event.getGroupId())) return;
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
