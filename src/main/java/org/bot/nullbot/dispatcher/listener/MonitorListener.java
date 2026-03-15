@@ -60,7 +60,7 @@ public class MonitorListener
     @FunctionControl(config = "BottleAutoThrow")
     public void onGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception
     {
-        double freq = 0.001;
+        double freq = 0.001;  // 暂时固定自动投出频率
         if (freq > Math.random()) {
             String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
             log.info("◉ [GroupMonitor:BottleAutoThrow] 漂流瓶自动投出: {} -> {}", event.getUserId(), parsed);
