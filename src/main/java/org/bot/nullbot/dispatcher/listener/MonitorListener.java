@@ -76,7 +76,7 @@ public class MonitorListener
             return false;
         } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
             String slashCommand = event.getArrayMsg().get(1).getData().get("text");
-            if(slashCommand != null && slashCommand.startsWith(commandPrefix)) return false;
+            if (slashCommand != null && slashCommand.startsWith(commandPrefix)) return false;
         }
 
         double freq = settingService.getReplyFrequency(event.getGroupId());
