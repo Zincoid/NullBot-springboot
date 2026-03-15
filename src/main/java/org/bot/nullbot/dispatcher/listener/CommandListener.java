@@ -94,6 +94,7 @@ public class CommandListener
         if (!monitorListener.onGroupAIAutoReply(bot, event))  // 触发自动发言会记录当前消息 忽略消息收集
             monitorListener.onGroupMessageCollection(bot, event);
         monitorListener.onGroupImageCollection(event);
+        monitorListener.onGroupBottleAutoThrow(bot, event);
 
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
             log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
@@ -105,9 +106,6 @@ public class CommandListener
                 commandProcessor.processQQ(bot, new CommandEvent<>(event));
             }
         }
-
-        // 串行调用 消息预处理 默认处理情况 (非指令时)
-        monitorListener.onGroupBottleAutoThrow(bot, event);
     }
 
     @GroupMessageHandler
@@ -120,6 +118,7 @@ public class CommandListener
         // if (!monitorListener.onGroupAIAutoReply(bot, event))  // 无需调用 AI即将回复
         //     monitorListener.onGroupMessageCollection(bot, event);  // 无需调用 AI自动记录
         monitorListener.onGroupImageCollection(event);
+        monitorListener.onGroupBottleAutoThrow(bot, event);
 
         String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
         log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed.replaceAll("\\R", " "));
