@@ -562,4 +562,5 @@
 - 新增 DriftBottle 指令 - 扔或者捡一个漂流瓶。
 
 ### 2026.3.16
-- 新增 onGroupBottleAutoThrow 监听方法 - 用于自动补充漂流瓶。
+- 新增 onGroupBottleAutoThrow 监听方法 - 用于自动补充漂流瓶；
+- 优化 部分代码。
