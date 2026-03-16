@@ -35,7 +35,11 @@ public class DriftBottleCommand implements Command
         if (params.isEmpty()) {
             DriftBottlePO bottle = driftBottleService.pickUpRand();
             if (bottle == null) throw new NullBotMsgException("没有漂流瓶了！");
-            bot.sendGroupMsg(groupId, bottle.toString(), false);
+            try {
+                bot.sendGroupMsg(groupId, bottle.toString(), false);
+            } catch (Exception e) {
+                throw new NullBotMsgException("[漂流瓶] ❌发送时出错: 该漂流瓶可能包含已过期的媒体内容");
+            }
             List<Pair<Long, String>> inputs;
             try {
                 inputs = botNextInputer.request(BniMode.PS, userId, "扔回去", KEEP_TIME, true);
