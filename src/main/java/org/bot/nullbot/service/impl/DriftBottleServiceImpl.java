@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +42,10 @@ public class DriftBottleServiceImpl implements DriftBottleService
     @Override
     @Transactional
     public DriftBottlePO pickUpRand() {
-        DriftBottlePO bottle = driftBottleMapper.getRand();
+        long count = driftBottleMapper.selectCount(null);
+        if (count == 0) return null;
+        long randomOffset = new Random().nextLong(0, count);
+        DriftBottlePO bottle = driftBottleMapper.getOneByOffset(randomOffset);
         if (bottle != null) driftBottleMapper.deleteById(bottle.getId());
         return bottle;
     }

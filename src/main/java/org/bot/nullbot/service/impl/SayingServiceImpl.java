@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +42,10 @@ public class SayingServiceImpl implements SayingService
 
     @Override
     public SayingPO getRand() {
-        return sayingMapper.getRand();
+        long count = sayingMapper.selectCount(null);
+        if (count == 0) return null;
+        long randomOffset = new Random().nextLong(0, count);
+        return sayingMapper.getOneByOffset(randomOffset);
     }
 
     @Override
