@@ -47,6 +47,7 @@ public class DriftBottleCommand implements Command
                 throw new NullBotMsgException("[漂流瓶] ❌" + e.getMessage());
             }
             if (!inputs.isEmpty()) {
+                bottle.plusRethrowTimes();
                 int thrown = driftBottleService.throwBottle(bottle);
                 bot.sendGroupMsg(groupId, thrown == 1 ? "✉️ 已投回！" : "[漂流瓶] ❌出错", true);
                 log.info("\t\t\t\t├─[DriftBottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());

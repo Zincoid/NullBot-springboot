@@ -8,5 +8,6 @@ CREATE TABLE `drift_bottle` (
     time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id LONG NOT NULL,
     user_name VARCHAR(50) NOT NULL,
-    text VARCHAR(2000) NOT NULL
+    text VARCHAR(2000) NOT NULL,
+    rethrow_times INT NOT NULL DEFAULT 0
 );

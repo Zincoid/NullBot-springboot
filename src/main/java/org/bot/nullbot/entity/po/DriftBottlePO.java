@@ -23,6 +23,11 @@ public class DriftBottlePO
     private Long userId;
     private String userName;
     private String text;
+    private Integer rethrowTimes;
+
+    public void plusRethrowTimes() {
+        rethrowTimes++;
+    }
 
     @Override
     public String toString() {
@@ -30,11 +35,20 @@ public class DriftBottlePO
         String formattedTime = time != null ? time.format(formatter) : "";
         return """
             [%ss后销毁 - 发送"扔回去"投回]
-            漂流瓶 #%d
+            漂流瓶 #%d (%s)
             时间: %s
 
             %s
 
-            —— %s(%d)""".formatted(DriftBottleCommand.getKeepTime(), id, formattedTime, text, userName, userId);
+            —— %s(%d)"""
+                .formatted(
+                        DriftBottleCommand.getKeepTime(),
+                        id,
+                        rethrowTimes == 0 ? "首次被捡到" : "已被投回 " + rethrowTimes + " 次",
+                        formattedTime,
+                        text,
+                        userName,
+                        userId
+                );
     }
 }
