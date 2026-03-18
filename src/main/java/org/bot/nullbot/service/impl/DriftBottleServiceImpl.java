@@ -17,25 +17,26 @@ public class DriftBottleServiceImpl implements DriftBottleService
     private final DriftBottleMapper driftBottleMapper;
 
     @Override
-    public int throwBottle(DriftBottlePO bottle) {
+    public boolean throwBottle(DriftBottlePO bottle) {
         try {
-            return driftBottleMapper.insert(bottle);
+            return driftBottleMapper.insert(bottle) == 1;
         } catch (Exception e) {
-            return 0;
+            return false;
         }
     }
 
     @Override
-    public int throwBottle(Long userId, String userName, String text) {
+    public boolean throwBottle(Long userId, String userName, String content, boolean isImage) {
         try {
             DriftBottlePO bottle = new DriftBottlePO();
             bottle.setUserId(userId);
             bottle.setUserName(userName);
-            bottle.setText(text);
+            bottle.setContent(content);
+            bottle.setIsImage(isImage);
             bottle.setTime(LocalDateTime.now());
-            return driftBottleMapper.insert(bottle);
+            return driftBottleMapper.insert(bottle) == 1;
         } catch (Exception e) {
-            return 0;
+            return false;
         }
     }
 

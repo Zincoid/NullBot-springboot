@@ -4,9 +4,9 @@ import org.bot.nullbot.entity.po.DriftBottlePO;
 
 public interface DriftBottleService
 {
-    int throwBottle(DriftBottlePO bottle);
+    boolean throwBottle(DriftBottlePO bottle);
 
-    int throwBottle(Long userId, String userName, String text);
+    boolean throwBottle(Long userId, String userName, String content, boolean isImage);
 
     DriftBottlePO pickUpRand();
 }
