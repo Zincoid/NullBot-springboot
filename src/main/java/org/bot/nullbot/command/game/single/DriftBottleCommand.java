@@ -140,9 +140,11 @@ public class DriftBottleCommand implements Command
                 ◉ DriftBottle 命令
                 功能: 扔或者捡一个漂流瓶
                 限权: %d 级
-                格式: DriftBottle [可选: 文本]
+                格式: DriftBottle [可选: 文本/图片]
                 别名: 漂流瓶
-                注意: 可发送"扔回去"投回""", getAccess()
+                注意:
+                1. 可发送"扔回去"投回;
+                2. 投图片时指令后也需空格""", getAccess()
         );
     }
 }
