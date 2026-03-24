@@ -39,8 +39,7 @@ public class MemeCommand implements Command
 
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
-        Long groupId = event.getGroupId();
-        if (groupId != null)
+        if (event.getGroupId() != null)
             meme(bot, params, event.getGroupId(), false);
         else
             meme(bot, params, event.getUserId(), true);

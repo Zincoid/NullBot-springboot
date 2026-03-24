@@ -74,7 +74,8 @@ public class DeepSeekClient
                 "Convert", "Symmetry", "Tts",
                 /* ========== 加密命令 ========== */
                 "eb0f8545", "4ed1314d", "65275d24",
-                "1e7bd161", "b6713262", "db3fbe2b"
+                "1e7bd161", "b6713262", "db3fbe2b",
+                "0167a25a", "bab329aa"
         );
 
         PRIVATE_AI_CMD_WHITE_LIST = Set.of(
@@ -83,7 +84,7 @@ public class DeepSeekClient
                 /* ========== 合成命令 ========== */
                 "Tts",
                 /* ========== 加密命令 ========== */
-                "65275d24"
+                "65275d24", "0167a25a", "bab329aa"
         );
     }
 
