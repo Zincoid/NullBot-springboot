@@ -30,10 +30,10 @@ public class ChatResetCommand implements Command
             case Personal -> userId;
         };
         bot.sendGroupMsg(groupId, """
-                    [重置聊天] ♻️聊天历史已重置
+                    [重置聊天] ♻️历史已重置
                     - Chat Scope: %s
                     - Target ID: %s""".formatted(chatScope, id), false);
-        log.info("\t\t\t\t├─[ChatReset] 聊天历史已重置 - {}: {}", chatScope, id);
+        log.info("\t\t\t\t├─[ChatReset] 历史已重置 - {}: {}", chatScope, id);
     }
 
     @Override

@@ -52,14 +52,14 @@ public class ForgetCommand implements Command
         if (isPrivate) {
             String removed = sysMsgStorage.removeLongTermUserMemory(targetId, i);
             bot.sendPrivateMsg(targetId, """
-                    [遗忘] \uD83D\uDCA1 长时记忆已移除
-                    - 记忆: %s""".formatted(removed), false);
+                    [遗忘] \uD83D\uDCA1长时记忆已移除
+                    - 内容: %s""".formatted(removed), false);
             log.info("\t\t\t\t├─[Forget] 用户长时记忆已移除 - {} : {}", targetId, removed);
         } else {
             String removed = sysMsgStorage.removeLongTermGroupMemory(targetId, i);
             bot.sendGroupMsg(targetId, """
-                    [遗忘] \uD83D\uDCA1 长时记忆已移除
-                    - 记忆: %s""".formatted(removed), false);
+                    [遗忘] \uD83D\uDCA1长时记忆已移除
+                    - 内容: %s""".formatted(removed), false);
             log.info("\t\t\t\t├─[Forget] 群聊长时记忆已移除 - {} : {}", targetId, removed);
         }
     }

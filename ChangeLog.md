@@ -572,4 +572,5 @@
 
 ### 2026.3.24 - v1.4.2
 - 增强 DeepSeekClient/SysMsgStorage - 支持长时记忆；
-- 添加 AI专用指令 Remember/Forget 指令 - 用于添加和移除长时记忆。
+- 添加 AI专用指令 Remember/Forget 指令 - 用于添加和移除长时记忆；
+- 优化 部分文本。
