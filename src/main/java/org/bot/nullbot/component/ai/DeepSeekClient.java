@@ -11,6 +11,8 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -330,10 +332,18 @@ public class DeepSeekClient
 
         systemMessage = systemMessage + """
                 \n你在一个群聊中接收对话，不同用户的消息会带有消息ID和用户标识，格式为[Message ID][Username(UserId)]。
-                请根据标识区分不同消息和用户，回复消息时不要带以上那种格式化的标识。禁止讨论中国国内政治事件和政治人物相关问题""";
+                请根据标识区分不同消息和用户，回复消息时不要带以上那种格式化的标识。禁止讨论中国国内政治事件和政治人物相关问题。
+                你可以在回复中嵌入[CQ:at,qq=用户ID]来@别人，例如[CQ:at,qq=2660181154]。""";
 
-        // 添加 指令模式提示词
         if (!custom && embedding) {
+            List<String> memories = sysMsgStorage.getLongTermGroupMemory(groupId);
+            systemMessage = systemMessage + """
+                    \n你现有的长时记忆如下：
+                    %s"""
+                    .formatted(
+                            memories.isEmpty() ? "无" : IntStream.range(0, memories.size()).mapToObj(i -> i + ". " + memories.get(i)).collect(Collectors.joining("\n"))
+                    );
+
             systemMessage = systemMessage + """
                     \n你可以使用 {指令} 在回复中嵌入指令来进行各种操作，被指令分隔的消息会以多条消息的形式发送到群聊中，如果你想分开发送消息也可以使用空指令 {} 来分割。
                     指令使用示例：当有人想要看二次元图片或者色图时，你可以使用 {Anime} 指令，这样就能自动调用图片发送。
@@ -366,7 +376,15 @@ public class DeepSeekClient
 
         systemMessage = systemMessage + """
                 \n你在一个私聊中接收对话，用户消息带有消息ID和用户标识，格式为[Message ID][Username(UserId)]。
-                回复消息时不要带以上那种格式化的标识。禁止讨论中国国内政治事件和政治人物相关问题""";
+                回复消息时不要带以上那种格式化的标识。禁止讨论中国国内政治事件和政治人物相关问题。""";
+
+        List<String> memories = sysMsgStorage.getLongTermUserMemory(userId);
+        systemMessage = systemMessage + """
+                \n你现有的长时记忆如下：
+                %s"""
+                .formatted(
+                        memories.isEmpty() ? "无" : IntStream.range(0, memories.size()).mapToObj(i -> i + ". " + memories.get(i)).collect(Collectors.joining("\n"))
+                );
 
         systemMessage = systemMessage + """
                 \n你可以使用 {指令} 在回复中嵌入指令来进行各种操作，被指令分隔的消息会以多条消息的形式发送到私聊中，如果你想分开发送消息也可以使用空指令 {} 来分割。
