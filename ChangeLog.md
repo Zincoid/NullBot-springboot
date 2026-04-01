@@ -575,3 +575,6 @@
 - 增强 DeepSeekClient/SysMsgStorage - 支持长时记忆；
 - 添加 AI专用指令 Remember/Forget 指令 - 用于添加和移除长时记忆；
 - 优化 部分文本。
+
+### 2026.4.1
+- 修复 全局功能 Aspect 返回值问题 - 根据拦截方法返回值类型返回拦截默认值。
