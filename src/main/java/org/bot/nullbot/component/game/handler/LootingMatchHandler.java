@@ -89,7 +89,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
         if (!p.isAlive()) return getSuccessResult(userId, match, true, "💀 你已死亡，无法继续行动", "");
         if (p.isEvacuated()) return getSuccessResult(userId, match, true, "🚪 你已撤离，无法继续行动", "");
 
-        matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
+        // matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
 
         StringBuilder selfOutput = new StringBuilder();
         StringBuilder opponentOutput = new StringBuilder();

@@ -76,11 +76,10 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
         if (state == null) return getErrorResult("[黑白棋] ❌游戏状态不存在");
         if (state.isFinished()) return getErrorResult("[黑白棋] ❌对局已结束");
 
-        matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
+        // matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
 
-        char myColor =
-                userId.equals(state.getBlackPlayerId()) ? 'B' :
-                        userId.equals(state.getWhitePlayerId()) ? 'W' : 0;
+        char myColor = userId.equals(state.getBlackPlayerId()) ? 'B' :
+                userId.equals(state.getWhitePlayerId()) ? 'W' : 0;
 
         if (state.getCurrentTurn() != myColor) return getErrorResult("[黑白棋] ⏳还没轮到你下棋");
 
