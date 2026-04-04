@@ -85,7 +85,8 @@ public class HtmlRenderer
     }
 
     public void validate() {
-        if (!initialized) throw new RuntimeException("Chrome 驱动未初始化");
+        if (!initialized)
+            throw new RuntimeException("Chrome 驱动未初始化");
     }
 
     // =================== 渲染方法 ===================
