@@ -51,11 +51,12 @@ public class Matcher
      */
     public MatchResult joinMatch(Long userId, Long groupId, String userName, String gameType) {
         Player player = playerManager.refreshAndGetPlayer(userId, groupId, userName);
-
-        if (player.getStatus() != Player.PlayerStatus.IDLE) { return MatchResult.notMatched("你已经在匹配或游戏中！"); }
+        if (player.getStatus() != Player.PlayerStatus.IDLE)
+            return MatchResult.notMatched("你已经在匹配或游戏中！");
 
         GameMatchHandler handler = handlerMap.get(gameType);
-        if (handler == null) { return MatchResult.notMatched("暂不支持该类型游戏"); }
+        if (handler == null)
+            return MatchResult.notMatched("暂不支持该类型游戏");
 
         // 尝试匹配另一个玩家
         Player other = poolManager.pollPlayer(gameType);
