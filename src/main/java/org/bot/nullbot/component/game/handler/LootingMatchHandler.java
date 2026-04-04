@@ -64,10 +64,10 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
     {
         LootingGameState state = games.get(match.getMatchId());
         // 摸金 奖励逻辑
-        for(LootingPlayerState p : state.getPlayers().values()){
-            if(p.isEvacuated()){
+        for (LootingPlayerState p : state.getPlayers().values()) {
+            if (p.isEvacuated()) {
                 userService.plusExperience(p.getUserId(), 200);
-                for(ItemPO item : p.getBackpack())
+                for (ItemPO item : p.getBackpack())
                     inventoryService.increaseInventory(p.getUserId(), item.getId(), 1);
             }
         }
