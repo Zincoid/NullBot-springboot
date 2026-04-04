@@ -13,7 +13,6 @@ import org.bot.nullbot.entity.game.basic.Player;
 import java.util.Map;
 import java.util.Objects;
 
-
 @AllArgsConstructor
 public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
 {
