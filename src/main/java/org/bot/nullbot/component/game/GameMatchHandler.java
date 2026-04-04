@@ -79,13 +79,27 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
     }
 
     // 成功消息结果
-    protected GameResult getSuccessResult(Long userId, Match match, Boolean isAsync, String selfInfo, String opponentInfo) {
-        return GameResult.success(isAsync, match.getSelfGroupIdBySelfId(userId), match.getOpponentGroupIdBySelfId(userId), selfInfo, opponentInfo);
+    protected GameResult getSuccessResult(Long userId, Match match, Boolean isAsync,
+                                          String selfInfo, String opponentInfo) {
+        return GameResult.success(
+                isAsync,
+                match.getSelfGroupIdBySelfId(userId),
+                match.getOpponentGroupIdBySelfId(userId),
+                selfInfo,
+                opponentInfo
+        );
     }
 
     // 成功消息结果 (自动结束游戏)
-    protected GameResult getFinishResult(Long userId, Match match, Boolean isAsync, String selfInfo, String opponentInfo) {
-        GameResult result = getSuccessResult(userId, match, isAsync, selfInfo + "\n\nMatch 已结束：" + match.getMatchId(),  opponentInfo + "\n\nMatch 已结束：" + match.getMatchId());
+    protected GameResult getFinishResult(Long userId, Match match, Boolean isAsync,
+                                         String selfInfo, String opponentInfo) {
+        GameResult result = getSuccessResult(
+                userId,
+                match,
+                isAsync,
+                selfInfo + "\n\nMatch 已结束：" + match.getMatchId(),
+                opponentInfo + "\n\nMatch 已结束：" + match.getMatchId()
+        );
         onMatchEnd(match);
         return result;
     }
