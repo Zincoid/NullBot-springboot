@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,10 +20,27 @@ public class GameResult
     private String opponentInfo;
 
     public static GameResult error(String info) {
-        return new GameResult(false, null, null, null, null, info, null);
+        return new GameResult(
+                false,
+                null,
+                null,
+                null,
+                null,
+                info,
+                null
+        );
     }
 
-    public static GameResult success(Boolean isSeperated, Long selfGroupId, Long opponentGroupId, String selfInfo, String opponentInfo) {
-        return new GameResult(true, Objects.equals(selfGroupId, opponentGroupId), isSeperated, selfGroupId, opponentGroupId, selfInfo, opponentInfo);
+    public static GameResult success(Boolean isSeperated, Long selfGroupId, Long opponentGroupId,
+                                     String selfInfo, String opponentInfo) {
+        return new GameResult(
+                true,
+                Objects.equals(selfGroupId, opponentGroupId),
+                isSeperated,
+                selfGroupId,
+                opponentGroupId,
+                selfInfo,
+                opponentInfo
+        );
     }
 }
