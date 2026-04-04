@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Data
-public class Player {
+public class Player
+{
     private Long groupId;
     private Long userId;
     private String userName;
