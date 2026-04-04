@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.util.Objects;
 
-
 @Data
 @AllArgsConstructor
 public class MatchResult
