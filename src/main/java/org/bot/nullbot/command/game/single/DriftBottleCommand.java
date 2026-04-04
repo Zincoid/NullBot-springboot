@@ -1,6 +1,5 @@
 package org.bot.nullbot.command.game.single;
 
-import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
@@ -126,7 +125,7 @@ public class DriftBottleCommand implements Command
             int index = bottle.getContent().lastIndexOf("/");
             String fileName = bottle.getContent().substring(index + 1);
             String directory = bottle.getContent().substring(0, index);
-            log.info("[DEBUG] {} and {}", directory, fileName);
+            // log.info("[DEBUG] {} and {}", directory, fileName);
             fileService.deleteFileRecordForBot(directory, fileName);
             FileUtil.deleteFileByName(directory, fileName);
         }
