@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
-@CommandMapping({"VideoGet", "获取视频"})
+@CommandMapping({"VideoGet", "获取视频", "视频检索"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -38,7 +38,7 @@ public class VideoGetCommand implements Command
         Long userId = event.getUserId();
 
         if (params.isEmpty())
-            throw new NullBotMsgException("[获取视频] ❌无文件名参数");
+            throw new NullBotMsgException("[获取视频] ❌参数不足");
 
         // String videoPath = FileUtil.getFilePathByName(fileStorageProperties.getVideoPath(), params.getFirst());
         List<String> videoPaths = new ArrayList<>(FileUtil.getFilePathsByKeyword(
@@ -47,7 +47,7 @@ public class VideoGetCommand implements Command
         );
 
         if (videoPaths.isEmpty())
-            throw new NullBotMsgException("[获取视频] ❌未找到该视频");
+            throw new NullBotMsgException("[获取视频] ❌无匹配项");
         if (videoPaths.size() == 1) {
             sendVideo(bot, groupId, videoPaths.getFirst());
             return;
@@ -141,10 +141,10 @@ public class VideoGetCommand implements Command
     public String getHelp() {
         return String.format("""
                 ◉ VideoGet 命令
-                功能: 获取保存的视频
+                功能: 检索获取保存的视频
                 限权: %d 级
-                格式: VideoGet [文件名]
-                别名: 获取视频""", getAccess()
+                格式: VideoGet [关键字]
+                别名: 获取视频/视频检索""", getAccess()
         );
     }
 }
