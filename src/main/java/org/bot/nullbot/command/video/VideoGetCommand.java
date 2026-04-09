@@ -153,8 +153,8 @@ public class VideoGetCommand implements Command
                 格式: VideoGet [可选: -c] [关键字]
                 别名: 获取视频/视频检索
                 注意:
-                默认搜索 storage 库;
-                通过 -c 参数搜索 collect 库
+                1. 默认搜索 storage 库
+                2. 通过参数 [-c] 搜索 collect 库
                 视频库:
                 1. collect 用户收集库
                 2. storage 管理存储库""", getAccess()
