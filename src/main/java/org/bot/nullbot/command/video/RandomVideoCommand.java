@@ -26,7 +26,7 @@ public class RandomVideoCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         String videoPath;
         try {
-            videoPath = FileUtil.getRandomFilePath(fileStorageProperties.getVideoPath());
+            videoPath = FileUtil.getRandomFilePath(fileStorageProperties.getVideoPath() + "/collect");
         } catch (Exception e) {
             throw new NullBotMsgException("[随机视频] ❌目录异常");
         }
