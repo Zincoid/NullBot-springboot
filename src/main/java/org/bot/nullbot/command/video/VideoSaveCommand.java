@@ -40,31 +40,35 @@ public class VideoSaveCommand implements Command
         Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());
         if(videoMap.isEmpty())
             throw new NullBotMsgException("[保存视频] ❌未包含视频");
+        if(videoMap.size() > 1)
+            throw new NullBotMsgException("[保存视频] ❌视频数过多");
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
 
-        for (Map.Entry<String, String> entry : videoMap.entrySet()) {
-            String fileName = entry.getKey();
-            String filePath = fileStorageProperties.getVideoPath();
-            String url = entry.getValue();
-            try {
-                FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t\t├─ ");
-                if(!fileService.addFileRecordForBot(
-                        filePath,
-                        fileInfo.getFileName(),
-                        fileInfo.getFileSize(),
-                        fileInfo.getLastModified(),
-                        userId, userName)
-                ) {
-                    throw new NullBotMsgException("[保存视频] ❌数据库更新失败");
-                }
-                bot.sendGroupMsg(groupId, "\uD83C\uDFA5 已保存！", false);
-                log.info("\t\t\t\t├─[VideoSave] 已保存 - {}", fileInfo.getFileName());
-            } catch (Exception e) {
-                throw new NullBotMsgException("[保存视频] ❌出错: " + e.getMessage());
+        Map.Entry<String, String> entry = videoMap.entrySet().iterator().next();
+        String fileName = params.isEmpty() ? entry.getKey()
+                : String.join(" ", params) + "." + entry.getKey().split("\\.")[1];
+        if (fileName.matches(".*[\\\\/:*?\"<>|].*"))
+            throw new NullBotMsgException("[保存视频] ❌文件名非法");
+        String filePath = fileStorageProperties.getVideoPath();
+        String url = entry.getValue();
+        try {
+            FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t\t├─ ");
+            if(!fileService.addFileRecordForBot(
+                    filePath,
+                    fileInfo.getFileName(),
+                    fileInfo.getFileSize(),
+                    fileInfo.getLastModified(),
+                    userId, userName)
+            ) {
+                throw new NullBotMsgException("[保存视频] ❌数据库更新失败");
             }
+            bot.sendGroupMsg(groupId, "\uD83C\uDFA5 已保存！", false);
+            log.info("\t\t\t\t├─[VideoSave] 已保存 - {}", fileInfo.getFileName());
+        } catch (Exception e) {
+            throw new NullBotMsgException("[保存视频] ❌出错: " + e.getMessage());
         }
     }
 
@@ -74,7 +78,7 @@ public class VideoSaveCommand implements Command
                 ◉ VideoSave 命令
                 功能: 保存视频至视频库
                 限权: %d 级
-                格式: [引用视频] VideoSave
+                格式: [引用视频] VideoSave [可选: 文件名]
                 别名: 保存视频""", getAccess()
         );
     }
