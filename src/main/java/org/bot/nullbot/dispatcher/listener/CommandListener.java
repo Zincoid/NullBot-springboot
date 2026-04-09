@@ -39,7 +39,7 @@ public class CommandListener
     @Value("${nullbot.admin-id}")
     private Long adminId;
 
-    @FunctionControl(config = "PrivateCmd")
+    @FunctionControl(id = "PrivateCmd")
     @PrivateMessageHandler
     @Async("ThreadExecutor")
     public void onPrivateMessageInteraction(Bot bot, PrivateMessageEvent event) throws Exception

@@ -9,5 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FunctionControl  // Aspect
 {
-    String config();
+    String id();  // 功能名标识符
+    boolean enabled() default true;  // 默认启用状态
 }

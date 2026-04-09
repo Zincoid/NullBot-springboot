@@ -57,7 +57,7 @@ public class MonitorListener
 
     // =================== 串行监听方法 ===================
 
-    @FunctionControl(config = "BottleAutoThrow")
+    @FunctionControl(id = "BottleAutoThrow", enabled = false)
     public void onGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception
     {
         double freq = 0.001;  // 暂时固定自动投出频率
@@ -67,7 +67,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "AIAutoReply")
+    @FunctionControl(id = "AIAutoReply")
     public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception
     {
         if (!settingService.isAutoReply(event.getGroupId())) return false;
@@ -88,7 +88,7 @@ public class MonitorListener
             return false;
     }
 
-    @FunctionControl(config = "ImgCollect")
+    @FunctionControl(id = "ImgCollect")
     public void onGroupImageCollection(GroupMessageEvent event)  // 群目录不存在时数据库无法插入详情文件条目 需手动SYNC
     {
         if (!settingService.isImageCollect(event.getGroupId())) return;
@@ -129,7 +129,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "MsgCollect")
+    @FunctionControl(id = "MsgCollect")
     public void onGroupMessageCollection(Bot bot, GroupMessageEvent event)
     {
         if (!settingService.isMessageCollect(event.getGroupId())) return;
@@ -142,7 +142,7 @@ public class MonitorListener
         log.info("└─[Recorded] {} Message(s)", chatMessages.size());
     }
 
-    @FunctionControl(config = "KeyDetect")
+    @FunctionControl(id = "KeyDetect")
     public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception
     {
         if (!settingService.isKeywordDetect(event.getGroupId())) return;
@@ -160,7 +160,7 @@ public class MonitorListener
 
     // =================== 独占监听方法 ===================
 
-    @FunctionControl(config = "PokeDetect")
+    @FunctionControl(id = "PokeDetect")
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception
@@ -172,7 +172,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "PrivateCmd")
+    @FunctionControl(id = "PrivateCmd")
     @PrivatePokeNoticeHandler
     @Async("ThreadExecutor")
     public void onPrivatePokeDetection(Bot bot, PokeNoticeEvent event) throws Exception
@@ -183,7 +183,7 @@ public class MonitorListener
         }
     }
 
-    @FunctionControl(config = "RecallDetect")
+    @FunctionControl(id = "RecallDetect")
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception

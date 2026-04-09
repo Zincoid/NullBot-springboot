@@ -20,7 +20,7 @@ public class FunctionAspect
 
     @Around("@annotation(function)")
     public Object checkFunction(ProceedingJoinPoint joinPoint, FunctionControl function) throws Throwable {
-        boolean enabled = functionManager.isEnabled(function.config());
+        boolean enabled = functionManager.isEnabled(function.id());
         if (enabled) {
             // logger.info("◉ [FunctionManager] {} 已启用", function.config());
             return joinPoint.proceed();
