@@ -52,7 +52,7 @@ public class VideoSaveCommand implements Command
                 : String.join(" ", params) + "." + entry.getKey().split("\\.")[1];
         if (fileName.matches(".*[\\\\/:*?\"<>|].*"))
             throw new NullBotMsgException("[保存视频] ❌文件名非法");
-        String filePath = fileStorageProperties.getVideoPath();
+        String filePath = fileStorageProperties.getVideoPath() + "/collect";
         String url = entry.getValue();
         try {
             FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t\t├─ ");

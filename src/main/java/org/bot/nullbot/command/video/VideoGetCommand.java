@@ -36,14 +36,21 @@ public class VideoGetCommand implements Command
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
+        String secondary;
+        String keyword;
 
-        if (params.isEmpty())
-            throw new NullBotMsgException("[获取视频] ❌参数不足");
+        if (!params.isEmpty() && "-c".equals(params.getFirst())) {
+            secondary = "collect";
+            keyword = String.join(" ", params.subList(1, params.size()));
+        } else {
+            secondary = "storage";
+            keyword = String.join(" ", params);
+        }
 
         // String videoPath = FileUtil.getFilePathByName(fileStorageProperties.getVideoPath(), params.getFirst());
         List<String> videoPaths = new ArrayList<>(FileUtil.getFilePathsByKeyword(
-                fileStorageProperties.getVideoPath(),
-                String.join(" ", params))
+                fileStorageProperties.getVideoPath() + "/" + secondary,
+                keyword)
         );
 
         if (videoPaths.isEmpty())
@@ -143,8 +150,14 @@ public class VideoGetCommand implements Command
                 ◉ VideoGet 命令
                 功能: 检索获取保存的视频
                 限权: %d 级
-                格式: VideoGet [关键字]
-                别名: 获取视频/视频检索""", getAccess()
+                格式: VideoGet [可选: -c] [关键字]
+                别名: 获取视频/视频检索
+                注意:
+                默认搜索 storage 库;
+                通过 -c 参数搜索 collect 库
+                视频库:
+                1. collect 用户收集库
+                2. storage 管理存储库""", getAccess()
         );
     }
 }
