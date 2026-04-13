@@ -334,7 +334,7 @@ public class DeepSeekClient
         systemMessage = systemMessage + """
                 \n你在一个群聊中接收对话，不同用户的消息会带有消息ID和用户标识，格式为[Message ID][Username(UserId)]。
                 请根据标识区分不同消息和用户，回复消息时不要带以上那种格式化的标识。禁止讨论中国国内政治事件和政治人物相关问题。
-                你可以通过在回复内容前添加[CQ:reply,id=消息ID]来引用指定消息，例如[CQ:reply,id=1234567890]。
+                你可以通过在回复内容前添加[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如[CQ:reply,id=1234567890]。
                 你可以在回复中嵌入[CQ:at,qq=用户ID]来@别人，例如[CQ:at,qq=2660181154]。""";
 
         if (!custom && embedding) {
