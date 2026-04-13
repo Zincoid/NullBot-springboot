@@ -381,7 +381,7 @@ public class DeepSeekClient
                 \n你在一个私聊中接收对话，用户消息带有消息ID和用户标识，格式为[Message ID][Username(UserId)]。
                 回复消息时不要带以上那种格式化的标识。禁止讨论中国国内政治事件和政治人物相关问题。
                 你可以通过在回复内容前添加[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如[CQ:reply,id=1234567890]。
-                你可以在回复中嵌入 {Discard} 来放弃回复，该消息不会被发送。""";
+                你可以在回复内容中嵌入 {Discard} 来放弃回复/保持静默，此时回复内容不会被发送。""";
 
         List<String> memories = sysMsgStorage.getLongTermUserMemory(userId);
         systemMessage = systemMessage + """
