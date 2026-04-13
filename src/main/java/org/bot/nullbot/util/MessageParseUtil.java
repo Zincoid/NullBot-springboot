@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 public class MessageParseUtil
 {
+    // =================== @QQ号提取方法 ===================
+
     public static List<Long> extractAtQQNumbers(String message) {
         List<Long> qqNumbers = new ArrayList<>();
         // 正则表达式匹配 [CQ:at,qq=数字]
@@ -28,6 +30,8 @@ public class MessageParseUtil
         }
         return qqNumbers;
     }
+
+    // =================== 消息格式化方法 ===================
 
     public static String parseArrayMsgToSimple(Bot bot, List<ArrayMsg> arrayMsgs) {
         StringBuilder message = new StringBuilder();
@@ -58,6 +62,8 @@ public class MessageParseUtil
         }
         return message.toString();
     }
+
+    // =================== 语录格式化方法 ===================
 
     @Deprecated
     public static String parseRawSaying(String rawSaying) {
@@ -100,68 +106,26 @@ public class MessageParseUtil
         return finalResult;
     }
 
+    // =================== 资源 URL 提取方法 ===================
+
     public static Map<String, String> parseGroupRawMessageAsImageMap(String rawMessage) {
-        return Pattern.compile("\\[CQ:image([^]]+)]")
-                .matcher(rawMessage == null ? "" : rawMessage)
-                .results()
-                .map(match -> match.group(1))
-                .map(params -> new AbstractMap.SimpleEntry<>(
-                        Pattern.compile("file=([^,]+)").matcher(params).results()
-                                .findFirst().map(m -> m.group(1)).orElse(null),
-                        Pattern.compile("url=([^,]+)").matcher(params).results()
-                                .findFirst().map(m -> m.group(1).replace("&amp;", "&")).orElse(null)
-                ))
-                .filter(entry -> entry.getKey() != null && entry.getValue() != null)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (existing, replacement) -> replacement,
-                        LinkedHashMap::new
-                ));
+        return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:image([^]]+)]"));
     }
 
     public static Map<String, String> parseGroupRawMessageAsVideoMap(String rawMessage) {
-        return Pattern.compile("\\[CQ:video([^]]+)]")
-                .matcher(rawMessage == null ? "" : rawMessage)
-                .results()
-                .map(match -> match.group(1))
-                .map(params -> new AbstractMap.SimpleEntry<>(
-                        Pattern.compile("file=([^,]+)").matcher(params).results()
-                                .findFirst().map(m -> m.group(1)).orElse(null),
-                        Pattern.compile("url=([^,]+)").matcher(params).results()
-                                .findFirst().map(m -> m.group(1).replace("&amp;", "&")).orElse(null)
-                ))
-                .filter(entry -> entry.getKey() != null && entry.getValue() != null)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (existing, replacement) -> replacement,
-                        LinkedHashMap::new
-                ));
+        return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:video([^]]+)]"));
     }
 
     public static Map<String, String> parseGroupRawMessageAsRecordMap(String rawMessage) {
-        return Pattern.compile("\\[CQ:record([^]]+)]")
-                .matcher(rawMessage == null ? "" : rawMessage)
-                .results()
-                .map(match -> match.group(1))
-                .map(params -> new AbstractMap.SimpleEntry<>(
-                        Pattern.compile("file=([^,]+)").matcher(params).results()
-                                .findFirst().map(m -> m.group(1)).orElse(null),
-                        Pattern.compile("url=([^,]+)").matcher(params).results()
-                                .findFirst().map(m -> m.group(1).replace("&amp;", "&")).orElse(null)
-                ))
-                .filter(entry -> entry.getKey() != null && entry.getValue() != null)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (existing, replacement) -> replacement,
-                        LinkedHashMap::new
-                ));
+        return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:record([^]]+)]"));
     }
 
     public static Map<String, String> parseGroupRawMessageAsFileMap(String rawMessage) {
-        return Pattern.compile("\\[CQ:file([^]]+)]")
+        return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:file([^]]+)]"));
+    }
+
+    private static Map<String, String> parseCqCodeToMap(String rawMessage, Pattern cqPattern) {
+        return cqPattern
                 .matcher(rawMessage == null ? "" : rawMessage)
                 .results()
                 .map(match -> match.group(1))
