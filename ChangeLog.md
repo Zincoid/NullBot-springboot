@@ -591,5 +591,5 @@
 - 增强 Function AOP 切面功能 - 添加默认启用标志位并优化相关使用。
 
 ### 2026.4.13
-- 增强 DeepSeekClient - 添加 消息引用/丢弃回复 提示词；
+- 增强 DeepSeekClient - 添加 消息引用/丢弃回复(静默) 提示词；
 - 优化 MessageParseUtil 工具类 - 简化代码。
