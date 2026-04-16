@@ -14,8 +14,10 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-public class CsvExportUtil
+public final class CsvExportUtil
 {
+    private CsvExportUtil() {}
+
     /**
      * 导出数据到CSV文件
      * @param response HttpServletResponse

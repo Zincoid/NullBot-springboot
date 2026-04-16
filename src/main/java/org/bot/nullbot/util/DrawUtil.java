@@ -6,9 +6,11 @@ import org.bot.nullbot.enums.Rarity;
 import java.util.List;
 import java.util.Random;
 
-public class DrawUtil
+public final class DrawUtil
 {
     private static final Random random = new Random();
+
+    private DrawUtil() {}
 
     public static Rarity drawRarityByProbability() {
         double randomValue = random.nextDouble();

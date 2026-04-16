@@ -18,8 +18,10 @@ import java.util.regex.Pattern;
 
 
 @Slf4j
-public class DownloadUtil
+public final class DownloadUtil
 {
+    private DownloadUtil() {}
+
     /**
      * 主下载方法 (无 LOG 前缀)
      */

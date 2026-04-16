@@ -1,7 +1,9 @@
 package org.bot.nullbot.util;
 
-public class StringUtil
+public final class StringUtil
 {
+    private StringUtil() {}
+
     public static String truncateFileName(String fileName, int maxLength) {
         if (fileName == null || fileName.length() <= maxLength) {
             return fileName;

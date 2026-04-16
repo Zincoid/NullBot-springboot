@@ -10,8 +10,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class MessageParseUtil
+public final class MessageParseUtil
 {
+    private MessageParseUtil() {}
+
     // =================== @QQ号提取方法 ===================
 
     public static List<Long> extractAtQQNumbers(String message) {

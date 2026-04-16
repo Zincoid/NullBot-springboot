@@ -8,9 +8,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Deprecated
-public class ResourceUtil  // 改用 Spring 组件 ResourceLoader
+public final class ResourceUtil  // 改用 Spring 组件 ResourceLoader
 {
     private static final Map<String, Path> CACHE = new ConcurrentHashMap<>();
+
+    private ResourceUtil() {}
 
     public static synchronized Path getCached(String resourcePath, String tempPath) throws IOException {
         // 使用缓存

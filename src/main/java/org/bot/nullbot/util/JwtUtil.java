@@ -8,10 +8,12 @@ import java.util.Date;
 import java.util.Map;
 
 @Deprecated
-public class JwtUtil  // 改用 Spring 组件 JwtTool
+public final class JwtUtil  // 改用 Spring 组件 JwtTool
 {
     private static final String signKey = "zincoid";
     private static final Long expire = 43200000L;
+
+    private JwtUtil() {}
 
     /**
      * 生成JWT令牌

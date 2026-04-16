@@ -6,8 +6,10 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-public class DuelUtil
+public final class DuelUtil
 {
+    private DuelUtil() {}
+
     /**
      * CSV文件中随机读取一行加载为 DuelInfo 对象
      * @param filePath CSV 文件路径
