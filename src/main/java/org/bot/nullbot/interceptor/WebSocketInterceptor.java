@@ -20,11 +20,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 @Slf4j
 @Component
-public class WebSocketInterceptor implements ChannelInterceptor {
-
+public class WebSocketInterceptor implements ChannelInterceptor
+{
     private final AdminService adminService;
     private final JwtTool jwtTool;
-    private final MessageChannel clientOutboundChannel; // 注入出站通道
+    private final MessageChannel clientOutboundChannel;  // 注入出站通道
 
     public WebSocketInterceptor(@Lazy AdminService adminService,
                                 JwtTool jwtTool,
@@ -65,7 +65,7 @@ public class WebSocketInterceptor implements ChannelInterceptor {
             } catch (IllegalArgumentException e) {
                 // 发送错误帧给客户端
                 sendErrorMessage(accessor.getSessionId(), e.getMessage());
-                return null; // 阻止原消息继续传递
+                return null;  // 阻止原消息继续传递
             }
         }
         return message;
@@ -74,7 +74,7 @@ public class WebSocketInterceptor implements ChannelInterceptor {
     private void sendErrorMessage(String sessionId, String errorMessage) {
         StompHeaderAccessor errorAccessor = StompHeaderAccessor.create(StompCommand.ERROR);
         errorAccessor.setSessionId(sessionId);
-        errorAccessor.setMessage(errorMessage); // 设置错误描述
+        errorAccessor.setMessage(errorMessage);  // 设置错误描述
         errorAccessor.setLeaveMutable(true);
         Message<byte[]> errorMessageObj = MessageBuilder.createMessage(new byte[0], errorAccessor.getMessageHeaders());
         clientOutboundChannel.send(errorMessageObj);
