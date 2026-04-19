@@ -332,9 +332,9 @@ public class DeepSeekClient
             systemMessage = sysMsgStorage.getDefaultMessage(groupId);
 
         systemMessage = systemMessage + """
-                \n你在一个群聊中接收对话，不同用户的消息会带有消息ID和用户标识，格式为[MessageId][Username(UserId)]。
+                \n你在一个群聊中接收对话，不同用户消息会带有消息ID和用户标识，格式为[MessageId][Username(UserId)]。
                 请根据标识区分不同消息和用户，回复消息时不要带以上那种格式化的标识。禁止讨论中国国内政治事件和政治人物相关问题。
-                你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如"[CQ:reply,id=1234567890]你好"。
+                你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息(之后不要加空格)，仅在需强调回复某消息时使用，例如"[CQ:reply,id=1234567890]你好"。
                 你可以在回复中嵌入[CQ:at,qq=用户ID]来@别人，例如[CQ:at,qq=2660181154]。
                 你可以在回复内容中嵌入 {Discard} 来放弃回复/保持静默，此时回复内容不会被发送。""";
 
@@ -380,7 +380,7 @@ public class DeepSeekClient
         systemMessage = systemMessage + """
                 \n你在一个私聊中接收对话，用户消息带有消息ID和用户标识，格式为[MessageId][Username(UserId)]。
                 回复消息时不要带以上那种格式化的标识。禁止讨论中国国内政治事件和政治人物相关问题。
-                你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如"[CQ:reply,id=1234567890]你好"。
+                你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息(之后不要加空格)，仅在需强调回复某消息时使用，例如"[CQ:reply,id=1234567890]你好"。
                 你可以在回复内容中嵌入 {Discard} 来放弃回复/保持静默，此时回复内容不会被发送。""";
 
         List<String> memories = sysMsgStorage.getLongTermUserMemory(userId);
