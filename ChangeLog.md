@@ -610,5 +610,5 @@
 - 准备大改先留存一下。
 
 ### 2026.5.12+
-- 补上 CommandMapping 注解缺失的 @Target 元注解；
-- 
+- 修补 CommandMapping 注解缺失的 @Target 元注解；
+- 使用泛型分页类型 DataPage 替换所有独立分页类；
