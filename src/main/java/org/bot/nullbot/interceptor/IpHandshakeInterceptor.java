@@ -11,11 +11,13 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 import java.util.Map;
 
 @Component
-public class IpHandshakeInterceptor implements HandshakeInterceptor
-{
+public class IpHandshakeInterceptor implements HandshakeInterceptor {
+
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                                   WebSocketHandler wsHandler, Map<String, Object> attributes) {
+    public boolean beforeHandshake(
+            ServerHttpRequest request, ServerHttpResponse response,
+            WebSocketHandler wsHandler, Map<String, Object> attributes
+    ) {
         if (request instanceof ServletServerHttpRequest) {
             HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
             String ip = getClientIp(servletRequest);
@@ -25,8 +27,10 @@ public class IpHandshakeInterceptor implements HandshakeInterceptor
     }
 
     @Override
-    public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                               WebSocketHandler wsHandler, Exception exception) {
+    public void afterHandshake(
+            ServerHttpRequest request, ServerHttpResponse response,
+            WebSocketHandler wsHandler, Exception exception
+    ) {
         // 无需处理
     }
 

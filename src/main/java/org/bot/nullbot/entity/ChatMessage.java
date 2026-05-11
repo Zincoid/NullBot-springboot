@@ -8,8 +8,8 @@ import java.util.Map;
 
 @Data
 @AllArgsConstructor
-public class ChatMessage
-{
+public class ChatMessage {
+
     private final Integer messageId;
     private final Long userId;
     private final String userName;

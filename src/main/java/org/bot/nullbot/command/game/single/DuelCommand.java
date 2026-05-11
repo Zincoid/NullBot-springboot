@@ -25,8 +25,8 @@ import java.util.Map;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class DuelCommand implements Command
-{
+public class DuelCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
     private final DuelStorage duelStorage;
     private final BotNextInputer botNextInputer;

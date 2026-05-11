@@ -16,13 +16,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-
 @CommandMapping({"SayingSave", "保存语录"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SayingSaveCommand implements Command
-{
+public class SayingSaveCommand implements Command {
+
     private final SayingService sayingService;
 
     @Override

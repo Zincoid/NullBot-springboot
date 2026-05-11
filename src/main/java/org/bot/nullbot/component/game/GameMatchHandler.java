@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Objects;
 
 @AllArgsConstructor
-public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
-{
+public abstract class GameMatchHandler<S extends GameState, L extends GameLogic> {
+
     protected Long botId;
 
     protected BotContainer botContainer;
@@ -24,7 +24,6 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic>
 
     protected final L gameLogic;
     protected final Map<String, S> games;  // matchId -> game state
-
 
     // 定义游戏类型名称
     public abstract String gameType();

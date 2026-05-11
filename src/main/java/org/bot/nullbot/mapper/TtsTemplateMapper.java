@@ -5,6 +5,5 @@ import org.apache.ibatis.annotations.Mapper;
 import org.bot.nullbot.entity.po.TtsTemplatePO;
 
 @Mapper
-public interface TtsTemplateMapper extends BaseMapper<TtsTemplatePO>
-{
+public interface TtsTemplateMapper extends BaseMapper<TtsTemplatePO> {
 }

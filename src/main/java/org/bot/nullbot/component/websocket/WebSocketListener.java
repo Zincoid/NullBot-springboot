@@ -13,8 +13,8 @@ import java.security.Principal;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class WebSocketListener
-{
+public class WebSocketListener {
+
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());

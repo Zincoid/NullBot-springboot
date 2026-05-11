@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class StatisticServiceImpl implements StatisticService
-{
+public class StatisticServiceImpl implements StatisticService {
+
     @Value("${nullbot.bot-id}")
     private Long botId;
     private final BotContainer botContainer;

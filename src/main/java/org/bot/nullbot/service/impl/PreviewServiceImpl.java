@@ -20,11 +20,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
-public class PreviewServiceImpl implements PreviewService
-{
+public class PreviewServiceImpl implements PreviewService {
+
     private final FileMapper fileMapper;
 
     // =================== WEB功能相关 ===================

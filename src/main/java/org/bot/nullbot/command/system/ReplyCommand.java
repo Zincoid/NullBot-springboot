@@ -14,8 +14,8 @@ import java.util.List;
 @CommandMapping({"Reply", "回复"})
 @Component
 @Slf4j
-public class ReplyCommand implements Command
-{
+public class ReplyCommand implements Command {
+
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.isEmpty()) throw new NullBotMsgException("[回复] ❌无参数");

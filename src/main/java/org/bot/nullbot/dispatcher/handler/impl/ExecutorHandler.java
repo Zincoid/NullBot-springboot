@@ -17,12 +17,12 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Order(4)
 @Component
-@Slf4j
 @RequiredArgsConstructor
-public class ExecutorHandler implements Handler
-{
+public class ExecutorHandler implements Handler {
+
     private final WebSocketSender webSocketSender;
 
     @Override

@@ -20,15 +20,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 @Slf4j
 @Component
-public class WebSocketInterceptor implements ChannelInterceptor
-{
+public class WebSocketInterceptor implements ChannelInterceptor {
+
     private final AdminService adminService;
     private final JwtTool jwtTool;
     private final MessageChannel clientOutboundChannel;  // 注入出站通道
 
-    public WebSocketInterceptor(@Lazy AdminService adminService,
-                                JwtTool jwtTool,
-                                @Lazy @Qualifier("clientOutboundChannel") MessageChannel clientOutboundChannel) {
+    public WebSocketInterceptor(
+            @Lazy AdminService adminService,
+            JwtTool jwtTool,
+            @Lazy @Qualifier("clientOutboundChannel") MessageChannel clientOutboundChannel
+    ) {
         this.adminService = adminService;
         this.jwtTool = jwtTool;
         this.clientOutboundChannel = clientOutboundChannel;

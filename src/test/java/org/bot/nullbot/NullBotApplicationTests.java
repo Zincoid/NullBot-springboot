@@ -35,8 +35,8 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class NullBotApplicationTests
-{
+class NullBotApplicationTests {
+
     @Value("${nullbot.bot-id}")
     private Long botId;
     @Resource

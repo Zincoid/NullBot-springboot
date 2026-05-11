@@ -23,8 +23,8 @@ import java.util.Map;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class PucciCommand implements Command
-{
+public class PucciCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
 
     private final ResourceLoader resourceLoader;

@@ -12,8 +12,8 @@ import java.nio.channels.ReadableByteChannel;
 /**
  * 支持HTTP范围请求的Resource实现 - Spring Boot 4 版本
  */
-public class HttpRangeResource extends AbstractResource
-{
+public class HttpRangeResource extends AbstractResource {
+
     private final Resource delegate;
     private final long rangeStart;
     private final long rangeEnd;

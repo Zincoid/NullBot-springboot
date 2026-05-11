@@ -10,11 +10,11 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.*;
 
+@EnableWebSocketMessageBroker
 @Configuration
 @RequiredArgsConstructor
-@EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer
-{
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
     private final WebSocketInterceptor webSocketInterceptor;
 
     @Bean

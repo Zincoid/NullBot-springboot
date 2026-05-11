@@ -8,8 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class SayingPage
-{
+public class SayingPage {
     private List<SayingPO> sayings;
     private long currentPage;
     private long totalPage;

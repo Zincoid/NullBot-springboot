@@ -13,8 +13,8 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class NullBotApiTests
-{
+public class NullBotApiTests {
+
     private static final String BASE_URL = "https://pointercrate.com/api/v1/players/";
 
     @Test

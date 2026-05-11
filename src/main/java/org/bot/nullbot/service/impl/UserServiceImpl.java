@@ -18,11 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService
-{
+public class UserServiceImpl implements UserService {
+
     // 数据库更新用
     @Value("${nullbot.bot-id}")
     private Long botId;

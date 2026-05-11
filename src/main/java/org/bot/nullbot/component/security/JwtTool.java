@@ -15,8 +15,8 @@ import java.time.Duration;
 import java.util.Date;
 
 @Component
-public class JwtTool
-{
+public class JwtTool {
+
     private final JWTSigner jwtSigner;
     private final ObjectMapper objectMapper;
 
@@ -72,7 +72,6 @@ public class JwtTool
 
         return jwt;
     }
-
 
     /**
      * 解析 JWT 获取数据

@@ -5,7 +5,6 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.dispatcher.CommandHandlerChain;
 import org.bot.nullbot.entity.CommandEvent;
 
-public interface Handler
-{
+public interface Handler {
     void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception;
 }

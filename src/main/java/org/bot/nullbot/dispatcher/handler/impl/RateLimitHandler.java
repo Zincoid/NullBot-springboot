@@ -14,12 +14,12 @@ import org.bot.nullbot.component.control.CommandRateLimiter;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Order(2)
 @Component
 @RequiredArgsConstructor
-@Slf4j
-public class RateLimitHandler implements Handler
-{
+public class RateLimitHandler implements Handler {
+
     private final RateLimitProperties rateLimitProperties;
     private final CommandRateLimiter commandRateLimiter;
 

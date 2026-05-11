@@ -15,8 +15,8 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class SayingServiceImpl implements SayingService
-{
+public class SayingServiceImpl implements SayingService {
+
     private final SayingMapper sayingMapper;
 
     // =================== BOT功能相关 ===================

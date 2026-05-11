@@ -6,8 +6,7 @@ import org.bot.nullbot.enums.ChatScope;
 
 @Data
 @AllArgsConstructor
-public class ChatOption
-{
+public class ChatOption {
     private ChatScope chatScope;
     private boolean antiInjection;
     private boolean thinking;

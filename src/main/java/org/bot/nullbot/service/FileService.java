@@ -8,8 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-public interface FileService
-{
+public interface FileService {
+
     Boolean addFileRecordForBot(String directory, String fileName, Long fileSize, LocalDateTime lastModified, Long ownerId, String ownerName);
 
     Boolean deleteFileRecordForBot(String directory, String fileName);

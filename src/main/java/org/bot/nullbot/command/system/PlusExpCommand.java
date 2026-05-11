@@ -16,8 +16,8 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class PlusExpCommand implements Command
-{
+public class PlusExpCommand implements Command {
+
     private final UserService userService;
 
     @Override

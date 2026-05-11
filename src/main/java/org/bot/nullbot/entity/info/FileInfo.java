@@ -5,10 +5,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
 @Data
-public class FileInfo
-{
+@AllArgsConstructor
+public class FileInfo {
     private String fileName;
     private Long fileSize;
     LocalDateTime lastModified;

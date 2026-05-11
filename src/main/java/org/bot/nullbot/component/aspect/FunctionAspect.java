@@ -10,12 +10,12 @@ import org.bot.nullbot.annotation.FunctionControl;
 import org.bot.nullbot.component.control.FunctionManager;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
-@Slf4j
-public class FunctionAspect
-{
+public class FunctionAspect {
+
     private final FunctionManager functionManager;
 
     @Around("@annotation(function)")

@@ -8,8 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class GroupPage
-{
+public class GroupPage {
     private List<GroupPO> groups;
     private long currentPage;
     private long totalPage;

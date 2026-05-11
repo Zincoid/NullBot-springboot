@@ -20,8 +20,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class BanChatCommand implements Command
-{
+public class BanChatCommand implements Command {
+
     private final UserService userService;
     private final PermissionHandler permissionHandler;
 

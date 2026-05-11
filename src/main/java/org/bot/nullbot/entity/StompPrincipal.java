@@ -7,8 +7,8 @@ import java.security.Principal;
 
 @Data
 @AllArgsConstructor
-public class StompPrincipal implements Principal
-{
+public class StompPrincipal implements Principal {
+
     private final Long userId;
     private final String userName;
 

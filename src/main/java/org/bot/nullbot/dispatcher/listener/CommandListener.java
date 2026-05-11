@@ -23,12 +23,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Shiro
 @Component
 @RequiredArgsConstructor
-@Slf4j
-public class CommandListener
-{
+public class CommandListener {
+
     private final CommandProcessor commandProcessor;
     private final MonitorListener monitorListener;
     private final SecurityCodeScheduler securityCodeScheduler;

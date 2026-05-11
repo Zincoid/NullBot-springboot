@@ -16,8 +16,8 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("`drift_bottle`")
-public class DriftBottlePO
-{
+public class DriftBottlePO {
+
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private LocalDateTime time;

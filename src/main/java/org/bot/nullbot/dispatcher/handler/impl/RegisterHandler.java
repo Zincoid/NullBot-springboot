@@ -20,12 +20,12 @@ import org.bot.nullbot.service.UserService;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Order(-1)
 @Component
 @RequiredArgsConstructor
-@Slf4j
-public class RegisterHandler implements Handler
-{
+public class RegisterHandler implements Handler {
+
     private final GroupService groupService;
     private final UserService userService;
 

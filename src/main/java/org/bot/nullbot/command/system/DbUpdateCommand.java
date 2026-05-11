@@ -17,8 +17,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DbUpdateCommand implements Command
-{
+public class DbUpdateCommand implements Command {
+
     private final GroupService groupService;
     private final UserService userService;
     private final InventoryService inventoryService;

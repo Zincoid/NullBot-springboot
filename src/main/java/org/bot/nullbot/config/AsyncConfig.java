@@ -12,11 +12,11 @@ import java.lang.reflect.Method;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Slf4j
 @EnableAsync
 @Configuration
-@Slf4j
-public class AsyncConfig implements AsyncConfigurer
-{
+public class AsyncConfig implements AsyncConfigurer {
+
     @Bean(name = "ThreadExecutor", destroyMethod = "shutdown")
     public ExecutorService ThreadExecutor() {
         // Java 21+: 使用虚拟线程（正式）

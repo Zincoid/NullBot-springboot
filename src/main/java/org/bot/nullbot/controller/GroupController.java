@@ -16,12 +16,12 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RestController
-@RequestMapping("/nullbot/group")
-@RequiredArgsConstructor
 @Slf4j
-public class GroupController
-{
+@RequestMapping("/nullbot/group")
+@RestController
+@RequiredArgsConstructor
+public class GroupController {
+
     private final GroupService groupService;
 
     @GetMapping("/list")

@@ -13,8 +13,8 @@ import java.util.List;
 @CommandMapping({"4ed1314d"})  // 加密 仅供AI嵌入调用
 @Component
 @Slf4j
-public class SendPrivateMsgCommand implements Command
-{
+public class SendPrivateMsgCommand implements Command {
+
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.size() < 2)

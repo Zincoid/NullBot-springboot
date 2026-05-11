@@ -17,8 +17,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RandomSayingCommand implements Command
-{
+public class RandomSayingCommand implements Command {
+
     private final SayingService sayingService;
 
     @Override

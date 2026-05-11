@@ -16,8 +16,8 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class RestartCommand implements Command
-{
+public class RestartCommand implements Command {
+
     private final SystemService systemService;
 
     @Override

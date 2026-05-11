@@ -19,8 +19,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DrawCommand implements Command
-{
+public class DrawCommand implements Command {
+
     private final ItemService itemService;
 
     @Override

@@ -21,8 +21,8 @@ import java.util.*;
 import java.util.function.Function;
 
 @Slf4j
-public final class CsvImportUtil
-{
+public final class CsvImportUtil {
+
     // 默认的日期时间格式
     private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
     private static final String DEFAULT_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";

@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class GuessInfo
-{
+public class GuessInfo {
     private String name;
     private String path;
     private int times;

@@ -9,8 +9,8 @@ import java.util.HashMap;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WebResult
-{
+public class WebResult {
+
     private Integer code;
     private String message;
     private HashMap<String, Object> data = new HashMap<>();

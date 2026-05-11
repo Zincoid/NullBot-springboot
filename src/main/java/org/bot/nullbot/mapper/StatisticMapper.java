@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper
-public interface StatisticMapper extends BaseMapper<StatisticPO>
-{
+public interface StatisticMapper extends BaseMapper<StatisticPO> {
+
     @Select("SELECT group_id, SUM(visits) as total_visits " +
             "FROM statistic " +
             "GROUP BY group_id " +

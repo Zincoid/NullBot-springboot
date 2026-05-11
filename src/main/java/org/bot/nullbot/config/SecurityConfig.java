@@ -10,8 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.security.KeyPair;
 
 @Configuration
-public class SecurityConfig
-{
+public class SecurityConfig {
+
     // // Spring Security 拦截器 (引入完整 Spring Security 依赖时需配置默认放行)
     // @Bean
     // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

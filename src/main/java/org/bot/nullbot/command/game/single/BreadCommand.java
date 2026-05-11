@@ -24,8 +24,8 @@ import java.util.Random;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class BreadCommand implements Command
-{
+public class BreadCommand implements Command {
+
     private final UserService userService;
     private final InventoryService inventoryService;
     private final BreadService breadService;

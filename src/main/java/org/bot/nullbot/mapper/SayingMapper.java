@@ -4,12 +4,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 import org.bot.nullbot.entity.po.SayingPO;
 
-import java.util.List;
-
-
 @Mapper
-public interface SayingMapper extends BaseMapper<SayingPO>
-{
+public interface SayingMapper extends BaseMapper<SayingPO> {
+
     @Select("SELECT * FROM saying ORDER BY RAND() LIMIT 1")
     SayingPO getRand();
 

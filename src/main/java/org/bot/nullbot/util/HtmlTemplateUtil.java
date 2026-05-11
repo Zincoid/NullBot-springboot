@@ -9,8 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public final class HtmlTemplateUtil
-{
+public final class HtmlTemplateUtil {
+
     private HtmlTemplateUtil() {}
 
     // =================== 主要方法 ===================

@@ -20,8 +20,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ChatCommand implements Command
-{
+public class ChatCommand implements Command {
+
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
     private final DeepSeekClient deepSeekClient;

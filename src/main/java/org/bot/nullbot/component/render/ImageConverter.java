@@ -10,8 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Component
-public class ImageConverter
-{
+public class ImageConverter {
+
     private final ResourceLoader resourceLoader;
 
     private final String tempFontPath;
@@ -21,7 +21,6 @@ public class ImageConverter
         this.resourceLoader = resourceLoader;
         tempFontPath = fileStorageProperties.getTempPath() + "/font";
         tempImagePath = fileStorageProperties.getTempPath() + "/image";
-
     }
 
     public String RIP(String imagePath) throws Exception {

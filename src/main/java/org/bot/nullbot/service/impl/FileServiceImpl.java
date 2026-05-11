@@ -34,11 +34,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
-public class FileServiceImpl implements FileService
-{
+public class FileServiceImpl implements FileService {
+
     private final AdminMapper adminMapper;
     private final FileMapper fileMapper;
     private final FileStorageProperties fileStorageProperties;

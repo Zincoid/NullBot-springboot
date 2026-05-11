@@ -7,8 +7,8 @@ import org.bot.nullbot.enums.LimitScope;
 
 import java.util.List;
 
-public interface SettingService
-{
+public interface SettingService {
+
     SettingInfo getSetting(Long groupId);
 
     boolean setSetting(SettingInfo setting);
@@ -83,5 +83,5 @@ public interface SettingService
 
     int getGuessPadding(Long groupId);
 
-    public boolean setGuessParams(Long groupId, double cropRatio, double transparentRatio, int padding);
+    boolean setGuessParams(Long groupId, double cropRatio, double transparentRatio, int padding);
 }

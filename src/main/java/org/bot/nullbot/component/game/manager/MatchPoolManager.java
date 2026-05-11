@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Component
-public class MatchPoolManager
-{
+public class MatchPoolManager {
+
     // gameType -> waiting Queue
     private final Map<String, Queue<Player>> waitingPools = new ConcurrentHashMap<>();
 

@@ -17,8 +17,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RecallCommand implements Command
-{
+public class RecallCommand implements Command {
+
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         ArrayMsg reply = event.getArrayMsg().getFirst();

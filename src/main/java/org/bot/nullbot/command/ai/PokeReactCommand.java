@@ -17,8 +17,8 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class PokeReactCommand implements Command
-{
+public class PokeReactCommand implements Command {
+
     private final DeepSeekClient deepSeekClient;
 
     @Override

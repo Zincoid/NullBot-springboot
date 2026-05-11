@@ -20,8 +20,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class InventoryServiceImpl implements InventoryService
-{
+public class InventoryServiceImpl implements InventoryService {
+
     private final UserMapper userMapper;
     private final ItemMapper itemMapper;
     private final InventoryMapper inventoryMapper;

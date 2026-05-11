@@ -15,8 +15,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class LockCommand implements Command
-{
+public class LockCommand implements Command {
+
     private final PermissionHandler permissionHandler;
 
     @Override

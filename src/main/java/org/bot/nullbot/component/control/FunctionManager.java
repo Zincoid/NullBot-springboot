@@ -11,8 +11,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class FunctionManager
-{
+public class FunctionManager {
+
     private final ApplicationContext applicationContext;
     private final DefaultProperties defaultProperties;
     private final Map<String, Boolean> enableFlags = new ConcurrentHashMap<>();

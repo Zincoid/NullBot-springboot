@@ -22,8 +22,8 @@ import java.time.Duration;
 
 @Component
 @Slf4j
-public class HtmlRenderer
-{
+public class HtmlRenderer {
+
     private final ChromeProperties chromeProperties;
     private boolean initialized;
     private WebDriver driver;

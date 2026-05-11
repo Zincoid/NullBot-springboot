@@ -17,8 +17,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class PRTSCommand implements Command
-{
+public class PRTSCommand implements Command {
+
     private final WebScreenCapturer webScreenCapturer;
 
     @Override

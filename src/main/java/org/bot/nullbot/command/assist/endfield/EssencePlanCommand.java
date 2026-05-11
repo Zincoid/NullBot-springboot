@@ -17,8 +17,8 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class EssencePlanCommand implements Command
-{
+public class EssencePlanCommand implements Command {
+
     private final WebScreenCapturer webScreenCapturer;
 
     @Override

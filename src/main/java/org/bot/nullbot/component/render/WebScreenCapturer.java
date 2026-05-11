@@ -20,8 +20,8 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class WebScreenCapturer
-{
+public class WebScreenCapturer {
+
     private final Boolean driverAuto;  // 自动获取驱动
     private final String driverPath;  // 手动指定驱动路径
     private final int maxRetries;  // 最大重试次数

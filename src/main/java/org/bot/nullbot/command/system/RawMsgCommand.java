@@ -18,8 +18,8 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class RawMsgCommand implements Command
-{
+public class RawMsgCommand implements Command {
+
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         ArrayMsg reply = event.getArrayMsg().getFirst();

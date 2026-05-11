@@ -16,8 +16,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SayingDeleteCommand implements Command
-{
+public class SayingDeleteCommand implements Command {
+
     private final SayingService sayingService;
 
     @Override

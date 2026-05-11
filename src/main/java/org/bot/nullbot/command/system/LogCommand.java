@@ -15,8 +15,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class LogCommand implements Command
-{
+public class LogCommand implements Command {
+
     @Value("${logging.file.name}")
     private String logPath;
 

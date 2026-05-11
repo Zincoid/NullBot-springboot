@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BotOperator
-{
+public class BotOperator {
+
     @Value("${nullbot.bot-id}")
     private Long botId;
     @Value("${nullbot.log-id}")

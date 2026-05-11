@@ -5,8 +5,8 @@ import org.bot.nullbot.entity.game.tictactoe.TicTacToeGameState;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TicTacToeGameLogic extends GameLogic
-{
+public class TicTacToeGameLogic extends GameLogic {
+
     public boolean place(TicTacToeGameState s, int r, int c) {
         if (r < 0 || r >= 3 || c < 0 || c >= 3) return false;
         if (s.getBoard()[r][c] != '.') return false;

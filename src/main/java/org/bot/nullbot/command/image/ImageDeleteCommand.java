@@ -24,8 +24,8 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ImageDeleteCommand implements Command
-{
+public class ImageDeleteCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
 

@@ -5,6 +5,5 @@ import org.apache.ibatis.annotations.Mapper;
 import org.bot.nullbot.entity.po.AdminPO;
 
 @Mapper
-public interface AdminMapper extends BaseMapper<AdminPO>
-{
+public interface AdminMapper extends BaseMapper<AdminPO> {
 }

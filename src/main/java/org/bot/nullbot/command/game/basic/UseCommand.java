@@ -20,8 +20,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class UseCommand implements Command
-{
+public class UseCommand implements Command {
+
     private final InventoryService inventoryService;
     private final ItemService itemService;
     private final ApplicationEventPublisher eventPublisher;

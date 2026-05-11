@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Order(1)
 @Component
-@Slf4j
-public class HelpHandler implements Handler
-{
+public class HelpHandler implements Handler {
+
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         List<String> params = event.getCommandParameters();

@@ -5,8 +5,8 @@ import org.bot.nullbot.entity.po.UserPO;
 
 import java.util.List;
 
-public interface UserService
-{
+public interface UserService {
+
     void increaseDrawTimes(Long userId, int i);
 
     boolean decreaseDrawTimes(Long userId);

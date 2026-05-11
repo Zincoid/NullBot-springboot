@@ -21,8 +21,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class InventoryCommand implements Command
-{
+public class InventoryCommand implements Command {
+
     private final InventoryService inventoryService;
     private final UserService userService;
 

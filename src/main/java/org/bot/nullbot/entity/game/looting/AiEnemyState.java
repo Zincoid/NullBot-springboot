@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Random;
 
 @Data
-public class AiEnemyState
-{
+public class AiEnemyState {
+
     private String name;
     private String location;
     private int hp = 50;

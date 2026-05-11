@@ -8,8 +8,8 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Slf4j
-public final class FileUtil
-{
+public final class FileUtil {
+
     private FileUtil() {}
 
     // =================== 文件列表相关 ===================

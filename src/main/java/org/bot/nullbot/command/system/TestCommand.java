@@ -18,8 +18,8 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class TestCommand implements Command
-{
+public class TestCommand implements Command {
+
     private final BotNextInputer botNextInputer;
 
     @Override

@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
 @Slf4j
-public class SettingManager
-{
+@Component
+public class SettingManager {
+
     private final DefaultProperties defaultProperties;
     private final Map<Long, SettingInfo> settings;
 

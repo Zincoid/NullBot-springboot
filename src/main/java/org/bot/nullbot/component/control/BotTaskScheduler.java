@@ -17,8 +17,8 @@ import java.util.concurrent.*;
 
 @Slf4j
 @Component
-public class BotTaskScheduler
-{
+public class BotTaskScheduler {
+
     @Value("${nullbot.bot-id}")
     private Long botId;
     private final BotContainer botContainer;

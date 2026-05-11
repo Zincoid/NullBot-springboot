@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/nullbot/statistic")
-@RequiredArgsConstructor
 @Slf4j
-public class StatisticController
-{
+@RequestMapping("/nullbot/statistic")
+@RestController
+@RequiredArgsConstructor
+public class StatisticController {
+
     private final StatisticService statisticService;
 
     @GetMapping

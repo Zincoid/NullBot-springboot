@@ -12,8 +12,8 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class DriftBottleServiceImpl implements DriftBottleService
-{
+public class DriftBottleServiceImpl implements DriftBottleService {
+
     private final DriftBottleMapper driftBottleMapper;
 
     @Override

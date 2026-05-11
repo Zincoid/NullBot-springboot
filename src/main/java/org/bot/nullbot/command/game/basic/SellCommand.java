@@ -19,8 +19,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SellCommand implements Command
-{
+public class SellCommand implements Command {
+
     private final InventoryService inventoryService;
     private final UserService userService;
 

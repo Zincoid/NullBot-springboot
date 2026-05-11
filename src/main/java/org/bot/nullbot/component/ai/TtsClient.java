@@ -15,11 +15,11 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-@Data
-@Component
 @Slf4j
-public class TtsClient
-{
+@Component
+@Data
+public class TtsClient {
+
     private String apiUrl;
     private String apiKey;
     private String version;

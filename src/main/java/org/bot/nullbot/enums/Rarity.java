@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
 
 @Getter
-public enum Rarity
-{
+public enum Rarity {
+
     WHITE(0, "白", 0.15),
     GREEN(1, "绿", 0.15),
     BLUE(2, "蓝", 0.25),

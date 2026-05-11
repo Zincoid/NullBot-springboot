@@ -24,8 +24,8 @@ import java.util.stream.IntStream;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class VideoGetCommand implements Command
-{
+public class VideoGetCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
     private final BotNextInputer botNextInputer;
 

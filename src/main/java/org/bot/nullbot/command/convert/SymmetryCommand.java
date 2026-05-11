@@ -29,8 +29,8 @@ import java.util.*;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class SymmetryCommand implements Command
-{
+public class SymmetryCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
 
     private final ResourceLoader resourceLoader;

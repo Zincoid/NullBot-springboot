@@ -5,8 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class StatisticVO
-{
+public class StatisticVO {
     private Long totalVisits;
 
     private List<String> visitsXAxis;

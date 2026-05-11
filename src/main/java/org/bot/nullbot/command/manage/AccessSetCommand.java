@@ -17,8 +17,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class AccessSetCommand implements Command
-{
+public class AccessSetCommand implements Command {
+
     private final GroupService groupService;
     private final UserService userService;
 

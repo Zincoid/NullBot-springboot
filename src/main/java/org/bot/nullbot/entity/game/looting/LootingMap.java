@@ -6,8 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Data
-public class LootingMap
-{
+public class LootingMap {
+
     private String name;
     private Map<String, MapNode> nodes = new LinkedHashMap<>();
 

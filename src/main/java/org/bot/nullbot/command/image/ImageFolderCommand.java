@@ -17,8 +17,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ImageFolderCommand implements Command
-{
+public class ImageFolderCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
 
     @Override

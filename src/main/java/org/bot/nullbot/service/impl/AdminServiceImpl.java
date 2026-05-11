@@ -16,8 +16,8 @@ import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
-public class AdminServiceImpl implements AdminService
-{
+public class AdminServiceImpl implements AdminService {
+
     private final UserMapper userMapper;
     private final AdminMapper adminMapper;
 
@@ -45,6 +45,7 @@ public class AdminServiceImpl implements AdminService
         newAdmin.setUsername(user.getName());
         newAdmin.setEmail(registDTO.getEmail());
         newAdmin.setPassword(passwordEncoder.encode(registDTO.getPassword()));
+
         try {
             boolean inserted = adminMapper.insert(newAdmin) == 1;
             if (inserted) securityCodeScheduler.refreshCode("regist", true);

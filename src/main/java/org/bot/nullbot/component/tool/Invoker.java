@@ -10,11 +10,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 @Slf4j
+@Component
 @RequiredArgsConstructor
-public class Invoker
-{
+public class Invoker {
+
     private final ApplicationContext applicationContext;
 
     // public String test() { return "test-non"; }
@@ -24,7 +24,7 @@ public class Invoker
 
     public Object invokeSpringMethod(String beanName, String methodName,
                                      Object... args) throws Exception {
-        // 从Spring容器获取Bean
+        // 从 Spring 容器获取 Bean
         Object bean = applicationContext.getBean(beanName);
         Method[] methods = bean.getClass().getMethods();
 

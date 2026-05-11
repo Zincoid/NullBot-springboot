@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
-public class TtsTemplateServiceImpl implements TtsTemplateService
-{
+public class TtsTemplateServiceImpl implements TtsTemplateService {
+
     private final TtsTemplateMapper ttsTemplateMapper;
 
     @Override

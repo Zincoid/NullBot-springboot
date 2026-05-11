@@ -2,6 +2,7 @@
 <project version="4">
   <component name="DataSourcePerFileMappings">
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/135bc4e9-c1a8-482d-8c52-3205c86100b5/console.sql" value="135bc4e9-c1a8-482d-8c52-3205c86100b5" />
+    <file url="file://$PROJECT_DIR$/src/main/java/org/bot/nullbot/mapper/DriftBottleMapper.java" value="135bc4e9-c1a8-482d-8c52-3205c86100b5" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/bot/nullbot/mapper/FileMapper.java" value="135bc4e9-c1a8-482d-8c52-3205c86100b5" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/bot/nullbot/mapper/InventoryMapper.java" value="135bc4e9-c1a8-482d-8c52-3205c86100b5" />
     <file url="file://$PROJECT_DIR$/src/main/java/org/bot/nullbot/mapper/SayingMapper.java" value="135bc4e9-c1a8-482d-8c52-3205c86100b5" />

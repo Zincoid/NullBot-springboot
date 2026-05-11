@@ -9,8 +9,8 @@ import java.util.Objects;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameResult
-{
+public class GameResult {
+
     private Boolean success;
     private Boolean isSameGroup;
     private Boolean isAsync;

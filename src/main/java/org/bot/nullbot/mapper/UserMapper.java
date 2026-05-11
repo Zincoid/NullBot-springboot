@@ -5,6 +5,5 @@ import org.apache.ibatis.annotations.Mapper;
 import org.bot.nullbot.entity.po.UserPO;
 
 @Mapper
-public interface UserMapper extends BaseMapper<UserPO>
-{
+public interface UserMapper extends BaseMapper<UserPO> {
 }

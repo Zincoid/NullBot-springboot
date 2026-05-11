@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.regex.Pattern;
 
-@Component
 @Slf4j
-public class BotNextInputer
-{
+@Component
+public class BotNextInputer {
+
     private final Map<String, InputEntry> inputEntries = new ConcurrentHashMap<>();
     private final Map<String, List<Pair<Long, String>>> inputCaches = new ConcurrentHashMap<>();
 

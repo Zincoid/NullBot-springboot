@@ -22,8 +22,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class MemeCommand implements Command
-{
+public class MemeCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
     private final ChatStorage chatStorage;
 

@@ -4,10 +4,9 @@ import org.bot.nullbot.component.game.GameLogic;
 import org.bot.nullbot.entity.game.reversi.ReversiGameState;
 import org.springframework.stereotype.Component;
 
-
 @Component
-public class ReversiGameLogic extends GameLogic
-{
+public class ReversiGameLogic extends GameLogic {
+
     private static final int[][] DIRS = {
             {-1, -1}, {-1, 0}, {-1, 1},
             {0, -1},           {0, 1},

@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Random;
 
 @Data
-public class LootingPlayerState
-{
+public class LootingPlayerState {
+
     private Long userId;
     private String location;
 

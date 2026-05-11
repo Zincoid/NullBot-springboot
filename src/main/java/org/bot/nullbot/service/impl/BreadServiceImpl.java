@@ -24,8 +24,8 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class BreadServiceImpl implements BreadService
-{
+public class BreadServiceImpl implements BreadService {
+
     private final UserMapper userMapper;
     private final InventoryMapper inventoryMapper;
     private final ItemMapper itemMapper;

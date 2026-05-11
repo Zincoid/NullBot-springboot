@@ -16,8 +16,8 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class DisMatchCommand implements Command
-{
+public class DisMatchCommand implements Command {
+
     private final Matcher matcher;
 
     @Override

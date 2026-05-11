@@ -13,8 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("`statistic_date`")
-public class StatisticDatePO
-{
+public class StatisticDatePO {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private LocalDate date;

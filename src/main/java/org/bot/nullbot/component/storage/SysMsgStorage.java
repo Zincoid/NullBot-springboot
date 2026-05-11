@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@Data
 @Component
-public class SysMsgStorage
-{
+@Data
+public class SysMsgStorage {
+
     private final DeepSeekProperties deepSeekProperties;
 
     private final Map<Long, String> defaultMessages = new ConcurrentHashMap<>();  // 群聊默认提示词

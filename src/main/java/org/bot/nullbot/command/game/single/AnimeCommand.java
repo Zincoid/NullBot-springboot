@@ -18,8 +18,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class AnimeCommand implements Command
-{
+public class AnimeCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
 
     @Override

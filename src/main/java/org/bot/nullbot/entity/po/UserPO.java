@@ -9,12 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("`user`")
-public class UserPO
-{
+public class UserPO {
+
     private Long  id;
     private String name;
     private Integer access;
-
     private Integer level;
     private Integer experience;
     private Integer cash;

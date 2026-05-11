@@ -18,8 +18,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GroupServiceImpl implements GroupService
-{
+public class GroupServiceImpl implements GroupService {
+
     // 数据库更新用
     @Value("${nullbot.bot-id}")
     private Long botId;

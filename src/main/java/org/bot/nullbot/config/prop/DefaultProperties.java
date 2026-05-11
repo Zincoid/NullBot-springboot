@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "nullbot.default")
-public class DefaultProperties
-{
+public class DefaultProperties {
     private LimitScope limitScope;  // 限速范围
     private int limitCapacity;  //  限速容量
     private int limitRefill;  // 限速补充量

@@ -5,8 +5,8 @@ import org.bot.nullbot.entity.po.GroupPO;
 
 import java.util.List;
 
-public interface GroupService
-{
+public interface GroupService {
+
     GroupPO getGroup(Long groupId);
 
     void addGroup(Long groupId, String groupName);

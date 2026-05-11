@@ -16,8 +16,8 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class CancelAlarmCommand implements Command
-{
+public class CancelAlarmCommand implements Command {
+
     private final BotTaskScheduler botTaskScheduler;
 
     @Override

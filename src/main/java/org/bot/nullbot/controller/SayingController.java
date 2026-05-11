@@ -16,12 +16,12 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RestController
-@RequestMapping("/nullbot/saying")
-@RequiredArgsConstructor
 @Slf4j
-public class SayingController
-{
+@RequestMapping("/nullbot/saying")
+@RestController
+@RequiredArgsConstructor
+public class SayingController {
+
     private final SayingService sayingService;
 
     @GetMapping("/list")

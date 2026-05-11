@@ -6,8 +6,8 @@ import org.apache.ibatis.annotations.Select;
 import org.bot.nullbot.entity.po.StatisticDatePO;
 
 @Mapper
-public interface StatisticDateMapper extends BaseMapper<StatisticDatePO>
-{
+public interface StatisticDateMapper extends BaseMapper<StatisticDatePO> {
+
     @Select("SELECT COALESCE(SUM(visits), 0) FROM statistic_date")
     Long selectTotalVisits();
 }

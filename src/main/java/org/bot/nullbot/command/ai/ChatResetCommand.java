@@ -16,8 +16,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ChatResetCommand implements Command
-{
+public class ChatResetCommand implements Command {
+
     private final DeepSeekClient deepSeekClient;
 
     @Override

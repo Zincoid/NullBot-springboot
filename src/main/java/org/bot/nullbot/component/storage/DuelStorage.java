@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class DuelStorage
-{
+public class DuelStorage {
+
     private final Map<Long, DuelInfo> duels;
     private final String dataPath;
 

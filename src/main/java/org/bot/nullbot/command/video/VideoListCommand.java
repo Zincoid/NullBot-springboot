@@ -16,8 +16,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class VideoListCommand  implements Command
-{
+public class VideoListCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
 
     @Override

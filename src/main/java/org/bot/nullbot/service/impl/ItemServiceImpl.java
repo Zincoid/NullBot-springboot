@@ -21,8 +21,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ItemServiceImpl implements ItemService
-{
+public class ItemServiceImpl implements ItemService {
+
     private final InventoryService inventoryService;
     private final UserService userService;
 

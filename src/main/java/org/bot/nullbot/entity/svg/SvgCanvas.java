@@ -19,8 +19,8 @@ import java.nio.file.Path;
 import java.util.Base64;
 
 @Slf4j
-public class SvgCanvas
-{
+public class SvgCanvas {
+
     private final Document document;
     private final Element svg;
 

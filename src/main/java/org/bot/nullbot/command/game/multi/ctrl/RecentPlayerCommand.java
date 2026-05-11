@@ -18,8 +18,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RecentPlayerCommand implements Command
-{
+public class RecentPlayerCommand implements Command {
+
     private final PlayerManager playerManager;
 
     @Override

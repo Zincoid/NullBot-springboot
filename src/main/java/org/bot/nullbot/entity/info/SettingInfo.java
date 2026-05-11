@@ -11,8 +11,8 @@ import org.bot.nullbot.enums.LimitScope;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SettingInfo
-{
+public class SettingInfo {
+
     private Long groupId;
 
     private LimitScope limitScope;

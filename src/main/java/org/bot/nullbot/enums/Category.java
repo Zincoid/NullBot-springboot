@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
 
 @Getter
-public enum Category
-{
+public enum Category {
+
     COMMON(0, "基本物品"),
     SPECIAL(1, "特殊物品"),
     BREAD(2, "面包"),

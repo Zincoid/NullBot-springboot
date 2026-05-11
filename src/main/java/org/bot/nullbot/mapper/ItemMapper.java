@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.bot.nullbot.entity.po.ItemPO;
 
-
 @Mapper
-public interface ItemMapper extends BaseMapper<ItemPO>
-{
+public interface ItemMapper extends BaseMapper<ItemPO> {
 }

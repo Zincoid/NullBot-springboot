@@ -28,8 +28,8 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DriftBottleCommand implements Command
-{
+public class DriftBottleCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
     private final DriftBottleService driftBottleService;

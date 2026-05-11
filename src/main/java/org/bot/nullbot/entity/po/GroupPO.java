@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("`group`")
-public class GroupPO
-{
-    private Long  id;
+public class GroupPO {
+    private Long id;
     private String name;
     private Integer access;
 }

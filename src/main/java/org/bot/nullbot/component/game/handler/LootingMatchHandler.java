@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class LootingMatchHandler extends GameMatchHandler<LootingGameState, LootingGameLogic>
-{
+public class LootingMatchHandler extends GameMatchHandler<LootingGameState, LootingGameLogic> {
+
     private final InventoryService inventoryService;
     private final UserService userService;
 

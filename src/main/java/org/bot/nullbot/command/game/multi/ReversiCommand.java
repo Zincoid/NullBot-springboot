@@ -17,8 +17,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ReversiCommand implements Command
-{
+public class ReversiCommand implements Command {
+
     private final ReversiMatchHandler reversiMatchHandler;
 
     @Override

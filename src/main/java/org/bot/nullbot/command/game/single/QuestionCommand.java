@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class QuestionCommand implements Command
-{
+public class QuestionCommand implements Command {
+
     private final DeepSeekClient deepSeekClient;
     private final BotNextInputer botNextInputer;
     private final PermissionHandler permissionHandler;

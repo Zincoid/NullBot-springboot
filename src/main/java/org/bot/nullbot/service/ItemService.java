@@ -5,8 +5,8 @@ import org.bot.nullbot.entity.po.ItemPO;
 
 import java.util.List;
 
-public interface ItemService
-{
+public interface ItemService {
+
     ItemPO getItem(Integer itemId);
 
     ItemPO getRandomItem();

@@ -26,8 +26,8 @@ import java.util.*;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class ConvertCommand implements Command
-{
+public class ConvertCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
     private final ImageConverter imageConverter;
 

@@ -6,10 +6,10 @@ import org.bot.nullbot.entity.game.GameState;
 
 import java.util.Arrays;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class ReversiGameState  extends GameState
-{
+@EqualsAndHashCode(callSuper = true)
+public class ReversiGameState  extends GameState {
+
     public static final int SIZE = 8;
 
     private char[][] board = new char[SIZE][SIZE];

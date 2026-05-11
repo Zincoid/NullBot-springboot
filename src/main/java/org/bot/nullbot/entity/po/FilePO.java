@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("`file`")
-public class FilePO
-{
+public class FilePO {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private String fileName;

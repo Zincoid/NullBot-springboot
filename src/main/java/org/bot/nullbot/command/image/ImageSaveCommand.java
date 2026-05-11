@@ -25,8 +25,8 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ImageSaveCommand implements Command
-{
+public class ImageSaveCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
 

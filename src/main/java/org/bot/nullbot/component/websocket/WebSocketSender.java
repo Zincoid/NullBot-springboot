@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class WebSocketSender
-{
+public class WebSocketSender {
+
     private final SimpMessagingTemplate messagingTemplate;
 
     /**

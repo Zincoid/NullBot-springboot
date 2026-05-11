@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Data
-public class Match
-{
+public class Match {
+
     private String matchId;
     private String gameType;
     private Player player1;

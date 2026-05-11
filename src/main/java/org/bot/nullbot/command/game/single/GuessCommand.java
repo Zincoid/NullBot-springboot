@@ -27,8 +27,8 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class GuessCommand implements Command
-{
+public class GuessCommand implements Command {
+
     private final BotNextInputer botNextInputer;
     private final GuessStorage guessStorage;
     private final SettingService settingService;

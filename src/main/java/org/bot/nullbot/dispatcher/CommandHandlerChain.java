@@ -8,9 +8,10 @@ import org.bot.nullbot.entity.CommandEvent;
 import java.util.Iterator;
 import java.util.List;
 
-public class CommandHandlerChain
-{
+public class CommandHandlerChain {
+
     private final Iterator<Handler> iterator;
+
     public CommandHandlerChain(List<Handler> handlers) {
         this.iterator = handlers.iterator();
     }

@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("`tts_template`")
-public class TtsTemplatePO
-{
+public class TtsTemplatePO {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private String name;

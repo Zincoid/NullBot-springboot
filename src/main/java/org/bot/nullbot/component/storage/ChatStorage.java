@@ -13,10 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
-@Data
 @Component
-public class ChatStorage
-{
+@Data
+public class ChatStorage {
+
     private final Map<Long, List<ChatMessage>> userHistories = new ConcurrentHashMap<>();
     private final Map<Long, List<ChatMessage>> groupHistories = new ConcurrentHashMap<>();
     private final Map<Long, List<ChatMessage>> monitorHistories = new ConcurrentHashMap<>();

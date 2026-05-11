@@ -11,9 +11,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class MatchManager
-{
-    // playerId → matchId，用于快速查找玩家所在的对局
+public class MatchManager {
+
+    // playerId -> matchId 用于快速查找玩家所在的对局
     private final Map<Long, String> playerMatchIndex = new ConcurrentHashMap<>();
     private final Map<String, Match> matchMap = new ConcurrentHashMap<>();
 

@@ -6,8 +6,8 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-public final class DuelUtil
-{
+public final class DuelUtil {
+
     private DuelUtil() {}
 
     /**

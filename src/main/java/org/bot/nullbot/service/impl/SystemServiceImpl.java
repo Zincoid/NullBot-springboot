@@ -10,8 +10,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SystemServiceImpl implements SystemService
-{
+public class SystemServiceImpl implements SystemService {
+
     private final Restarter restarter;
     private final Invoker invoker;
 

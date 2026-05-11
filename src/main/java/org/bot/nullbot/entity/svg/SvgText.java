@@ -2,8 +2,8 @@ package org.bot.nullbot.entity.svg;
 
 import org.w3c.dom.Element;
 
-public class SvgText
-{
+public class SvgText {
+
     private final Element text;
 
     SvgText(Element text) {

@@ -18,8 +18,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RandomAudioCommand implements Command
-{
+public class RandomAudioCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
 
     @Override

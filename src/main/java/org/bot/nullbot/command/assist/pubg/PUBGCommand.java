@@ -18,8 +18,8 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class PUBGCommand implements Command
-{
+public class PUBGCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
 
     @Override

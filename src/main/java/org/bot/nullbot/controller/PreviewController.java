@@ -9,11 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
+@RequestMapping("/nullbot/preview")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/nullbot/preview")
-public class PreviewController
-{
+public class PreviewController {
+
     private final PreviewService previewService;
 
     @GetMapping("/{id}")

@@ -13,12 +13,12 @@ import org.bot.nullbot.service.AdminService;
 import org.bot.nullbot.util.WebUtil;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/nullbot")
 @Slf4j
+@RequestMapping("/nullbot")
+@RestController
 @RequiredArgsConstructor
-public class LoginController
-{
+public class LoginController {
+
     private final JwtTool jwtTool;
     private final JwtProperties jwtProperties;
     private final AdminService adminService;

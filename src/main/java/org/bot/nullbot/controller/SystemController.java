@@ -6,12 +6,12 @@ import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.SystemService;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/nullbot/system")
-@RequiredArgsConstructor
 @Slf4j
-public class SystemController
-{
+@RequestMapping("/nullbot/system")
+@RestController
+@RequiredArgsConstructor
+public class SystemController {
+
     private final SystemService systemService;
 
     @GetMapping("/invoke")

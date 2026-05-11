@@ -21,8 +21,8 @@ import java.util.*;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class ChoyenCommand implements Command
-{
+public class ChoyenCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
 
     private final ResourceLoader resourceLoader;

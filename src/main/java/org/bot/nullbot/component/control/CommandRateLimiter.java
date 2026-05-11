@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CommandRateLimiter
-{
+public class CommandRateLimiter {
+
     private final SettingService settingService;
 
     @Getter  // 调试用

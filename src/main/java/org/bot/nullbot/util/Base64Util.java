@@ -7,8 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
 
-public final class Base64Util
-{
+public final class Base64Util {
+
     private Base64Util() {}
 
     public static String imageToBase64(BufferedImage image) {

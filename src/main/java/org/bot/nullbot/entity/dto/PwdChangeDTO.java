@@ -6,8 +6,8 @@ import org.springframework.util.StringUtils;
 import java.util.Objects;
 
 @Data
-public class PwdChangeDTO
-{
+public class PwdChangeDTO {
+
     private String oldPassword;
     private String newPassword;
     private String confirmPassword;

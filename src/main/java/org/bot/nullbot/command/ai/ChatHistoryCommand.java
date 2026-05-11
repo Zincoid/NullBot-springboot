@@ -20,8 +20,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ChatHistoryCommand implements Command
-{
+public class ChatHistoryCommand implements Command {
+
     private final DeepSeekClient deepSeekClient;
     private final BotNextInputer botNextInputer;
 

@@ -6,11 +6,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication
-@EnableAsync
 @EnableScheduling
-public class NullBotApplication
-{
+@EnableAsync
+@SpringBootApplication
+public class NullBotApplication {
+
     private static ConfigurableApplicationContext context;
     private static String[] args;
 

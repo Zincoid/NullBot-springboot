@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-public final class CsvExportUtil
-{
+public final class CsvExportUtil {
+
     private CsvExportUtil() {}
 
     /**

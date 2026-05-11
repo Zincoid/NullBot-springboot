@@ -28,8 +28,8 @@ import java.util.stream.IntStream;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class EndfieldCommand implements Command
-{
+public class EndfieldCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
     private final BotNextInputer botNextInputer;
     private final Map<Long, String> versions = new ConcurrentHashMap<>();  // 群聊版本存储

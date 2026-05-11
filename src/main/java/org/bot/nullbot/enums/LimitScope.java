@@ -1,7 +1,7 @@
 package org.bot.nullbot.enums;
 
-public enum LimitScope
-{
+public enum LimitScope {
+
     User,
     Group,
     Cmd;

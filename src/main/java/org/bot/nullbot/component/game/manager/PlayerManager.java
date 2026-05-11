@@ -12,8 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
-public class PlayerManager
-{
+public class PlayerManager {
+
     private final Map<Long, Player> playerMap = new ConcurrentHashMap<>();
 
     public Player getPlayer(Long userId) {
@@ -45,7 +45,6 @@ public class PlayerManager
         }
         return player;
     }
-
 
     public void updateStatus(Player player, Player.PlayerStatus status) {
         player.setStatus(status);

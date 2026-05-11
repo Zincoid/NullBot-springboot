@@ -13,8 +13,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Slf4j
 @Component
 @Deprecated
-public class WebSocketHandler extends TextWebSocketHandler
-{
+public class WebSocketHandler extends TextWebSocketHandler {
+
     // 线程安全的会话集合
     private static final CopyOnWriteArraySet<WebSocketSession> sessions = new CopyOnWriteArraySet<>();
 

@@ -17,8 +17,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TicTacToeCommand implements Command
-{
+public class TicTacToeCommand implements Command {
+
     private final TicTacToeMatchHandler ticTacToeMatchHandler;
 
     @Override

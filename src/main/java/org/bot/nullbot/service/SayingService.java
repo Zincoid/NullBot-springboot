@@ -5,8 +5,8 @@ import org.bot.nullbot.entity.po.SayingPO;
 
 import java.util.List;
 
-public interface SayingService
-{
+public interface SayingService {
+
     int addSaying(Long userId, String userName, String text);
 
     boolean deleteById(Integer id);

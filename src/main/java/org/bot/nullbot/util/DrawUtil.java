@@ -6,8 +6,8 @@ import org.bot.nullbot.enums.Rarity;
 import java.util.List;
 import java.util.Random;
 
-public final class DrawUtil
-{
+public final class DrawUtil {
+
     private static final Random random = new Random();
 
     private DrawUtil() {}

@@ -29,8 +29,8 @@ import java.util.*;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class TtsCommand implements Command
-{
+public class TtsCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
     private final TtsTemplateService ttsTemplateService;
     private final TtsClient ttsClient;

@@ -5,8 +5,8 @@ import org.bot.nullbot.entity.dto.PwdChangeDTO;
 import org.bot.nullbot.entity.dto.RegistDTO;
 import org.bot.nullbot.entity.po.AdminPO;
 
-public interface AdminService
-{
+public interface AdminService {
+
     boolean regist(RegistDTO registDTO);
 
     boolean login(LoginDTO loginDTO);

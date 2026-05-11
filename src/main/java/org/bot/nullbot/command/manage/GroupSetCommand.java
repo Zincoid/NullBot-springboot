@@ -21,8 +21,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class GroupSetCommand implements Command
-{
+public class GroupSetCommand implements Command {
+
     private final DeepSeekClient deepSeekClient;
     private final SettingService settingService;
     private final CommandRateLimiter commandRateLimiter;

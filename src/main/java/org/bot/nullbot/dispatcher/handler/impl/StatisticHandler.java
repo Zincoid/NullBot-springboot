@@ -16,12 +16,12 @@ import org.bot.nullbot.component.websocket.WebSocketSender;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Order(3)
 @Component
-@Slf4j
 @RequiredArgsConstructor
-public class StatisticHandler implements Handler
-{
+public class StatisticHandler implements Handler {
+
     private final StatisticService statisticService;
     private final WebSocketSender webSocketSender;
 

@@ -17,8 +17,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RecallAICommand implements Command
-{
+public class RecallAICommand implements Command {
+
     private final ChatStorage chatStorage;
 
     @Override

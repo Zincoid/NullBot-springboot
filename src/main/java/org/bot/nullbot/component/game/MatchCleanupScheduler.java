@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Component
 @Slf4j
-public class MatchCleanupScheduler
-{
+@Component
+public class MatchCleanupScheduler {
+
     @Value("${nullbot.bot-id}")
     private Long botId;
     private final BotContainer botContainer;

@@ -19,10 +19,10 @@ import java.util.concurrent.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
 @Slf4j
-public class SecurityCodeScheduler
-{
+@Component
+public class SecurityCodeScheduler {
+
     private final BotOperator botOperator;  // 管理群通知工具
     private final WebSocketSender webSocketSender;  // 客户端通知工具
     private final ScheduledExecutorService scheduler;  // 任务调度器

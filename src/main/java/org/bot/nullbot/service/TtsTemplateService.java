@@ -4,8 +4,8 @@ import org.bot.nullbot.entity.po.TtsTemplatePO;
 
 import java.util.List;
 
-public interface TtsTemplateService
-{
+public interface TtsTemplateService {
+
     boolean addTemplate(String name, String path, String text, Long userId, String userName);
 
     boolean deleteTemplate(String templateName);

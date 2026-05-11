@@ -20,8 +20,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SysMsgSetCommand implements Command
-{
+public class SysMsgSetCommand implements Command {
+
     private final DeepSeekClient deepSeekClient;
     private final SysMsgStorage sysMsgStorage;
     private final SettingService settingService;

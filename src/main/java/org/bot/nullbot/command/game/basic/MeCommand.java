@@ -16,8 +16,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class MeCommand implements Command
-{
+public class MeCommand implements Command {
+
     private final UserService userService;
 
     @Override

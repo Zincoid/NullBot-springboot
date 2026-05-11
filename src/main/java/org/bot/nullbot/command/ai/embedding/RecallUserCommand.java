@@ -15,8 +15,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RecallUserCommand implements Command
-{
+public class RecallUserCommand implements Command {
+
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.isEmpty())

@@ -41,10 +41,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Data
 @Component
-public class DeepSeekClient
-{
+@Data
+public class DeepSeekClient {
+
     @Value("${nullbot.bot-id}")
     private Long botId;
 

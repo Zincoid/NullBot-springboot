@@ -32,12 +32,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Shiro
 @Component
 @RequiredArgsConstructor
-@Slf4j
-public class MonitorListener
-{
+public class MonitorListener {
+
     private final BotNextInputer botNextInputer;
     private final CommandProcessor commandProcessor;
     private final ChatStorage chatStorage;

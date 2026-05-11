@@ -13,8 +13,8 @@ import java.util.List;
 @CommandMapping({"UserBan", "ban", "禁言"})
 @Component
 @Slf4j
-public class UserBanCommand implements Command
-{
+public class UserBanCommand implements Command {
+
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.size() < 2)

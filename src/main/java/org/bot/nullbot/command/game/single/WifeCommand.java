@@ -27,8 +27,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class WifeCommand implements Command
-{
+public class WifeCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
 
     private final Map<Long, Long> memberWifeMap = new ConcurrentHashMap<>();

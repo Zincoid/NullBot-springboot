@@ -18,8 +18,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RememberCommand implements Command
-{
+public class RememberCommand implements Command {
+
     private final SysMsgStorage sysMsgStorage;
 
     @Override

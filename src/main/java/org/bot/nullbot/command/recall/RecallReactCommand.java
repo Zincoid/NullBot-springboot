@@ -14,13 +14,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 
-
 @CommandMapping({"RecallReact"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RecallReactCommand implements Command
-{
+public class RecallReactCommand implements Command {
+
     private final ChatStorage chatStorage;
 
     @Override

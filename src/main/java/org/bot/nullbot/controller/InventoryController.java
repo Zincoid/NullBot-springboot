@@ -15,12 +15,12 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RestController
-@RequestMapping("/nullbot/inventory")
 @Slf4j
+@RequestMapping("/nullbot/inventory")
+@RestController
 @RequiredArgsConstructor
-public class InventoryController
-{
+public class InventoryController {
+
     private final InventoryService inventoryService;
 
     @GetMapping("/list")

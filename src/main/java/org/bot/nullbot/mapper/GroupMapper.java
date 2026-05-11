@@ -5,6 +5,5 @@ import org.apache.ibatis.annotations.Mapper;
 import org.bot.nullbot.entity.po.GroupPO;
 
 @Mapper
-public interface GroupMapper extends BaseMapper<GroupPO>
-{
+public interface GroupMapper extends BaseMapper<GroupPO> {
 }

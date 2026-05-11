@@ -13,8 +13,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SettingServiceImpl implements SettingService
-{
+public class SettingServiceImpl implements SettingService {
+
     private final SettingManager settingManager;
 
     // =================== 全局功能相关 ===================

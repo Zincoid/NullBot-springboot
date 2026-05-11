@@ -8,8 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class FilePage
-{
+public class FilePage {
     private List<FilePO> files;
     private long currentPage;
     private long totalPage;

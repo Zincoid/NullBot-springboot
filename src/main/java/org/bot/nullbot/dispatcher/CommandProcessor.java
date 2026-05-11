@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
-public class CommandProcessor
-{
+public class CommandProcessor {
+
     private final CommandRegistry registry;
     private final List<Handler> handlers;
 

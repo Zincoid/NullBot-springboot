@@ -15,8 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @RequiredArgsConstructor
-public class ResourceLoader
-{
+public class ResourceLoader {
+
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
 

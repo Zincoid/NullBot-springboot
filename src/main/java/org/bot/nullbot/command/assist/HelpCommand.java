@@ -20,8 +20,8 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class HelpCommand implements Command
-{
+public class HelpCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
     private final ResourceLoader resourceLoader;
 

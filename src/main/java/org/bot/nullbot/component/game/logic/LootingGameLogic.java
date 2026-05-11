@@ -15,8 +15,8 @@ import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
-public class LootingGameLogic extends GameLogic
-{
+public class LootingGameLogic extends GameLogic {
+
     private final LootingMapFactory mapFactory;
     private static final Random R = new Random();
 

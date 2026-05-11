@@ -11,8 +11,8 @@ import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class LootingGameState extends GameState
-{
+public class LootingGameState extends GameState {
+
     private LootingMap map;
 
     private Map<Long, LootingPlayerState> players = new HashMap<>();

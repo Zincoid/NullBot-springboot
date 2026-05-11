@@ -16,8 +16,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class FuncSetCommand implements Command
-{
+public class FuncSetCommand implements Command {
+
     private final FunctionManager functionManager;
 
     @Override

@@ -17,8 +17,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ItemCommand implements Command
-{
+public class ItemCommand implements Command {
+
     private final ItemService itemService;
 
     @Override

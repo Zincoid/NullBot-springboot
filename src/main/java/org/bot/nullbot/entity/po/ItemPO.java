@@ -13,8 +13,8 @@ import org.bot.nullbot.enums.Rarity;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("`item`")
-public class ItemPO
-{
+public class ItemPO {
+
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private String name;

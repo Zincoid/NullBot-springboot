@@ -1,7 +1,7 @@
 package org.bot.nullbot.enums;
 
-public enum ChatScope
-{
+public enum ChatScope {
+
     Group,
     Personal,
     Monitor;

@@ -18,8 +18,8 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class WebInterceptor implements HandlerInterceptor
-{
+public class WebInterceptor implements HandlerInterceptor {
+
     private final JwtTool jwtTool;
     private static final List<String> GUEST_FORBIDDEN_URLS;
 

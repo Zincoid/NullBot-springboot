@@ -18,8 +18,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class LootingCommand implements Command
-{
+public class LootingCommand implements Command {
+
     private final LootingMatchHandler lootingMatchHandler;
 
     @Override

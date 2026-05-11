@@ -17,12 +17,12 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RestController
-@RequestMapping("/nullbot/setting")
-@RequiredArgsConstructor
 @Slf4j
-public class SettingController
-{
+@RequestMapping("/nullbot/setting")
+@RestController
+@RequiredArgsConstructor
+public class SettingController {
+
     private final SettingService settingService;
     private final CommandRateLimiter commandRateLimiter;
     private final DeepSeekClient deepSeekClient;

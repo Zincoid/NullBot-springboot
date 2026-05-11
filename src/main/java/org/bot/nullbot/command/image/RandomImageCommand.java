@@ -19,8 +19,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RandomImageCommand implements Command
-{
+public class RandomImageCommand implements Command {
+
     private final FileStorageProperties fileStorageProperties;
 
     @Override

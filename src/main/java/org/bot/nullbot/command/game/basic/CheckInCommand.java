@@ -20,8 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CheckInCommand implements Command
-{
+public class CheckInCommand implements Command {
+
     private final Map<Long, LocalDateTime> checkInExpireMap = new ConcurrentHashMap<>();
     private final UserService userService;
 

@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Data
 @Component
-public class GuessStorage
-{
+@Data
+public class GuessStorage {
+
     private final Map<Long, GuessInfo> guesses;
     private final String dataPath;
 

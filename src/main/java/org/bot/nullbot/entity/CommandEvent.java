@@ -14,8 +14,8 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class CommandEvent<T extends Event>
-{
+public class CommandEvent<T extends Event> {
+
     private T event;
     private String commandType;
     private List<String> commandParameters;

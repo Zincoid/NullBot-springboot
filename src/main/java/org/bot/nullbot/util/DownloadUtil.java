@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 
 
 @Slf4j
-public final class DownloadUtil
-{
+public final class DownloadUtil {
+
     private DownloadUtil() {}
 
     /**

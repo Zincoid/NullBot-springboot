@@ -15,11 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
 @Slf4j
+@RequestMapping("/nullbot/file")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/nullbot/file")
-public class FileController
-{
+public class FileController {
+
     private final JwtTool jwtTool;
     private final FileService fileService;
 

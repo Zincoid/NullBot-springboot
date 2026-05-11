@@ -21,8 +21,8 @@ import java.util.UUID;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class OneTimeAlarmCommand implements Command
-{
+public class OneTimeAlarmCommand implements Command {
+
     private final BotTaskScheduler botTaskScheduler;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
