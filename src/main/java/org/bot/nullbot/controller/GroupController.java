@@ -3,7 +3,7 @@ package org.bot.nullbot.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.entity.page.GroupPage;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.po.GroupPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.GroupService;
@@ -31,7 +31,7 @@ public class GroupController {
 
     @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getGroupByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
-        GroupPage groupPage = groupService.getGroupByPage(currentPage, pageSize);
+        DataPage<GroupPO> groupPage = groupService.getGroupByPage(currentPage, pageSize);
         return WebResult.success().addMsg("查询成功").addData("groupPage", groupPage);
     }
 

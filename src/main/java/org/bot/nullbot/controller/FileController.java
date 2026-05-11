@@ -5,8 +5,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.security.JwtTool;
+import org.bot.nullbot.entity.po.FilePO;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.result.WebResult;
-import org.bot.nullbot.entity.page.FilePage;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.WebUtil;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public class FileController {
     public WebResult getFileByPage(@PathVariable Integer currentPage,
                                 @PathVariable Integer pageSize,
                                 @RequestParam(defaultValue = "/") String curDir){
-        FilePage filePage = fileService.getFileByPage(
+        DataPage<FilePO> filePage = fileService.getFileByPage(
                 currentPage, pageSize, curDir,
                 jwtTool.getLoginType(WebUtil.getToken()) == 0
         );
@@ -58,7 +59,7 @@ public class FileController {
         if (key.contains("/") || key.contains("\\")){
             return WebResult.fail().addMsg("不允许出现斜杠");
         }
-        FilePage filePage = fileService.searchFile(
+        DataPage<FilePO> filePage = fileService.searchFile(
                 key, curDir,
                 jwtTool.getLoginType(WebUtil.getToken()) == 0
         );

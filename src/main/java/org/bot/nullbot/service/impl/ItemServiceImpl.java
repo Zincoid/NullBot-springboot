@@ -3,7 +3,7 @@ package org.bot.nullbot.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.entity.page.ItemPage;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.mapper.InventoryMapper;
 import org.bot.nullbot.mapper.ItemMapper;
 import org.bot.nullbot.mapper.UserMapper;
@@ -102,11 +102,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemPage getItemByPage(Integer currentPage, Integer pageSize) {
+    public DataPage<ItemPO> getItemByPage(Integer currentPage, Integer pageSize) {
         Page<ItemPO> page = new Page<>(currentPage, pageSize);
         Page<ItemPO> itemPage;
         itemPage = itemMapper.selectPage(page, new LambdaQueryWrapper<ItemPO>().orderByAsc(ItemPO::getId));
-        return new ItemPage(itemPage.getRecords(), itemPage.getCurrent(), itemPage.getPages(), itemPage.getTotal(), itemPage.getSize());
+        return new DataPage<>(itemPage.getRecords(), itemPage.getCurrent(), itemPage.getPages(), itemPage.getTotal(), itemPage.getSize());
     }
 
     @Override

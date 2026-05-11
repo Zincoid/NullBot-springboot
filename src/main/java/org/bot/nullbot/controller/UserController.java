@@ -3,7 +3,7 @@ package org.bot.nullbot.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.entity.page.UserPage;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.UserService;
@@ -31,7 +31,7 @@ public class UserController {
 
     @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getUserByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
-        UserPage userPage = userService.getUserByPage(currentPage, pageSize);
+        DataPage<UserPO> userPage = userService.getUserByPage(currentPage, pageSize);
         return WebResult.success().addMsg("查询成功").addData("userPage", userPage);
     }
 

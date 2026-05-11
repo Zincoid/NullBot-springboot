@@ -1,6 +1,6 @@
 package org.bot.nullbot.service;
 
-import org.bot.nullbot.entity.page.ItemPage;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.po.ItemPO;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public interface ItemService {
 
     List<ItemPO> getItemList();
 
-    ItemPage getItemByPage(Integer currentPage, Integer pageSize);
+    DataPage<ItemPO> getItemByPage(Integer currentPage, Integer pageSize);
 
     boolean addItem(ItemPO item);
 

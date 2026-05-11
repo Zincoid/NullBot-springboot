@@ -2,7 +2,8 @@ package org.bot.nullbot.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.bot.nullbot.entity.page.FilePage;
+import org.bot.nullbot.entity.po.FilePO;
+import org.bot.nullbot.entity.page.DataPage;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -18,9 +19,9 @@ public interface FileService {
 
     void syncFilesToDatabase();
 
-    FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden);
+    DataPage<FilePO> getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden);
 
-    FilePage searchFile(String key, String curDir, Boolean hidden);
+    DataPage<FilePO> searchFile(String key, String curDir, Boolean hidden);
 
     Boolean upload(Long owner, MultipartFile uploadFile, String curDir) throws IOException;
 

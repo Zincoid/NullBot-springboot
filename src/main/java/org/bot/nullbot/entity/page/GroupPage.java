@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
+@Deprecated
 public class GroupPage {
     private List<GroupPO> groups;
     private long currentPage;

@@ -1,11 +1,12 @@
 package org.bot.nullbot.service;
 
-import org.bot.nullbot.entity.page.InventoryPage;
+import org.bot.nullbot.entity.page.DataPage;
+import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.po.ItemPO;
 
 public interface BreadService {
 
-    InventoryPage getBreadPage(Long userId, int p, int size);
+    DataPage<InventoryPO> getBreadPage(Long userId, int p, int size);
 
     int buyBasicBread(Long userId, int cost);
 

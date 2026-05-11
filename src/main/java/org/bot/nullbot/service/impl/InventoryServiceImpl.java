@@ -3,6 +3,7 @@ package org.bot.nullbot.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.enums.Rarity;
 import org.bot.nullbot.mapper.InventoryMapper;
@@ -10,7 +11,6 @@ import org.bot.nullbot.mapper.ItemMapper;
 import org.bot.nullbot.mapper.UserMapper;
 import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.po.ItemPO;
-import org.bot.nullbot.entity.page.InventoryPage;
 import org.bot.nullbot.service.InventoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -48,7 +48,7 @@ public class InventoryServiceImpl implements InventoryService {
     // =================== BOT功能相关 ===================
 
     @Override
-    public InventoryPage getInventoriesPage(Long userId, int p, int size) {
+    public DataPage<InventoryPO> getInventoriesPage(Long userId, int p, int size) {
         Page<InventoryPO> page = new Page<>(p, size);
         Page<InventoryPO> inventoryPage = inventoryMapper
                 .selectPage(page, new LambdaQueryWrapper<InventoryPO>()
@@ -56,7 +56,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .orderByDesc(InventoryPO::getRarity)
                 .orderByDesc(InventoryPO::getPrice)
                 .orderByAsc(InventoryPO::getId));
-        return new InventoryPage(inventoryPage.getRecords(), inventoryPage.getCurrent(), inventoryPage.getPages(), inventoryPage.getTotal(), inventoryPage.getSize());
+        return new DataPage<>(inventoryPage.getRecords(), inventoryPage.getCurrent(), inventoryPage.getPages(), inventoryPage.getTotal(), inventoryPage.getSize());
     }
 
     @Override

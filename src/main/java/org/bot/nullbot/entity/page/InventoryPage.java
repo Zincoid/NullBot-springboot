@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
+@Deprecated
 public class InventoryPage {
     private List<InventoryPO> inventories;
     private long currentPage;

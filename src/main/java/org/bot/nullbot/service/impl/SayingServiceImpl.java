@@ -3,7 +3,7 @@ package org.bot.nullbot.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.entity.page.SayingPage;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.mapper.SayingMapper;
 import org.bot.nullbot.entity.po.SayingPO;
 import org.bot.nullbot.service.SayingService;
@@ -57,10 +57,10 @@ public class SayingServiceImpl implements SayingService {
     public List<SayingPO> getSayingList() { return sayingMapper.selectList(null); }
 
     @Override
-    public SayingPage getSayingByPage(Integer currentPage, Integer pageSize) {
+    public DataPage<SayingPO> getSayingByPage(Integer currentPage, Integer pageSize) {
         Page<SayingPO> page = new Page<>(currentPage, pageSize);
         Page<SayingPO> sayingPage = sayingMapper.selectPage(page, new LambdaQueryWrapper<SayingPO>().orderByDesc(SayingPO::getTime));
-        return new SayingPage(sayingPage.getRecords(), sayingPage.getCurrent(), sayingPage.getPages(), sayingPage.getTotal(), sayingPage.getSize());
+        return new DataPage<>(sayingPage.getRecords(), sayingPage.getCurrent(), sayingPage.getPages(), sayingPage.getTotal(), sayingPage.getSize());
     }
 
     @Override

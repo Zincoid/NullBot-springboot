@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.entity.page.InventoryPage;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.po.UserPO;
@@ -161,7 +161,7 @@ public class BreadCommand implements Command {
                 log.info("\t\t\t\t├─[Bread-Look] 页码格式错误");
                 return;
             }
-        InventoryPage inventoryPage = breadService.getBreadPage(userId, p, 10);
+        DataPage<InventoryPO> inventoryPage = breadService.getBreadPage(userId, p, 10);
         UserPO user = userService.getUser(userId);
         int totalAmount = inventoryService.getTotalAmountByUserId(userId);
         StringBuilder sb = new StringBuilder()
@@ -169,12 +169,12 @@ public class BreadCommand implements Command {
                 .append("现金: ￥").append(user.getCash()).append("  容量: ").append(totalAmount).append("/").append(user.getCapacity()).append("\n")
                 .append("[ID -- 名称 -- 品质/单价 - 数量]\n");
         if (inventoryPage.getTotal() > 0) {
-            for (InventoryPO inventoryPO : inventoryPage.getInventories())
+            for (InventoryPO inventoryPO : inventoryPage.getData())
                 sb.append(inventoryPO.toString()).append("\n");
         } else {
             sb.append("无面包...").append("\n");
         }
-        sb.append("[第").append(inventoryPage.getCurrentPage()).append("页").append(" / 共").append(inventoryPage.getTotalPage()).append("页 (每页").append(inventoryPage.getPageSize()).append("条)]");
+        sb.append("[第").append(inventoryPage.getCurrent()).append("页").append(" / 共").append(inventoryPage.getPages()).append("页 (每页").append(inventoryPage.getSize()).append("条)]");
         bot.sendGroupMsg(groupId, sb.toString(), false);
         log.info("\t\t\t\t├─[Bread-Look] 已获取面包库存 - {}({})", userName, userId);
     }

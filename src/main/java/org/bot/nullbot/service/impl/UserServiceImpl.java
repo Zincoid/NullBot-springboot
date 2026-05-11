@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.entity.page.UserPage;
-import org.bot.nullbot.mapper.InventoryMapper;
-import org.bot.nullbot.mapper.ItemMapper;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.mapper.UserMapper;
 import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.service.UserService;
@@ -28,8 +26,6 @@ public class UserServiceImpl implements UserService {
     private final BotContainer botContainer;
 
     private final UserMapper userMapper;
-    private final ItemMapper itemMapper;
-    private final InventoryMapper inventoryMapper;
 
     // =================== BOT功能相关 ===================
 
@@ -121,10 +117,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserPage getUserByPage(Integer currentPage, Integer pageSize) {
+    public DataPage<UserPO> getUserByPage(Integer currentPage, Integer pageSize) {
         Page<UserPO> page = new Page<>(currentPage, pageSize);
         Page<UserPO> userPage = userMapper.selectPage(page, new LambdaQueryWrapper<UserPO>().orderByAsc(UserPO::getId));
-        return new UserPage(userPage.getRecords(), userPage.getCurrent(), userPage.getPages(), userPage.getTotal(), userPage.getSize());
+        return new DataPage<>(userPage.getRecords(), userPage.getCurrent(), userPage.getPages(), userPage.getTotal(), userPage.getSize());
     }
 
     @Override

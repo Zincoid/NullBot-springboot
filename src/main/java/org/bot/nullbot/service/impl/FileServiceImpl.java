@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.page.FilePage;
 import org.bot.nullbot.entity.po.FilePO;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.mapper.AdminMapper;
 import org.bot.nullbot.mapper.FileMapper;
 import org.bot.nullbot.service.FileService;
@@ -146,7 +146,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FilePage getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden) {
+    public DataPage<FilePO> getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden) {
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
@@ -159,18 +159,18 @@ public class FileServiceImpl implements FileService {
         if(hidden) wrapper.eq(FilePO::getVisible, true);
         Page<FilePO> page = new Page<>(currentPage, pageSize);
         Page<FilePO> filePage = fileMapper.selectPage(page, wrapper);
-        return new FilePage(filePage.getRecords(), filePage.getCurrent(), filePage.getPages(), filePage.getTotal(), filePage.getSize());
+        return new DataPage<>(filePage.getRecords(), filePage.getCurrent(), filePage.getPages(), filePage.getTotal(), filePage.getSize());
     }
 
     @Override
-    public FilePage searchFile(String key, String curDir, Boolean hidden) {
+    public DataPage<FilePO> searchFile(String key, String curDir, Boolean hidden) {
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
         else
             fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/") + curDir;
         List<FilePO> fileList = hidden ? fileMapper.searchFileVisible(key, fullDir) : fileMapper.searchFile(key, fullDir);
-        return new FilePage(fileList, 0L, 0, 0, 0);
+        return new DataPage<>(fileList, 0L, 0L, 0L, 0L);
     }
 
     @Override

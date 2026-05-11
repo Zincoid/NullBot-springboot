@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
+@Deprecated
 public class FilePage {
     private List<FilePO> files;
     private long currentPage;

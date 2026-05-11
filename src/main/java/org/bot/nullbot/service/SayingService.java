@@ -1,6 +1,6 @@
 package org.bot.nullbot.service;
 
-import org.bot.nullbot.entity.page.SayingPage;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.po.SayingPO;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public interface SayingService {
 
     List<SayingPO> getSayingList();
 
-    SayingPage getSayingByPage(Integer currentPage, Integer pageSize);
+    DataPage<SayingPO> getSayingByPage(Integer currentPage, Integer pageSize);
 
     void addSayings(List<SayingPO> sayings);
 }

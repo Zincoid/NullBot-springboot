@@ -1,6 +1,6 @@
 package org.bot.nullbot.service;
 
-import org.bot.nullbot.entity.page.GroupPage;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.po.GroupPO;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public interface GroupService {
 
     List<GroupPO> getGroupList();
 
-    GroupPage getGroupByPage(Integer currentPage, Integer pageSize);
+    DataPage<GroupPO> getGroupByPage(Integer currentPage, Integer pageSize);
 
     void addGroups(List<GroupPO> groups);
 

@@ -3,7 +3,7 @@ package org.bot.nullbot.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.entity.page.SayingPage;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.po.SayingPO;
 import org.bot.nullbot.service.SayingService;
@@ -31,7 +31,7 @@ public class SayingController {
 
     @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getSayingByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
-        SayingPage sayingPage = sayingService.getSayingByPage(currentPage, pageSize);
+        DataPage<SayingPO> sayingPage = sayingService.getSayingByPage(currentPage, pageSize);
         return WebResult.success().addMsg("查询成功").addData("sayingPage", sayingPage);
     }
 

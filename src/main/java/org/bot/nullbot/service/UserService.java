@@ -1,6 +1,6 @@
 package org.bot.nullbot.service;
 
-import org.bot.nullbot.entity.page.UserPage;
+import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.po.UserPO;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public interface UserService {
 
     List<UserPO> getUserList();
 
-    UserPage getUserByPage(Integer currentPage, Integer pageSize);
+    DataPage<UserPO> getUserByPage(Integer currentPage, Integer pageSize);
 
     void addUsers(List<UserPO> users);
 

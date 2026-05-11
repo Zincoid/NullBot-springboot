@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
+@Deprecated
 public class UserPage {
     private List<UserPO> users;
     private long currentPage;
