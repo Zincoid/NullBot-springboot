@@ -88,7 +88,7 @@ public class JwtTool {
                 return clazz.cast(payload);
             return objectMapper.convertValue(payload, clazz);
         } catch (RuntimeException e) {
-            throw new IllegalArgumentException("Invalid Info: " + e.getMessage());
+            throw new IllegalArgumentException("Invalid Attr: " + e.getMessage());
         }
     }
 

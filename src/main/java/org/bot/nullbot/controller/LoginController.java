@@ -37,7 +37,7 @@ public class LoginController {
     public WebResult guest() {
         log.info("└─[LoginController] 访客登录");
         String token = jwtTool.createJwt(
-                0L, 0,
+                null, 0,
                 jwtProperties.getTokenTTL()
         );
         return WebResult.success("访客登录成功").withData("token", token);
