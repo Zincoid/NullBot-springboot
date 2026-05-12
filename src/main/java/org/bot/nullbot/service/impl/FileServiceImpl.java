@@ -489,7 +489,7 @@ public class FileServiceImpl implements FileService {
             Map<String, SyncFileInfo> fileSystemMap = new HashMap<>();
             scanDirectory(basePath, fileSystemMap);
 
-            // 3. 获取数据库记录
+            // 3. 获取数据记录
             List<FilePO> dbFiles = fileMapper.selectList(null);
             Map<String, FilePO> dbMap = new HashMap<>();
             for (FilePO file : dbFiles) {
@@ -498,7 +498,7 @@ public class FileServiceImpl implements FileService {
                 dbMap.put(normalizedPath, file);
             }
 
-            // 4. 同步处理
+            // 4. 开始同步处理
             syncFiles(fileSystemMap, dbMap);
 
             log.info("◎ [FileService] 文件同步完成 - 共处理文件: {}", fileSystemMap.size());
