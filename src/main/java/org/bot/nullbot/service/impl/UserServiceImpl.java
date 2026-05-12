@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<UserPO> getAll() {
+    public List<UserPO> getList() {
         return userMapper.selectList(null);
     }
 

@@ -21,7 +21,7 @@ public interface GroupService {
 
     void updateAllNames();
 
-    List<GroupPO> getAll();
+    List<GroupPO> getList();
 
     DataPage<GroupPO> getPage(Integer current, Integer size);
 

@@ -97,7 +97,7 @@ public class ItemServiceImpl implements ItemService {
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<ItemPO> getAll() {
+    public List<ItemPO> getList() {
         return itemMapper.selectList(null);
     }
 

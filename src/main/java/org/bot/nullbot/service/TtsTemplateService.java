@@ -12,7 +12,7 @@ public interface TtsTemplateService {
 
     TtsTemplatePO getByName(String name);
 
-    List<TtsTemplatePO> getAll();
+    List<TtsTemplatePO> getList();
 
     void increaseUsed(Integer id);
 }

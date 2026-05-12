@@ -80,7 +80,7 @@ public class GroupServiceImpl implements GroupService {
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<GroupPO> getAll() {
+    public List<GroupPO> getList() {
         return groupMapper.selectList(null);
     }
 

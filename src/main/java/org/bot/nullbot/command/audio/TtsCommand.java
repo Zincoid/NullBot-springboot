@@ -135,7 +135,7 @@ public class TtsCommand implements Command {
                 }
 
                 case "list" -> {
-                    List<TtsTemplatePO> templates = ttsTemplateService.getAll();
+                    List<TtsTemplatePO> templates = ttsTemplateService.getList();
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
                     StringBuilder sb = new StringBuilder("\n[名称 | 作者 - 创建日期 | 用量]");
                     for (TtsTemplatePO template : templates) {

@@ -54,7 +54,7 @@ public class SayingServiceImpl implements SayingService {
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<SayingPO> getAll() { return sayingMapper.selectList(null); }
+    public List<SayingPO> getList() { return sayingMapper.selectList(null); }
 
     @Override
     public DataPage<SayingPO> getPage(Integer current, Integer size) {

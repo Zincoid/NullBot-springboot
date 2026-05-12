@@ -21,7 +21,7 @@ public interface ItemService {
 
     String getCommand(Integer id);
 
-    List<ItemPO> getAll();
+    List<ItemPO> getList();
 
     DataPage<ItemPO> getPage(Integer current, Integer size);
 

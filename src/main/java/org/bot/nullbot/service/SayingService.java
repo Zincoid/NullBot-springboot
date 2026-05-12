@@ -15,7 +15,7 @@ public interface SayingService {
 
     SayingPO getRandByUserId(Long userId);
 
-    List<SayingPO> getAll();
+    List<SayingPO> getList();
 
     DataPage<SayingPO> getPage(Integer current, Integer size);
 

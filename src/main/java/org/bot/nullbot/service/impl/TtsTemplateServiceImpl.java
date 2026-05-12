@@ -44,7 +44,7 @@ public class TtsTemplateServiceImpl implements TtsTemplateService {
     }
 
     @Override
-    public List<TtsTemplatePO> getAll() {
+    public List<TtsTemplatePO> getList() {
         return ttsTemplateMapper.selectList(null);
     }
 

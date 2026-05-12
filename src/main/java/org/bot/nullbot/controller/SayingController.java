@@ -26,7 +26,7 @@ public class SayingController {
 
     @GetMapping("/list")
     public WebResult getSayingList(){
-        return WebResult.success().withMsg("查询成功").withData("sayings", sayingService.getAll());
+        return WebResult.success().withMsg("查询成功").withData("sayings", sayingService.getList());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
@@ -57,7 +57,7 @@ public class SayingController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<SayingPO> sayings = sayingService.getAll();
+        List<SayingPO> sayings = sayingService.getList();
         CsvExportUtil.exportToCsv(response, "Sayings_" + LocalDateTime.now(), sayings, SayingPO.class);
     }
 

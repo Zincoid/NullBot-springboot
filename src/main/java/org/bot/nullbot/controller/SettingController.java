@@ -49,7 +49,7 @@ public class SettingController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<SettingInfo> settings = settingService.getAll();
+        List<SettingInfo> settings = settingService.getList();
         CsvExportUtil.exportToCsv(response, "Settings_" + LocalDateTime.now(), settings, SettingInfo.class);
     }
 

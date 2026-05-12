@@ -26,7 +26,7 @@ public class ItemController {
 
     @GetMapping("/list")
     public WebResult getItemList(){
-        return WebResult.success().withMsg("查询成功").withData("items", itemService.getAll());
+        return WebResult.success().withMsg("查询成功").withData("items", itemService.getList());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
@@ -66,7 +66,7 @@ public class ItemController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<ItemPO> items = itemService.getAll();
+        List<ItemPO> items = itemService.getList();
         CsvExportUtil.exportToCsv(response, "Items_" + LocalDateTime.now(), items, ItemPO.class);
     }
 

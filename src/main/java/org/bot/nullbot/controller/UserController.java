@@ -26,7 +26,7 @@ public class UserController {
 
     @GetMapping("/list")
     public WebResult getUserList(){
-        return WebResult.success().withMsg("查询成功").withData("users", userService.getAll());
+        return WebResult.success().withMsg("查询成功").withData("users", userService.getList());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
@@ -54,7 +54,7 @@ public class UserController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<UserPO> users = userService.getAll();
+        List<UserPO> users = userService.getList();
         CsvExportUtil.exportToCsv(response, "Users_" + LocalDateTime.now(), users, UserPO.class);
     }
 

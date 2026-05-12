@@ -13,7 +13,7 @@ public interface SettingService {
 
     boolean set(SettingInfo setting);
 
-    List<SettingInfo> getAll();
+    List<SettingInfo> getList();
 
     void sets(List<SettingInfo> settings);
 

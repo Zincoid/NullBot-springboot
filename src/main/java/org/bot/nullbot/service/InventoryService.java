@@ -25,9 +25,9 @@ public interface InventoryService {
 
     List<InventoryVO> getVOList(Long userId);
 
-    List<InventoryPO> getAll();
+    List<InventoryPO> getList();
 
-    void add(List<InventoryPO> inventories);
+    void adds(List<InventoryPO> inventories);
 
     boolean deleteById(Integer id);
 

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.result.WebResult;
+import org.bot.nullbot.entity.vo.InventoryVO;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.util.CsvExportUtil;
 import org.bot.nullbot.util.CsvImportUtil;
@@ -24,44 +25,47 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     @GetMapping("/list")
-    public WebResult getInventoryList(Long userId){
-        return WebResult.success().withMsg("查询成功").withData("inventories", inventoryService.getVOList(userId));
+    public WebResult getInventoryList(Long userId) {
+        List<InventoryVO> inventories = inventoryService.getVOList(userId);
+        return WebResult.success("查询成功").withData("inventories", inventories);
     }
 
     @PostMapping("/add")
-    public WebResult add(Long userId, Integer itemId){
-        if(inventoryService.increase(userId, itemId, 1))
-            return WebResult.success().withMsg("增加成功");
-        else
-            return WebResult.fail().withMsg("增加失败");
+    public WebResult add(Long userId, Integer itemId) {
+        if (inventoryService.increase(userId, itemId, 1)) {
+            return WebResult.success("增加成功");
+        } else {
+            return WebResult.fail("增加失败");
+        }
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult delete(@PathVariable Integer id){
-        if(inventoryService.deleteById(id)){
-            return WebResult.success().withMsg("删除成功");
-        }else{
-            return WebResult.fail().withMsg("删除失败");
+    public WebResult delete(@PathVariable Integer id) {
+        if (inventoryService.deleteById(id)) {
+            return WebResult.success("删除成功");
+        } else {
+            return WebResult.fail("删除失败");
         }
     }
 
     @PutMapping("/update")
-    public WebResult update(@RequestBody InventoryPO inventory){
-        if(inventoryService.update(inventory))
-            return WebResult.success().withMsg("更新成功");
-        else
-            return WebResult.fail().withMsg("更新失败");
+    public WebResult update(@RequestBody InventoryPO inventory) {
+        if (inventoryService.update(inventory)) {
+            return WebResult.success("更新成功");
+        } else {
+            return WebResult.fail("更新失败");
+        }
     }
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<InventoryPO> inventories = inventoryService.getAll();
+        List<InventoryPO> inventories = inventoryService.getList();
         CsvExportUtil.exportToCsv(response, "Inventories_" + LocalDateTime.now(), inventories, InventoryPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
-        List<InventoryPO> inventories =  CsvImportUtil.importFromCsv(csvFile, InventoryPO.class);
-        inventoryService.add(inventories);
+        List<InventoryPO> inventories = CsvImportUtil.importFromCsv(csvFile, InventoryPO.class);
+        inventoryService.adds(inventories);
     }
 }

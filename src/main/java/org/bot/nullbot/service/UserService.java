@@ -27,7 +27,7 @@ public interface UserService {
 
     void updateAllNames();
 
-    List<UserPO> getAll();
+    List<UserPO> getList();
 
     DataPage<UserPO> getPage(Integer current, Integer size);
 
