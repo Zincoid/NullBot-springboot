@@ -542,9 +542,9 @@ public class FileServiceImpl implements FileService {
             // 4. 同步处理
             syncFiles(fileSystemMap, dbMap);
 
-            log.info("└─[FileService] 文件同步完成 - 共处理文件: {}", fileSystemMap.size());
+            log.info("◎ [FileService] 文件同步完成 - 共处理文件: {}", fileSystemMap.size());
         } catch (Exception e) {
-            log.info("└─[FileService] 文件同步失败 - {}", e.getMessage());
+            log.info("◎ [FileService] 文件同步失败 - {}", e.getMessage());
             throw e;
         }
     }

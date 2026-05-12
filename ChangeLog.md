@@ -623,6 +623,6 @@
 - 基于 ThreadLocal 构筑 UserCtxUtil 工具类以存储运行时用户信息并优化相关功能；
 - 优化访客拦截 URLS；
 - 更新 DeepSeekClient 组件的 API 请求格式；
-- 添加 logback.xml 配置文件 (暂时不用 感觉yml配置好一点)；
+- 调整部分日志输出 添加 logback.xml 配置文件 (暂时不用 感觉yml配置好一点)；
 
 - 前端做出对应调整。
