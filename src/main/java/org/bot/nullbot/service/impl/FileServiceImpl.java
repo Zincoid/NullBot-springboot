@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.entity.page.DataPage;
@@ -22,13 +23,12 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -53,10 +53,10 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public boolean addRecordOnly(String directory, String fileName, Long fileSize,
-                                 LocalDateTime lastModified, Long ownerId, String ownerName)
-    {
-        // 覆盖已存在文件
+    public boolean addRecordOnly(
+            String directory, String fileName, Long fileSize,
+            LocalDateTime lastModified, Long ownerId, String ownerName
+    ) {
         FilePO existFile = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, directory)
                 .eq(FilePO::getFileName, fileName));
@@ -69,8 +69,7 @@ public class FileServiceImpl implements FileService {
             return true;
         }
 
-        // 查询父文件夹
-        Path path = Paths.get(directory);
+        Path path = Path.of(directory);
         FilePO dir = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, path.getParent().toString())
                 .eq(FilePO::getFileName, path.getFileName().toString())
@@ -147,11 +146,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public DataPage<FilePO> getPage(String curDir, Integer current, Integer size, boolean hidden) {
-        String fullDir;
-        if(curDir.equals("/"))
-            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
-        else
-            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/") + curDir;
+        String fullDir = resolveFullDir(curDir);
         LambdaQueryWrapper<FilePO> wrapper = new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, fullDir)
                 .orderByDesc(FilePO::getIsDir)
@@ -167,11 +162,7 @@ public class FileServiceImpl implements FileService {
         if (key.contains("/") || key.contains("\\")) {
             throw new IllegalArgumentException("路径名不允许出现斜杠");
         }
-        String fullDir;
-        if(curDir.equals("/"))
-            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
-        else
-            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/") + curDir;
+        String fullDir = resolveFullDir(curDir);
         List<FilePO> fileList = hidden ? fileMapper.searchFileVisible(key, fullDir) : fileMapper.searchFile(key, fullDir);
         return new DataPage<>(fileList, 0L, 0L, 0L, 0L);
     }
@@ -180,18 +171,13 @@ public class FileServiceImpl implements FileService {
     @Transactional
     public void upload(Long ownerId, MultipartFile uploadFile, String curDir) throws IOException {
         String fileName = uploadFile.getOriginalFilename();
-        String fullDir;
-        if(curDir.equals("/"))
-            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
-        else
-            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/") + curDir;
+        String fullDir = resolveFullDir(curDir);
 
         if(!fileMapper.selectList(new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).eq(FilePO::getFileName, fileName)).isEmpty()) {
             throw new IllegalArgumentException("数据库存在同名冲突");
         }
 
-        // 查询父文件夹
-        Path path = Paths.get(fullDir);
+        Path path = Path.of(fullDir);
         FilePO dir = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, path.getParent().toString())
                 .eq(FilePO::getFileName, path.getFileName().toString())
@@ -199,19 +185,14 @@ public class FileServiceImpl implements FileService {
         );
         if(dir == null)
             throw new IllegalArgumentException("数据库父目录不存在");
-        java.io.File file_dir = new java.io.File(fullDir);
-        if (!file_dir.exists())
+        if (!Files.exists(path))
             throw new IllegalArgumentException("磁盘父目录不存在");
 
         String filePath = fullDir + "/" + fileName;
-        uploadFile.transferTo(new java.io.File(filePath));
+        uploadFile.transferTo(new File(filePath));
 
         String ownerName = adminMapper.selectById(ownerId).getUsername();
-        LocalDateTime lastModified = Files
-                .getLastModifiedTime(Path.of(filePath))
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
+        LocalDateTime lastModified = getLastModifiedTime(Path.of(filePath));
 
         FilePO file = new FilePO();
         file.setFileName(uploadFile.getOriginalFilename());
@@ -231,13 +212,12 @@ public class FileServiceImpl implements FileService {
         FilePO file = fileMapper.selectById(id);
         if (file == null) throw new IllegalArgumentException("数据库文件不存在");
         String fileName = file.getFileName();
-        String suf = file.getFileName().substring(file.getFileName().lastIndexOf("."));
-        FileInputStream fileInputStream;
-        try {
-            fileInputStream = new FileInputStream(file.getDirectory() + "/" + fileName);
-            response.setContentType(request.getSession().getServletContext().getMimeType(suf));  // 获取文件 MimeType
+        String suf = fileName.substring(fileName.lastIndexOf("."));
+        Path filePath = Path.of(file.getDirectory(), fileName);
+        try (InputStream fileInputStream = Files.newInputStream(filePath);
+             ServletOutputStream os = response.getOutputStream()) {
+            response.setContentType(request.getSession().getServletContext().getMimeType(suf));
             response.setHeader("content-disposition","attachment;fileName="+ URLEncoder.encode(fileName, StandardCharsets.UTF_8));
-            ServletOutputStream os = response.getOutputStream();
             FileCopyUtils.copy(fileInputStream, os);
         } catch (IOException e) {
             throw new RuntimeException("从磁盘下载文件时出错");
@@ -247,14 +227,9 @@ public class FileServiceImpl implements FileService {
     @Override
     @Transactional
     public void createDir(Long ownerId, String curDir, String dirName) throws IOException {
-        String fullDir;
-        if(curDir.equals("/"))
-            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
-        else
-            fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/") + curDir;
+        String fullDir = resolveFullDir(curDir);
 
-        // 查询父文件夹
-        Path path = Paths.get(fullDir);
+        Path path = Path.of(fullDir);
         FilePO dir = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, path.getParent().toString())
                 .eq(FilePO::getFileName, path.getFileName().toString())
@@ -262,25 +237,18 @@ public class FileServiceImpl implements FileService {
         );
         if(dir == null)
             throw new IllegalArgumentException("数据库父目录不存在");
-        java.io.File file_dir = new java.io.File(fullDir);
-        if(!file_dir.exists() || file_dir.isFile())
+        if(!Files.exists(path) || !Files.isDirectory(path))
             throw new IllegalArgumentException("磁盘父目录不存在");
 
-        String dirPath = fullDir + "/" + dirName;
+        Path dirPath = Path.of(fullDir, dirName);
 
-        java.io.File new_dir = new java.io.File(dirPath);
-        if (!new_dir.exists()){
-            if(!new_dir.mkdir())
-                throw new RuntimeException("磁盘目录创建失败");
+        if (!Files.exists(dirPath)){
+            Files.createDirectory(dirPath);
         } else
             throw new IllegalArgumentException("磁盘目录已存在");
 
         String ownerName = adminMapper.selectById(ownerId).getUsername();
-        LocalDateTime lastModified = Files
-                .getLastModifiedTime(Path.of(dirPath))
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
+        LocalDateTime lastModified = getLastModifiedTime(dirPath);
 
         FilePO file = new FilePO();
         file.setFileName(dirName);
@@ -299,7 +267,7 @@ public class FileServiceImpl implements FileService {
     public void deleteById(Integer id) {
         FilePO file = fileMapper.selectById(id);
         String filePath = file.getDirectory() + "/" + file.getFileName();
-        deleteFileByDir(new java.io.File(filePath));
+        FileUtils.deleteQuietly(new File(filePath));
         if (file.getIsDir() == 1)
             fileMapper.delete(new LambdaQueryWrapper<FilePO>().likeRight(FilePO::getDirectory, filePath));
         fileMapper.deleteById(id);
@@ -324,11 +292,11 @@ public class FileServiceImpl implements FileService {
             throw new IllegalArgumentException("新文件名包含非法字符");
         }
 
-        // 检查新文件名是否与同一目录下的其他文件重名
+        // 检查是否重名
         LambdaQueryWrapper<FilePO> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(FilePO::getDirectory, file.getDirectory())
                 .eq(FilePO::getFileName, newFileName)
-                .ne(FilePO::getId, id); // 排除当前文件自己
+                .ne(FilePO::getId, id); // 排除当前文件
         Long count = fileMapper.selectCount(queryWrapper);
         if (count > 0) {
             throw new IllegalArgumentException("数据库目录存在同名文件");
@@ -336,8 +304,8 @@ public class FileServiceImpl implements FileService {
 
         String oldFilePath = file.getDirectory() + "/" + file.getFileName();
         String newFilePath = file.getDirectory() + "/" + newFileName;
-        java.io.File oldFile = new java.io.File(oldFilePath);
-        java.io.File newFile = new java.io.File(newFilePath);
+        File oldFile = new File(oldFilePath);
+        File newFile = new File(newFilePath);
 
         if (!oldFile.exists()) {
             throw new IllegalArgumentException("磁盘原文件不存在");
@@ -349,48 +317,37 @@ public class FileServiceImpl implements FileService {
         // 重命名文件
         boolean renameSuccess = oldFile.renameTo(newFile);
         if (!renameSuccess) {
-            // log.info("文件重命名失败: {} -> {}", oldFilePath, newFilePath);
             throw new RuntimeException("磁盘文件重命名失败");
         }
 
-        // 如果是目录，需要更新目录下所有文件的路径（如果有子文件和子目录）
+        // 目录需更新所有子文件的路径
         if (file.getIsDir() == 1) {
-            // 更新该目录下所有文件的路径
             updateSubFilesPath(oldFilePath, newFilePath);
         }
 
-        // 更新数据库记录
+        // 更新数据库
         file.setFileName(newFileName);
         fileMapper.updateById(file);
-
-        // log.info("文件重命名成功: {} -> {}", oldFilePath, newFilePath);
     }
 
     @Override
     @Transactional
     public void move(Integer id, String newDir) {
-        // 获取源文件信息
         FilePO sourceFile = fileMapper.selectById(id);
         if (sourceFile == null) {
             throw new IllegalArgumentException("数据库文件不存在");
         }
 
-        // 构建目标目录的完整路径
-        String targetFullDir;
-        String fileStorageDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
-        if (newDir.equals("/"))
-            targetFullDir = fileStorageDir;
-        else
-            targetFullDir = fileStorageDir + newDir;
+        String targetFullDir = resolveFullDir(newDir);
 
-        // 检查源文件和目标目录是否相同
+        // 检查目录是否未修改
         if (sourceFile.getDirectory().equals(targetFullDir)) {
             throw new IllegalArgumentException("数据库路径未修改");
         }
 
-        // 检查目标目录是否存在（数据库和文件系统）
+        // 检查目标目录存在
         // 数据库检查
-        Path targetPath = Paths.get(targetFullDir);
+        Path targetPath = Path.of(targetFullDir);
         FilePO targetDir = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, targetPath.getParent().toString())
                 .eq(FilePO::getFileName, targetPath.getFileName().toString())
@@ -399,12 +356,11 @@ public class FileServiceImpl implements FileService {
             throw new IllegalArgumentException("数据库目标路径不存在");
         }
         // 文件系统检查
-        File targetDirFile = new File(targetFullDir);
-        if (!targetDirFile.exists() || !targetDirFile.isDirectory()) {
+        if (!Files.exists(targetPath) || !Files.isDirectory(targetPath)) {
             throw new IllegalArgumentException("磁盘目标路径不存在");
         }
 
-        // 检查目标目录下是否已存在同名文件
+        // 检查目标目录是否存在同名
         LambdaQueryWrapper<FilePO> conflictCheck = new LambdaQueryWrapper<>();
         conflictCheck.eq(FilePO::getDirectory, targetFullDir)
                 .eq(FilePO::getFileName, sourceFile.getFileName());
@@ -425,19 +381,17 @@ public class FileServiceImpl implements FileService {
             throw new IllegalArgumentException("磁盘目标路径存在同名文件");
         }
 
-        // 执行移动操作（文件系统）
+        // 执行文件系统移动操作
         try {
             boolean moveSuccess = sourceFileSystem.renameTo(targetFileSystem);
             if (!moveSuccess) {
-                // log.info("文件移动失败: {} -> {}", sourcePath, targetPathStr);
                 throw new RuntimeException("磁盘文件移动失败");
             }
         } catch (SecurityException e) {
-            // log.info("移动文件时发生安全异常: {}", e.getMessage());
             throw new RuntimeException("磁盘权限不足无法移动");
         }
 
-        // 如果是目录，更新所有子文件的路径
+        // 如果是目录需更新子文件路径
         if (sourceFile.getIsDir() == 1) {
             updateSubFilesPath(sourceFile.getDirectory() + "/" + sourceFile.getFileName(),
                     targetFullDir + "/" + sourceFile.getFileName());
@@ -448,8 +402,6 @@ public class FileServiceImpl implements FileService {
         // sourceFile.setVisible(targetDir.getVisible());
         sourceFile.setDirectory(targetFullDir);
         fileMapper.updateById(sourceFile);
-
-        // log.info("文件移动成功: {} -> {}", sourcePath, targetPathStr);
     }
 
     @Override
@@ -481,7 +433,7 @@ public class FileServiceImpl implements FileService {
      * @param newDirPath 新目录路径
      */
     private void updateSubFilesPath(String oldDirPath, String newDirPath) {
-        // 查询所有以原目录路径开头的文件
+        // 查询原目录路径开头文件
         LambdaQueryWrapper<FilePO> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.likeRight(FilePO::getDirectory, oldDirPath);
         List<FilePO> subFiles = fileMapper.selectList(queryWrapper);
@@ -493,116 +445,114 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-    private void deleteFileByDir(java.io.File dir){
-        java.io.File[] files = dir.listFiles();
-        if (files != null) {
-            for (java.io.File f : files) {
-                if (f.isFile()) {
-                    f.delete();
-                } else {
-                    deleteFileByDir(f);
-                }
-            }
-        }
-        dir.delete();
+    // =================== 路径 & 时间工具 ===================
+
+    private String normalizePath(String path) {
+        if (path == null) return null;
+        // 将 Windows 的反斜杠替换为正斜杠
+        return path.replace('\\', '/');
+    }
+
+    private String getNormalizedBaseDir() {
+        return normalizePath(fileStorageProperties.getFileDirectory());
+    }
+
+    private String resolveFullDir(String curDir) {
+        String base = getNormalizedBaseDir();
+        if (curDir.equals("/")) return base;
+        return base + curDir;
+    }
+
+    private static LocalDateTime getLastModifiedTime(Path path) throws IOException {
+        return Files.getLastModifiedTime(path)
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
     }
 
     // =================== 本地系统文件与数据库同步工具 ===================
 
-    // 文件信息类
-    private static class FileInfo {
-        String path;
-        long size;
-        long lastModified;
-        boolean isDirectory;
-    }
+    private record SyncFileInfo(long size, long lastModified, boolean isDirectory) {}
 
     // 主同步方法 (用户调用)
     public void scanAndSyncFiles() {
         try {
             // 1. 获取存储目录
-            String baseDir = normalizePath(fileStorageProperties.getFileDirectory());
-            File baseDirectory = new File(baseDir);
-            if (!baseDirectory.exists() || !baseDirectory.isDirectory()) {
-                System.err.println("存储目录不存在: " + baseDir);
+            String baseDir = getNormalizedBaseDir();
+            Path basePath = Path.of(baseDir);
+            if (!Files.exists(basePath) || !Files.isDirectory(basePath)) {
+                log.info("◎ [FileService] 存储目录不存在: {}", baseDir);
                 return;
             }
+
             // 2. 扫描文件系统
-            Map<String, FileInfo> fileSystemMap = new HashMap<>();
-            scanDirectory(baseDirectory, fileSystemMap);
+            Map<String, SyncFileInfo> fileSystemMap = new HashMap<>();
+            scanDirectory(basePath, fileSystemMap);
+
             // 3. 获取数据库记录
             List<FilePO> dbFiles = fileMapper.selectList(null);
             Map<String, FilePO> dbMap = new HashMap<>();
             for (FilePO file : dbFiles) {
-                // 统一数据库中的路径格式
-                String normalizedLocation = normalizePath(file.getDirectory() + "/" + file.getFileName());
+                String normalizedPath = normalizePath(file.getDirectory() + "/" + file.getFileName());
                 file.setDirectory(normalizePath(file.getDirectory()));
-                dbMap.put(normalizedLocation, file);
+                dbMap.put(normalizedPath, file);
             }
+
             // 4. 同步处理
             syncFiles(fileSystemMap, dbMap);
 
             log.info("◎ [FileService] 文件同步完成 - 共处理文件: {}", fileSystemMap.size());
         } catch (Exception e) {
             log.info("◎ [FileService] 文件同步失败 - {}", e.getMessage());
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 
-    // 路径标准化：统一使用正斜杠
-    private String normalizePath(String path) {
-        if (path == null) return null;
-        // 将Windows的反斜杠替换为正斜杠
-        return path.replace('\\', '/');
-    }
-
-    // 扫描本地文件目录
-    private void scanDirectory(File dir, Map<String, FileInfo> resultMap) {
-        if (!dir.exists() || !dir.isDirectory()) return;
-        File[] files = dir.listFiles();
-        if (files == null) return;
-        for (File file : files) {
-            // 统一路径格式为Windows反斜杠
-            String path = normalizePath(file.getAbsolutePath());
-            FileInfo info = new FileInfo();
-            info.path = path;
-            info.size = file.length();
-            info.lastModified = file.lastModified();
-            info.isDirectory = file.isDirectory();
-            resultMap.put(path, info);
-            // 递归扫描子目录
-            if (file.isDirectory()) {
-                scanDirectory(file, resultMap);
+    // 扫描本地文件
+    private void scanDirectory(Path dir, Map<String, SyncFileInfo> resultMap) throws IOException {
+        if (!Files.exists(dir) || !Files.isDirectory(dir)) return;
+        try (var stream = Files.list(dir)) {
+            for (Path child : stream.toList()) {
+                String normalizedPath = normalizePath(child.toAbsolutePath().toString());
+                boolean isDir = Files.isDirectory(child);
+                resultMap.put(normalizedPath, new SyncFileInfo(
+                        Files.size(child),
+                        Files.getLastModifiedTime(child).toMillis(),
+                        isDir
+                ));
+                if (isDir) {
+                    scanDirectory(child, resultMap);
+                }
             }
         }
     }
 
     // 同步文件系统与数据库
-    private void syncFiles(Map<String, FileInfo> fileSystemMap, Map<String, FilePO> dbMap) {
-        // 处理新增和修改的文件
-        for (Map.Entry<String, FileInfo> entry : fileSystemMap.entrySet()) {
+    private void syncFiles(Map<String, SyncFileInfo> fileSystemMap, Map<String, FilePO> dbMap) {
+        for (var entry : fileSystemMap.entrySet()) {
             String path = entry.getKey();
-            FileInfo fileInfo = entry.getValue();
-            File file = new File(path);
+            SyncFileInfo info = entry.getValue();
+            Path filePath = Path.of(path);
+
             if (dbMap.containsKey(path)) {
                 // 检查文件是否被修改 (性能损耗大)
                 FilePO dbFile = dbMap.get(path);
-                if (dbFile.getFileSize() != fileInfo.size ||
+                if (dbFile.getFileSize() != info.size() ||
                         dbFile.getLastModified() == null ||
-                        dbFile.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() != fileInfo.lastModified) {
+                        dbFile.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() != info.lastModified()) {
                     // 更新文件信息
-                    dbFile.setFileSize(fileInfo.size);
-                    dbFile.setLastModified(Instant.ofEpochMilli(fileInfo.lastModified).atZone(ZoneId.systemDefault()).toLocalDateTime());
+                    dbFile.setFileSize(info.size());
+                    dbFile.setLastModified(Instant.ofEpochMilli(info.lastModified()).atZone(ZoneId.systemDefault()).toLocalDateTime());
                     fileMapper.updateById(dbFile);
                 }
             } else {
                 // 新增文件记录
                 FilePO newFile = new FilePO();
-                newFile.setFileName(file.getName());
-                newFile.setFileSize(fileInfo.size);
-                newFile.setDirectory(normalizePath(file.getParent()));
-                newFile.setIsDir(fileInfo.isDirectory ? 1 : 0);
-                newFile.setLastModified(Instant.ofEpochMilli(fileInfo.lastModified).atZone(ZoneId.systemDefault()).toLocalDateTime());
+                newFile.setFileName(filePath.getFileName().toString());
+                newFile.setFileSize(info.size());
+                newFile.setDirectory(normalizePath(filePath.getParent().toString()));
+                newFile.setIsDir(info.isDirectory() ? 1 : 0);
+                newFile.setLastModified(Instant.ofEpochMilli(info.lastModified()).atZone(ZoneId.systemDefault()).toLocalDateTime());
                 fileMapper.insert(newFile);
             }
         }
