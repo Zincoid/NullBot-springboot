@@ -30,7 +30,7 @@ jwt:
   password:
   tokenTTL: 24h
 
-logging:  # 可移入 logback.yml 配置
+logging:  # 可移入 logback.xml 配置
   file:
     name: /root/Nullbot/output.log  # 日志路径
 #  level:
