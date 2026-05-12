@@ -19,4 +19,9 @@ public class SystemController {
         String result = systemService.invoke(command);
         return WebResult.success("调用成功").withData("result", result);
     }
+
+    @GetMapping("/exception")
+    public WebResult exception() throws Exception {
+        throw new Exception("测试异常");
+    }
 }
