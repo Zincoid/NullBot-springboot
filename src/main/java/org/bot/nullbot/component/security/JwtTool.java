@@ -98,6 +98,7 @@ public class JwtTool {
      * @param token token
      * @return 用户ID
      */
+    @Deprecated
     public Long getLoginId(String token) {
         JWT jwt = parseJwt(token);
         return getAs(jwt, "id", Long.class);
@@ -108,6 +109,7 @@ public class JwtTool {
      * @param token token
      * @return 用户Type
      */
+    @Deprecated
     public Integer getLoginType(String token) {
         JWT jwt = parseJwt(token);
         return getAs(jwt, "type", Integer.class);

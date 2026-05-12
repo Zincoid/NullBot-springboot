@@ -4,10 +4,12 @@ import cn.hutool.jwt.JWT;
 import com.alibaba.fastjson.JSONObject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.security.JwtTool;
 import org.bot.nullbot.entity.result.WebResult;
+import org.bot.nullbot.util.UserCtxUtil;
 import org.bot.nullbot.util.WebUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -25,50 +27,38 @@ public class WebInterceptor implements HandlerInterceptor {
 
     static {
         GUEST_FORBIDDEN_URLS = Arrays.asList(
-            "/nullbot/system",
 
-            "/nullbot/delete",
-            "/nullbot/update",
-            "/nullbot/changePwd",
+                // 禁用系统和设置功能
+                "/system",
+                "/setting",
 
-            "/nullbot/file/init",
-            "/nullbot/file/upload",
-            "/nullbot/file/createDir",
-            "/nullbot/file/delete",
-            "/nullbot/file/rename",
-            "/nullbot/file/move",
+                // 禁止操作 Csv
+                "/exportCsv",
+                "/importCsv",
 
-            "/nullbot/saying/delete",
-            "/nullbot/saying/exportCsv",
-            "/nullbot/saying/importCsv",
+                // 禁止增删改
+                "/add",
+                "/delete",
+                "/update",
 
-            "/nullbot/group/delete",
-            "/nullbot/group/update",
-            "/nullbot/group/exportCsv",
-            "/nullbot/group/importCsv",
+                // 禁止修改密码
+                "/changePwd",
 
-            "/nullbot/setting",
-
-            "/nullbot/user/delete",
-            "/nullbot/user/update",
-            "/nullbot/user/exportCsv",
-            "/nullbot/user/importCsv",
-
-            "/nullbot/item/add",
-            "/nullbot/item/delete",
-            "/nullbot/item/update",
-            "/nullbot/item/exportCsv",
-            "/nullbot/item/importCsv",
-
-            "/nullbot/inventory/add",
-            "/nullbot/inventory/delete",
-            "/nullbot/inventory/update",
-            "/nullbot/inventory/exportCsv",
-            "/nullbot/inventory/importCsv"
+                // 禁用部分文件功能
+                "/file/init",
+                "/file/upload",
+                "/file/createDir",
+                "/file/rename",
+                "/file/move"
         );
     }
 
-    public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
+    public boolean preHandle(
+            HttpServletRequest req,
+            @NonNull HttpServletResponse res,
+            @NonNull Object handler
+    ) throws Exception {
+
         String url = req.getRequestURL().toString();
         String ip = WebUtil.getClientIpAddress();
         log.info("◎ [WebInterceptor] 来自 {} 的请求 - {}", ip, url);
@@ -98,13 +88,16 @@ public class WebInterceptor implements HandlerInterceptor {
             return false;
         }
 
+        Long userId = jwtTool.getAs(jwt, "id", Long.class);
         Integer userType = jwtTool.getAs(jwt, "type", Integer.class);
+
+        UserCtxUtil.set(userId, userType);  // 存储此次用户信息
 
         if (userType == 0) {
             for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
                 if (url.contains(forbiddenUrl)) {
                     log.info("└─[WebInterceptor] 访客受限");
-                    WebResult error = WebResult.fail().withMsg("No Access");
+                    WebResult error = WebResult.fail("No Access");
                     res.getWriter().write(JSONObject.toJSONString(error));
                     return false;
                 }
@@ -112,7 +105,6 @@ public class WebInterceptor implements HandlerInterceptor {
             log.info("└─[WebInterceptor] 访客放行");
             return true;
         }
-
         if (userType == 1) {
             log.info("└─[WebInterceptor] 管理放行");
             return true;
@@ -120,5 +112,14 @@ public class WebInterceptor implements HandlerInterceptor {
 
         log.info("└─[WebInterceptor] 用户类型不存在");
         return false;
+    }
+
+    public void afterCompletion(
+            @NonNull HttpServletRequest req,
+            @NonNull HttpServletResponse res,
+            @NonNull Object handler,
+            Exception ex
+    ) {
+        UserCtxUtil.remove();
     }
 }

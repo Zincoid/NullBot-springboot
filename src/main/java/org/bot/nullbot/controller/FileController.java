@@ -4,12 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.component.security.JwtTool;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.FileService;
-import org.bot.nullbot.util.WebUtil;
+import org.bot.nullbot.util.UserCtxUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +21,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FileController {
 
-    private final JwtTool jwtTool;
     private final FileService fileService;
 
     @GetMapping("/init")
@@ -46,7 +44,8 @@ public class FileController {
             @PathVariable Integer pageSize,
             @RequestParam(defaultValue = "/") String curDir
     ) {
-        Integer userType = jwtTool.getLoginType(WebUtil.getToken());
+        // Integer userType = jwtTool.getLoginType(WebUtil.getToken());  // 弃用
+        Integer userType = UserCtxUtil.getType();
         DataPage<FilePO> filePage = fileService.getPage(
                 curDir,
                 currentPage,
@@ -58,7 +57,8 @@ public class FileController {
 
     @GetMapping("/searchFile")
     public WebResult searchFile(String key, String curDir) {
-        Integer userType = jwtTool.getLoginType(WebUtil.getToken());
+        // Integer userType = jwtTool.getLoginType(WebUtil.getToken());  // 弃用
+        Integer userType = UserCtxUtil.getType();
         DataPage<FilePO> filePage = fileService.search(
                 key,
                 curDir,
@@ -72,7 +72,8 @@ public class FileController {
             MultipartFile uploadFile,
             @RequestParam(defaultValue = "/") String curDir
     ) throws IOException {
-        Long userId = jwtTool.getLoginId(WebUtil.getToken());
+        // Long userId = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
+        Long userId = UserCtxUtil.getId();
         fileService.upload(userId, uploadFile, curDir);
         return WebResult.success("上传成功");
     }
@@ -90,7 +91,8 @@ public class FileController {
     public WebResult createDir(@RequestBody Map<String, String> map) throws IOException {
         String curDir = map.get("curDir");
         String dirName = map.get("dirName");
-        Long userId = jwtTool.getLoginId(WebUtil.getToken());
+        // Long userId = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
+        Long userId = UserCtxUtil.getId();
         fileService.createDir(userId, curDir, dirName);
         return WebResult.success("创建成功");
     }
