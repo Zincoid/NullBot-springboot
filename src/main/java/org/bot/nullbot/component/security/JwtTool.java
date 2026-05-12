@@ -82,14 +82,13 @@ public class JwtTool {
      */
     public <T> T getAs(JWT jwt, String attr, Class<T> clazz) {
         Object payload = jwt.getPayload(attr);
-        if (payload == null)
-            throw new UnauthorizedException("No Info");
+        if (payload == null) return null;
         try {
             if (clazz.isInstance(payload))
                 return clazz.cast(payload);
             return objectMapper.convertValue(payload, clazz);
         } catch (RuntimeException e) {
-            throw new UnauthorizedException("Invalid Info: " + e.getMessage());
+            throw new IllegalArgumentException("Invalid Info: " + e.getMessage());
         }
     }
 
