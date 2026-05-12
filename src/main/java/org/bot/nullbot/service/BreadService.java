@@ -1,20 +1,21 @@
 package org.bot.nullbot.service;
 
-import org.bot.nullbot.entity.page.DataPage;
-import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.po.ItemPO;
+import org.bot.nullbot.entity.vo.InventoryVO;
+
+import java.util.List;
 
 public interface BreadService {
 
-    DataPage<InventoryPO> getBreadPage(Long userId, int p, int size);
+    List<InventoryVO> getVOList(Long userId);
 
-    int buyBasicBread(Long userId, int cost);
+    int buyBasic(Long userId, int cost);
 
-    int[] eatBasicBread(Long userId, int exp);
+    int[] eatBasic(Long userId, int exp);
 
-    boolean eatRottenBread(Long userId);
+    boolean eatRotten(Long userId);
 
-    ItemPO buySpecialBread(Long userId, int cost);
+    ItemPO buySpecial(Long userId, int cost);
 
-    int transferBasicBread(Long fromId, Long toId);
+    int transferBasic(Long fromId, Long toId);
 }

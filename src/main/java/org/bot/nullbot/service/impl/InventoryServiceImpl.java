@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.po.UserPO;
+import org.bot.nullbot.entity.vo.InventoryVO;
 import org.bot.nullbot.enums.Rarity;
 import org.bot.nullbot.mapper.InventoryMapper;
 import org.bot.nullbot.mapper.ItemMapper;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -26,57 +28,53 @@ public class InventoryServiceImpl implements InventoryService {
     private final ItemMapper itemMapper;
     private final InventoryMapper inventoryMapper;
 
-    // =================== 数据库功能相关 ===================
-
-    @Transactional
-    @Override
-    public void updateAllInventories() {
-        inventoryMapper.selectList(null).forEach(inventory -> {
-            ItemPO item = itemMapper.selectById(inventory.getItemId());
-            if(item != null){
-                inventory.setItemName(item.getName());
-                inventory.setPrice(item.getPrice());
-                inventory.setCategory(item.getCategory());
-                inventory.setRarity(item.getRarity());
-                inventoryMapper.updateById(inventory);
-            }else{
-                inventoryMapper.deleteById(inventory.getId());
-            }
-        });
-    }
-
     // =================== BOT功能相关 ===================
 
     @Override
-    public DataPage<InventoryPO> getInventoriesPage(Long userId, int p, int size) {
-        Page<InventoryPO> page = new Page<>(p, size);
-        Page<InventoryPO> inventoryPage = inventoryMapper
-                .selectPage(page, new LambdaQueryWrapper<InventoryPO>()
-                .eq(InventoryPO::getOwnerId, userId)
-                .orderByDesc(InventoryPO::getRarity)
-                .orderByDesc(InventoryPO::getPrice)
-                .orderByAsc(InventoryPO::getId));
-        return new DataPage<>(inventoryPage.getRecords(), inventoryPage.getCurrent(), inventoryPage.getPages(), inventoryPage.getTotal(), inventoryPage.getSize());
+    public DataPage<InventoryVO> getVOPage(Long userId, Integer current, Integer size) {
+        Page<InventoryPO> page = new Page<>(current, size);
+        Page<InventoryPO> inventoryPOPage = inventoryMapper.selectPage(
+                page, new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId)
+        );
+        List<InventoryVO> inventoryVOS = inventoryPOPage.getRecords().stream()
+                .map(inventoryPO -> {
+                    ItemPO item = itemMapper.selectById(inventoryPO.getItemId());
+                    return new InventoryVO(
+                            inventoryPO.getId(),
+                            inventoryPO.getOwnerId(),
+                            inventoryPO.getItemId(),
+                            item.getName(),
+                            item.getCategory(),
+                            item.getRarity(),
+                            item.getPrice(),
+                            inventoryPO.getAmount()
+                    );
+                })
+                .sorted(Comparator
+                        .comparing(InventoryVO::getRarity, Comparator.reverseOrder())
+                        .thenComparing(InventoryVO::getPrice, Comparator.reverseOrder())
+                        .thenComparing(InventoryVO::getId)
+                )
+                .toList();
+        return new DataPage<>(inventoryVOS, inventoryPOPage.getCurrent(),
+                inventoryPOPage.getPages(), inventoryPOPage.getTotal(), inventoryPOPage.getSize());
     }
 
     @Override
-    public int getTotalAmountByUserId(Long userId) {
+    public int getTotalAmount(Long userId) {
         return inventoryMapper.sumAmountByUserId(userId);
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public boolean increaseInventory(Long userId, Integer itemId, int i) {
+    public boolean increase(Long userId, Integer itemId, int i) {
         ItemPO item = itemMapper.selectById(itemId);
         if(item == null) return false;
         UserPO user = userMapper.selectById(userId);
         if(inventoryMapper.sumAmountByUserId(userId) >= user.getCapacity()) return false;
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
         if(inventories == null || inventories.isEmpty()){
-            return inventoryMapper.insert(
-                    new InventoryPO(null, userId,
-                            item.getId(), item.getName(), item.getCategory(), item.getRarity(), item.getPrice(), i)
-            ) == 1;
+            return inventoryMapper.insert(new InventoryPO(null, userId, item.getId(), i)) == 1;
         }else if(inventories.size() == 1){
             InventoryPO inventory = inventories.getFirst();
             inventory.setAmount(inventory.getAmount() + i);
@@ -87,7 +85,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public boolean decreaseInventory(Long userId, Integer itemId, int i) {
+    public boolean decrease(Long userId, Integer itemId, int i) {
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
         if(inventories == null || inventories.size() != 1) return false;
         InventoryPO inventory = inventories.getFirst();
@@ -101,10 +99,10 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     @Transactional
-    public boolean sellInventory(Long userId, Integer itemId, int i) {
+    public boolean sell(Long userId, Integer itemId, int i) {
         ItemPO item = itemMapper.selectById(itemId);
         if(item == null) return false;
-        if(decreaseInventory(userId, itemId, i)){
+        if(decrease(userId, itemId, i)){
             UserPO user = userMapper.selectById(userId);
             user.setCash(user.getCash() + item.getPrice() * i);
             return userMapper.updateById(user) == 1;
@@ -114,25 +112,28 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     @Transactional
-    public boolean buyInventory(Long userId, Integer itemId, int i) {
+    public boolean buy(Long userId, Integer itemId, int i) {
         ItemPO item = itemMapper.selectById(itemId);
         if(item == null) return false;
         UserPO user = userMapper.selectById(userId);
         int totalPrice = item.getPrice() * i;
         if (user.getCash() >= totalPrice) {
             user.setCash(user.getCash() - totalPrice);
-            return userMapper.updateById(user) == 1 && increaseInventory(userId, itemId, i);
+            return userMapper.updateById(user) == 1 && increase(userId, itemId, i);
         }else
             return false;
     }
 
     @Override
     @Transactional
-    public boolean sellInventoryByRarity(Long userId, Rarity rarity) {
-        List<InventoryPO> inventoriesByRarity = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getRarity, rarity));
-        if(inventoriesByRarity == null || inventoriesByRarity.isEmpty()) return false;
-        for(InventoryPO inventory : inventoriesByRarity){
-            sellInventory(userId, inventory.getItemId(), inventory.getAmount());
+    public boolean sellByRarity(Long userId, Rarity rarity) {
+        List<InventoryVO> InventoryVOS = getVOList(userId);
+        List<InventoryVO> inventoryVOSByRarity = InventoryVOS.stream()
+                .filter(inventoryVO -> inventoryVO.getRarity() == rarity)
+                .toList();
+        if(inventoryVOSByRarity.isEmpty()) return false;
+        for(InventoryVO inventoryVO : inventoryVOSByRarity){
+            sell(userId, inventoryVO.getItemId(), inventoryVO.getAmount());
         }
         return true;
     }
@@ -140,23 +141,41 @@ public class InventoryServiceImpl implements InventoryService {
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<InventoryPO> getInventories(Long userId) {
-        return inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>()
-                .eq(InventoryPO::getOwnerId, userId)
-                .orderByDesc(InventoryPO::getRarity)
-                .orderByDesc(InventoryPO::getPrice)
-                .orderByAsc(InventoryPO::getId));
+    public List<InventoryVO> getVOList(Long userId) {
+        List<InventoryPO> inventoryPOS = inventoryMapper.selectList(
+                new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId)
+        );
+        return inventoryPOS.stream()
+                .map(inventoryPO -> {
+                    ItemPO item = itemMapper.selectById(inventoryPO.getItemId());
+                    return new InventoryVO(
+                            inventoryPO.getId(),
+                            inventoryPO.getOwnerId(),
+                            inventoryPO.getItemId(),
+                            item.getName(),
+                            item.getCategory(),
+                            item.getRarity(),
+                            item.getPrice(),
+                            inventoryPO.getAmount()
+                    );
+                })
+                .sorted(Comparator
+                        .comparing(InventoryVO::getRarity, Comparator.reverseOrder())
+                        .thenComparing(InventoryVO::getPrice, Comparator.reverseOrder())
+                        .thenComparing(InventoryVO::getId)
+                )
+                .toList();
     }
 
     @Override
-    public List<InventoryPO> getInventoryList() { return inventoryMapper.selectList(null); }
+    public List<InventoryPO> getAll() { return inventoryMapper.selectList(null); }
 
     @Override
-    public void addInventories(List<InventoryPO> inventories) { inventoryMapper.insert(inventories); }
+    public void add(List<InventoryPO> inventories) { inventoryMapper.insert(inventories); }
 
     @Override
-    public boolean deleteById(Integer id) { return inventoryMapper.deleteById(id) == 1; }
+    public boolean delete(Integer id) { return inventoryMapper.deleteById(id) == 1; }
 
     @Override
-    public boolean updateInventory(InventoryPO inventory) { return inventoryMapper.updateById(inventory) == 1; }
+    public boolean update(InventoryPO inventory) { return inventoryMapper.updateById(inventory) == 1; }
 }

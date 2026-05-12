@@ -6,10 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.entity.page.DataPage;
-import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.po.ItemPO;
 import org.bot.nullbot.entity.po.UserPO;
+import org.bot.nullbot.entity.vo.InventoryVO;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.BreadService;
 import org.bot.nullbot.service.InventoryService;
@@ -44,7 +43,7 @@ public class BreadCommand implements Command {
             case "-eat", "e" -> eat(bot, userId, userName, groupId);
             case "-rob", "r" -> rob(bot, event, groupId, userId, userName);
             case "-gift", "g" -> gift(bot, event, groupId, userId, userName);
-            case "-look", "l" -> look(bot, params, groupId, userId, userName);
+            case "-look", "l" -> look(bot, groupId, userId, userName);
             default -> throw new NullBotMsgException("[面包] ❌操作不存在");
         }
     }
@@ -52,14 +51,14 @@ public class BreadCommand implements Command {
     private void buy(Bot bot, Long userId, Long groupId, String userName) {
         int cost = 500;  // 需支付的现金
         if (random.nextInt(100) >= 10) {  // 10% 概率获得特殊面包
-            int i = breadService.buyBasicBread(userId, cost);
+            int i = breadService.buyBasic(userId, cost);
             if (i > 0) {
                 bot.sendGroupMsg(groupId, userName + " 花费￥" + cost + "...\n- 买到" + i + "个面包！", false);
                 log.info("\t\t\t\t├─[Bread-Buy] 已购买普通面包 - {}({}) -> {}个", userName, userId, i);
                 return;
             }
         } else {
-            ItemPO bread = breadService.buySpecialBread(userId, cost);
+            ItemPO bread = breadService.buySpecial(userId, cost);
             if (bread != null) {
                 bot.sendGroupMsg(groupId, userName + " 花费￥" + cost + "...\n- 买到1个特殊面包！\n" + bread, false);
                 log.info("\t\t\t\t├─[Bread-Buy] 已购买特殊面包 - {}({}) -> {}", userName, userId, bread.getName());
@@ -73,7 +72,7 @@ public class BreadCommand implements Command {
     private void eat(Bot bot, Long userId, String userName, Long groupId) {
         int exp = 5;  // 单个面包经验值
         if (random.nextInt(100) >= 10) {  // 10% 概率吃到过期面包
-            int[] res = breadService.eatBasicBread(userId, exp);
+            int[] res = breadService.eatBasic(userId, exp);
             int i = res[0];
             if (i > 0) {
                 int j = res[1];
@@ -87,7 +86,7 @@ public class BreadCommand implements Command {
                 return;
             }
         } else {
-            if (breadService.eatRottenBread(userId)) {
+            if (breadService.eatRotten(userId)) {
                 bot.sendGroupMsg(groupId, userName + " 吃到1个烂面包！\n- Exp清空了！", false);
                 log.info("\t\t\t\t├─[Bread-Eat] 吃到烂面包 - {}({})", userName, userId);
                 return;
@@ -114,7 +113,7 @@ public class BreadCommand implements Command {
             return;
         }
 
-        int i = breadService.transferBasicBread(targetId, userId);
+        int i = breadService.transferBasic(targetId, userId);
         if (i > 0) {
             bot.sendGroupMsg(groupId, userName + " 抢了 " + targetName + " " + i + "个面包！", false);
             log.info("\t\t\t\t├─[Bread-Rob] 已抢面包 - {}({}) -> {}个", targetName, targetId, i);
@@ -141,7 +140,7 @@ public class BreadCommand implements Command {
             return;
         }
 
-        int i = breadService.transferBasicBread(userId, targetId);
+        int i = breadService.transferBasic(userId, targetId);
         if (i > 0) {
             bot.sendGroupMsg(groupId, userName + " 送了 " + targetName + " " + i + "个面包！", false);
             log.info("\t\t\t\t├─[Bread-Gift] 已送面包 - {}({}) -> {}个", targetName, targetId, i);
@@ -151,31 +150,21 @@ public class BreadCommand implements Command {
         }
     }
 
-    private void look(Bot bot, List<String> params, Long groupId, Long userId, String userName) {
-        int p = 1;
-        if (params.size() > 1)
-            try {
-                p = Integer.parseInt(params.get(1));
-            } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupId, "[查面包] ❌页码格式错误", false);
-                log.info("\t\t\t\t├─[Bread-Look] 页码格式错误");
-                return;
-            }
-        DataPage<InventoryPO> inventoryPage = breadService.getBreadPage(userId, p, 10);
+    private void look(Bot bot, Long groupId, Long userId, String userName) {
+        List<InventoryVO> inventoryVOS = breadService.getVOList(userId);
         UserPO user = userService.getUser(userId);
-        int totalAmount = inventoryService.getTotalAmountByUserId(userId);
+        int totalAmount = inventoryService.getTotalAmount(userId);
         StringBuilder sb = new StringBuilder()
                 .append("[面包] ").append(userName).append("(").append(userId).append(")\n")
                 .append("现金: ￥").append(user.getCash()).append("  容量: ").append(totalAmount).append("/").append(user.getCapacity()).append("\n")
                 .append("[ID -- 名称 -- 品质/单价 - 数量]\n");
-        if (inventoryPage.getTotal() > 0) {
-            for (InventoryPO inventoryPO : inventoryPage.getData())
-                sb.append(inventoryPO.toString()).append("\n");
+        if (!inventoryVOS.isEmpty()) {
+            for (InventoryVO inventoryVO : inventoryVOS)
+                sb.append(inventoryVO.toString()).append("\n");
         } else {
-            sb.append("无面包...").append("\n");
+            sb.append("无面包...");
         }
-        sb.append("[第").append(inventoryPage.getCurrent()).append("页").append(" / 共").append(inventoryPage.getPages()).append("页 (每页").append(inventoryPage.getSize()).append("条)]");
-        bot.sendGroupMsg(groupId, sb.toString(), false);
+        bot.sendGroupMsg(groupId, sb.toString().trim(), false);
         log.info("\t\t\t\t├─[Bread-Look] 已获取面包库存 - {}({})", userName, userId);
     }
 
@@ -187,7 +176,7 @@ public class BreadCommand implements Command {
                 限权: %d 级
                 格式: Bread [操作符] [参数]
                 操作:
-                - 查面包 [l|-look] [可选: 页码]
+                - 查面包 [l|-look]
                 - 买面包 [b|-buy]
                 - 吃面包 [e|-eat]
                 - 抢面包 [r|-rob] [@用户]

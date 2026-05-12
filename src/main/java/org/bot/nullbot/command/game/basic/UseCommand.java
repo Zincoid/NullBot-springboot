@@ -46,7 +46,7 @@ public class UseCommand implements Command {
             throw new NullBotMsgException("[使用] ❌该物品不可使用");
         // 库存检查
         Long userId = event.getUserId();
-        if (!inventoryService.decreaseInventory(userId, itemId, 1))
+        if (!inventoryService.decrease(userId, itemId, 1))
             throw new NullBotMsgException("[使用] ❌该物品数量不足");
 
         // 替换参数

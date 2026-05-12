@@ -71,7 +71,7 @@ public class ItemServiceImpl implements ItemService {
                             .eq(ItemPO::getRarity, rarity)
             );
             ItemPO item = DrawUtil.drawItemByLogPrice(itemList);
-            if(inventoryService.increaseInventory(userId, item.getId(), 1))
+            if(inventoryService.increase(userId, item.getId(), 1))
                 return item;
             else
                 return null;

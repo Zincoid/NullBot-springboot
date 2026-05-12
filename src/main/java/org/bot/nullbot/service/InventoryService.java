@@ -2,35 +2,34 @@ package org.bot.nullbot.service;
 
 import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.po.InventoryPO;
+import org.bot.nullbot.entity.vo.InventoryVO;
 import org.bot.nullbot.enums.Rarity;
 
 import java.util.List;
 
 public interface InventoryService {
 
-    void updateAllInventories();
+    DataPage<InventoryVO> getVOPage(Long userId, Integer current, Integer size);
 
-    DataPage<InventoryPO> getInventoriesPage(Long userId, int p, int size);
+    int getTotalAmount(Long userId);
 
-    int getTotalAmountByUserId(Long userId);
+    boolean increase(Long userId, Integer itemId, int i);
 
-    boolean increaseInventory(Long userId, Integer itemId,  int i);
+    boolean decrease(Long userId, Integer itemId, int i);
 
-    boolean decreaseInventory(Long userId, Integer itemId,  int i);
+    boolean sell(Long userId, Integer itemId, int i);
 
-    boolean sellInventory(Long userId, Integer itemId, int i);
+    boolean buy(Long userId, Integer itemId, int i);
 
-    boolean buyInventory(Long userId, Integer itemId, int i);
+    boolean sellByRarity(Long userId, Rarity rarity);
 
-    boolean sellInventoryByRarity(Long userId, Rarity rarity);
+    List<InventoryVO> getVOList(Long userId);
 
-    List<InventoryPO> getInventories(Long userId);
+    List<InventoryPO> getAll();
 
-    List<InventoryPO> getInventoryList();
+    void add(List<InventoryPO> inventories);
 
-    void addInventories(List<InventoryPO> inventories);
+    boolean delete(Integer id);
 
-    boolean deleteById(Integer id);
-
-    boolean updateInventory(InventoryPO inventory);
+    boolean update(InventoryPO inventory);
 }

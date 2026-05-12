@@ -25,12 +25,12 @@ public class InventoryController {
 
     @GetMapping("/list")
     public WebResult getInventoryList(Long userId){
-        return WebResult.success().addMsg("查询成功").addData("inventories", inventoryService.getInventories(userId));
+        return WebResult.success().addMsg("查询成功").addData("inventories", inventoryService.getVOList(userId));
     }
 
     @PostMapping("/add")
     public WebResult add(Long userId, Integer itemId){
-        if(inventoryService.increaseInventory(userId, itemId, 1))
+        if(inventoryService.increase(userId, itemId, 1))
             return WebResult.success().addMsg("增加成功");
         else
             return WebResult.fail().addMsg("增加失败");
@@ -38,7 +38,7 @@ public class InventoryController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
-        if(inventoryService.deleteById(id)){
+        if(inventoryService.delete(id)){
             return WebResult.success().addMsg("删除成功");
         }else{
             return WebResult.fail().addMsg("删除失败");
@@ -47,7 +47,7 @@ public class InventoryController {
 
     @PutMapping("/update")
     public WebResult update(@RequestBody InventoryPO inventory){
-        if(inventoryService.updateInventory(inventory))
+        if(inventoryService.update(inventory))
             return WebResult.success().addMsg("更新成功");
         else
             return WebResult.fail().addMsg("更新失败");
@@ -55,13 +55,13 @@ public class InventoryController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<InventoryPO> inventories = inventoryService.getInventoryList();
+        List<InventoryPO> inventories = inventoryService.getAll();
         CsvExportUtil.exportToCsv(response, "Inventories_" + LocalDateTime.now(), inventories, InventoryPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<InventoryPO> inventories =  CsvImportUtil.importFromCsv(csvFile, InventoryPO.class);
-        inventoryService.addInventories(inventories);
+        inventoryService.add(inventories);
     }
 }
