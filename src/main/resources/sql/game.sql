@@ -1,5 +1,5 @@
-# CREATE DATABASE NullBot;
-# USE NullBot;
+# CREATE DATABASE nullbot;
+# USE nullbot;
 
 DROP TABLE IF EXISTS `item`;
 DROP TABLE IF EXISTS `inventory`;
@@ -22,9 +22,5 @@ CREATE TABLE `inventory` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     owner_id LONG NOT NULL,
     item_id INT NOT NULL,
-    item_name VARCHAR(100) NOT NULL,
-    category INT NOT NULL,
-    rarity INT NOT NULL,
-    price INT NOT NULL,
     amount INT DEFAULT 1
 );

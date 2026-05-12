@@ -8,6 +8,7 @@ import org.bot.nullbot.entity.po.DriftBottlePO;
 @Mapper
 public interface DriftBottleMapper extends BaseMapper<DriftBottlePO> {
 
+    @Deprecated
     @Select("SELECT * FROM drift_bottle ORDER BY RAND() LIMIT 1")
     DriftBottlePO getRand();
 

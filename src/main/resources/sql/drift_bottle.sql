@@ -1,5 +1,5 @@
-# CREATE DATABASE NullBot;
-# USE NullBot;
+# CREATE DATABASE nullbot;
+# USE nullbot;
 
 DROP TABLE IF EXISTS `drift_bottle`;
 

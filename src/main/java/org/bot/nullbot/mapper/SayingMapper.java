@@ -7,6 +7,7 @@ import org.bot.nullbot.entity.po.SayingPO;
 @Mapper
 public interface SayingMapper extends BaseMapper<SayingPO> {
 
+    @Deprecated
     @Select("SELECT * FROM saying ORDER BY RAND() LIMIT 1")
     SayingPO getRand();
 
