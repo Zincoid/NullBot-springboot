@@ -16,6 +16,7 @@ import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
@@ -128,9 +129,11 @@ public class DeepSeekClient {
      * @param event 命令事件实体 (用于执行嵌入命令)
      * @return AI回复内容
      */
-    public String chatGroup(Integer messageId, Long groupId, Long userId, String userName,
-                            String message, Bot bot, Event event) throws Exception
-    {
+    public String chatGroup(
+            Integer messageId, Long groupId, Long userId, String userName,
+            String message, Bot bot, Event event
+    ) throws Exception {
+
         ChatOption option = settingService.getChatOption(groupId);
 
         if (option.isAntiInjection()) {
@@ -234,9 +237,11 @@ public class DeepSeekClient {
      * @param event 命令事件实体 (用于执行嵌入命令)
      * @return AI回复内容
      */
-    public String chatPrivate(Integer messageId, Long userId, String userName,
-                              String message, Bot bot, Event event) throws Exception
-    {
+    public String chatPrivate(
+            Integer messageId, Long userId, String userName,
+            String message, Bot bot, Event event
+    ) throws Exception {
+
         ReentrantLock lock = chatStorage.getUserLock(userId);
         lock.lock();  // 锁定历史存储
 
@@ -323,8 +328,10 @@ public class DeepSeekClient {
      * @param embedding 嵌入指令模式
      * @return 发送给 API 的消息列表
      */
-    private List<Map<String, String>> buildGroupMsgs(List<ChatMessage> chatMessages, Long groupId,
-                                                     boolean custom, boolean embedding) {
+    private List<Map<String, String>> buildGroupMsgs(
+            List<ChatMessage> chatMessages, Long groupId,
+            boolean custom, boolean embedding
+    ) {
         String systemMessage;
         if (custom)
             systemMessage = sysMsgStorage.getCustomMessage(groupId);
@@ -420,7 +427,18 @@ public class DeepSeekClient {
     private String sendRequest(List<Map<String, String>> _messages, boolean thinking) throws Exception {
         // 构建 JSON
         ObjectNode requestBody = objectMapper.createObjectNode();
-        requestBody.put("model", thinking ? "deepseek-reasoner" : "deepseek-chat");
+        requestBody.put("model", "deepseek-v4-flash");
+
+        if (thinking) {
+            ObjectNode thinkingNode = objectMapper.createObjectNode();
+            thinkingNode.put("type", "enabled");
+            requestBody.set("thinking", thinkingNode);
+            requestBody.put("reasoning_effort", "high");
+        } else {
+            requestBody.set("thinking", NullNode.getInstance());
+        }
+
+        requestBody.put("stream", false);
         requestBody.put("max_tokens", deepSeekProperties.getMaxTokens());
         requestBody.set("messages", objectMapper.valueToTree(_messages));
 
@@ -463,8 +481,11 @@ public class DeepSeekClient {
      * @param voice 语音模式
      * @return 处理过的消息 (已过滤)
      */
-    String executeBasic(String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
-                        Bot bot, boolean voice) throws IOException {
+    String executeBasic(
+            String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
+            Bot bot, boolean voice
+    ) throws IOException {
+
         // 丢弃判断
         if (response.contains("{Discard}")) return "Discarded";
         // 处理消息
@@ -490,8 +511,11 @@ public class DeepSeekClient {
      * @param voice 语音模式
      * @return 处理过的消息 (未过滤)
      */
-    String executeEmbeddingChain(String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
-                                 Bot bot, Event event, boolean voice, boolean embeddingAuth, boolean embeddingLimit) throws IOException {
+    String executeEmbeddingChain(
+            String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
+            Bot bot, Event event, boolean voice, boolean embeddingAuth, boolean embeddingLimit
+    ) throws IOException {
+
         // 丢弃判断
         if (response.contains("{Discard}")) return "Discarded";
         // 处理消息
@@ -538,8 +562,11 @@ public class DeepSeekClient {
      * @return 处理过的消息 (已过滤)
      */
     @Deprecated
-    String executeEmbedding(String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
-                            Bot bot, Event event, boolean voice, boolean embeddingAuth, boolean embeddingLimit) throws IOException {
+    String executeEmbedding(
+            String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
+            Bot bot, Event event, boolean voice, boolean embeddingAuth, boolean embeddingLimit
+    ) throws IOException {
+
         // 丢弃判断
         if (response.contains("{Discard}")) return "Discarded";
         // 处理消息
