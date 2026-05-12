@@ -56,7 +56,7 @@ public class LoginController {
     public WebResult delete(){
         Long id = jwtTool.getLoginId(WebUtil.getToken());
         log.info("└─[LoginController] 管理员注销 - ID: {}", id);
-        if(adminService.delete(id))
+        if(adminService.deleteById(id))
             return WebResult.success().addMsg("管理员注销成功");
         return WebResult.fail().addMsg("管理员注销失败");
     }

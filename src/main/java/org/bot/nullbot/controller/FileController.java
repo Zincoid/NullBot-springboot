@@ -26,7 +26,7 @@ public class FileController {
 
     @GetMapping("/init")
     public WebResult initRootFile(){
-        if(fileService.initRootFile()){
+        if(fileService.initRoot()){
             return WebResult.success().addMsg("Root 文件 初始化完成");
         }else{
             return WebResult.fail().addMsg("Root 文件 已初始化过");
@@ -36,7 +36,7 @@ public class FileController {
     @GetMapping("/sync")
     public WebResult syncFilesToDatabase(){
         try {
-            fileService.syncFilesToDatabase();
+            fileService.syncLocalToDatabase();
             return WebResult.success().addMsg("本地与数据库 已同步");
         } catch (Exception e) {
             return WebResult.fail().addMsg("本地与数据库 同步失败");
@@ -47,8 +47,8 @@ public class FileController {
     public WebResult getFileByPage(@PathVariable Integer currentPage,
                                 @PathVariable Integer pageSize,
                                 @RequestParam(defaultValue = "/") String curDir){
-        DataPage<FilePO> filePage = fileService.getFileByPage(
-                currentPage, pageSize, curDir,
+        DataPage<FilePO> filePage = fileService.getPage(
+                curDir, currentPage, pageSize,
                 jwtTool.getLoginType(WebUtil.getToken()) == 0
         );
         return WebResult.success().addMsg("查询成功").addData("filePage", filePage);
@@ -59,7 +59,7 @@ public class FileController {
         if (key.contains("/") || key.contains("\\")){
             return WebResult.fail().addMsg("不允许出现斜杠");
         }
-        DataPage<FilePO> filePage = fileService.searchFile(
+        DataPage<FilePO> filePage = fileService.search(
                 key, curDir,
                 jwtTool.getLoginType(WebUtil.getToken()) == 0
         );
@@ -106,7 +106,7 @@ public class FileController {
     @DeleteMapping("/delete/{id}")
     public WebResult deleteFile(@PathVariable Integer id){
         try {
-            if(fileService.deleteFile(id))
+            if(fileService.deleteById(id))
                 return WebResult.success().addMsg("删除成功");
             else
                 return WebResult.fail().addMsg("删除失败: 未知错误");
@@ -118,7 +118,7 @@ public class FileController {
     @GetMapping("/rename/{id}")
     public WebResult renameFile(@PathVariable Integer id, @RequestParam(defaultValue = "") String newFileName){
         try {
-            if(fileService.renameFile(id, newFileName))
+            if(fileService.rename(id, newFileName))
                 return WebResult.success().addMsg("重命名成功");
             else
                 return WebResult.fail().addMsg("重命名失败: 未知错误");
@@ -130,7 +130,7 @@ public class FileController {
     @GetMapping("/move/{id}")
     public WebResult moveFile(@PathVariable Integer id, @RequestParam String newDir){
         try {
-            if(fileService.moveFile(id, newDir))
+            if(fileService.move(id, newDir))
                 return WebResult.success().addMsg("移动成功");
             else
                 return WebResult.fail().addMsg("移动失败: 未知错误");

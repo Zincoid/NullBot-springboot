@@ -49,7 +49,7 @@ public class ImageDeleteCommand implements Command {
                 }
                 if (realFileNames.size() != 1)
                     throw new NullBotMsgException("[删除图片] ❌删除异常");
-                if (!fileService.deleteFileRecordForBot(directory, realFileNames.getFirst()))
+                if (!fileService.deleteRecordOnly(directory, realFileNames.getFirst()))
                     throw new NullBotMsgException("[删除图片] ❌数据库更新失败");
                 bot.sendGroupMsg(event.getGroupId(), "[删除图片] ⚠️已删除\n- " +
                         StringUtil.truncateFileName(realFileNames.getFirst(), 12), false);
@@ -62,7 +62,7 @@ public class ImageDeleteCommand implements Command {
             } catch (Exception e) {
                 throw new NullBotMsgException("[删除图片] ❌" + e.getMessage());
             }
-            if (!fileService.deleteFileRecordForBot(directory, fileName))
+            if (!fileService.deleteRecordOnly(directory, fileName))
                 throw new NullBotMsgException("[删除图片] ❌数据库更新失败");
             bot.sendGroupMsg(event.getGroupId(), "[删除图片] ⚠️已删除\n- " +
                     StringUtil.truncateFileName(fileName, 12), false);

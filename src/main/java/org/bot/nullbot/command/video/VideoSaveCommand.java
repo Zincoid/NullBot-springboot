@@ -56,7 +56,7 @@ public class VideoSaveCommand implements Command {
         String url = entry.getValue();
         try {
             FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t\t├─ ");
-            if(!fileService.addFileRecordForBot(
+            if(!fileService.addRecordOnly(
                     filePath,
                     fileInfo.getFileName(),
                     fileInfo.getFileSize(),

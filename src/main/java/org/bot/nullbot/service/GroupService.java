@@ -23,11 +23,11 @@ public interface GroupService {
 
     List<GroupPO> getAll();
 
-    DataPage<GroupPO> getPage(Integer currentPage, Integer pageSize);
+    DataPage<GroupPO> getPage(Integer current, Integer size);
 
     void adds(List<GroupPO> groups);
 
-    boolean delete(Long groupId);
+    boolean deleteById(Long id);
 
     boolean update(GroupPO group);
 }

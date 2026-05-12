@@ -53,8 +53,8 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public Boolean addFileRecordForBot(String directory, String fileName, Long fileSize,
-                                       LocalDateTime lastModified, Long ownerId, String ownerName)
+    public boolean addRecordOnly(String directory, String fileName, Long fileSize,
+                                 LocalDateTime lastModified, Long ownerId, String ownerName)
     {
         // 覆盖已存在文件
         FilePO existFile = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
@@ -94,7 +94,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Boolean deleteFileRecordForBot(String directory, String fileName) {
+    public boolean deleteRecordOnly(String directory, String fileName) {
         return fileMapper.delete(new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, directory)
                 .eq(FilePO::getFileName, fileName)
@@ -105,7 +105,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public Boolean initRootFile() {
+    public boolean initRoot() {
         Path rootPath = Path.of(fileStorageProperties.getFileDirectory());
         String rootParentPath = rootPath.getParent().toString();
         String rootFileName = rootPath.getFileName().toString();
@@ -141,12 +141,12 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void syncFilesToDatabase() {
+    public void syncLocalToDatabase() {
         scanAndSyncFiles();
     }
 
     @Override
-    public DataPage<FilePO> getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden) {
+    public DataPage<FilePO> getPage(String curDir, Integer current, Integer size, boolean hidden) {
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
@@ -157,13 +157,13 @@ public class FileServiceImpl implements FileService {
                 .orderByDesc(FilePO::getIsDir)
                 .orderByAsc(FilePO::getId);
         if(hidden) wrapper.eq(FilePO::getVisible, true);
-        Page<FilePO> page = new Page<>(currentPage, pageSize);
+        Page<FilePO> page = new Page<>(current, size);
         Page<FilePO> filePage = fileMapper.selectPage(page, wrapper);
         return new DataPage<>(filePage.getRecords(), filePage.getCurrent(), filePage.getPages(), filePage.getTotal(), filePage.getSize());
     }
 
     @Override
-    public DataPage<FilePO> searchFile(String key, String curDir, Boolean hidden) {
+    public DataPage<FilePO> search(String key, String curDir, boolean hidden) {
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
@@ -175,7 +175,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public Boolean upload(Long ownerId, MultipartFile uploadFile, String curDir) throws IOException {
+    public boolean upload(Long ownerId, MultipartFile uploadFile, String curDir) throws IOException {
         String fileName = uploadFile.getOriginalFilename();
         String fullDir;
         if(curDir.equals("/"))
@@ -245,7 +245,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public Boolean createDir(Long ownerId, String curDir, String dirName) throws IOException {
+    public boolean createDir(Long ownerId, String curDir, String dirName) throws IOException {
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
@@ -297,7 +297,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public Boolean deleteFile(Integer id) {
+    public boolean deleteById(Integer id) {
         FilePO file = fileMapper.selectById(id);
         String filePath = file.getDirectory() + "/" + file.getFileName();
         deleteFileByDir(new java.io.File(filePath));
@@ -309,7 +309,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public Boolean renameFile(Integer id, String newFileName) {
+    public boolean rename(Integer id, String newFileName) {
         FilePO file = fileMapper.selectById(id);
         if (file == null) {
             throw new IllegalArgumentException("数据库文件不存在");
@@ -371,7 +371,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public Boolean moveFile(Integer id, String newDir) {
+    public boolean move(Integer id, String newDir) {
         // 获取源文件信息
         FilePO sourceFile = fileMapper.selectById(id);
         if (sourceFile == null) {
@@ -458,7 +458,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public Boolean setVisible(Integer id, Boolean visible) {
+    public boolean setVisible(Integer id, boolean visible) {
         FilePO file = fileMapper.selectById(id);
         if (file == null) {
             throw new IllegalArgumentException("数据库文件不存在");

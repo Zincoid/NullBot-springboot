@@ -111,7 +111,7 @@ public class MonitorListener {
                 String filePath = fileStorageProperties.getImagePath() + "/monitor/" + groupId;
                 try {
                     FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "├─ ");
-                    if(!fileService.addFileRecordForBot(
+                    if(!fileService.addRecordOnly(
                             filePath,
                             fileInfo.getFileName(),
                             fileInfo.getFileSize(),

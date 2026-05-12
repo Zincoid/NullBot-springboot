@@ -174,7 +174,7 @@ public class InventoryServiceImpl implements InventoryService {
     public void add(List<InventoryPO> inventories) { inventoryMapper.insert(inventories); }
 
     @Override
-    public boolean delete(Integer id) { return inventoryMapper.deleteById(id) == 1; }
+    public boolean deleteById(Integer id) { return inventoryMapper.deleteById(id) == 1; }
 
     @Override
     public boolean update(InventoryPO inventory) { return inventoryMapper.updateById(inventory) == 1; }

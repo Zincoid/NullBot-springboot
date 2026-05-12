@@ -11,29 +11,29 @@ import java.time.LocalDateTime;
 
 public interface FileService {
 
-    Boolean addFileRecordForBot(String directory, String fileName, Long fileSize, LocalDateTime lastModified, Long ownerId, String ownerName);
+    boolean addRecordOnly(String directory, String fileName, Long fileSize, LocalDateTime lastModified, Long ownerId, String ownerName);
 
-    Boolean deleteFileRecordForBot(String directory, String fileName);
+    boolean deleteRecordOnly(String directory, String fileName);
 
-    Boolean initRootFile();
+    boolean initRoot();
 
-    void syncFilesToDatabase();
+    void syncLocalToDatabase();
 
-    DataPage<FilePO> getFileByPage(Integer currentPage, Integer pageSize, String curDir, Boolean hidden);
+    DataPage<FilePO> getPage(String curDir, Integer current, Integer size, boolean hidden);
 
-    DataPage<FilePO> searchFile(String key, String curDir, Boolean hidden);
+    DataPage<FilePO> search(String key, String curDir, boolean hidden);
 
-    Boolean upload(Long owner, MultipartFile uploadFile, String curDir) throws IOException;
+    boolean upload(Long owner, MultipartFile uploadFile, String curDir) throws IOException;
 
     void download(Integer id, HttpServletRequest request, HttpServletResponse response);
 
-    Boolean createDir(Long ownerId, String curDir, String dirName) throws IOException;
+    boolean createDir(Long ownerId, String curDir, String dirName) throws IOException;
 
-    Boolean deleteFile(Integer id);
+    boolean deleteById(Integer id);
 
-    Boolean renameFile(Integer id, String newFileName);
+    boolean rename(Integer id, String newFileName);
 
-    Boolean moveFile(Integer id, String newDir);
+    boolean move(Integer id, String newDir);
 
-    Boolean setVisible(Integer id, Boolean visible);
+    boolean setVisible(Integer id, boolean visible);
 }

@@ -57,7 +57,7 @@ public class DriftBottleCommand implements Command {
                 boolean thrown = false;
                 try {
                     fileInfo = DownloadUtil.downloadFile(url, directory, fileName, "\t\t\t\t├─ ");
-                    if (!fileService.addFileRecordForBot(
+                    if (!fileService.addRecordOnly(
                             directory,
                             fileInfo.getFileName(),
                             fileInfo.getFileSize(),
@@ -80,7 +80,7 @@ public class DriftBottleCommand implements Command {
                     if (!autoThrow) throw new NullBotMsgException("[漂流瓶] ❌出错: " + e.getMessage());
                 } finally {
                     if (fileInfo != null && !thrown) {
-                        fileService.deleteFileRecordForBot(directory, fileInfo.getFileName());
+                        fileService.deleteRecordOnly(directory, fileInfo.getFileName());
                         FileUtil.deleteFileByName(directory, fileInfo.getFileName());
                     }
                 }
@@ -126,7 +126,7 @@ public class DriftBottleCommand implements Command {
             String fileName = bottle.getContent().substring(index + 1);
             String directory = bottle.getContent().substring(0, index);
             // log.info("[DEBUG] {} and {}", directory, fileName);
-            fileService.deleteFileRecordForBot(directory, fileName);
+            fileService.deleteRecordOnly(directory, fileName);
             FileUtil.deleteFileByName(directory, fileName);
         }
     }

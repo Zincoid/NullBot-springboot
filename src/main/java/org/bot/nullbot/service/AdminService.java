@@ -11,7 +11,7 @@ public interface AdminService {
 
     boolean login(LoginDTO loginDTO);
 
-    boolean delete(Long id);
+    boolean deleteById(Long id);
 
     boolean update(AdminPO admin);
 

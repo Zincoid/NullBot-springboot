@@ -29,7 +29,7 @@ public interface InventoryService {
 
     void add(List<InventoryPO> inventories);
 
-    boolean delete(Integer id);
+    boolean deleteById(Integer id);
 
     boolean update(InventoryPO inventory);
 }

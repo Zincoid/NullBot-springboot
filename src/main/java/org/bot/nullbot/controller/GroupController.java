@@ -37,7 +37,7 @@ public class GroupController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Long id){
-        if(groupService.delete(id)){
+        if(groupService.deleteById(id)){
             return WebResult.success().addMsg("删除成功");
         }else{
             return WebResult.fail().addMsg("删除失败");

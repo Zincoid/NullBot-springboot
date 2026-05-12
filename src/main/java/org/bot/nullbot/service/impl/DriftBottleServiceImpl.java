@@ -26,7 +26,7 @@ public class DriftBottleServiceImpl implements DriftBottleService {
     }
 
     @Override
-    public boolean throwBottle(Long userId, String userName, String content, Boolean isImage) {
+    public boolean throwBottle(Long userId, String userName, String content, boolean isImage) {
         try {
             DriftBottlePO bottle = new DriftBottlePO();
             bottle.setUserId(userId);

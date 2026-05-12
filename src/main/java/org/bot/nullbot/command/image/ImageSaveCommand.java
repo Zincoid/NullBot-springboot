@@ -53,7 +53,7 @@ public class ImageSaveCommand implements Command {
             String filePath = fileStorageProperties.getImagePath() + "/collect";
             try {
                 FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t\t├─ ");
-                if(!fileService.addFileRecordForBot(
+                if(!fileService.addRecordOnly(
                         filePath,
                         fileInfo.getFileName(),
                         fileInfo.getFileSize(),

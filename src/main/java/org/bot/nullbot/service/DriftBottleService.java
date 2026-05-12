@@ -6,7 +6,7 @@ public interface DriftBottleService {
 
     boolean throwBottle(DriftBottlePO bottle);
 
-    boolean throwBottle(Long userId, String userName, String content, Boolean isImage);
+    boolean throwBottle(Long userId, String userName, String content, boolean isImage);
 
     DriftBottlePO pickUpRand();
 }
