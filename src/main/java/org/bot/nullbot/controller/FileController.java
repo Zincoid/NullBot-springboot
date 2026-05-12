@@ -28,9 +28,9 @@ public class FileController {
     @GetMapping("/init")
     public WebResult initRootFile() {
         if (fileService.initRoot()) {
-            return WebResult.success("Root 文件 初始化完成");
+            return WebResult.success("初始化完成");
         } else {
-            return WebResult.fail("Root 文件 已初始化过");
+            return WebResult.fail("已初始化过");
         }
     }
 
