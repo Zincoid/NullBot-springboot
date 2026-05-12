@@ -31,9 +31,9 @@ public class SettingController {
     public WebResult getSetting(@PathVariable Long id) {
         SettingInfo setting = settingService.get(id);
         if(setting != null)
-            return WebResult.success().addMsg("获取成功").addData("setting", setting);
+            return WebResult.success().withMsg("获取成功").withData("setting", setting);
         else
-            return WebResult.fail().addMsg("获取失败");
+            return WebResult.fail().withMsg("获取失败");
     }
 
     @PutMapping("/set")
@@ -41,10 +41,10 @@ public class SettingController {
         if(settingService.set(setting)) {
             commandRateLimiter.reset(setting.getGroupId());
             deepSeekClient.clearGroupHistory(setting.getGroupId(), null);
-            return WebResult.success().addMsg("更新成功");
+            return WebResult.success().withMsg("更新成功");
         }
         else
-            return WebResult.fail().addMsg("更新失败");
+            return WebResult.fail().withMsg("更新失败");
     }
 
     @GetMapping("/exportCsv")

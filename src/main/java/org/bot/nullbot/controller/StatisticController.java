@@ -21,18 +21,18 @@ public class StatisticController {
     public WebResult Statistic(){
         StatisticVO statisticVO = statisticService.getStatistic();
         if(statisticVO != null){
-            return WebResult.success().addMsg("获取成功")
-                    .addData("totalVisits", statisticVO.getTotalVisits())
-                    .addData("visitsXAxis", statisticVO.getVisitsXAxis())
-                    .addData("visitsData", statisticVO.getVisitsData())
-                    .addData("topGroupsAxis", statisticVO.getTopGroupsAxis())
-                    .addData("topGroupsData", statisticVO.getTopGroupsData())
-                    .addData("topUsersAxis", statisticVO.getTopUsersAxis())
-                    .addData("topUsersData", statisticVO.getTopUsersData())
-                    .addData("topCommandsAxis", statisticVO.getTopCommandsAxis())
-                    .addData("topCommandsData", statisticVO.getTopCommandsData());
+            return WebResult.success().withMsg("获取成功")
+                    .withData("totalVisits", statisticVO.getTotalVisits())
+                    .withData("visitsXAxis", statisticVO.getVisitsXAxis())
+                    .withData("visitsData", statisticVO.getVisitsData())
+                    .withData("topGroupsAxis", statisticVO.getTopGroupsAxis())
+                    .withData("topGroupsData", statisticVO.getTopGroupsData())
+                    .withData("topUsersAxis", statisticVO.getTopUsersAxis())
+                    .withData("topUsersData", statisticVO.getTopUsersData())
+                    .withData("topCommandsAxis", statisticVO.getTopCommandsAxis())
+                    .withData("topCommandsData", statisticVO.getTopCommandsData());
         }else{
-            return WebResult.fail().addMsg("获取失败");
+            return WebResult.fail().withMsg("获取失败");
         }
     }
 }

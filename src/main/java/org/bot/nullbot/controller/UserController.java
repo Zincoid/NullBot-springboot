@@ -26,30 +26,30 @@ public class UserController {
 
     @GetMapping("/list")
     public WebResult getUserList(){
-        return WebResult.success().addMsg("查询成功").addData("users", userService.getAll());
+        return WebResult.success().withMsg("查询成功").withData("users", userService.getAll());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getUserByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
         DataPage<UserPO> userPage = userService.getPage(currentPage, pageSize);
-        return WebResult.success().addMsg("查询成功").addData("userPage", userPage);
+        return WebResult.success().withMsg("查询成功").withData("userPage", userPage);
     }
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
         if(userService.delete(id)){
-            return WebResult.success().addMsg("删除成功");
+            return WebResult.success().withMsg("删除成功");
         }else{
-            return WebResult.fail().addMsg("删除失败");
+            return WebResult.fail().withMsg("删除失败");
         }
     }
 
     @PutMapping("/update")
     public WebResult update(@RequestBody UserPO user){
         if(userService.update(user))
-            return WebResult.success().addMsg("更新成功");
+            return WebResult.success().withMsg("更新成功");
         else
-            return WebResult.fail().addMsg("更新出错");
+            return WebResult.fail().withMsg("更新出错");
     }
 
     @GetMapping("/exportCsv")

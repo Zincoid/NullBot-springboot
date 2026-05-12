@@ -26,42 +26,42 @@ public class ItemController {
 
     @GetMapping("/list")
     public WebResult getItemList(){
-        return WebResult.success().addMsg("查询成功").addData("items", itemService.getAll());
+        return WebResult.success().withMsg("查询成功").withData("items", itemService.getAll());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getItemByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
         DataPage<ItemPO> itemPage = itemService.getPage(currentPage, pageSize);
-        return WebResult.success().addMsg("查询成功").addData("itemPage", itemPage);
+        return WebResult.success().withMsg("查询成功").withData("itemPage", itemPage);
     }
 
     @PostMapping("/add")
     public WebResult add(@RequestBody ItemPO item){
         try {
             if(itemService.add(item))
-                return WebResult.success().addMsg("新增成功");
+                return WebResult.success().withMsg("新增成功");
             else
-                return WebResult.fail().addMsg("新增失败");
+                return WebResult.fail().withMsg("新增失败");
         } catch (Exception e) {
-            return WebResult.fail().addMsg("新增出错: " + e.getMessage());
+            return WebResult.fail().withMsg("新增出错: " + e.getMessage());
         }
     }
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
         if(itemService.deleteById(id)){
-            return WebResult.success().addMsg("删除成功");
+            return WebResult.success().withMsg("删除成功");
         }else{
-            return WebResult.fail().addMsg("删除失败");
+            return WebResult.fail().withMsg("删除失败");
         }
     }
 
     @PutMapping("/update")
     public WebResult update(@RequestBody ItemPO item){
         if(itemService.update(item))
-            return WebResult.success().addMsg("更新成功");
+            return WebResult.success().withMsg("更新成功");
         else
-            return WebResult.fail().addMsg("更新失败");
+            return WebResult.fail().withMsg("更新失败");
     }
 
     @GetMapping("/exportCsv")

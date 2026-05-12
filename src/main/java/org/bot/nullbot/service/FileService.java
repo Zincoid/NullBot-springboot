@@ -23,17 +23,17 @@ public interface FileService {
 
     DataPage<FilePO> search(String key, String curDir, boolean hidden);
 
-    boolean upload(Long owner, MultipartFile uploadFile, String curDir) throws IOException;
+    void upload(Long owner, MultipartFile uploadFile, String curDir) throws IOException;
 
     void download(Integer id, HttpServletRequest request, HttpServletResponse response);
 
-    boolean createDir(Long ownerId, String curDir, String dirName) throws IOException;
+    void createDir(Long ownerId, String curDir, String dirName) throws IOException;
 
-    boolean deleteById(Integer id);
+    void deleteById(Integer id);
 
-    boolean rename(Integer id, String newFileName);
+    void rename(Integer id, String newFileName);
 
-    boolean move(Integer id, String newDir);
+    void move(Integer id, String newDir);
 
-    boolean setVisible(Integer id, boolean visible);
+    void setVisible(Integer id, boolean visible);
 }

@@ -93,7 +93,7 @@ public class WebInterceptor implements HandlerInterceptor {
             jwt = jwtTool.parseJwt(token);
         } catch (Exception e) {
             log.info("└─[WebInterceptor] 验证失败");
-            WebResult error = WebResult.fail().addMsg(e.getMessage());
+            WebResult error = WebResult.fail().withMsg(e.getMessage());
             res.getWriter().write(JSONObject.toJSONString(error));
             return false;
         }
@@ -104,7 +104,7 @@ public class WebInterceptor implements HandlerInterceptor {
             for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
                 if (url.contains(forbiddenUrl)) {
                     log.info("└─[WebInterceptor] 访客受限");
-                    WebResult error = WebResult.fail().addMsg("No Access");
+                    WebResult error = WebResult.fail().withMsg("No Access");
                     res.getWriter().write(JSONObject.toJSONString(error));
                     return false;
                 }

@@ -26,13 +26,13 @@ public class SayingController {
 
     @GetMapping("/list")
     public WebResult getSayingList(){
-        return WebResult.success().addMsg("查询成功").addData("sayings", sayingService.getAll());
+        return WebResult.success().withMsg("查询成功").withData("sayings", sayingService.getAll());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getSayingByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
         DataPage<SayingPO> sayingPage = sayingService.getPage(currentPage, pageSize);
-        return WebResult.success().addMsg("查询成功").addData("sayingPage", sayingPage);
+        return WebResult.success().withMsg("查询成功").withData("sayingPage", sayingPage);
     }
 
     @GetMapping("/random")
@@ -40,18 +40,18 @@ public class SayingController {
         log.info("[管理系统] 获取随机语录");
         SayingPO saying = sayingService.getRand();
         if(saying != null){
-            return WebResult.success().addMsg("获取成功").addData("saying", saying.toString());
+            return WebResult.success().withMsg("获取成功").withData("saying", saying.toString());
         }else{
-            return WebResult.fail().addMsg("获取失败");
+            return WebResult.fail().withMsg("获取失败");
         }
     }
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
         if(sayingService.deleteById(id)){
-            return WebResult.success().addMsg("删除成功");
+            return WebResult.success().withMsg("删除成功");
         }else{
-            return WebResult.fail().addMsg("删除失败");
+            return WebResult.fail().withMsg("删除失败");
         }
     }
 

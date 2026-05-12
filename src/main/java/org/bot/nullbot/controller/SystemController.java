@@ -18,9 +18,9 @@ public class SystemController {
     public WebResult invoke(@RequestParam(defaultValue = "") String command){
         try {
             String result = systemService.invoke(command);
-            return WebResult.success().addMsg("调用成功").addData("result", result);
+            return WebResult.success().withMsg("调用成功").withData("result", result);
         } catch (Exception e) {
-            return WebResult.fail().addMsg("调用失败").addData("result", e.toString());
+            return WebResult.fail().withMsg("调用失败").withData("result", e.toString());
         }
     }
 }

@@ -25,32 +25,32 @@ public class InventoryController {
 
     @GetMapping("/list")
     public WebResult getInventoryList(Long userId){
-        return WebResult.success().addMsg("查询成功").addData("inventories", inventoryService.getVOList(userId));
+        return WebResult.success().withMsg("查询成功").withData("inventories", inventoryService.getVOList(userId));
     }
 
     @PostMapping("/add")
     public WebResult add(Long userId, Integer itemId){
         if(inventoryService.increase(userId, itemId, 1))
-            return WebResult.success().addMsg("增加成功");
+            return WebResult.success().withMsg("增加成功");
         else
-            return WebResult.fail().addMsg("增加失败");
+            return WebResult.fail().withMsg("增加失败");
     }
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
         if(inventoryService.deleteById(id)){
-            return WebResult.success().addMsg("删除成功");
+            return WebResult.success().withMsg("删除成功");
         }else{
-            return WebResult.fail().addMsg("删除失败");
+            return WebResult.fail().withMsg("删除失败");
         }
     }
 
     @PutMapping("/update")
     public WebResult update(@RequestBody InventoryPO inventory){
         if(inventoryService.update(inventory))
-            return WebResult.success().addMsg("更新成功");
+            return WebResult.success().withMsg("更新成功");
         else
-            return WebResult.fail().addMsg("更新失败");
+            return WebResult.fail().withMsg("更新失败");
     }
 
     @GetMapping("/exportCsv")

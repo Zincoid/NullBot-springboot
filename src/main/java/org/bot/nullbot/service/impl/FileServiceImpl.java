@@ -164,6 +164,9 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public DataPage<FilePO> search(String key, String curDir, boolean hidden) {
+        if (key.contains("/") || key.contains("\\")) {
+            throw new IllegalArgumentException("路径名不允许出现斜杠");
+        }
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
@@ -175,7 +178,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public boolean upload(Long ownerId, MultipartFile uploadFile, String curDir) throws IOException {
+    public void upload(Long ownerId, MultipartFile uploadFile, String curDir) throws IOException {
         String fileName = uploadFile.getOriginalFilename();
         String fullDir;
         if(curDir.equals("/"))
@@ -220,8 +223,6 @@ public class FileServiceImpl implements FileService {
         file.setOwnerName(ownerName);
         file.setLastModified(lastModified);
         fileMapper.insert(file);
-
-        return true;
     }
 
     @Override
@@ -245,7 +246,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public boolean createDir(Long ownerId, String curDir, String dirName) throws IOException {
+    public void createDir(Long ownerId, String curDir, String dirName) throws IOException {
         String fullDir;
         if(curDir.equals("/"))
             fullDir = fileStorageProperties.getFileDirectory().replace("\\", "/");
@@ -291,25 +292,22 @@ public class FileServiceImpl implements FileService {
         file.setOwnerName(ownerName);
         file.setLastModified(lastModified);
         fileMapper.insert(file);
-
-        return true;
     }
 
     @Override
     @Transactional
-    public boolean deleteById(Integer id) {
+    public void deleteById(Integer id) {
         FilePO file = fileMapper.selectById(id);
         String filePath = file.getDirectory() + "/" + file.getFileName();
         deleteFileByDir(new java.io.File(filePath));
         if (file.getIsDir() == 1)
             fileMapper.delete(new LambdaQueryWrapper<FilePO>().likeRight(FilePO::getDirectory, filePath));
         fileMapper.deleteById(id);
-        return true;
     }
 
     @Override
     @Transactional
-    public boolean rename(Integer id, String newFileName) {
+    public void rename(Integer id, String newFileName) {
         FilePO file = fileMapper.selectById(id);
         if (file == null) {
             throw new IllegalArgumentException("数据库文件不存在");
@@ -366,12 +364,11 @@ public class FileServiceImpl implements FileService {
         fileMapper.updateById(file);
 
         // log.info("文件重命名成功: {} -> {}", oldFilePath, newFilePath);
-        return true;
     }
 
     @Override
     @Transactional
-    public boolean move(Integer id, String newDir) {
+    public void move(Integer id, String newDir) {
         // 获取源文件信息
         FilePO sourceFile = fileMapper.selectById(id);
         if (sourceFile == null) {
@@ -453,12 +450,11 @@ public class FileServiceImpl implements FileService {
         fileMapper.updateById(sourceFile);
 
         // log.info("文件移动成功: {} -> {}", sourcePath, targetPathStr);
-        return true;
     }
 
     @Override
     @Transactional
-    public boolean setVisible(Integer id, boolean visible) {
+    public void setVisible(Integer id, boolean visible) {
         FilePO file = fileMapper.selectById(id);
         if (file == null) {
             throw new IllegalArgumentException("数据库文件不存在");
@@ -475,7 +471,6 @@ public class FileServiceImpl implements FileService {
         }
         file.setVisible(visible);
         fileMapper.updateById(file);
-        return true;
     }
 
     // =================== 其他工具 ===================

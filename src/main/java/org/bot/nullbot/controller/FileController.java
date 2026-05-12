@@ -13,6 +13,7 @@ import org.bot.nullbot.util.WebUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
@@ -25,129 +26,105 @@ public class FileController {
     private final FileService fileService;
 
     @GetMapping("/init")
-    public WebResult initRootFile(){
-        if(fileService.initRoot()){
-            return WebResult.success().addMsg("Root 文件 初始化完成");
-        }else{
-            return WebResult.fail().addMsg("Root 文件 已初始化过");
+    public WebResult initRootFile() {
+        if (fileService.initRoot()) {
+            return WebResult.success("Root 文件 初始化完成");
+        } else {
+            return WebResult.fail("Root 文件 已初始化过");
         }
     }
 
     @GetMapping("/sync")
-    public WebResult syncFilesToDatabase(){
-        try {
-            fileService.syncLocalToDatabase();
-            return WebResult.success().addMsg("本地与数据库 已同步");
-        } catch (Exception e) {
-            return WebResult.fail().addMsg("本地与数据库 同步失败");
-        }
+    public WebResult syncFilesToDatabase() {
+        fileService.syncLocalToDatabase();
+        return WebResult.success("本地与数据库 已同步");
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
-    public WebResult getFileByPage(@PathVariable Integer currentPage,
-                                @PathVariable Integer pageSize,
-                                @RequestParam(defaultValue = "/") String curDir){
+    public WebResult getFileByPage(
+            @PathVariable Integer currentPage,
+            @PathVariable Integer pageSize,
+            @RequestParam(defaultValue = "/") String curDir
+    ) {
+        Integer userType = jwtTool.getLoginType(WebUtil.getToken());
         DataPage<FilePO> filePage = fileService.getPage(
-                curDir, currentPage, pageSize,
-                jwtTool.getLoginType(WebUtil.getToken()) == 0
+                curDir,
+                currentPage,
+                pageSize,
+                userType == 0
         );
-        return WebResult.success().addMsg("查询成功").addData("filePage", filePage);
+        return WebResult.success("查询成功").withData("filePage", filePage);
     }
 
     @GetMapping("/searchFile")
-    public WebResult searchFile(String key, String curDir){
-        if (key.contains("/") || key.contains("\\")){
-            return WebResult.fail().addMsg("不允许出现斜杠");
-        }
+    public WebResult searchFile(String key, String curDir) {
+        Integer userType = jwtTool.getLoginType(WebUtil.getToken());
         DataPage<FilePO> filePage = fileService.search(
-                key, curDir,
-                jwtTool.getLoginType(WebUtil.getToken()) == 0
+                key,
+                curDir,
+                userType == 0
         );
-        return WebResult.success().addMsg("查询成功").addData("filePage", filePage);
+        return WebResult.success("查询成功").withData("filePage", filePage);
     }
 
     @PostMapping("/upload")
-    public WebResult upload(MultipartFile uploadFile, @RequestParam(defaultValue = "/") String curDir) {
-        try {
-            Long userId = jwtTool.getLoginId(WebUtil.getToken());
-            if(fileService.upload(userId, uploadFile, curDir))
-                return WebResult.success().addMsg("上传成功");
-            else
-                return WebResult.fail().addMsg("上传失败: 未知错误");
-        } catch (Exception e) {
-            return WebResult.fail().addMsg("上传失败: " + e.getMessage());
-        }
+    public WebResult upload(
+            MultipartFile uploadFile,
+            @RequestParam(defaultValue = "/") String curDir
+    ) throws IOException {
+        Long userId = jwtTool.getLoginId(WebUtil.getToken());
+        fileService.upload(userId, uploadFile, curDir);
+        return WebResult.success("上传成功");
     }
 
     @GetMapping("/download/{id}")
-    public void download(@PathVariable Integer id, HttpServletRequest request, HttpServletResponse response){
-        try {
-            fileService.download(id, request, response);
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+    public void download(
+            @PathVariable Integer id,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        fileService.download(id, request, response);
     }
 
     @PostMapping("/createDir")
-    public WebResult createDir(@RequestBody Map<String, String> map) {
+    public WebResult createDir(@RequestBody Map<String, String> map) throws IOException {
         String curDir = map.get("curDir");
         String dirName = map.get("dirName");
-        try {
-            Long userId = jwtTool.getLoginId(WebUtil.getToken());
-            if(fileService.createDir(userId, curDir, dirName))
-                return WebResult.success().addMsg("创建成功");
-            else
-                return WebResult.fail().addMsg("创建失败: 未知错误");
-        } catch (Exception e) {
-            return WebResult.fail().addMsg("创建失败: " + e.getMessage());
-        }
+        Long userId = jwtTool.getLoginId(WebUtil.getToken());
+        fileService.createDir(userId, curDir, dirName);
+        return WebResult.success("创建成功");
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult deleteFile(@PathVariable Integer id){
-        try {
-            if(fileService.deleteById(id))
-                return WebResult.success().addMsg("删除成功");
-            else
-                return WebResult.fail().addMsg("删除失败: 未知错误");
-        } catch (Exception e) {
-            return WebResult.fail().addMsg("删除失败: " + e.getMessage());
-        }
+    public WebResult deleteFile(@PathVariable Integer id) {
+        fileService.deleteById(id);
+        return WebResult.success("删除成功");
     }
 
     @GetMapping("/rename/{id}")
-    public WebResult renameFile(@PathVariable Integer id, @RequestParam(defaultValue = "") String newFileName){
-        try {
-            if(fileService.rename(id, newFileName))
-                return WebResult.success().addMsg("重命名成功");
-            else
-                return WebResult.fail().addMsg("重命名失败: 未知错误");
-        } catch (Exception e) {
-            return WebResult.fail().addMsg("重命名失败: " + e.getMessage());
-        }
+    public WebResult renameFile(
+            @PathVariable Integer id,
+            @RequestParam(defaultValue = "") String newFileName
+    ) {
+        fileService.rename(id, newFileName);
+        return WebResult.success("重命名成功");
     }
 
     @GetMapping("/move/{id}")
-    public WebResult moveFile(@PathVariable Integer id, @RequestParam String newDir){
-        try {
-            if(fileService.move(id, newDir))
-                return WebResult.success().addMsg("移动成功");
-            else
-                return WebResult.fail().addMsg("移动失败: 未知错误");
-        } catch (Exception e) {
-            return WebResult.fail().addMsg("移动失败: " + e.getMessage());
-        }
+    public WebResult moveFile(
+            @PathVariable Integer id,
+            @RequestParam String newDir
+    ) {
+        fileService.move(id, newDir);
+        return WebResult.success("移动成功");
     }
 
     @GetMapping("/setVisible/{id}")
-    public WebResult setVisible(@PathVariable Integer id, @RequestParam Boolean visible){
-        try {
-            if(fileService.setVisible(id, visible))
-                return WebResult.success().addMsg("设置成功");
-            else
-                return WebResult.fail().addMsg("设置失败: 未知错误");
-        } catch (Exception e) {
-            return WebResult.fail().addMsg("设置失败: " + e.getMessage());
-        }
+    public WebResult setVisible(
+            @PathVariable Integer id,
+            @RequestParam Boolean visible
+    ) {
+        fileService.setVisible(id, visible);
+        return WebResult.success("设置成功");
     }
 }
