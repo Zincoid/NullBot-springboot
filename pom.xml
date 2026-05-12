@@ -277,6 +277,13 @@
             <version>0.1.6</version>
         </dependency>
 
+        <!-- Commons IO 工具 -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.22.0</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

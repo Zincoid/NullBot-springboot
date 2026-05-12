@@ -160,16 +160,7 @@ public final class DownloadUtil {
 
     private static boolean hasExtension(String fileName) {
         if (fileName == null || fileName.isEmpty()) return false;
-
-        int lastDotIndex = fileName.lastIndexOf('.');
-        int lastSlashIndex = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
-
-        if (lastDotIndex > lastSlashIndex && lastDotIndex > 0 && lastDotIndex < fileName.length() - 1) {
-            String extension = fileName.substring(lastDotIndex + 1);
-            return !extension.isEmpty() && extension.length() <= 10 && extension.matches("[a-zA-Z0-9]+");
-        }
-
-        return false;
+        return !extractExtensionFromFileName(fileName).isEmpty();
     }
 
     private static String getFileExtension(String contentType, String fileUrl, String fileName, String logPrefix) {
