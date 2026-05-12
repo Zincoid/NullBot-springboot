@@ -1,4 +1,4 @@
-package org.bot.nullbot.exception;
+package org.bot.nullbot.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.result.WebResult;
