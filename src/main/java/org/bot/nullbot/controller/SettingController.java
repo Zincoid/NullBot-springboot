@@ -29,7 +29,7 @@ public class SettingController {
 
     @GetMapping("/{id}")
     public WebResult getSetting(@PathVariable Long id) {
-        SettingInfo setting = settingService.getSetting(id);
+        SettingInfo setting = settingService.get(id);
         if(setting != null)
             return WebResult.success().addMsg("获取成功").addData("setting", setting);
         else
@@ -38,7 +38,7 @@ public class SettingController {
 
     @PutMapping("/set")
     public WebResult setSetting(@RequestBody SettingInfo setting){
-        if(settingService.setSetting(setting)) {
+        if(settingService.set(setting)) {
             commandRateLimiter.reset(setting.getGroupId());
             deepSeekClient.clearGroupHistory(setting.getGroupId(), null);
             return WebResult.success().addMsg("更新成功");
@@ -49,13 +49,13 @@ public class SettingController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<SettingInfo> settings = settingService.getSettings();
+        List<SettingInfo> settings = settingService.getAll();
         CsvExportUtil.exportToCsv(response, "Settings_" + LocalDateTime.now(), settings, SettingInfo.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<SettingInfo> settings =  CsvImportUtil.importFromCsv(csvFile, SettingInfo.class);
-        settingService.setSettings(settings);
+        settingService.sets(settings);
     }
 }

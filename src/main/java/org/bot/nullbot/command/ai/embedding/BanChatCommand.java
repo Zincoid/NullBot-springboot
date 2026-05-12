@@ -46,7 +46,7 @@ public class BanChatCommand implements Command {
         } catch (NumberFormatException e) {
             throw new NullBotMsgException("[停用AI] ❌参数格式错误");
         }
-        if (!userService.existUser(userId))
+        if (!userService.exist(userId))
             throw new NullBotMsgException("[停用AI] ❌用户不存在");
 
         permissionHandler.setUserBan(userId, ChatCommand.class, banTime);

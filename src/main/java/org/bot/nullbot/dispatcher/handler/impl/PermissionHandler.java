@@ -91,8 +91,8 @@ public class PermissionHandler implements Handler {
         // =================== 限权信息查询 ===================
 
         int commandAccess = command.getAccess();
-        int groupAccess = groupService.getGroupAccess(groupId);
-        int userAccess = userService.getUserAccess(userId);
+        int groupAccess = groupService.getAccess(groupId);
+        int userAccess = userService.getAccess(userId);
 
         // =================== 系统锁定验证 ===================
 
@@ -179,7 +179,7 @@ public class PermissionHandler implements Handler {
                 bot.sendGroupMsg(groupId, "[访问] ❌封禁参数非法", false);
                 return;
             }
-            if (!userService.existUser(targetId)) {
+            if (!userService.exist(targetId)) {
                 log.info("\t\t├─[PermissionHandler] 封禁用户未注册");
                 bot.sendGroupMsg(groupId, "[访问] ❌封禁用户未注册", false);
                 return;

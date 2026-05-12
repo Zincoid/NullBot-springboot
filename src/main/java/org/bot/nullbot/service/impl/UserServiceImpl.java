@@ -61,38 +61,38 @@ public class UserServiceImpl implements UserService {
     // =================== 注册功能相关 ===================
 
     @Override
-    public UserPO getUser(Long userId) {
-        return userMapper.selectById(userId);
+    public UserPO get(Long id) {
+        return userMapper.selectById(id);
     }
 
     @Override
-    public void addUser(Long userId, String userName) {
-        userMapper.insert(new UserPO(userId, userName, 0, 1, 0, 0, 100, 50));
+    public void add(Long id, String name) {
+        userMapper.insert(new UserPO(id, name, 0, 1, 0, 0, 100, 50));
     }
 
     @Override
-    public void updateUserName(Long userId, String userName) {
+    public void updateName(Long id, String newName) {
         userMapper.update(null, new LambdaUpdateWrapper<UserPO>()
-                .eq(UserPO::getId, userId)
-                .set(UserPO::getName, userName));
+                .eq(UserPO::getId, id)
+                .set(UserPO::getName, newName));
     }
 
     // =================== 限权功能相关 ===================
 
     @Override
-    public boolean existUser(Long userId) {
-        return userMapper.selectById(userId) != null;
+    public boolean exist(Long id) {
+        return userMapper.selectById(id) != null;
     }
 
     @Override
-    public int getUserAccess(Long userId) {
-        return userMapper.selectById(userId).getAccess();
+    public int getAccess(Long id) {
+        return userMapper.selectById(id).getAccess();
     }
 
     @Override
-    public void setUserAccess(Long userId, int newAccess) {
+    public void setAccess(Long id, int newAccess) {
         userMapper.update(null, new LambdaUpdateWrapper<UserPO>()
-                .eq(UserPO::getId, userId)
+                .eq(UserPO::getId, id)
                 .set(UserPO::getAccess, newAccess));
     }
 
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateAllUserNames() {
+    public void updateAllNames() {
         userMapper.selectList(null).forEach(user -> {
             Bot bot = botContainer.robots.get(botId);
             user.setName(bot.getStrangerInfo(user.getId(), true).getData().getNickname());
@@ -111,26 +111,26 @@ public class UserServiceImpl implements UserService {
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<UserPO> getUserList() {
+    public List<UserPO> getAll() {
         return userMapper.selectList(null);
     }
 
 
     @Override
-    public DataPage<UserPO> getUserByPage(Integer currentPage, Integer pageSize) {
-        Page<UserPO> page = new Page<>(currentPage, pageSize);
+    public DataPage<UserPO> getPage(Integer current, Integer size) {
+        Page<UserPO> page = new Page<>(current, size);
         Page<UserPO> userPage = userMapper.selectPage(page, new LambdaQueryWrapper<UserPO>().orderByAsc(UserPO::getId));
         return new DataPage<>(userPage.getRecords(), userPage.getCurrent(), userPage.getPages(), userPage.getTotal(), userPage.getSize());
     }
 
     @Override
-    public void addUsers(List<UserPO> users) { userMapper.insert(users); }
+    public void adds(List<UserPO> users) { userMapper.insert(users); }
 
     @Override
-    public boolean deleteById(Integer id) { return userMapper.deleteById(id) == 1; }
+    public boolean delete(Integer id) { return userMapper.deleteById(id) == 1; }
 
     @Override
-    public boolean updateUser(UserPO user) {
+    public boolean update(UserPO user) {
         return userMapper.updateById(user) == 1;
     }
 }

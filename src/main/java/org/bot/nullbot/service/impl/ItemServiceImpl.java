@@ -33,12 +33,12 @@ public class ItemServiceImpl implements ItemService {
     // =================== BOT功能相关 ===================
 
     @Override
-    public ItemPO getItem(Integer itemId) {
-        return itemMapper.selectById(itemId);
+    public ItemPO get(Integer id) {
+        return itemMapper.selectById(id);
     }
 
     @Override
-    public ItemPO getRandomItem() {
+    public ItemPO getRandom() {
         Rarity rarity = DrawUtil.drawRarityByProbability();
         List<ItemPO> itemList = itemMapper.selectList(
                 new LambdaQueryWrapper<ItemPO>()
@@ -49,7 +49,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemPO getRandomHighValueItem() {
+    public ItemPO getRandomHighValue() {
         Rarity rarity = Rarity.GOLD;
         List<ItemPO> itemList = itemMapper.selectList(
                 new LambdaQueryWrapper<ItemPO>()
@@ -61,7 +61,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemPO drawAndKeepRandomItem(Long userId) {
+    public ItemPO drawAndKeepRandom(Long userId) {
         if (userService.decreaseDrawTimes(userId)) {
             Rarity rarity = DrawUtil.drawRarityByProbability();
             List<ItemPO> itemList = itemMapper.selectList(
@@ -80,50 +80,50 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public boolean exist(Integer itemId) {
-        return !itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, itemId)).isEmpty();
+    public boolean exist(Integer id) {
+        return !itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, id)).isEmpty();
     }
 
     @Override
-    public boolean isUsable(Integer itemId) {
-        return itemMapper.selectById(itemId).getCommand() != null;
+    public boolean isUsable(Integer id) {
+        return itemMapper.selectById(id).getCommand() != null;
     }
 
     @Override
-    public String getItemCommand(Integer itemId) {
-        return  itemMapper.selectById(itemId).getCommand();
+    public String getCommand(Integer id) {
+        return  itemMapper.selectById(id).getCommand();
     }
 
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<ItemPO> getItemList() {
+    public List<ItemPO> getAll() {
         return itemMapper.selectList(null);
     }
 
     @Override
-    public DataPage<ItemPO> getItemByPage(Integer currentPage, Integer pageSize) {
-        Page<ItemPO> page = new Page<>(currentPage, pageSize);
+    public DataPage<ItemPO> getPage(Integer current, Integer size) {
+        Page<ItemPO> page = new Page<>(current, size);
         Page<ItemPO> itemPage;
         itemPage = itemMapper.selectPage(page, new LambdaQueryWrapper<ItemPO>().orderByAsc(ItemPO::getId));
         return new DataPage<>(itemPage.getRecords(), itemPage.getCurrent(), itemPage.getPages(), itemPage.getTotal(), itemPage.getSize());
     }
 
     @Override
-    public boolean addItem(ItemPO item) {
+    public boolean add(ItemPO item) {
         return itemMapper.insert(item) == 1;
     }
 
     @Override
-    public void addItems(List<ItemPO> items) { itemMapper.insert(items); }
+    public void adds(List<ItemPO> items) { itemMapper.insert(items); }
 
     @Override
-    public boolean updateItem(ItemPO item) {
+    public boolean update(ItemPO item) {
         return itemMapper.updateById(item) == 1;
     }
 
     @Override
-    public boolean deleteById(Integer id) {
+    public boolean delete(Integer id) {
         return itemMapper.deleteById(id) == 1;
     }
 }

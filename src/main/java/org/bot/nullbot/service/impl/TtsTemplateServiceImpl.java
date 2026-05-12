@@ -19,7 +19,7 @@ public class TtsTemplateServiceImpl implements TtsTemplateService {
     private final TtsTemplateMapper ttsTemplateMapper;
 
     @Override
-    public boolean addTemplate(String name, String path, String text, Long userId, String userName) {
+    public boolean add(String name, String path, String text, Long userId, String userName) {
         TtsTemplatePO ttsTemplate = new TtsTemplatePO();
         ttsTemplate.setName(name);
         ttsTemplate.setPath(path);
@@ -34,17 +34,17 @@ public class TtsTemplateServiceImpl implements TtsTemplateService {
     }
 
     @Override
-    public boolean deleteTemplate(String templateName) {
-        return ttsTemplateMapper.delete(new LambdaQueryWrapper<TtsTemplatePO>().eq(TtsTemplatePO::getName, templateName)) == 1;
+    public boolean delete(String name) {
+        return ttsTemplateMapper.delete(new LambdaQueryWrapper<TtsTemplatePO>().eq(TtsTemplatePO::getName, name)) == 1;
     }
 
     @Override
-    public TtsTemplatePO getTemplate(String templateName) {
-        return ttsTemplateMapper.selectOne(new LambdaQueryWrapper<TtsTemplatePO>().eq(TtsTemplatePO::getName, templateName));
+    public TtsTemplatePO get(String name) {
+        return ttsTemplateMapper.selectOne(new LambdaQueryWrapper<TtsTemplatePO>().eq(TtsTemplatePO::getName, name));
     }
 
     @Override
-    public List<TtsTemplatePO> getTemplateList() {
+    public List<TtsTemplatePO> getAll() {
         return ttsTemplateMapper.selectList(null);
     }
 

@@ -39,9 +39,9 @@ public class AccessSetCommand implements Command {
         switch (params.get(0))
         {
             case "-GROUP" -> {
-                if (!groupService.existGroup(targetId)) throw new NullBotMsgException("[限权设置] ❌群聊未注册");
-                int targetAccess = groupService.getGroupAccess(targetId);
-                int selfAccess = userService.getUserAccess(event.getUserId());
+                if (!groupService.exist(targetId)) throw new NullBotMsgException("[限权设置] ❌群聊未注册");
+                int targetAccess = groupService.getAccess(targetId);
+                int selfAccess = userService.getAccess(event.getUserId());
                 if (selfAccess < 2) {
                     bot.sendGroupMsg(event.getGroupId(), """
                             [限权设置] \uD83D\uDEAB修改失败
@@ -49,7 +49,7 @@ public class AccessSetCommand implements Command {
                             - 你的限权等级: %s""".formatted(selfAccess), false);
                     log.info("\t\t\t\t├─[AccessSet] 修改失败 - 仅限权等级2用户可修改群限权 用户限权为{}", selfAccess);
                 } else {
-                    groupService.setGroupAccess(targetId, targetNewAccess);
+                    groupService.setAccess(targetId, targetNewAccess);
                     bot.sendGroupMsg(event.getGroupId(), """
                             [限权设置] ✅群限权已修改
                             - 变动群聊: %s
@@ -59,9 +59,9 @@ public class AccessSetCommand implements Command {
             }
 
             case "-USER" -> {
-                if (!userService.existUser(targetId)) throw new NullBotMsgException("[限权设置] ❌用户未注册");
-                int targetAccess = userService.getUserAccess(targetId);
-                int selfAccess = userService.getUserAccess(event.getUserId());
+                if (!userService.exist(targetId)) throw new NullBotMsgException("[限权设置] ❌用户未注册");
+                int targetAccess = userService.getAccess(targetId);
+                int selfAccess = userService.getAccess(event.getUserId());
                 if (targetAccess >= selfAccess) {
                     bot.sendGroupMsg(event.getGroupId(), """
                             [限权设置] \uD83D\uDEAB修改失败
@@ -77,7 +77,7 @@ public class AccessSetCommand implements Command {
                             - 你的限权等级: %s""".formatted(targetNewAccess, selfAccess), false);
                     log.info("\t\t\t\t├─[AccessSet] 修改失败 - 新限权等级{} 高于或等于 自身限权等级{}", targetNewAccess, selfAccess);
                 } else {
-                    userService.setUserAccess(targetId, targetNewAccess);
+                    userService.setAccess(targetId, targetNewAccess);
                     bot.sendGroupMsg(event.getGroupId(), """
                             [限权设置] ✅用户限权已修改
                             - 变动用户: %s

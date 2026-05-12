@@ -93,7 +93,7 @@ public class GuessCommand implements Command {
 
                 if (guess.getName().equals(answer)) {
                     boolean rewarded = false;
-                    if (userService.existUser(answererId)) {
+                    if (userService.exist(answererId)) {
                         userService.plusExperience(answererId, 20);  // 给赢家 20 Exp
                         userService.increaseDrawTimes(answererId, 5);  // 给赢家 5 抽
                         rewarded = true;

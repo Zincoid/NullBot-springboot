@@ -30,7 +30,7 @@ public class DrawCommand implements Command {
         String userName = event.getSender().getNickname();
 
         if (params.isEmpty()) {
-            ItemPO item = itemService.drawAndKeepRandomItem(userId);
+            ItemPO item = itemService.drawAndKeepRandom(userId);
             if (item != null) {
                 bot.sendGroupMsg(groupId, "[抽奖] " + userName + "抽到了...\n" + item, false);
                 log.info("\t\t\t\t├─[Draw] 已抽取 - {}({}) -> {}", userName, userId, item.getName());
@@ -46,7 +46,7 @@ public class DrawCommand implements Command {
                 List<ItemPO> items = new ArrayList<>();
                 boolean stop = false;
                 while (times > 0 && !stop) {
-                    ItemPO item = itemService.drawAndKeepRandomItem(userId);
+                    ItemPO item = itemService.drawAndKeepRandom(userId);
                     if (item != null) {
                         items.add(item);
                         times--;

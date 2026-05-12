@@ -22,7 +22,7 @@ public class SayingServiceImpl implements SayingService {
     // =================== BOT功能相关 ===================
 
     @Override
-    public int addSaying(Long userId, String userName, String text) {
+    public int add(Long userId, String userName, String text) {
         try {
             SayingPO saying = new SayingPO();
             saying.setUserId(userId);
@@ -36,7 +36,7 @@ public class SayingServiceImpl implements SayingService {
     }
 
     @Override
-    public boolean deleteById(Integer id) {
+    public boolean delete(Integer id) {
         return sayingMapper.deleteById(id) == 1;
     }
 
@@ -54,15 +54,15 @@ public class SayingServiceImpl implements SayingService {
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<SayingPO> getSayingList() { return sayingMapper.selectList(null); }
+    public List<SayingPO> getAll() { return sayingMapper.selectList(null); }
 
     @Override
-    public DataPage<SayingPO> getSayingByPage(Integer currentPage, Integer pageSize) {
-        Page<SayingPO> page = new Page<>(currentPage, pageSize);
+    public DataPage<SayingPO> getPage(Integer current, Integer size) {
+        Page<SayingPO> page = new Page<>(current, size);
         Page<SayingPO> sayingPage = sayingMapper.selectPage(page, new LambdaQueryWrapper<SayingPO>().orderByDesc(SayingPO::getTime));
         return new DataPage<>(sayingPage.getRecords(), sayingPage.getCurrent(), sayingPage.getPages(), sayingPage.getTotal(), sayingPage.getSize());
     }
 
     @Override
-    public void addSayings(List<SayingPO> sayings) { sayingMapper.insert(sayings); }
+    public void adds(List<SayingPO> sayings) { sayingMapper.insert(sayings); }
 }

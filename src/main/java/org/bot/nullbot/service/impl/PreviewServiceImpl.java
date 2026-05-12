@@ -30,7 +30,7 @@ public class PreviewServiceImpl implements PreviewService {
     // =================== WEB功能相关 ===================
 
     @Override
-    public ResponseEntity<Resource> preview(Integer  id, HttpServletRequest request) {
+    public ResponseEntity<Resource> preview(Integer id, HttpServletRequest request) {
         try {
             // 查询文件信息
             FilePO file = fileMapper.selectById(id);

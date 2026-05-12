@@ -43,7 +43,7 @@ public class SellCommand implements Command {
             }
             if (!inventoryService.sellByRarity(userId, rarity))
                 throw new NullBotMsgException("[出售] ❌无该稀有度物品");
-            UserPO user = userService.getUser(userId);
+            UserPO user = userService.get(userId);
             bot.sendGroupMsg(groupId, "[出售] ✅已出售" + rarity.getDescription() + "色物品！\n" + "- 当前余额: " + user.getCash() + " ￥", false);
             log.info("\t\t\t\t├─[Sell] 按稀有度出售成功 - {}", rarity);
         } else {
@@ -61,7 +61,7 @@ public class SellCommand implements Command {
             }
             if (!inventoryService.sell(userId, itemId, amount))
                 throw new NullBotMsgException("[出售] ❌无该物品或数量不足");
-            UserPO user = userService.getUser(userId);
+            UserPO user = userService.get(userId);
             bot.sendGroupMsg(groupId, "[出售] ✅已出售！\n" + "- 当前余额: " + user.getCash() + " ￥", false);
             log.info("\t\t\t\t├─[Sell] 出售成功 - {} -> {}", itemId, amount);
         }

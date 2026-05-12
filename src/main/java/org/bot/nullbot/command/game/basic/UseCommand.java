@@ -50,7 +50,7 @@ public class UseCommand implements Command {
             throw new NullBotMsgException("[使用] ❌该物品数量不足");
 
         // 替换参数
-        String command = itemService.getItemCommand(itemId);
+        String command = itemService.getCommand(itemId);
         if ("UserBan".equals(command.split(" ")[0]))
             command = command.replace("userId", userId.toString());
 
@@ -58,7 +58,7 @@ public class UseCommand implements Command {
         eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event, command, false, false)));
 
         // 发送通知
-        String itemName = itemService.getItem(itemId).getName();
+        String itemName = itemService.get(itemId).getName();
         String userName = event.getSender().getNickname();
         bot.sendGroupMsg(event.getGroupId(), "[使用] ✅" + userName + " 已使用 " + itemName + "！", false);
         log.info("\t\t\t\t├─[Use] 已使用");

@@ -20,18 +20,18 @@ public class SettingServiceImpl implements SettingService {
     // =================== 全局功能相关 ===================
 
     @Override
-    public SettingInfo getSetting(Long groupId) { return settingManager.getSetting(groupId); }
+    public SettingInfo get(Long groupId) { return settingManager.getSetting(groupId); }
     @Override
-    public boolean setSetting(SettingInfo setting) { return settingManager.setSetting(setting); }
+    public boolean set(SettingInfo setting) { return settingManager.setSetting(setting); }
 
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<SettingInfo> getSettings() {
+    public List<SettingInfo> getAll() {
         return settingManager.getSettings();
     }
     @Override
-    public void setSettings(List<SettingInfo> settings) { settingManager.setSettings(settings); }
+    public void sets(List<SettingInfo> settings) { settingManager.setSettings(settings); }
 
     // =================== BOT功能相关 ===================
 
@@ -39,35 +39,35 @@ public class SettingServiceImpl implements SettingService {
 
     // 查询方法
     @Override
-    public LimitScope getLimitScope(Long groupId) { return getSetting(groupId).getLimitScope(); }
+    public LimitScope getLimitScope(Long groupId) { return get(groupId).getLimitScope(); }
     @Override
-    public int getLimitCapacity(Long groupId) { return getSetting(groupId).getLimitCapacity(); }
+    public int getLimitCapacity(Long groupId) { return get(groupId).getLimitCapacity(); }
     @Override
-    public int getLimitRefill(Long groupId) { return getSetting(groupId).getLimitRefill(); }
+    public int getLimitRefill(Long groupId) { return get(groupId).getLimitRefill(); }
     @Override
-    public int getLimitInterval(Long groupId) { return getSetting(groupId).getLimitInterval(); }
+    public int getLimitInterval(Long groupId) { return get(groupId).getLimitInterval(); }
 
     // 修改方法
     @Override
-    public LimitScope switchLimitScope(Long groupId) { return getSetting(groupId).switchLimitScope(); }
+    public LimitScope switchLimitScope(Long groupId) { return get(groupId).switchLimitScope(); }
 
     @Override
     public boolean setLimitCapacity(Long groupId, int limitCapacity) {
-        SettingInfo setting = getSetting(groupId);
+        SettingInfo setting = get(groupId);
         setting.setLimitCapacity(limitCapacity);
         return true;
     }
 
     @Override
     public boolean setLimitRefill(Long groupId, int limitRefill) {
-        SettingInfo setting = getSetting(groupId);
+        SettingInfo setting = get(groupId);
         setting.setLimitRefill(limitRefill);
         return true;
     }
 
     @Override
     public boolean setLimitInterval(Long groupId, int limitInterval) {
-        SettingInfo setting = getSetting(groupId);
+        SettingInfo setting = get(groupId);
         setting.setLimitInterval(limitInterval);
         return true;
     }
@@ -78,33 +78,33 @@ public class SettingServiceImpl implements SettingService {
     @Override
     public ChatOption getChatOption(Long groupId) { return settingManager.getChatOption(groupId); }
     @Override
-    public boolean isAutoReply(Long groupId) { return getSetting(groupId).isAutoReply(); }
+    public boolean isAutoReply(Long groupId) { return get(groupId).isAutoReply(); }
     @Override
-    public double getReplyFrequency(Long groupId) { return getSetting(groupId).getReplyFrequency(); }
+    public double getReplyFrequency(Long groupId) { return get(groupId).getReplyFrequency(); }
 
     // 修改方法
     @Override
-    public ChatScope switchChatScope(Long groupId) { return getSetting(groupId).switchChatScope(); }
+    public ChatScope switchChatScope(Long groupId) { return get(groupId).switchChatScope(); }
     @Override
-    public boolean switchAntiInjection(Long groupId) { return getSetting(groupId).switchAntiInjection(); }
+    public boolean switchAntiInjection(Long groupId) { return get(groupId).switchAntiInjection(); }
     @Override
-    public boolean switchThinking(Long groupId) { return getSetting(groupId).switchThinking(); }
+    public boolean switchThinking(Long groupId) { return get(groupId).switchThinking(); }
     @Override
     public boolean switchVoice(Long groupId) {
-        return getSetting(groupId).switchVoice();
+        return get(groupId).switchVoice();
     }
     @Override
-    public boolean switchEmbedding(Long groupId) { return getSetting(groupId).switchEmbedding(); }
+    public boolean switchEmbedding(Long groupId) { return get(groupId).switchEmbedding(); }
     @Override
-    public boolean switchEmbeddingAuth(Long groupId) { return getSetting(groupId).switchEmbeddingAuth(); }
+    public boolean switchEmbeddingAuth(Long groupId) { return get(groupId).switchEmbeddingAuth(); }
     @Override
-    public boolean switchCustom(Long groupId) { return getSetting(groupId).switchCustom(); }
+    public boolean switchCustom(Long groupId) { return get(groupId).switchCustom(); }
     @Override
-    public boolean switchAutoReply(Long groupId) { return getSetting(groupId).switchAutoReply(); }
+    public boolean switchAutoReply(Long groupId) { return get(groupId).switchAutoReply(); }
 
     @Override
     public boolean setReplyFrequency(Long groupId, double frequency) {
-        SettingInfo setting = getSetting(groupId);
+        SettingInfo setting = get(groupId);
         setting.setReplyFrequency(frequency);
         return true;
     }
@@ -113,42 +113,42 @@ public class SettingServiceImpl implements SettingService {
 
     // 查询方法
     @Override
-    public boolean isImageCollect(Long groupId) { return getSetting(groupId).isImageCollect(); }
+    public boolean isImageCollect(Long groupId) { return get(groupId).isImageCollect(); }
     @Override
-    public boolean isMessageCollect(Long groupId) { return getSetting(groupId).isMessageCollect(); }
+    public boolean isMessageCollect(Long groupId) { return get(groupId).isMessageCollect(); }
     @Override
-    public boolean isKeywordDetect(Long groupId) { return getSetting(groupId).isKeywordDetect(); }
+    public boolean isKeywordDetect(Long groupId) { return get(groupId).isKeywordDetect(); }
     @Override
-    public boolean isPokeDetect(Long groupId) { return getSetting(groupId).isPokeDetect(); }
+    public boolean isPokeDetect(Long groupId) { return get(groupId).isPokeDetect(); }
     @Override
-    public boolean isRecallDetect(Long groupId) { return getSetting(groupId).isRecallDetect(); }
+    public boolean isRecallDetect(Long groupId) { return get(groupId).isRecallDetect(); }
 
     // 修改方法
     @Override
-    public boolean switchImageCollect(Long groupId) { return getSetting(groupId).switchImageCollect(); }
+    public boolean switchImageCollect(Long groupId) { return get(groupId).switchImageCollect(); }
     @Override
-    public boolean switchMessageCollect(Long groupId) { return getSetting(groupId).switchMessageCollect(); }
+    public boolean switchMessageCollect(Long groupId) { return get(groupId).switchMessageCollect(); }
     @Override
-    public boolean switchKeywordDetect(Long groupId) { return getSetting(groupId).switchKeywordDetect(); }
+    public boolean switchKeywordDetect(Long groupId) { return get(groupId).switchKeywordDetect(); }
     @Override
-    public boolean switchPokeDetect(Long groupId) { return getSetting(groupId).switchPokeDetect(); }
+    public boolean switchPokeDetect(Long groupId) { return get(groupId).switchPokeDetect(); }
     @Override
-    public boolean switchRecallDetect(Long groupId) { return getSetting(groupId).switchRecallDetect(); }
+    public boolean switchRecallDetect(Long groupId) { return get(groupId).switchRecallDetect(); }
 
     // ------------------ Guess 功能控制 ------------------
 
     // 查询方法
     @Override
-    public double getGuessCropRatio(Long groupId) { return getSetting(groupId).getGuessCropRatio(); }
+    public double getGuessCropRatio(Long groupId) { return get(groupId).getGuessCropRatio(); }
     @Override
-    public double getGuessTransparentRatio(Long groupId) { return getSetting(groupId).getGuessTransparentRatio(); }
+    public double getGuessTransparentRatio(Long groupId) { return get(groupId).getGuessTransparentRatio(); }
     @Override
-    public int getGuessPadding(Long groupId) {return getSetting(groupId).getGuessPadding(); }
+    public int getGuessPadding(Long groupId) {return get(groupId).getGuessPadding(); }
 
     // 修改方法
     @Override
     public boolean setGuessParams(Long groupId, double cropRatio, double transparentRatio, int padding) {
-        SettingInfo setting = getSetting(groupId);
+        SettingInfo setting = get(groupId);
         setting.setGuessCropRatio(cropRatio);
         setting.setGuessTransparentRatio(transparentRatio);
         setting.setGuessPadding(padding);

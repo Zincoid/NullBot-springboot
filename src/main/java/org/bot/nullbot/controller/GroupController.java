@@ -26,18 +26,18 @@ public class GroupController {
 
     @GetMapping("/list")
     public WebResult getGroupList(){
-        return WebResult.success().addMsg("查询成功").addData("groups", groupService.getGroupList());
+        return WebResult.success().addMsg("查询成功").addData("groups", groupService.getAll());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getGroupByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
-        DataPage<GroupPO> groupPage = groupService.getGroupByPage(currentPage, pageSize);
+        DataPage<GroupPO> groupPage = groupService.getPage(currentPage, pageSize);
         return WebResult.success().addMsg("查询成功").addData("groupPage", groupPage);
     }
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Long id){
-        if(groupService.deleteById(id)){
+        if(groupService.delete(id)){
             return WebResult.success().addMsg("删除成功");
         }else{
             return WebResult.fail().addMsg("删除失败");
@@ -46,7 +46,7 @@ public class GroupController {
 
     @PutMapping("/update")
     public WebResult update(@RequestBody GroupPO group){
-        if(groupService.updateGroup(group))
+        if(groupService.update(group))
             return WebResult.success().addMsg("更新成功");
         else
             return WebResult.fail().addMsg("更新出错");
@@ -54,13 +54,13 @@ public class GroupController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<GroupPO> groups = groupService.getGroupList();
+        List<GroupPO> groups = groupService.getAll();
         CsvExportUtil.exportToCsv(response, "Groups_" + LocalDateTime.now(), groups, GroupPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<GroupPO> groups =  CsvImportUtil.importFromCsv(csvFile, GroupPO.class);
-        groupService.addGroups(groups);
+        groupService.adds(groups);
     }
 }

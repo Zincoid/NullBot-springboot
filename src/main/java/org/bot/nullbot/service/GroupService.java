@@ -7,27 +7,27 @@ import java.util.List;
 
 public interface GroupService {
 
-    GroupPO getGroup(Long groupId);
+    GroupPO get(Long id);
 
-    void addGroup(Long groupId, String groupName);
+    void add(Long id, String name);
 
-    void updateGroupName(Long groupId, String groupName);
+    void updateName(Long id, String newName);
 
-    boolean existGroup(Long groupId);
+    boolean exist(Long id);
 
-    int getGroupAccess(Long groupId);
+    int getAccess(Long id);
 
-    void setGroupAccess(Long groupId, int newAccess);
+    void setAccess(Long id, Integer newAccess);
 
-    void updateAllGroupNames();
+    void updateAllNames();
 
-    List<GroupPO> getGroupList();
+    List<GroupPO> getAll();
 
-    DataPage<GroupPO> getGroupByPage(Integer currentPage, Integer pageSize);
+    DataPage<GroupPO> getPage(Integer currentPage, Integer pageSize);
 
-    void addGroups(List<GroupPO> groups);
+    void adds(List<GroupPO> groups);
 
-    boolean deleteById(Long groupId);
+    boolean delete(Long groupId);
 
-    boolean updateGroup(GroupPO group);
+    boolean update(GroupPO group);
 }

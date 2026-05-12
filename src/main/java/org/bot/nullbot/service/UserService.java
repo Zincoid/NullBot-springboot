@@ -13,27 +13,27 @@ public interface UserService {
 
     int plusExperience(Long userId, int exp);
 
-    UserPO getUser(Long userId);
+    UserPO get(Long id);
 
-    void addUser(Long userId, String userName);
+    void add(Long id, String name);
 
-    void updateUserName(Long userId, String userName);
+    void updateName(Long id, String newName);
 
-    boolean existUser(Long userId);
+    boolean exist(Long id);
 
-    int getUserAccess(Long userId);
+    int getAccess(Long id);
 
-    void setUserAccess(Long userId, int newAccess);
+    void setAccess(Long id, int newAccess);
 
-    void updateAllUserNames();
+    void updateAllNames();
 
-    List<UserPO> getUserList();
+    List<UserPO> getAll();
 
-    DataPage<UserPO> getUserByPage(Integer currentPage, Integer pageSize);
+    DataPage<UserPO> getPage(Integer current, Integer size);
 
-    void addUsers(List<UserPO> users);
+    void adds(List<UserPO> users);
 
-    boolean deleteById(Integer id);
+    boolean delete(Integer id);
 
-    boolean updateUser(UserPO user);
+    boolean update(UserPO user);
 }

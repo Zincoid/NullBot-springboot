@@ -26,19 +26,19 @@ public class ItemController {
 
     @GetMapping("/list")
     public WebResult getItemList(){
-        return WebResult.success().addMsg("查询成功").addData("items", itemService.getItemList());
+        return WebResult.success().addMsg("查询成功").addData("items", itemService.getAll());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getItemByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
-        DataPage<ItemPO> itemPage = itemService.getItemByPage(currentPage, pageSize);
+        DataPage<ItemPO> itemPage = itemService.getPage(currentPage, pageSize);
         return WebResult.success().addMsg("查询成功").addData("itemPage", itemPage);
     }
 
     @PostMapping("/add")
     public WebResult add(@RequestBody ItemPO item){
         try {
-            if(itemService.addItem(item))
+            if(itemService.add(item))
                 return WebResult.success().addMsg("新增成功");
             else
                 return WebResult.fail().addMsg("新增失败");
@@ -49,7 +49,7 @@ public class ItemController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
-        if(itemService.deleteById(id)){
+        if(itemService.delete(id)){
             return WebResult.success().addMsg("删除成功");
         }else{
             return WebResult.fail().addMsg("删除失败");
@@ -58,7 +58,7 @@ public class ItemController {
 
     @PutMapping("/update")
     public WebResult update(@RequestBody ItemPO item){
-        if(itemService.updateItem(item))
+        if(itemService.update(item))
             return WebResult.success().addMsg("更新成功");
         else
             return WebResult.fail().addMsg("更新失败");
@@ -66,13 +66,13 @@ public class ItemController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<ItemPO> items = itemService.getItemList();
+        List<ItemPO> items = itemService.getAll();
         CsvExportUtil.exportToCsv(response, "Items_" + LocalDateTime.now(), items, ItemPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<ItemPO> items =  CsvImportUtil.importFromCsv(csvFile, ItemPO.class);
-        itemService.addItems(items);
+        itemService.adds(items);
     }
 }

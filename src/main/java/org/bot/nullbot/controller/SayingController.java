@@ -26,12 +26,12 @@ public class SayingController {
 
     @GetMapping("/list")
     public WebResult getSayingList(){
-        return WebResult.success().addMsg("查询成功").addData("sayings", sayingService.getSayingList());
+        return WebResult.success().addMsg("查询成功").addData("sayings", sayingService.getAll());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getSayingByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
-        DataPage<SayingPO> sayingPage = sayingService.getSayingByPage(currentPage, pageSize);
+        DataPage<SayingPO> sayingPage = sayingService.getPage(currentPage, pageSize);
         return WebResult.success().addMsg("查询成功").addData("sayingPage", sayingPage);
     }
 
@@ -48,7 +48,7 @@ public class SayingController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
-        if(sayingService.deleteById(id)){
+        if(sayingService.delete(id)){
             return WebResult.success().addMsg("删除成功");
         }else{
             return WebResult.fail().addMsg("删除失败");
@@ -57,13 +57,13 @@ public class SayingController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<SayingPO> sayings = sayingService.getSayingList();
+        List<SayingPO> sayings = sayingService.getAll();
         CsvExportUtil.exportToCsv(response, "Sayings_" + LocalDateTime.now(), sayings, SayingPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<SayingPO> sayings =  CsvImportUtil.importFromCsv(csvFile, SayingPO.class);
-        sayingService.addSayings(sayings);
+        sayingService.adds(sayings);
     }
 }

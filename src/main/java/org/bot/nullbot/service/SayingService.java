@@ -7,17 +7,17 @@ import java.util.List;
 
 public interface SayingService {
 
-    int addSaying(Long userId, String userName, String text);
+    int add(Long userId, String userName, String text);
 
-    boolean deleteById(Integer id);
+    boolean delete(Integer id);
 
     SayingPO getRand();
 
     SayingPO getRandByUserId(Long userId);
 
-    List<SayingPO> getSayingList();
+    List<SayingPO> getAll();
 
-    DataPage<SayingPO> getSayingByPage(Integer currentPage, Integer pageSize);
+    DataPage<SayingPO> getPage(Integer current, Integer size);
 
-    void addSayings(List<SayingPO> sayings);
+    void adds(List<SayingPO> sayings);
 }

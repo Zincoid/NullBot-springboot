@@ -26,18 +26,18 @@ public class UserController {
 
     @GetMapping("/list")
     public WebResult getUserList(){
-        return WebResult.success().addMsg("查询成功").addData("users", userService.getUserList());
+        return WebResult.success().addMsg("查询成功").addData("users", userService.getAll());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
     public WebResult getUserByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
-        DataPage<UserPO> userPage = userService.getUserByPage(currentPage, pageSize);
+        DataPage<UserPO> userPage = userService.getPage(currentPage, pageSize);
         return WebResult.success().addMsg("查询成功").addData("userPage", userPage);
     }
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
-        if(userService.deleteById(id)){
+        if(userService.delete(id)){
             return WebResult.success().addMsg("删除成功");
         }else{
             return WebResult.fail().addMsg("删除失败");
@@ -46,7 +46,7 @@ public class UserController {
 
     @PutMapping("/update")
     public WebResult update(@RequestBody UserPO user){
-        if(userService.updateUser(user))
+        if(userService.update(user))
             return WebResult.success().addMsg("更新成功");
         else
             return WebResult.fail().addMsg("更新出错");
@@ -54,13 +54,13 @@ public class UserController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<UserPO> users = userService.getUserList();
+        List<UserPO> users = userService.getAll();
         CsvExportUtil.exportToCsv(response, "Users_" + LocalDateTime.now(), users, UserPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<UserPO> users =  CsvImportUtil.importFromCsv(csvFile, UserPO.class);
-        userService.addUsers(users);
+        userService.adds(users);
     }
 }

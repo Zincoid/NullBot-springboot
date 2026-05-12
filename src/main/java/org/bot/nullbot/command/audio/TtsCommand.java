@@ -93,7 +93,7 @@ public class TtsCommand implements Command {
                             FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
                         }
 
-                        if (!ttsTemplateService.addTemplate(templateName, uploadedPath, templateText, userId, userName))
+                        if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
                             throw new NullBotMsgException("[语音合成] ❌存在重名冲突");
 
                         bot.sendGroupMsg(groupId, "[语音合成] \uD83D\uDCBE模板已保存！\n" +
@@ -106,7 +106,7 @@ public class TtsCommand implements Command {
                     if (params.size() < 3)
                         throw new NullBotMsgException("[语音合成] ❌删除参数不足");
                     String templateName = params.get(2);
-                    if (!ttsTemplateService.deleteTemplate(templateName))
+                    if (!ttsTemplateService.delete(templateName))
                         throw new NullBotMsgException("[语音合成] ❌该模板不存在");
                     bot.sendGroupMsg(event.getGroupId(), "[语音合成] ⚠️模板已删除", false);
                     log.info("\t\t\t\t├─[Tts] 已删除模板 - {}", templateName);
@@ -117,7 +117,7 @@ public class TtsCommand implements Command {
                         throw new NullBotMsgException("[语音合成] ❌克隆参数不足");
                     String templateName = params.get(2);
                     String targetText = params.get(3);
-                    TtsTemplatePO template = ttsTemplateService.getTemplate(templateName);
+                    TtsTemplatePO template = ttsTemplateService.get(templateName);
                     if (template == null)
                         throw new NullBotMsgException("[语音合成] ❌模板不存在");
                     String base64;
@@ -135,7 +135,7 @@ public class TtsCommand implements Command {
                 }
 
                 case "list" -> {
-                    List<TtsTemplatePO> templates = ttsTemplateService.getTemplateList();
+                    List<TtsTemplatePO> templates = ttsTemplateService.getAll();
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
                     StringBuilder sb = new StringBuilder("\n[名称 | 作者 - 创建日期 | 用量]");
                     for (TtsTemplatePO template : templates) {

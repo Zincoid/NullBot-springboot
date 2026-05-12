@@ -107,7 +107,7 @@ public class BreadCommand implements Command {
         long targetId = qqNumbers.getFirst(); // 只抢第一个人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
 
-        if (!userService.existUser(targetId)) {
+        if (!userService.exist(targetId)) {
             bot.sendGroupMsg(groupId, "[抢面包] ❌对象未注册", false);
             log.info("\t\t\t\t├─[Bread-Rob] 对象未注册 - {}({})", targetName, targetId);
             return;
@@ -134,7 +134,7 @@ public class BreadCommand implements Command {
         long targetId = qqNumbers.getFirst(); // 只送第一个人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
 
-        if (!userService.existUser(targetId)) {
+        if (!userService.exist(targetId)) {
             bot.sendGroupMsg(groupId, "[送面包] ❌对象未注册", false);
             log.info("\t\t\t\t├─[Bread-Gift] 对象未注册 - {}({})", targetName, targetId);
             return;
@@ -152,7 +152,7 @@ public class BreadCommand implements Command {
 
     private void look(Bot bot, Long groupId, Long userId, String userName) {
         List<InventoryVO> inventoryVOS = breadService.getVOList(userId);
-        UserPO user = userService.getUser(userId);
+        UserPO user = userService.get(userId);
         int totalAmount = inventoryService.getTotalAmount(userId);
         StringBuilder sb = new StringBuilder()
                 .append("[面包] ").append(userName).append("(").append(userId).append(")\n")

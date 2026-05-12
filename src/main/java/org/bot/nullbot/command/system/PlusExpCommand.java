@@ -34,7 +34,7 @@ public class PlusExpCommand implements Command {
             throw new NullBotMsgException("[加经验] ❌参数格式错误");
         }
 
-        if (!userService.existUser(userId))
+        if (!userService.exist(userId))
             throw new NullBotMsgException("[加经验] ❌用户不存在");
 
         int i = userService.plusExperience(userId, exp);

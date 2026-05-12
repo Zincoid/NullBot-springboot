@@ -36,7 +36,7 @@ public class ItemCommand implements Command {
         if (!itemService.exist(itemId))
             throw new NullBotMsgException("[查询物品] ❌该物品不存在");
 
-        ItemPO item = itemService.getItem(itemId);
+        ItemPO item = itemService.get(itemId);
         bot.sendGroupMsg(event.getGroupId(), item.toString(), false);
         log.info("\t\t\t\t├─[Item] 已获取物品详情 - {}", item.getName());
     }

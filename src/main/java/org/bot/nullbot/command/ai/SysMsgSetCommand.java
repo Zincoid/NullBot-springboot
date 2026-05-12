@@ -37,7 +37,7 @@ public class SysMsgSetCommand implements Command {
         String option = params.getFirst();
 
         if ("-reset".equals(option)) {
-            int userAccess = userService.getUserAccess(userId);
+            int userAccess = userService.getAccess(userId);
             if (userAccess < 1)
                 throw new NullBotMsgException("""
                         [提示词设置] \uD83D\uDEAB重置失败
@@ -56,7 +56,7 @@ public class SysMsgSetCommand implements Command {
         if ("-default".equals(option)) {
             if (settingService.getChatOption(groupId).isCustom())
                 throw new NullBotMsgException("[提示词设置] ❌非Default模式");
-            int userAccess = userService.getUserAccess(userId);
+            int userAccess = userService.getAccess(userId);
             if (userAccess < 1)
                 throw new NullBotMsgException("""
                         [提示词设置] \uD83D\uDEAB设置失败

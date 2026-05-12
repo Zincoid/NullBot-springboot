@@ -65,23 +65,23 @@ public class RegisterHandler implements Handler {
     }
 
     private void registerGroup(Long groupId, String groupName) {
-        GroupPO group = groupService.getGroup(groupId);
+        GroupPO group = groupService.get(groupId);
         if (group == null) {
-            groupService.addGroup(groupId, groupName);
+            groupService.add(groupId, groupName);
             log.info("\t\t├─[RegisterHandler] 新群聊注册完成");
         } else {
-            groupService.updateGroupName(groupId, groupName);
+            groupService.updateName(groupId, groupName);
             log.info("\t\t├─[RegisterHandler] 群聊信息已更新");
         }
     }
 
     private void registerUser(Long userId, String userName) {
-        UserPO user = userService.getUser(userId);
+        UserPO user = userService.get(userId);
         if (user == null) {
-            userService.addUser(userId, userName);
+            userService.add(userId, userName);
             log.info("\t\t├─[RegisterHandler] 新用户注册完成");
         } else {
-            userService.updateUserName(userId, userName);
+            userService.updateName(userId, userName);
             log.info("\t\t├─[RegisterHandler] 用户信息已更新");
         }
     }

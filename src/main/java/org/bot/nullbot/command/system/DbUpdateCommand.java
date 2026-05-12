@@ -27,8 +27,8 @@ public class DbUpdateCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
 
         // 自定义更新方式
-        groupService.updateAllGroupNames();
-        userService.updateAllUserNames();
+        groupService.updateAllNames();
+        userService.updateAllNames();
 
         bot.sendGroupMsg(event.getGroupId(), "[数据库更新] ✅已完成", false);
         log.info("\t\t\t\t├─[DbUpdate] 数据库已更新");

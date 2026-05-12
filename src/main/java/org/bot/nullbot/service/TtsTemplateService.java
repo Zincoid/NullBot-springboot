@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface TtsTemplateService {
 
-    boolean addTemplate(String name, String path, String text, Long userId, String userName);
+    boolean add(String name, String path, String text, Long userId, String userName);
 
-    boolean deleteTemplate(String templateName);
+    boolean delete(String name);
 
-    TtsTemplatePO getTemplate(String templateName);
+    TtsTemplatePO get(String name);
 
-    List<TtsTemplatePO> getTemplateList();
+    List<TtsTemplatePO> getAll();
 
     void increaseUsed(Integer id);
 }

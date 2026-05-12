@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface SettingService {
 
-    SettingInfo getSetting(Long groupId);
+    SettingInfo get(Long groupId);
 
-    boolean setSetting(SettingInfo setting);
+    boolean set(SettingInfo setting);
 
-    List<SettingInfo> getSettings();
+    List<SettingInfo> getAll();
 
-    void setSettings(List<SettingInfo> settings);
+    void sets(List<SettingInfo> settings);
 
     LimitScope getLimitScope(Long groupId);
 

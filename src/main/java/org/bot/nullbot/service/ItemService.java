@@ -7,29 +7,29 @@ import java.util.List;
 
 public interface ItemService {
 
-    ItemPO getItem(Integer itemId);
+    ItemPO get(Integer id);
 
-    ItemPO getRandomItem();
+    ItemPO getRandom();
 
-    ItemPO getRandomHighValueItem();
+    ItemPO getRandomHighValue();
 
-    ItemPO drawAndKeepRandomItem(Long userId);
+    ItemPO drawAndKeepRandom(Long userId);
 
-    boolean exist(Integer itemId);
+    boolean exist(Integer id);
 
-    boolean isUsable(Integer itemId);
+    boolean isUsable(Integer id);
 
-    String getItemCommand(Integer itemId);
+    String getCommand(Integer id);
 
-    List<ItemPO> getItemList();
+    List<ItemPO> getAll();
 
-    DataPage<ItemPO> getItemByPage(Integer currentPage, Integer pageSize);
+    DataPage<ItemPO> getPage(Integer current, Integer size);
 
-    boolean addItem(ItemPO item);
+    boolean add(ItemPO item);
 
-    void addItems(List<ItemPO> items);
+    void adds(List<ItemPO> items);
 
-    boolean updateItem(ItemPO item);
+    boolean update(ItemPO item);
 
-    boolean deleteById(Integer id);
+    boolean delete(Integer id);
 }

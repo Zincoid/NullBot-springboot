@@ -79,9 +79,9 @@ public class LootingMapFactory {
         List<ItemPO> list = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             if(highValue)
-                list.add(itemService.getRandomHighValueItem());
+                list.add(itemService.getRandomHighValue());
             else
-                list.add(itemService.getRandomItem());
+                list.add(itemService.getRandom());
         }
         return list;
     }

@@ -30,38 +30,38 @@ public class GroupServiceImpl implements GroupService {
     // =================== 注册功能相关 ===================
 
     @Override
-    public GroupPO getGroup(Long groupId) {
-        return groupMapper.selectById(groupId);
+    public GroupPO get(Long id) {
+        return groupMapper.selectById(id);
     }
 
     @Override
-    public void addGroup(Long groupId, String groupName) {
-        groupMapper.insert(new GroupPO(groupId, groupName, 2));
+    public void add(Long id, String name) {
+        groupMapper.insert(new GroupPO(id, name, 2));
     }
 
     @Override
-    public void updateGroupName(Long groupId, String groupName) {
+    public void updateName(Long id, String newName) {
         groupMapper.update(null, new LambdaUpdateWrapper<GroupPO>()
-                .eq(GroupPO::getId, groupId)
-                .set(GroupPO::getName, groupName));
+                .eq(GroupPO::getId, id)
+                .set(GroupPO::getName, newName));
     }
 
     // =================== 限权功能相关 ===================
 
     @Override
-    public boolean existGroup(Long groupId) {
-        return groupMapper.selectById(groupId) != null;
+    public boolean exist(Long id) {
+        return groupMapper.selectById(id) != null;
     }
 
     @Override
-    public int getGroupAccess(Long groupId) {
-        return groupMapper.selectById(groupId).getAccess();
+    public int getAccess(Long id) {
+        return groupMapper.selectById(id).getAccess();
     }
 
     @Override
-    public void setGroupAccess(Long groupId, int newAccess) {
+    public void setAccess(Long id, Integer newAccess) {
         groupMapper.update(null, new LambdaUpdateWrapper<GroupPO>()
-                .eq(GroupPO::getId, groupId)
+                .eq(GroupPO::getId, id)
                 .set(GroupPO::getAccess, newAccess));
     }
 
@@ -69,7 +69,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void updateAllGroupNames() {
+    public void updateAllNames() {
         groupMapper.selectList(null).forEach(group -> {
             Bot bot = botContainer.robots.get(botId);
             group.setName(bot.getGroupInfo(group.getId(), true).getData().getGroupName());
@@ -80,25 +80,25 @@ public class GroupServiceImpl implements GroupService {
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<GroupPO> getGroupList() {
+    public List<GroupPO> getAll() {
         return groupMapper.selectList(null);
     }
 
     @Override
-    public DataPage<GroupPO> getGroupByPage(Integer currentPage, Integer pageSize) {
+    public DataPage<GroupPO> getPage(Integer currentPage, Integer pageSize) {
         Page<GroupPO> page = new Page<>(currentPage, pageSize);
         Page<GroupPO> groupPage = groupMapper.selectPage(page, new LambdaQueryWrapper<GroupPO>().orderByAsc(GroupPO::getId));
         return new DataPage<>(groupPage.getRecords(), groupPage.getCurrent(), groupPage.getPages(), groupPage.getTotal(), groupPage.getSize());
     }
 
     @Override
-    public void addGroups(List<GroupPO> groups) { groupMapper.insert(groups); }
+    public void adds(List<GroupPO> groups) { groupMapper.insert(groups); }
 
     @Override
-    public boolean deleteById(Long groupId) { return groupMapper.deleteById(groupId) == 1; }
+    public boolean delete(Long groupId) { return groupMapper.deleteById(groupId) == 1; }
 
     @Override
-    public boolean updateGroup(GroupPO group) {
+    public boolean update(GroupPO group) {
         return groupMapper.updateById(group) == 1;
     }
 }
