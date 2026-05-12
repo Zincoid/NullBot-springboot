@@ -14,4 +14,9 @@ public class WebExceptionHandler {
         log.error("▽ [WebExceptionHandler] ", e);
         return WebResult.fail("服务器运行出错: " + e.getMessage());
     }
+
+    @ExceptionHandler
+    public WebResult handleIllegalArgumentException(IllegalArgumentException e) {
+        return WebResult.fail(e.getMessage());
+    }
 }

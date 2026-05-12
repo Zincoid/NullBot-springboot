@@ -17,7 +17,10 @@ public class PreviewController {
     private final PreviewService previewService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> preview(@PathVariable Integer id, HttpServletRequest request){
+    public ResponseEntity<Resource> preview(
+            @PathVariable Integer id,
+            HttpServletRequest request
+    ) {
         return previewService.preview(id, request);
     }
 }

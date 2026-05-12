@@ -17,4 +17,8 @@ public class AdminPO {
     private String username;
     private String password;
     private String email;
+
+    public AdminPO(String username) {
+        this.username = username;
+    }
 }

@@ -25,43 +25,44 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/list")
-    public WebResult getItemList(){
-        return WebResult.success().withMsg("查询成功").withData("items", itemService.getList());
+    public WebResult getItemList() {
+        return WebResult.success("查询成功").withData("items", itemService.getList());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
-    public WebResult getItemByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
+    public WebResult getItemByPage(
+            @PathVariable Integer currentPage,
+            @PathVariable Integer pageSize
+    ) {
         DataPage<ItemPO> itemPage = itemService.getPage(currentPage, pageSize);
-        return WebResult.success().withMsg("查询成功").withData("itemPage", itemPage);
+        return WebResult.success("查询成功").withData("itemPage", itemPage);
     }
 
     @PostMapping("/add")
-    public WebResult add(@RequestBody ItemPO item){
-        try {
-            if(itemService.add(item))
-                return WebResult.success().withMsg("新增成功");
-            else
-                return WebResult.fail().withMsg("新增失败");
-        } catch (Exception e) {
-            return WebResult.fail().withMsg("新增出错: " + e.getMessage());
+    public WebResult add(@RequestBody ItemPO item) {
+        if (itemService.add(item)) {
+            return WebResult.success("新增成功");
+        } else {
+            return WebResult.fail("新增失败");
         }
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult delete(@PathVariable Integer id){
-        if(itemService.deleteById(id)){
-            return WebResult.success().withMsg("删除成功");
-        }else{
+    public WebResult delete(@PathVariable Integer id) {
+        if (itemService.deleteById(id)) {
+            return WebResult.success("删除成功");
+        } else {
             return WebResult.fail().withMsg("删除失败");
         }
     }
 
     @PutMapping("/update")
-    public WebResult update(@RequestBody ItemPO item){
-        if(itemService.update(item))
-            return WebResult.success().withMsg("更新成功");
-        else
-            return WebResult.fail().withMsg("更新失败");
+    public WebResult update(@RequestBody ItemPO item) {
+        if (itemService.update(item)) {
+            return WebResult.success("更新成功");
+        } else {
+            return WebResult.fail("更新失败");
+        }
     }
 
     @GetMapping("/exportCsv")
@@ -72,7 +73,7 @@ public class ItemController {
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
-        List<ItemPO> items =  CsvImportUtil.importFromCsv(csvFile, ItemPO.class);
+        List<ItemPO> items = CsvImportUtil.importFromCsv(csvFile, ItemPO.class);
         itemService.adds(items);
     }
 }

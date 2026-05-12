@@ -30,21 +30,22 @@ public class SettingController {
     @GetMapping("/{id}")
     public WebResult getSetting(@PathVariable Long id) {
         SettingInfo setting = settingService.get(id);
-        if(setting != null)
-            return WebResult.success().withMsg("获取成功").withData("setting", setting);
-        else
-            return WebResult.fail().withMsg("获取失败");
+        if (setting != null) {
+            return WebResult.success("获取成功").withData("setting", setting);
+        } else {
+            return WebResult.fail("获取失败");
+        }
     }
 
     @PutMapping("/set")
-    public WebResult setSetting(@RequestBody SettingInfo setting){
-        if(settingService.set(setting)) {
+    public WebResult setSetting(@RequestBody SettingInfo setting) {
+        if (settingService.set(setting)) {
             commandRateLimiter.reset(setting.getGroupId());
             deepSeekClient.clearGroupHistory(setting.getGroupId(), null);
-            return WebResult.success().withMsg("更新成功");
+            return WebResult.success("更新成功");
+        } else {
+            return WebResult.fail("更新失败");
         }
-        else
-            return WebResult.fail().withMsg("更新失败");
     }
 
     @GetMapping("/exportCsv")
@@ -55,7 +56,7 @@ public class SettingController {
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
-        List<SettingInfo> settings =  CsvImportUtil.importFromCsv(csvFile, SettingInfo.class);
+        List<SettingInfo> settings = CsvImportUtil.importFromCsv(csvFile, SettingInfo.class);
         settingService.sets(settings);
     }
 }

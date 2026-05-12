@@ -18,21 +18,12 @@ public class StatisticController {
     private final StatisticService statisticService;
 
     @GetMapping
-    public WebResult Statistic(){
+    public WebResult Statistic() {
         StatisticVO statisticVO = statisticService.getStatistic();
-        if(statisticVO != null){
-            return WebResult.success().withMsg("获取成功")
-                    .withData("totalVisits", statisticVO.getTotalVisits())
-                    .withData("visitsXAxis", statisticVO.getVisitsXAxis())
-                    .withData("visitsData", statisticVO.getVisitsData())
-                    .withData("topGroupsAxis", statisticVO.getTopGroupsAxis())
-                    .withData("topGroupsData", statisticVO.getTopGroupsData())
-                    .withData("topUsersAxis", statisticVO.getTopUsersAxis())
-                    .withData("topUsersData", statisticVO.getTopUsersData())
-                    .withData("topCommandsAxis", statisticVO.getTopCommandsAxis())
-                    .withData("topCommandsData", statisticVO.getTopCommandsData());
-        }else{
-            return WebResult.fail().withMsg("获取失败");
+        if (statisticVO != null) {
+            return WebResult.success("获取成功").withData("statistic", statisticVO);
+        } else {
+            return WebResult.fail("获取失败");
         }
     }
 }

@@ -25,33 +25,36 @@ public class SayingController {
     private final SayingService sayingService;
 
     @GetMapping("/list")
-    public WebResult getSayingList(){
-        return WebResult.success().withMsg("查询成功").withData("sayings", sayingService.getList());
+    public WebResult getSayingList() {
+        List<SayingPO> sayings = sayingService.getList();
+        return WebResult.success("查询成功").withData("sayings", sayings);
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
-    public WebResult getSayingByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
+    public WebResult getSayingByPage(
+            @PathVariable Integer currentPage,
+            @PathVariable Integer pageSize
+    ) {
         DataPage<SayingPO> sayingPage = sayingService.getPage(currentPage, pageSize);
-        return WebResult.success().withMsg("查询成功").withData("sayingPage", sayingPage);
+        return WebResult.success("查询成功").withData("sayingPage", sayingPage);
     }
 
     @GetMapping("/random")
-    public WebResult random(){
-        log.info("[管理系统] 获取随机语录");
+    public WebResult random() {
         SayingPO saying = sayingService.getRand();
-        if(saying != null){
-            return WebResult.success().withMsg("获取成功").withData("saying", saying.toString());
-        }else{
-            return WebResult.fail().withMsg("获取失败");
+        if (saying != null) {
+            return WebResult.success("获取成功").withData("saying", saying.toString());
+        } else {
+            return WebResult.fail("获取失败");
         }
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult delete(@PathVariable Integer id){
-        if(sayingService.deleteById(id)){
-            return WebResult.success().withMsg("删除成功");
-        }else{
-            return WebResult.fail().withMsg("删除失败");
+    public WebResult delete(@PathVariable Integer id) {
+        if (sayingService.deleteById(id)) {
+            return WebResult.success("删除成功");
+        } else {
+            return WebResult.fail("删除失败");
         }
     }
 
@@ -63,7 +66,7 @@ public class SayingController {
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
-        List<SayingPO> sayings =  CsvImportUtil.importFromCsv(csvFile, SayingPO.class);
+        List<SayingPO> sayings = CsvImportUtil.importFromCsv(csvFile, SayingPO.class);
         sayingService.adds(sayings);
     }
 }
