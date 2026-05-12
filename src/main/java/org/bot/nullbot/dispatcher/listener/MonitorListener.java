@@ -139,7 +139,7 @@ public class MonitorListener {
         List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
         chatMessages.add(new ChatMessage(event.getMessageId() , event.getUserId(), event.getSender().getNickname(), "user", parsed));
         chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
-        log.info("└─[Recorded] {} Message(s)", chatMessages.size());
+        // log.info("└─[Recorded] {} Message(s)", chatMessages.size());
     }
 
     @FunctionControl(id = "KeyDetect")

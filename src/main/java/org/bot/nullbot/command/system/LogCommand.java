@@ -1,11 +1,15 @@
 package org.bot.nullbot.command.system;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.rolling.RollingFileAppender;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,10 +22,11 @@ import java.util.List;
 public class LogCommand implements Command {
 
     @Value("${logging.file.name}")
-    private String logPath;
+    private String logPath;  // 通过 yaml 配置时获取日志文件路径
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        // String logPath = getLogFilePath();
         bot.uploadGroupFile(
                 event.getGroupId(),
                 logPath,
@@ -29,6 +34,18 @@ public class LogCommand implements Command {
         );
         log.info("\t\t\t\t├─[Log] 日志已发送");
     }
+
+    // public static String getLogFilePath() {  // 通过 xml 配置时获取日志文件路径
+    //     LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+    //     // 获取名为 "FILE" 的 appender
+    //     RollingFileAppender<ch.qos.logback.classic.spi.ILoggingEvent> fileAppender =
+    //             (RollingFileAppender<ILoggingEvent>)
+    //                     loggerContext.getLogger("ROOT").getAppender("FILE");
+    //     if (fileAppender != null) {
+    //         return fileAppender.getFile();
+    //     }
+    //     throw new RuntimeException("未找到日志文件路径");
+    // }
 
     @Override
     public Integer getAccess() { return 2; }
