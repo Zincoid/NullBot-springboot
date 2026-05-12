@@ -15,12 +15,8 @@ public class SystemController {
     private final SystemService systemService;
 
     @GetMapping("/invoke")
-    public WebResult invoke(@RequestParam(defaultValue = "") String command){
-        try {
-            String result = systemService.invoke(command);
-            return WebResult.success().withMsg("调用成功").withData("result", result);
-        } catch (Exception e) {
-            return WebResult.fail().withMsg("调用失败").withData("result", e.toString());
-        }
+    public WebResult invoke(@RequestParam(defaultValue = "") String command) throws Exception {
+        String result = systemService.invoke(command);
+        return WebResult.success("调用成功").withData("result", result);
     }
 }

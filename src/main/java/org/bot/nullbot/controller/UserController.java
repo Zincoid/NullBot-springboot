@@ -25,31 +25,35 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/list")
-    public WebResult getUserList(){
-        return WebResult.success().withMsg("查询成功").withData("users", userService.getList());
+    public WebResult getUserList() {
+        return WebResult.success("查询成功").withData("users", userService.getList());
     }
 
     @GetMapping("/page/{currentPage}/{pageSize}")
-    public WebResult getUserByPage(@PathVariable Integer currentPage, @PathVariable Integer pageSize){
+    public WebResult getUserByPage(
+            @PathVariable Integer currentPage,
+            @PathVariable Integer pageSize
+    ) {
         DataPage<UserPO> userPage = userService.getPage(currentPage, pageSize);
-        return WebResult.success().withMsg("查询成功").withData("userPage", userPage);
+        return WebResult.success("查询成功").withData("userPage", userPage);
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult delete(@PathVariable Integer id){
-        if(userService.delete(id)){
-            return WebResult.success().withMsg("删除成功");
-        }else{
-            return WebResult.fail().withMsg("删除失败");
+    public WebResult delete(@PathVariable Integer id) {
+        if (userService.delete(id)) {
+            return WebResult.success("删除成功");
+        } else {
+            return WebResult.fail("删除失败");
         }
     }
 
     @PutMapping("/update")
-    public WebResult update(@RequestBody UserPO user){
-        if(userService.update(user))
-            return WebResult.success().withMsg("更新成功");
-        else
-            return WebResult.fail().withMsg("更新出错");
+    public WebResult update(@RequestBody UserPO user) {
+        if (userService.update(user)) {
+            return WebResult.success("更新成功");
+        } else {
+            return WebResult.fail("更新出错");
+        }
     }
 
     @GetMapping("/exportCsv")
@@ -60,7 +64,7 @@ public class UserController {
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
-        List<UserPO> users =  CsvImportUtil.importFromCsv(csvFile, UserPO.class);
+        List<UserPO> users = CsvImportUtil.importFromCsv(csvFile, UserPO.class);
         userService.adds(users);
     }
 }
