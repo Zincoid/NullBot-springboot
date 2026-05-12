@@ -83,7 +83,7 @@ public class WebInterceptor implements HandlerInterceptor {
             jwt = jwtTool.parseJwt(token);
         } catch (Exception e) {
             log.info("└─[WebInterceptor] 验证失败");
-            WebResult error = WebResult.fail().withMsg(e.getMessage());
+            WebResult error = WebResult.fail(e.getMessage());
             res.getWriter().write(JSONObject.toJSONString(error));
             return false;
         }

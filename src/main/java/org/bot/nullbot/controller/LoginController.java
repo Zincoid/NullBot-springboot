@@ -37,8 +37,7 @@ public class LoginController {
     public WebResult guest() {
         log.info("└─[LoginController] 访客登录");
         String token = jwtTool.createJwt(
-                null,
-                0,
+                0L, 0,
                 jwtProperties.getTokenTTL()
         );
         return WebResult.success("访客登录成功").withData("token", token);
@@ -49,8 +48,7 @@ public class LoginController {
         log.info("└─[LoginController] 管理员登录 - {}", loginDTO);
         if (adminService.login(loginDTO)) {
             String token = jwtTool.createJwt(
-                    loginDTO.getId(),
-                    1,
+                    loginDTO.getId(), 1,
                     jwtProperties.getTokenTTL()
             );
             return WebResult.success("管理员登录成功").withData("token", token);
@@ -101,7 +99,10 @@ public class LoginController {
         // Integer type = jwtTool.getLoginType(WebUtil.getToken());  // 弃用
         Integer type = UserCtxUtil.getType();
         if (type == 0) {
-            AdminPO admin = new AdminPO("Guest");
+            AdminPO admin = new AdminPO(
+                    null, "Guest",
+                    null, null
+            );
             log.info("└─[LoginController] 获取访客信息");
             return WebResult
                     .success("获取访客信息成功")
