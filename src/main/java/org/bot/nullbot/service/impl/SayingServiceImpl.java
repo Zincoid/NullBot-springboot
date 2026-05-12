@@ -36,7 +36,7 @@ public class SayingServiceImpl implements SayingService {
     }
 
     @Override
-    public boolean delete(Integer id) {
+    public boolean deleteById(Integer id) {
         return sayingMapper.deleteById(id) == 1;
     }
 

@@ -123,7 +123,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public boolean delete(Integer id) {
+    public boolean deleteById(Integer id) {
         return itemMapper.deleteById(id) == 1;
     }
 }

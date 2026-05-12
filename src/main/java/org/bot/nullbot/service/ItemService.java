@@ -31,5 +31,5 @@ public interface ItemService {
 
     boolean update(ItemPO item);
 
-    boolean delete(Integer id);
+    boolean deleteById(Integer id);
 }

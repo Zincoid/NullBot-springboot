@@ -34,12 +34,12 @@ public class TtsTemplateServiceImpl implements TtsTemplateService {
     }
 
     @Override
-    public boolean delete(String name) {
+    public boolean deleteByName(String name) {
         return ttsTemplateMapper.delete(new LambdaQueryWrapper<TtsTemplatePO>().eq(TtsTemplatePO::getName, name)) == 1;
     }
 
     @Override
-    public TtsTemplatePO get(String name) {
+    public TtsTemplatePO getByName(String name) {
         return ttsTemplateMapper.selectOne(new LambdaQueryWrapper<TtsTemplatePO>().eq(TtsTemplatePO::getName, name));
     }
 

@@ -8,9 +8,9 @@ public interface TtsTemplateService {
 
     boolean add(String name, String path, String text, Long userId, String userName);
 
-    boolean delete(String name);
+    boolean deleteByName(String name);
 
-    TtsTemplatePO get(String name);
+    TtsTemplatePO getByName(String name);
 
     List<TtsTemplatePO> getAll();
 

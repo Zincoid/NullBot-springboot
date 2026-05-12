@@ -9,7 +9,7 @@ public interface SayingService {
 
     int add(Long userId, String userName, String text);
 
-    boolean delete(Integer id);
+    boolean deleteById(Integer id);
 
     SayingPO getRand();
 

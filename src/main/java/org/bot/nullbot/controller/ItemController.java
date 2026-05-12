@@ -49,7 +49,7 @@ public class ItemController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
-        if(itemService.delete(id)){
+        if(itemService.deleteById(id)){
             return WebResult.success().addMsg("删除成功");
         }else{
             return WebResult.fail().addMsg("删除失败");

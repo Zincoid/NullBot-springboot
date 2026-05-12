@@ -48,7 +48,7 @@ public class SayingController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id){
-        if(sayingService.delete(id)){
+        if(sayingService.deleteById(id)){
             return WebResult.success().addMsg("删除成功");
         }else{
             return WebResult.fail().addMsg("删除失败");
