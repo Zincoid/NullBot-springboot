@@ -6,9 +6,11 @@ import com.mikuac.shiro.core.BotContainer;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.entity.po.StatisticDatePO;
 import org.bot.nullbot.entity.po.StatisticPO;
+import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.entity.vo.StatisticVO;
 import org.bot.nullbot.mapper.StatisticDateMapper;
 import org.bot.nullbot.mapper.StatisticMapper;
+import org.bot.nullbot.mapper.UserMapper;
 import org.bot.nullbot.service.StatisticService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class StatisticServiceImpl implements StatisticService {
 
     private final StatisticMapper statisticMapper;
     private final StatisticDateMapper statisticDateMapper;
+    private final UserMapper userMapper;
 
     // =================== WEB功能相关 ===================
 
@@ -117,7 +120,13 @@ public class StatisticServiceImpl implements StatisticService {
         List<Long> userData = new ArrayList<>();
         for (Map<String, Object> map : topUsers) {
             long userId = Long.parseLong(map.get("user_id").toString());
-            String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+            String userName;
+            UserPO user = userMapper.selectById(userId);
+            if (user != null) {
+                userName = user.getName();
+            } else {
+                userName = bot.getStrangerInfo(userId, true).getData().getNickname();
+            }
             userAxis.add(userName + "\n(" + userId + ")");
             userData.add(Long.valueOf(map.get("total_visits").toString()));
         }
