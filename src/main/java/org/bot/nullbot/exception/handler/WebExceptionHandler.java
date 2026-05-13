@@ -1,5 +1,7 @@
 package org.bot.nullbot.exception.handler;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.result.WebResult;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -14,20 +16,28 @@ import java.util.stream.Collectors;
 public class WebExceptionHandler {
 
     @ExceptionHandler
-    public WebResult handleException(Exception e) {  // 拦截所有异常
+    public WebResult handleException(Exception e) {  // 拦截所有其他异常
         log.error("▽ [WebExceptionHandler] ", e);
         return WebResult.fail("服务器运行出错: " + e.getMessage());
     }
 
     @ExceptionHandler
-    public WebResult handleIllegalArgumentException(IllegalArgumentException e) {  // 部分方法抛出
+    public WebResult handleIllegalArgumentException(IllegalArgumentException e) {  // 部分方法抛出此异常
         return WebResult.fail(e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public WebResult handleValidation(MethodArgumentNotValidException e) {  // 参数校验异常
+    public WebResult handleValidation(MethodArgumentNotValidException e) {  // 实体参数校验异常
         String message = e.getBindingResult().getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining("; "));
+        return WebResult.fail(message);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public WebResult handleConstraintViolation(ConstraintViolationException e) {  // 简单参数校验异常
+        String message = e.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining("; "));
         return WebResult.fail(message);
     }
