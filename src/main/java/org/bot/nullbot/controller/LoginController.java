@@ -15,7 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@Validated
+@Validated  // 表单校验 仅方法普通参数  @RequestBody 参数需额外在字段上添加 @Validated 注解
 @RequestMapping("/nullbot")
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class LoginController {
     private final AdminService adminService;
 
     @PostMapping("/regist")
-    public WebResult regist(@RequestBody RegistDTO registDTO) {
+    public WebResult regist(@RequestBody @Validated RegistDTO registDTO) {
         log.info("└─[LoginController] 管理员注册 - {}", registDTO);
         if (adminService.regist(registDTO)) {
             return WebResult.success("管理员注册成功");
@@ -46,7 +46,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public WebResult login(@RequestBody LoginDTO loginDTO) {
+    public WebResult login(@RequestBody @Validated LoginDTO loginDTO) {
         log.info("└─[LoginController] 管理员登录 - {}", loginDTO);
         if (adminService.login(loginDTO)) {
             String token = jwtTool.createJwt(
@@ -85,7 +85,7 @@ public class LoginController {
     }
 
     @PostMapping("/changePwd")
-    public WebResult changePwd(@RequestBody PwdChangeDTO pwdChangeDTO) {
+    public WebResult changePwd(@RequestBody @Validated PwdChangeDTO pwdChangeDTO) {
         // Long id = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
         Long id = UserCtxUtil.getId();
         log.info("└─[LoginController] 管理员密码更改 - ID: {}", id);
