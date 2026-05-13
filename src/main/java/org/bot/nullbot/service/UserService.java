@@ -33,7 +33,7 @@ public interface UserService {
 
     void adds(List<UserPO> users);
 
-    boolean delete(Integer id);
+    boolean delete(Long id);
 
     boolean update(UserPO user);
 }

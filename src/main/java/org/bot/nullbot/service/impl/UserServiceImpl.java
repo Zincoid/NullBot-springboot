@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
     public void adds(List<UserPO> users) { userMapper.insert(users); }
 
     @Override
-    public boolean delete(Integer id) { return userMapper.deleteById(id) == 1; }
+    public boolean delete(Long id) { return userMapper.deleteById(id) == 1; }
 
     @Override
     public boolean update(UserPO user) {

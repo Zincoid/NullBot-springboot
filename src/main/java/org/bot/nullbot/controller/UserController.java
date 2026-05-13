@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult delete(@PathVariable Integer id) {
+    public WebResult delete(@PathVariable Long id) {
         if (userService.delete(id)) {
             return WebResult.success("删除成功");
         } else {
