@@ -28,8 +28,6 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean regist(RegistDTO registDTO) {
-        if (!StringUtils.hasLength(registDTO.getPassword()))
-            throw new IllegalArgumentException("未输入密码");
         if (!securityCodeScheduler.validateCode("regist", registDTO.getActivationCode()))
             throw new IllegalArgumentException("激活码错误");
 
@@ -69,8 +67,6 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean changePwd(Long id, PwdChangeDTO pwdChangeDTO) {
-        if (!pwdChangeDTO.verify())
-            throw new IllegalArgumentException("表单验证失败");
         AdminPO admin = adminMapper.selectById(id);
         if (admin == null)
             throw new IllegalArgumentException("用户不存在");

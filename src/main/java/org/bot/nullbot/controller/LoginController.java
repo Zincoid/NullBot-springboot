@@ -11,9 +11,11 @@ import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.dto.LoginDTO;
 import org.bot.nullbot.service.AdminService;
 import org.bot.nullbot.util.UserCtxUtil;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
+@Validated
 @RequestMapping("/nullbot")
 @RestController
 @RequiredArgsConstructor

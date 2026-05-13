@@ -52,7 +52,7 @@ public class ItemController {
         if (itemService.deleteById(id)) {
             return WebResult.success("删除成功");
         } else {
-            return WebResult.fail().withMsg("删除失败");
+            return WebResult.fail("删除失败");
         }
     }
 
