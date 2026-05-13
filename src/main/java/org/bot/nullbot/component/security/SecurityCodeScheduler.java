@@ -57,7 +57,7 @@ public class SecurityCodeScheduler {
     @EventListener(ApplicationReadyEvent.class)
     public void initCode() {  // 初始化安全码
         createCode("regist");
-        createCode("access", 86_400_000, true);
+        createCode("access", 86_400_000, false);
         log.info("▽ [SecurityCodeScheduler] 默认安全码已初始化");
     }
 

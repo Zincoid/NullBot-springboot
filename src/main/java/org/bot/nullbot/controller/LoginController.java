@@ -55,7 +55,7 @@ public class LoginController {
             );
             return WebResult.success("管理员登录成功").withData("token", token);
         } else {
-            return WebResult.fail("管理员登录失败");
+            return WebResult.fail("用户名或密码错误");
         }
     }
 
