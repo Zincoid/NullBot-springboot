@@ -49,7 +49,8 @@ public class WebInterceptor implements HandlerInterceptor {
                 "/file/upload",
                 "/file/createDir",
                 "/file/rename",
-                "/file/move"
+                "/file/move",
+                "/file/setVisible"
         );
     }
 
