@@ -61,7 +61,7 @@ public class FileServiceImpl implements FileService {
         FilePO existFile = fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, directory)
                 .eq(FilePO::getFileName, fileName));
-        if(existFile != null) {
+        if (existFile != null) {
             existFile.setFileSize(fileSize);
             existFile.setLastModified(lastModified);
             existFile.setOwnerId(ownerId);
@@ -76,7 +76,7 @@ public class FileServiceImpl implements FileService {
                 .eq(FilePO::getFileName, path.getFileName().toString())
                 .eq(FilePO::getIsDir, 1)
         );
-        if(dir == null) {
+        if (dir == null) {
             return false;
         }
 
@@ -110,14 +110,14 @@ public class FileServiceImpl implements FileService {
         String rootParentPath = rootPath.getParent().toString();
         String rootFileName = rootPath.getFileName().toString();
 
-        if(fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
+        if (fileMapper.selectOne(new LambdaQueryWrapper<FilePO>()
                 .eq(FilePO::getDirectory, rootParentPath)
                 .eq(FilePO::getFileName, rootFileName)) != null
         ) {
             return false;
         }
 
-        FilePO newRoot =  new FilePO();
+        FilePO newRoot = new FilePO();
         newRoot.setDirectory(rootParentPath);
         newRoot.setFileName(rootFileName);
         newRoot.setFileSize(0L);
@@ -132,7 +132,7 @@ public class FileServiceImpl implements FileService {
                 .eq(FilePO::getOwnerName, "root")
         );
 
-        if(existRoot != null) {
+        if (existRoot != null) {
             newRoot.setId(existRoot.getId());
             return fileMapper.updateById(newRoot) == 1;
         }
@@ -152,7 +152,7 @@ public class FileServiceImpl implements FileService {
                 .eq(FilePO::getDirectory, fullDir)
                 .orderByDesc(FilePO::getIsDir)
                 .orderByAsc(FilePO::getId);
-        if(hidden) wrapper.eq(FilePO::getVisible, true);
+        if (hidden) wrapper.eq(FilePO::getVisible, true);
         Page<FilePO> page = new Page<>(current, size);
         Page<FilePO> filePage = fileMapper.selectPage(page, wrapper);
         return new DataPage<>(filePage.getRecords(), filePage.getCurrent(), filePage.getPages(), filePage.getTotal(), filePage.getSize());
@@ -174,7 +174,7 @@ public class FileServiceImpl implements FileService {
         String fileName = uploadFile.getOriginalFilename();
         String fullDir = resolveFullDir(curDir);
 
-        if(!fileMapper.selectList(new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).eq(FilePO::getFileName, fileName)).isEmpty()) {
+        if (!fileMapper.selectList(new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).eq(FilePO::getFileName, fileName)).isEmpty()) {
             throw new IllegalArgumentException("数据库存在同名冲突");
         }
 
@@ -184,7 +184,7 @@ public class FileServiceImpl implements FileService {
                 .eq(FilePO::getFileName, path.getFileName().toString())
                 .eq(FilePO::getIsDir, 1)
         );
-        if(dir == null)
+        if (dir == null)
             throw new IllegalArgumentException("数据库父目录不存在");
         if (!Files.exists(path))
             throw new IllegalArgumentException("磁盘父目录不存在");
@@ -218,12 +218,13 @@ public class FileServiceImpl implements FileService {
         String mimeType = request.getSession().getServletContext().getMimeType(fileName);
         if (mimeType == null || mimeType.isEmpty()) {
             mimeType = "application/octet-stream";
+            response.setHeader("X-Content-Type-Options", "nosniff");
         }
         try (InputStream fileInputStream = Files.newInputStream(filePath);
              ServletOutputStream os = response.getOutputStream()) {
             response.setContentType(mimeType);
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+                    "attachment; filename=\"" + URLEncoder.encode(fileName, StandardCharsets.UTF_8) + "\"");
             FileCopyUtils.copy(fileInputStream, os);
         } catch (IOException e) {
             throw new RuntimeException("从磁盘下载文件时出错", e);
@@ -241,14 +242,14 @@ public class FileServiceImpl implements FileService {
                 .eq(FilePO::getFileName, path.getFileName().toString())
                 .eq(FilePO::getIsDir, 1)
         );
-        if(dir == null)
+        if (dir == null)
             throw new IllegalArgumentException("数据库父目录不存在");
-        if(!Files.exists(path) || !Files.isDirectory(path))
+        if (!Files.exists(path) || !Files.isDirectory(path))
             throw new IllegalArgumentException("磁盘父目录不存在");
 
         Path dirPath = Path.of(fullDir, dirName);
 
-        if (!Files.exists(dirPath)){
+        if (!Files.exists(dirPath)) {
             Files.createDirectory(dirPath);
         } else
             throw new IllegalArgumentException("磁盘目录已存在");
@@ -435,6 +436,7 @@ public class FileServiceImpl implements FileService {
 
     /**
      * 更新子文件的路径
+     *
      * @param oldDirPath 原目录路径
      * @param newDirPath 新目录路径
      */
@@ -478,7 +480,8 @@ public class FileServiceImpl implements FileService {
 
     // =================== 本地系统文件与数据库同步工具 ===================
 
-    private record SyncFileInfo(long size, long lastModified, boolean isDirectory) {}
+    private record SyncFileInfo(long size, long lastModified, boolean isDirectory) {
+    }
 
     // 主同步方法 (用户调用)
     public void scanAndSyncFiles() {
