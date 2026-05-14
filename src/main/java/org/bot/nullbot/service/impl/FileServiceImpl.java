@@ -16,6 +16,7 @@ import org.bot.nullbot.mapper.FileMapper;
 import org.bot.nullbot.service.FileService;
 import org.springframework.context.event.EventListener;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -210,17 +211,22 @@ public class FileServiceImpl implements FileService {
     @Transactional
     public void download(Integer id, HttpServletRequest request, HttpServletResponse response) {
         FilePO file = fileMapper.selectById(id);
-        if (file == null) throw new IllegalArgumentException("数据库文件不存在");
+        if (file == null)
+            throw new IllegalArgumentException("数据库文件不存在");
         String fileName = file.getFileName();
-        String suf = fileName.substring(fileName.lastIndexOf("."));
         Path filePath = Path.of(file.getDirectory(), fileName);
+        String mimeType = request.getSession().getServletContext().getMimeType(fileName);
+        if (mimeType == null || mimeType.isEmpty()) {
+            mimeType = "application/octet-stream";
+        }
         try (InputStream fileInputStream = Files.newInputStream(filePath);
              ServletOutputStream os = response.getOutputStream()) {
-            response.setContentType(request.getSession().getServletContext().getMimeType(suf));
-            response.setHeader("content-disposition","attachment;fileName="+ URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+            response.setContentType(mimeType);
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8));
             FileCopyUtils.copy(fileInputStream, os);
         } catch (IOException e) {
-            throw new RuntimeException("从磁盘下载文件时出错");
+            throw new RuntimeException("从磁盘下载文件时出错", e);
         }
     }
 
