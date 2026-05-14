@@ -218,7 +218,6 @@ public class FileServiceImpl implements FileService {
         String mimeType = request.getSession().getServletContext().getMimeType(fileName);
         if (mimeType == null || mimeType.isEmpty()) {
             mimeType = "application/octet-stream";
-            response.setHeader("X-Content-Type-Options", "nosniff");
         }
         try (InputStream fileInputStream = Files.newInputStream(filePath);
              ServletOutputStream os = response.getOutputStream()) {
