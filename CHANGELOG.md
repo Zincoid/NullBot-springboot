@@ -1,4 +1,4 @@
-# NullBot 更新日志
+# NullBot 后端更新日志
 
 # Beta
 
