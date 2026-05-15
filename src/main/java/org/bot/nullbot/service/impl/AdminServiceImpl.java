@@ -40,9 +40,7 @@ public class AdminServiceImpl implements AdminService {
         if (admin != null)
             throw new IllegalArgumentException("用户已注册");
 
-        AdminPO newAdmin = new AdminPO();
-        newAdmin.setId(user.getId());
-        newAdmin.setUsername(user.getName());
+        AdminPO newAdmin = adminConverter.toPO(user);
         newAdmin.setEmail(registDTO.getEmail());
         newAdmin.setPassword(passwordEncoder.encode(registDTO.getPassword()));
 

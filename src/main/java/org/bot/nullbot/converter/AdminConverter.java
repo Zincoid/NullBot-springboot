@@ -4,6 +4,7 @@ import org.bot.nullbot.entity.dto.AdminUpdateDTO;
 import org.bot.nullbot.entity.po.AdminPO;
 import org.bot.nullbot.entity.po.UserPO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -13,5 +14,6 @@ public interface AdminConverter {
 
     public AdminPO toPO(AdminUpdateDTO dto);
 
+    @Mapping(source = "name", target = "username")
     public AdminPO toPO(UserPO user);
 }
