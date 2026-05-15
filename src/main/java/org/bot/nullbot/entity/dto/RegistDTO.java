@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class RegistDTO {
 
-    @NotBlank(message = "用户ID不能为空")
+    @NotBlank(message = "账号不能为空")
     private String id;
 
     @NotBlank(message = "密码不能为空")

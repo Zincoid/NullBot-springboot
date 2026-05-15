@@ -2,6 +2,7 @@ package org.bot.nullbot.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.security.SecurityCodeScheduler;
+import org.bot.nullbot.entity.dto.AdminUpdateDTO;
 import org.bot.nullbot.entity.dto.LoginDTO;
 import org.bot.nullbot.entity.dto.PwdChangeDTO;
 import org.bot.nullbot.entity.dto.RegistDTO;
@@ -10,9 +11,9 @@ import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.mapper.AdminMapper;
 import org.bot.nullbot.mapper.UserMapper;
 import org.bot.nullbot.service.AdminService;
+import org.bot.nullbot.util.UserCtxUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +64,13 @@ public class AdminServiceImpl implements AdminService {
     public boolean deleteById(Long id) { return adminMapper.deleteById(id) == 1; }
 
     @Override
-    public boolean update(AdminPO admin) { return adminMapper.updateById(admin) == 1; }
+    public boolean update(AdminUpdateDTO adminUpdateDTO) {
+        AdminPO admin = new AdminPO();
+        admin.setId(adminUpdateDTO.getId());
+        admin.setUsername(adminUpdateDTO.getUsername());
+        admin.setEmail(adminUpdateDTO.getEmail());
+        return adminMapper.updateById(admin) == 1;
+    }
 
     @Override
     public boolean changePwd(Long id, PwdChangeDTO pwdChangeDTO) {

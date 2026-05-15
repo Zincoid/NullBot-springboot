@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.security.JwtTool;
 import org.bot.nullbot.config.prop.JwtProperties;
+import org.bot.nullbot.entity.dto.AdminUpdateDTO;
 import org.bot.nullbot.entity.dto.PwdChangeDTO;
 import org.bot.nullbot.entity.dto.RegistDTO;
 import org.bot.nullbot.entity.po.AdminPO;
@@ -72,12 +73,12 @@ public class LoginController {
     }
 
     @PostMapping("/update")
-    public WebResult update(@RequestBody AdminPO admin) {
+    public WebResult update(@RequestBody @Validated AdminUpdateDTO adminUpdateDTO) {
         // Long id = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
         Long id = UserCtxUtil.getId();
-        admin.setId(id);
+        adminUpdateDTO.setId(id);
         log.info("└─[LoginController] 管理员更新 - ID: {}", id);
-        if (adminService.update(admin)) {
+        if (adminService.update(adminUpdateDTO)) {
             return WebResult.success("管理员更新成功");
         } else {
             return WebResult.fail("管理员更新失败");

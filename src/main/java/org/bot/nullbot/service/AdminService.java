@@ -1,5 +1,6 @@
 package org.bot.nullbot.service;
 
+import org.bot.nullbot.entity.dto.AdminUpdateDTO;
 import org.bot.nullbot.entity.dto.LoginDTO;
 import org.bot.nullbot.entity.dto.PwdChangeDTO;
 import org.bot.nullbot.entity.dto.RegistDTO;
@@ -13,7 +14,7 @@ public interface AdminService {
 
     boolean deleteById(Long id);
 
-    boolean update(AdminPO admin);
+    boolean update(AdminUpdateDTO admin);
 
     boolean changePwd(Long id, PwdChangeDTO pwdChangeDTO);
 
