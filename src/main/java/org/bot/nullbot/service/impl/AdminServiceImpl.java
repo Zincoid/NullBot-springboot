@@ -2,6 +2,7 @@ package org.bot.nullbot.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.security.SecurityCodeScheduler;
+import org.bot.nullbot.converter.AdminConverter;
 import org.bot.nullbot.entity.dto.AdminUpdateDTO;
 import org.bot.nullbot.entity.dto.LoginDTO;
 import org.bot.nullbot.entity.dto.PwdChangeDTO;
@@ -11,7 +12,6 @@ import org.bot.nullbot.entity.po.UserPO;
 import org.bot.nullbot.mapper.AdminMapper;
 import org.bot.nullbot.mapper.UserMapper;
 import org.bot.nullbot.service.AdminService;
-import org.bot.nullbot.util.UserCtxUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,7 @@ public class AdminServiceImpl implements AdminService {
 
     private final UserMapper userMapper;
     private final AdminMapper adminMapper;
+    private final AdminConverter adminConverter;
 
     private final SecurityCodeScheduler securityCodeScheduler;
     private final PasswordEncoder passwordEncoder;
@@ -65,10 +66,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean update(AdminUpdateDTO adminUpdateDTO) {
-        AdminPO admin = new AdminPO();
-        admin.setId(adminUpdateDTO.getId());
-        admin.setUsername(adminUpdateDTO.getUsername());
-        admin.setEmail(adminUpdateDTO.getEmail());
+        AdminPO admin = adminConverter.toPO(adminUpdateDTO);
         return adminMapper.updateById(admin) == 1;
     }
 
