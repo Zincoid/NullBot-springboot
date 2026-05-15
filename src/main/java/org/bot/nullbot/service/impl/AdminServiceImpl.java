@@ -21,7 +21,6 @@ public class AdminServiceImpl implements AdminService {
 
     private final UserMapper userMapper;
     private final AdminMapper adminMapper;
-    private final AdminConverter adminConverter;
 
     private final SecurityCodeScheduler securityCodeScheduler;
     private final PasswordEncoder passwordEncoder;
@@ -40,7 +39,7 @@ public class AdminServiceImpl implements AdminService {
         if (admin != null)
             throw new IllegalArgumentException("用户已注册");
 
-        AdminPO newAdmin = adminConverter.toPO(user);
+        AdminPO newAdmin = AdminConverter.INSTANCE.toPO(user);
         newAdmin.setEmail(registDTO.getEmail());
         newAdmin.setPassword(passwordEncoder.encode(registDTO.getPassword()));
 
@@ -64,7 +63,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean update(AdminUpdateDTO adminUpdateDTO) {
-        AdminPO admin = adminConverter.toPO(adminUpdateDTO);
+        AdminPO admin = AdminConverter.INSTANCE.toPO(adminUpdateDTO);
         return adminMapper.updateById(admin) == 1;
     }
 
