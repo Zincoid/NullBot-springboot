@@ -6,6 +6,7 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - WSR_ENABLE=true
+      - ACCOUNT=<机器人QQ账号>
     ports:
       - "6099:6099"
       - "3000:3000"
