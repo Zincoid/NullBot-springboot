@@ -1,0 +1,49 @@
+services:
+
+  nullbot-mysql:
+    image: mysql:8.0.44
+    container_name: nullbot-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: 68b9b73b-4f4f-49e8-b0eb-62f7ed79f4ba
+    volumes:
+      - "/root/Mysql/conf:/etc/mysql/conf.d"
+      - "/root/Mysql/data:/var/lib/mysql"
+    networks:
+      - nullbot-net
+
+  nullbot-backend:
+    image: nullbot-backend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nullbot-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/root/Nullbot/file:/root/Nullbot/file"
+    depends_on:
+      - nullbot-mysql
+    restart: unless-stopped
+    networks:
+      - nullbot-net
+
+  nullbot-frontend:
+    image: nullbot-frontend:latest
+    build:
+      context: /root/Nginx
+      dockerfile: Dockerfile
+    container_name: nullbot-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - nullbot-backend
+    restart: unless-stopped
+    networks:
+      - nullbot-net
+
+networks:
+  nullbot-net:
+    name: nullbot-net
