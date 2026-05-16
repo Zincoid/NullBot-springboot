@@ -161,7 +161,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public DataPage<FilePO> search(String key, String curDir, boolean hidden) {
         if (key.contains("/") || key.contains("\\")) {
-            throw new IllegalArgumentException("路径名不允许出现斜杠");
+            throw new IllegalArgumentException("关键字不允许出现斜杠");
         }
         String fullDir = resolveFullDir(curDir);
         List<FilePO> fileList = hidden ? fileMapper.searchFileVisible(key, fullDir) : fileMapper.searchFile(key, fullDir);
