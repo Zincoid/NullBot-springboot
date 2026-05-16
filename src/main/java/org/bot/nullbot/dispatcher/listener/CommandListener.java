@@ -20,6 +20,7 @@ import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 
@@ -100,8 +101,8 @@ public class CommandListener {
             log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
         } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {  // 检测引用命令
-            String slashCommand = event.getArrayMsg().get(1).getData().get("text").asString(null);
-            if (slashCommand != null && slashCommand.startsWith(commandPrefix)) {
+            JsonNode textNode = event.getArrayMsg().get(1).getData().get("text");
+            if (textNode != null && textNode.asString().startsWith(commandPrefix)) {
                 log.info("◉ [GroupAction:ReplyCommand] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
                 commandProcessor.processQQ(bot, new CommandEvent<>(event));
             }

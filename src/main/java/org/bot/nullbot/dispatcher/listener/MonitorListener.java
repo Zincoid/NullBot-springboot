@@ -28,6 +28,7 @@ import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.Objects;
@@ -74,8 +75,8 @@ public class MonitorListener {
         if (event.getMessage().startsWith(commandPrefix)) {
             return false;
         } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
-            String slashCommand = event.getArrayMsg().get(1).getData().get("text").asString(null);
-            if (slashCommand != null && slashCommand.startsWith(commandPrefix)) return false;
+            JsonNode textNode = event.getArrayMsg().get(1).getData().get("text");
+            if (textNode != null && textNode.asString().startsWith(commandPrefix)) return false;
         }
 
         double freq = settingService.getReplyFrequency(event.getGroupId());
