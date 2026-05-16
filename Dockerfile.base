@@ -2,22 +2,22 @@ FROM eclipse-temurin:21-jre
 
 RUN apt-get update && apt-get install -y wget gnupg2 unzip
 
+# 添加 Google Chrome 仓库并安装最新稳定版
 RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/google.gpg \
-    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update && apt-get install -y google-chrome-stable
 
-RUN apt-get update && apt-get install -y google-chrome-stable
-
-ARG CHROME_DRIVER_VERSION=144.0.7559.31
-RUN wget -O /tmp/chromedriver.zip https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/${CHROME_DRIVER_VERSION}/linux64/chromedriver-linux64.zip \
+# 获取已安装 Chrome 的完整版本号，并下载对应的 ChromeDriver
+RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}') \
+    && echo "Detected Chrome version: $CHROME_VERSION" \
+    && wget -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip" \
     && unzip /tmp/chromedriver.zip -d /tmp/ \
     && mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver \
     && chmod +x /usr/local/bin/chromedriver \
     && rm -rf /tmp/chromedriver*
 
+# 创建软链接以兼容你代码中原来的路径 /root/Nullbot/file/driver/chromedriver
 RUN mkdir -p /root/Nullbot/file/driver \
     && ln -s /usr/local/bin/chromedriver /root/Nullbot/file/driver/chromedriver
 
 ENV PATH="/usr/local/bin:${PATH}"
-
-# 构建命令
-# docker build -f Dockerfile.base -t nullbot-jre-chrome:21 .
