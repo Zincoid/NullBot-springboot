@@ -1,0 +1,21 @@
+services:
+  nullbot-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nullbot-backend
+    ports:
+      - "8080:8080"
+    # 如果有数据库等依赖，可加 depends_on
+    restart: unless-stopped
+
+  nullbot-frontend:
+    build:
+      context: /root/Nginx
+      dockerfile: Dockerfile
+    container_name: nullbot-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - nullbot-backend
+    restart: unless-stopped
