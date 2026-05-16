@@ -7,10 +7,10 @@ services:
       - "3306:3306"
     environment:
       TZ: Asia/Shanghai
-      MYSQL_ROOT_PASSWORD: 68b9b73b-4f4f-49e8-b0eb-62f7ed79f4ba
+      MYSQL_ROOT_PASSWORD: <数据库 root 密码>
     volumes:
-      - "/root/Mysql/conf:/etc/mysql/conf.d"
-      - "/root/Mysql/data:/var/lib/mysql"
+      - "<配置文件路径>:/etc/mysql/conf.d"
+      - "<数据文件路径>:/var/lib/mysql"
     networks:
       - nullbot-net
 
@@ -23,7 +23,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - "/root/Nullbot/file:/root/Nullbot/file"
+      - "<Bot数据目录>:/root/Nullbot/file"
     depends_on:
       - nullbot-mysql
     restart: unless-stopped
