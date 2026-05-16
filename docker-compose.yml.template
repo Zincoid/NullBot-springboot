@@ -15,6 +15,7 @@ services:
       - <NapCat配置文件路径>:/app/napcat/config
       - <QQ数据文件路径>:/app/.config/QQ
       - <NapCat日志文件路径>:/app/napcat/logs
+      - "<Bot数据目录>:/root/Nullbot/file"
     restart: unless-stopped
     mem_limit: 1g
     cpus: '1'
