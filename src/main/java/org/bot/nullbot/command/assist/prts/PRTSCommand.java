@@ -90,6 +90,7 @@ public class PRTSCommand implements Command {
         } catch (NullBotMsgException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new NullBotMsgException("[PRTS] ❌查询失败: " + e.getMessage());
         }
 
