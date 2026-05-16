@@ -1,5 +1,25 @@
 services:
 
+  nullbot-napcat:
+    image: docker.1ms.run/mlikiowa/napcat-docker:latest
+    container_name: nullbot-napcat
+    environment:
+      - TZ=Asia/Shanghai
+      - WSR_ENABLE=true
+    ports:
+      - "6099:6099"
+      - "3000:3000"
+      - "3001:3001"
+    volumes:
+      - <NapCat配置文件路径>:/app/napcat/config
+      - <QQ数据文件路径>:/app/.config/QQ
+      - <NapCat日志文件路径>:/app/napcat/logs
+    restart: unless-stopped
+    mem_limit: 1g
+    cpus: '1'
+    networks:
+      - nullbot-net
+
   nullbot-mysql:
     image: mysql:8.0.44
     container_name: nullbot-mysql
@@ -11,6 +31,7 @@ services:
     volumes:
       - "<配置文件路径>:/etc/mysql/conf.d"
       - "<数据文件路径>:/var/lib/mysql"
+    restart: unless-stopped
     networks:
       - nullbot-net
 
