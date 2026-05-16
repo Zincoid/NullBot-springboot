@@ -31,5 +31,5 @@ sudo xvfb-run -a /root/Napcat/opt/QQ/qq --no-sandbox
 sudo screen -S nullbot  
 java -jar /root/Nullbot/target/NullBot-0.0.1-SNAPSHOT.jar
 
-# Chrome
+# 本地测试部署 Chrome 版本
 Google Chrome 144.0.7559.59
