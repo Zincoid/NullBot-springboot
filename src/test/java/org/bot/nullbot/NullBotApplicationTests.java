@@ -139,7 +139,7 @@ class NullBotApplicationTests {
         // // 添加用户头像
         // canvas.image(
         //         0, 0, 640, 640,
-        //         Path.of("src/test/testFile/input.jpg"), true
+        //         Path.of("src/test/file/input.jpg"), true
         // );
         //
         // // 添加 RIP 文字 - 确保使用正确的字体名称
@@ -156,7 +156,7 @@ class NullBotApplicationTests {
         // 添加用户头像
         canvas.image(
                 0, 0, 640, 640, 1,
-                Path.of("src/test/testFile/input.jpg"), false
+                Path.of("src/test/file/input.jpg"), false
         );
         // 添加 PRTS
         canvas.image(
@@ -165,11 +165,11 @@ class NullBotApplicationTests {
         );
 
         // 使用 resvg 渲染为 PNG
-        Path outputPath = Path.of("src/test/testFile/output.png");
+        Path outputPath = Path.of("src/test/file/output.png");
         canvas.render(outputPath, "/root/Nullbot/file/temp/font");
 
         // 先保存SVG文件查看内容
-        Path svgPath = Path.of("src/test/testFile/output.svg");
+        Path svgPath = Path.of("src/test/file/output.svg");
         canvas.exportSvg(svgPath);
 
         // 读取并打印SVG内容
@@ -261,7 +261,7 @@ class NullBotApplicationTests {
         // Base64 解码
         byte[] imageBytes = Base64.getDecoder().decode(base64);
         // 写入文件
-        try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\captured.png")) {
+        try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\file\\captured.png")) {
             fos.write(imageBytes);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -271,7 +271,7 @@ class NullBotApplicationTests {
     @Test
     void HtmlRenderTest() throws Exception {
         // String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\symmetry.html";
-        // String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\neuro.png";
+        // String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\file\\neuro.png";
         // Map<String, String> variables = new HashMap<>();
         // variables.put("mode", "right");
         // Map<String, String> images = new HashMap<>();
@@ -289,9 +289,9 @@ class NullBotApplicationTests {
         // html = HtmlTemplateUtil.replaceVariables(html, variables);
         // String base64 = htmlRenderer.renderElement(html, "#templateContainer");
 
-        // String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\meme_template.html";
-        // String backgroundPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\input.jpg";
-        // String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\neuro.png";
+        // String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\file\\meme_template.html";
+        // String backgroundPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\file\\input.jpg";
+        // String imagePath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\file\\neuro.png";
         // Map<String, String> variables = new HashMap<>();
         // variables.put("text", "我去我去我去我去我去我去我去我去我去我去我去我去我去");
         // Map<String, String> images = new HashMap<>();
@@ -318,7 +318,7 @@ class NullBotApplicationTests {
         // Base64 解码
         byte[] imageBytes = Base64.getDecoder().decode(base64);
         // 写入文件
-        try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\testFile\\rendered.png")) {
+        try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\file\\rendered.png")) {
             fos.write(imageBytes);
         } catch (IOException e) {
             throw new RuntimeException(e);

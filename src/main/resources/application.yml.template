@@ -7,7 +7,8 @@ spring:
       max-request-size: 1024MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/NullBot
+    url: jdbc:mysql://localhost:3306/nullbot  # 本地部署
+    # url: jdbc:mysql://nullbot-mysql:3306/nullbot  # 容器化部署
     username:
     password:
 
@@ -39,8 +40,10 @@ logging:  # 可移入 logback.xml 配置
 
 chrome:
     driver-auto: false
-    driver-path: /root/Nullbot/file/driver/chromedriver
-#    driver-path: src/test/testFile/driver/chromedriver.exe
+    # 在 Docker 环境下指向 /root/Nullbot/driver/chromedriver 且容器内无该文件时
+    # 将使用由 Dockerfile.base 构建的 nullbot-jre-chrome:21 环境中的内置驱动
+    driver-path: /root/Nullbot/driver/chromedriver  # Linux
+#    driver-path: src/test/driver/chromedriver.exe  # Windows
     max-retries: 3
     load-timeout: 10
 
@@ -59,7 +62,7 @@ shiro:
     capacity: 30
     awaitTask: true
     timeout: 20  # 10
-#  task-pool:
+#  task-pool:  #  内置线程池
 #    core-pool-size: 10
 #    queue-capacity: 200
 #    keep-alive-time: 10
@@ -107,18 +110,12 @@ nullbot:
       file-directory: /root/Nullbot/file
       # 以下路径需选择管理根下子目录
       config-path: /root/Nullbot/file/config  # 可配置文件 - 群设置: Settings.csv
-      resource-path: /root/Nullbot/file/resource  # 资源文件夹 - ai/meme/*, endfield/*, pubg/*, duel/data.csv, duel/icon/*.png
+      resource-path: /root/Nullbot/file/resource  # 资源文件夹 - ai/meme/*, endfield/public或版本文件夹/*, pubg/*, duel/data.csv, duel/icon/*.png
       temp-path: /root/Nullbot/file/temp
       image-path: /root/Nullbot/file/image
       video-path: /root/Nullbot/file/video
       audio-path: /root/Nullbot/file/audio
-#      file-directory: ${user.dir}/src/main/resources/upload
-#      config-path: src/main/resources/file/config
-#      resource-path: src/main/resources/file/resource
-#      temp-path: src/main/resources/file/temp
-#      image-path: src/main/resources/file/image
-#      video-path: src/main/resources/file/video
-#      audio-path: src/main/resources/file/audio
+
   ai:
     deepseek:
       api-url: https://api.deepseek.com/chat/completions
