@@ -139,7 +139,8 @@ public class VideoGetCommand implements Command {
 
     private void sendVideo(Bot bot, Long groupId, String videoPath) {
         String response = MsgUtils.builder()
-                .video("base64://" + Base64Util.from(videoPath), "")
+                // .video("base64://" + Base64Util.from(videoPath), "")
+                .img(videoPath)
                 .build();
         bot.sendGroupMsg(groupId, response, false);
         log.info("\t\t\t\t├─[VideoGet] 已获取视频 - {}", videoPath);

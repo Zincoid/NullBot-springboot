@@ -15,6 +15,7 @@ services:
       - <NapCat配置文件路径>:/app/napcat/config
       - <QQ数据文件路径>:/app/.config/QQ
       - <NapCat日志文件路径>:/app/napcat/logs
+      - <Bot数据目录>:/root/Nullbot/file  # 部分大文件发送需求
     restart: unless-stopped
     mem_limit: 1g
     cpus: '1'
@@ -30,8 +31,8 @@ services:
       TZ: Asia/Shanghai
       MYSQL_ROOT_PASSWORD: <数据库 root 密码>
     volumes:
-      - "<配置文件路径>:/etc/mysql/conf.d"
-      - "<数据文件路径>:/var/lib/mysql"
+      - <配置文件路径>:/etc/mysql/conf.d
+      - <数据文件路径>:/var/lib/mysql
     restart: unless-stopped
     networks:
       - nullbot-net
@@ -45,7 +46,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - "<Bot数据目录>:/root/Nullbot/file"
+      - <Bot数据目录>:/root/Nullbot/file
     depends_on:
       - nullbot-mysql
     restart: unless-stopped
