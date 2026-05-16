@@ -169,6 +169,15 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    public DataPage<FilePO> search(String key, String fullDir) {
+        if (key.contains("/") || key.contains("\\")) {
+            throw new IllegalArgumentException("关键字不允许出现斜杠");
+        }
+        List<FilePO> fileList = fileMapper.searchFile(key, fullDir);
+        return new DataPage<>(fileList, 0L, 0L, 0L, 0L);
+    }
+
+    @Override
     @Transactional
     public void upload(Long ownerId, MultipartFile uploadFile, String curDir) throws IOException {
         String fileName = uploadFile.getOriginalFilename();

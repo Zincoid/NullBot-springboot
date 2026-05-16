@@ -111,15 +111,15 @@ public class VideoGetCommand implements Command {
         }
     }
 
-    private void sendPage(Bot bot, Long groupId, List<String> helpPaths,
+    private void sendPage(Bot bot, Long groupId, List<String> videoPaths,
                           int pageSize, int current) {
-        int total = helpPaths.size();
+        int total = videoPaths.size();
         int pages = (total + pageSize - 1) / pageSize;
         int fromIndex = (current - 1) * pageSize;
         int toIndex = Math.min(fromIndex + pageSize, total);
         List<String> helpNames = IntStream.range(fromIndex, toIndex)
                 .mapToObj(i -> {
-                    String[] split = helpPaths.get(i).split("/");
+                    String[] split = videoPaths.get(i).split("/");
                     String fileName = split[split.length - 1];
                     String fileVer = split[split.length - 2];
                     int dotIndex = fileName.lastIndexOf('.');

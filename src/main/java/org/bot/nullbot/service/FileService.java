@@ -23,6 +23,8 @@ public interface FileService {
 
     DataPage<FilePO> search(String key, String curDir, boolean hidden);
 
+    DataPage<FilePO> search(String key, String fullDir);
+
     void upload(Long owner, MultipartFile uploadFile, String curDir) throws IOException;
 
     void download(Integer id, HttpServletRequest request, HttpServletResponse response);
