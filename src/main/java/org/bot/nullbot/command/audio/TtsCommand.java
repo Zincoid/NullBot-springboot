@@ -2,7 +2,7 @@ package org.bot.nullbot.command.audio;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.dto.action.response.GetMsgResp;
+import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
@@ -54,7 +54,7 @@ public class TtsCommand implements Command {
                     if (params.size() < 4)
                         throw new NullBotMsgException("[语音合成] ❌新模板参数不足");
 
-                    GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+                    MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
                     // Map<String, String> recordMap = MessageParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());  // 暂不支持 AMR 格式音频
                     Map<String, String> fileMap = MessageParseUtil.parseGroupRawMessageAsFileMap(replyMsg.getRawMessage());
 

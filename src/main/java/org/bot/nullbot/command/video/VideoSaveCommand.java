@@ -1,7 +1,7 @@
 package org.bot.nullbot.command.video;
 
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.dto.action.response.GetMsgResp;
+import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
@@ -35,7 +35,7 @@ public class VideoSaveCommand implements Command {
         if (reply.getType() != MsgTypeEnum.reply)
             throw new NullBotMsgException("[保存视频] ❌需引用视频");
 
-        GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+        MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         // 可优化为单个键值对?
         Map<String, String> videoMap = MessageParseUtil.parseGroupRawMessageAsVideoMap(replyMsg.getRawMessage());
         if(videoMap.isEmpty())

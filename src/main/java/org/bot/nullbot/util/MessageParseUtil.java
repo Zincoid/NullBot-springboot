@@ -2,8 +2,9 @@ package org.bot.nullbot.util;
 
 import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.dto.action.response.GetMsgResp;
+import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.model.ArrayMsg;
+import tools.jackson.databind.JsonNode;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -38,14 +39,14 @@ public final class MessageParseUtil {
     public static String parseArrayMsgToSimple(Bot bot, List<ArrayMsg> arrayMsgs) {
         StringBuilder message = new StringBuilder();
         for (ArrayMsg msg : arrayMsgs) {
-            Map<String, String> data = msg.getData();
+            JsonNode data = msg.getData();
             switch (msg.getType()) {
                 case image -> message.append("[图片]");
                 case video -> message.append("[视频]");
                 case text -> message.append(data.get("text"));
                 case reply -> {
-                    int replyId = Integer.parseInt(data.get("id"));
-                    GetMsgResp replyMsg = bot.getMsg(replyId).getData();
+                    int replyId = data.get("id").asInt();
+                    MsgResp replyMsg = bot.getMsg(replyId).getData();
                     message.append("[引用 ")
                             .append(replyMsg.getSender().getNickname())
                             .append(": ")
@@ -55,7 +56,7 @@ public final class MessageParseUtil {
                             .append("]");
                 }
                 case at -> {
-                    long qq = Long.parseLong(data.get("qq"));
+                    long qq = data.get("qq").asLong();
                     String nickname = bot.getStrangerInfo(qq, true).getData().getNickname();
                     message.append("@").append(nickname).append("(").append(qq).append(")");
                 }

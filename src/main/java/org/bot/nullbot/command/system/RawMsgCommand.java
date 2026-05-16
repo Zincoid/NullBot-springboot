@@ -1,7 +1,7 @@
 package org.bot.nullbot.command.system;
 
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.dto.action.response.GetMsgResp;
+import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
@@ -24,7 +24,7 @@ public class RawMsgCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply) throw new NullBotMsgException("[原始消息] ❌需引用消息");
-        GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+        MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         log.info("\t\t\t\t├─[RawMsg] 已输出\n{}", replyMsg.getRawMessage());
         bot.sendGroupMsg(event.getGroupId(), "[原始消息] ✅已输出至控制台", false);
     }

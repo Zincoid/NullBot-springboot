@@ -1,7 +1,7 @@
 package org.bot.nullbot.command.image;
 
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.dto.action.response.GetMsgResp;
+import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
@@ -34,7 +34,7 @@ public class ImageDeleteCommand implements Command {
         String directory = fileStorageProperties.getImagePath() + "/collect";
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() == MsgTypeEnum.reply) {
-            GetMsgResp replyMsg = bot.getMsg(Integer.parseInt(reply.getData().get("id"))).getData();
+            MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
             Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
             if (imageMap.isEmpty()) throw new NullBotMsgException("[删除图片] ❌未引用图片");
             for (Map.Entry<String, String> entry : imageMap.entrySet()) {

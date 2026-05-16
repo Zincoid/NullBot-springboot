@@ -74,7 +74,7 @@ public class MonitorListener {
         if (event.getMessage().startsWith(commandPrefix)) {
             return false;
         } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
-            String slashCommand = event.getArrayMsg().get(1).getData().get("text");
+            String slashCommand = event.getArrayMsg().get(1).getData().get("text").asString(null);
             if (slashCommand != null && slashCommand.startsWith(commandPrefix)) return false;
         }
 
@@ -105,8 +105,8 @@ public class MonitorListener {
                     log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
                     hasLogged = true;
                 }
-                String originName =msg.getData().get("file");
-                String url = msg.getData().get("url");
+                String originName = msg.getData().get("file").asString();
+                String url = msg.getData().get("url").asString();
                 String fileName = originName.substring(0, originName.lastIndexOf("."));
                 String filePath = fileStorageProperties.getImagePath() + "/monitor/" + groupId;
                 try {

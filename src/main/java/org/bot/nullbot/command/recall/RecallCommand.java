@@ -24,7 +24,7 @@ public class RecallCommand implements Command {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
             throw new NullBotMsgException("[撤回] ❌需引用消息");
-        int messageId = Integer.parseInt(reply.getData().get("id"));
+        int messageId = reply.getData().get("id").asInt();
         bot.deleteMsg(messageId);
         log.info("\t\t\t\t├─[Recall] 已撤回引用消息 - Message Id -> {}", messageId);
     }
