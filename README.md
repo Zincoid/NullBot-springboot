@@ -1,7 +1,7 @@
 # 快捷运行
 screen -dmS napcat bash -c "xvfb-run -a /root/Napcat/opt/QQ/qq --no-sandbox -q 3408240018 > /root/Napcat/output.log 2>&1"  
-screen -dmS nullbot bash -c "java -jar /root/Nullbot/jar/NullBot-springboot-0.0.1-SNAPSHOT.jar 2>&1 | tee /root/Nullbot/output.log"  
-screen -dmS nullbot bash -c "java -jar /root/Nullbot/jar/NullBot-springboot-0.0.1-SNAPSHOT.jar"
+screen -dmS nullbot bash -c "java -jar /root/Nullbot/target/NullBot-springboot-0.0.1-SNAPSHOT.jar 2>&1 | tee /root/Nullbot/output.log"  
+screen -dmS nullbot bash -c "java -jar /root/Nullbot//target/NullBot-springboot-0.0.1-SNAPSHOT.jar"
 
 # 附加方法
 ### 限制Napcat
@@ -20,7 +20,7 @@ systemctl start napcat
 sudo alternatives --config java  
 
 ### 指定输出文件 (nohup)
-nohup java -jar /root/Nullbot/jar/NullBot-0.0.1-SNAPSHOT.jar > output.log 2>&1 &
+nohup java -jar /root/Nullbot/target/NullBot-0.0.1-SNAPSHOT.jar > output.log 2>&1 &
 
 # 基础命令
 ### NapCat 基础运行命令
@@ -29,7 +29,7 @@ sudo xvfb-run -a /root/Napcat/opt/QQ/qq --no-sandbox
 
 ### NullBot 基础运行命令
 sudo screen -S nullbot  
-java -jar /root/Nullbot/jar/NullBot-0.0.1-SNAPSHOT.jar
+java -jar /root/Nullbot/target/NullBot-0.0.1-SNAPSHOT.jar
 
 # Chrome
 Google Chrome 144.0.7559.59
