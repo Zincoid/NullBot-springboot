@@ -35,7 +35,7 @@ public class RandomImageCommand implements Command {
             throw new NullBotMsgException("[随机图片] ❌暂无图片");
 
         String response = MsgUtils.builder()
-                .img(imagePath)
+                .img("file://" + imagePath)
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("\t\t\t\t├─[RandomImage] 已发送图片 - {}", imagePath);
