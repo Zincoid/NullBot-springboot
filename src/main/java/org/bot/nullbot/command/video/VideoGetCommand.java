@@ -12,6 +12,7 @@ import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -138,7 +139,7 @@ public class VideoGetCommand implements Command {
 
     private void sendVideo(Bot bot, Long groupId, String videoPath) {
         String response = MsgUtils.builder()
-                .video(videoPath, "")
+                .video("base64://" + Base64Util.from(videoPath), "")
                 .build();
         bot.sendGroupMsg(groupId, response, false);
         log.info("\t\t\t\t├─[VideoGet] 已获取视频 - {}", videoPath);

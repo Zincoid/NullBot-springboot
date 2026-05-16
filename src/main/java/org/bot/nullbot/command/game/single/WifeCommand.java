@@ -11,6 +11,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -92,7 +93,7 @@ public class WifeCommand implements Command {
                 acgExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
                 String response = MsgUtils.builder()
                         .text("你的今日二次元老婆✨是\n" + category + " - " + wifeName)
-                        .img(wifePath)
+                        .img("base64://" + Base64Util.from(wifePath))
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
@@ -105,7 +106,7 @@ public class WifeCommand implements Command {
                             .split("_")[0];  // 切割后缀
                     String response = MsgUtils.builder()
                             .text("今天已经选过了哦\uD83D\uDCA6...\n你的二次元老婆是\n" + wifeName)
-                            .img(wifePath)
+                            .img("base64://" + Base64Util.from(wifePath))
                             .build();
                     bot.sendGroupMsg(event.getGroupId(), response, false);
                     log.info("\t\t\t\t├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);

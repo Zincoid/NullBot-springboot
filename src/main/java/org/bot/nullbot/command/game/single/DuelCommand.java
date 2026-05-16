@@ -14,6 +14,7 @@ import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.info.DuelInfo;
 import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -45,10 +46,12 @@ public class DuelCommand implements Command {
             MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] ⚔️请交战双方无序入场");
             builder.text("\n[ ====== 左方选手 ====== ]\n");
             for (Map.Entry<Integer, Integer> enemy : duel.getLeft().entrySet())
-                builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + " ");
+                builder.img("base64://" + Base64Util.from(getIconPath(enemy.getKey())))
+                        .text("*" + enemy.getValue() + " ");
             builder.text("\n[ ====== 右方选手 ====== ]\n");
             for (Map.Entry<Integer, Integer> enemy : duel.getRight().entrySet())
-                builder.img(icon(enemy.getKey())).text("*" + enemy.getValue() + " ");
+                builder.img("base64://" + Base64Util.from(getIconPath(enemy.getKey())))
+                        .text("*" + enemy.getValue() + " ");
             builder.text("\n\n注: 发送L或R进行选择(%s秒内)".formatted(SELECTION_TIME));
             bot.sendGroupMsg(groupId, builder.build(), false);
 
@@ -102,7 +105,7 @@ public class DuelCommand implements Command {
         }
     }
 
-    private String icon(int id) {
+    private String getIconPath(int id) {
         return fileStorageProperties.getResourcePath() + "/duel/icon/" + id + ".png";
     }
 

@@ -9,6 +9,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +36,7 @@ public class AnimeCommand implements Command {
             throw new NullBotMsgException("[二次元] ❌暂无图片");
 
         String response = MsgUtils.builder()
-                .img(animePath)
+                .img("base64://" + Base64Util.from(animePath))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("\t\t\t\t├─[Anime] 获取二次元图片");

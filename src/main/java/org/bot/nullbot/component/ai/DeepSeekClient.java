@@ -36,6 +36,7 @@ import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.EmbeddedCommandEvent;
 import org.bot.nullbot.service.SettingService;
+import org.bot.nullbot.util.Base64Util;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
@@ -635,7 +636,8 @@ public class DeepSeekClient {
     private String buildRefusedMsg() throws IOException {
         return MsgUtils.builder()
                 .text("[AI] ⚠️对话被拒绝")
-                .img(resourceLoader.getCached("static/image/Filtered.jpg").toAbsolutePath().toString())
+                .img("base64://" + Base64Util.from(
+                        resourceLoader.getCached("static/image/Filtered.jpg")))
                 .build();
     }
 
@@ -646,7 +648,8 @@ public class DeepSeekClient {
     private String buildFilteredMsg() throws IOException {
         return MsgUtils.builder()
                 .text("[AI] ⚠️回复被过滤")
-                .img(resourceLoader.getCached("static/image/Filtered.jpg").toAbsolutePath().toString())
+                .img("base64://" + Base64Util.from(
+                        resourceLoader.getCached("static/image/Filtered.jpg")))
                 .build();
     }
 }

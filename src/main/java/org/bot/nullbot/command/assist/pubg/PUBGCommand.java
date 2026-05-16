@@ -9,6 +9,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +41,7 @@ public class PUBGCommand implements Command {
         String helpPath = FileUtil.getFilePathByName(fileStorageProperties.getResourcePath() + "/pubg", map);
         if (helpPath == null)
             throw new NullBotMsgException("[PUBG] ❌资源缺失");
-        String response = MsgUtils.builder().img(helpPath).build();
+        String response = MsgUtils.builder().img("base64://" + Base64Util.from(helpPath)).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("\t\t\t\t├─[PUBG] 已获取地图");
     }

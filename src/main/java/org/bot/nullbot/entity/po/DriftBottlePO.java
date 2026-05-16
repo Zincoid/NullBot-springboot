@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bot.nullbot.command.game.single.DriftBottleCommand;
+import org.bot.nullbot.util.Base64Util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -50,7 +51,7 @@ public class DriftBottlePO {
                 )
         );
         if (isImage) {
-            builder.img(content);
+            builder.img("base64://" + Base64Util.from(content));
         } else {
             builder.text(content + "\n");
         }

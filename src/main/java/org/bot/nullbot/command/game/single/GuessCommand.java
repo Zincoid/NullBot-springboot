@@ -77,11 +77,12 @@ public class GuessCommand implements Command {
 
                 if (inputs.isEmpty() || "##".equals(inputs.getFirst().getRight())) {
                     String endMsg = MsgUtils.builder()
-                            .text("""
+                            .text(
+                                """
                                 游戏结束啦\uD83D\uDCA6
                                 答案是...%s！""".formatted(guess.getName())
                             )
-                            .img(guess.getPath())
+                            .img("base64://" + Base64Util.from(guess.getPath()))
                             .build();
                     bot.sendGroupMsg(groupId, endMsg, false);
                     log.info("\t\t\t\t├─[Guess] 群聊 {} 已结束", groupId);
@@ -112,7 +113,7 @@ public class GuessCommand implements Command {
                                             guess.getTimes()
                                     )
                             )
-                            .img(guess.getPath())
+                            .img("base64://" + Base64Util.from(guess.getPath()))
                             .build();
                     bot.sendGroupMsg(groupId, correctMsg, false);
                     log.info("\t\t\t\t├─[Guess] 用户 {} 猜测正确", answererId);
@@ -128,7 +129,7 @@ public class GuessCommand implements Command {
                         已经错%s次啦\uD83D\uDCA6
                         答案是...%s！""".formatted(MAX_RETRIES, guess.getName())
                     )
-                    .img(guess.getPath())
+                    .img("base64://" + Base64Util.from(guess.getPath()))
                     .build();
             bot.sendGroupMsg(groupId, failMsg, false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);

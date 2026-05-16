@@ -9,6 +9,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +35,7 @@ public class RandomVideoCommand implements Command {
             throw new NullBotMsgException("[随机视频] ❌暂无视频");
 
         String response = MsgUtils.builder()
-                .video(videoPath, "")
+                .video("base64://" + Base64Util.from(videoPath), "")
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("\t\t\t\t├─[RandomVideo] 已发送视频 - {}", videoPath);

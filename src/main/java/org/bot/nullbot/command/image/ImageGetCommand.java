@@ -9,6 +9,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,7 @@ public class ImageGetCommand implements Command {
         if (imagePath == null)
             throw new NullBotMsgException("[获取图片] ❌未找到该图片");
         String response = MsgUtils.builder()
-                .img(imagePath)
+                .img("base64://" + Base64Util.from(imagePath))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("\t\t\t\t├─[ImageGet] 已获取图片 - {}", imagePath);

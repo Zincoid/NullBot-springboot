@@ -9,11 +9,11 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-
 
 @CommandMapping({"RandomImage", "Image", "image", "img", "随机图片", "图片"})
 @Component
@@ -35,7 +35,7 @@ public class RandomImageCommand implements Command {
             throw new NullBotMsgException("[随机图片] ❌暂无图片");
 
         String response = MsgUtils.builder()
-                .img("file://" + imagePath)
+                .img("base64://" + Base64Util.from(imagePath))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("\t\t\t\t├─[RandomImage] 已发送图片 - {}", imagePath);

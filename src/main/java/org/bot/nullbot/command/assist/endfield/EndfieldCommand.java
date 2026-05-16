@@ -12,6 +12,7 @@ import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -186,7 +187,7 @@ public class EndfieldCommand implements Command {
                 throw new NullBotMsgException("[终末地] ❌读取出错");
             }
         } else {  // 其他文件类型 按图片处理
-            String response = MsgUtils.builder().img(resourcePath).build();
+            String response = MsgUtils.builder().img("base://" + Base64Util.from(resourcePath)).build();
             bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[Endfield] 已获取图片内容");
         }

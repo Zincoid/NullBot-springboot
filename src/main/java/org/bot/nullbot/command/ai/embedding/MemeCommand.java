@@ -48,8 +48,7 @@ public class MemeCommand implements Command {
     }
 
     private void meme(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
-        if (params.isEmpty())
-            throw new NullBotMsgException("[表情] ❌参数不足");
+        if (params.isEmpty()) throw new NullBotMsgException("[表情] ❌参数不足");
 
         String memeFolderPath = fileStorageProperties.getResourcePath() + "/ai/meme";
         String memeName = params.getFirst();
@@ -60,9 +59,7 @@ public class MemeCommand implements Command {
             throw new NullBotLogException("[表情] ❌" + memeName + " 不存在");
         }
 
-        String response = MsgUtils.builder()
-                .img("base64://" + Base64Util.from(memePath))
-                .build();
+        String response = MsgUtils.builder().img("base64://" + Base64Util.from(memePath)).build();
 
         if (isPrivate) {
             bot.sendPrivateMsg(targetId, response, false);

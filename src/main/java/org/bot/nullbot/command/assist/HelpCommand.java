@@ -11,6 +11,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -51,7 +52,7 @@ public class HelpCommand implements Command {
             String helpPath = resourceLoader
                     .getCached("static/help/help.jpg", fileStorageProperties.getTempPath())
                     .toAbsolutePath().toString();
-            return MsgUtils.builder().img(helpPath).build();
+            return MsgUtils.builder().img("base64://" + Base64Util.from(helpPath)).build();
         } catch (IOException e) {
             throw new NullBotMsgException("[帮助] ❌资源缺失");
         }

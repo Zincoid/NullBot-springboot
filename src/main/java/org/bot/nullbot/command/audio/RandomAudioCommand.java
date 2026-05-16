@@ -9,6 +9,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +35,7 @@ public class RandomAudioCommand implements Command {
             throw new NullBotMsgException("[随机音频] ❌暂无音频");
 
         String response = MsgUtils.builder()
-                .voice(audioPath)
+                .voice("base64://" + Base64Util.from(audioPath))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("\t\t\t\t├─[RandomAudio] 已发送音频 - {}", audioPath);
