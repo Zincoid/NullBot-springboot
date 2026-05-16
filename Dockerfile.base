@@ -1,11 +1,13 @@
 FROM eclipse-temurin:21-jre
 
-RUN apt-get update && apt-get install -y wget gnupg2 unzip
+RUN apt-get update && apt-get install -y wget gnupg2 unzip \
+    && rm -rf /var/lib/apt/lists/*
 
-# 添加 Google Chrome 仓库并安装最新稳定版
+# 添加 Google Chrome 仓库并安装最新稳定版，同时安装中文字体以支持中文显示
 RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/google.gpg \
     && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
-    && apt-get update && apt-get install -y google-chrome-stable
+    && apt-get update && apt-get install -y google-chrome-stable fonts-wqy-microhei \
+    && rm -rf /var/lib/apt/lists/*
 
 # 获取已安装 Chrome 的完整版本号，并下载对应的 ChromeDriver
 RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}') \
@@ -16,11 +18,14 @@ RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}') \
     && chmod +x /usr/local/bin/chromedriver \
     && rm -rf /tmp/chromedriver*
 
-# 创建软链接以兼容你代码中原来的路径 /root/Nullbot/file/driver/chromedriver
+# 创建软链接以兼容你代码中原来的路径 /root/Nullbot/driver/chromedriver
 RUN mkdir -p /root/Nullbot/driver \
     && ln -s /usr/local/bin/chromedriver /root/Nullbot/driver/chromedriver
 
 ENV PATH="/usr/local/bin:${PATH}"
 
 # 构建命令
+# docker rmi nullbot-jre-chrome:21
 # docker build -f Dockerfile.base -t nullbot-jre-chrome:21 .
+# docker save -o nullbot-jre-chrome.tar nullbot-jre-chrome:21
+# docker load -i /root/Nullbot/nullbot-jre-chrome.tar
