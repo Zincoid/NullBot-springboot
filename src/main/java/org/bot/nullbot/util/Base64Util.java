@@ -11,30 +11,41 @@ public final class Base64Util {
 
     private Base64Util() {}
 
-    public static String imageToBase64(BufferedImage image) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            ImageIO.write(image, "png", baos);
-            return Base64.getEncoder().encodeToString(baos.toByteArray());
-        } catch (Exception e) {
-            throw new RuntimeException("Base64转换失败 (BufferedImage 方法)");
-        }
-    }
+    // ==================== 图片相关 ====================
 
     public static String imageToBase64(Path imagePath) {
-        try {
-            byte[] pngBytes = Files.readAllBytes(imagePath);
-            return Base64.getEncoder().encodeToString(pngBytes);
-        } catch (Exception e) {
-            throw new RuntimeException("Base64转换失败 (Path 方法)");
-        }
+        return fileToBase64(imagePath);
     }
 
     public static String imageToBase64(String imagePath) {
-        try {
-            byte[] pngBytes = Files.readAllBytes(Path.of(imagePath));
-            return Base64.getEncoder().encodeToString(pngBytes);
+        return fileToBase64(Path.of(imagePath));
+    }
+
+    public static String imageToBase64(BufferedImage image) {
+        return imageToBase64(image, "png");
+    }
+
+    public static String imageToBase64(BufferedImage image, String format) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(image, format, baos);
+            return Base64.getEncoder().encodeToString(baos.toByteArray());
         } catch (Exception e) {
-            throw new RuntimeException("Base64转换失败 (String 方法)");
+            throw new RuntimeException("BufferedImage转Base64失败: ", e);
         }
+    }
+
+    // ============== 通用文件 (视频 音频等) ==============
+
+    public static String fileToBase64(Path filePath) {
+        try {
+            byte[] bytes = Files.readAllBytes(filePath);
+            return Base64.getEncoder().encodeToString(bytes);
+        } catch (Exception e) {
+            throw new RuntimeException("文件转Base64失败: " + filePath, e);
+        }
+    }
+
+    public static String fileToBase64(String filePath) {
+        return fileToBase64(Path.of(filePath));
     }
 }
