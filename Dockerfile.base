@@ -17,7 +17,7 @@ RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}') \
     && rm -rf /tmp/chromedriver*
 
 # 创建软链接以兼容你代码中原来的路径 /root/Nullbot/file/driver/chromedriver
-RUN mkdir -p /root/Nullbot/file/driver \
-    && ln -s /usr/local/bin/chromedriver /root/Nullbot/file/driver/chromedriver
+RUN mkdir -p /root/Nullbot/driver \
+    && ln -s /usr/local/bin/chromedriver /root/Nullbot/driver/chromedriver
 
 ENV PATH="/usr/local/bin:${PATH}"
