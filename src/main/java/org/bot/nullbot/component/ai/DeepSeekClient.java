@@ -146,7 +146,7 @@ public class DeepSeekClient {
             if (res.contains("YES")) {
                 String response = buildRefusedMsg();
                 bot.sendGroupMsg(groupId, response, false);
-                return response;
+                return "Refused";
             }
         }
 
@@ -489,14 +489,20 @@ public class DeepSeekClient {
 
         // 丢弃判断
         if (response.contains("{Discard}")) return "Discarded";
-        // 处理消息
-        response = response.replaceAll("(\r?\n)+", "\n").trim();
-        if (messageFilter(response)) response = buildFilteredMsg();
+        boolean filtered = messageFilter(response);
         // 发送消息
-        Integer messageId = sendMsg(bot, targetId, response, isPrivate, voice);
+        Integer messageId;
+        if (filtered) {
+            messageId = sendMsg(bot, targetId, buildFilteredMsg(), isPrivate, voice);
+            response = "回复被过滤";
+        } else {
+            // 处理消息
+            response = response.replaceAll("(\r?\n)+", "\n").trim();
+            messageId = sendMsg(bot, targetId, response, isPrivate, voice);
+        }
         // 记录消息
         chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", response));
-        return response;
+        return filtered ? "Filtered" : response;
     }
 
     /**
@@ -519,31 +525,33 @@ public class DeepSeekClient {
 
         // 丢弃判断
         if (response.contains("{Discard}")) return "Discarded";
+        // 过滤判断
+        if (messageFilter(response)) {
+            Integer messageId = sendMsg(bot, targetId, buildFilteredMsg(), isPrivate, voice);
+            chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", "回复被过滤"));
+            return "Filtered";
+        }
         // 处理消息
         response = response.replaceAll("(\r?\n)+", "\n").trim();
-        // 正则匹配所有 {指令} 和 文本部分
+        // 分段执行 {指令}和单句
         Pattern pattern = Pattern.compile("(\\{.*?}|[^{]+)");
         Matcher matcher = pattern.matcher(response);
         while (matcher.find()) {
-            String segment = matcher.group(1);
+            String segment = matcher.group(1).trim();
             if (segment.startsWith("{") && segment.endsWith("}")) {
                 // 执行指令
                 String command = segment.substring(1, segment.length() - 1).trim();
                 if (command.isEmpty()) continue;
-                eventPublisher.publishEvent(new EmbeddedCommandEvent(
-                        bot,
-                        new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)
-                ));
+                eventPublisher.publishEvent(new EmbeddedCommandEvent(bot,
+                        new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)));
                 // 记录指令
                 chatMessages.add(new ChatMessage(null, botId, "Null", "assistant", segment));
             } else {
                 // 发送消息
-                String text = segment.trim();
-                if (text.isEmpty()) continue;
-                if (messageFilter(text)) text = buildFilteredMsg();
-                Integer messageId = sendMsg(bot, targetId, text, isPrivate, voice);
+                if (segment.isEmpty()) continue;
+                Integer messageId = sendMsg(bot, targetId, segment, isPrivate, voice);
                 // 记录消息
-                chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", text));
+                chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", segment));
             }
         }
         return response;
@@ -570,20 +578,23 @@ public class DeepSeekClient {
 
         // 丢弃判断
         if (response.contains("{Discard}")) return "Discarded";
+        // 过滤判断
+        if (messageFilter(response)) {
+            Integer messageId = sendMsg(bot, targetId, buildFilteredMsg(), isPrivate, voice);
+            chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", "回复被过滤"));
+            return "Filtered";
+        }
         // 处理消息
         response = response.replaceAll("(\r?\n)+", "\n").trim();
-        Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
         // 执行指令
+        Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
         while (m.find()) {
             String command = m.group(1);
-            eventPublisher.publishEvent(new EmbeddedCommandEvent(
-                    bot,
-                    new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)
-            ));
+            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot,
+                    new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)));
         }
         // 发送消息
         String _response = response.replaceAll("\\{.*?}", "").trim();
-        if (messageFilter(_response)) _response =  buildFilteredMsg();
         Integer messageId = sendMsg(bot, targetId, _response, isPrivate, voice);
         // 记录消息
         chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", response));
