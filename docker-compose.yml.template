@@ -1,7 +1,7 @@
 services:
 
   nullbot-napcat:
-    image: docker.1ms.run/mlikiowa/napcat-docker:latest
+    image: mlikiowa/napcat-docker:latest
     container_name: nullbot-napcat
     environment:
       - TZ=Asia/Shanghai
