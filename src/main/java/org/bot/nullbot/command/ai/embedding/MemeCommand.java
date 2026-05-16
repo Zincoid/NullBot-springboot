@@ -13,6 +13,7 @@ import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -39,14 +40,15 @@ public class MemeCommand implements Command {
 
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
-        if (event.getGroupId() != null)
+        if (event.getGroupId() != null) {
             meme(bot, params, event.getGroupId(), false);
-        else
+        } else {
             meme(bot, params, event.getUserId(), true);
+        }
     }
 
     private void meme(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
-        if(params.isEmpty())
+        if (params.isEmpty())
             throw new NullBotMsgException("[表情] ❌参数不足");
 
         String memeFolderPath = fileStorageProperties.getResourcePath() + "/ai/meme";
@@ -58,11 +60,16 @@ public class MemeCommand implements Command {
             throw new NullBotLogException("[表情] ❌" + memeName + " 不存在");
         }
 
-        String response = MsgUtils.builder().img(memePath).build();
-        if (isPrivate)
+        String response = MsgUtils.builder()
+                .img("base64://" + Base64Util.from(memePath))
+                .build();
+
+        if (isPrivate) {
             bot.sendPrivateMsg(targetId, response, false);
-        else
+        } else {
             bot.sendGroupMsg(targetId, response, false);
+        }
+
         log.info("\t\t\t\t├─[Meme] 已发送表情: {}", memeName);
     }
 
@@ -74,14 +81,14 @@ public class MemeCommand implements Command {
     @Override
     public String getHelpForAI() {
         return String.format("""
-                ◉ 65275d24 命令
-                功能: 发送表情包图片
-                格式: 65275d24 [表情文件名]
-                可用表情文件列表 (文件名为 表情主体人物_表达的文字内容或情绪.文件扩展名):
-                %s
-                示例: 65275d24 女孩_干嘛.jpg
-                注意: 你可以发送表情包图片以表达自己的情绪，要经常发表情
-                (重要！) 你只能用提供给你的完整表情文件名，不要用下划线把不同文件名的主体人物和表达内容情绪的文本拼接起来使用，这种文件不存在""",
+                        ◉ 65275d24 命令
+                        功能: 发送表情包图片
+                        格式: 65275d24 [表情文件名]
+                        可用表情文件列表 (文件名为 表情主体人物_表达的文字内容或情绪.文件扩展名):
+                        %s
+                        示例: 65275d24 女孩_干嘛.jpg
+                        注意: 你可以发送表情包图片以表达自己的情绪，要经常发表情
+                        (重要！) 你只能用提供给你的完整表情文件名，不要用下划线把不同文件名的主体人物和表达内容情绪的文本拼接起来使用，这种文件不存在""",
                 FileUtil.getFileListAsString(fileStorageProperties.getResourcePath() + "/ai/meme", ", ", true)
         );
     }

@@ -43,7 +43,7 @@ public class ImageConverter {
                     .stroke("#FFFFFF", 6);
             // 渲染并转换为 Base64
             canvas.render(tempPngPath, tempFontPath);
-            return Base64Util.imageToBase64(tempPngPath);
+            return Base64Util.from(tempPngPath);
         } finally {
             Files.deleteIfExists(tempPngPath);
         }
@@ -67,7 +67,7 @@ public class ImageConverter {
             );
             // 渲染并转换为 Base64
             canvas.render(tempPngPath, tempFontPath);
-            return Base64Util.imageToBase64(tempPngPath);
+            return Base64Util.from(tempPngPath);
         } finally {
             Files.deleteIfExists(tempPngPath);
         }
@@ -91,7 +91,7 @@ public class ImageConverter {
             );
             // 渲染并转换为 Base64
             canvas.render(tempPngPath, tempFontPath);
-            return Base64Util.imageToBase64(tempPngPath);
+            return Base64Util.from(tempPngPath);
         } finally {
             Files.deleteIfExists(tempPngPath);
         }

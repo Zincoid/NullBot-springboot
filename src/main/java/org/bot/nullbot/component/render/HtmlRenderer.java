@@ -115,7 +115,7 @@ public class HtmlRenderer {
             Screenshot screenshot = ashot.takeScreenshot(driver);
             BufferedImage fullImage = screenshot.getImage();
 
-            return Base64Util.imageToBase64(fullImage);
+            return Base64Util.from(fullImage);
         } finally {
             // 清理临时文件
             if (tempFile != null && tempFile.exists()) tempFile.delete();
@@ -149,7 +149,7 @@ public class HtmlRenderer {
             Screenshot screenshot = ashot.takeScreenshot(driver, element);
             BufferedImage eleImage = screenshot.getImage();
 
-            return Base64Util.imageToBase64(eleImage);
+            return Base64Util.from(eleImage);
         } finally {
             // 清理临时文件
             if (tempFile != null && tempFile.exists()) tempFile.delete();

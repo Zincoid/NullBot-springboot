@@ -75,7 +75,7 @@ public class WebScreenCapturer {
                 // File outputFile = new File(outputPath);
                 // ImageIO.write(eleImage, "png", outputFile);
                 // BASE64 转换
-                return Base64Util.imageToBase64(eleImage);
+                return Base64Util.from(eleImage);
 
             } catch (TimeoutException e) {
                 retryCount++;
@@ -120,7 +120,7 @@ public class WebScreenCapturer {
                 // File outputFile = new File(outputPath);
                 // ImageIO.write(fullImage, "png", outputFile);
                 // BASE64 转换
-                return Base64Util.imageToBase64(fullImage);
+                return Base64Util.from(fullImage);
 
             } catch (TimeoutException e) {
                 retryCount++;
@@ -164,7 +164,7 @@ public class WebScreenCapturer {
                 // File outputFile = new File(outputPath);
                 // ImageIO.write(eleImage, "png", outputFile);
                 // BASE64 转换
-                return Base64Util.imageToBase64(eleImage);
+                return Base64Util.from(eleImage);
 
             } catch (TimeoutException e) {
                 retryCount++;

@@ -9,6 +9,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.util.Base64Util;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +36,7 @@ public class FemboyCommand implements Command {
             throw new NullBotMsgException("[男娘] ❌暂无图片");
 
         String response = MsgUtils.builder()
-                .img(femboyPath)
+                .img("base64://" + Base64Util.from(femboyPath))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("\t\t\t\t├─[Femboy] 获取男娘图片");

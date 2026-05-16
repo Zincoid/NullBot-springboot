@@ -157,7 +157,7 @@ public class GuessCommand implements Command {
         if (!img.getColorModel().hasAlpha()) {
             int x = xMin + (xMax > xMin ? (int)(Math.random() * (xMax - xMin)) : 0);
             int y = yMin + (yMax > yMin ? (int)(Math.random() * (yMax - yMin)) : 0);
-            return Base64Util.imageToBase64(img.getSubimage(x, y, w, h));
+            return Base64Util.from(img.getSubimage(x, y, w, h));
         }
         int attempts = 0;
         while (attempts < maxAttempts) {
@@ -173,7 +173,7 @@ public class GuessCommand implements Command {
                     transparentCount++;
             double ratio = (double) transparentCount / (w * h);
             if (ratio <= transparentRatio)
-                return Base64Util.imageToBase64(subImg);
+                return Base64Util.from(subImg);
             attempts++;
         }
         throw new RuntimeException("经过%s次尝试后仍未找到透明像素比例小于%s的切图".formatted(
