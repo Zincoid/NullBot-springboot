@@ -21,3 +21,6 @@ RUN mkdir -p /root/Nullbot/driver \
     && ln -s /usr/local/bin/chromedriver /root/Nullbot/driver/chromedriver
 
 ENV PATH="/usr/local/bin:${PATH}"
+
+# 构建命令
+# docker build -f Dockerfile.base -t nullbot-jre-chrome:21 .
