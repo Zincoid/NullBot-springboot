@@ -36,7 +36,7 @@ public class RandomVideoCommand implements Command {
 
         String response = MsgUtils.builder()
                 // .video("base64://" + Base64Util.from(videoPath), "")
-                .img(videoPath)
+                .video("file://" + videoPath, "")
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("\t\t\t\t├─[RandomVideo] 已发送视频 - {}", videoPath);
