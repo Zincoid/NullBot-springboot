@@ -29,6 +29,7 @@ services:
     restart: unless-stopped
     networks:
       - nullbot-net
+    shm_size: 2g  # Chrome 需求
 
   nullbot-frontend:
     image: nullbot-frontend:latest
