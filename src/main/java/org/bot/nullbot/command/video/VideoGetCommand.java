@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.component.tool.OssUrlBuilder;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.BotPageSelector;
 import org.bot.nullbot.entity.po.FilePO;
@@ -24,6 +25,7 @@ import java.util.List;
 @Slf4j
 public class VideoGetCommand implements Command {
 
+    private final OssUrlBuilder ossUrlBuilder;
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
     private final BotNextInputer botNextInputer;
@@ -52,14 +54,14 @@ public class VideoGetCommand implements Command {
         if (files.isEmpty())
             throw new NullBotMsgException("[获取视频] ❌无匹配项");
         if (files.size() == 1) {
-            sendVideo(bot, groupId, files.getFirst().getId());
+            sendVideo(bot, groupId, files.getFirst());
             return;
         }
 
         files.sort(Comparator.comparing(FilePO::getFileName));
-        BotPageSelector<Integer, String> pager = new BotPageSelector<>(
+        BotPageSelector<FilePO, String> pager = new BotPageSelector<>(
                 bot, groupId, userId, "视频检索", "", false, PAGE_SIZE,
-                files.stream().map(FilePO::getId).toList(),
+                files,
                 files.stream().map(FilePO::getFileName).toList(),
                 this::sendVideo
         );
@@ -70,13 +72,12 @@ public class VideoGetCommand implements Command {
         }
     }
 
-    private Void sendVideo(Bot bot, Long groupId, Integer videoId) {
-        log.info("\t\t\t\t├─[VideoGet] 获取视频 - {}", videoId);
+    private Void sendVideo(Bot bot, Long groupId, FilePO video) {
         String response = MsgUtils.builder()
-                .video("http://nullbot.zincoid.online/api/oss/" + videoId, "")
+                .video(ossUrlBuilder.from(video.getId()), "")
                 .build();
         bot.sendGroupMsg(groupId, response, false);
-        log.info("\t\t\t\t├─[VideoGet] 已获取视频 - {}", videoId);
+        log.info("\t\t\t\t├─[VideoGet] 已获取视频 - {}", video.getFileName());
         return null;
     }
 
