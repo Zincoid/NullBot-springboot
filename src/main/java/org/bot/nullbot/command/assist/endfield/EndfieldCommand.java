@@ -46,11 +46,10 @@ public class EndfieldCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String version = getGroupVersion(groupId);
-
         boolean continuousQuery = false;  // 连续查询模式
         boolean globalQuery;  // 全局查询模式
-
         String keyword = params.isEmpty() ? "" : params.getFirst();
+
         if ("-c".equals(keyword)) {
             continuousQuery = true;
             if (params.size() > 1) {
@@ -69,7 +68,7 @@ public class EndfieldCommand implements Command {
             return;
         }
 
-        List<FilePO> allFiles =  new ArrayList<>();
+        List<FilePO> allFiles = new ArrayList<>();
         allFiles.addAll(fileService.search(keyword,
                 fileStorageProperties.getResourcePath() + "/endfield/public").getData());
         allFiles.addAll(fileService.search(keyword,
