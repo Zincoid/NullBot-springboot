@@ -15,6 +15,7 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.FileService;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 
 @CommandMapping({"VideoGet", "获取视频", "视频检索"})
@@ -55,8 +56,9 @@ public class VideoGetCommand implements Command {
             return;
         }
 
+        files.sort(Comparator.comparing(FilePO::getFileName));
         BotPageSelector<Integer, String> pager = new BotPageSelector<>(
-                bot, groupId, userId, "视频检索", false, PAGE_SIZE,
+                bot, groupId, userId, "视频检索", "", false, PAGE_SIZE,
                 files.stream().map(FilePO::getId).toList(),
                 files.stream().map(FilePO::getFileName).toList(),
                 this::sendVideo

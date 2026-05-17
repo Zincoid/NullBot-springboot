@@ -5,15 +5,15 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.enums.BniMode;
+import org.bot.nullbot.entity.BotPageSelector;
+import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.Base64Util;
-import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.IntStream;
 
 @CommandMapping({"Endfield", "endfield", "end", "终末地查询", "终末地"})
 @Component
@@ -32,12 +31,13 @@ import java.util.stream.IntStream;
 public class EndfieldCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
+    private final FileService fileService;
     private final BotNextInputer botNextInputer;
+
     private final Map<Long, String> versions = new ConcurrentHashMap<>();  // 群聊版本存储
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
-    private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
-
+    // private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second) 使用默认
     private static final Set<String> ALLOWED_VERSIONS = Set.of("1.0", "1.1", "1.2");  // 可用资源版本
     private static final String DEFAULT_VERSION = "1.2";  // 默认资源版本
 
@@ -45,17 +45,19 @@ public class EndfieldCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
+        String version = getGroupVersion(groupId);
 
         boolean continuousQuery = false;  // 连续查询模式
-        boolean globalQuery = false;  // 全局查询模式
+        boolean globalQuery;  // 全局查询模式
 
         String keyword = params.isEmpty() ? "" : params.getFirst();
         if ("-c".equals(keyword)) {
             continuousQuery = true;
-            if (params.size() > 1)
+            if (params.size() > 1) {
                 keyword = params.get(1);
-            else
+            } else {
                 keyword = "";
+            }
         } else if ("-v".equals(keyword)) {
             if (params.size() > 1) {
                 String newVersion = params.get(1);
@@ -63,120 +65,57 @@ public class EndfieldCommand implements Command {
                     throw new NullBotMsgException("[终末地] ❌版本非法");
                 setGroupVersion(groupId, newVersion);
             }
-            bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD79当前️资源版本 - " +
-                    getGroupVersion(groupId), false);
+            bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD79当前️资源版本 - " + version, false);
             return;
         }
 
-        List<String> helpPaths = new ArrayList<>();
-        try {
-            helpPaths.addAll(FileUtil.getFilePathsByKeyword(
-                    fileStorageProperties.getResourcePath() + "/endfield/public", keyword));
-            helpPaths.addAll(FileUtil.getFilePathsByKeyword(
-                    fileStorageProperties.getResourcePath() + "/endfield/" + getGroupVersion(groupId), keyword));
-        } catch (Exception e) {
-            throw new NullBotMsgException("[终末地] ❌资源异常");
-        }
+        List<FilePO> allFiles =  new ArrayList<>();
+        allFiles.addAll(fileService.search(keyword,
+                fileStorageProperties.getResourcePath() + "/endfield/public").getData());
+        allFiles.addAll(fileService.search(keyword,
+                fileStorageProperties.getResourcePath() + "/endfield/" + version).getData());
 
-        if (helpPaths.isEmpty()) {
+        if (allFiles.isEmpty()) {
             globalQuery = true;
-            for (String version : ALLOWED_VERSIONS) {
-                helpPaths.addAll(FileUtil.getFilePathsByKeyword(
-                        fileStorageProperties.getResourcePath() + "/endfield/" + version, keyword));
+            for (String ver : ALLOWED_VERSIONS) {
+                allFiles.addAll(fileService.search(keyword,
+                        fileStorageProperties.getResourcePath() + "/endfield/" + ver).getData());
             }
+        } else {
+            globalQuery = false;
         }
 
-        if (helpPaths.isEmpty())
-            throw new NullBotMsgException("[终末地] ❌无查询项");
-
-        helpPaths.sort(Comparator.naturalOrder());  // 排序
-        int total = helpPaths.size();
-        int pages = (total + PAGE_SIZE - 1) / PAGE_SIZE;
-        int current = 1;
-
-        if (!globalQuery && total == 1) {  // 非全局查询且单匹配项时直接发送
-            sendResource(bot, groupId, helpPaths.getFirst());
+        if (allFiles.isEmpty())
+            throw new NullBotMsgException("[终末地] ❌无匹配项");
+        if (!globalQuery && allFiles.size() == 1) {  // 非全局查询且单匹配项时直接发送
+            sendResource(bot, groupId, allFiles.getFirst().getPath());
             return;
         }
 
-        String operation = "INIT";
-        while (true) {
-            switch (operation) {
-                case "INIT" -> sendPage(bot, groupId, helpPaths, PAGE_SIZE, current, globalQuery);
-                case "UP" -> {
-                    if (current > 1) sendPage(bot, groupId, helpPaths, PAGE_SIZE, --current, globalQuery);
-                    else bot.sendGroupMsg(groupId, "到顶啦！", false);
-                }
-                case "DOWN" -> {
-                    if (current < pages) sendPage(bot, groupId, helpPaths, PAGE_SIZE, ++current, globalQuery);
-                    else bot.sendGroupMsg(groupId, "到底啦！", false);
-                }
-                case "END" -> {
-                    bot.sendGroupMsg(groupId, "[终末地] ⛔️查询终止", false);
-                    log.info("\t\t\t\t├─[Endfield] 用户 {} 查询终止", userId);
-                    return;
-                }
-                default -> {
-                    int selection;
-                    try {
-                        selection = Integer.parseInt(operation) - 1;
-                    } catch (NumberFormatException e) {
-                        throw new NullBotMsgException("[终末地] ❌格式错误");
-                    }
-                    if (selection < 0 || selection > total - 1)
-                        throw new NullBotMsgException("[终末地] ❌范围错误");
-                    sendResource(bot, groupId, helpPaths.get(selection));
-                    if (!continuousQuery) return;
-                }
-            }
+        allFiles.sort(Comparator.comparing(FilePO::getFileName));
 
-            List<Pair<Long, String>> inputs;
-            try {
-                inputs = botNextInputer
-                        .request(BniMode.PS, userId, "[1-9]\\d*|(?i)up|down|end", WAIT_TIMEOUT);
-            } catch (Exception e) {
-                throw new NullBotMsgException("[终末地] ❌" + e.getMessage());
-            }
+        String info = "\n[当前资源版本 - %s]%s".formatted(
+                globalQuery ? "ALL" : version,
+                globalQuery ? "\n[版本 %s 无匹配资源]".formatted(version) : ""
+        );
+        BotPageSelector<String, String> pager = new BotPageSelector<>(
+                bot, groupId, userId, "终末地", info, continuousQuery, PAGE_SIZE,
+                allFiles.stream().map(FilePO::getPath).toList(),
+                allFiles.stream().map(f -> {
+                    String name = f.getName();
+                    String ver = f.getDirName();
+                    return globalQuery ? "[" + ver + "]" + name : name;
+                }).toList(),
+                this::sendResource
+        );
 
-            if (inputs.isEmpty())
-                throw new NullBotMsgException("[终末地] ⌛️输入超时");
-            operation = inputs.getFirst().getRight().toUpperCase();
+        pager.init();
+        while (pager.input(botNextInputer)) {
+            log.info("\t\t\t\t├─[VideoGet] 已操作分页器");
         }
     }
 
-    private void sendPage(Bot bot, Long groupId, List<String> helpPaths,
-                          int pageSize, int current, boolean globalQuery) {
-        String version = getGroupVersion(groupId);
-        int total = helpPaths.size();
-        int pages = (total + pageSize - 1) / pageSize;
-        int fromIndex = (current - 1) * pageSize;
-        int toIndex = Math.min(fromIndex + pageSize, total);
-        List<String> helpNames = IntStream.range(fromIndex, toIndex)
-                .mapToObj(i -> {
-                    String[] split = helpPaths.get(i).split("/");
-                    String fileName = split[split.length - 1];
-                    String fileVer = split[split.length - 2];
-                    int dotIndex = fileName.lastIndexOf('.');
-                    String name = dotIndex > 0 ? fileName.substring(0, dotIndex) : fileName;
-                    return (i + 1) + ". " + (globalQuery ? "[" + fileVer + "]" + name : name);
-                }).toList();
-        String content = String.join("\n", helpNames);
-        String footer = """
-                [第 %s/%s 页 (每页%s条)]
-                [当前资源版本 - %s]%s
-                操作 - Up/Down/End
-                选择 - 发送序号 (上同)"""
-                .formatted(
-                        current, pages, pageSize,
-                        globalQuery ? "ALL" : version,
-                        globalQuery ? "\n[版本 %s 无匹配资源]".formatted(version) : ""
-                );
-        bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD0D共%s个结果\n%s\n\n%s"
-                .formatted(total, content, footer), false);
-        log.info("\t\t\t\t├─[Endfield] 已获取查询页 - {}/{}", current, pages);
-    }
-
-    private void sendResource(Bot bot, Long groupId, String resourcePath) {
+    private Void sendResource(Bot bot, Long groupId, String resourcePath) {
         String helpName = new File(resourcePath).getName().toLowerCase();
         if (helpName.endsWith(".txt")) {  // TXT文件类型 读取文本内容
             try {
@@ -191,6 +130,7 @@ public class EndfieldCommand implements Command {
             bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[Endfield] 已获取图片内容");
         }
+        return null;
     }
 
     private void setGroupVersion(Long groupId, String version) {

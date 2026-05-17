@@ -24,4 +24,20 @@ public class FilePO {
     private Long ownerId;
     private String ownerName;
     private LocalDateTime lastModified;
+
+    public String getPath() {
+        return directory + "/" + fileName;
+    }
+
+    public String getName() {
+        if (fileName.contains("."))
+            return fileName.substring(0, fileName.lastIndexOf("."));
+        return fileName;
+    }
+
+    public String getDirName() {
+        if (directory.contains("/"))
+            return directory.substring(directory.lastIndexOf("/") + 1);
+        return directory;
+    }
 }

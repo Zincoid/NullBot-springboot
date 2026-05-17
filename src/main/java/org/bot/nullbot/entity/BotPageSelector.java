@@ -18,6 +18,7 @@ public class BotPageSelector<K, V> {
     private final Long groupId;
     private final Long userId;
     private final String title;
+    private final String info;
     private final boolean continuous;
 
     private final List<K> keys;
@@ -31,15 +32,15 @@ public class BotPageSelector<K, V> {
     private int current;
 
     public BotPageSelector(
-            Bot bot, Long groupId, String title,
+            Bot bot, Long groupId, String title, String info,
             boolean continuous, int size, List<K> keys, List<V> values,
             BotFunction<Bot, Long, K, Void> action
     ) {
-        this(bot, groupId, null, title, continuous, size, keys, values, action);
+        this(bot, groupId, null, title, info, continuous, size, keys, values, action);
     }
 
     public BotPageSelector(
-            Bot bot, Long groupId, Long userId, String title,
+            Bot bot, Long groupId, Long userId, String title, String info,
             boolean continuous, int size, List<K> keys, List<V> values,
             BotFunction<Bot, Long, K, Void> action
     ) {
@@ -49,6 +50,7 @@ public class BotPageSelector<K, V> {
         this.groupId = groupId;
         this.userId = userId;
         this.title = title;
+        this.info = info;
         this.continuous = continuous;
         this.keys = keys;
         this.values = values;
@@ -101,27 +103,24 @@ public class BotPageSelector<K, V> {
     }
 
     public boolean init() {
-        page();
-        return true;
+        return page();
     }
 
     private boolean next() {
         if (current < pages) {
             current++;
-            page();
-        } else {
-            bot.sendGroupMsg(groupId, "到底啦！", false);
+            return page();
         }
+        bot.sendGroupMsg(groupId, "到底啦！", false);
         return true;
     }
 
     private boolean prev() {
         if (current > 1) {
             current--;
-            page();
-        } else {
-            bot.sendGroupMsg(groupId, "到顶啦！", false);
+            return page();
         }
+        bot.sendGroupMsg(groupId, "到顶啦！", false);
         return true;
     }
 
@@ -138,9 +137,9 @@ public class BotPageSelector<K, V> {
                 .toList();
         String content = String.join("\n", lines);
         String footer = """
-                [第 %s/%s 页 (每页%s条)]
+                [第 %s/%s 页 (每页%s条)]%s
                 操作 - Up/Down/End
-                选择 - 发送序号 (上同)""".formatted(current, pages, size);
+                选择 - 发送序号 (上同)""".formatted(current, pages, size, info);
         bot.sendGroupMsg(groupId, "[%s] \uD83D\uDD0D共%s个结果\n%s\n\n%s"
                 .formatted(title, total, content, footer), false);
         return true;
