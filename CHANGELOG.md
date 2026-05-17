@@ -742,4 +742,5 @@
 - 优化 大部分按文件路径发送媒体资源的方式改为Base64编码发送:
   - 避免分离部署时 NapCat 无法访问文件；
   - 大文件如视频发送无法使用Base64暂时保持路径发送；
-- 优化 DeepSeekClient 部分代码。
+- 优化 DeepSeekClient 部分代码；
+- 更名 PreviewController -> OssController 并优化相关方法。
