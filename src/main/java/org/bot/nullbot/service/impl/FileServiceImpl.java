@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.entity.page.DataPage;
+import org.bot.nullbot.exception.CommonException;
 import org.bot.nullbot.mapper.AdminMapper;
 import org.bot.nullbot.mapper.FileMapper;
 import org.bot.nullbot.service.FileService;
@@ -161,7 +162,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<FilePO> search(String key, String curDir, boolean hidden) {
         if (key.contains("/") || key.contains("\\")) {
-            throw new IllegalArgumentException("关键字不允许出现斜杠");
+            throw new CommonException("关键字不允许出现斜杠");
         }
         String fullDir = resolveFullDir(curDir);
         return hidden ? fileMapper.searchFileVisible(key, fullDir) : fileMapper.searchFile(key, fullDir);
@@ -170,7 +171,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<FilePO> search(String key, String fullDir) {
         if (key.contains("/") || key.contains("\\")) {
-            throw new IllegalArgumentException("关键字不允许出现斜杠");
+            throw new CommonException("关键字不允许出现斜杠");
         }
         return fileMapper.searchFile(key, fullDir);
     }
@@ -181,8 +182,9 @@ public class FileServiceImpl implements FileService {
         String fileName = uploadFile.getOriginalFilename();
         String fullDir = resolveFullDir(curDir);
 
-        if (!fileMapper.selectList(new LambdaQueryWrapper<FilePO>().eq(FilePO::getDirectory, fullDir).eq(FilePO::getFileName, fileName)).isEmpty()) {
-            throw new IllegalArgumentException("数据库存在同名冲突");
+        if (!fileMapper.selectList(new LambdaQueryWrapper<FilePO>()
+                .eq(FilePO::getDirectory, fullDir).eq(FilePO::getFileName, fileName)).isEmpty()) {
+            throw new CommonException("数据库存在同名冲突");
         }
 
         Path path = Path.of(fullDir);
@@ -258,7 +260,7 @@ public class FileServiceImpl implements FileService {
         if (!Files.exists(dirPath)) {
             Files.createDirectory(dirPath);
         } else
-            throw new IllegalArgumentException("磁盘目录已存在");
+            throw new CommonException("磁盘目录已存在");
 
         String ownerName = adminMapper.selectById(ownerId).getUsername();
         LocalDateTime lastModified = getLastModifiedTime(dirPath);
@@ -294,7 +296,7 @@ public class FileServiceImpl implements FileService {
             throw new IllegalArgumentException("数据库文件不存在");
         }
         if (newFileName == null || newFileName.trim().isEmpty()) {
-            throw new IllegalArgumentException("新文件名不能为空");
+            throw new CommonException("新文件名不能为空");
         }
         newFileName = newFileName.trim();
         if (newFileName.contains("/") || newFileName.contains("\\") ||
@@ -302,7 +304,7 @@ public class FileServiceImpl implements FileService {
                 newFileName.contains("?") || newFileName.contains("\"") ||
                 newFileName.contains("<") || newFileName.contains(">") ||
                 newFileName.contains("|")) {
-            throw new IllegalArgumentException("新文件名包含非法字符");
+            throw new CommonException("新文件名包含非法字符");
         }
 
         // 检查是否重名
@@ -312,7 +314,7 @@ public class FileServiceImpl implements FileService {
                 .ne(FilePO::getId, id); // 排除当前文件
         Long count = fileMapper.selectCount(queryWrapper);
         if (count > 0) {
-            throw new IllegalArgumentException("数据库目录存在同名文件");
+            throw new CommonException("数据库目录存在同名文件");
         }
 
         String oldFilePath = file.getDirectory() + "/" + file.getFileName();
@@ -355,7 +357,7 @@ public class FileServiceImpl implements FileService {
 
         // 检查目录是否未修改
         if (sourceFile.getDirectory().equals(targetFullDir)) {
-            throw new IllegalArgumentException("数据库路径未修改");
+            throw new CommonException("数据库路径未修改");
         }
 
         // 检查目标目录存在
@@ -366,7 +368,7 @@ public class FileServiceImpl implements FileService {
                 .eq(FilePO::getFileName, targetPath.getFileName().toString())
                 .eq(FilePO::getIsDir, 1));
         if (targetDir == null) {
-            throw new IllegalArgumentException("数据库目标路径不存在");
+            throw new CommonException("数据库目标路径不存在");
         }
         // 文件系统检查
         if (!Files.exists(targetPath) || !Files.isDirectory(targetPath)) {
@@ -379,7 +381,7 @@ public class FileServiceImpl implements FileService {
                 .eq(FilePO::getFileName, sourceFile.getFileName());
 
         if (fileMapper.selectCount(conflictCheck) > 0) {
-            throw new IllegalArgumentException("数据库路径下存在同名文件");
+            throw new CommonException("数据库路径下存在同名文件");
         }
 
         // 检查文件系统是否存在冲突
