@@ -1,6 +1,7 @@
 package org.bot.nullbot.service.impl;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.HttpRangeResource;
@@ -30,7 +31,7 @@ public class PreviewServiceImpl implements OssService {
     // =================== WEB功能相关 ===================
 
     @Override
-    public ResponseEntity<Resource> preview(Integer id, HttpServletRequest request) {
+    public ResponseEntity<@NonNull Resource> getResource(Integer id, HttpServletRequest request) {
         try {
             // 查询文件信息
             FilePO file = fileMapper.selectById(id);
@@ -75,7 +76,7 @@ public class PreviewServiceImpl implements OssService {
     /**
      * 处理范围请求（视频支持）
      */
-    private ResponseEntity<Resource> handleRangeRequest(
+    private ResponseEntity<@NonNull Resource> handleRangeRequest(
             Path filePath, Resource resource,
             String contentType, String rangeHeader) throws IOException {
 

@@ -22,6 +22,6 @@ public class OssController {
             @PathVariable Integer id,
             HttpServletRequest request
     ) {
-        return ossService.preview(id, request);
+        return ossService.getResource(id, request);
     }
 }
