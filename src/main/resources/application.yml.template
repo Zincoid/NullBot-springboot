@@ -12,6 +12,8 @@ spring:
     # url: jdbc:mysql://172.17.0.1:3306/nullbot  # 容器化部署但MySql在宿主机时
     username:
     password:
+  api:
+    base-url: http://nullbot.zincoid.online/api  # OSS 配置
 
 server:
 #  address: 127.0.0.1  # 仅监听本地回环

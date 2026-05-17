@@ -23,8 +23,4 @@ public final class StringUtil {
         String truncated = nameWithoutExt.substring(0, Math.min(availableLength, nameWithoutExt.length())) + ellipsis;
         return truncated + extension;
     }
-
-    public static String getFileUrl(Integer fileId) {
-        return "http://nullbot.zincoid.online/oss/" + fileId;
-    }
 }

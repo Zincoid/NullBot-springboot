@@ -1,9 +1,9 @@
 package org.bot.nullbot.config.prop;
 
-import lombok.Getter;
+import lombok.Data;
 import org.springframework.stereotype.Component;
 
-@Getter
+@Data
 @Component
 public class MatchProperties {
     // 等待匹配超时（秒）
