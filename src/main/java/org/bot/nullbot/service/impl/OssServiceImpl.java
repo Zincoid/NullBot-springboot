@@ -35,7 +35,7 @@ public class OssServiceImpl implements OssService {
     @Override
     public ResponseEntity<?> getResourceByPath(HttpServletRequest request, String path) {
         String baseDir = fileStorageProperties.getFileDirectory();
-        String fullPath = baseDir + "/" + path;
+        String fullPath = baseDir + path;
         int index = fullPath.lastIndexOf("/");
         String directory = fullPath.substring(0, index);
         String filename = fullPath.substring(index + 1);
