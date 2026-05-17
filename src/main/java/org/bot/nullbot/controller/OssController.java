@@ -1,6 +1,7 @@
 package org.bot.nullbot.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.service.OssService;
@@ -17,7 +18,7 @@ public class OssController {
     private final OssService ossService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> preview(
+    public ResponseEntity<@NonNull Resource> preview(
             @PathVariable Integer id,
             HttpServletRequest request
     ) {
