@@ -16,7 +16,7 @@ public class OssController {
     private final OssService ossService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> preview(
+    public ResponseEntity<?> getResource(
             @PathVariable Integer id,
             HttpServletRequest request
     ) {
