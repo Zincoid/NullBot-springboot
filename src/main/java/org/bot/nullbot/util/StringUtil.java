@@ -18,12 +18,13 @@ public final class StringUtil {
         }
         // 计算可保留的文件名长度 (减去扩展名长度和省略符号长度)
         String ellipsis = "⋯"; // 使用垂直居中的省略号
-        int availableLength = maxLength - extension.length() - ellipsis.length();
-        if (availableLength <= 0) {  // 如果可用长度太小 至少保留一些字符
-            availableLength = Math.max(1, maxLength - extension.length() - ellipsis.length());
-        }
+        int availableLength = Math.max(1, maxLength - extension.length() - ellipsis.length());
         // 保留文件名前部 直接加省略号和扩展名
         String truncated = nameWithoutExt.substring(0, Math.min(availableLength, nameWithoutExt.length())) + ellipsis;
         return truncated + extension;
+    }
+
+    public static String getFileUrl(Integer fileId) {
+        return "http://nullbot.zincoid.online/oss/" + fileId;
     }
 }
