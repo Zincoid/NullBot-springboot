@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface FileService {
 
@@ -21,9 +22,9 @@ public interface FileService {
 
     DataPage<FilePO> getPage(String curDir, Integer current, Integer size, boolean hidden);
 
-    DataPage<FilePO> search(String key, String curDir, boolean hidden);
+    List<FilePO> search(String key, String curDir, boolean hidden);
 
-    DataPage<FilePO> search(String key, String fullDir);
+    List<FilePO> search(String key, String fullDir);
 
     void upload(Long owner, MultipartFile uploadFile, String curDir) throws IOException;
 

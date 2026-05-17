@@ -49,7 +49,7 @@ public class VideoGetCommand implements Command {
         }
 
         List<FilePO> files = fileService.search(
-                keyword, fileStorageProperties.getVideoPath() + "/" + secondary).getData();
+                keyword, fileStorageProperties.getVideoPath() + "/" + secondary);
 
         if (files.isEmpty())
             throw new NullBotMsgException("[获取视频] ❌无匹配项");

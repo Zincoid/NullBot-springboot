@@ -7,13 +7,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.tool.OssUrlBuilder;
 import org.bot.nullbot.config.prop.FileStorageProperties;
+import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.exception.NullBotMsgException;
-import org.bot.nullbot.util.Base64Util;
-import org.bot.nullbot.util.FileUtil;
+import org.bot.nullbot.service.FileService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @CommandMapping({"eb0f8545"})  // 加密 仅供AI嵌入调用
 @Component
@@ -22,21 +24,18 @@ import java.util.List;
 public class FemboyCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
+    private final FileService fileService;
+    private final OssUrlBuilder ossUrlBuilder;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         String acgPath = fileStorageProperties.getImagePath() + "/femboy";
-        String femboyPath;
-        try {
-            femboyPath = FileUtil.getRandomFilePath(acgPath);
-        } catch (Exception e) {
-            throw new NullBotMsgException("[男娘] ❌目录异常");
-        }
-        if (femboyPath == null)
+        List<FilePO> images = fileService.search("", acgPath);
+        if (images.isEmpty())
             throw new NullBotMsgException("[男娘] ❌暂无图片");
-
+        FilePO image = images.get(ThreadLocalRandom.current().nextInt(images.size()));
         String response = MsgUtils.builder()
-                .img("base64://" + Base64Util.from(femboyPath))
+                .img(ossUrlBuilder.from(image.getId()))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("\t\t\t\t├─[Femboy] 获取男娘图片");

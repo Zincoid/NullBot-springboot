@@ -70,15 +70,15 @@ public class EndfieldCommand implements Command {
 
         List<FilePO> allFiles = new ArrayList<>();
         allFiles.addAll(fileService.search(keyword,
-                fileStorageProperties.getResourcePath() + "/endfield/public").getData());
+                fileStorageProperties.getResourcePath() + "/endfield/public"));
         allFiles.addAll(fileService.search(keyword,
-                fileStorageProperties.getResourcePath() + "/endfield/" + version).getData());
+                fileStorageProperties.getResourcePath() + "/endfield/" + version));
 
         if (allFiles.isEmpty()) {
             globalQuery = true;
             for (String ver : ALLOWED_VERSIONS) {
                 allFiles.addAll(fileService.search(keyword,
-                        fileStorageProperties.getResourcePath() + "/endfield/" + ver).getData());
+                        fileStorageProperties.getResourcePath() + "/endfield/" + ver));
             }
         } else {
             globalQuery = false;

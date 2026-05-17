@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -59,12 +60,12 @@ public class FileController {
     public WebResult searchFile(String key, String curDir) {
         // Integer userType = jwtTool.getLoginType(WebUtil.getToken());  // 弃用
         Integer userType = UserCtxUtil.getType();
-        DataPage<FilePO> filePage = fileService.search(
+        List<FilePO> fileList = fileService.search(
                 key,
                 curDir,
                 userType == 0
         );
-        return WebResult.success("查询成功").withData("filePage", filePage);
+        return WebResult.success("查询成功").withData("fileList", fileList);
     }
 
     @PostMapping("/upload")

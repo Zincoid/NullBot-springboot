@@ -15,7 +15,7 @@ import org.bot.nullbot.service.FileService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @CommandMapping({"RandomVideo", "Video", "video", "vid", "随机视频", "视频"})
 @Component
@@ -29,10 +29,10 @@ public class RandomVideoCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        List<FilePO> videos = fileService.search("", fileStorageProperties.getVideoPath()).getData();
+        List<FilePO> videos = fileService.search("", fileStorageProperties.getVideoPath());
         if (videos.isEmpty())
             throw new NullBotMsgException("[随机视频] ❌暂无视频");
-        FilePO video = videos.get(new Random().nextInt(videos.size()));
+        FilePO video = videos.get(ThreadLocalRandom.current().nextInt(videos.size()));
         String response = MsgUtils.builder()
                 .video(ossUrlBuilder.from(video.getId()), "")
                 .build();
