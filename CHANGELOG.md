@@ -751,4 +751,5 @@
 - 优化 大部分本地文件发送方式改为使用 OSS 存储；
 - 优化文件查询方法 - 返回类型由分页类改为列表；
 - 优化 FileMapper 方法；
-- 新增异常 CommonException - 用于向前端返回错误信息并修改优化相关代码。
+- 新增异常 CommonException - 用于向前端返回错误信息并修改优化相关代码；
+- 优化 WebInterceptor - 优化逻辑并使用URI代替URL进行放行验证。
