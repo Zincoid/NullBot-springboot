@@ -22,7 +22,7 @@ public class OssUrlBuilder {
             String relativePath = path.substring(baseDir.length());
             if (relativePath.isEmpty())
                 throw new  IllegalArgumentException("无相对路径");
-            return apiProperties.getBaseUrl() + "/to/" + relativePath;
+            return apiProperties.getBaseUrl() + "/oss/to/" + relativePath;
         }
         throw new IllegalArgumentException("路径不在文件根下");
     }
