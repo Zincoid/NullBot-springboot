@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.HttpRangeResource;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.mapper.FileMapper;
-import org.bot.nullbot.service.PreviewService;
+import org.bot.nullbot.service.OssService;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PreviewServiceImpl implements PreviewService {
+public class PreviewServiceImpl implements OssService {
 
     private final FileMapper fileMapper;
 
