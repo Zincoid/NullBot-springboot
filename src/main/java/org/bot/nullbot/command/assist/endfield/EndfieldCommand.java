@@ -115,6 +115,7 @@ public class EndfieldCommand implements Command {
     }
 
     private Void sendResource(Bot bot, Long groupId, String resourcePath) {
+        log.info("\t\t\t\t├─[Endfield] 获取资源 - {}", resourcePath);
         String helpName = new File(resourcePath).getName().toLowerCase();
         if (helpName.endsWith(".txt")) {  // TXT文件类型 读取文本内容
             try {
