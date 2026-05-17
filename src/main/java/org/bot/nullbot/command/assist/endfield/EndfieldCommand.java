@@ -126,7 +126,7 @@ public class EndfieldCommand implements Command {
                 throw new NullBotMsgException("[终末地] ❌读取出错");
             }
         } else {  // 其他文件类型 按图片处理
-            String response = MsgUtils.builder().img("base://" + Base64Util.from(resourcePath)).build();
+            String response = MsgUtils.builder().img("file://" + resourcePath).build();
             bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[Endfield] 已获取图片内容");
         }

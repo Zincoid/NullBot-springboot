@@ -1,11 +1,9 @@
 package org.bot.nullbot.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.service.OssService;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +16,7 @@ public class OssController {
     private final OssService ossService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<@NonNull Resource> preview(
+    public ResponseEntity<?> preview(
             @PathVariable Integer id,
             HttpServletRequest request
     ) {
