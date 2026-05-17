@@ -62,6 +62,10 @@ public class OssServiceImpl implements OssService {
             log.info("[OssService] 文件记录未找到 - id={}", id);
             return ResponseEntity.notFound().build();
         }
+        if (file.getIsDir() == 1) {
+            log.info("[OssService] 目标是文件夹 - id={}", id);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return getResource(request, file);
     }
 
