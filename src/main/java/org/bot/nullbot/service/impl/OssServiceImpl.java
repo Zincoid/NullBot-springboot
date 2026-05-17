@@ -38,8 +38,8 @@ public class OssServiceImpl implements OssService {
         String fullPath = baseDir + "/" + path;
         int index = fullPath.lastIndexOf("/");
         String directory = path.substring(0, index);
-        String name = path.substring(index + 1);
-        List<FilePO> files = fileMapper.searchFile(name, directory);
+        String filename = path.substring(index + 1);
+        List<FilePO> files = fileMapper.searchFile(filename, directory);
         if (files.isEmpty()) {
             log.info("[OssService] 文件未找到 - path={}", path);
             return ResponseEntity.notFound().build();
@@ -60,6 +60,8 @@ public class OssServiceImpl implements OssService {
         }
         return getResource(request, file);
     }
+
+    // =========================================== 工具方法 ===========================================
 
     public ResponseEntity<?> getResource(HttpServletRequest request, @NonNull FilePO file) {
         try {
