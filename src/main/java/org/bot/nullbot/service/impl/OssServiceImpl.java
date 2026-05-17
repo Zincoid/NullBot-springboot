@@ -48,6 +48,10 @@ public class OssServiceImpl implements OssService {
             log.info("[OssService] 文件路径不唯一 - path={}", path);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
+        if (files.getFirst().getIsDir() == 1) {
+            log.info("[OssService] 目标是文件夹 - path={}", path);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return getResource(request, files.getFirst());
     }
 
