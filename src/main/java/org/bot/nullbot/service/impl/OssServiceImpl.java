@@ -34,22 +34,20 @@ public class OssServiceImpl implements OssService {
 
     @Override
     public ResponseEntity<?> getResourceByPath(HttpServletRequest request, String path) {
-        String baseDir = fileStorageProperties.getFileDirectory();
-        String fullPath = baseDir + "/" + path;
-        int index = fullPath.lastIndexOf("/");
-        String directory = path.substring(0, index);
-        String filename = path.substring(index + 1);
+        int index = path.lastIndexOf("/");
+        String directory = index == -1 ? "" : path.substring(0, index);
+        String filename = index == -1 ? path : path.substring(index + 1);
         List<FilePO> files = fileMapper.searchFile(filename, directory);
         if (files.isEmpty()) {
-            log.info("[OssService] 文件未找到 - path={}", path);
+            log.warn("[OssService] 文件未找到 - path={}", path);
             return ResponseEntity.notFound().build();
         }
         if (files.size() > 1) {
-            log.info("[OssService] 文件路径不唯一 - path={}", path);
+            log.warn("[OssService] 文件路径不唯一 - path={}", path);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         if (files.getFirst().getIsDir() == 1) {
-            log.info("[OssService] 目标是文件夹 - path={}", path);
+            log.warn("[OssService] 目标是文件夹 - path={}", path);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return getResource(request, files.getFirst());
@@ -59,11 +57,11 @@ public class OssServiceImpl implements OssService {
     public ResponseEntity<?> getResourceById(HttpServletRequest request, Integer id) {
         FilePO file = fileMapper.selectById(id);
         if (file == null) {
-            log.info("[OssService] 文件记录未找到 - id={}", id);
+            log.warn("[OssService] 文件记录未找到 - id={}", id);
             return ResponseEntity.notFound().build();
         }
         if (file.getIsDir() == 1) {
-            log.info("[OssService] 目标是文件夹 - id={}", id);
+            log.warn("[OssService] 目标是文件夹 - id={}", id);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return getResource(request, file);
@@ -77,12 +75,12 @@ public class OssServiceImpl implements OssService {
             Path rootPath = Paths.get(fileStorageProperties.getFileDirectory()).toAbsolutePath().normalize();
             Path filePath = rootPath.resolve(Paths.get(file.getDirectory(), file.getFileName())).normalize();
             if (!filePath.startsWith(rootPath)) {
-                log.error("Attempt to access file outside base dir: {}", filePath);
+                log.warn("[OssService] 安全检查未通过 - id={}, path={}", file.getId(), filePath);
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             if (!Files.exists(filePath) || !Files.isReadable(filePath)) {
-                log.warn("File not found or not readable: {}", filePath);
+                log.warn("[OssService] 文件无法访问 - id={}, path={}", file.getId(), filePath);
                 return ResponseEntity.notFound().build();
             }
 
@@ -121,7 +119,7 @@ public class OssServiceImpl implements OssService {
                     .body(resource);
 
         } catch (Exception e) {
-            log.error("[OssService] 响应失败 - id={}", file.getId(), e);
+            log.error("[OssService] 响应失败 - id={}, path={}", file.getId(), file.getPath(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
