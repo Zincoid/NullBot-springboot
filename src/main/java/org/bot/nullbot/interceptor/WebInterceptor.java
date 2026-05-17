@@ -60,19 +60,19 @@ public class WebInterceptor implements HandlerInterceptor {
             @NonNull Object handler
     ) throws Exception {
 
-        String url = req.getRequestURL().toString();
+        String uri = req.getRequestURI();
         String ip = WebUtil.getClientIpAddress();
-        log.info("◎ [WebInterceptor] 来自 {} 的请求 - {}", ip, url);
+        log.info("◎ [WebInterceptor] 来自 {} 的请求 - {}", ip, uri);
 
-        if (url.contains("/nullbot/login") || url.contains("/nullbot/guest")) {
+        if (uri.equals("/nullbot/login") || uri.equals("/nullbot/guest")) {
             log.info("└─[WebInterceptor] 登录放行");
             return true;
         }
-        if (url.contains("/nullbot/regist")) {
+        if (uri.equals("/nullbot/regist")) {
             log.info("└─[WebInterceptor] 注册放行");
             return true;
         }
-        if (url.contains("/nullbot/oss")) {
+        if (uri.startsWith("/nullbot/oss")) {
             log.info("└─[WebInterceptor] OSS放行");
             return true;
         }
@@ -96,7 +96,7 @@ public class WebInterceptor implements HandlerInterceptor {
 
         if (userType == 0) {
             for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
-                if (url.contains(forbiddenUrl)) {
+                if (uri.contains(forbiddenUrl)) {
                     log.info("└─[WebInterceptor] 访客受限");
                     WebResult error = WebResult.fail("No Access");
                     res.getWriter().write(JSONObject.toJSONString(error));
