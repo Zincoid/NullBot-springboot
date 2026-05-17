@@ -38,7 +38,7 @@ public class FemboyCommand implements Command {
                 .img(ossUrlBuilder.from(photo.getId()))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("\t\t\t\t├─[Femboy] 获取男娘图片");
+        log.info("\t\t\t\t├─[Femboy] 获取男娘图片 - {}", photo.getFileName());
     }
 
     @Override

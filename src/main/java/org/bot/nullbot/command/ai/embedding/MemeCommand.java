@@ -65,8 +65,9 @@ public class MemeCommand implements Command {
             throw new NullBotLogException("[表情] ❌" + memeName + " 不存在");
         }
 
+        FilePO meme = memes.getFirst();
         String response = MsgUtils.builder()
-                .img(ossUrlBuilder.from(memes.getFirst().getId()))
+                .img(ossUrlBuilder.from(meme.getId()))
                 .build();
 
         if (isPrivate) {
@@ -75,7 +76,7 @@ public class MemeCommand implements Command {
             bot.sendGroupMsg(targetId, response, false);
         }
 
-        log.info("\t\t\t\t├─[Meme] 已发送表情: {}", memeName);
+        log.info("\t\t\t\t├─[Meme] 已发送表情: {}", meme.getFileName());
     }
 
     @Override
