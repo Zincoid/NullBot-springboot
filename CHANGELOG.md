@@ -747,4 +747,5 @@
 - 新增 BotPageSelector 类 - 用于处理QQ分页选择逻辑并优化相关方法；
 - 更名 PreviewController -> OssController 并优化相关方法；
 - 新增 OssUrlBuilder 组件 - 用于构建 OSS 访问链接；
-- 优化 全部本地文件发送方式改为使用 OSS 存储；
+- 优化 文件查询逻辑为数据库查询 避免使用文件系统查询；
+- 优化 全部本地文件发送方式改为使用 OSS 存储。
