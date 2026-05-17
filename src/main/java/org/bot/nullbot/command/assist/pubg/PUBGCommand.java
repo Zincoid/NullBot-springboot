@@ -7,10 +7,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.tool.OssUrlBuilder;
 import org.bot.nullbot.config.prop.FileStorageProperties;
+import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.exception.NullBotMsgException;
-import org.bot.nullbot.util.Base64Util;
-import org.bot.nullbot.util.FileUtil;
+import org.bot.nullbot.service.FileService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,6 +23,8 @@ import java.util.List;
 public class PUBGCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
+    private final FileService fileService;
+    private final OssUrlBuilder ossUrlBuilder;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -38,12 +41,15 @@ public class PUBGCommand implements Command {
         };
         if (map == null)
             throw new NullBotMsgException("[PUBG] ❌不支持此地图");
-        String helpPath = FileUtil.getFilePathByName(fileStorageProperties.getResourcePath() + "/pubg", map);
-        if (helpPath == null)
+        String helpPath = fileStorageProperties.getResourcePath() + "/pubg";
+        List<FilePO> helps = fileService.search(map, helpPath);
+        if (helps.isEmpty())
             throw new NullBotMsgException("[PUBG] ❌资源缺失");
-        String response = MsgUtils.builder().img("base64://" + Base64Util.from(helpPath)).build();
+        String response = MsgUtils.builder()
+                .img(ossUrlBuilder.from(helps.getFirst().getId()))
+                .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("\t\t\t\t├─[PUBG] 已获取地图");
+        log.info("\t\t\t\t├─[PUBG] 已获取地图 - {}", map);
     }
 
     @Override

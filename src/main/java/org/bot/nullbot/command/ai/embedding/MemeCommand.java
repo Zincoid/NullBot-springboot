@@ -10,10 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.storage.ChatStorage;
+import org.bot.nullbot.component.tool.OssUrlBuilder;
 import org.bot.nullbot.config.prop.FileStorageProperties;
+import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.exception.NullBotLogException;
 import org.bot.nullbot.exception.NullBotMsgException;
-import org.bot.nullbot.util.Base64Util;
+import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,8 @@ public class MemeCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
     private final ChatStorage chatStorage;
+    private final FileService fileService;
+    private final OssUrlBuilder ossUrlBuilder;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -48,18 +52,22 @@ public class MemeCommand implements Command {
     }
 
     private void meme(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
-        if (params.isEmpty()) throw new NullBotMsgException("[表情] ❌参数不足");
+        if (params.isEmpty())
+            throw new NullBotMsgException("[表情] ❌参数不足");
 
-        String memeFolderPath = fileStorageProperties.getResourcePath() + "/ai/meme";
+        String memePath = fileStorageProperties.getResourcePath() + "/ai/meme";
         String memeName = params.getFirst();
-        String memePath = FileUtil.getFilePathByName(memeFolderPath, memeName);
+        List<FilePO> memes = fileService.search(memeName, memePath);
 
-        if (memePath == null) {
-            chatStorage.recordError("表情文件 " + memeName + " 不存在，不要再使用了");  // 自动记录表情错误使用
+        // 自动记录表情错误使用
+        if (memes.isEmpty()) {
+            chatStorage.recordError("表情文件 " + memeName + " 不存在，不要再使用了");
             throw new NullBotLogException("[表情] ❌" + memeName + " 不存在");
         }
 
-        String response = MsgUtils.builder().img("base64://" + Base64Util.from(memePath)).build();
+        String response = MsgUtils.builder()
+                .img(ossUrlBuilder.from(memes.getFirst().getId()))
+                .build();
 
         if (isPrivate) {
             bot.sendPrivateMsg(targetId, response, false);

@@ -29,13 +29,13 @@ public class FemboyCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        String acgPath = fileStorageProperties.getImagePath() + "/femboy";
-        List<FilePO> images = fileService.search("", acgPath);
-        if (images.isEmpty())
+        String femboyPath = fileStorageProperties.getImagePath() + "/femboy";
+        List<FilePO> photos = fileService.search("", femboyPath);
+        if (photos.isEmpty())
             throw new NullBotMsgException("[男娘] ❌暂无图片");
-        FilePO image = images.get(ThreadLocalRandom.current().nextInt(images.size()));
+        FilePO photo = photos.get(ThreadLocalRandom.current().nextInt(photos.size()));
         String response = MsgUtils.builder()
-                .img(ossUrlBuilder.from(image.getId()))
+                .img(ossUrlBuilder.from(photo.getId()))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("\t\t\t\t├─[Femboy] 获取男娘图片");
