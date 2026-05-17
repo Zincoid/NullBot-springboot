@@ -71,6 +71,7 @@ public class VideoGetCommand implements Command {
     }
 
     private Void sendVideo(Bot bot, Long groupId, Integer videoId) {
+        log.info("\t\t\t\t├─[VideoGet] 获取视频 - {}", videoId);
         String response = MsgUtils.builder()
                 .video("http://nullbot.zincoid.online/api/preview/" + videoId, "")
                 .build();
