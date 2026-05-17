@@ -20,6 +20,7 @@ public class OssController {
             HttpServletRequest request,
             @PathVariable Integer id
     ) {
+        log.info("◎ [OssController] id: {}", id);
         return ossService.getResourceById(request, id);
     }
 
@@ -28,6 +29,7 @@ public class OssController {
             HttpServletRequest request,
             @PathVariable String path
     ) {
+        log.info("◎ [OssController] path: {}", path);
         return ossService.getResourceByPath(request, path);
     }
 }
