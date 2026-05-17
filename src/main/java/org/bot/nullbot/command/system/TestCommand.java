@@ -31,10 +31,10 @@ public class TestCommand implements Command {
         // Long userId = event.getUserId();
 
         String msg1 = MsgUtils.builder()
-                .img(ossUrlBuilder.from("root/Nullbot/file/image/acg/明日方舟/莱伊_2.png"))
+                .img(ossUrlBuilder.from("/root/Nullbot/file/image/acg/明日方舟/莱伊_2.png"))
                 .build();
         String msg2 = MsgUtils.builder()
-                .video(ossUrlBuilder.from("root/Nullbot/file/video/collect/97781267c560e2aa42d07f05759161f9.mp4"), "")
+                .video(ossUrlBuilder.from("/root/Nullbot/file/video/collect/97781267c560e2aa42d07f05759161f9.mp4"), "")
                 .build();
 
         bot.sendGroupMsg(groupId, msg1, false);

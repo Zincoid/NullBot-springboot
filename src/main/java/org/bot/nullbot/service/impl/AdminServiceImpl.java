@@ -9,6 +9,7 @@ import org.bot.nullbot.entity.dto.PwdChangeDTO;
 import org.bot.nullbot.entity.dto.RegistDTO;
 import org.bot.nullbot.entity.po.AdminPO;
 import org.bot.nullbot.entity.po.UserPO;
+import org.bot.nullbot.exception.CommonException;
 import org.bot.nullbot.mapper.AdminMapper;
 import org.bot.nullbot.mapper.UserMapper;
 import org.bot.nullbot.service.AdminService;
@@ -30,14 +31,14 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public boolean regist(RegistDTO registDTO) {
         if (!securityCodeScheduler.validateCode("regist", registDTO.getActivationCode()))
-            throw new IllegalArgumentException("激活码错误");
+            throw new CommonException("激活码错误");
 
         UserPO user = userMapper.selectById(registDTO.getId());
         if (user == null)
-            throw new IllegalArgumentException("用户不可用 (未使用过 NullBot)");
+            throw new CommonException("用户不可用 (未使用过 NullBot)");
         AdminPO admin = adminMapper.selectById(registDTO.getId());
         if (admin != null)
-            throw new IllegalArgumentException("用户已注册");
+            throw new CommonException("用户已注册");
 
         AdminPO newAdmin = AdminConverter.INSTANCE.toPO(user);
         newAdmin.setEmail(registDTO.getEmail());
@@ -71,9 +72,9 @@ public class AdminServiceImpl implements AdminService {
     public boolean changePwd(Long id, PwdChangeDTO pwdChangeDTO) {
         AdminPO admin = adminMapper.selectById(id);
         if (admin == null)
-            throw new IllegalArgumentException("用户不存在");
+            throw new CommonException("用户不存在");
         if (!passwordEncoder.matches(pwdChangeDTO.getOldPassword(), admin.getPassword()))
-            throw new IllegalArgumentException("旧密码错误");
+            throw new CommonException("旧密码错误");
         admin.setPassword(passwordEncoder.encode(pwdChangeDTO.getNewPassword()));
         return adminMapper.updateById(admin) == 1;
     }

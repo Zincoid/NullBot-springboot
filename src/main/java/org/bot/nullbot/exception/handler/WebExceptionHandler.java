@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.entity.result.WebResult;
+import org.bot.nullbot.exception.CommonException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,7 +24,7 @@ public class WebExceptionHandler {
     }
 
     @ExceptionHandler
-    public WebResult handleIllegalArgumentException(IllegalArgumentException e) {  // 部分方法抛出此异常
+    public WebResult handleCommonException(CommonException e) {  // 自定义服务器异常
         return WebResult.fail(e.getMessage());
     }
 
