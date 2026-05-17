@@ -72,8 +72,8 @@ public class WebInterceptor implements HandlerInterceptor {
             log.info("└─[WebInterceptor] 注册放行");
             return true;
         }
-        if (url.contains("/nullbot/preview")) {
-            log.info("└─[WebInterceptor] 预览放行");
+        if (url.contains("/nullbot/oss")) {
+            log.info("└─[WebInterceptor] OSS放行");
             return true;
         }
 
