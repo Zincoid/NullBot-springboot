@@ -32,7 +32,7 @@ public class OssServiceImpl implements OssService {
     private final FileMapper fileMapper;
 
     @Override
-    public ResponseEntity<?> getResource(Integer id, HttpServletRequest request) {
+    public ResponseEntity<?> getResourceById(Integer id, HttpServletRequest request) {
         try {
             // 1. 查询文件记录
             FilePO file = fileMapper.selectById(id);
@@ -92,6 +92,11 @@ public class OssServiceImpl implements OssService {
             log.error("Failed to serve file id: {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @Override
+    public ResponseEntity<?> getResourceByPath(HttpServletRequest request) {
+        return null;
     }
 
     /**

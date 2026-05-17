@@ -5,5 +5,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface OssService {
 
-    ResponseEntity<?> getResource(Integer id, HttpServletRequest request);
+    ResponseEntity<?> getResourceById(Integer id, HttpServletRequest request);
+
+    ResponseEntity<?> getResourceByPath(HttpServletRequest request);
 }

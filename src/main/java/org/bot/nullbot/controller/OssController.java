@@ -20,6 +20,13 @@ public class OssController {
             @PathVariable Integer id,
             HttpServletRequest request
     ) {
-        return ossService.getResource(id, request);
+        return ossService.getResourceById(id, request);
+    }
+
+    @GetMapping("/path/**")
+    public ResponseEntity<?> getResourceByPath(
+            HttpServletRequest request
+    ) {
+        return ossService.getResourceByPath(request);
     }
 }
