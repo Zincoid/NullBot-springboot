@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PreviewServiceImpl implements OssService {
+public class OssServiceImpl implements OssService {
 
     private final FileMapper fileMapper;
 
