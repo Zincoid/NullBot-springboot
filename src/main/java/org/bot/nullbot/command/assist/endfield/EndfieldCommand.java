@@ -111,7 +111,7 @@ public class EndfieldCommand implements Command {
 
         pager.init();
         while (pager.input(botNextInputer)) {
-            log.info("\t\t\t\t├─[VideoGet] 已操作分页器");
+            log.info("\t\t\t\t├─[Endfield] 已操作分页器");
         }
     }
 
