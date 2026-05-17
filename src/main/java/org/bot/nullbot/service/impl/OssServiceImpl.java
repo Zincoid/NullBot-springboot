@@ -34,9 +34,11 @@ public class OssServiceImpl implements OssService {
 
     @Override
     public ResponseEntity<?> getResourceByPath(HttpServletRequest request, String path) {
-        int index = path.lastIndexOf("/");
-        String directory = index == -1 ? "" : path.substring(0, index);
-        String filename = index == -1 ? path : path.substring(index + 1);
+        String baseDir = fileStorageProperties.getFileDirectory();
+        String fullPath = baseDir + "/" + path;
+        int index = fullPath.lastIndexOf("/");
+        String directory = fullPath.substring(0, index);
+        String filename = fullPath.substring(index + 1);
         List<FilePO> files = fileMapper.searchFile(filename, directory);
         if (files.isEmpty()) {
             log.warn("[OssService] 文件未找到 - path={}", path);

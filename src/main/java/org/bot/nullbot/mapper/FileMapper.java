@@ -10,9 +10,9 @@ import java.util.List;
 @Mapper
 public interface FileMapper extends BaseMapper<FilePO> {
 
-    @Select("select * from file where file_name like concat('%',#{key},'%') and locate(#{fullDir}, directory) != 0")
+    @Select("select * from file where file_name like concat('%',#{key},'%') and (directory = #{fullDir} or directory like concat(#{fullDir}, '/%'))")
     List<FilePO> searchFile(String key, String fullDir);
 
-    @Select("select * from file where file_name like concat('%',#{key},'%') and locate(#{fullDir}, directory) != 0 and visible = true")
+    @Select("select * from file where file_name like concat('%',#{key},'%') and (directory = #{fullDir} or directory like concat(#{fullDir}, '/%')) and visible = true")
     List<FilePO> searchFileVisible(String key, String fullDir);
 }
