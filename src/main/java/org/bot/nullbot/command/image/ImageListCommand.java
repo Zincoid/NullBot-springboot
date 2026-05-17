@@ -27,7 +27,7 @@ public class ImageListCommand implements Command {
         String imagePath = fileStorageProperties.getImagePath() + "/collect";
         List<FilePO> images = fileMapper.searchFile("", imagePath);
         List<String> fileNames = images.stream().map(FilePO::getFileName).toList();
-        if (images.size() > 100) {
+        if (images.size() > 50) {
             log.info("\t\t\t\t├─[ImageList] 图片列表数据过多 - {}", fileNames);
             bot.sendGroupMsg(event.getGroupId(), """
                     [图片列表] ✅过多暂不展示
@@ -36,7 +36,7 @@ public class ImageListCommand implements Command {
         }
         bot.sendGroupMsg(event.getGroupId(), "[图片列表] ✅已获取\n"
                 + String.join("\n", fileNames), false);
-        log.info("\t\t\t\t├─[ImageList] 已获取 - 图片列表");
+        log.info("\t\t\t\t├─[ImageList] 已获取图片列表");
     }
 
     @Override

@@ -7,7 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.util.FileUtil;
+import org.bot.nullbot.entity.po.FilePO;
+import org.bot.nullbot.mapper.FileMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,12 +20,23 @@ import java.util.List;
 public class VideoListCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
+    private final FileMapper fileMapper;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        String videoList = FileUtil.getFileListAsString(fileStorageProperties.getVideoPath(), "\n", true);
-        bot.sendGroupMsg(event.getGroupId(), "[视频列表] ✅已获取！\n" + videoList, false);
-        log.info("\t\t\t\t├─[VideoList] 已获取 - 视频列表");
+        String videoPath = fileStorageProperties.getVideoPath();
+        List<FilePO> videos = fileMapper.searchFile("", videoPath);
+        List<String> fileNames = videos.stream().map(FilePO::getFileName).toList();
+        if (videos.size() > 50) {
+            log.info("\t\t\t\t├─[VideoList] 视频列表数据过多 - {}", fileNames);
+            bot.sendGroupMsg(event.getGroupId(), """
+                    [视频列表] ✅过多暂不展示
+                    - 共 %s 个视频""".formatted(videos.size()), false);
+            return;
+        }
+        bot.sendGroupMsg(event.getGroupId(), "[视频列表] ✅已获取\n"
+                + String.join("\n", fileNames), false);
+        log.info("\t\t\t\t├─[VideoList] 已获取视频列表");
     }
 
     @Override
