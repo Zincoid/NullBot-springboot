@@ -169,7 +169,7 @@ public class OssServiceImpl implements OssService {
                     .body(rangeResource);
 
         } catch (Exception e) {
-            log.warn("Invalid Range request: {}", rangeHeader, e);
+            log.warn("[OssService] 无效的范围请求 - {}", rangeHeader, e);
             return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).build();
         }
     }
