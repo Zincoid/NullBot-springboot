@@ -17,16 +17,17 @@ public class OssController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getResource(
-            @PathVariable Integer id,
-            HttpServletRequest request
+            HttpServletRequest request,
+            @PathVariable Integer id
     ) {
-        return ossService.getResourceById(id, request);
+        return ossService.getResourceById(request, id);
     }
 
-    @GetMapping("/path/**")
+    @GetMapping("/path/{*path}")
     public ResponseEntity<?> getResourceByPath(
-            HttpServletRequest request
+            HttpServletRequest request,
+            @PathVariable String path
     ) {
-        return ossService.getResourceByPath(request);
+        return ossService.getResourceByPath(request, path);
     }
 }

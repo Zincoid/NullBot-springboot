@@ -1,6 +1,7 @@
 package org.bot.nullbot.service.impl;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BoundedInputStream;
@@ -32,16 +33,37 @@ public class OssServiceImpl implements OssService {
     private final FileMapper fileMapper;
 
     @Override
-    public ResponseEntity<?> getResourceById(Integer id, HttpServletRequest request) {
-        try {
-            // 1. 查询文件记录
-            FilePO file = fileMapper.selectById(id);
-            if (file == null) {
-                log.warn("File record not found for id: {}", id);
-                return ResponseEntity.notFound().build();
-            }
+    public ResponseEntity<?> getResourceByPath(HttpServletRequest request, String path) {
+        String baseDir = fileStorageProperties.getFileDirectory();
+        String fullPath = baseDir + "/" + path;
+        int index = fullPath.lastIndexOf("/");
+        String directory = path.substring(0, index);
+        String name = path.substring(index + 1);
+        List<FilePO> files = fileMapper.searchFile(name, directory);
+        if (files.isEmpty()) {
+            log.info("[OssService] 文件未找到 - path={}", path);
+            return ResponseEntity.notFound().build();
+        }
+        if (files.size() > 1) {
+            log.info("[OssService] 文件路径不唯一 - path={}", path);
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        return getResource(request, files.getFirst());
+    }
 
-            // 2. 构建安全路径
+    @Override
+    public ResponseEntity<?> getResourceById(HttpServletRequest request, Integer id) {
+        FilePO file = fileMapper.selectById(id);
+        if (file == null) {
+            log.info("[OssService] 文件记录未找到 - id={}", id);
+            return ResponseEntity.notFound().build();
+        }
+        return getResource(request, file);
+    }
+
+    public ResponseEntity<?> getResource(HttpServletRequest request, @NonNull FilePO file) {
+        try {
+            // 1. 构建安全路径
             Path rootPath = Paths.get(fileStorageProperties.getFileDirectory()).toAbsolutePath().normalize();
             Path filePath = rootPath.resolve(Paths.get(file.getDirectory(), file.getFileName())).normalize();
             if (!filePath.startsWith(rootPath)) {
@@ -54,12 +76,12 @@ public class OssServiceImpl implements OssService {
                 return ResponseEntity.notFound().build();
             }
 
-            // 3. 准备 Resource 和 Content-Type
+            // 2. 准备 Resource 和 Content-Type
             FileSystemResource resource = new FileSystemResource(filePath);
             MediaType mediaType = determineMediaType(file.getFileName());
             long contentLength = resource.contentLength();
 
-            // 4. HEAD 请求直接返回头信息
+            // 3. HEAD 请求直接返回头信息
             if (HttpMethod.HEAD.matches(request.getMethod())) {
                 return ResponseEntity.ok()
                         .contentType(mediaType)
@@ -69,13 +91,13 @@ public class OssServiceImpl implements OssService {
                         .build();
             }
 
-            // 5. 处理 Range 请求
+            // 4. 处理 Range 请求
             String rangeHeader = request.getHeader(HttpHeaders.RANGE);
             if (rangeHeader != null && (mediaType.getType().equals("video") || mediaType.getType().equals("audio"))) {
                 return handleRangeRequest(resource, mediaType, rangeHeader, contentLength);
             }
 
-            // 6. 完整文件响应（使用 ContentDisposition 安全设置文件名，防止中文乱码异常）
+            // 5. 完整文件响应（使用 ContentDisposition 安全设置文件名，防止中文乱码异常）
             ContentDisposition contentDisposition = ContentDisposition.inline()
                     .filename(file.getFileName(), StandardCharsets.UTF_8)
                     .build();
@@ -89,14 +111,9 @@ public class OssServiceImpl implements OssService {
                     .body(resource);
 
         } catch (Exception e) {
-            log.error("Failed to serve file id: {}", id, e);
+            log.error("[OssService] 响应失败 - id={}", file.getId(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
-
-    @Override
-    public ResponseEntity<?> getResourceByPath(HttpServletRequest request) {
-        return null;
     }
 
     /**
