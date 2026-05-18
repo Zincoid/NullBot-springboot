@@ -1,6 +1,8 @@
 package org.bot.nullbot.command.game.single;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @CommandMapping({"Question", "问答"})
 @Component
@@ -29,12 +29,12 @@ public class QuestionCommand implements Command {
     private final DeepSeekClient deepSeekClient;
     private final BotNextInputer botNextInputer;
     private final PermissionHandler permissionHandler;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private boolean thinking = true;
     private final Set<Long> inGameUsers = new ConcurrentHashSet<>();
 
-    private static final int BLOCKING_TIME = 1;  // 封禁时间 (单位: Minute)
-    private static final int WAIT_TIMEOUT = 60;  // 回答时间 (单位: Second)
+    private static final int BLOCKING_TIME = 1;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -51,63 +51,74 @@ public class QuestionCommand implements Command {
             String raw;
             try {
                 raw = deepSeekClient.chatSingle("""
-                                    出一道单选题并给出题目和答案
-                                    问题主题:%s
-                                    (注:将答案用{}包围放在开头,例如{正确选项字母},无需答案解析,选项要换行)
-                                    (注:禁止生成中国国内政治事件和政治人物相关问题,
-                                    当主题涉及或影射上述禁止内容时仅回复REFUSED)"""
+                                出一道单选题并给出题目和答案，问题主题：%s。请严格按照以下JSON格式回复，不要包含任何其他内容：
+                                {"answer":"正确选项字母","timeout":回答限时秒数,"question":"题目内容(选项要换行)"}
+                                注:
+                                1. timeout根据题目难度设定，简单题15-30秒，中等题45-60秒，困难题90-120秒，
+                                2. 公式相关内容不要使用Latex格式
+                                3. 禁止生成中国国内政治事件和政治人物相关问题，当主题涉及时仅回复REFUSED"""
                                 .formatted(params.isEmpty() ? "二次元" : String.join(" ", params)),
                         thinking, 2500
                 );
-                // log.info("[Question] generated: {}", raw);  // DEBUG
             } catch (Exception e) {
                 throw new NullBotMsgException("""
-                            [问答] ❌生成请求出错
-                            - 用户: [CQ:at,qq=%s]""".formatted(userId)
+                        [问答] ❌生成请求出错
+                        - 用户: [CQ:at,qq=%s]""".formatted(userId)
                 );
             }
 
             if (raw.contains("REFUSED")) {
                 permissionHandler.setUserBan(userId, this.getClass(), BLOCKING_TIME);
                 throw new NullBotMsgException("""
-                            [问答] 🚫生成问题敏感
-                            - 用户: [CQ:at,qq=%s]
-                            - 处罚: 封禁功能%s分钟""".formatted(userId, BLOCKING_TIME)
+                        [问答] 🚫生成问题敏感
+                        - 用户: [CQ:at,qq=%s]
+                        - 处罚: 封禁功能%s分钟""".formatted(userId, BLOCKING_TIME)
                 );
             }
 
-            Pattern answerPattern = Pattern.compile("\\{([A-Za-z])}");
-            Matcher answerMatcher = answerPattern.matcher(raw);
-
-            if (!answerMatcher.find())
+            String answer;
+            String question;
+            int timeout;
+            try {
+                JsonNode json = objectMapper.readTree(raw);
+                answer = json.get("answer").asText().toUpperCase();
+                timeout = json.get("timeout").asInt();
+                question = json.get("question").asText();
+            } catch (Exception e) {
                 throw new NullBotMsgException("""
-                            [问答] ❌生成格式异常
-                            - 用户: [CQ:at,qq=%s]""".formatted(userId)
+                        [问答] ❌生成格式异常
+                        - 用户: [CQ:at,qq=%s]""".formatted(userId)
+                );
+            }
+
+            if (answer.isEmpty() || question.isEmpty() || !answer.matches("[A-Za-z]"))
+                throw new NullBotMsgException("""
+                        [问答] ❌生成内容异常
+                        - 用户: [CQ:at,qq=%s]""".formatted(userId)
                 );
 
-            String answer = answerMatcher.group(1).toUpperCase();
-            String question = """
-                            请[CQ:at,qq=%s]回答问题！
-                            %s
-                            注: 请直接发送选项, 限时%s秒！"""
-                    .formatted(userId, raw.replaceFirst("\\{[A-Za-z]}\\s*", ""), WAIT_TIMEOUT);
+            String questionMsg = """
+                    请[CQ:at,qq=%s]回答问题！
+                    %s
+                    注: 请直接发送选项, 限时%s秒！""".formatted(userId, question, timeout);
 
-            bot.sendGroupMsg(groupId, question, false);
+            bot.sendGroupMsg(groupId, questionMsg, false);
 
             List<Pair<Long, String>> inputs;
             try {
-                inputs = botNextInputer.request(BniMode.PS, userId, "[a-zA-Z]", WAIT_TIMEOUT);
+                inputs = botNextInputer.request(BniMode.PS, userId, "[a-zA-Z]", timeout);
             } catch (Exception e) {
                 throw new NullBotMsgException("[问答] ❌" + e.getMessage());
             }
 
             String response;
-            if (inputs.isEmpty())
+            if (inputs.isEmpty()) {
                 response = "%s回答超时！答案是...%s！".formatted(userName, answer);
-            else if (answer.equals(inputs.getFirst().getRight().toUpperCase()))
+            } else if (answer.equalsIgnoreCase(inputs.getFirst().getRight())) {
                 response = "%s回答正确！".formatted(userName);
-            else
+            } else {
                 response = "%s回答错误！答案是...%s！".formatted(userName, answer);
+            }
 
             bot.sendGroupMsg(groupId, response, false);
 
@@ -116,7 +127,9 @@ public class QuestionCommand implements Command {
         }
     }
 
-    public boolean switchThinking() { return thinking = !thinking; }
+    public boolean switchThinking() {
+        return thinking = !thinking;
+    }
 
     @Override
     public String getHelp() {
