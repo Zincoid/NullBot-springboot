@@ -288,7 +288,7 @@ public class DeepSeekClient {
      */
     public String chatSingle(String message, boolean thinking, int maxTokens) throws Exception {
         List<Map<String, String>> _messages = List.of(
-                Map.of("role", "user", "content", message)
+                Map.of("role", "system", "content", message)
         );
         return sendRequest(_messages, thinking, maxTokens);
     }
