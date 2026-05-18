@@ -69,14 +69,8 @@ public class ChatHistoryCommand implements Command {
                 }
             }
 
-            List<Pair<Long, String>> inputs;
-            try {
-                inputs = botNextInputer
-                        .request(BniMode.PS, userId, "(?i)up|down|end", WAIT_TIMEOUT);
-            } catch (Exception e) {
-                throw new NullBotMsgException("[聊天历史] ❌" + e.getMessage());
-            }
-
+            List<Pair<Long, String>> inputs = botNextInputer
+                    .request(BniMode.PS, userId, "(?i)up|down|end", WAIT_TIMEOUT);
             if (inputs.isEmpty())
                 throw new NullBotMsgException("[聊天历史] ⌛️输入超时");
             operation = inputs.getFirst().getRight().toUpperCase();

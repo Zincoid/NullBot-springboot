@@ -36,12 +36,40 @@ public class BotPageSelector<K, V> {
             boolean continuous, int size, List<K> keys, List<V> values,
             BotFunction<Bot, Long, K, Void> action
     ) {
-        this(bot, groupId, null, title, info, continuous, size, keys, values, action);
+        this(
+                bot, groupId, null, title, info,
+                continuous, size, keys, values,
+                action
+        );
+    }
+
+    public BotPageSelector(
+            Bot bot, Long groupId, String title, String info,
+            boolean continuous, int size, int current, List<K> keys, List<V> values,
+            BotFunction<Bot, Long, K, Void> action
+    ) {
+        this(
+                bot, groupId, null, title, info,
+                continuous, size, current, keys, values,
+                action
+        );
     }
 
     public BotPageSelector(
             Bot bot, Long groupId, Long userId, String title, String info,
             boolean continuous, int size, List<K> keys, List<V> values,
+            BotFunction<Bot, Long, K, Void> action
+    ) {
+        this(
+                bot, groupId, userId, title, info,
+                continuous, size, 1, keys, values,
+                action
+        );
+    }
+
+    public BotPageSelector(
+            Bot bot, Long groupId, Long userId, String title, String info,
+            boolean continuous, int size, int current, List<K> keys, List<V> values,
             BotFunction<Bot, Long, K, Void> action
     ) {
         if (keys.size() != values.size())
@@ -58,7 +86,7 @@ public class BotPageSelector<K, V> {
         this.total = keys.size();
         this.size = size;
         this.pages = (total + size - 1) / size;
-        this.current = 1;
+        this.current = Math.max(1, Math.min(current, pages));
     }
 
     public boolean input(BotNextInputer inputer) {
@@ -72,13 +100,8 @@ public class BotPageSelector<K, V> {
     }
 
     public boolean input(BotNextInputer inputer, Long userId, int timeout) {
-        List<Pair<Long, String>> inputs;
-        try {
-            inputs = inputer.request(BniMode.PS, userId,
-                    "[1-9]\\d*|(?i)up|down|end", timeout);
-        } catch (Exception e) {
-            throw new NullBotMsgException("[%s] ❌%s".formatted(title, e.getMessage()));
-        }
+        List<Pair<Long, String>> inputs = inputer
+                .request(BniMode.PS, userId, "[1-9]\\d*|(?i)up|down|end", timeout);
         if (inputs.isEmpty())
             throw new NullBotMsgException("[%s] ⌛️输入超时".formatted(title));
         return input(inputs.getFirst().getRight().toUpperCase());
