@@ -169,7 +169,7 @@ public class DeepSeekClient {
             // 构建完整消息列表
             List<Map<String, String>> _messages = buildGroupMsgs(chatMessages, groupId, option.isCustom(), option.isEmbedding());
             // 发送对话请求到 API
-            String originalResponse = sendRequest(_messages, option.isThinking());
+            String originalResponse = sendRequest(_messages, option.isThinking(), deepSeekProperties.getMaxTokens());
             // 限制历史记录长度
             if (option.getChatScope() == ChatScope.Monitor)
                 chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
@@ -255,7 +255,7 @@ public class DeepSeekClient {
             // 构建完整消息列表
             List<Map<String, String>> _messages = buildPrivateMsgs(chatMessages, userId);
             // 发送对话请求到 API
-            String originalResponse = sendRequest(_messages, false);
+            String originalResponse = sendRequest(_messages, false, deepSeekProperties.getMaxTokens());
             // 限制历史记录长度
             chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxHistoryLength());
             // 内嵌指令执行部分
@@ -285,38 +285,10 @@ public class DeepSeekClient {
      * @return AI 回复内容
      */
     public String chatSingle(String message, boolean thinking, int maxTokens) throws Exception {
-        // 构建JSON请求体
-        String requestBody = objectMapper.writeValueAsString(Map.of(
-                "model", thinking ? "deepseek-reasoner" : "deepseek-chat",
-                "messages", List.of(Map.of(
-                        "role", "user",
-                        "content", message
-                )),
-                "max_tokens", maxTokens
-        ));
-
-        // 创建HTTP请求
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(deepSeekProperties.getApiUrl()))
-                .header("Authorization", "Bearer " + deepSeekProperties.getApiKey())
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .timeout(Duration.ofSeconds(60))  // 添加请求超时
-                .build();
-
-        // 发送请求并处理响应
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() == 200) {
-            JsonNode rootNode = objectMapper.readTree(response.body());
-            return rootNode
-                    .path("choices")
-                    .get(0)
-                    .path("message")
-                    .path("content")
-                    .asText();
-        } else
-            throw new RuntimeException("API请求失败: " + response.statusCode() + " - " + response.body());
+        List<Map<String, String>> _messages = List.of(
+                Map.of("role", "user", "content", message)
+        );
+        return sendRequest(_messages, thinking, maxTokens);
     }
 
     // =================== 链式调用方法 ===================
@@ -425,7 +397,7 @@ public class DeepSeekClient {
      * @param thinking 思考模式
      * @return AI 回复内容
      */
-    private String sendRequest(List<Map<String, String>> _messages, boolean thinking) throws Exception {
+    private String sendRequest(List<Map<String, String>> _messages, boolean thinking, int maxTokens) throws Exception {
         // 构建 JSON
         ObjectNode requestBody = objectMapper.createObjectNode();
         requestBody.put("model", "deepseek-v4-flash");
@@ -440,7 +412,7 @@ public class DeepSeekClient {
         }
 
         requestBody.put("stream", false);
-        requestBody.put("max_tokens", deepSeekProperties.getMaxTokens());
+        requestBody.put("max_tokens", maxTokens);
         requestBody.set("messages", objectMapper.valueToTree(_messages));
 
         // 次要参数
