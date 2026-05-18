@@ -36,7 +36,7 @@ public class EndfieldCommand implements Command {
     private final Map<Long, String> versions = new ConcurrentHashMap<>();  // 群聊版本存储
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
-    // private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second) 使用默认
+    private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
     private static final Set<String> ALLOWED_VERSIONS = Set.of("1.0", "1.1", "1.2");  // 可用资源版本
     private static final String DEFAULT_VERSION = "1.2";  // 默认资源版本
     private final OssUrlBuilder ossUrlBuilder;
@@ -110,7 +110,7 @@ public class EndfieldCommand implements Command {
         ).size(PAGE_SIZE).userId(userId).info(info).build();
 
         pager.init();
-        while (pager.input(botNextInputer)) {
+        while (pager.input(botNextInputer, WAIT_TIMEOUT)) {
             log.info("\t\t\t\t├─[Endfield] 已操作分页器");
         }
     }

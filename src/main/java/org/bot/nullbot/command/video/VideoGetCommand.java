@@ -31,7 +31,7 @@ public class VideoGetCommand implements Command {
     private final BotNextInputer botNextInputer;
 
     private static final int PAGE_SIZE = 5;  // 查询单页大小
-    // private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second) 使用默认
+    private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -68,7 +68,7 @@ public class VideoGetCommand implements Command {
         ).size(PAGE_SIZE).userId(userId).build();
 
         pager.init();
-        while (pager.input(botNextInputer)) {
+        while (pager.input(botNextInputer, WAIT_TIMEOUT)) {
             log.info("\t\t\t\t├─[VideoGet] 已操作分页器");
         }
     }

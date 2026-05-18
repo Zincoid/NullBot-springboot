@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 
 public class BotPageSelector<K, V> {
 
-    private static final int DEFAULT_TIMEOUT = 30;
+    private static final int DEFAULT_INPUTER_TIMEOUT = 30;
 
     private final Bot bot;
     private final Long groupId;
@@ -102,7 +102,7 @@ public class BotPageSelector<K, V> {
     }
 
     public boolean input(BotNextInputer inputer) {
-        return input(inputer, userId, DEFAULT_TIMEOUT);
+        return input(inputer, userId, DEFAULT_INPUTER_TIMEOUT);
     }
 
     public boolean input(BotNextInputer inputer, int timeout) {

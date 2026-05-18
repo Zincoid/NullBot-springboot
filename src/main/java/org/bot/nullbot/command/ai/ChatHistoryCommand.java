@@ -9,6 +9,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.entity.BotPageSelector;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -37,74 +38,38 @@ public class ChatHistoryCommand implements Command {
         if (history == null || history.isEmpty())
             throw new NullBotMsgException("[聊天历史] ⚠️无对话历史");
 
-        int total = history.size();
-        int pages = (total + PAGE_SIZE - 1) / PAGE_SIZE;
-        int current = pages;
+        BotPageSelector<ChatMessage, String> pager = new BotPageSelector.Builder<>(
+                bot, groupId, "聊天历史", true,
+                history,
+                history.stream()
+                        .map(msg ->
+                                "user".equals(msg.getRole()) ?
+                                        "%s(%s): %s".formatted(
+                                                msg.getUserName(),
+                                                msg.getUserId(),
+                                                msg.getContent()
+                                        ) :
+                                        "Null: %s".formatted(msg.getContent())
+                        ).toList(),
+                this::sendInfo
+        ).userId(userId).current(Integer.MAX_VALUE).build();
 
-        if (!params.isEmpty()) {
-            try {
-                current = Math.min(pages, Integer.parseInt(params.getFirst()));
-                current = Math.max(1, current);
-            } catch (NumberFormatException e) {
-                throw new NullBotMsgException("[聊天历史] ❌页码格式错误");
-            }
-        }
-
-        String operation = "INIT";
-        while (true) {
-            switch (operation) {
-                case "INIT" -> sendPage(bot, groupId, history, PAGE_SIZE, current);
-                case "UP" -> {
-                    if (current > 1) sendPage(bot, groupId, history, PAGE_SIZE, --current);
-                    else bot.sendGroupMsg(groupId, "到顶啦！", false);
-                }
-                case "DOWN" -> {
-                    if (current < pages) sendPage(bot, groupId, history, PAGE_SIZE, ++current);
-                    else bot.sendGroupMsg(groupId, "到底啦！", false);
-                }
-                case "END" -> {
-                    bot.sendGroupMsg(groupId, "[聊天历史] ⛔️查询终止", false);
-                    log.info("\t\t\t\t├─[ChatHistory] 用户 {} 查询终止", userId);
-                    return;
-                }
-            }
-
-            List<Pair<Long, String>> inputs = botNextInputer
-                    .request(BniMode.PS, userId, "(?i)up|down|end", WAIT_TIMEOUT);
-            if (inputs.isEmpty())
-                throw new NullBotMsgException("[聊天历史] ⌛️输入超时");
-            operation = inputs.getFirst().getRight().toUpperCase();
+        pager.init();
+        while (pager.input(botNextInputer, WAIT_TIMEOUT)) {
+            log.info("\t\t\t\t├─[ChatHistory] 已操作分页器");
         }
     }
 
-    private void sendPage(Bot bot, Long groupId, List<ChatMessage> history, int pageSize, int current) {
-        int total = history.size();
-        int pages = (total + pageSize - 1) / pageSize;
-        int fromIndex = (current - 1) * pageSize;
-        int toIndex = Math.min(fromIndex + pageSize, total);
-        List<ChatMessage> historyPage = history.subList(fromIndex, toIndex);
-        List<String> contentPage = historyPage.stream()
-                .map(msg ->
-                        "user".equals(msg.getRole()) ?
-                                "%s(%s): %s".formatted(
-                                        msg.getUserName(),
-                                        msg.getUserId(),
-                                        msg.getContent()
-                                ) :
-                                "Null: %s".formatted(msg.getContent())
-                )
-                .toList();
-        String content = String.join("\n", contentPage);
-        String footer = """
-                [第%s页 / 共%s页 (每页%s条)]
-                翻页和终止 - Up/Down & End""".formatted(current, pages, pageSize);
-        bot.sendGroupMsg(groupId, "[聊天历史] \uD83D\uDD0D共%s条存储记录\n%s\n\n%s"
-                .formatted(total, content, footer), false);
-        log.info("\t\t\t\t├─[ChatHistory] 已获取聊天历史 - {}/{}", current, pages);
+    private Void sendInfo(Bot bot, Long groupId, ChatMessage message) {
+        bot.sendGroupMsg(groupId, message.toString(), false);
+        log.info("\t\t\t\t├─[ChatHistory] 已获取记录 - {}", message.getMessageId());
+        return null;
     }
 
     @Override
-    public Integer getAccess() { return 1; }
+    public Integer getAccess() {
+        return 1;
+    }
 
     @Override
     public String getHelp() {
