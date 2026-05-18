@@ -757,4 +757,5 @@
 ### 2026.5.18 - v2.0.0
 
 - 优化 AI相关组件代码；
-- 优化 QuestionCommand 指令相关代码。
+- 优化 QuestionCommand 指令 - 使用 Json 格式生成问题；
+- 优化 BotNextInputer - 异常抛出类型改为 NullBotMsgException 并优化相关使用。

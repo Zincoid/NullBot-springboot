@@ -91,26 +91,20 @@ public class GuessCommand implements Command {
                 String answer = inputs.getFirst().getRight().substring(1).trim();
 
                 if (guess.getName().equals(answer)) {
-                    boolean rewarded = false;
-                    if (userService.exist(answererId)) {
+                    boolean rewardable = userService.exist(answererId);
+                    if (rewardable) {
                         userService.plusExperience(answererId, 20);  // 给赢家 20 Exp
                         userService.increaseDrawTimes(answererId, 5);  // 给赢家 5 抽
-                        rewarded = true;
                     }
-
                     String correct = MsgUtils.builder()
                             .text("""
                                     %s猜对啦✨
                                     答案是...%s！
                                     - %s
                                     - 一共猜了%s次！"""
-                                    .formatted(
-                                            bot.getStrangerInfo(answererId, true).getData().getNickname(),
-                                            answer,
-                                            rewarded ? "获得 5抽数 和 20Exp！" : "无奖励: 用户未注册(请调用任意指令完成注册, 例如戳一戳Null)",
-                                            guess.getTimes()
-                                    )
-                            )
+                                    .formatted(bot.getStrangerInfo(answererId, true).getData().getNickname(), answer,
+                                            rewardable ? "获得 5抽数 和 20Exp！" : "无奖励: 用户未注册(调用任意指令以注册, 例如戳戳Null)",
+                                            guess.getTimes()))
                             .img("base64://" + Base64Util.from(guess.getPath()))
                             .build();
                     bot.sendGroupMsg(groupId, correct, false);
@@ -131,8 +125,6 @@ public class GuessCommand implements Command {
             bot.sendGroupMsg(groupId, fail, false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
 
-        } catch (Exception e) {
-            throw new NullBotMsgException("[猜角色] ❌" + e.getMessage());
         } finally {
             guessStorage.removeGuess(groupId);
         }
@@ -178,26 +170,6 @@ public class GuessCommand implements Command {
                 maxAttempts, transparentRatio
         ));
     }
-
-    // private static String crop(String p, double r, int pad) throws Exception {
-    //     BufferedImage img = ImageIO.read(new File(p));
-    //     // 计算裁剪尺寸 确保在 padding 内部
-    //     int w = Math.max(1, (int)(img.getWidth() * r));
-    //     int h = Math.max(1, (int)(img.getHeight() * r));
-    //     // 调整裁剪尺寸以适应 padding
-    //     w = Math.min(w, img.getWidth() - 2 * pad);
-    //     h = Math.min(h, img.getHeight() - 2 * pad);
-    //     // 计算可裁剪范围
-    //     int xMin = Math.max(0, pad);
-    //     int xMax = Math.max(xMin, img.getWidth() - w - pad);
-    //     int yMin = Math.max(0, pad);
-    //     int yMax = Math.max(yMin, img.getHeight() - h - pad);
-    //     // 随机选择裁剪起点
-    //     int x = xMin + (xMax > xMin ? (int)(Math.random() * (xMax - xMin)) : 0);
-    //     int y = yMin + (yMax > yMin ? (int)(Math.random() * (yMax - yMin)) : 0);
-    //     // 裁剪并转换 Base64
-    //     return Base64Util.imageToBase64(img.getSubimage(x, y, w, h));
-    // }
 
     @Override
     public String getHelp() {

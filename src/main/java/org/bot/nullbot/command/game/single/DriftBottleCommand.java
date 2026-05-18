@@ -104,23 +104,23 @@ public class DriftBottleCommand implements Command {
         }
 
         DriftBottlePO bottle = driftBottleService.pickUpRand();
-        if (bottle == null) throw new NullBotMsgException("没有漂流瓶了！");
+        if (bottle == null)
+            throw new NullBotMsgException("没有漂流瓶了！");
         bot.sendGroupMsg(groupId, bottle.toString(), false);
-        List<Pair<Long, String>> inputs;
-        try {
-            inputs = botNextInputer.request(BniMode.PS, userId, "扔回去", KEEP_TIME, true);
-        } catch (Exception e) {
-            throw new NullBotMsgException("[漂流瓶] ❌" + e.getMessage());
-        }
+
+        List<Pair<Long, String>> inputs = botNextInputer
+                .request(BniMode.PS, userId, "扔回去", KEEP_TIME, true);
+
         boolean thrownBack = false;
         if (!inputs.isEmpty()) {
             bottle.plusRethrowTimes();
             thrownBack = driftBottleService.throwBottle(bottle);
-            bot.sendGroupMsg(groupId, thrownBack ? "✉️ 已投回！" : "[漂流瓶] ❌出错", true);
+            bot.sendGroupMsg(groupId, thrownBack ? "✉️ 已投回！" : "[漂流瓶] ❌投回出错", true);
             log.info("\t\t\t\t├─[DriftBottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());
         } else {
             log.info("\t\t\t\t├─[DriftBottle] 捡漂流瓶并销毁 - {} -> #{}", userId, bottle.getId());
         }
+
         if (!thrownBack && bottle.getIsImage()) {
             int index = bottle.getContent().lastIndexOf("/");
             String fileName = bottle.getContent().substring(index + 1);
