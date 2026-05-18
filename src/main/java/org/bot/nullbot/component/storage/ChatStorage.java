@@ -39,7 +39,7 @@ public class ChatStorage {
             int removeCount = history.size() - maxHistoryLength;
             int startIndex = 0;
             if ("system".equals(history.getFirst().getRole())) startIndex = 1;  // 跳过系统消息
-            history.subList(startIndex, startIndex + removeCount).clear();  // 移除最旧消息
+            for (int i = 0; i < removeCount; i++) history.remove(startIndex);  // 移除最旧消息
         }
     }
 

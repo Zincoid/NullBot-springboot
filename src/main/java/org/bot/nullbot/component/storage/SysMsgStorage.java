@@ -38,21 +38,21 @@ public class SysMsgStorage {
     // =================== 长时记忆功能相关 ===================
 
     public List<String> getLongTermGroupMemory(Long groupId) { return longTermGroupMemories.computeIfAbsent(groupId, k -> new CopyOnWriteArrayList<>()); }
-    public synchronized boolean addLongTermGroupMemory(Long groupId, String memory) {
+    public boolean addLongTermGroupMemory(Long groupId, String memory) {
         List<String> groupMemory = getLongTermGroupMemory(groupId);
         if (groupMemory.size() >= longTermMemoryCapacity) return false;
         return groupMemory.add(memory);
     }
-    public String removeLongTermGroupMemory(Long groupId, int i) { return getLongTermGroupMemory(groupId).remove(i); }
+    public String removeLongTermGroupMemory(Long groupId, int i) { return longTermGroupMemories.get(groupId).remove(i); }
     public void clearLongTermGroupMemory(Long groupId) { longTermGroupMemories.remove(groupId); }
 
     public List<String> getLongTermUserMemory(Long userId) { return longTermUserMemories.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>()); }
-    public synchronized boolean addLongTermUserMemory(Long userId, String memory) {
+    public boolean addLongTermUserMemory(Long userId, String memory) {
         List<String> userMemory = getLongTermUserMemory(userId);
         if (userMemory.size() >= longTermMemoryCapacity) return false;
         return userMemory.add(memory);
     }
-    public String removeLongTermUserMemory(Long userId, int i) { return getLongTermUserMemory(userId).remove(i); }
+    public String removeLongTermUserMemory(Long userId, int i) { return longTermUserMemories.get(userId).remove(i); }
     public void clearLongTermUserMemory(Long userId) { longTermUserMemories.remove(userId); }
 
     // =================== 重置功能相关 ===================

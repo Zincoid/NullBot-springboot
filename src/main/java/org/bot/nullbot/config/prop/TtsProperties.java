@@ -12,8 +12,6 @@ public class TtsProperties {
     private String apiKey;
     private String version;
     private String modelName;
-    private String cloneGptModelName;
-    private String cloneSovitsModelName;
     private String promptTextLang;
     private String textLang;
     private String emotion;
