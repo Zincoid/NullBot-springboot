@@ -13,6 +13,7 @@ import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.FunctionControl;
+import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.config.prop.DeepSeekProperties;
 import org.bot.nullbot.config.prop.FileStorageProperties;
@@ -39,7 +40,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class MonitorListener {
 
-    private final BotNextInputer botNextInputer;
+    private final BotNextInputer botNextInputer;  // 弃用?
     private final CommandProcessor commandProcessor;
     private final ChatStorage chatStorage;
     private final DeepSeekProperties deepSeekProperties;
@@ -53,7 +54,9 @@ public class MonitorListener {
     // =================== 输入监听方法 ===================
 
     public boolean onGroupNextInputDetection(GroupMessageEvent event) {
-        return botNextInputer.response(event.getGroupId(), event.getUserId(), event.getMessage());
+        boolean isOldMethodResponded = botNextInputer.response(event.getGroupId(), event.getUserId(), event.getMessage());
+        boolean isNewMethodResponded = BotInputManager.response(event.getGroupId(), event.getUserId(), event.getMessage());
+        return isOldMethodResponded || isNewMethodResponded;
     }
 
     // =================== 串行监听方法 ===================

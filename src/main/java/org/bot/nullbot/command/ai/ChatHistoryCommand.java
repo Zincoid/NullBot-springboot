@@ -4,11 +4,11 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.entity.BotInputer;
 import org.bot.nullbot.entity.BotPageSelector;
 import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.enums.BniMode;
@@ -54,14 +54,16 @@ public class ChatHistoryCommand implements Command {
                 this::sendInfo
         ).userId(userId).current(Integer.MAX_VALUE).build();
 
-        pager.init();
-        while (pager.input(botNextInputer, WAIT_TIMEOUT)) {
-            log.info("\t\t\t\t├─[ChatHistory] 已操作分页器");
-        }
+        // pager.init();
+        // while (pager.input(botNextInputer, WAIT_TIMEOUT)) {
+        //     log.info("\t\t\t\t├─[ChatHistory] 已操作分页器");
+        // }
+        BotInputer in = new BotInputer(BniMode.PS, userId).timeout(WAIT_TIMEOUT);
+        pager.start(in);
     }
 
     private Void sendInfo(Bot bot, Long groupId, ChatMessage message) {
-        bot.sendGroupMsg(groupId, message.toString(), false);
+        bot.sendGroupMsg(groupId, message.toString(), true);
         log.info("\t\t\t\t├─[ChatHistory] 已获取记录 - {}", message.getMessageId());
         return null;
     }

@@ -1,6 +1,7 @@
 package org.bot.nullbot.entity;
 
 import com.mikuac.shiro.core.Bot;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.component.control.BotNextInputer;
 import org.bot.nullbot.enums.BniMode;
@@ -10,6 +11,7 @@ import org.bot.nullbot.function.BotFunction;
 import java.util.List;
 import java.util.stream.IntStream;
 
+@Slf4j
 public class BotPageSelector<K, V> {
 
     private static final int DEFAULT_INPUTER_TIMEOUT = 30;
@@ -101,6 +103,29 @@ public class BotPageSelector<K, V> {
         }
     }
 
+    public void start(BotInputer inputer) {
+        init();
+        while (input(inputer)) {
+            log.info("\t\t\t\t├─[BotPageSelector] 已操作{}分页器", title);
+        }
+    }
+
+    public void start(BotNextInputer inputer) {
+        init();
+        while (input(inputer)) {
+            log.info("\t\t\t\t├─[BotPageSelector] 已操作{}分页器", title);
+        }
+    }
+
+    public boolean input(BotInputer inputer) {
+        inputer.setPattern("[1-9]\\d*|(?i)up|down|end");
+        inputer.setCoverable(true);
+        List<Pair<Long, String>> inputs = inputer.next();
+        if (inputs.isEmpty())
+            throw new NullBotMsgException("[%s] ⌛️输入超时".formatted(title));
+        return input(inputs.getFirst().getRight().toUpperCase());
+    }
+
     public boolean input(BotNextInputer inputer) {
         return input(inputer, userId, DEFAULT_INPUTER_TIMEOUT);
     }
@@ -109,6 +134,10 @@ public class BotPageSelector<K, V> {
         if (userId == null)
             throw new NullPointerException("BotPageSelector未指定UserId");
         return input(inputer, userId, timeout);
+    }
+
+    public boolean input(BotNextInputer inputer, Long userId) {
+        return input(inputer, userId, DEFAULT_INPUTER_TIMEOUT);
     }
 
     public boolean input(BotNextInputer inputer, Long userId, int timeout) {
@@ -175,7 +204,7 @@ public class BotPageSelector<K, V> {
                 操作 - Up/Down/End
                 选择 - 发送序号 (上同)""".formatted(current, pages, size, info);
         bot.sendGroupMsg(groupId, "[%s] \uD83D\uDD0D共%s个结果\n%s\n\n%s"
-                .formatted(title, total, content, footer), false);
+                .formatted(title, total, content, footer), true);
         return true;
     }
 
