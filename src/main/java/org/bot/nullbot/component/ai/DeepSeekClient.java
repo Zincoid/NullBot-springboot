@@ -37,6 +37,7 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.EmbeddedCommandEvent;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.Base64Util;
+import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
@@ -318,10 +319,7 @@ public class DeepSeekClient {
      * @param embedding 嵌入指令模式
      * @return 发送给 API 的消息列表
      */
-    private List<Map<String, String>> buildGroupMsgs(
-            List<ChatMessage> chatMessages, Long groupId,
-            boolean custom, boolean embedding
-    ) {
+    private List<Map<String, String>> buildGroupMsgs(List<ChatMessage> chatMessages, Long groupId, boolean custom, boolean embedding) {
         String systemMessage;
         if (custom)
             systemMessage = sysMsgStorage.getCustomMessage(groupId);
@@ -469,7 +467,10 @@ public class DeepSeekClient {
             messageId = sendMsg(bot, targetId, response, isPrivate, voice);
         }
         // 记录消息
-        chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", response));
+        String parsed = MessageParseUtil.parseArrayMsgToSimple(
+                bot, bot.getMsg(messageId).getData().getArrayMsg());
+        chatMessages.add(new ChatMessage(
+                messageId, botId, "Null", "assistant", parsed));
         return filtered ? "Filtered" : response;
     }
 
@@ -496,7 +497,8 @@ public class DeepSeekClient {
         // 过滤判断
         if (messageFilter(response)) {
             Integer messageId = sendMsg(bot, targetId, buildFilteredMsg(), isPrivate, voice);
-            chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", "回复被过滤"));
+            chatMessages.add(new ChatMessage(
+                    messageId, botId, "Null", "assistant", "回复被过滤"));
             return "Filtered";
         }
         // 处理消息
@@ -513,13 +515,17 @@ public class DeepSeekClient {
                 eventPublisher.publishEvent(new EmbeddedCommandEvent(bot,
                         new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)));
                 // 记录指令
-                chatMessages.add(new ChatMessage(null, botId, "Null", "assistant", segment));
+                chatMessages.add(new ChatMessage(
+                        null, botId, "Null", "assistant", segment));
             } else {
                 // 发送消息
                 if (segment.isEmpty()) continue;
                 Integer messageId = sendMsg(bot, targetId, segment, isPrivate, voice);
                 // 记录消息
-                chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", segment));
+                String parsed = MessageParseUtil.parseArrayMsgToSimple(
+                        bot, bot.getMsg(messageId).getData().getArrayMsg());
+                chatMessages.add(new ChatMessage(
+                        messageId, botId, "Null", "assistant", parsed));
             }
         }
         return response;
@@ -549,7 +555,8 @@ public class DeepSeekClient {
         // 过滤判断
         if (messageFilter(response)) {
             Integer messageId = sendMsg(bot, targetId, buildFilteredMsg(), isPrivate, voice);
-            chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", "回复被过滤"));
+            chatMessages.add(new ChatMessage(
+                    messageId, botId, "Null", "assistant", "回复被过滤"));
             return "Filtered";
         }
         // 处理消息
@@ -565,7 +572,10 @@ public class DeepSeekClient {
         String _response = response.replaceAll("\\{.*?}", "").trim();
         Integer messageId = sendMsg(bot, targetId, _response, isPrivate, voice);
         // 记录消息
-        chatMessages.add(new ChatMessage(messageId, botId, "Null", "assistant", response));
+        String parsed = MessageParseUtil.parseArrayMsgToSimple(
+                bot, bot.getMsg(messageId).getData().getArrayMsg());
+        chatMessages.add(new ChatMessage(
+                messageId, botId, "Null", "assistant", parsed));
         return _response;
     }
 
@@ -585,13 +595,15 @@ public class DeepSeekClient {
         if (isPrivate)
             msgIdActionData = bot.sendPrivateMsg(
                     targetId,
-                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(message)).build() : message,
+                    voice ? MsgUtils.builder()
+                            .voice("base64://" + ttsClient.synthesize(message)).build() : message,
                     false
             );
         else
             msgIdActionData = bot.sendGroupMsg(
                     targetId,
-                    voice ? MsgUtils.builder().voice("base64://" + ttsClient.synthesize(message)).build() : message,
+                    voice ? MsgUtils.builder()
+                            .voice("base64://" + ttsClient.synthesize(message)).build() : message,
                     false
             );
         return msgIdActionData.getData().getMessageId();
