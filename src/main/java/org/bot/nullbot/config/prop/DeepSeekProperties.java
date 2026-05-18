@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class DeepSeekProperties {
     private String apiKey;
     private String apiUrl;
+    private String model;
     private Integer maxHistoryLength;
     private Integer maxMonitorLength;
     private Integer maxTokens;
