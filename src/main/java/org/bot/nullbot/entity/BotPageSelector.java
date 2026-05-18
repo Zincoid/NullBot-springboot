@@ -114,7 +114,7 @@ public class BotPageSelector<K, V> {
 
     public boolean input(BotInputer inputer) {
         inputer.setPattern("[1-9]\\d*|(?i)up|down|end");
-        inputer.setCoverable(true);
+        inputer.setCoverable(false);
         List<Pair<Long, String>> inputs = inputer.next();
         if (inputs.isEmpty())
             throw new NullBotMsgException("[%s] ⌛️输入超时".formatted(title));
