@@ -24,6 +24,8 @@ public class TtsClient {
     private String apiKey;
     private String version;
     private String modelName;
+    private String cloneGptModelName;
+    private String cloneSovitsModelName;
     private String promptTextLang;
     private String textLang;
     private String emotion;
@@ -35,6 +37,8 @@ public class TtsClient {
         apiKey = props.getApiKey();
         version = props.getVersion();
         modelName = props.getModelName();
+        cloneGptModelName = props.getCloneGptModelName();
+        cloneSovitsModelName = props.getCloneSovitsModelName();
         promptTextLang = props.getPromptTextLang();
         textLang = props.getTextLang();
         emotion = props.getEmotion();
@@ -135,8 +139,8 @@ public class TtsClient {
         // 构建请求体
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("version", "v4");
-        requestBody.put("gpt_model_name", "【GSVI】羽毛笔-e10");
-        requestBody.put("sovits_model_name", "【GSVI】羽毛笔_e10_s150_I32");
+        requestBody.put("gpt_model_name", cloneGptModelName);
+        requestBody.put("sovits_model_name", cloneSovitsModelName);
         requestBody.put("ref_audio_path", refAudioPath);
         requestBody.put("prompt_text", refText);
         requestBody.put("prompt_text_lang", "中文");
