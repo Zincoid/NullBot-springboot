@@ -58,7 +58,7 @@ public class GuessCommand implements Command {
         try {
             GuessInfo guess = guessStorage.initGuess(groupId, params.getFirst());
 
-            String startMsg = MsgUtils.builder()
+            String start = MsgUtils.builder()
                     .text("[猜角色] ✨题目是\n")
                     .img("base64://" + crop(guess.getPath(),
                             settingService.getGuessCropRatio(groupId),
@@ -67,7 +67,7 @@ public class GuessCommand implements Command {
                             MAX_CROP_ATTEMPTS))
                     .text("注: 请发送\"#内容\"")
                     .build();
-            bot.sendGroupMsg(groupId, startMsg, false);
+            bot.sendGroupMsg(groupId, start, false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 初始化猜谜 -> {}", groupId, guess.getName());
 
             while (guess.getTimes() < MAX_RETRIES) {
@@ -76,15 +76,13 @@ public class GuessCommand implements Command {
                         .request(BniMode.GS, groupId, "#.+", WAIT_TIMEOUT);
 
                 if (inputs.isEmpty() || "##".equals(inputs.getFirst().getRight())) {
-                    String endMsg = MsgUtils.builder()
-                            .text(
-                                """
-                                游戏结束啦\uD83D\uDCA6
-                                答案是...%s！""".formatted(guess.getName())
-                            )
+                    String end = MsgUtils.builder()
+                            .text("""
+                                    游戏结束啦\uD83D\uDCA6
+                                    答案是...%s！""".formatted(guess.getName()))
                             .img("base64://" + Base64Util.from(guess.getPath()))
                             .build();
-                    bot.sendGroupMsg(groupId, endMsg, false);
+                    bot.sendGroupMsg(groupId, end, false);
                     log.info("\t\t\t\t├─[Guess] 群聊 {} 已结束", groupId);
                     return;
                 }
@@ -100,12 +98,12 @@ public class GuessCommand implements Command {
                         rewarded = true;
                     }
 
-                    String correctMsg = MsgUtils.builder()
+                    String correct = MsgUtils.builder()
                             .text("""
-                                %s猜对啦✨
-                                答案是...%s！
-                                - %s
-                                - 一共猜了%s次！"""
+                                    %s猜对啦✨
+                                    答案是...%s！
+                                    - %s
+                                    - 一共猜了%s次！"""
                                     .formatted(
                                             bot.getStrangerInfo(answererId, true).getData().getNickname(),
                                             answer,
@@ -115,7 +113,7 @@ public class GuessCommand implements Command {
                             )
                             .img("base64://" + Base64Util.from(guess.getPath()))
                             .build();
-                    bot.sendGroupMsg(groupId, correctMsg, false);
+                    bot.sendGroupMsg(groupId, correct, false);
                     log.info("\t\t\t\t├─[Guess] 用户 {} 猜测正确", answererId);
                     return;
                 } else {
@@ -124,14 +122,13 @@ public class GuessCommand implements Command {
                 }
             }
 
-            String failMsg = MsgUtils.builder()
+            String fail = MsgUtils.builder()
                     .text("""
-                        已经错%s次啦\uD83D\uDCA6
-                        答案是...%s！""".formatted(MAX_RETRIES, guess.getName())
-                    )
+                            已经错%s次啦\uD83D\uDCA6
+                            答案是...%s！""".formatted(MAX_RETRIES, guess.getName()))
                     .img("base64://" + Base64Util.from(guess.getPath()))
                     .build();
-            bot.sendGroupMsg(groupId, failMsg, false);
+            bot.sendGroupMsg(groupId, fail, false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
 
         } catch (Exception e) {
@@ -145,8 +142,8 @@ public class GuessCommand implements Command {
                                double transparentRatio, int maxAttempts) throws Exception {
         BufferedImage img = ImageIO.read(new File(imagePath));
         // 计算裁剪尺寸 确保在padding内部
-        int w = Math.max(1, (int)(img.getWidth() * cropRatio));
-        int h = Math.max(1, (int)(img.getHeight() * cropRatio));
+        int w = Math.max(1, (int) (img.getWidth() * cropRatio));
+        int h = Math.max(1, (int) (img.getHeight() * cropRatio));
         w = Math.min(w, img.getWidth() - 2 * padding);
         h = Math.min(h, img.getHeight() - 2 * padding);
         // 计算可裁剪范围
@@ -156,15 +153,15 @@ public class GuessCommand implements Command {
         int yMax = Math.max(yMin, img.getHeight() - h - padding);
         // 没有Alpha通道 直接返回随机裁剪
         if (!img.getColorModel().hasAlpha()) {
-            int x = xMin + (xMax > xMin ? (int)(Math.random() * (xMax - xMin)) : 0);
-            int y = yMin + (yMax > yMin ? (int)(Math.random() * (yMax - yMin)) : 0);
+            int x = xMin + (xMax > xMin ? (int) (Math.random() * (xMax - xMin)) : 0);
+            int y = yMin + (yMax > yMin ? (int) (Math.random() * (yMax - yMin)) : 0);
             return Base64Util.from(img.getSubimage(x, y, w, h));
         }
         int attempts = 0;
         while (attempts < maxAttempts) {
             // 随机选择裁剪起点
-            int x = xMin + (xMax > xMin ? (int)(Math.random() * (xMax - xMin)) : 0);
-            int y = yMin + (yMax > yMin ? (int)(Math.random() * (yMax - yMin)) : 0);
+            int x = xMin + (xMax > xMin ? (int) (Math.random() * (xMax - xMin)) : 0);
+            int y = yMin + (yMax > yMin ? (int) (Math.random() * (yMax - yMin)) : 0);
             BufferedImage subImg = img.getSubimage(x, y, w, h);
             // 计算透明像素比例
             int transparentCount = 0;

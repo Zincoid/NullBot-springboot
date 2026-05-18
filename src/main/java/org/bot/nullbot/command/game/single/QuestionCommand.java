@@ -31,10 +31,10 @@ public class QuestionCommand implements Command {
     private final PermissionHandler permissionHandler;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private boolean thinking = true;
     private final Set<Long> inGameUsers = new ConcurrentHashSet<>();
 
-    private static final int BLOCKING_TIME = 1;
+    private boolean thinking = true;  // 思考模式
+    private static final int BLOCKING_TIME = 1;  // 封禁时间 (单位: Min)
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -97,30 +97,25 @@ public class QuestionCommand implements Command {
                         - 用户: [CQ:at,qq=%s]""".formatted(userId)
                 );
 
-            String questionMsg = """
+            String req = """
                     请[CQ:at,qq=%s]回答问题！
                     %s
                     注: 请直接发送选项, 限时%s秒！""".formatted(userId, question, timeout);
 
-            bot.sendGroupMsg(groupId, questionMsg, false);
+            bot.sendGroupMsg(groupId, req, false);
 
-            List<Pair<Long, String>> inputs;
-            try {
-                inputs = botNextInputer.request(BniMode.PS, userId, "[a-zA-Z]", timeout);
-            } catch (Exception e) {
-                throw new NullBotMsgException("[问答] ❌" + e.getMessage());
-            }
+            List<Pair<Long, String>> inputs = botNextInputer
+                    .request(BniMode.PS, userId, "[a-zA-Z]", timeout);
 
-            String response;
+            String res;
             if (inputs.isEmpty()) {
-                response = "%s回答超时！答案是...%s！".formatted(userName, answer);
+                res = "%s回答超时！答案是...%s！".formatted(userName, answer);
             } else if (answer.equalsIgnoreCase(inputs.getFirst().getRight())) {
-                response = "%s回答正确！".formatted(userName);
+                res = "%s回答正确！".formatted(userName);
             } else {
-                response = "%s回答错误！答案是...%s！".formatted(userName, answer);
+                res = "%s回答错误！答案是...%s！".formatted(userName, answer);
             }
-
-            bot.sendGroupMsg(groupId, response, false);
+            bot.sendGroupMsg(groupId, res, false);
 
         } finally {
             inGameUsers.remove(userId);
