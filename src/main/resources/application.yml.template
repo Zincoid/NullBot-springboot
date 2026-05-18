@@ -126,6 +126,7 @@ nullbot:
     deepseek:
       api-url: https://api.deepseek.com/chat/completions
       api-key:
+      model: deepseek-v4-flash
       max-history-length: 50
       max-monitor-length: 100
       max-tokens: 250
