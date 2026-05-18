@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 
 public class BotPageSelector<K, V> {
 
-    private static final int DEFAULT_TIMEOUT = 30;  // 默认等待超时 (单位: Second)
+    private static final int DEFAULT_TIMEOUT = 30;
 
     private final Bot bot;
     private final Long groupId;
@@ -31,62 +31,74 @@ public class BotPageSelector<K, V> {
 
     private int current;
 
-    public BotPageSelector(
-            Bot bot, Long groupId, String title, String info,
-            boolean continuous, int size, List<K> keys, List<V> values,
-            BotFunction<Bot, Long, K, Void> action
-    ) {
-        this(
-                bot, groupId, null, title, info,
-                continuous, size, keys, values,
-                action
-        );
-    }
-
-    public BotPageSelector(
-            Bot bot, Long groupId, String title, String info,
-            boolean continuous, int size, int current, List<K> keys, List<V> values,
-            BotFunction<Bot, Long, K, Void> action
-    ) {
-        this(
-                bot, groupId, null, title, info,
-                continuous, size, current, keys, values,
-                action
-        );
-    }
-
-    public BotPageSelector(
-            Bot bot, Long groupId, Long userId, String title, String info,
-            boolean continuous, int size, List<K> keys, List<V> values,
-            BotFunction<Bot, Long, K, Void> action
-    ) {
-        this(
-                bot, groupId, userId, title, info,
-                continuous, size, 1, keys, values,
-                action
-        );
-    }
-
-    public BotPageSelector(
-            Bot bot, Long groupId, Long userId, String title, String info,
-            boolean continuous, int size, int current, List<K> keys, List<V> values,
-            BotFunction<Bot, Long, K, Void> action
-    ) {
-        if (keys.size() != values.size())
+    private BotPageSelector(Builder<K, V> builder) {
+        if (builder.keys.size() != builder.values.size())
             throw new IllegalArgumentException("键值大小不匹配");
-        this.bot = bot;
-        this.groupId = groupId;
-        this.userId = userId;
-        this.title = title;
-        this.info = info;
-        this.continuous = continuous;
-        this.keys = keys;
-        this.values = values;
-        this.action = action;
-        this.total = keys.size();
-        this.size = size;
-        this.pages = (total + size - 1) / size;
-        this.current = Math.max(1, Math.min(current, pages));
+        this.bot = builder.bot;
+        this.groupId = builder.groupId;
+        this.userId = builder.userId;
+        this.title = builder.title;
+        this.info = builder.info;
+        this.continuous = builder.continuous;
+        this.keys = builder.keys;
+        this.values = builder.values;
+        this.action = builder.action;
+        this.total = builder.keys.size();
+        this.size = builder.size;
+        this.pages = (total + builder.size - 1) / builder.size;
+        this.current = Math.max(1, Math.min(builder.current, pages));
+    }
+
+    public static class Builder<K, V> {
+        private final Bot bot;
+        private final Long groupId;
+        private final String title;
+        private final boolean continuous;
+        private final List<K> keys;
+        private final List<V> values;
+        private final BotFunction<Bot, Long, K, Void> action;
+
+        private Long userId;
+        private String info = "";
+        private int size = 10;
+        private int current = 1;
+
+        public Builder(Bot bot, Long groupId,
+                       String title, boolean continuous,
+                       List<K> keys, List<V> values,
+                       BotFunction<Bot, Long, K, Void> action) {
+            this.bot = bot;
+            this.groupId = groupId;
+            this.title = title;
+            this.continuous = continuous;
+            this.keys = keys;
+            this.values = values;
+            this.action = action;
+        }
+
+        public Builder<K, V> userId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder<K, V> info(String info) {
+            this.info = info;
+            return this;
+        }
+
+        public Builder<K, V> size(int size) {
+            this.size = size;
+            return this;
+        }
+
+        public Builder<K, V> current(int current) {
+            this.current = current;
+            return this;
+        }
+
+        public BotPageSelector<K, V> build() {
+            return new BotPageSelector<>(this);
+        }
     }
 
     public boolean input(BotNextInputer inputer) {
@@ -108,8 +120,7 @@ public class BotPageSelector<K, V> {
     }
 
     public boolean input(String cmd) {
-        cmd = cmd.toUpperCase();
-        return switch (cmd) {
+        return switch (cmd.toUpperCase()) {
             case "INIT" -> init();
             case "UP" -> prev();
             case "DOWN" -> next();
