@@ -103,14 +103,9 @@ public class BotPageSelector<K, V> {
         }
     }
 
-    public void start(BotInputer inputer) {
-        init();
-        while (input(inputer)) {
-            log.info("\t\t\t\t├─[BotPageSelector] 已操作{}分页器", title);
-        }
-    }
+    // ========== BotInputManager + BotInputer 控制方案 ==========
 
-    public void start(BotNextInputer inputer) {
+    public void start(BotInputer inputer) {
         init();
         while (input(inputer)) {
             log.info("\t\t\t\t├─[BotPageSelector] 已操作{}分页器", title);
@@ -124,6 +119,15 @@ public class BotPageSelector<K, V> {
         if (inputs.isEmpty())
             throw new NullBotMsgException("[%s] ⌛️输入超时".formatted(title));
         return input(inputs.getFirst().getRight().toUpperCase());
+    }
+
+    // ================= BotNextInputer 控制方案 =================
+
+    public void start(BotNextInputer inputer) {
+        init();
+        while (input(inputer)) {
+            log.info("\t\t\t\t├─[BotPageSelector] 已操作{}分页器", title);
+        }
     }
 
     public boolean input(BotNextInputer inputer) {
@@ -148,6 +152,8 @@ public class BotPageSelector<K, V> {
         return input(inputs.getFirst().getRight().toUpperCase());
     }
 
+    // ======================= 直接控制方案 =======================
+
     public boolean input(String cmd) {
         return switch (cmd.toUpperCase()) {
             case "INIT" -> init();
@@ -168,6 +174,8 @@ public class BotPageSelector<K, V> {
     public boolean init() {
         return page();
     }
+
+    // ======================= 内部操作工具 =======================
 
     private boolean next() {
         if (current < pages) {
