@@ -28,6 +28,9 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/
   max-http-request-header-size: 65536
 
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+
 jwt:
   location: classpath:key/JwtSignKey.jks  # .jks 密钥文件路径
   alias:
@@ -123,6 +126,7 @@ nullbot:
     deepseek:
       api-url: https://api.deepseek.com/chat/completions
       api-key:
+      model: deepseek-v4-flash
       max-history-length: 50
       max-monitor-length: 100
       max-tokens: 250
@@ -132,6 +136,8 @@ nullbot:
       api-key:
       version: v4
       model_name: 明日方舟-中文-羽毛笔
+      clone_gpt_model_name: 【GSVI】羽毛笔-e10
+      clone_sovits_model_name: 【GSVI】羽毛笔_e10_s150_I32
       prompt_text_lang: 中文
       text_lang: 中文
       emotion: 默认
