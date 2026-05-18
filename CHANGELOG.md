@@ -753,3 +753,7 @@
 - 优化 FileMapper 方法；
 - 新增异常 CommonException - 用于向前端返回错误信息并修改优化相关代码；
 - 优化 WebInterceptor - 优化逻辑并使用URI代替URL进行放行验证。
+
+### 2026.5.18
+
+- 优化 AI相关组件代码。
