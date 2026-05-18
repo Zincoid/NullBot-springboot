@@ -757,10 +757,10 @@
 ### 2026.5.18 - v2.0.0
 
 - 优化 AI相关组件代码；
-- 优化 QuestionCommand 指令 - 使用 Json 格式生成问题；
-- 优化 BotNextInputer - 异常抛出类型改为 NullBotMsgException 并优化相关使用。
 
 ### 2026.5.19
 
+- 优化 QuestionCommand 指令 - 使用 Json 格式生成问题；
+- 优化 BotNextInputer - 异常抛出类型改为 NullBotMsgException 并优化相关使用。
 - 优化 BotPageSelector - 使用 Builder 模式并优化相关使用；
 - 优化 ChatHistory 指令 - 使用 BotPageSelector 简化。
