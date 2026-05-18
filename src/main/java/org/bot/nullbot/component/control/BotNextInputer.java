@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @Component
+@Deprecated
 public class BotNextInputer {
 
     private final Map<String, InputEntry> inputEntries = new ConcurrentHashMap<>();
