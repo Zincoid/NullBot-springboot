@@ -754,11 +754,11 @@
 - 新增异常 CommonException - 用于向前端返回错误信息并修改优化相关代码；
 - 优化 WebInterceptor - 优化逻辑并使用URI代替URL进行放行验证。
 
-### 2026.5.18 - v2.0.0
+### 2026.5.18
 
 - 优化 AI相关组件代码；
 
-### 2026.5.19
+### 2026.5.19 - v2.0.0
 
 - 优化 QuestionCommand 指令 - 使用 Json 格式生成问题；
 - 优化 BotNextInputer - 异常抛出类型改为 NullBotMsgException 并优化相关使用；
