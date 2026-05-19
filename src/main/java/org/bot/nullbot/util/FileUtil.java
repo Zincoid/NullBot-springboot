@@ -129,7 +129,7 @@ public final class FileUtil {
         }
     }
 
-    // 查询无后缀文件用 (因为 QQ Bug)
+    @Deprecated
     public static List<String> getFilePathsByPattern(String directoryPath, String pattern) {
         Path directory = validateDirectory(directoryPath);
         FileSystem fs = FileSystems.getDefault();
