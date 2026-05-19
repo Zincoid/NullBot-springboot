@@ -3,6 +3,8 @@ package org.bot.nullbot.component.control;
 import jakarta.annotation.PostConstruct;
 import org.bot.nullbot.annotation.FunctionControl;
 import org.bot.nullbot.config.prop.DefaultProperties;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
@@ -31,9 +33,7 @@ public class FunctionManager {
 
     private void loadPropsViaDefault() {
         try {
-            org.springframework.beans.BeanWrapper wrapper =
-                    new org.springframework.beans.BeanWrapperImpl(defaultProperties);
-
+            BeanWrapper wrapper = new BeanWrapperImpl(defaultProperties);
             for (java.beans.PropertyDescriptor pd : wrapper.getPropertyDescriptors()) {
                 if (pd.getPropertyType() == Boolean.class || pd.getPropertyType() == boolean.class) {
                     Object value = wrapper.getPropertyValue(pd.getName());
