@@ -129,7 +129,7 @@ public final class FileUtil {
         }
     }
 
-    @Deprecated
+    // 查询无后缀文件用 (因为 QQ Bug)
     public static List<String> getFilePathsByPattern(String directoryPath, String pattern) {
         Path directory = validateDirectory(directoryPath);
         FileSystem fs = FileSystems.getDefault();
@@ -180,7 +180,7 @@ public final class FileUtil {
 
     // =================== 文件删除相关 ===================
 
-    @Deprecated
+    // 临时文件清理用
     public static void deleteFileByName(String directoryPath, String fileName) {
         Path directory = validateDirectory(directoryPath);
         try {
