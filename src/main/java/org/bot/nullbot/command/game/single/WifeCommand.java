@@ -31,12 +31,12 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class WifeCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
-
     private final Map<Long, Long> memberWifeMap = new ConcurrentHashMap<>();
     private final Map<Long, LocalDateTime> memberExpireMap = new ConcurrentHashMap<>();
     private final Map<Long, FilePO> acgWifeMap = new ConcurrentHashMap<>();
     private final Map<Long, LocalDateTime> acgExpireMap = new ConcurrentHashMap<>();
+
+    private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
 
     @Override
