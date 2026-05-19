@@ -43,7 +43,7 @@ public final class MessageParseUtil {
             switch (msg.getType()) {
                 case image -> message.append("[图片]");
                 case video -> message.append("[视频]");
-                case text -> message.append(data.get("text"));
+                case text -> message.append(data.get("text").asString());
                 case reply -> {
                     int replyId = data.get("id").asInt();
                     MsgResp replyMsg = bot.getMsg(replyId).getData();
