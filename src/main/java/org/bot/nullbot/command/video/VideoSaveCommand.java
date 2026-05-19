@@ -13,7 +13,6 @@ import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.FileService;
-import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
 
@@ -55,16 +54,7 @@ public class VideoSaveCommand implements Command {
         String filePath = fileStorageProperties.getVideoPath() + "/collect";
         String url = entry.getValue();
         try {
-            FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "\t\t\t\t├─ ");
-            if(!fileService.addRecordOnly(
-                    filePath,
-                    fileInfo.getFileName(),
-                    fileInfo.getFileSize(),
-                    fileInfo.getLastModified(),
-                    userId, userName)
-            ) {
-                throw new NullBotMsgException("[保存视频] ❌数据库更新失败");
-            }
+            FileInfo fileInfo = fileService.saveFile(url, filePath, fileName, userId, userName);
             bot.sendGroupMsg(groupId, "\uD83C\uDFA5 已保存！", false);
             log.info("\t\t\t\t├─[VideoSave] 已保存 - {}", fileInfo.getFileName());
         } catch (Exception e) {
