@@ -7,11 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
-import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.entity.BotInputer;
 import org.bot.nullbot.entity.BotPageSelector;
 import org.bot.nullbot.entity.ChatMessage;
-import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,7 @@ import java.util.List;
 public class ChatHistoryCommand implements Command {
 
     private final DeepSeekClient deepSeekClient;
-    private final BotNextInputer botNextInputer;
+    // private final BotInputManager botInputManager;
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT = 60;  // 等待超时时间 (单位: Second)
@@ -52,10 +51,10 @@ public class ChatHistoryCommand implements Command {
                                         "Null: %s".formatted(msg.getContent())
                         ).toList(),
                 this::sendInfo
-        ).userId(userId).current(Integer.MAX_VALUE).build();
+        ).userId(userId).size(PAGE_SIZE).current(Integer.MAX_VALUE).build();
 
         // pager.init();
-        // while (pager.input(botNextInputer, WAIT_TIMEOUT)) {
+        // while (pager.input(botInputManager, WAIT_TIMEOUT)) {
         //     log.info("\t\t\t\t├─[ChatHistory] 已操作分页器");
         // }
         BotInputer in = new BotInputer(userId).timeout(WAIT_TIMEOUT);
@@ -69,9 +68,7 @@ public class ChatHistoryCommand implements Command {
     }
 
     @Override
-    public Integer getAccess() {
-        return 1;
-    }
+    public Integer getAccess() { return 1; }
 
     @Override
     public String getHelp() {
