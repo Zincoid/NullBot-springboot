@@ -9,6 +9,7 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.TtsClient;
@@ -18,10 +19,10 @@ import org.bot.nullbot.entity.po.TtsTemplatePO;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.TtsTemplateService;
 import org.bot.nullbot.util.DownloadUtil;
-import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -55,7 +56,8 @@ public class TtsCommand implements Command {
                         throw new NullBotMsgException("[语音合成] ❌新模板参数不足");
 
                     MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-                    // Map<String, String> recordMap = MessageParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());  // 暂不支持 AMR 格式音频
+                    // 暂不支持 AMR 格式音频
+                    // Map<String, String> recordMap = MessageParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());
                     Map<String, String> fileMap = MessageParseUtil.parseGroupRawMessageAsFileMap(replyMsg.getRawMessage());
 
                     Map<String, String> voiceMap = new HashMap<>();
@@ -68,7 +70,7 @@ public class TtsCommand implements Command {
                         if (!isAudioFile(entry.getKey()))
                             throw new NullBotMsgException("[语音合成] ❌引用非音频文件");
 
-                    String tempFilePath = fileStorageProperties.getTempPath();
+                    String tempPath = fileStorageProperties.getTempPath();
                     String templateName = params.get(2);
                     String templateText = params.get(3);
 
@@ -78,7 +80,7 @@ public class TtsCommand implements Command {
                         String downloadedFileName;
 
                         try {
-                            FileInfo fileInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName, "\t\t\t\t├─ ");
+                            FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempFileName, "\t\t\t\t├─ ");
                             downloadedFileName = fileInfo.getFileName();
                         } catch (Exception e) {
                             throw new NullBotMsgException("[语音合成] ❌模板临时文件下载失败: " + e.getMessage());
@@ -86,11 +88,11 @@ public class TtsCommand implements Command {
 
                         String uploadedPath;
                         try {
-                            uploadedPath = ttsClient.upload(tempFilePath + "/" + downloadedFileName);
+                            uploadedPath = ttsClient.upload(tempPath + "/" + downloadedFileName);
                         } catch (Exception e) {
                             throw new NullBotMsgException("[语音合成] ❌模板临时文件上传失败: " + e.getMessage());
                         } finally {
-                            FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
+                            FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedFileName));
                         }
 
                         if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
@@ -165,7 +167,7 @@ public class TtsCommand implements Command {
                     .voice("base64://" + base64)
                     .build();
             bot.sendGroupMsg(event.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[Tts] 已回复合成语音: {}", targetText.replaceAll("\\R", " "));
+            log.info("\t\t\t\t├─[Tts] 已回复合成语音");
             return;
         }
 
