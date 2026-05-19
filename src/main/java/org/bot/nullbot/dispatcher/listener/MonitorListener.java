@@ -26,12 +26,10 @@ import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Shiro
@@ -50,13 +48,13 @@ public class MonitorListener {
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
 
-    // =================== 输入监听方法 ===================
+    // =================== 输入响应方法 ===================
 
     public boolean onGroupNextInputDetection(GroupMessageEvent event) {
         return botInputManager.response(event.getGroupId(), event.getUserId(), event.getMessage());
     }
 
-    // =================== 串行监听方法 ===================
+    // =================== 自动动作方法 ===================
 
     @FunctionControl(value = "BottleAutoThrow", enabled = false)
     public void onGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception {
@@ -79,14 +77,15 @@ public class MonitorListener {
             if (textNode != null && textNode.asString().startsWith(commandPrefix)) return false;
         }
         double freq = settingService.getReplyFrequency(event.getGroupId());
-        if (freq > Math.random()) {
-            String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
-            log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至 群聊 {}", event.getGroupId());
-            commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), false, false));
-            return true;
-        } else
-            return false;
+        if (freq < Math.random()) return false;
+        String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
+        log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至 群聊 {}", event.getGroupId());
+        commandProcessor.processQQ(bot, new CommandEvent<>(
+                event, "Chat", List.of(parsed), false, false));
+        return true;
     }
+
+    // =================== 资源监听方法 ===================
 
     @FunctionControl("ImgCollect")
     public void onGroupImageCollection(GroupMessageEvent event) {  // 缺失群目录时数据库无法插入文件条目需先SYNC
@@ -148,37 +147,5 @@ public class MonitorListener {
             commandProcessor.processQQ(bot, new CommandEvent<>(event, "UserBan", List.of(event.getUserId().toString(), "1"), false, false));
             // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("你也受着"), event, false, false));
         }
-    }
-
-    // =================== 独占监听方法 ===================
-
-    @FunctionControl("PokeDetect")
-    @GroupPokeNoticeHandler
-    @Async("ThreadExecutor")
-    public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
-        if (!settingService.isPokeDetect(event.getGroupId())) return;
-        if (Objects.equals(event.getTargetId(), event.getSelfId())) {
-            log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (仅戳Bot)", event.getGroupId(), event.getUserId(), event.getTargetId());
-            commandProcessor.processQQ(bot, new CommandEvent<>(event));
-        }
-    }
-
-    @FunctionControl("PrivateCmd")
-    @PrivatePokeNoticeHandler
-    @Async("ThreadExecutor")
-    public void onPrivatePokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
-        if (Objects.equals(event.getTargetId(), event.getSelfId())) {
-            log.info("◉ [PrivateAction:Poke] 来自私信 -> From {} to {} (仅戳Bot)", event.getUserId(), event.getTargetId());
-            commandProcessor.processQQ(bot, new CommandEvent<>(event));
-        }
-    }
-
-    @FunctionControl("RecallDetect")
-    @GroupMsgDeleteNoticeHandler
-    @Async("ThreadExecutor")
-    public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
-        if (!settingService.isRecallDetect(event.getGroupId())) return;
-        log.info("◉ [GroupAction:Recall] 来自群 {} -> {}", event.getGroupId(), event.getUserId());
-        commandProcessor.processQQ(bot, new CommandEvent<>(event));
     }
 }
