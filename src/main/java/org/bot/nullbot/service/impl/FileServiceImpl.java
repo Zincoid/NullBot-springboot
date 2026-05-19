@@ -11,10 +11,12 @@ import org.apache.commons.io.FileUtils;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.entity.page.DataPage;
+import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.exception.CommonException;
 import org.bot.nullbot.mapper.AdminMapper;
 import org.bot.nullbot.mapper.FileMapper;
 import org.bot.nullbot.service.FileService;
+import org.bot.nullbot.util.DownloadUtil;
 import org.springframework.context.event.EventListener;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.http.HttpHeaders;
@@ -53,11 +55,28 @@ public class FileServiceImpl implements FileService {
 
     // =================== BOT功能相关 ===================
 
-    /* TODO: 想办法优化掉以下两个方法 */
+    @Override
+    public FileInfo saveFile(String url, String directory, String fileName, Long ownerId, String ownerName) {
+        FileInfo fileInfo = DownloadUtil.downloadFile(url, directory, fileName);
+        boolean recorded = addOrUpdateRecord(directory, fileInfo.getFileName(),
+                fileInfo.getFileSize(), fileInfo.getLastModified(), ownerId, ownerName);
+        if (!recorded) {
+            FileUtils.deleteQuietly(new File(directory + "/" + fileInfo.getFileName()));
+            throw new CommonException("数据库记录失败，已清理本地文件");
+        }
+        return fileInfo;
+    }
 
     @Override
-    @Transactional
-    public boolean addRecordOnly(
+    public boolean deleteFile(String directory, String fileName) {
+        FileUtils.deleteQuietly(new File(directory + "/" + fileName));
+        return fileMapper.delete(new LambdaQueryWrapper<FilePO>()
+                .eq(FilePO::getDirectory, directory)
+                .eq(FilePO::getFileName, fileName)
+        ) == 1;
+    }
+
+    private boolean addOrUpdateRecord(
             String directory, String fileName, Long fileSize,
             LocalDateTime lastModified, Long ownerId, String ownerName
     ) {
@@ -69,8 +88,7 @@ public class FileServiceImpl implements FileService {
             existFile.setLastModified(lastModified);
             existFile.setOwnerId(ownerId);
             existFile.setOwnerName(ownerName);
-            fileMapper.updateById(existFile);
-            return true;
+            return fileMapper.updateById(existFile) == 1;
         }
 
         Path path = Path.of(directory);
@@ -94,14 +112,6 @@ public class FileServiceImpl implements FileService {
         file.setOwnerName(ownerName);
 
         return fileMapper.insert(file) == 1;
-    }
-
-    @Override
-    public boolean deleteRecordOnly(String directory, String fileName) {
-        return fileMapper.delete(new LambdaQueryWrapper<FilePO>()
-                .eq(FilePO::getDirectory, directory)
-                .eq(FilePO::getFileName, fileName)
-        ) == 1;
     }
 
     // =================== WEB功能相关 ===================
