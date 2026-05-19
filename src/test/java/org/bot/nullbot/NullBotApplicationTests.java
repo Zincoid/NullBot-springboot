@@ -83,7 +83,7 @@ class NullBotApplicationTests {
     @Test
     void fileTest() throws IOException {
         String root = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main";
-        System.out.println(FileUtil.getFolderTreeString(root, 0));
+        System.out.println(StringUtil.getFolderTreeString(root, 0));
     }
 
    @Test
