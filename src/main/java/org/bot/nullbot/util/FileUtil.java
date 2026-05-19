@@ -9,45 +9,13 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 @Slf4j
+@Deprecated
 public final class FileUtil {
 
     private FileUtil() {}
 
     // =================== 文件列表相关 ===================
 
-    public static String getFolderTreeString(String rootPath, int maxDepth) throws IOException {
-        Path root = validateDirectory(rootPath);
-        StringBuilder sb = new StringBuilder();
-        sb.append(root.getFileName().toString()).append("\n");
-        buildTreeString(root, "", sb, maxDepth, 0);
-        return sb.toString().trim();
-    }
-
-    private static void buildTreeString(Path directory, String prefix, StringBuilder sb,
-                                        int maxDepth, int currentDepth) throws IOException {
-        if (maxDepth > 0 && currentDepth >= maxDepth) return;
-        try (Stream<Path> stream = Files.list(directory)) {
-            List<Path> items = stream
-                    .filter(Files::isDirectory)
-                    .sorted((p1, p2) -> p1.getFileName().toString()
-                            .compareToIgnoreCase(p2.getFileName().toString()))
-                    .toList();
-
-            for (int i = 0; i < items.size(); i++) {
-                Path item = items.get(i);
-                boolean itemIsLast = (i == items.size() - 1);
-
-                sb.append(prefix);
-                sb.append(itemIsLast ? "└ " : "├ ");
-                sb.append(item.getFileName()).append("\n");
-                String childPrefix = prefix + (itemIsLast ? "    " : "│ ");
-
-                buildTreeString(item, childPrefix, sb, maxDepth, currentDepth + 1);
-            }
-        }
-    }
-
-    @Deprecated
     public static String getFileListAsString(String directoryPath, String delimiter, boolean withExtension) {
         Path directory = validateDirectory(directoryPath);
         try (Stream<Path> stream = Files.list(directory)) {
@@ -71,7 +39,6 @@ public final class FileUtil {
 
     // =================== 路径获取相关 ===================
 
-    @Deprecated
     public static String getRandomFilePath(String directoryPath) {
         Path directory = validateDirectory(directoryPath);
         try (Stream<Path> stream = Files.list(directory)) {
@@ -84,7 +51,6 @@ public final class FileUtil {
         }
     }
 
-    @Deprecated
     public static String getRandomFilePathByPattern(String directoryPath, String pattern) {
         Path directory = validateDirectory(directoryPath);
         FileSystem fs = FileSystems.getDefault();
@@ -102,7 +68,6 @@ public final class FileUtil {
         }
     }
 
-    @Deprecated
     public static String getRandomFilePathRecursive(String directoryPath) {
         Path startDir = validateDirectory(directoryPath);
         try (Stream<Path> stream = Files.walk(startDir)) {
@@ -115,7 +80,6 @@ public final class FileUtil {
         }
     }
 
-    @Deprecated
     public static String getFilePathByName(String directoryPath, String fileName) {
         Path directory = validateDirectory(directoryPath);
         try (Stream<Path> stream = Files.list(directory)) {
@@ -129,7 +93,6 @@ public final class FileUtil {
         }
     }
 
-    @Deprecated
     public static List<String> getFilePathsByPattern(String directoryPath, String pattern) {
         Path directory = validateDirectory(directoryPath);
         FileSystem fs = FileSystems.getDefault();
@@ -145,7 +108,6 @@ public final class FileUtil {
         }
     }
 
-    @Deprecated
     public static List<String> getFilePathsByKeyword(String directoryPath, String keyword) {
         Path directory = validateDirectory(directoryPath);
         String lowerKeyword = keyword.toLowerCase();
@@ -164,7 +126,6 @@ public final class FileUtil {
         }
     }
 
-    @Deprecated
     public static List<String> getFilePathsRecursive(String directoryPath, String fileName) {
         Path directory = validateDirectory(directoryPath);
         try (Stream<Path> stream = Files.walk(directory)) {
@@ -180,7 +141,6 @@ public final class FileUtil {
 
     // =================== 文件删除相关 ===================
 
-    // 临时文件清理用
     public static void deleteFileByName(String directoryPath, String fileName) {
         Path directory = validateDirectory(directoryPath);
         try {
@@ -203,7 +163,6 @@ public final class FileUtil {
         }
     }
 
-    @Deprecated
     public static int deleteFilesRecursive(String directoryPath, String fileName) {
         Path directory = validateDirectory(directoryPath);
         try {
@@ -236,7 +195,6 @@ public final class FileUtil {
         }
     }
 
-    @Deprecated
     public static List<String> deleteFilesByPattern(String directoryPath, String pattern) {
         Path directory = validateDirectory(directoryPath);
         try {

@@ -12,8 +12,6 @@ import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.FileService;
-import org.bot.nullbot.util.Base64Util;
-import org.bot.nullbot.util.FileUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
