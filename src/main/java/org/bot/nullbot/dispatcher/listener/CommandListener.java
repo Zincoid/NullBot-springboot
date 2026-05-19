@@ -104,7 +104,7 @@ public class CommandListener {
     public void onGroupMessageInteraction(Bot bot, GroupMessageEvent event) throws Exception {
 
         // 串行调用 消息预处理 指令输入捕获
-        if (monitorListener.onGroupInputResponse(event)) {
+        if (monitorListener.doGroupInputResponse(event)) {
             monitorListener.doGroupMsgCollect(bot, event);
             monitorListener.doGroupImgCollect(event);
             return;
@@ -114,7 +114,7 @@ public class CommandListener {
         if (!monitorListener.doGroupAIAutoReply(bot, event))  // 按需 AI自动记录
             monitorListener.doGroupMsgCollect(bot, event);
         monitorListener.doGroupImgCollect(event);
-        monitorListener.onGroupBottleAutoThrow(bot, event);
+        monitorListener.doGroupBottleAutoThrow(bot, event);
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
@@ -155,7 +155,7 @@ public class CommandListener {
         // if (!monitorListener.onGroupAIAutoReply(bot, event))  // 无需 AI即将回复
         //     monitorListener.onGroupMessageCollection(bot, event);  // 无需 AI自动记录
         monitorListener.doGroupImgCollect(event);
-        monitorListener.onGroupBottleAutoThrow(bot, event);
+        monitorListener.doGroupBottleAutoThrow(bot, event);
 
         String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
         log.info("◉ [GroupAction:At] 群聊 {} - {}({}) -> {}",

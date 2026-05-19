@@ -43,14 +43,14 @@ public class MonitorListener {
 
     // =================== 输入响应方法 ===================
 
-    public boolean onGroupInputResponse(GroupMessageEvent event) {
+    public boolean doGroupInputResponse(GroupMessageEvent event) {
         return botInputManager.response(event.getGroupId(), event.getUserId(), event.getMessage());
     }
 
     // =================== 自动动作方法 ===================
 
     @FunctionControl(value = "BottleAutoThrow", enabled = false)
-    public void onGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception {
+    public void doGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception {
         double freq = 0.001;  // 固定自动投出频率
         if (freq < Math.random()) return;
         log.info("◉ [GroupMonitor:BottleAutoThrow] 自动投出漂流瓶 {} -> {}", event.getUserId(), event.getMessage());
