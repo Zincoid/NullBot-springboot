@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.component.storage.GuessStorage;
 import org.bot.nullbot.entity.info.GuessInfo;
 import org.bot.nullbot.enums.BniMode;
@@ -29,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GuessCommand implements Command {
 
-    private final BotNextInputer botNextInputer;
+    private final BotInputManager botInputManager;
     private final GuessStorage guessStorage;
     private final SettingService settingService;
     private final UserService userService;
@@ -47,7 +47,7 @@ public class GuessCommand implements Command {
         if ("-f".equals(params.getFirst())) {
             if (guessStorage.getGuess(groupId) == null)
                 throw new NullBotMsgException("[猜角色] ❌未在游戏中");
-            botNextInputer.cancelWait(BniMode.GS, groupId);
+            botInputManager.cancelWait(BniMode.GS, groupId);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 放弃猜测", groupId);
             return;
         }
@@ -72,7 +72,7 @@ public class GuessCommand implements Command {
 
             while (guess.getTimes() < MAX_RETRIES) {
                 guessStorage.increaseTimes(groupId);
-                List<Pair<Long, String>> inputs = botNextInputer
+                List<Pair<Long, String>> inputs = botInputManager
                         .request(BniMode.GS, groupId, "#.+", WAIT_TIMEOUT);
 
                 if (inputs.isEmpty() || "##".equals(inputs.getFirst().getRight())) {
