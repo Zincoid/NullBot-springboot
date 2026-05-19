@@ -7,9 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.component.tool.OssUrlBuilder;
 import org.bot.nullbot.config.prop.FileStorageProperties;
+import org.bot.nullbot.entity.BotInputer;
 import org.bot.nullbot.entity.BotPageSelector;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -31,7 +32,7 @@ public class EndfieldCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
-    private final BotNextInputer botNextInputer;
+    private final BotInputManager botInputManager;
 
     private final Map<Long, String> versions = new ConcurrentHashMap<>();  // 群聊版本存储
 
@@ -107,12 +108,14 @@ public class EndfieldCommand implements Command {
                     return globalQuery ? "[" + ver + "]" + name : name;
                 }).toList(),
                 this::sendResource
-        ).size(PAGE_SIZE).userId(userId).info(info).build();
+        ).userId(userId).info(info).size(PAGE_SIZE).build();
 
         pager.init();
-        while (pager.input(botNextInputer, WAIT_TIMEOUT)) {
+        while (pager.input(botInputManager, WAIT_TIMEOUT)) {
             log.info("\t\t\t\t├─[Endfield] 已操作分页器");
         }
+        // BotInputer in = new BotInputer(userId).timeout(WAIT_TIMEOUT);
+        // pager.start(in);
     }
 
     private Void sendResource(Bot bot, Long groupId, FilePO file) {
