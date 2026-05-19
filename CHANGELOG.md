@@ -767,4 +767,5 @@
 - 新增 BotInputManager + BotInputer 连续输入监听方案 - 暂时测试中并添加分页器支持；
 - 优化 DeepSeekClient 组件 - 对 Bot 回复内容进行回显解析再存储，优化部分代码和提示词；
 - 合并 BotNextInputer - 两种输入方案整合到 BotInputManager 中并修改相关代码；
-- 修复 MessageParseUtil - 将文本 JsonNode 转换为字符串。
+- 修复 MessageParseUtil - 将文本 JsonNode 转换为字符串；
+- 优化 WebExceptionHandler - 新增对 Oss 服务相关异常的拦截提示。

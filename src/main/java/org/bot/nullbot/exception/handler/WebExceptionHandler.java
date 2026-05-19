@@ -3,13 +3,14 @@ package org.bot.nullbot.exception.handler;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.connector.ClientAbortException;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.exception.CommonException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 
 import java.util.stream.Collectors;
 
@@ -17,30 +18,43 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class WebExceptionHandler {
 
-    @ExceptionHandler(produces = MediaType.APPLICATION_JSON_VALUE)
-    public WebResult handleException(Exception e) {  // 拦截所有其他异常
-        log.error("▽ [WebExceptionHandler] ", e);
+    // 异步请求失效异常 (Oss)
+    @ExceptionHandler(AsyncRequestNotUsableException.class)
+    public void handleAsyncRequestNotUsable(AsyncRequestNotUsableException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof ClientAbortException) {
+            log.warn("▽ [WebExceptionHandler] 客户端断开连接: {}", cause.getMessage());
+        } else {
+            log.error("▽ [WebExceptionHandler] 异步请求不可用: ", e);
+        }
+    }
+
+    // 拦截所有其他异常
+    @ExceptionHandler
+    public WebResult handleException(Exception e) {
+        log.error("▽ [WebExceptionHandler] 未知异常: ", e);
         return WebResult.fail("服务器运行出错: " + e.getMessage());
     }
 
-    @ExceptionHandler
-    public WebResult handleCommonException(CommonException e) {  // 自定义服务器异常
+    // 自定义服务器异常
+    @ExceptionHandler(CommonException.class)
+    public WebResult handleCommonException(CommonException e) {
         return WebResult.fail(e.getMessage());
     }
 
+    // 实体参数校验异常
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public WebResult handleValidation(MethodArgumentNotValidException e) {  // 实体参数校验异常
-        String message = e.getBindingResult().getAllErrors().stream()
+    public WebResult handleValidation(MethodArgumentNotValidException e) {
+        return WebResult.fail(e.getBindingResult().getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.joining("; "));
-        return WebResult.fail(message);
+                .collect(Collectors.joining("; ")));
     }
 
+    // 简单参数校验异常
     @ExceptionHandler(ConstraintViolationException.class)
-    public WebResult handleConstraintViolation(ConstraintViolationException e) {  // 简单参数校验异常
-        String message = e.getConstraintViolations().stream()
+    public WebResult handleConstraintViolation(ConstraintViolationException e) {
+        return WebResult.fail(e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining("; "));
-        return WebResult.fail(message);
+                .collect(Collectors.joining("; ")));
     }
 }
