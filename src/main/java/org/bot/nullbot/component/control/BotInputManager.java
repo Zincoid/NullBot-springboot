@@ -31,9 +31,14 @@ public class BotInputManager {
 
     // ============= BotInputer 注册方法 ==============
 
-    public static void register(BotInputer inputer) {
-        request(inputer.getMode(), inputer.getTargetId(),
-                inputer.getPattern(), inputer.getTimeout(), inputer.isCoverable());
+    public static List<Pair<Long, String>> register(BotInputer inputer) {
+        return request(
+                inputer.getMode(),
+                inputer.getTargetId(),
+                inputer.getPattern(),
+                inputer.getTimeout(),
+                inputer.isCoverable()
+        );
     }
 
     // =================== 调用方法 ===================

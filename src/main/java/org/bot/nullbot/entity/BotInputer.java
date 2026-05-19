@@ -40,6 +40,6 @@ public class BotInputer {
     }
 
     public List<Pair<Long, String>> next() {
-        return BotInputManager.request(mode, targetId, pattern, timeout, coverable);
+        return BotInputManager.register(this);
     }
 }
