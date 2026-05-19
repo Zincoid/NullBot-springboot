@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.entity.po.DriftBottlePO;
@@ -33,7 +33,7 @@ public class DriftBottleCommand implements Command {
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
     private final DriftBottleService driftBottleService;
-    private final BotNextInputer botNextInputer;
+    private final BotInputManager botInputManager;
 
     private static final int KEEP_TIME = 30;  // 漂流瓶保留时间
 
@@ -108,7 +108,7 @@ public class DriftBottleCommand implements Command {
             throw new NullBotMsgException("没有漂流瓶了！");
         bot.sendGroupMsg(groupId, bottle.toString(), false);
 
-        List<Pair<Long, String>> inputs = botNextInputer
+        List<Pair<Long, String>> inputs = botInputManager
                 .request(BniMode.PS, userId, "扔回去", KEEP_TIME, true);
 
         boolean thrownBack = false;
