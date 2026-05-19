@@ -71,9 +71,10 @@ public class MonitorListener {
     @FunctionControl("AIAutoReply")
     public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
         if (!settingService.isAutoReply(event.getGroupId())) return false;
+
         if (event.getMessage().startsWith(commandPrefix)) {
             return false;
-        } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
+        } else if (event.getArrayMsg().size() > 1 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
             JsonNode textNode = event.getArrayMsg().get(1).getData().get("text");
             if (textNode != null && textNode.asString().startsWith(commandPrefix)) return false;
         }
@@ -90,9 +91,11 @@ public class MonitorListener {
     @FunctionControl("ImgCollect")
     public void onGroupImageCollection(GroupMessageEvent event) {  // 缺失群目录时数据库无法插入文件条目需先SYNC
         if (!settingService.isImageCollect(event.getGroupId())) return;
+
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
+
         for (ArrayMsg msg : event.getArrayMsg()) {
             if (msg.getType() != MsgTypeEnum.image) continue;
             log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
@@ -103,15 +106,13 @@ public class MonitorListener {
             try {
                 FileInfo fileInfo = DownloadUtil.downloadFile(
                         url, filePath, fileName, "├─ ");
-                if (
-                        !fileService.addRecordOnly(
-                                filePath,
-                                fileInfo.getFileName(),
-                                fileInfo.getFileSize(),
-                                fileInfo.getLastModified(),
-                                userId, userName
-                        )
-                ) {
+                if (!fileService.addRecordOnly(
+                        filePath,
+                        fileInfo.getFileName(),
+                        fileInfo.getFileSize(),
+                        fileInfo.getLastModified(),
+                        userId, userName
+                )) {
                     log.info("├─[Error] DbSave Failed");
                 }
                 log.info("└─[Saved] {}", fileInfo.getFileName());
