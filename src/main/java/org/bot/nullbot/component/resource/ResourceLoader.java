@@ -2,14 +2,11 @@ package org.bot.nullbot.component.resource;
 
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.service.FileService;
 import org.springframework.stereotype.Component;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ResourceLoader {
 
     private final FileStorageProperties fileStorageProperties;
-    private final FileService fileService;
 
     private final Map<String, Path> CACHE = new ConcurrentHashMap<>();
 
@@ -86,17 +82,6 @@ public class ResourceLoader {
             resourceStream.transferTo(out);
         }
         resourceStream.close();
-        // 添加至文件系统
-        LocalDateTime lastModified = Files
-                .getLastModifiedTime(tempFile)
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
-        // 添加至数据库系统 (不会自动新增父目录 需手动SYNC)
-        fileService.addRecordOnly(
-                tempPath, tempFile.getFileName().toString(), Files.size(tempFile),
-                lastModified, null, null
-        );
         // JVM退出时删除
         tempFile.toFile().deleteOnExit();
         return tempFile;
