@@ -3,11 +3,14 @@ package org.bot.nullbot.component.storage;
 import lombok.Data;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.info.GuessInfo;
-import org.bot.nullbot.util.FileUtil;
+import org.bot.nullbot.entity.po.FilePO;
+import org.bot.nullbot.service.FileService;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @Data
@@ -15,25 +18,21 @@ public class GuessStorage {
 
     private final Map<Long, GuessInfo> guesses;
     private final String dataPath;
+    private final FileService fileService;
 
-    public GuessStorage(FileStorageProperties fileStorageProperties) {
+    public GuessStorage(FileStorageProperties fileStorageProperties, FileService fileService) {
         guesses = new ConcurrentHashMap<>();
         dataPath = fileStorageProperties.getImagePath() + "/acg";
+        this.fileService = fileService;
     }
 
     public GuessInfo initGuess(Long groupId, String category) {
-        String characterPath;
-        try {
-            characterPath = FileUtil.getRandomFilePath(dataPath + "/" + category);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("该类别不存在");  // 目录异常
-        }
-        if (characterPath == null)
-            throw new IllegalArgumentException("该类别下暂无图片");
-        String characterName = characterPath
-                .split("/")[characterPath.split("/").length-1]
-                .split("_")[0];
-        GuessInfo guess = new GuessInfo(characterName, characterPath, 0);
+        List<FilePO> characters = fileService.search("", dataPath + "/" + category);
+        if (characters.isEmpty())
+            throw new IllegalArgumentException("暂无可用图片");
+        FilePO character = characters.get(ThreadLocalRandom.current().nextInt(characters.size()));
+        String characterName = character.getName().split("_")[0];
+        GuessInfo guess = new GuessInfo(characterName, character, 0);
         guesses.put(groupId, guess);
         return guess;
     }

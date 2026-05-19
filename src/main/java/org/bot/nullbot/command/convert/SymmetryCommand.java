@@ -18,7 +18,6 @@ import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.DownloadUtil;
-import org.bot.nullbot.util.FileUtil;
 import org.bot.nullbot.util.HtmlTemplateUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;

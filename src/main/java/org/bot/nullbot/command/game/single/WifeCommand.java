@@ -9,10 +9,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
+import org.bot.nullbot.component.tool.OssUrlBuilder;
 import org.bot.nullbot.config.prop.FileStorageProperties;
+import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.exception.NullBotMsgException;
-import org.bot.nullbot.util.Base64Util;
-import org.bot.nullbot.util.FileUtil;
+import org.bot.nullbot.service.FileService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -34,12 +35,14 @@ public class WifeCommand implements Command {
 
     private final Map<Long, Long> memberWifeMap = new ConcurrentHashMap<>();
     private final Map<Long, LocalDateTime> memberExpireMap = new ConcurrentHashMap<>();
-    private final Map<Long, String> acgWifeMap = new ConcurrentHashMap<>();
+    private final Map<Long, FilePO> acgWifeMap = new ConcurrentHashMap<>();
     private final Map<Long, LocalDateTime> acgExpireMap = new ConcurrentHashMap<>();
+    private final FileService fileService;
+    private final OssUrlBuilder ossUrlBuilder;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if(params.isEmpty()){
+        if (params.isEmpty()) {
             GroupMemberInfoResp wife;
             Long userId = event.getUserId();
             LocalDateTime expireTime = memberExpireMap.get(userId);
@@ -63,7 +66,8 @@ public class WifeCommand implements Command {
                 Long wifeId = memberWifeMap.get(userId);
                 String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
                 String response = MsgUtils.builder()
-                        .text("今天已经选过了哦\uD83D\uDCA6...\n你的群友老婆是\n" + bot.getStrangerInfo(wifeId, true).getData().getNickname() + "(" + wifeId + ")")
+                        .text("今天已经选过了哦\uD83D\uDCA6...\n你的群友老婆是\n" + bot.getStrangerInfo(
+                                wifeId, true).getData().getNickname() + "(" + wifeId + ")")
                         .img(avatarUrl)
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
@@ -76,43 +80,28 @@ public class WifeCommand implements Command {
                 String category = params.getFirst();
                 String acgPath = fileStorageProperties.getImagePath() + "/acg/" + category;
 
-                String wifePath;
-                try {
-                    wifePath = FileUtil.getRandomFilePath(acgPath);
-                } catch (Exception e) {
-                    throw new NullBotMsgException("[今日老婆] ❌不存在该类别"); // 目录异常
-                }
-                if (wifePath == null)
-                    throw new NullBotMsgException("[今日老婆] ❌该类别下暂无角色");
-
-                String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,
-                                wifePath.lastIndexOf('.') > wifePath.lastIndexOf('/') ?
-                                        wifePath.lastIndexOf('.') : wifePath.length())
-                        .split("_")[0];  // 切割后缀
-                acgWifeMap.put(userId, wifePath);
+                List<FilePO> wives = fileService.search("", acgPath);
+                if (wives.isEmpty())
+                    throw new NullBotMsgException("[今日老婆] ❌暂无角色");
+                FilePO wife = wives.get(ThreadLocalRandom.current().nextInt(wives.size()));
+                String wifeName = wife.getName().split("_")[0];
+                acgWifeMap.put(userId, wife);
                 acgExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
                 String response = MsgUtils.builder()
                         .text("你的今日二次元老婆✨是\n" + category + " - " + wifeName)
-                        .img("base64://" + Base64Util.from(wifePath))
+                        .img(ossUrlBuilder.from(wife.getPath()))
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
             } else {
-                try {
-                    String wifePath = acgWifeMap.get(userId);
-                    String wifeName = wifePath.substring(wifePath.lastIndexOf('/') + 1,
-                                    wifePath.lastIndexOf('.') > wifePath.lastIndexOf('/') ?
-                                            wifePath.lastIndexOf('.') : wifePath.length())
-                            .split("_")[0];  // 切割后缀
-                    String response = MsgUtils.builder()
-                            .text("今天已经选过了哦\uD83D\uDCA6...\n你的二次元老婆是\n" + wifeName)
-                            .img("base64://" + Base64Util.from(wifePath))
-                            .build();
-                    bot.sendGroupMsg(event.getGroupId(), response, false);
-                    log.info("\t\t\t\t├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);
-                } catch (Exception e) {
-                    throw new NullBotMsgException("[今日老婆] ❌文件已被修改");
-                }
+                FilePO wife = acgWifeMap.get(userId);
+                String wifeName = wife.getName().split("_")[0];
+                String response = MsgUtils.builder()
+                        .text("今天已经选过了哦\uD83D\uDCA6...\n你的二次元老婆是\n" + wifeName)
+                        .img(ossUrlBuilder.from(wife.getPath()))
+                        .build();
+                bot.sendGroupMsg(event.getGroupId(), response, false);
+                log.info("\t\t\t\t├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);
             }
         }
     }
