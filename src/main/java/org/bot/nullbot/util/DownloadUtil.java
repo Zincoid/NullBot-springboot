@@ -26,7 +26,7 @@ public final class DownloadUtil {
      * 主下载方法 (无 LOG 前缀)
      */
     public static FileInfo downloadFile(String fileUrl, String savePath, String fileName) {
-        return downloadFile(fileUrl, savePath, fileName, "");
+        return downloadFile(fileUrl, savePath, fileName, "▽ [DownloadUtil] ");
     }
 
     /**
