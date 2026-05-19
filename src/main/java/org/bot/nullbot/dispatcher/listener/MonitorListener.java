@@ -58,16 +58,17 @@ public class MonitorListener {
 
     // =================== 串行监听方法 ===================
 
-    @FunctionControl(id = "BottleAutoThrow", enabled = false)
+    @FunctionControl(value = "BottleAutoThrow", enabled = false)
     public void onGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception {
         double freq = 0.001;  // 固定自动投出频率
-        if (freq > Math.random()) {
-            log.info("◉ [GroupMonitor:BottleAutoThrow] 用户 {} 自动投出漂流瓶", event.getUserId());
-            commandProcessor.processQQ(bot, new CommandEvent<>(event, "DriftBottle", List.of("-auto"), false, false));
-        }
+        if (freq < Math.random()) return;
+        log.info("◉ [GroupMonitor:BottleAutoThrow] 用户 {} 自动投出漂流瓶", event.getUserId());
+        commandProcessor.processQQ(bot, new CommandEvent<>(
+                event, "DriftBottle", List.of("-auto"), false, false));
+
     }
 
-    @FunctionControl(id = "AIAutoReply")
+    @FunctionControl("AIAutoReply")
     public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
         if (!settingService.isAutoReply(event.getGroupId())) return false;
         if (event.getMessage().startsWith(commandPrefix)) {
@@ -86,7 +87,7 @@ public class MonitorListener {
             return false;
     }
 
-    @FunctionControl(id = "ImgCollect")
+    @FunctionControl("ImgCollect")
     public void onGroupImageCollection(GroupMessageEvent event) {  // 缺失群目录时数据库无法插入文件条目需先SYNC
         if (!settingService.isImageCollect(event.getGroupId())) return;
         Long groupId = event.getGroupId();
@@ -121,7 +122,7 @@ public class MonitorListener {
         }
     }
 
-    @FunctionControl(id = "MsgCollect")
+    @FunctionControl("MsgCollect")
     public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
         if (!settingService.isMessageCollect(event.getGroupId())) return;
         if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // Chat 命令会自动记录消息 跳过
@@ -133,7 +134,7 @@ public class MonitorListener {
         // log.info("└─[Recorded] {} Message(s)", chatMessages.size());
     }
 
-    @FunctionControl(id = "KeyDetect")
+    @FunctionControl("KeyDetect")
     public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {
         if (!settingService.isKeywordDetect(event.getGroupId())) return;
         if (event.getMessage().contains("男娘")) {
@@ -150,7 +151,7 @@ public class MonitorListener {
 
     // =================== 独占监听方法 ===================
 
-    @FunctionControl(id = "PokeDetect")
+    @FunctionControl("PokeDetect")
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
@@ -161,7 +162,7 @@ public class MonitorListener {
         }
     }
 
-    @FunctionControl(id = "PrivateCmd")
+    @FunctionControl("PrivateCmd")
     @PrivatePokeNoticeHandler
     @Async("ThreadExecutor")
     public void onPrivatePokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
@@ -171,7 +172,7 @@ public class MonitorListener {
         }
     }
 
-    @FunctionControl(id = "RecallDetect")
+    @FunctionControl("RecallDetect")
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {

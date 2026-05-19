@@ -59,7 +59,7 @@ public class FunctionManager {
             FunctionControl classAnnotation = AnnotationUtils.findAnnotation(
                     beanType, FunctionControl.class);
             if (classAnnotation != null) {
-                enableFlags.put(classAnnotation.id(), true);
+                enableFlags.put(classAnnotation.value(), true);
             }
             // 扫描方法注解
             Arrays.stream(beanType.getDeclaredMethods())
@@ -67,7 +67,7 @@ public class FunctionManager {
                         FunctionControl methodAnnotation = AnnotationUtils.findAnnotation(
                                 method, FunctionControl.class);
                         if (methodAnnotation != null) {
-                            enableFlags.put(methodAnnotation.id(), methodAnnotation.enabled());
+                            enableFlags.put(methodAnnotation.value(), methodAnnotation.enabled());
                         }
                     });
         }

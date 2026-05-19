@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FunctionControl {  // Aspect
-    String id();  // 功能名标识符
+    String value();  // 功能名标识符
     boolean enabled() default true;  // 默认启用状态
 }
