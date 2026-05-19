@@ -104,16 +104,16 @@ public class CommandListener {
     public void onGroupMessageInteraction(Bot bot, GroupMessageEvent event) throws Exception {
 
         // 串行调用 消息预处理 指令输入捕获
-        if (monitorListener.onGroupNextInputDetection(event)) {
-            monitorListener.onGroupMessageCollection(bot, event);
-            monitorListener.onGroupImageCollection(event);
+        if (monitorListener.onGroupInputResponse(event)) {
+            monitorListener.doGroupMsgCollect(bot, event);
+            monitorListener.doGroupImgCollect(event);
             return;
         }
         // 串行调用 消息预处理 默认处理情况
-        monitorListener.onGroupKeywordDetection(bot, event);
-        if (!monitorListener.onGroupAIAutoReply(bot, event))  // 按需 AI自动记录
-            monitorListener.onGroupMessageCollection(bot, event);
-        monitorListener.onGroupImageCollection(event);
+        monitorListener.doGroupKeywordAct(bot, event);
+        if (!monitorListener.doGroupAIAutoReply(bot, event))  // 按需 AI自动记录
+            monitorListener.doGroupMsgCollect(bot, event);
+        monitorListener.doGroupImgCollect(event);
         monitorListener.onGroupBottleAutoThrow(bot, event);
 
         Long groupId = event.getGroupId();
@@ -154,7 +154,7 @@ public class CommandListener {
         // monitorListener.onGroupKeywordDetection(bot, event);  // 禁用 关键词检测
         // if (!monitorListener.onGroupAIAutoReply(bot, event))  // 无需 AI即将回复
         //     monitorListener.onGroupMessageCollection(bot, event);  // 无需 AI自动记录
-        monitorListener.onGroupImageCollection(event);
+        monitorListener.doGroupImgCollect(event);
         monitorListener.onGroupBottleAutoThrow(bot, event);
 
         String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());

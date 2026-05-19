@@ -1,13 +1,7 @@
 package org.bot.nullbot.dispatcher.listener;
 
-import com.mikuac.shiro.annotation.GroupMsgDeleteNoticeHandler;
-import com.mikuac.shiro.annotation.GroupPokeNoticeHandler;
-import com.mikuac.shiro.annotation.PrivatePokeNoticeHandler;
-import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
-import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +26,6 @@ import tools.jackson.databind.JsonNode;
 import java.util.List;
 
 @Slf4j
-@Shiro
 @Component
 @RequiredArgsConstructor
 public class MonitorListener {
@@ -50,7 +43,7 @@ public class MonitorListener {
 
     // =================== 输入响应方法 ===================
 
-    public boolean onGroupNextInputDetection(GroupMessageEvent event) {
+    public boolean onGroupInputResponse(GroupMessageEvent event) {
         return botInputManager.response(event.getGroupId(), event.getUserId(), event.getMessage());
     }
 
@@ -60,26 +53,26 @@ public class MonitorListener {
     public void onGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception {
         double freq = 0.001;  // 固定自动投出频率
         if (freq < Math.random()) return;
-        log.info("◉ [GroupMonitor:BottleAutoThrow] 用户 {} 自动投出漂流瓶", event.getUserId());
+        log.info("◉ [GroupMonitor:BottleAutoThrow] 自动投出漂流瓶 {} -> {}", event.getUserId(), event.getMessage());
         commandProcessor.processQQ(bot, new CommandEvent<>(
                 event, "DriftBottle", List.of("-auto"), false, false));
 
     }
 
     @FunctionControl("AIAutoReply")
-    public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
+    public boolean doGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
         if (!settingService.isAutoReply(event.getGroupId())) return false;
-
         if (event.getMessage().startsWith(commandPrefix)) {
             return false;
         } else if (event.getArrayMsg().size() > 1 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
             JsonNode textNode = event.getArrayMsg().get(1).getData().get("text");
             if (textNode != null && textNode.asString().startsWith(commandPrefix)) return false;
         }
+
         double freq = settingService.getReplyFrequency(event.getGroupId());
         if (freq < Math.random()) return false;
         String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
-        log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至 群聊 {}", event.getGroupId());
+        log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至群聊 {}", event.getGroupId());
         commandProcessor.processQQ(bot, new CommandEvent<>(
                 event, "Chat", List.of(parsed), false, false));
         return true;
@@ -88,7 +81,7 @@ public class MonitorListener {
     // =================== 资源监听方法 ===================
 
     @FunctionControl("ImgCollect")
-    public void onGroupImageCollection(GroupMessageEvent event) {  // 缺失群目录时数据库无法插入文件条目需先SYNC
+    public void doGroupImgCollect(GroupMessageEvent event) {  // 缺失群目录时数据库无法插入文件条目需先SYNC
         if (!settingService.isImageCollect(event.getGroupId())) return;
 
         Long groupId = event.getGroupId();
@@ -97,7 +90,7 @@ public class MonitorListener {
 
         for (ArrayMsg msg : event.getArrayMsg()) {
             if (msg.getType() != MsgTypeEnum.image) continue;
-            log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
+            log.info("◉ [GroupMonitor:ImgCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
             String originName = msg.getData().get("file").asString();
             String url = msg.getData().get("url").asString();
             String fileName = originName.substring(0, originName.lastIndexOf("."));
@@ -123,29 +116,31 @@ public class MonitorListener {
     }
 
     @FunctionControl("MsgCollect")
-    public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
+    public void doGroupMsgCollect(Bot bot, GroupMessageEvent event) {
         if (!settingService.isMessageCollect(event.getGroupId())) return;
-        if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // Chat 命令会自动记录消息 跳过
+
+        if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // 按需 AI自动记录
         String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
-        log.info("◉ [GroupMonitor:MessageCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
+        log.info("◉ [GroupMonitor:MsgCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
         chatMessages.add(new ChatMessage(event.getMessageId() , event.getUserId(), event.getSender().getNickname(), "user", parsed));
         chatStorage.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
         // log.info("└─[Recorded] {} Message(s)", chatMessages.size());
     }
 
-    @FunctionControl("KeyDetect")
-    public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {
+    @FunctionControl("KeywordAct")
+    public void doGroupKeywordAct(Bot bot, GroupMessageEvent event) throws Exception {
         if (!settingService.isKeywordDetect(event.getGroupId())) return;
+
         if (event.getMessage().contains("男娘")) {
-            log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
+            log.info("◉ [GroupMonitor:KeywordAct] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
             bot.sendGroupMsg(event.getGroupId(), "哪有男娘？", false);
-            // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("哪有男娘？"), event, false, false));
+            // commandProcessor.processQQ(bot, new CommandEvent<>(event, "Reply", List.of("哪有男娘？"), false, false));
         }
         if (event.getMessage().contains("受着")) {
-            log.info("◉ [GroupMonitor:Keyword] 检测到\"受着\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
+            log.info("◉ [GroupMonitor:KeywordAct] 检测到\"受着\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
             commandProcessor.processQQ(bot, new CommandEvent<>(event, "UserBan", List.of(event.getUserId().toString(), "1"), false, false));
-            // commandProcessor.processQQ(bot, new CommandEvent<>("Reply", List.of("你也受着"), event, false, false));
+            // commandProcessor.processQQ(bot, new CommandEvent<>(event, "Reply", List.of("你也受着"), false, false));
         }
     }
 }
