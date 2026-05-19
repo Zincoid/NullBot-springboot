@@ -10,7 +10,6 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.component.tool.OssUrlBuilder;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.BotInputer;
 import org.bot.nullbot.entity.BotPageSelector;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.exception.NullBotMsgException;
