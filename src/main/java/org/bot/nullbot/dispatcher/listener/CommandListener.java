@@ -96,7 +96,7 @@ public class CommandListener {
         }
     }
 
-    // ================================== 私聊动作捕获 ==================================
+    // ================================== 群聊动作捕获 ==================================
 
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)
@@ -134,6 +134,17 @@ public class CommandListener {
         }
     }
 
+    @FunctionControl("PokeDetect")
+    @GroupPokeNoticeHandler
+    @Async("ThreadExecutor")
+    public void onGroupPokeInteraction(Bot bot, PokeNoticeEvent event) throws Exception {
+        if (!settingService.isPokeDetect(event.getGroupId())) return;
+        if (Objects.equals(event.getTargetId(), event.getSelfId())) {
+            log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (仅戳Bot)", event.getGroupId(), event.getUserId(), event.getTargetId());
+            commandProcessor.processQQ(bot, new CommandEvent<>(event));
+        }
+    }
+
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NEED)
     @Async("ThreadExecutor")
@@ -153,23 +164,10 @@ public class CommandListener {
                 event, "Chat", List.of(parsed), true, true));
     }
 
-    // =================== 独占监听方法 ===================
-
-    @FunctionControl("PokeDetect")
-    @GroupPokeNoticeHandler
-    @Async("ThreadExecutor")
-    public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
-        if (!settingService.isPokeDetect(event.getGroupId())) return;
-        if (Objects.equals(event.getTargetId(), event.getSelfId())) {
-            log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (仅戳Bot)", event.getGroupId(), event.getUserId(), event.getTargetId());
-            commandProcessor.processQQ(bot, new CommandEvent<>(event));
-        }
-    }
-
     @FunctionControl("RecallDetect")
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
-    public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
+    public void onGroupRecallInteraction(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
         if (!settingService.isRecallDetect(event.getGroupId())) return;
         log.info("◉ [GroupAction:Recall] 来自群 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));
