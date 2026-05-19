@@ -17,7 +17,6 @@ import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.service.SettingService;
-import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -98,17 +97,7 @@ public class MonitorListener {
             String fileName = originName.substring(0, originName.lastIndexOf("."));
             String filePath = fileStorageProperties.getImagePath() + "/monitor/" + groupId;
             try {
-                FileInfo fileInfo = DownloadUtil.downloadFile(
-                        url, filePath, fileName, "├─ ");
-                if (!fileService.addRecordOnly(
-                        filePath,
-                        fileInfo.getFileName(),
-                        fileInfo.getFileSize(),
-                        fileInfo.getLastModified(),
-                        userId, userName
-                )) {
-                    log.info("├─[Error] DbSave Failed");
-                }
+                FileInfo fileInfo = fileService.saveFile(url, filePath, fileName, userId, userName);
                 log.info("└─[Saved] {}", fileInfo.getFileName());
             } catch (Exception e) {
                 log.info("└─[Error] {}", e.getMessage());
