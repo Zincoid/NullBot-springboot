@@ -15,8 +15,7 @@ import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.DriftBottleService;
 import org.bot.nullbot.service.FileService;
-import org.bot.nullbot.util.DownloadUtil;
-import org.bot.nullbot.util.FileUtil;
+
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
 
@@ -56,16 +55,7 @@ public class DriftBottleCommand implements Command {
                 FileInfo fileInfo = null;
                 boolean thrown = false;
                 try {
-                    fileInfo = DownloadUtil.downloadFile(url, directory, fileName, "\t\t\t\t├─ ");
-                    if (!fileService.addRecordOnly(
-                            directory,
-                            fileInfo.getFileName(),
-                            fileInfo.getFileSize(),
-                            fileInfo.getLastModified(),
-                            userId, userName)
-                    ) {
-                        if (!autoThrow) throw new NullBotMsgException("[漂流瓶] ❌数据库更新失败");
-                    }
+                    fileInfo = fileService.saveFile(url, directory, fileName, userId, userName);
                     thrown = driftBottleService.throwBottle(
                             userId,
                             bot.getStrangerInfo(userId, true).getData().getNickname(),
@@ -80,8 +70,7 @@ public class DriftBottleCommand implements Command {
                     if (!autoThrow) throw new NullBotMsgException("[漂流瓶] ❌出错: " + e.getMessage());
                 } finally {
                     if (fileInfo != null && !thrown) {
-                        fileService.deleteRecordOnly(directory, fileInfo.getFileName());
-                        FileUtil.deleteFileByName(directory, fileInfo.getFileName());
+                        fileService.deleteFile(directory, fileInfo.getFileName());
                     }
                 }
             }
@@ -126,8 +115,7 @@ public class DriftBottleCommand implements Command {
             String fileName = bottle.getContent().substring(index + 1);
             String directory = bottle.getContent().substring(0, index);
             // log.info("[DEBUG] {} and {}", directory, fileName);
-            fileService.deleteRecordOnly(directory, fileName);
-            FileUtil.deleteFileByName(directory, fileName);
+            fileService.deleteFile(directory, fileName);
         }
     }
 
