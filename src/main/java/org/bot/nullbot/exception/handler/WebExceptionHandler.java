@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class WebExceptionHandler {
 
-    // 异步请求失效异常 (Oss)
+    // 异步请求失效异常 (Oss服务)
     @ExceptionHandler(AsyncRequestNotUsableException.class)
     public void handleAsyncRequestNotUsable(AsyncRequestNotUsableException e) {
         Throwable cause = e.getCause();
