@@ -75,24 +75,24 @@ public class TtsCommand implements Command {
                     String templateText = params.get(3);
 
                     for (Map.Entry<String, String> entry : voiceMap.entrySet()) {
-                        String tempFileName = entry.getKey();
+                        String tempName = entry.getKey();
                         String url = entry.getValue();
-                        String downloadedFileName;
+                        String downloadedName;
 
                         try {
-                            FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempFileName, "\t\t\t\t├─ ");
-                            downloadedFileName = fileInfo.getFileName();
+                            FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "\t\t\t\t├─ ");
+                            downloadedName = fileInfo.getFileName();
                         } catch (Exception e) {
                             throw new NullBotMsgException("[语音合成] ❌模板临时文件下载失败: " + e.getMessage());
                         }
 
                         String uploadedPath;
                         try {
-                            uploadedPath = ttsClient.upload(tempPath + "/" + downloadedFileName);
+                            uploadedPath = ttsClient.upload(tempPath + "/" + downloadedName);
                         } catch (Exception e) {
                             throw new NullBotMsgException("[语音合成] ❌模板临时文件上传失败: " + e.getMessage());
                         } finally {
-                            FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedFileName));
+                            FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
                         }
 
                         if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))

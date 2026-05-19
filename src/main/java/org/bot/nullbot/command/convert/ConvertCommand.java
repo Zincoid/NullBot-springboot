@@ -9,6 +9,7 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
@@ -20,6 +21,7 @@ import org.bot.nullbot.util.MessageParseUtil;
 import org.bot.nullbot.component.render.ImageConverter;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.*;
 
 @CommandMapping({"Convert", "图像处理"})
@@ -69,17 +71,17 @@ public class ConvertCommand implements Command {
             throw new NullBotMsgException("[图像处理] ❌无引用图片或ID参数或At消息");
 
         // 开始处理
-        String tempFilePath = fileStorageProperties.getTempPath();
+        String tempPath = fileStorageProperties.getTempPath();
         for (String url : urls) {
-            String tempFileName = UUID.randomUUID().toString();
-            String downloadedFileName;
+            String tempName = UUID.randomUUID().toString();
+            String downloadedName;
             try {
-                FileInfo fileInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName, "\t\t\t\t├─ ");
-                downloadedFileName = fileInfo.getFileName();
+                FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "\t\t\t\t├─ ");
+                downloadedName = fileInfo.getFileName();
             } catch (Exception e) {
                 throw new NullBotMsgException("[图像处理] ❌下载时出错: " + e.getMessage());
             }
-            String imagePath = tempFilePath + "/" + downloadedFileName;
+            String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
                 base64 = switch (method){
@@ -93,11 +95,11 @@ public class ConvertCommand implements Command {
             } catch (Exception e) {
                 throw new NullBotMsgException("[图像处理] ❌处理时出错: " + e.getMessage());
             } finally {
-                FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
+                FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
             }
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedFileName);
+            log.info("\t\t\t\t├─[Convert] 处理完成 - {}", downloadedName);
         }
     }
 

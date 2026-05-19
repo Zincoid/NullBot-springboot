@@ -9,6 +9,7 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.render.HtmlRenderer;
@@ -22,6 +23,7 @@ import org.bot.nullbot.util.HtmlTemplateUtil;
 import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -76,20 +78,20 @@ public class SymmetryCommand implements Command {
             throw new NullBotMsgException("[对称] ❌无引用图片或ID参数或At消息");
 
         // 开始处理
-        String tempFilePath = fileStorageProperties.getTempPath();
+        String tempPath = fileStorageProperties.getTempPath();
         for (String url : urls) {
-            String tempFileName = UUID.randomUUID().toString();
-            String downloadedFileName;
+            String tempName = UUID.randomUUID().toString();
+            String downloadedName;
             try {
-                FileInfo fileInfo = DownloadUtil.downloadFile(url, tempFilePath, tempFileName, "\t\t\t\t├─ ");
-                downloadedFileName = fileInfo.getFileName();
+                FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "\t\t\t\t├─ ");
+                downloadedName = fileInfo.getFileName();
             } catch (Exception e) {
                 throw new NullBotMsgException("[对称] ❌下载时出错: " + e.getMessage());
             }
-            String imagePath = tempFilePath + "/" + downloadedFileName;
+            String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
-                Path htmlPath = resourceLoader.getCached("static/html/symmetry.html", tempFilePath + "/html");
+                Path htmlPath = resourceLoader.getCached("static/html/symmetry.html", tempPath + "/html");
                 Map<String, String> variables = new HashMap<>();
                 variables.put("mode", "left");
                 if (!params.isEmpty()) {
@@ -112,11 +114,11 @@ public class SymmetryCommand implements Command {
             } catch (Exception e) {
                 throw new NullBotMsgException("[对称] ❌处理时出错: " + e.getMessage());
             } finally {
-                FileUtil.deleteFileByName(tempFilePath, downloadedFileName);
+                FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
             }
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[Symmetry] 处理完成 - {}", downloadedFileName);
+            log.info("\t\t\t\t├─[Symmetry] 处理完成 - {}", downloadedName);
         }
     }
 
