@@ -30,6 +30,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MonitorListener {
 
+    /* 聊天机器人工具监听器 */
+
     private final BotInputManager botInputManager;
     private final CommandProcessor commandProcessor;
     private final ChatStorage chatStorage;
