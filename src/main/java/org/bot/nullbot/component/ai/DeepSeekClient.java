@@ -484,10 +484,10 @@ public class DeepSeekClient {
             messageId = sendMsg(bot, targetId, response, isPrivate, voice);
         }
         // 记录消息
-        String parsed = MessageParseUtil.parseArrayMsgToSimple(
-                bot, bot.getMsg(messageId).getData().getArrayMsg());
+        // String parsed = MessageParseUtil.parseArrayMsgToSimple(
+        //         bot, bot.getMsg(messageId).getData().getArrayMsg());
         chatMessages.add(new ChatMessage(
-                messageId, botId, "Null", "assistant", parsed));
+                messageId, botId, "Null", "assistant", response));
         return filtered ? "Filtered" : response;
     }
 
@@ -539,61 +539,13 @@ public class DeepSeekClient {
                 if (segment.isEmpty()) continue;
                 Integer messageId = sendMsg(bot, targetId, segment, isPrivate, voice);
                 // 记录消息
-                String parsed = MessageParseUtil.parseArrayMsgToSimple(
-                        bot, bot.getMsg(messageId).getData().getArrayMsg());
+                // String parsed = MessageParseUtil.parseArrayMsgToSimple(
+                //         bot, bot.getMsg(messageId).getData().getArrayMsg());
                 chatMessages.add(new ChatMessage(
-                        messageId, botId, "Null", "assistant", parsed));
+                        messageId, botId, "Null", "assistant", segment));
             }
         }
         return response;
-    }
-
-    /**
-     * 指令嵌入模式应答处理 (非链式)
-     * @param response 原始响应文本
-     * @param chatMessages 历史存储
-     * @param targetId 目标ID
-     * @param isPrivate 是否为私信
-     * @param bot 机器人实体
-     * @param event 指令事件
-     * @param embeddingAuth 嵌入指令验证
-     * @param embeddingLimit 嵌入指令限速
-     * @param voice 语音模式
-     * @return 处理过的消息 (已过滤)
-     */
-    @Deprecated
-    String executeEmbedding(
-            String response, List<ChatMessage> chatMessages, Long targetId, boolean isPrivate,
-            Bot bot, Event event, boolean voice, boolean embeddingAuth, boolean embeddingLimit
-    ) throws IOException {
-
-        // 丢弃判断
-        if (response.contains("{Discard}")) return "Discarded";
-        // 过滤判断
-        if (messageFilter(response)) {
-            Integer messageId = sendMsg(bot, targetId, buildFilteredMsg(), isPrivate, voice);
-            chatMessages.add(new ChatMessage(
-                    messageId, botId, "Null", "assistant", "回复被过滤"));
-            return "Filtered";
-        }
-        // 处理消息
-        response = response.replaceAll("(\r?\n)+", "\n").trim();
-        // 执行指令
-        Matcher m = Pattern.compile("\\{(.*?)}").matcher(response);
-        while (m.find()) {
-            String command = m.group(1);
-            eventPublisher.publishEvent(new EmbeddedCommandEvent(bot,
-                    new CommandEvent<>(event, command, embeddingAuth, embeddingLimit)));
-        }
-        // 发送消息
-        String _response = response.replaceAll("\\{.*?}", "").trim();
-        Integer messageId = sendMsg(bot, targetId, _response, isPrivate, voice);
-        // 记录消息
-        String parsed = MessageParseUtil.parseArrayMsgToSimple(
-                bot, bot.getMsg(messageId).getData().getArrayMsg());
-        chatMessages.add(new ChatMessage(
-                messageId, botId, "Null", "assistant", parsed));
-        return _response;
     }
 
     // =================== 工具方法 ===================

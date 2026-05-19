@@ -769,4 +769,5 @@
 - 合并 BotNextInputer - 两种输入方案整合到 BotInputManager 中并修改相关代码；
 - 修复 MessageParseUtil - 将文本 JsonNode 转换为字符串；
 - 优化 WebExceptionHandler - 新增对 Oss 服务相关异常的拦截提示；
-- 优化 CommandListener 和 MonitorListener - 优化结构，方法签名和日志输出。
+- 优化 CommandListener 和 MonitorListener - 优化结构，方法签名和日志输出；
+- 临时取消 DeepSeekClient 的回显存储 - 似乎会干扰生成格式。
