@@ -47,6 +47,7 @@ public final class FileUtil {
         }
     }
 
+    @Deprecated
     public static String getFileListAsString(String directoryPath, String delimiter, boolean withExtension) {
         Path directory = validateDirectory(directoryPath);
         try (Stream<Path> stream = Files.list(directory)) {
@@ -70,6 +71,7 @@ public final class FileUtil {
 
     // =================== 路径获取相关 ===================
 
+    @Deprecated
     public static String getRandomFilePath(String directoryPath) {
         Path directory = validateDirectory(directoryPath);
         try (Stream<Path> stream = Files.list(directory)) {
@@ -82,6 +84,7 @@ public final class FileUtil {
         }
     }
 
+    @Deprecated
     public static String getRandomFilePathByPattern(String directoryPath, String pattern) {
         Path directory = validateDirectory(directoryPath);
         FileSystem fs = FileSystems.getDefault();
@@ -99,6 +102,7 @@ public final class FileUtil {
         }
     }
 
+    @Deprecated
     public static String getRandomFilePathRecursive(String directoryPath) {
         Path startDir = validateDirectory(directoryPath);
         try (Stream<Path> stream = Files.walk(startDir)) {
@@ -111,6 +115,7 @@ public final class FileUtil {
         }
     }
 
+    @Deprecated
     public static String getFilePathByName(String directoryPath, String fileName) {
         Path directory = validateDirectory(directoryPath);
         try (Stream<Path> stream = Files.list(directory)) {
@@ -124,6 +129,7 @@ public final class FileUtil {
         }
     }
 
+    @Deprecated
     public static List<String> getFilePathsByPattern(String directoryPath, String pattern) {
         Path directory = validateDirectory(directoryPath);
         FileSystem fs = FileSystems.getDefault();
@@ -139,6 +145,7 @@ public final class FileUtil {
         }
     }
 
+    @Deprecated
     public static List<String> getFilePathsByKeyword(String directoryPath, String keyword) {
         Path directory = validateDirectory(directoryPath);
         String lowerKeyword = keyword.toLowerCase();
@@ -157,6 +164,7 @@ public final class FileUtil {
         }
     }
 
+    @Deprecated
     public static List<String> getFilePathsRecursive(String directoryPath, String fileName) {
         Path directory = validateDirectory(directoryPath);
         try (Stream<Path> stream = Files.walk(directory)) {
@@ -172,6 +180,7 @@ public final class FileUtil {
 
     // =================== 文件删除相关 ===================
 
+    @Deprecated
     public static void deleteFileByName(String directoryPath, String fileName) {
         Path directory = validateDirectory(directoryPath);
         try {
@@ -194,6 +203,7 @@ public final class FileUtil {
         }
     }
 
+    @Deprecated
     public static int deleteFilesRecursive(String directoryPath, String fileName) {
         Path directory = validateDirectory(directoryPath);
         try {
@@ -226,6 +236,7 @@ public final class FileUtil {
         }
     }
 
+    @Deprecated
     public static List<String> deleteFilesByPattern(String directoryPath, String pattern) {
         Path directory = validateDirectory(directoryPath);
         try {
