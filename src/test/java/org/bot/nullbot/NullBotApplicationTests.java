@@ -11,7 +11,7 @@ import jakarta.annotation.Resource;
 // import jdash.common.entity.GDLevel;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.component.ai.DeepSeekClient;
-import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.component.game.handler.TicTacToeMatchHandler;
 import org.bot.nullbot.component.game.logic.TicTacToeGameLogic;
 import org.bot.nullbot.component.render.HtmlRenderer;
@@ -56,7 +56,7 @@ class NullBotApplicationTests {
     @Resource
     private DeepSeekClient deepSeekClient;
     @Resource
-    private BotNextInputer botNextInputer;
+    private BotInputManager botInputManager;
 
     @Test
     void regexTest() {
@@ -365,19 +365,19 @@ class NullBotApplicationTests {
     }
 
     @Test
-    void NextInputerTest() {
+    void BotInputTest() {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                botNextInputer.response(0L, 1L, "test");
-                botNextInputer.response(0L, 0L, "A");
-                botNextInputer.response(0L, 2L, "11");
+                botInputManager.response(0L, 1L, "test");
+                botInputManager.response(0L, 0L, "A");
+                botInputManager.response(0L, 2L, "11");
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }).start();
 
-        List<Pair<Long, String>> inputs = botNextInputer.request(BniMode.PS, 0L, "[1-9]\\d*", 5);
+        List<Pair<Long, String>> inputs = botInputManager.request(BniMode.PS, 0L, "[1-9]\\d*", 5);
         System.out.println("已响应: " + inputs);
     }
 
