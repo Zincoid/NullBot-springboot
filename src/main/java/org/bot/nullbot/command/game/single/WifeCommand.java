@@ -9,11 +9,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.tool.OssUrlBuilder;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.FileService;
+import org.bot.nullbot.util.Base64Util;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -38,7 +38,6 @@ public class WifeCommand implements Command {
     private final Map<Long, FilePO> acgWifeMap = new ConcurrentHashMap<>();
     private final Map<Long, LocalDateTime> acgExpireMap = new ConcurrentHashMap<>();
     private final FileService fileService;
-    private final OssUrlBuilder ossUrlBuilder;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -89,7 +88,7 @@ public class WifeCommand implements Command {
                 acgExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
                 String response = MsgUtils.builder()
                         .text("你的今日二次元老婆✨是\n" + category + " - " + wifeName)
-                        .img(ossUrlBuilder.from(wife.getPath()))
+                        .img(Base64Util.from(wife.getPath()))
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
@@ -98,7 +97,7 @@ public class WifeCommand implements Command {
                 String wifeName = wife.getName().split("_")[0];
                 String response = MsgUtils.builder()
                         .text("今天已经选过了哦\uD83D\uDCA6...\n你的二次元老婆是\n" + wifeName)
-                        .img(ossUrlBuilder.from(wife.getPath()))
+                        .img(Base64Util.from(wife.getPath()))
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
                 log.info("\t\t\t\t├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);
