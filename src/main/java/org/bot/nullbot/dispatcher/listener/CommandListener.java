@@ -126,5 +126,5 @@ public class CommandListener {
         commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), true, true));
     }
 
-    // 框架有BUG 回复消息中有@机器人和另一个人时会被判定为 AtEnum.NOT_NEED 的方法 暂时不知道怎么修
+    // Shiro 2.3.3 框架有BUG 回复消息中有@机器人和另一个人时会被判定为 AtEnum.NOT_NEED 的方法
 }
