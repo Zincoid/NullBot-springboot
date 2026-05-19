@@ -3,9 +3,11 @@ package org.bot.nullbot.component.control;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
+import org.bot.nullbot.component.resource.SpringCtxHolder;
 import org.bot.nullbot.entity.BotInputer;
 import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,10 +19,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 @Slf4j
+@Component
 public class BotInputManager {
 
-    private static final Map<String, InputEntry> inputEntries = new ConcurrentHashMap<>();
-    private static final Map<String, List<Pair<Long, String>>> inputCaches = new ConcurrentHashMap<>();
+    private final Map<String, InputEntry> inputEntries = new ConcurrentHashMap<>();
+    private final Map<String, List<Pair<Long, String>>> inputCaches = new ConcurrentHashMap<>();
 
     @AllArgsConstructor
     private static class InputEntry {
@@ -32,24 +35,25 @@ public class BotInputManager {
     // ============= BotInputer 注册方法 ==============
 
     public static List<Pair<Long, String>> register(BotInputer inputer) {
-        return request(
-                inputer.getMode(),
-                inputer.getTargetId(),
-                inputer.getPattern(),
-                inputer.getTimeout(),
-                inputer.isCoverable()
-        );
+        return SpringCtxHolder.getBean(BotInputManager.class)
+                .request(
+                        inputer.getMode(),
+                        inputer.getTargetId(),
+                        inputer.getPattern(),
+                        inputer.getTimeout(),
+                        inputer.isCoverable()
+                );
     }
 
     // =================== 调用方法 ===================
 
     /* 注册输入事件 (默认非可覆盖模式) - 阻塞直到收到响应或超时 (视模式而定) */
-    public static List<Pair<Long, String>> request(BniMode mode, Long targetId, String pattern, long timeout) {
+    public List<Pair<Long, String>> request(BniMode mode, Long targetId, String pattern, long timeout) {
         return request(mode, targetId, pattern, timeout, false);
     }
 
     /* 注册输入事件 - 阻塞直到收到响应或超时 (视模式而定) */
-    public static List<Pair<Long, String>> request(BniMode mode, Long targetId, String pattern, long timeout, boolean coverable) {
+    public List<Pair<Long, String>> request(BniMode mode, Long targetId, String pattern, long timeout, boolean coverable) {
         String id = switch (mode) {
             case PS -> "PS_%s".formatted(targetId);  // 个人单值模式 targetId为用户ID 超时返回空列表
             case GS -> "GS_%s".formatted(targetId);  // 群组单值模式 targetId为群聊ID 超时返回空列表
@@ -82,7 +86,7 @@ public class BotInputManager {
     }
 
     /* 响应输入事件 -  自动匹配所有模式输入事件 */
-    public static boolean response(Long groupId, Long userId, String message) {
+    public boolean response(Long groupId, Long userId, String message) {
         boolean hasResponse = false;
         if (inputEntries.containsKey("PS_%s".formatted(userId)))
             if (_response(BniMode.PS, groupId, userId, message)) hasResponse = true;
@@ -94,7 +98,7 @@ public class BotInputManager {
     }
 
     /* 响应输入事件 (按模式) - 按模式匹配输入事件 */
-    private static boolean _response(BniMode mode, Long groupId, Long userId, String message) {
+    private boolean _response(BniMode mode, Long groupId, Long userId, String message) {
         String id = switch (mode) {
             case PS -> "PS_%s".formatted(userId);
             case GS -> "GS_%s".formatted(groupId);
@@ -113,7 +117,7 @@ public class BotInputManager {
 
     // =================== 工具方法 ===================
 
-    public static boolean isWaiting(BniMode mode, Long targetId) {
+    public boolean isWaiting(BniMode mode, Long targetId) {
         String id = switch (mode) {
             case PS -> "PS_%s".formatted(targetId);
             case GS -> "GS_%s".formatted(targetId);
@@ -123,7 +127,7 @@ public class BotInputManager {
         return entry != null && entry.future != null && !entry.future.isDone();
     }
 
-    public static boolean cancelWait(BniMode mode, Long targetId) {
+    public boolean cancelWait(BniMode mode, Long targetId) {
         String id = switch (mode) {
             case PS -> "PS_%s".formatted(targetId);
             case GS -> "GS_%s".formatted(targetId);
