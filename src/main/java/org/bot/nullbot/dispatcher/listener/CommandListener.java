@@ -43,8 +43,9 @@ public class CommandListener {
 
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
-    @Value("${nullbot.admin-id}")
-    private Long adminId;
+    // // 通知管理员使用
+    // @Value("${nullbot.admin-id}")
+    // private Long adminId;
 
     // ================================== 私聊动作捕获 ==================================
 
