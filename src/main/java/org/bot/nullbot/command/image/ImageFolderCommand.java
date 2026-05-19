@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.util.FileUtil;
+import org.bot.nullbot.util.StringUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class ImageFolderCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) throws IOException {
-        String structure = FileUtil.getFolderTreeString(fileStorageProperties.getImagePath(), 0);
+        String structure = StringUtil.getFolderTreeString(fileStorageProperties.getImagePath(), 0);
         bot.sendGroupMsg(event.getGroupId(), "[图片目录] \uD83D\uDCC1已获取！\n" + structure, false);
         log.info("\t\t\t\t├─[ImageFolder] 已输出 - 图片目录结构");
     }
