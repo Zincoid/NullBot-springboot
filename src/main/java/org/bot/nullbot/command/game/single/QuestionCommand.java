@@ -11,7 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
-import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.dispatcher.handler.impl.PermissionHandler;
 import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -27,7 +27,7 @@ import java.util.Set;
 public class QuestionCommand implements Command {
 
     private final DeepSeekClient deepSeekClient;
-    private final BotNextInputer botNextInputer;
+    private final BotInputManager botInputManager;
     private final PermissionHandler permissionHandler;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -104,7 +104,7 @@ public class QuestionCommand implements Command {
 
             bot.sendGroupMsg(groupId, req, false);
 
-            List<Pair<Long, String>> inputs = botNextInputer
+            List<Pair<Long, String>> inputs = botInputManager
                     .request(BniMode.PS, userId, "[a-zA-Z]", timeout);
 
             String res;
