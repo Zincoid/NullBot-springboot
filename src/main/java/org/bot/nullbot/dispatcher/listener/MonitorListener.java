@@ -59,9 +59,8 @@ public class MonitorListener {
     // =================== 串行监听方法 ===================
 
     @FunctionControl(id = "BottleAutoThrow", enabled = false)
-    public void onGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception
-    {
-        double freq = 0.001;  // 暂时固定自动投出频率
+    public void onGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception {
+        double freq = 0.001;  // 固定自动投出频率
         if (freq > Math.random()) {
             log.info("◉ [GroupMonitor:BottleAutoThrow] 用户 {} 自动投出漂流瓶", event.getUserId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event, "DriftBottle", List.of("-auto"), false, false));
@@ -69,8 +68,7 @@ public class MonitorListener {
     }
 
     @FunctionControl(id = "AIAutoReply")
-    public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception
-    {
+    public boolean onGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
         if (!settingService.isAutoReply(event.getGroupId())) return false;
         if (event.getMessage().startsWith(commandPrefix)) {
             return false;
@@ -78,7 +76,6 @@ public class MonitorListener {
             JsonNode textNode = event.getArrayMsg().get(1).getData().get("text");
             if (textNode != null && textNode.asString().startsWith(commandPrefix)) return false;
         }
-
         double freq = settingService.getReplyFrequency(event.getGroupId());
         if (freq > Math.random()) {
             String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
@@ -90,49 +87,42 @@ public class MonitorListener {
     }
 
     @FunctionControl(id = "ImgCollect")
-    public void onGroupImageCollection(GroupMessageEvent event)  // 群目录不存在时数据库无法插入详情文件条目 需手动SYNC
-    {
+    public void onGroupImageCollection(GroupMessageEvent event) {  // 缺失群目录时数据库无法插入文件条目需先SYNC
         if (!settingService.isImageCollect(event.getGroupId())) return;
-
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
-
-        boolean hasLogged = false;
         for (ArrayMsg msg : event.getArrayMsg()) {
-            if (msg.getType() == MsgTypeEnum.image) {
-                if (!hasLogged) {
-                    // log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> {}", groupId, userName, userId, event.getMessage());
-                    log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
-                    hasLogged = true;
+            if (msg.getType() != MsgTypeEnum.image) continue;
+            log.info("◉ [GroupMonitor:ImageCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
+            String originName = msg.getData().get("file").asString();
+            String url = msg.getData().get("url").asString();
+            String fileName = originName.substring(0, originName.lastIndexOf("."));
+            String filePath = fileStorageProperties.getImagePath() + "/monitor/" + groupId;
+            try {
+                FileInfo fileInfo = DownloadUtil.downloadFile(
+                        url, filePath, fileName, "├─ ");
+                if (
+                        !fileService.addRecordOnly(
+                                filePath,
+                                fileInfo.getFileName(),
+                                fileInfo.getFileSize(),
+                                fileInfo.getLastModified(),
+                                userId, userName
+                        )
+                ) {
+                    log.info("├─[Error] DbSave Failed");
                 }
-                String originName = msg.getData().get("file").asString();
-                String url = msg.getData().get("url").asString();
-                String fileName = originName.substring(0, originName.lastIndexOf("."));
-                String filePath = fileStorageProperties.getImagePath() + "/monitor/" + groupId;
-                try {
-                    FileInfo fileInfo = DownloadUtil.downloadFile(url, filePath, fileName, "├─ ");
-                    if(!fileService.addRecordOnly(
-                            filePath,
-                            fileInfo.getFileName(),
-                            fileInfo.getFileSize(),
-                            fileInfo.getLastModified(),
-                            userId, userName)
-                    ) {
-                        log.info("├─[Error] DbSave Failed");
-                    }
-                    log.info("└─[Saved] {}", fileInfo.getFileName());
-                } catch (Exception e) {
-                    log.info("└─[Error] {}", e.getMessage());
-                    throw e;
-                }
+                log.info("└─[Saved] {}", fileInfo.getFileName());
+            } catch (Exception e) {
+                log.info("└─[Error] {}", e.getMessage());
+                throw e;
             }
         }
     }
 
     @FunctionControl(id = "MsgCollect")
-    public void onGroupMessageCollection(Bot bot, GroupMessageEvent event)
-    {
+    public void onGroupMessageCollection(Bot bot, GroupMessageEvent event) {
         if (!settingService.isMessageCollect(event.getGroupId())) return;
         if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // Chat 命令会自动记录消息 跳过
         String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
@@ -144,8 +134,7 @@ public class MonitorListener {
     }
 
     @FunctionControl(id = "KeyDetect")
-    public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception
-    {
+    public void onGroupKeywordDetection(Bot bot, GroupMessageEvent event) throws Exception {
         if (!settingService.isKeywordDetect(event.getGroupId())) return;
         if (event.getMessage().contains("男娘")) {
             log.info("◉ [GroupMonitor:Keyword] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
@@ -164,11 +153,10 @@ public class MonitorListener {
     @FunctionControl(id = "PokeDetect")
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
-    public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception
-    {
+    public void onGroupPokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
         if (!settingService.isPokeDetect(event.getGroupId())) return;
         if (Objects.equals(event.getTargetId(), event.getSelfId())) {
-            log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (已限制为戳Bot自己)", event.getGroupId(), event.getUserId(), event.getTargetId());
+            log.info("◉ [GroupAction:Poke] 来自群 {} -> From {} to {} (仅戳Bot)", event.getGroupId(), event.getUserId(), event.getTargetId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
         }
     }
@@ -176,10 +164,9 @@ public class MonitorListener {
     @FunctionControl(id = "PrivateCmd")
     @PrivatePokeNoticeHandler
     @Async("ThreadExecutor")
-    public void onPrivatePokeDetection(Bot bot, PokeNoticeEvent event) throws Exception
-    {
+    public void onPrivatePokeDetection(Bot bot, PokeNoticeEvent event) throws Exception {
         if (Objects.equals(event.getTargetId(), event.getSelfId())) {
-            log.info("◉ [PrivateAction:Poke] 来自私信 -> From {} to {} (已限制为戳Bot自己)", event.getUserId(), event.getTargetId());
+            log.info("◉ [PrivateAction:Poke] 来自私信 -> From {} to {} (仅戳Bot)", event.getUserId(), event.getTargetId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
         }
     }
@@ -187,10 +174,9 @@ public class MonitorListener {
     @FunctionControl(id = "RecallDetect")
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
-    public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception
-    {
+    public void onGroupRecallDetection(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
         if (!settingService.isRecallDetect(event.getGroupId())) return;
-        log.info("◉ [GroupMonitor:Recall] 来自群 {} -> {}", event.getGroupId(), event.getUserId());
+        log.info("◉ [GroupAction:Recall] 来自群 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));
     }
 }

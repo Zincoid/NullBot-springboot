@@ -43,8 +43,8 @@ public class CommandListener {
     @FunctionControl(id = "PrivateCmd")
     @PrivateMessageHandler
     @Async("ThreadExecutor")
-    public void onPrivateMessageInteraction(Bot bot, PrivateMessageEvent event) throws Exception
-    {
+    public void onPrivateMessageInteraction(Bot bot, PrivateMessageEvent event) throws Exception {
+
         Long userId = event.getUserId();
         String userName = event.getPrivateSender().getNickname();
         String message = event.getMessage();
@@ -81,8 +81,8 @@ public class CommandListener {
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)
     @Async("ThreadExecutor")
-    public void onGroupMessageInteraction(Bot bot, GroupMessageEvent event) throws Exception
-    {
+    public void onGroupMessageInteraction(Bot bot, GroupMessageEvent event) throws Exception {
+
         // 串行调用 消息预处理 指令输入捕获
         if (monitorListener.onGroupNextInputDetection(event)) {
             monitorListener.onGroupMessageCollection(bot, event);
@@ -112,8 +112,8 @@ public class CommandListener {
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NEED)
     @Async("ThreadExecutor")
-    public void onGroupAtInteraction(Bot bot, GroupMessageEvent event) throws Exception
-    {
+    public void onGroupAtInteraction(Bot bot, GroupMessageEvent event) throws Exception {
+
         // 串行调用 消息预处理 默认处理情况
         // monitorListener.onGroupKeywordDetection(bot, event);  // 禁用 关键词检测
         // if (!monitorListener.onGroupAIAutoReply(bot, event))  // 无需调用 AI即将回复
