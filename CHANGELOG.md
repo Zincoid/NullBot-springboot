@@ -774,4 +774,4 @@
 - 弃用 FileUtil 大部分方法 改用 FileService 操作：
   - FileService 新增数据库和本地合并的文件操作方法并优化相关使用；
   - FileUtil 构建目录树方法移至 StringUtil；
-- 其他部分代码优化。
+- 其他部分代码优化纠错。
