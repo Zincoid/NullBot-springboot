@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.component.tool.OssUrlBuilder;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.BotPageSelector;
@@ -28,7 +28,7 @@ public class VideoGetCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
-    private final BotNextInputer botNextInputer;
+    private final BotInputManager botInputManager;
 
     private static final int PAGE_SIZE = 5;  // 查询单页大小
     private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
@@ -68,9 +68,11 @@ public class VideoGetCommand implements Command {
         ).size(PAGE_SIZE).userId(userId).build();
 
         pager.init();
-        while (pager.input(botNextInputer, WAIT_TIMEOUT)) {
+        while (pager.input(botInputManager, WAIT_TIMEOUT)) {
             log.info("\t\t\t\t├─[VideoGet] 已操作分页器");
         }
+        // BotInputer in = new BotInputer(userId).timeout(WAIT_TIMEOUT);
+        // pager.start(in);
     }
 
     private Void sendVideo(Bot bot, Long groupId, FilePO video) {
