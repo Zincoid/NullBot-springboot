@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.component.storage.DuelStorage;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.info.DuelInfo;
@@ -30,7 +30,7 @@ public class DuelCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
     private final DuelStorage duelStorage;
-    private final BotNextInputer botNextInputer;
+    private final BotInputManager botInputManager;
 
     private static final int SELECTION_TIME = 30;  // 抉择时间 (单位: Second)
 
@@ -55,7 +55,7 @@ public class DuelCommand implements Command {
             builder.text("\n\n注: 发送L或R进行选择(%s秒内)".formatted(SELECTION_TIME));
             bot.sendGroupMsg(groupId, builder.build(), false);
 
-            List<Pair<Long, String>> inputs = botNextInputer
+            List<Pair<Long, String>> inputs = botInputManager
                     .request(BniMode.GM, groupId, "[LlRr]", SELECTION_TIME);
 
             Map<Long, Pair<Long, String>> lastInputMap = new LinkedHashMap<>();
