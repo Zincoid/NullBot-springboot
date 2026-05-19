@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
-import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.component.tool.OssUrlBuilder;
 import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -21,24 +21,24 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class TestCommand implements Command {
-    private final OssUrlBuilder ossUrlBuilder;
 
-    // private final BotNextInputer botNextInputer;
+    private final OssUrlBuilder ossUrlBuilder;
+    private final BotInputManager botInputManager;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
-        // Long userId = event.getUserId();
+        Long userId = event.getUserId();
 
         String msg1 = MsgUtils.builder()
                 .img(ossUrlBuilder.from("/root/Nullbot/file/image/acg/明日方舟/莱伊_2.png"))
                 .build();
-        String msg2 = MsgUtils.builder()
-                .video(ossUrlBuilder.from("/root/Nullbot/file/video/collect/97781267c560e2aa42d07f05759161f9.mp4"), "")
-                .build();
-
+        // String msg2 = MsgUtils.builder()
+        //         .video(ossUrlBuilder.from("/root/Nullbot/file/video/collect/97781267c560e2aa42d07f05759161f9.mp4"), "")
+        //         .build();
+        //
         bot.sendGroupMsg(groupId, msg1, false);
-        bot.sendGroupMsg(groupId, msg2, false);
+        // bot.sendGroupMsg(groupId, msg2, false);
 
         // if (params.size() < 2)
         //     throw new NullBotMsgException("[测试] ❌参数不足");
@@ -57,7 +57,7 @@ public class TestCommand implements Command {
         // bot.sendGroupMsg(groupId, "[测试] ⏳等待输入中...", false);
         // List<Pair<Long, String>> inputs;
         // try {
-        //     inputs = botNextInputer.request(mode, mode == BniMode.PS ? userId : groupId, ".*", timeout);
+        //     inputs = botInputManager.request(mode, mode == BniMode.PS ? userId : groupId, ".*", timeout);
         // } catch (Exception e) {
         //     throw new NullBotMsgException("[测试] ❌" + e.getMessage());
         // }
@@ -66,6 +66,11 @@ public class TestCommand implements Command {
         //     return;
         // }
         // bot.sendGroupMsg(groupId, "[测试] ✅输入结束\n" + inputs, false);
+
+        bot.sendGroupMsg(groupId, """
+                [测试] ✅测试结束
+                - GroupID: %s
+                - UserID: %s""".formatted(groupId, userId), false);
     }
 
     @Override
