@@ -18,6 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class SettingManager {
 
+    /* TODO: 使用数据库重构设置管理 */
+
     private final DefaultProperties defaultProperties;
     private final Map<Long, SettingInfo> settings;
 
