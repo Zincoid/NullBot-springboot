@@ -50,10 +50,10 @@ public class CommandListener {
         String message = event.getMessage();
 
         if (message.startsWith(commandPrefix)) {  // 检测普通命令
-            log.info("◉ [PrivateAction:Command] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
+            log.info("◉ [PrivateAction:Command] 来自 {}({}) -> {}", userName, userId, message);
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
         } else if (message.startsWith("#")) {  // 检测授权命令
-            log.info("◉ [PrivateAction:Authorize] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
+            log.info("◉ [PrivateAction:Authorize] 来自 {}({}) -> {}", userName, userId, message);
             if (securityCodeScheduler.validateCode("access", message.substring(1))) {
                 permissionHandler.addAllowedPrivateUser(userId);
                 log.info("└─[Success] {}({}) 已授权", userName, userId);
@@ -64,7 +64,7 @@ public class CommandListener {
             bot.sendPrivateMsg(userId, "❌访问码错误", false);
         } else {  // 默认触发 AI 对话
             String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
-            log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", userName, userId, parsed.replaceAll("\\R", " "));
+            log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", userName, userId, parsed);
             commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), false, false));
         }
 
@@ -98,12 +98,12 @@ public class CommandListener {
         monitorListener.onGroupBottleAutoThrow(bot, event);
 
         if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
-            log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
+            log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
         } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {  // 检测引用命令
             JsonNode textNode = event.getArrayMsg().get(1).getData().get("text");
             if (textNode != null && textNode.asString().startsWith(commandPrefix)) {
-                log.info("◉ [GroupAction:ReplyCommand] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage().replaceAll("\\R", " "));
+                log.info("◉ [GroupAction:ReplyCommand] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
                 commandProcessor.processQQ(bot, new CommandEvent<>(event));
             }
         }
@@ -122,7 +122,7 @@ public class CommandListener {
         monitorListener.onGroupBottleAutoThrow(bot, event);
 
         String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
-        log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed.replaceAll("\\R", " "));
+        log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), true, true));
     }
 
