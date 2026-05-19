@@ -507,7 +507,6 @@ public class DeepSeekClient {
             Bot bot, Event event, boolean voice, boolean embeddingAuth, boolean embeddingLimit
     ) throws IOException {
 
-        log.info("EmbeddingChain: {}", response);
         // 丢弃判断
         if (response.contains("{Discard}")) return "Discarded";
         // 过滤判断
@@ -525,7 +524,6 @@ public class DeepSeekClient {
         while (matcher.find()) {
             String segment = matcher.group(1).trim();
             if (segment.startsWith("{") && segment.endsWith("}")) {
-                log.info("EmbeddingChain-cmd: {}", matcher.group(1));
                 // 执行指令
                 String command = segment.substring(1, segment.length() - 1).trim();
                 if (command.isEmpty()) continue;
@@ -535,7 +533,6 @@ public class DeepSeekClient {
                 chatMessages.add(new ChatMessage(
                         null, botId, "Null", "assistant", segment));
             } else {
-                log.info("EmbeddingChain-msg: {}", segment);
                 // 发送消息
                 if (segment.isEmpty()) continue;
                 Integer messageId = sendMsg(bot, targetId, segment, isPrivate, voice);
