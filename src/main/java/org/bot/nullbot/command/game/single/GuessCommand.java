@@ -125,6 +125,8 @@ public class GuessCommand implements Command {
             bot.sendGroupMsg(groupId, fail, false);
             log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
 
+        } catch (Exception e) {
+            throw new NullBotMsgException("[猜角色] ❌" + e.getMessage());
         } finally {
             guessStorage.removeGuess(groupId);
         }

@@ -98,6 +98,8 @@ public class DuelCommand implements Command {
                     loserNames.isEmpty() ? "无" : String.join(", ", loserNames)), false
             );
 
+        } catch (Exception e) {
+            throw new NullBotMsgException("[斗蛐蛐] ❌" + e.getMessage());
         } finally {
             duelStorage.removeDuel(groupId);
         }
