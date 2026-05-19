@@ -30,6 +30,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommandListener {
 
+    /* Shiro 2.3.3 框架有BUG 回复消息中有@机器人和另一个人时会被判定为 AtEnum.NOT_NEED 的方法 */
+
     private final CommandProcessor commandProcessor;
     private final MonitorListener monitorListener;
     private final SecurityCodeScheduler securityCodeScheduler;
@@ -49,10 +51,12 @@ public class CommandListener {
         String userName = event.getPrivateSender().getNickname();
         String message = event.getMessage();
 
-        if (message.startsWith(commandPrefix)) {  // 检测普通命令
+        if (message.startsWith(commandPrefix)) {
+            // 普通命令处理
             log.info("◉ [PrivateAction:Command] 来自 {}({}) -> {}", userName, userId, message);
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
-        } else if (message.startsWith("#")) {  // 检测授权命令
+        } else if (message.startsWith("#")) {
+            // 授权命令处理
             log.info("◉ [PrivateAction:Authorize] 来自 {}({}) -> {}", userName, userId, message);
             if (securityCodeScheduler.validateCode("access", message.substring(1))) {
                 permissionHandler.addAllowedPrivateUser(userId);
@@ -62,19 +66,18 @@ public class CommandListener {
             }
             log.info("└─[Fail] {}({}) 访问码错误", userName, userId);
             bot.sendPrivateMsg(userId, "❌访问码错误", false);
-        } else {  // 默认触发 AI 对话
+        } else {
+            // 私聊对话处理
             String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
             log.info("◉ [PrivateAction:AIChat] 来自 {}({}) -> {}", userName, userId, parsed);
-            commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), false, false));
+            commandProcessor.processQQ(bot, new CommandEvent<>(
+                    event, "Chat", List.of(parsed), false, false));
         }
 
-        // 默认通知管理员
-        // log.info("◉ [PrivateAction:Notice] 来自 {}({}) -> {}", userName, userId, message.replaceAll("\\R", " "));
-        // bot.sendPrivateMsg(adminId, "\uD83D\uDCE9来自%s(%s)的私信:\n%s".formatted(
-        //         userName,
-        //         userId,
-        //         message
-        // ), false);
+        // // 默认通知管理员
+        // log.info("◉ [PrivateAction:Notice] 来自 {}({}) -> {}", userName, userId, message);
+        // bot.sendPrivateMsg(adminId, "\uD83D\uDCE9来自%s(%s)的私信:\n%s"
+        //         .formatted(userName, userId, message), false);
         // bot.sendPrivateMsg(userId, "✉️已通知管理员", false);
     }
 
@@ -89,23 +92,28 @@ public class CommandListener {
             monitorListener.onGroupImageCollection(event);
             return;
         }
-
         // 串行调用 消息预处理 默认处理情况
         monitorListener.onGroupKeywordDetection(bot, event);
-        if (!monitorListener.onGroupAIAutoReply(bot, event))  // 触发自动发言会记录当前消息 忽略消息收集
+        if (!monitorListener.onGroupAIAutoReply(bot, event))  // 按需 AI自动记录
             monitorListener.onGroupMessageCollection(bot, event);
         monitorListener.onGroupImageCollection(event);
         monitorListener.onGroupBottleAutoThrow(bot, event);
 
-        if (event.getMessage().startsWith(commandPrefix)) {  // 检测普通命令
-            log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        String userName = event.getSender().getNickname();
+        String message = event.getMessage();
+
+        if (message.startsWith(commandPrefix)) {
+            // 普通命令处理
+            log.info("◉ [GroupAction:Command] 来自群 {} - {}({}) -> {}", groupId, userName, userId, message);
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
-        } else if (event.getArrayMsg().size() >= 2 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {  // 检测引用命令
+        } else if (event.getArrayMsg().size() > 1 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
+            // 引用命令处理
             JsonNode textNode = event.getArrayMsg().get(1).getData().get("text");
-            if (textNode != null && textNode.asString().startsWith(commandPrefix)) {
-                log.info("◉ [GroupAction:ReplyCommand] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
-                commandProcessor.processQQ(bot, new CommandEvent<>(event));
-            }
+            if (textNode == null || !textNode.asString().startsWith(commandPrefix)) return;
+            log.info("◉ [GroupAction:ReplyCommand] 来自群 {} - {}({}) -> {}", groupId, userName, userId, message);
+            commandProcessor.processQQ(bot, new CommandEvent<>(event));
         }
     }
 
@@ -116,15 +124,15 @@ public class CommandListener {
 
         // 串行调用 消息预处理 默认处理情况
         // monitorListener.onGroupKeywordDetection(bot, event);  // 禁用 关键词检测
-        // if (!monitorListener.onGroupAIAutoReply(bot, event))  // 无需调用 AI即将回复
-        //     monitorListener.onGroupMessageCollection(bot, event);  // 无需调用 AI自动记录
+        // if (!monitorListener.onGroupAIAutoReply(bot, event))  // 无需 AI即将回复
+        //     monitorListener.onGroupMessageCollection(bot, event);  // 无需 AI自动记录
         monitorListener.onGroupImageCollection(event);
         monitorListener.onGroupBottleAutoThrow(bot, event);
 
         String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
-        log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
-        commandProcessor.processQQ(bot, new CommandEvent<>(event, "Chat", List.of(parsed), true, true));
+        log.info("◉ [GroupAction:At] 来自群 {} - {}({}) -> {}",
+                event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
+        commandProcessor.processQQ(bot, new CommandEvent<>(
+                event, "Chat", List.of(parsed), true, true));
     }
-
-    // Shiro 2.3.3 框架有BUG 回复消息中有@机器人和另一个人时会被判定为 AtEnum.NOT_NEED 的方法
 }
