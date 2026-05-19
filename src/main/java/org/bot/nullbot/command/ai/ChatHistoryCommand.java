@@ -58,7 +58,7 @@ public class ChatHistoryCommand implements Command {
         // while (pager.input(botNextInputer, WAIT_TIMEOUT)) {
         //     log.info("\t\t\t\t├─[ChatHistory] 已操作分页器");
         // }
-        BotInputer in = new BotInputer(BniMode.PS, userId).timeout(WAIT_TIMEOUT);
+        BotInputer in = new BotInputer(userId).timeout(WAIT_TIMEOUT);
         pager.start(in);
     }
 

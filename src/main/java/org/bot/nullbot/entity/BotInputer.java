@@ -12,12 +12,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BotInputer {
 
-    private final BniMode mode;
     private final Long targetId;
 
+    private BniMode mode = BniMode.PS;
     private String pattern = ".*";
     private long timeout = 30;
     private boolean coverable = false;
+
+    public BotInputer mode(BniMode mode) {
+        this.mode = mode;
+        return this;
+    }
 
     public BotInputer pattern(String pattern) {
         this.pattern = pattern;

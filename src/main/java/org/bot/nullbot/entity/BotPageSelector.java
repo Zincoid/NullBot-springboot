@@ -113,6 +113,7 @@ public class BotPageSelector<K, V> {
     }
 
     public boolean input(BotInputer inputer) {
+        inputer.setMode(BniMode.PS);
         inputer.setPattern("[1-9]\\d*|(?i)up|down|end");
         inputer.setCoverable(false);
         List<Pair<Long, String>> inputs = inputer.next();
@@ -217,8 +218,10 @@ public class BotPageSelector<K, V> {
     }
 
     private boolean select(int i) {
-        if (i < 1 || i > total)
-            throw new IllegalArgumentException("索引超出范围");
+        if (i < 1 || i > total) {
+            bot.sendGroupMsg(groupId, "[%s] ❌索引越界".formatted(title), false);
+            return true;
+        }
         action.apply(bot, groupId, keys.get(i - 1));
         return continuous;
     }
