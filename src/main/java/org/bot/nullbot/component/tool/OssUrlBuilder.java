@@ -18,12 +18,11 @@ public class OssUrlBuilder {
 
     public String from(String path) {
         String baseDir = fileStorageProperties.getFileDirectory();
-        if (path.startsWith(baseDir)) {
-            String relativePath = path.substring(baseDir.length());
-            if (relativePath.isEmpty())
-                throw new IllegalArgumentException("无相对路径");
-            return apiProperties.getBaseUrl() + "/oss/to/" + relativePath;
-        }
-        throw new IllegalArgumentException("路径不在文件根下");
+        if (!path.startsWith(baseDir))
+            throw new IllegalArgumentException("路径不在根下");
+        String relativePath = path.substring(baseDir.length());
+        if (relativePath.isEmpty())
+            throw new IllegalArgumentException("路径不能为空");
+        return apiProperties.getBaseUrl() + "/oss/to/" + relativePath;
     }
 }
