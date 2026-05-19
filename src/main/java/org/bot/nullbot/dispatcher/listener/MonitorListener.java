@@ -41,6 +41,7 @@ import java.util.Objects;
 public class MonitorListener {
 
     private final BotNextInputer botNextInputer;  // 弃用?
+    private final BotInputManager botInputManager;
     private final CommandProcessor commandProcessor;
     private final ChatStorage chatStorage;
     private final DeepSeekProperties deepSeekProperties;
@@ -55,7 +56,7 @@ public class MonitorListener {
 
     public boolean onGroupNextInputDetection(GroupMessageEvent event) {
         boolean isOldMethodResponded = botNextInputer.response(event.getGroupId(), event.getUserId(), event.getMessage());
-        boolean isNewMethodResponded = BotInputManager.response(event.getGroupId(), event.getUserId(), event.getMessage());
+        boolean isNewMethodResponded = botInputManager.response(event.getGroupId(), event.getUserId(), event.getMessage());
         return isOldMethodResponded || isNewMethodResponded;
     }
 
