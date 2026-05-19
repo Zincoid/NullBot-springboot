@@ -3,7 +3,7 @@ package org.bot.nullbot.entity;
 import com.mikuac.shiro.core.Bot;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.bot.nullbot.component.control.BotNextInputer;
+import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.function.BotFunction;
@@ -103,7 +103,7 @@ public class BotPageSelector<K, V> {
         }
     }
 
-    // ========== BotInputManager + BotInputer 控制方案 ==========
+    // =================== BotInputer 控制方案 ====================
 
     public void start(BotInputer inputer) {
         init();
@@ -122,31 +122,31 @@ public class BotPageSelector<K, V> {
         return input(inputs.getFirst().getRight().toUpperCase());
     }
 
-    // ================= BotNextInputer 控制方案 =================
+    // ================= BotInputManager 控制方案 =================
 
-    public void start(BotNextInputer inputer) {
+    public void start(BotInputManager manager) {
         init();
-        while (input(inputer)) {
+        while (input(manager)) {
             log.info("\t\t\t\t├─[BotPageSelector] 已操作{}分页器", title);
         }
     }
 
-    public boolean input(BotNextInputer inputer) {
-        return input(inputer, userId, DEFAULT_INPUTER_TIMEOUT);
+    public boolean input(BotInputManager manager) {
+        return input(manager, userId, DEFAULT_INPUTER_TIMEOUT);
     }
 
-    public boolean input(BotNextInputer inputer, int timeout) {
+    public boolean input(BotInputManager manager, int timeout) {
         if (userId == null)
             throw new NullPointerException("BotPageSelector未指定UserId");
-        return input(inputer, userId, timeout);
+        return input(manager, userId, timeout);
     }
 
-    public boolean input(BotNextInputer inputer, Long userId) {
-        return input(inputer, userId, DEFAULT_INPUTER_TIMEOUT);
+    public boolean input(BotInputManager manager, Long userId) {
+        return input(manager, userId, DEFAULT_INPUTER_TIMEOUT);
     }
 
-    public boolean input(BotNextInputer inputer, Long userId, int timeout) {
-        List<Pair<Long, String>> inputs = inputer
+    public boolean input(BotInputManager manager, Long userId, int timeout) {
+        List<Pair<Long, String>> inputs = manager
                 .request(BniMode.PS, userId, "[1-9]\\d*|(?i)up|down|end", timeout);
         if (inputs.isEmpty())
             throw new NullBotMsgException("[%s] ⌛️输入超时".formatted(title));
