@@ -2,19 +2,19 @@ package org.bot.nullbot.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.entity.page.DataPage;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface FileService {
 
-    boolean addRecordOnly(String directory, String fileName, Long fileSize, LocalDateTime lastModified, Long ownerId, String ownerName);
+    FileInfo saveFile(String url, String directory, String fileName, Long ownerId, String ownerName);
 
-    boolean deleteRecordOnly(String directory, String fileName);
+    boolean deleteFile(String directory, String fileName);
 
     boolean initRoot();
 
