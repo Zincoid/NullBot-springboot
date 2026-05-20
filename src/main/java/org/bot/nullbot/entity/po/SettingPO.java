@@ -1,17 +1,17 @@
 package org.bot.nullbot.entity.po;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.enums.ChatScope;
 import org.bot.nullbot.enums.LimitScope;
 
 @Data
 @RequiredArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor
 public class SettingPO {
 
-    private final Long groupId;
+    private Long groupId;
 
     private LimitScope limitScope = LimitScope.Group;
     private int limitCapacity = 25;
@@ -37,6 +37,10 @@ public class SettingPO {
     private double guessCropRatio = 0.1;
     private double guessTransparentRatio = 0.75;
     private int guessPadding = 250;
+
+    public SettingPO(Long groupId) {
+        this.groupId = groupId;
+    }
 
     public LimitScope switchLimitScope() { return this.limitScope = this.limitScope.next(); }
 
