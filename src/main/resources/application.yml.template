@@ -62,6 +62,7 @@ shiro:
     max-binary-message-buffer-size: 5120000
     max-text-message-buffer-size: 512000
     access-token:
+  interceptor: org.bot.nullbot.interceptor.BotInterceptor
   limiter:
     enable: true
     rate: 10
