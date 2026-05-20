@@ -40,7 +40,7 @@ public class MatchManager {
             match.setEndTime(LocalDateTime.now());
             match.setLastActionTime(LocalDateTime.now());
 
-            // TODO: 保存对局历史
+            /* TODO: 保存对局历史 */
 
             playerMatchIndex.remove(match.getPlayer1().getUserId());
             playerMatchIndex.remove(match.getPlayer2().getUserId());
