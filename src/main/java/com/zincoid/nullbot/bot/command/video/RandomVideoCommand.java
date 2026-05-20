@@ -29,7 +29,8 @@ public class RandomVideoCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        List<FilePO> videos = fileService.search("", fileStorageProperties.getVideoPath());
+        String videoPath = fileStorageProperties.getVideoPath() + "/collect";
+        List<FilePO> videos = fileService.search("", videoPath);
         if (videos.isEmpty())
             throw new NullBotMsgException("[随机视频] ❌暂无视频");
         FilePO video = videos.get(ThreadLocalRandom.current().nextInt(videos.size()));
