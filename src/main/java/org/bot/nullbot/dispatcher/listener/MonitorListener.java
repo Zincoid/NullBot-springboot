@@ -15,6 +15,7 @@ import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.info.FileInfo;
+import org.bot.nullbot.entity.setting.ChatOption;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.MsgParseUtil;
@@ -62,7 +63,9 @@ public class MonitorListener {
 
     @FunctionControl("AIAutoReply")
     public boolean doGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
-        if (!settingService.isAutoReply(event.getGroupId())) return false;
+        ChatOption chatOption = settingService.getChatOption(event.getGroupId());
+
+        if (!chatOption.isAutoReply()) return false;
         if (event.getMessage().startsWith(commandPrefix)) {
             return false;
         } else if (event.getArrayMsg().size() > 1 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
@@ -70,7 +73,7 @@ public class MonitorListener {
             if (textNode != null && textNode.asString().startsWith(commandPrefix)) return false;
         }
 
-        double freq = settingService.getReplyFrequency(event.getGroupId());
+        double freq = chatOption.getReplyFrequency();
         if (freq < Math.random()) return false;
         String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至群聊 {}", event.getGroupId());
@@ -83,7 +86,7 @@ public class MonitorListener {
 
     @FunctionControl("ImgCollect")
     public void doGroupImgCollect(GroupMessageEvent event) {  // 缺失群目录时数据库无法插入文件条目需先SYNC
-        if (!settingService.isImageCollect(event.getGroupId())) return;
+        if (!settingService.getMonitorOption(event.getGroupId()).isImageCollect()) return;
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
@@ -108,7 +111,7 @@ public class MonitorListener {
 
     @FunctionControl("MsgCollect")
     public void doGroupMsgCollect(Bot bot, GroupMessageEvent event) {
-        if (!settingService.isMessageCollect(event.getGroupId())) return;
+        if (!settingService.getMonitorOption(event.getGroupId()).isMessageCollect()) return;
 
         if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // 按需 AI自动记录
         String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
@@ -121,7 +124,7 @@ public class MonitorListener {
 
     @FunctionControl("KeywordAct")
     public void doGroupKeywordAct(Bot bot, GroupMessageEvent event) throws Exception {
-        if (!settingService.isKeywordDetect(event.getGroupId())) return;
+        if (!settingService.getMonitorOption(event.getGroupId()).isKeywordDetect()) return;
 
         if (event.getMessage().contains("男娘")) {
             log.info("◉ [GroupMonitor:KeywordAct] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
