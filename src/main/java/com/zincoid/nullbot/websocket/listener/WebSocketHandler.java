@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.websocket;
+package com.zincoid.nullbot.websocket.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

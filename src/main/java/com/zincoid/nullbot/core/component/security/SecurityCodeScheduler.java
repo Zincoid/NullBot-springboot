@@ -5,7 +5,7 @@ import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.tool.BotOperator;
-import com.zincoid.nullbot.core.component.websocket.WebSocketSender;
+import com.zincoid.nullbot.core.component.tool.WsSender;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SecurityCodeScheduler {
 
     private final BotOperator botOperator;  // 管理群通知工具
-    private final WebSocketSender webSocketSender;  // 客户端通知工具
+    private final WsSender wsSender;  // 客户端通知工具
     private final ScheduledExecutorService scheduler;  // 任务调度器
     private final ConcurrentHashMap<String, CodeEntry> codeEntries;  // 存储安全码及调度任务
 
@@ -40,9 +40,9 @@ public class SecurityCodeScheduler {
         private final boolean logging;
     }
 
-    public SecurityCodeScheduler(BotOperator botOperator, WebSocketSender webSocketSender) {
+    public SecurityCodeScheduler(BotOperator botOperator, WsSender wsSender) {
         this.botOperator = botOperator;
-        this.webSocketSender = webSocketSender;
+        this.wsSender = wsSender;
         scheduler = Executors.newScheduledThreadPool(5);
         codeEntries = new ConcurrentHashMap<>();
     }
@@ -143,7 +143,7 @@ public class SecurityCodeScheduler {
         ));
         log.info("▽ [SecurityCodeScheduler] 安全码已刷新 - CodeId: {}, NewCode: {}", codeId, newCode);
         if (entry.logging) {
-            webSocketSender.broadcast("INFO", "安全码已刷新 -> %s: %s".formatted(codeId, newCode));
+            wsSender.broadcast("INFO", "安全码已刷新 -> %s: %s".formatted(codeId, newCode));
             botOperator.sendLogGroupMsg("""
                 [安全码调度] 🔑已刷新
                 - CodeID: %s

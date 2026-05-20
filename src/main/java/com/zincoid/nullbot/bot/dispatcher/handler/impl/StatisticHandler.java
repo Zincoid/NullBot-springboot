@@ -12,7 +12,7 @@ import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
 import com.zincoid.nullbot.core.entity.CommandEvent;
 import com.zincoid.nullbot.core.service.StatisticService;
-import com.zincoid.nullbot.core.component.websocket.WebSocketSender;
+import com.zincoid.nullbot.core.component.tool.WsSender;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class StatisticHandler implements Handler {
 
     private final StatisticService statisticService;
-    private final WebSocketSender webSocketSender;
+    private final WsSender wsSender;
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
@@ -59,7 +59,7 @@ public class StatisticHandler implements Handler {
         //         )
         // );
 
-        webSocketSender.broadcast(
+        wsSender.broadcast(
                 groupId == 0 ? "私聊" : "群聊 " + groupId,
                 "%s(%s) -> %s %s".formatted(
                         bot.getStrangerInfo(userId, true).getData().getNickname(),
