@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.game.manager.MatchManager;
 import com.zincoid.nullbot.core.component.game.manager.MatchPoolManager;
 import com.zincoid.nullbot.core.component.game.manager.PlayerManager;
-import com.zincoid.nullbot.core.properties.MatchProperties;
 import com.zincoid.nullbot.core.entity.game.basic.Match;
 import com.zincoid.nullbot.core.entity.game.basic.Player;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +23,9 @@ import java.util.Objects;
 @Component
 public class MatchCleanupScheduler {
 
+    private static final long WAITING_TIMEOUT = 120;  // 匹配等待超时 (单位: Sec)
+    private static final long PLAYING_TIMEOUT = 240;  // 游戏等待超时 (单位: Sec)
+
     @Value("${nullbot.bot-id}")
     private Long botId;
     private final BotContainer botContainer;
@@ -31,24 +33,21 @@ public class MatchCleanupScheduler {
     private final MatchPoolManager poolManager;
     private final MatchManager matchManager;
     private final PlayerManager playerManager;
-    private final MatchProperties matchProperties;
 
     // gameType -> match handler
-    private final Map<String, GameMatchHandler> handlerMap = new HashMap<>();
+    private final Map<String, GameMatchHandler<?, ?>> handlerMap = new HashMap<>();
 
     public MatchCleanupScheduler(
             BotContainer botContainer,
             MatchPoolManager poolManager,
             MatchManager matchManager,
             PlayerManager playerManager,
-            MatchProperties matchProperties,
-            List<GameMatchHandler> handlers
+            List<GameMatchHandler<?, ?>> handlers
     ) {
         this.botContainer = botContainer;
         this.poolManager = poolManager;
         this.matchManager = matchManager;
         this.playerManager = playerManager;
-        this.matchProperties = matchProperties;
 
         // 自动注册所有 Handler
         handlers.forEach(h -> handlerMap.put(h.gameType(), h));
@@ -72,7 +71,7 @@ public class MatchCleanupScheduler {
         LocalDateTime now = LocalDateTime.now();
         poolManager.getAllPools().forEach((gameType, queue) -> queue.removeIf(p -> {
             long seconds = Duration.between(p.getLastActionTime(), now).getSeconds();
-            if (seconds >= matchProperties.getWaitingTimeoutSeconds()) {
+            if (seconds >= WAITING_TIMEOUT) {
                 log.info("◉ [Match Cleaner] 清理匹配超时玩家 {}", p.getUserId());
                 bot.sendGroupMsg(p.getGroupId(), p.getUserName() + "(" + p.getUserId() + ") 匹配超时！", false);
                 playerManager.resetPlayer(p);
@@ -93,7 +92,7 @@ public class MatchCleanupScheduler {
             LocalDateTime lastActionTime = match.getLastActionTime();
             if (lastActionTime == null) lastActionTime = match.getStartTime();
             long seconds = Duration.between(lastActionTime, now).getSeconds();
-            if (seconds >= matchProperties.getPlayingTimeoutSeconds()) {
+            if (seconds >= PLAYING_TIMEOUT) {
                 log.warn("◉ [Match Cleaner] Match {} 超时未响应自动结束", match.getMatchId());
                 Player p1 = match.getPlayer1();
                 Player p2 = match.getPlayer2();

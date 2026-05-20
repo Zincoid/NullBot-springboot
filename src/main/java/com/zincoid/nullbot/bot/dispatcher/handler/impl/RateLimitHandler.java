@@ -6,11 +6,11 @@ import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.properties.RateLimitProperties;
 import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
 import com.zincoid.nullbot.core.entity.CommandEvent;
 import com.zincoid.nullbot.core.component.control.CommandRateLimiter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -20,13 +20,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RateLimitHandler implements Handler {
 
-    private final RateLimitProperties rateLimitProperties;
+    @Value("${nullbot.command.limit}")
+    private boolean enabled;
+
     private final CommandRateLimiter commandRateLimiter;
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception
     {
-        if (!rateLimitProperties.getEnabled()) {
+        if (!enabled) {
             log.info("\t\t├─[RateLimitHandler] 未启用速率限制");
             chain.doHandle(bot, event, command);
             return;

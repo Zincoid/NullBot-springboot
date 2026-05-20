@@ -72,8 +72,7 @@ nullbot:
   log-id:  # 日志用群聊
   command:
     prefix: /  # 指令前缀
-    rate-limit:
-      enabled: true  # 指令限速
+    limit: true  # 指令限速
 
 file:
   init: true  # 启动时是否文件同步
