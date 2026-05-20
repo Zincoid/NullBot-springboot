@@ -102,7 +102,6 @@ nullbot:
       image-path: /image
       video-path: /video
       audio-path: /audio
-
   ai:
     deepseek:  # DeepSeek API
       api-url: https://api.deepseek.com/chat/completions
