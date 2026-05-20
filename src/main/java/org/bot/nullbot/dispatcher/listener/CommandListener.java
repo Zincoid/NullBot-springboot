@@ -104,6 +104,12 @@ public class CommandListener {
     @Async("ThreadExecutor")
     public void onGroupMessageInteraction(Bot bot, GroupMessageEvent event) throws Exception {
 
+        // // 记录会话信息至 ThreadLocal
+        // Long groupId = event.getGroupId();
+        // Long userId = event.getUserId();
+        // SettingPO setting = settingService.get(groupId);
+        // BotCtxUtil.set(userId, groupId, setting);
+
         // 串行调用 消息预处理 指令输入捕获
         if (monitorListener.doGroupInputResponse(event)) {
             monitorListener.doGroupMsgCollect(bot, event);
