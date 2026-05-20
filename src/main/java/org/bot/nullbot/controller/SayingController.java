@@ -7,8 +7,7 @@ import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.po.SayingPO;
 import org.bot.nullbot.service.SayingService;
-import org.bot.nullbot.util.CsvExportUtil;
-import org.bot.nullbot.util.CsvImportUtil;
+import org.bot.nullbot.util.CsvUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,14 +58,14 @@ public class SayingController {
     }
 
     @GetMapping("/exportCsv")
-    public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
+    public void exportCsv(HttpServletResponse response) throws IOException {
         List<SayingPO> sayings = sayingService.getList();
-        CsvExportUtil.exportToCsv(response, "Sayings_" + LocalDateTime.now(), sayings, SayingPO.class);
+        CsvUtil.exportCsv(response, "Sayings_" + LocalDateTime.now(), sayings, SayingPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
-        List<SayingPO> sayings = CsvImportUtil.importFromCsv(csvFile, SayingPO.class);
+        List<SayingPO> sayings = CsvUtil.importCsv(csvFile, SayingPO.class);
         sayingService.adds(sayings);
     }
 }

@@ -7,8 +7,7 @@ import org.bot.nullbot.entity.page.DataPage;
 import org.bot.nullbot.entity.po.GroupPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.GroupService;
-import org.bot.nullbot.util.CsvExportUtil;
-import org.bot.nullbot.util.CsvImportUtil;
+import org.bot.nullbot.util.CsvUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,14 +56,14 @@ public class GroupController {
     }
 
     @GetMapping("/exportCsv")
-    public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
+    public void exportCsv(HttpServletResponse response) throws IOException {
         List<GroupPO> groups = groupService.getList();
-        CsvExportUtil.exportToCsv(response, "Groups_" + LocalDateTime.now(), groups, GroupPO.class);
+        CsvUtil.exportCsv(response, "Groups_" + LocalDateTime.now(), groups, GroupPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
-        List<GroupPO> groups = CsvImportUtil.importFromCsv(csvFile, GroupPO.class);
+        List<GroupPO> groups = CsvUtil.importCsv(csvFile, GroupPO.class);
         groupService.adds(groups);
     }
 }

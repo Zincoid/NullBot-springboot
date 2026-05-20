@@ -787,4 +787,5 @@
   - 新增 注解 @BotContext 和 BotCtxAspect 切面用于通过 AOP 自动注册会话信息；
 - 移除 CommandProcessor 组件的 Async 注解；
 - BotFunction 函数式接口改为 Consumer 风格；
+- 合并 CsvUtil 并优化代码；
 - 优化部分代码。

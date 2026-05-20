@@ -7,8 +7,7 @@ import org.bot.nullbot.entity.po.InventoryPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.vo.InventoryVO;
 import org.bot.nullbot.service.InventoryService;
-import org.bot.nullbot.util.CsvExportUtil;
-import org.bot.nullbot.util.CsvImportUtil;
+import org.bot.nullbot.util.CsvUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,14 +57,14 @@ public class InventoryController {
     }
 
     @GetMapping("/exportCsv")
-    public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
+    public void exportCsv(HttpServletResponse response) throws IOException {
         List<InventoryPO> inventories = inventoryService.getList();
-        CsvExportUtil.exportToCsv(response, "Inventories_" + LocalDateTime.now(), inventories, InventoryPO.class);
+        CsvUtil.exportCsv(response, "Inventories_" + LocalDateTime.now(), inventories, InventoryPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
-        List<InventoryPO> inventories = CsvImportUtil.importFromCsv(csvFile, InventoryPO.class);
+        List<InventoryPO> inventories = CsvUtil.importCsv(csvFile, InventoryPO.class);
         inventoryService.adds(inventories);
     }
 }

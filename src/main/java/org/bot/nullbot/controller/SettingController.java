@@ -8,8 +8,7 @@ import org.bot.nullbot.component.control.CommandRateLimiter;
 import org.bot.nullbot.entity.po.SettingPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.SettingService;
-import org.bot.nullbot.util.CsvExportUtil;
-import org.bot.nullbot.util.CsvImportUtil;
+import org.bot.nullbot.util.CsvUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,14 +48,14 @@ public class SettingController {
     }
 
     @GetMapping("/exportCsv")
-    public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
+    public void exportCsv(HttpServletResponse response) throws IOException {
         List<SettingPO> settings = settingService.getAll();
-        CsvExportUtil.exportToCsv(response, "Settings_" + LocalDateTime.now(), settings, SettingPO.class);
+        CsvUtil.exportCsv(response, "Settings_" + LocalDateTime.now(), settings, SettingPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
-        List<SettingPO> settings = CsvImportUtil.importFromCsv(csvFile, SettingPO.class);
+        List<SettingPO> settings = CsvUtil.importCsv(csvFile, SettingPO.class);
         settingService.setAll(settings);
     }
 }

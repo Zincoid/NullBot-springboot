@@ -3,7 +3,7 @@ package org.bot.nullbot.component.control;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.po.SettingPO;
-import org.bot.nullbot.util.CsvImportUtil;
+import org.bot.nullbot.util.CsvUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class SettingManager {
     public SettingManager(FileStorageProperties fileStorageProperties) {
         settings = new ConcurrentHashMap<>();
         try {
-            List<SettingPO> defaultSettings = CsvImportUtil.importFromCsv(
+            List<SettingPO> defaultSettings = CsvUtil.importCsv(
                     fileStorageProperties.getConfigPath() + "/Settings.csv", SettingPO.class);
             setSettings(defaultSettings);
             log.info("▽ [SettingManager] 群组配置文件已载入");
