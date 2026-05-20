@@ -125,13 +125,14 @@ public class DeepSeekClient {
 
     /**
      * 与 DeepSeek 进行对话 (连续对话) (群聊)
+     *
      * @param messageId 消息ID 在此仅记录用 (用于撤回检测)
-     * @param groupId 群聊ID 用于区分不同的对话历史
-     * @param userId 用户ID 用于区分不同的对话历史，帮助AI区分用户
-     * @param userName 用户昵称 用于帮助AI区分用户
-     * @param message 用户消息
-     * @param bot 机器人实体 (用于执行嵌入命令和回复)
-     * @param event 命令事件实体 (用于执行嵌入命令)
+     * @param groupId   群聊ID 用于区分不同的对话历史
+     * @param userId    用户ID 用于区分不同的对话历史，帮助AI区分用户
+     * @param userName  用户昵称 用于帮助AI区分用户
+     * @param message   用户消息
+     * @param bot       机器人实体 (用于执行嵌入命令和回复)
+     * @param event     命令事件实体 (用于执行嵌入命令)
      * @return AI回复内容
      */
     public String chatGroup(
@@ -207,7 +208,7 @@ public class DeepSeekClient {
                 response = executeBasic(originalResponse, chatMessages, groupId, false, bot, setting.isVoice());
             return response;
         } catch (Exception e) {
-            if(setting.getChatScope() != ChatScope.Monitor) chatMessages.removeLast();  // 非监听模式请求失败移除新增的用户消息
+            if (setting.getChatScope() != ChatScope.Monitor) chatMessages.removeLast();  // 非监听模式请求失败移除新增的用户消息
             throw e;
         } finally {
             lock.unlock();  // 解锁历史存储
@@ -216,15 +217,18 @@ public class DeepSeekClient {
 
     /**
      * 清空对话历史 (群聊)
+     *
      * @param groupId 群聊ID
-     * @param userId 用户ID
+     * @param userId  用户ID
      * @return 清除模式
      */
     public ChatScope clearGroupHistory(Long groupId, Long userId) {
         ChatScope chatScope = settingService.get(groupId).getChatScope();
         switch (chatScope) {
             case Group -> chatStorage.clearGroupHistory(groupId);
-            case Personal -> { if (userId != null) chatStorage.clearUserHistory(userId); }
+            case Personal -> {
+                if (userId != null) chatStorage.clearUserHistory(userId);
+            }
             case Monitor -> chatStorage.clearMonitorHistory(groupId);
         }
         return chatScope;
@@ -232,9 +236,10 @@ public class DeepSeekClient {
 
     /**
      * 获取对话历史 (群聊)
-     *  @param groupId 群聊ID
-     *  @param userId 用户ID
-     *  @return 聊天记录列表
+     *
+     * @param groupId 群聊ID
+     * @param userId  用户ID
+     * @return 聊天记录列表
      */
     public List<ChatMessage> getGroupHistory(Long groupId, Long userId) {
         SettingPO setting = settingService.get(groupId);
@@ -249,12 +254,13 @@ public class DeepSeekClient {
 
     /**
      * 与 DeepSeek 进行对话 (连续对话) (私聊)
+     *
      * @param messageId 消息ID 在此仅记录用 (用于撤回检测)
-     * @param userId 用户ID 用于区分不同的对话历史，帮助AI区分用户
-     * @param userName 用户昵称 用于帮助AI区分用户
-     * @param message 用户消息
-     * @param bot 机器人实体 (用于执行嵌入命令和回复)
-     * @param event 命令事件实体 (用于执行嵌入命令)
+     * @param userId    用户ID 用于区分不同的对话历史，帮助AI区分用户
+     * @param userName  用户昵称 用于帮助AI区分用户
+     * @param message   用户消息
+     * @param bot       机器人实体 (用于执行嵌入命令和回复)
+     * @param event     命令事件实体 (用于执行嵌入命令)
      * @return AI回复内容
      */
     public String chatPrivate(
@@ -290,6 +296,7 @@ public class DeepSeekClient {
 
     /**
      * 清空对话历史 (私聊)
+     *
      * @param userId 用户ID
      */
     public void clearUserHistory(Long userId) {
@@ -300,6 +307,7 @@ public class DeepSeekClient {
 
     /**
      * 与 DeepSeek 进行对话 (非连续对话)
+     *
      * @param message 用户消息
      * @return AI 回复内容
      */
@@ -314,10 +322,11 @@ public class DeepSeekClient {
 
     /**
      * 添加系统信息构建发送给 API 的消息列表 (群聊)
+     *
      * @param chatMessages 信息列表
-     * @param groupId 群聊ID
-     * @param custom 自定义模式
-     * @param embedding 嵌入指令模式
+     * @param groupId      群聊ID
+     * @param custom       自定义模式
+     * @param embedding    嵌入指令模式
      * @return 发送给 API 的消息列表
      */
     private List<Map<String, String>> buildGroupMsgs(List<ChatMessage> chatMessages, Long groupId, boolean custom, boolean embedding) {
@@ -347,8 +356,9 @@ public class DeepSeekClient {
 
     /**
      * 添加系统信息构建发送给 API 的消息列表 (私聊)
+     *
      * @param chatMessages 信息列表
-     * @param userId 用户ID
+     * @param userId       用户ID
      * @return 发送给 API 的消息列表
      */
     private List<Map<String, String>> buildPrivateMsgs(List<ChatMessage> chatMessages, Long userId) {
@@ -407,8 +417,9 @@ public class DeepSeekClient {
 
     /**
      * 发送 HTTP 请求到 API
+     *
      * @param _messages 请求消息列表 (包括历史)
-     * @param thinking 思考模式
+     * @param thinking  思考模式
      * @return AI 回复内容
      */
     private String sendRequest(List<Map<String, String>> _messages, boolean thinking, int maxTokens) throws Exception {
@@ -460,12 +471,13 @@ public class DeepSeekClient {
 
     /**
      * 非指令嵌入模式应答处理
-     * @param response 原始响应文本
+     *
+     * @param response     原始响应文本
      * @param chatMessages 历史存储
-     * @param targetId 目标ID
-     * @param isPrivate 是否为私信
-     * @param bot 机器人实体
-     * @param voice 语音模式
+     * @param targetId     目标ID
+     * @param isPrivate    是否为私信
+     * @param bot          机器人实体
+     * @param voice        语音模式
      * @return 处理过的消息 (已过滤)
      */
     String executeBasic(
@@ -496,15 +508,16 @@ public class DeepSeekClient {
 
     /**
      * 指令嵌入模式应答处理 (链式)
-     * @param response 原始响应文本
-     * @param chatMessages 历史存储
-     * @param targetId 目标ID
-     * @param isPrivate 是否为私信
-     * @param bot 机器人实体
-     * @param event 指令事件
-     * @param embeddingAuth 嵌入指令验证
+     *
+     * @param response       原始响应文本
+     * @param chatMessages   历史存储
+     * @param targetId       目标ID
+     * @param isPrivate      是否为私信
+     * @param bot            机器人实体
+     * @param event          指令事件
+     * @param embeddingAuth  嵌入指令验证
      * @param embeddingLimit 嵌入指令限速
-     * @param voice 语音模式
+     * @param voice          语音模式
      * @return 处理过的消息 (未过滤)
      */
     String executeEmbeddingChain(
@@ -555,11 +568,12 @@ public class DeepSeekClient {
 
     /**
      * 发送消息
-     * @param bot 机器人实体
-     * @param targetId 目标ID
-     * @param message 消息
+     *
+     * @param bot       机器人实体
+     * @param targetId  目标ID
+     * @param message   消息
      * @param isPrivate 是否为私信
-     * @param voice 语音模式
+     * @param voice     语音模式
      * @return 发送的消息ID
      */
     private Integer sendMsg(Bot bot, Long targetId, String message, boolean isPrivate, boolean voice) {
@@ -584,6 +598,7 @@ public class DeepSeekClient {
 
     /**
      * 异常消息过滤器
+     *
      * @param message 消息
      * @return 是否过滤
      */
@@ -593,6 +608,7 @@ public class DeepSeekClient {
 
     /**
      * 构建拒绝应答消息
+     *
      * @return 消息字符串
      */
     private String buildRefusedMsg() throws IOException {
@@ -605,6 +621,7 @@ public class DeepSeekClient {
 
     /**
      * 构建过滤回复消息
+     *
      * @return 消息字符串
      */
     private String buildFilteredMsg() throws IOException {
