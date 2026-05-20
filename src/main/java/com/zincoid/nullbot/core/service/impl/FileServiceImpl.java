@@ -17,6 +17,7 @@ import com.zincoid.nullbot.core.mapper.AdminMapper;
 import com.zincoid.nullbot.core.mapper.FileMapper;
 import com.zincoid.nullbot.core.service.FileService;
 import com.zincoid.nullbot.core.util.DownloadUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.http.HttpHeaders;
@@ -47,8 +48,12 @@ public class FileServiceImpl implements FileService {
     private final FileMapper fileMapper;
     private final FileStorageProperties fileStorageProperties;
 
+    @Value("${nullbot.file.init}")
+    private boolean init;
+
     @EventListener(ApplicationReadyEvent.class)
     public void init() {  // 更新文件数据库
+        if (!init) return;
         log.info("◎ [FileService] 初始化文件同步中...");
         scanAndSyncFiles();
     }

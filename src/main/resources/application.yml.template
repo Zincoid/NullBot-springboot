@@ -84,23 +84,24 @@ nullbot:
     rate-limit:
       enabled: true  # 指令限速
   file:
+    init: true  # 启动时是否文件同步
     storage:
       # 机器人文件管理根目录
       file-directory: /root/file
-      # 需设置子目录完整路径
+      # 路径为管理根下子目录
       # config-path 下可配置文件:
       # - 持久化群设置: Settings.csv
-      config-path: /root/file/config
+      config-path: /config
       # resource-path 下需资源文件:
       # - AI表情包: ai/meme/*
       # - 终末地资源: endfield/public或版本号/*
       # - PUBG地图: pubg/固定图片
       # - 斗蛐蛐资源: duel/data.csv, duel/icon/*.png
-      resource-path: /root/file/resource
-      temp-path: /root/file/temp
-      image-path: /root/file/image
-      video-path: /root/file/video
-      audio-path: /root/file/audio
+      resource-path: /resource
+      temp-path: /temp
+      image-path: /image
+      video-path: /video
+      audio-path: /audio
 
   ai:
     deepseek:  # DeepSeek API
