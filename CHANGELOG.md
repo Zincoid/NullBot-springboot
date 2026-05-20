@@ -760,7 +760,7 @@
 - 优化 QuestionCommand 指令 - 使用 Json 格式生成问题；
 - 优化 BotNextInputer - 异常抛出类型改为 NullBotMsgException 并优化相关使用。
 
-### 2026.5.19 - v2.0.0
+### 2026.5.19
 
 - 优化 BotPageSelector - 使用 Builder 模式并优化相关使用，添加部分新方法，优化部分代码；
 - 优化 ChatHistory 指令 - 使用 BotPageSelector 简化；
@@ -777,7 +777,7 @@
   - FileUtil 其余方法的使用全部替换为数据库查询和 Commons IO 操作；
 - 其他部分代码优化纠错。
 
-### 2026.5.20 - v2.0.1
+### 2026.5.20 - v2.0.0
 
 - 优化 设置管理功能结构：
   - 移除默认设置配置相关使用和配置文件内容；
