@@ -111,23 +111,23 @@ public final class MsgParseUtil {
 
     // =================== 资源 URL 提取方法 ===================
 
-    public static Map<String, String> parseGroupRawMsgAsImgMap(String rawMessage) {
-        return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:image([^]]+)]"));
+    public static Map<String, String> parseRawMsgAsImgMap(String rawMessage) {
+        return parseCqCodeAsMap(rawMessage, Pattern.compile("\\[CQ:image([^]]+)]"));
     }
 
-    public static Map<String, String> parseGroupRawMsgAsVidMap(String rawMessage) {
-        return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:video([^]]+)]"));
+    public static Map<String, String> parseRawMsgAsVidMap(String rawMessage) {
+        return parseCqCodeAsMap(rawMessage, Pattern.compile("\\[CQ:video([^]]+)]"));
     }
 
-    public static Map<String, String> parseGroupRawMsgAsRecMap(String rawMessage) {
-        return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:record([^]]+)]"));
+    public static Map<String, String> parseRawMsgAsRecMap(String rawMessage) {
+        return parseCqCodeAsMap(rawMessage, Pattern.compile("\\[CQ:record([^]]+)]"));
     }
 
-    public static Map<String, String> parseGroupRawMsgAsFileMap(String rawMessage) {
-        return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:file([^]]+)]"));
+    public static Map<String, String> parseRawMsgAsFileMap(String rawMessage) {
+        return parseCqCodeAsMap(rawMessage, Pattern.compile("\\[CQ:file([^]]+)]"));
     }
 
-    private static Map<String, String> parseCqCodeToMap(String rawMessage, Pattern cqPattern) {
+    private static Map<String, String> parseCqCodeAsMap(String rawMessage, Pattern cqPattern) {
         return cqPattern
                 .matcher(rawMessage == null ? "" : rawMessage)
                 .results()

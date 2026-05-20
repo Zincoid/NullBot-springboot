@@ -40,7 +40,7 @@ public class VideoDeleteCommand implements Command {
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
             Map<String, String> videoMap = MsgParseUtil
-                    .parseGroupRawMsgAsVidMap(replyMsg.getRawMessage());
+                    .parseRawMsgAsVidMap(replyMsg.getRawMessage());
             if (videoMap.isEmpty())
                 throw new NullBotMsgException("[删除视频] ❌未引用视频");
             for (Map.Entry<String, String> entry : videoMap.entrySet())

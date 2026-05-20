@@ -41,7 +41,7 @@ public class ImageDeleteCommand implements Command {
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
             Map<String, String> imageMap = MsgParseUtil
-                    .parseGroupRawMsgAsImgMap(replyMsg.getRawMessage());
+                    .parseRawMsgAsImgMap(replyMsg.getRawMessage());
             if (imageMap.isEmpty())
                 throw new NullBotMsgException("[删除图片] ❌未引用图片");
             for (Map.Entry<String, String> entry : imageMap.entrySet()) {

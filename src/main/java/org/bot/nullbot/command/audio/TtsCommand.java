@@ -58,7 +58,7 @@ public class TtsCommand implements Command {
                     MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
                     // 暂不支持 AMR 格式音频
                     // Map<String, String> recordMap = MsgParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());
-                    Map<String, String> fileMap = MsgParseUtil.parseGroupRawMsgAsFileMap(replyMsg.getRawMessage());
+                    Map<String, String> fileMap = MsgParseUtil.parseRawMsgAsFileMap(replyMsg.getRawMessage());
 
                     Map<String, String> voiceMap = new HashMap<>();
                     // voiceMap.putAll(recordMap);
