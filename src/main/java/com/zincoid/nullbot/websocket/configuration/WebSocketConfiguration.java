@@ -13,7 +13,7 @@ import org.springframework.web.socket.config.annotation.*;
 @EnableWebSocketMessageBroker
 @Configuration
 @RequiredArgsConstructor
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 
     private final WebSocketInterceptor webSocketInterceptor;
 
@@ -54,7 +54,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 // @Configuration
 // @RequiredArgsConstructor
 // @EnableWebSocket
-// public class WebSocketConfig implements WebSocketConfigurer
+// public class WebSocketConfiguration implements WebSocketConfigurer
 // {
 //     private final WebSocketHandler webSocketHandler;
 //
