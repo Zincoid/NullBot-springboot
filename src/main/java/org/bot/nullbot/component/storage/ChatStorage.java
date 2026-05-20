@@ -2,7 +2,7 @@ package org.bot.nullbot.component.storage;
 
 import lombok.Data;
 import org.bot.nullbot.entity.ChatMessage;
-import org.bot.nullbot.entity.po.Setting;
+import org.bot.nullbot.entity.po.SettingPO;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
@@ -66,7 +66,7 @@ public class ChatStorage {
     // =================== 撤回功能相关 ===================
 
     public List<ChatMessage> getAIMessagesForRecall(Long groupId, Long userId, int n) {
-        Setting setting = settingService.get(groupId);
+        SettingPO setting = settingService.get(groupId);
         ReentrantLock lock = switch (setting.getChatScope()) {
             case Group, Monitor -> getGroupLock(groupId);
             case Personal -> getUserLock(userId);

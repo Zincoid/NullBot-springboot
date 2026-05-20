@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import io.github.bucket4j.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.entity.po.Setting;
+import org.bot.nullbot.entity.po.SettingPO;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +25,7 @@ public class CommandRateLimiter {
 
     public boolean tryConsume(Long groupId, Long userId, String commandType) {
         if (isSpam(groupId, 500)) return false;
-        Setting setting = settingService.get(groupId);
+        SettingPO setting = settingService.get(groupId);
         String key = switch (setting.getLimitScope()) {
             case Group -> "[%s]".formatted(groupId);
             case User -> "[%s][User:%s]".formatted(groupId, userId);
@@ -52,7 +52,7 @@ public class CommandRateLimiter {
         return false;
     }
 
-    private Bucket resolveBucket(String key, Setting setting) {
+    private Bucket resolveBucket(String key, SettingPO setting) {
         return buckets.computeIfAbsent(key, k -> Bucket.builder()
                 .addLimit(limit -> limit
                         .capacity(setting.getLimitCapacity())

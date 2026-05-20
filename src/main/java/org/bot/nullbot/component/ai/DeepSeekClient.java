@@ -29,7 +29,7 @@ import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.component.storage.SysMsgStorage;
 import org.bot.nullbot.config.prop.DeepSeekProperties;
-import org.bot.nullbot.entity.po.Setting;
+import org.bot.nullbot.entity.po.SettingPO;
 import org.bot.nullbot.enums.ChatScope;
 import org.bot.nullbot.dispatcher.CommandRegistry;
 import org.bot.nullbot.entity.ChatMessage;
@@ -139,7 +139,7 @@ public class DeepSeekClient {
             String message, Bot bot, Event event
     ) throws Exception {
 
-        Setting setting = settingService.get(groupId);
+        SettingPO setting = settingService.get(groupId);
 
         if (setting.isAntiInjection()) {
             String req = """
@@ -237,7 +237,7 @@ public class DeepSeekClient {
      *  @return 聊天记录列表
      */
     public List<ChatMessage> getGroupHistory(Long groupId, Long userId) {
-        Setting setting = settingService.get(groupId);
+        SettingPO setting = settingService.get(groupId);
         return switch (setting.getChatScope()) {
             case Group -> chatStorage.getGroupHistory(groupId);
             case Personal -> chatStorage.getUserHistory(userId);

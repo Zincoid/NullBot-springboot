@@ -2,7 +2,7 @@ package org.bot.nullbot.component.control;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.po.Setting;
+import org.bot.nullbot.entity.po.SettingPO;
 import org.bot.nullbot.util.CsvImportUtil;
 import org.springframework.stereotype.Component;
 
@@ -16,13 +16,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class SettingManager {
 
-    private final Map<Long, Setting> settings;
+    private final Map<Long, SettingPO> settings;
 
     public SettingManager(FileStorageProperties fileStorageProperties) {
         settings = new ConcurrentHashMap<>();
         try {
-            List<Setting> defaultSettings = CsvImportUtil.importFromCsv(
-                    fileStorageProperties.getConfigPath() + "/Settings.csv", Setting.class);
+            List<SettingPO> defaultSettings = CsvImportUtil.importFromCsv(
+                    fileStorageProperties.getConfigPath() + "/Settings.csv", SettingPO.class);
             setSettings(defaultSettings);
             log.info("▽ [SettingManager] 群组配置文件已载入");
         } catch (IOException e) {
@@ -30,20 +30,20 @@ public class SettingManager {
         }
     }
 
-    public Setting getSetting(Long groupId) {
-        return settings.computeIfAbsent(groupId, k -> new Setting(groupId));
+    public SettingPO getSetting(Long groupId) {
+        return settings.computeIfAbsent(groupId, k -> new SettingPO(groupId));
     }
 
-    public boolean setSetting(Setting setting) {
+    public boolean setSetting(SettingPO setting) {
         return settings.put(setting.getGroupId(), setting) != null;
     }
 
-    public List<Setting> getSettings() {
+    public List<SettingPO> getSettings() {
         return new ArrayList<>(settings.values());
     }
 
-    public void setSettings(List<Setting> newSettings) {
-        for (Setting setting : newSettings)
+    public void setSettings(List<SettingPO> newSettings) {
+        for (SettingPO setting : newSettings)
             settings.put(setting.getGroupId(), setting);
     }
 }

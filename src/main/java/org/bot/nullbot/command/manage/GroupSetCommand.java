@@ -8,7 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.CommandRateLimiter;
-import org.bot.nullbot.entity.po.Setting;
+import org.bot.nullbot.entity.po.SettingPO;
 import org.bot.nullbot.enums.ChatScope;
 import org.bot.nullbot.enums.LimitScope;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -34,7 +34,7 @@ public class GroupSetCommand implements Command {
         try {
             if (params.isEmpty()) throw new NullBotMsgException("[群设置] ❌参数不足");
             String option = params.getFirst();
-            Setting setting = settingService.get(groupId);
+            SettingPO setting = settingService.get(groupId);
 
             if ("-view".equals(option)) {
                 bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);

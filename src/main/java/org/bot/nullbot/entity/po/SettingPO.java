@@ -9,7 +9,7 @@ import org.bot.nullbot.enums.LimitScope;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class Setting {
+public class SettingPO {
 
     private final Long groupId;
 

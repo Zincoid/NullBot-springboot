@@ -2,7 +2,7 @@ package org.bot.nullbot.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.component.control.SettingManager;
-import org.bot.nullbot.entity.po.Setting;
+import org.bot.nullbot.entity.po.SettingPO;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +17,16 @@ public class SettingServiceImpl implements SettingService {
     // =================== 全局功能相关 ===================
 
     @Override
-    public Setting get(Long groupId) { return settingManager.getSetting(groupId); }
+    public SettingPO get(Long groupId) { return settingManager.getSetting(groupId); }
 
     @Override
-    public boolean set(Setting setting) { return settingManager.setSetting(setting); }
+    public boolean set(SettingPO setting) { return settingManager.setSetting(setting); }
 
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<Setting> getAll() { return settingManager.getSettings(); }
+    public List<SettingPO> getAll() { return settingManager.getSettings(); }
 
     @Override
-    public void setAll(List<Setting> settings) { settingManager.setSettings(settings); }
+    public void setAll(List<SettingPO> settings) { settingManager.setSettings(settings); }
 }

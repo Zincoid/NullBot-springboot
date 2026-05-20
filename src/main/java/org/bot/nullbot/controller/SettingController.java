@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.CommandRateLimiter;
-import org.bot.nullbot.entity.po.Setting;
+import org.bot.nullbot.entity.po.SettingPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.CsvExportUtil;
@@ -29,7 +29,7 @@ public class SettingController {
 
     @GetMapping("/{id}")
     public WebResult getSetting(@PathVariable Long id) {
-        Setting setting = settingService.get(id);
+        SettingPO setting = settingService.get(id);
         if (setting != null) {
             return WebResult.success("获取成功").withData("setting", setting);
         } else {
@@ -38,7 +38,7 @@ public class SettingController {
     }
 
     @PutMapping("/set")
-    public WebResult setSetting(@RequestBody Setting setting) {
+    public WebResult setSetting(@RequestBody SettingPO setting) {
         if (settingService.set(setting)) {
             commandRateLimiter.reset(setting.getGroupId());
             deepSeekClient.clearGroupHistory(setting.getGroupId(), null);
@@ -50,13 +50,13 @@ public class SettingController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException, IllegalAccessException {
-        List<Setting> settings = settingService.getAll();
-        CsvExportUtil.exportToCsv(response, "Settings_" + LocalDateTime.now(), settings, Setting.class);
+        List<SettingPO> settings = settingService.getAll();
+        CsvExportUtil.exportToCsv(response, "Settings_" + LocalDateTime.now(), settings, SettingPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
-        List<Setting> settings = CsvImportUtil.importFromCsv(csvFile, Setting.class);
+        List<SettingPO> settings = CsvImportUtil.importFromCsv(csvFile, SettingPO.class);
         settingService.setAll(settings);
     }
 }

@@ -15,7 +15,7 @@ import org.bot.nullbot.entity.ChatMessage;
 import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.info.FileInfo;
-import org.bot.nullbot.entity.po.Setting;
+import org.bot.nullbot.entity.po.SettingPO;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.MsgParseUtil;
@@ -63,7 +63,7 @@ public class MonitorListener {
 
     @FunctionControl("AIAutoReply")
     public boolean doGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
-        Setting setting = settingService.get(event.getGroupId());
+        SettingPO setting = settingService.get(event.getGroupId());
 
         if (!setting.isAutoReply()) return false;
         if (event.getMessage().startsWith(commandPrefix)) {

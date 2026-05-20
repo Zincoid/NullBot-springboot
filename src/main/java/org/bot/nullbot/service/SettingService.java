@@ -1,16 +1,16 @@
 package org.bot.nullbot.service;
 
-import org.bot.nullbot.entity.po.Setting;
+import org.bot.nullbot.entity.po.SettingPO;
 
 import java.util.List;
 
 public interface SettingService {
 
-    Setting get(Long groupId);
+    SettingPO get(Long groupId);
 
-    boolean set(Setting setting);
+    boolean set(SettingPO setting);
 
-    List<Setting> getAll();
+    List<SettingPO> getAll();
 
-    void setAll(List<Setting> settings);
+    void setAll(List<SettingPO> settings);
 }
