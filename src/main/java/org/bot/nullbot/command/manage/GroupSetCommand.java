@@ -77,7 +77,7 @@ public class GroupSetCommand implements Command {
                 commandRateLimiter.reset(groupId);
                 bot.sendGroupMsg(groupId, """
                         [限速] ✅设置已更新
-                        - %s""".formatted(msg), false);
+                        %s""".formatted(msg), false);
                 log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速设置 - {}", groupId, msg);
                 return;
             }
@@ -134,7 +134,7 @@ public class GroupSetCommand implements Command {
                 settingService.set(setting);
                 bot.sendGroupMsg(groupId, """
                         [AI] ✅设置已更新
-                        - %s""".formatted(msg), false);
+                        %s""".formatted(msg), false);
                 log.info("\t\t\t\t├─[GroupSet] 已更改群 {} AI设置 - {}", groupId, msg);
                 return;
             }
