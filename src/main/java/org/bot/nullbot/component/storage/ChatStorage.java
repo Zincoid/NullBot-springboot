@@ -2,7 +2,7 @@ package org.bot.nullbot.component.storage;
 
 import lombok.Data;
 import org.bot.nullbot.entity.ChatMessage;
-import org.bot.nullbot.entity.ChatOption;
+import org.bot.nullbot.entity.setting.ChatOption;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
