@@ -2,7 +2,7 @@ package org.bot.nullbot.component.control;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.setting.Setting;
+import org.bot.nullbot.entity.po.Setting;
 import org.bot.nullbot.util.CsvImportUtil;
 import org.springframework.stereotype.Component;
 

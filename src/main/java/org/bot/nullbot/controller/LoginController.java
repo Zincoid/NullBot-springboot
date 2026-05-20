@@ -11,7 +11,7 @@ import org.bot.nullbot.entity.po.AdminPO;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.entity.dto.LoginDTO;
 import org.bot.nullbot.service.AdminService;
-import org.bot.nullbot.util.UserCtxUtil;
+import org.bot.nullbot.util.WebCtxUtil;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,7 +63,7 @@ public class LoginController {
     @DeleteMapping("/delete")
     public WebResult delete() {
         // Long id = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
-        Long id = UserCtxUtil.getId();
+        Long id = WebCtxUtil.getId();
         log.info("└─[LoginController] 管理员注销 - ID: {}", id);
         if (adminService.deleteById(id)) {
             return WebResult.success("管理员注销成功");
@@ -75,7 +75,7 @@ public class LoginController {
     @PostMapping("/update")
     public WebResult update(@RequestBody @Validated AdminUpdateDTO adminUpdateDTO) {
         // Long id = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
-        Long id = UserCtxUtil.getId();
+        Long id = WebCtxUtil.getId();
         adminUpdateDTO.setId(id);
         log.info("└─[LoginController] 管理员更新 - ID: {}", id);
         if (adminService.update(adminUpdateDTO)) {
@@ -88,7 +88,7 @@ public class LoginController {
     @PostMapping("/changePwd")
     public WebResult changePwd(@RequestBody @Validated PwdChangeDTO pwdChangeDTO) {
         // Long id = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
-        Long id = UserCtxUtil.getId();
+        Long id = WebCtxUtil.getId();
         log.info("└─[LoginController] 管理员密码更改 - ID: {}", id);
         if (adminService.changePwd(id, pwdChangeDTO)) {
             return WebResult.success("管理员密码更改成功");
@@ -100,7 +100,7 @@ public class LoginController {
     @GetMapping("/info")
     public WebResult info() {
         // Integer type = jwtTool.getLoginType(WebUtil.getToken());  // 弃用
-        Integer type = UserCtxUtil.getType();
+        Integer type = WebCtxUtil.getType();
         if (type == 0) {
             AdminPO admin = new AdminPO(
                     null, "Guest",
@@ -113,7 +113,7 @@ public class LoginController {
                     .withData("userType", 0);
         } else if (type == 1) {
             // Long id = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
-            Long id = UserCtxUtil.getId();
+            Long id = WebCtxUtil.getId();
             log.info("└─[LoginController] 获取管理员信息 - ID {}", id);
             AdminPO admin = adminService.info(id);
             if (admin != null) {

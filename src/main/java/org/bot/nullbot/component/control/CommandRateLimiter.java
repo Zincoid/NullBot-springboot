@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import io.github.bucket4j.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bot.nullbot.entity.setting.LimitOption;
+import org.bot.nullbot.entity.po.Setting;
 import org.bot.nullbot.service.SettingService;
 import org.springframework.stereotype.Component;
 
@@ -25,13 +25,13 @@ public class CommandRateLimiter {
 
     public boolean tryConsume(Long groupId, Long userId, String commandType) {
         if (isSpam(groupId, 500)) return false;
-        LimitOption option = settingService.getLimitOption(groupId);
-        String key = switch (option.getLimitScope()) {
+        Setting setting = settingService.get(groupId);
+        String key = switch (setting.getLimitScope()) {
             case Group -> "[%s]".formatted(groupId);
             case User -> "[%s][User:%s]".formatted(groupId, userId);
             case Cmd -> "[%s][Cmd:%s]".formatted(groupId, commandType);
         };
-        return resolveBucket(key, option).tryConsume(1);
+        return resolveBucket(key, setting).tryConsume(1);
     }
 
     public void reset(Long groupId) {
@@ -52,12 +52,12 @@ public class CommandRateLimiter {
         return false;
     }
 
-    private Bucket resolveBucket(String key, LimitOption option) {
+    private Bucket resolveBucket(String key, Setting setting) {
         return buckets.computeIfAbsent(key, k -> Bucket.builder()
                 .addLimit(limit -> limit
-                        .capacity(option.getLimitCapacity())
-                        .refillGreedy(option.getLimitRefill(),
-                                Duration.ofMinutes(option.getLimitInterval())))
+                        .capacity(setting.getLimitCapacity())
+                        .refillGreedy(setting.getLimitRefill(),
+                                Duration.ofMinutes(setting.getLimitInterval())))
                 .build());
     }
 }

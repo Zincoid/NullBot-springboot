@@ -139,7 +139,7 @@ public class CommandListener {
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupPokeInteraction(Bot bot, PokeNoticeEvent event) throws Exception {
-        if (!settingService.getMonitorOption(event.getGroupId()).isPokeDetect()) return;
+        if (!settingService.get(event.getGroupId()).isPokeDetect()) return;
         if (Objects.equals(event.getTargetId(), event.getSelfId())) {
             log.info("◉ [GroupAction:Poke] 群聊 {} -> From {} to {} (仅戳Bot)", event.getGroupId(), event.getUserId(), event.getTargetId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
@@ -169,7 +169,7 @@ public class CommandListener {
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupRecallInteraction(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
-        if (!settingService.getMonitorOption(event.getGroupId()).isRecallDetect()) return;
+        if (!settingService.get(event.getGroupId()).isRecallDetect()) return;
         log.info("◉ [GroupAction:Recall] 群聊 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));
     }

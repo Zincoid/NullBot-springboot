@@ -11,7 +11,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.component.storage.GuessStorage;
 import org.bot.nullbot.entity.info.GuessInfo;
-import org.bot.nullbot.entity.setting.GuessOption;
+import org.bot.nullbot.entity.po.Setting;
 import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SettingService;
@@ -58,14 +58,14 @@ public class GuessCommand implements Command {
 
         try {
             GuessInfo guess = guessStorage.initGuess(groupId, params.getFirst());
-            GuessOption guessOption = settingService.getGuessOption(groupId);
+            Setting setting = settingService.get(groupId);
 
             String start = MsgUtils.builder()
                     .text("[猜角色] ✨题目是\n")
                     .img("base64://" + crop(guess.getPath(),
-                            guessOption.getGuessCropRatio(),
-                            guessOption.getGuessPadding(),
-                            guessOption.getGuessTransparentRatio(),
+                            setting.getGuessCropRatio(),
+                            setting.getGuessPadding(),
+                            setting.getGuessTransparentRatio(),
                             MAX_CROP_ATTEMPTS))
                     .text("注: 请发送\"#内容\"")
                     .build();

@@ -8,7 +8,7 @@ import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.CommandRateLimiter;
-import org.bot.nullbot.entity.setting.*;
+import org.bot.nullbot.entity.po.Setting;
 import org.bot.nullbot.enums.ChatScope;
 import org.bot.nullbot.enums.LimitScope;
 import org.bot.nullbot.exception.NullBotMsgException;
@@ -33,10 +33,10 @@ public class GroupSetCommand implements Command {
         Long userId = event.getUserId();
         try {
             if (params.isEmpty()) throw new NullBotMsgException("[群设置] ❌参数不足");
-            String option = params.get(0);
+            String option = params.getFirst();
+            Setting setting = settingService.get(groupId);
 
             if ("-view".equals(option)) {
-                Setting setting = settingService.get(groupId);
                 bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);
                 log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
                 return;
@@ -44,37 +44,36 @@ public class GroupSetCommand implements Command {
 
             if ("-limit".equals(option)) {
                 if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
-                LimitOption limitOption = settingService.getLimitOption(groupId);
-                String setting = params.get(1);
+                String name = params.get(1);
                 String msg;
 
-                switch (setting) {
+                switch (name) {
                     case "scp" -> {
-                        LimitScope newLimitScope = limitOption.switchLimitScope();
+                        LimitScope newLimitScope = setting.switchLimitScope();
                         msg = "限速范围 -> %s".formatted(newLimitScope);
                     }
                     case "cap" -> {
                         if (params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
                         int capacity = Integer.parseInt(params.get(2));
-                        limitOption.setLimitCapacity(capacity);
+                        setting.setLimitCapacity(capacity);
                         msg = "限速容量 -> %s".formatted(capacity);
                     }
                     case "ref" -> {
                         if (params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
                         int refill = Integer.parseInt(params.get(2));
-                        limitOption.setLimitRefill(refill);
+                        setting.setLimitRefill(refill);
                         msg = "补充数量 -> %s".formatted(refill);
                     }
                     case "itv" -> {
                         if (params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
                         int interval = Integer.parseInt(params.get(2));
-                        limitOption.setLimitInterval(interval);
+                        setting.setLimitInterval(interval);
                         msg = "补充间隔 -> %s".formatted(interval);
                     }
                     default -> throw new NullBotMsgException("[群设置] ❌无此Limit设置");
                 }
 
-                settingService.setLimitOption(groupId, limitOption);
+                settingService.set(setting);
                 commandRateLimiter.reset(groupId);
                 bot.sendGroupMsg(groupId, """
                         [限速] ✅设置已更新
@@ -85,55 +84,54 @@ public class GroupSetCommand implements Command {
 
             if ("-ai".equals(option)) {
                 if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
-                String setting = params.get(1);
-                ChatOption chatOption = settingService.getChatOption(groupId);
+                String name = params.get(1);
                 String msg;
 
-                switch (setting) {
+                switch (name) {
                     case "scp" -> {
-                        ChatScope newScope = chatOption.switchChatScope();
+                        ChatScope newScope = setting.switchChatScope();
                         msg = "会话范围 -> %s".formatted(newScope);
                     }
                     case "frq" -> {
                         if (params.size() < 3) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
                         double freq = Double.parseDouble(params.get(2));
-                        chatOption.setReplyFrequency(freq);
+                        setting.setReplyFrequency(freq);
                         msg = "发言频率 -> %s".formatted(freq);
                     }
                     case "ati" -> {
-                        boolean enabled = chatOption.switchAntiInjection();
+                        boolean enabled = setting.switchAntiInjection();
                         msg = "防注模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "tkn" -> {
-                        boolean enabled = chatOption.switchThinking();
+                        boolean enabled = setting.switchThinking();
                         msg = "思考模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "voi" -> {
-                        boolean enabled = chatOption.switchVoice();
+                        boolean enabled = setting.switchVoice();
                         msg = "语音模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "ebd" -> {
                         deepSeekClient.clearGroupHistory(groupId, userId);
-                        boolean enabled = chatOption.switchEmbedding();
+                        boolean enabled = setting.switchEmbedding();
                         msg = "指令模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "eau" -> {
-                        boolean enabled = chatOption.switchEmbeddingAuth();
+                        boolean enabled = setting.switchEmbeddingAuth();
                         msg = "指令校验 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "cus" -> {
                         deepSeekClient.clearGroupHistory(groupId, userId);
-                        boolean enabled = chatOption.switchCustom();
+                        boolean enabled = setting.switchCustom();
                         msg = "自定模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "aur" -> {
-                        boolean enabled = chatOption.switchAutoReply();
+                        boolean enabled = setting.switchAutoReply();
                         msg = "自动发言 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     default -> throw new NullBotMsgException("[群设置] ❌无此AI设置");
                 }
 
-                settingService.setChatOption(groupId, chatOption);
+                settingService.set(setting);
                 bot.sendGroupMsg(groupId, """
                         [AI] ✅设置已更新
                         - %s""".formatted(msg), false);
@@ -143,19 +141,18 @@ public class GroupSetCommand implements Command {
 
             if ("-monitor".equals(option)) {
                 if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌Monitor设置参数不足");
-                String setting = params.get(1);
-                MonitorOption monitorOption = settingService.getMonitorOption(groupId);
-                boolean enabled = switch (setting) {
-                    case "img" -> monitorOption.switchImageCollect();
-                    case "msg" -> monitorOption.switchMessageCollect();
-                    case "key" -> monitorOption.switchKeywordDetect();
-                    case "pok" -> monitorOption.switchPokeDetect();
-                    case "rcl" -> monitorOption.switchRecallDetect();
+                String name = params.get(1);
+                boolean enabled = switch (name) {
+                    case "img" -> setting.switchImageCollect();
+                    case "msg" -> setting.switchMessageCollect();
+                    case "key" -> setting.switchKeywordDetect();
+                    case "pok" -> setting.switchPokeDetect();
+                    case "rcl" -> setting.switchRecallDetect();
                     default -> throw new NullBotMsgException("[群设置] ❌无此Monitor设置");
                 };
-                settingService.setMonitorOption(groupId, monitorOption);
+                settingService.set(setting);
                 bot.sendGroupMsg(event.getGroupId(), "[监听] ✅已切换: %s".formatted(enabled ? "ON" : "OFF"), false);
-                log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 监听设置 - {} -> {}", groupId, setting, enabled ? "ON" : "OFF");
+                log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 监听设置 - {} -> {}", groupId, name, enabled ? "ON" : "OFF");
                 return;
             }
 
@@ -164,11 +161,10 @@ public class GroupSetCommand implements Command {
                 double cropRatio = Double.parseDouble(params.get(1));
                 double transparentRatio = Double.parseDouble(params.get(2));
                 int padding = Integer.parseInt(params.get(3));
-                GuessOption guessOption = settingService.getGuessOption(groupId);
-                guessOption.setGuessCropRatio(cropRatio);
-                guessOption.setGuessTransparentRatio(transparentRatio);
-                guessOption.setGuessPadding(padding);
-                settingService.setGuessOption(groupId, guessOption);
+                setting.setGuessCropRatio(cropRatio);
+                setting.setGuessTransparentRatio(transparentRatio);
+                setting.setGuessPadding(padding);
+                settingService.set(setting);
                 bot.sendGroupMsg(groupId, "[猜角色] ✅参数已更新", false);
                 log.info("\t\t\t\t├─[GroupSet] 已更改群 {} Guess参数 -> {} {} {}", groupId, cropRatio, transparentRatio, padding);
                 return;
@@ -181,9 +177,7 @@ public class GroupSetCommand implements Command {
     }
 
     @Override
-    public Integer getAccess() {
-        return 1;
-    }
+    public Integer getAccess() { return 1; }
 
     @Override
     public String getHelp() {

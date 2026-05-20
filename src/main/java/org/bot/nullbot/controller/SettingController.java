@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.component.ai.DeepSeekClient;
 import org.bot.nullbot.component.control.CommandRateLimiter;
-import org.bot.nullbot.entity.setting.Setting;
+import org.bot.nullbot.entity.po.Setting;
 import org.bot.nullbot.entity.result.WebResult;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.CsvExportUtil;
