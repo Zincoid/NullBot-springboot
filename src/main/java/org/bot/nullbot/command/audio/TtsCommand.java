@@ -19,7 +19,7 @@ import org.bot.nullbot.entity.po.TtsTemplatePO;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.TtsTemplateService;
 import org.bot.nullbot.util.DownloadUtil;
-import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -57,8 +57,8 @@ public class TtsCommand implements Command {
 
                     MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
                     // 暂不支持 AMR 格式音频
-                    // Map<String, String> recordMap = MessageParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());
-                    Map<String, String> fileMap = MessageParseUtil.parseGroupRawMsgAsFileMap(replyMsg.getRawMessage());
+                    // Map<String, String> recordMap = MsgParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());
+                    Map<String, String> fileMap = MsgParseUtil.parseGroupRawMsgAsFileMap(replyMsg.getRawMessage());
 
                     Map<String, String> voiceMap = new HashMap<>();
                     // voiceMap.putAll(recordMap);

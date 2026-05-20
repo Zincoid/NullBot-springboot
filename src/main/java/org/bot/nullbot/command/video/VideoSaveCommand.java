@@ -13,7 +13,7 @@ import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.FileService;
-import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class VideoSaveCommand implements Command {
 
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         // 可优化为单个键值对?
-        Map<String, String> videoMap = MessageParseUtil.parseGroupRawMsgAsVidMap(replyMsg.getRawMessage());
+        Map<String, String> videoMap = MsgParseUtil.parseGroupRawMsgAsVidMap(replyMsg.getRawMessage());
         if(videoMap.isEmpty())
             throw new NullBotMsgException("[保存视频] ❌未包含视频");
         if(videoMap.size() > 1)

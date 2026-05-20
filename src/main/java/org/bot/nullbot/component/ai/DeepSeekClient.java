@@ -37,7 +37,6 @@ import org.bot.nullbot.entity.CommandEvent;
 import org.bot.nullbot.entity.EmbeddedCommandEvent;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.util.Base64Util;
-import org.bot.nullbot.util.MessageParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
@@ -488,7 +487,7 @@ public class DeepSeekClient {
             messageId = sendMsg(bot, targetId, response, isPrivate, voice);
         }
         // 记录消息
-        // String parsed = MessageParseUtil.parseArrayMsgToSimple(
+        // String parsed = MsgParseUtil.parseArrayMsgToSimple(
         //         bot, bot.getMsg(messageId).getData().getArrayMsg());
         chatMessages.add(new ChatMessage(
                 messageId, botId, "Null", "assistant", response));
@@ -543,7 +542,7 @@ public class DeepSeekClient {
                 if (segment.isEmpty()) continue;
                 Integer messageId = sendMsg(bot, targetId, segment, isPrivate, voice);
                 // 记录消息
-                // String parsed = MessageParseUtil.parseArrayMsgToSimple(
+                // String parsed = MsgParseUtil.parseArrayMsgToSimple(
                 //         bot, bot.getMsg(messageId).getData().getArrayMsg());
                 chatMessages.add(new ChatMessage(
                         messageId, botId, "Null", "assistant", segment));

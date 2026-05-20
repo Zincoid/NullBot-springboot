@@ -13,7 +13,7 @@ import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.FileService;
-import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class ImageSaveCommand implements Command {
             throw new NullBotMsgException("[保存图片] ❌需引用图片");
 
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-        Map<String, String> imageMap = MessageParseUtil.parseGroupRawMsgAsImgMap(replyMsg.getRawMessage());
+        Map<String, String> imageMap = MsgParseUtil.parseGroupRawMsgAsImgMap(replyMsg.getRawMessage());
         if (imageMap.isEmpty())
             throw new NullBotMsgException("[保存图片] ❌未包含图片");
 

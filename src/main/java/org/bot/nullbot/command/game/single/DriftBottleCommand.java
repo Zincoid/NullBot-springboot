@@ -15,8 +15,7 @@ import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.DriftBottleService;
 import org.bot.nullbot.service.FileService;
-
-import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,7 +41,7 @@ public class DriftBottleCommand implements Command {
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
         String message = event.getMessage();
-        Map<String, String> imageMap = MessageParseUtil.parseGroupRawMsgAsImgMap(event.getRawMessage());
+        Map<String, String> imageMap = MsgParseUtil.parseGroupRawMsgAsImgMap(event.getRawMessage());
 
         if (!imageMap.isEmpty()) {
             boolean autoThrow = !params.isEmpty() && "-auto".equals(params.getFirst());

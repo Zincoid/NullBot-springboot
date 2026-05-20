@@ -12,7 +12,7 @@ import org.bot.nullbot.command.Command;
 import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.FileService;
-import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.MsgParseUtil;
 import org.bot.nullbot.util.StringUtil;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +39,7 @@ public class VideoDeleteCommand implements Command {
         }
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-            Map<String, String> videoMap = MessageParseUtil
+            Map<String, String> videoMap = MsgParseUtil
                     .parseGroupRawMsgAsVidMap(replyMsg.getRawMessage());
             if (videoMap.isEmpty())
                 throw new NullBotMsgException("[删除视频] ❌未引用视频");

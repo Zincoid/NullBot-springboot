@@ -16,7 +16,7 @@ import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.DownloadUtil;
-import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.MsgParseUtil;
 import org.bot.nullbot.component.render.ImageConverter;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +48,7 @@ public class ConvertCommand implements Command {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-            Map<String, String> imageMap = MessageParseUtil.parseGroupRawMsgAsImgMap(replyMsg.getRawMessage());
+            Map<String, String> imageMap = MsgParseUtil.parseGroupRawMsgAsImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
         }
 
@@ -62,7 +62,7 @@ public class ConvertCommand implements Command {
             }
             urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         }else{
-            List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(event.getRawMessage());
+            List<Long> qqNumbers = MsgParseUtil.extractAtQQNumbers(event.getRawMessage());
             for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         }
 

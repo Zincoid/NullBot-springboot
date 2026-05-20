@@ -11,9 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public final class MessageParseUtil {
+public final class MsgParseUtil {
 
-    private MessageParseUtil() {}
+    private MsgParseUtil() {}
 
     // =================== @QQ号提取方法 ===================
 

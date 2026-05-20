@@ -19,7 +19,7 @@ import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.util.DownloadUtil;
 import org.bot.nullbot.util.HtmlTemplateUtil;
-import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -46,7 +46,7 @@ public class SymmetryCommand implements Command {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-            Map<String, String> imageMap = MessageParseUtil.parseGroupRawMsgAsImgMap(replyMsg.getRawMessage());
+            Map<String, String> imageMap = MsgParseUtil.parseGroupRawMsgAsImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
         }
 
@@ -58,7 +58,7 @@ public class SymmetryCommand implements Command {
                         long qqNumber = Long.parseLong(params.get(1));
                         urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
                     } else {
-                        List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(event.getRawMessage());
+                        List<Long> qqNumbers = MsgParseUtil.extractAtQQNumbers(event.getRawMessage());
                         for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
                     }
                 } else {
@@ -69,7 +69,7 @@ public class SymmetryCommand implements Command {
                 throw new NullBotMsgException("[对称] ❌参数格式错误");
             }
         } else {
-            List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(event.getRawMessage());
+            List<Long> qqNumbers = MsgParseUtil.extractAtQQNumbers(event.getRawMessage());
             for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
         }
 

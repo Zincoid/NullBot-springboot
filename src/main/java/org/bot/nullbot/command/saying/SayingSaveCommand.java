@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bot.nullbot.annotation.CommandMapping;
 import org.bot.nullbot.command.Command;
 import org.bot.nullbot.exception.NullBotMsgException;
-import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.MsgParseUtil;
 import org.bot.nullbot.service.SayingService;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +34,7 @@ public class SayingSaveCommand implements Command {
         String userName = replyMsg.getSender().getNickname();
         String text;
         try {
-            text = MessageParseUtil.parseRawSaying(bot, replyMsg.getRawMessage());
+            text = MsgParseUtil.parseRawSaying(bot, replyMsg.getRawMessage());
         } catch (Exception e) {
             throw new NullBotMsgException("[保存语录] ❌" + e.getMessage());
         }

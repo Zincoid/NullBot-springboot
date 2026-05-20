@@ -17,7 +17,7 @@ import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.entity.info.FileInfo;
 import org.bot.nullbot.service.FileService;
 import org.bot.nullbot.service.SettingService;
-import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.MsgParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
@@ -72,7 +72,7 @@ public class MonitorListener {
 
         double freq = settingService.getReplyFrequency(event.getGroupId());
         if (freq < Math.random()) return false;
-        String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
+        String parsed = MsgParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至群聊 {}", event.getGroupId());
         commandProcessor.processQQ(bot, new CommandEvent<>(
                 event, "Chat", List.of(parsed), false, false));
@@ -111,7 +111,7 @@ public class MonitorListener {
         if (!settingService.isMessageCollect(event.getGroupId())) return;
 
         if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // 按需 AI自动记录
-        String parsed = MessageParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
+        String parsed = MsgParseUtil.parseArrayMsgToSimple(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:MsgCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         List<ChatMessage> chatMessages = chatStorage.getMonitorHistory(event.getGroupId());
         chatMessages.add(new ChatMessage(event.getMessageId() , event.getUserId(), event.getSender().getNickname(), "user", parsed));

@@ -13,7 +13,7 @@ import org.bot.nullbot.config.prop.FileStorageProperties;
 import org.bot.nullbot.entity.po.FilePO;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.FileService;
-import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.MsgParseUtil;
 import org.bot.nullbot.util.StringUtil;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +40,7 @@ public class ImageDeleteCommand implements Command {
         }
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-            Map<String, String> imageMap = MessageParseUtil
+            Map<String, String> imageMap = MsgParseUtil
                     .parseGroupRawMsgAsImgMap(replyMsg.getRawMessage());
             if (imageMap.isEmpty())
                 throw new NullBotMsgException("[删除图片] ❌未引用图片");

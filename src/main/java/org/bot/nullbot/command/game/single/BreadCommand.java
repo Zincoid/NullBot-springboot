@@ -13,7 +13,7 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.BreadService;
 import org.bot.nullbot.service.InventoryService;
 import org.bot.nullbot.service.UserService;
-import org.bot.nullbot.util.MessageParseUtil;
+import org.bot.nullbot.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -97,7 +97,7 @@ public class BreadCommand implements Command {
     }
 
     private void rob(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
-        List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+        List<Long> qqNumbers = MsgParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
         if (qqNumbers.isEmpty()) {
             bot.sendGroupMsg(groupId, "[抢面包] ❌未指定对象", false);
             log.info("\t\t\t\t├─[Bread-Rob] 未指定对象");
@@ -124,7 +124,7 @@ public class BreadCommand implements Command {
     }
 
     private void gift(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
-        List<Long> qqNumbers = MessageParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+        List<Long> qqNumbers = MsgParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
         if (qqNumbers.isEmpty()) {
             bot.sendGroupMsg(groupId, "[送面包] ❌未指定对象", false);
             log.info("\t\t\t\t├─[Bread-Gift] 未指定对象");

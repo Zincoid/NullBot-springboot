@@ -77,7 +77,7 @@ class NullBotApplicationTests {
     void parseTest() {
         Bot bot = botContainer.robots.get(botId);
         System.out.println(bot.getStrangerInfo(2660181154L, true).getData().getNickname());
-        System.out.println(MessageParseUtil.parseRawSaying(bot, "[CQ:at,qq=2660181154] 你好！"));
+        System.out.println(MsgParseUtil.parseRawSaying(bot, "[CQ:at,qq=2660181154] 你好！"));
     }
 
     @Test
