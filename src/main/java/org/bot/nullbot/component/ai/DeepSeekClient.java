@@ -29,7 +29,7 @@ import org.bot.nullbot.component.resource.ResourceLoader;
 import org.bot.nullbot.component.storage.ChatStorage;
 import org.bot.nullbot.component.storage.SysMsgStorage;
 import org.bot.nullbot.config.prop.DeepSeekProperties;
-import org.bot.nullbot.entity.ChatOption;
+import org.bot.nullbot.entity.setting.ChatOption;
 import org.bot.nullbot.enums.ChatScope;
 import org.bot.nullbot.dispatcher.CommandRegistry;
 import org.bot.nullbot.entity.ChatMessage;
