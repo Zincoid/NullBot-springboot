@@ -788,4 +788,5 @@
 - 移除 CommandProcessor 组件的 Async 注解；
 - BotFunction 函数式接口改为 Consumer 风格；
 - 合并 CsvUtil 并优化代码；
+- 重命名根包名，重新组织项目结构；
 - 优化部分代码。
