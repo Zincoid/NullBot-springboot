@@ -43,15 +43,6 @@ logging:  # 可移入 logback.xml 配置
     root: INFO
     com.zincoid.nullbot: INFO  # 日志级别
 
-chrome:
-  driver-auto: false  # 是否自动下载 ChromeDriver
-  # 注: Docker 环境下指向 /root/Nullbot/driver/chromedriver 且容器内无该文件时
-  # 将使用由 Dockerfile.base 构建的 nullbot-jre-chrome:21 环境中的内置驱动程序
-  driver-path: ./chromedriver  # Linux
-  # driver-path: ./chromedriver.exe  # Windows
-  max-retries: 3
-  load-timeout: 10
-
 shiro:
   ws:
     server:
@@ -83,39 +74,50 @@ nullbot:
     prefix: /  # 指令前缀
     rate-limit:
       enabled: true  # 指令限速
-  file:
-    init: true  # 启动时是否文件同步
-    storage:
-      # 机器人文件管理根目录
-      file-directory: /root/file
-      # 路径为管理根下子目录
-      # config-path 下可配置文件:
-      # - 持久化群设置: Settings.csv
-      config-path: /config
-      # resource-path 下需资源文件:
-      # - AI表情包: ai/meme/*
-      # - 终末地资源: endfield/public或版本号/*
-      # - PUBG地图: pubg/固定图片
-      # - 斗蛐蛐资源: duel/data.csv, duel/icon/*.png
-      resource-path: /resource
-      temp-path: /temp
-      image-path: /image
-      video-path: /video
-      audio-path: /audio
-  ai:
-    deepseek:  # DeepSeek API
-      api-url: https://api.deepseek.com/chat/completions
-      api-key:
-      model: deepseek-v4-flash
-      max-history-length: 50
-      max-monitor-length: 100
-      max-tokens: 750
-      default-system-message: 你是一只猫娘，你的名字叫Null。
-    tts:  # TTS API
-      api-url: https://gsv2p.acgnai.top
-      api-key:
-      version: v4
-      model_name: 明日方舟-中文-羽毛笔
-      prompt_text_lang: 中文
-      text_lang: 中文
-      emotion: 默认
+
+file:
+  init: true  # 启动时是否文件同步
+  storage:
+    # 文件管理根目录
+    file-directory: /root/Nullbot/file
+    # 管理根下子目录
+    # config-path 下可配置文件:
+    # - 持久化群设置: Settings.csv
+    config-path: /config
+    # resource-path 下需资源文件:
+    # - AI表情包: ai/meme/*
+    # - 终末地资源: endfield/public或版本号/*
+    # - PUBG地图: pubg/固定图片
+    # - 斗蛐蛐资源: duel/data.csv, duel/icon/*.png
+    resource-path: /resource
+    temp-path: /temp
+    image-path: /image
+    video-path: /video
+    audio-path: /audio
+
+ai:
+  deepseek:  # DeepSeek API
+    api-url: https://api.deepseek.com/chat/completions
+    api-key:
+    model: deepseek-v4-flash
+    max-history-length: 50
+    max-monitor-length: 100
+    max-tokens: 750
+    default-system-message: 你是一只猫娘，你的名字叫Null。
+  tts:  # TTS API
+    api-url: https://gsv2p.acgnai.top
+    api-key:
+    version: v4
+    model_name: 明日方舟-中文-羽毛笔
+    prompt_text_lang: 中文
+    text_lang: 中文
+    emotion: 默认
+
+chrome:
+  driver-auto: false  # 是否自动下载 ChromeDriver
+  # 注: Docker 环境下指向 /root/Nullbot/driver/chromedriver 且容器内无该文件时
+  # 将使用由 Dockerfile.base 构建的 nullbot-jre-chrome:21 环境中的内置驱动程序
+  driver-path: ./chromedriver  # Linux
+  # driver-path: ./chromedriver.exe  # Windows
+  max-retries: 3
+  load-timeout: 10

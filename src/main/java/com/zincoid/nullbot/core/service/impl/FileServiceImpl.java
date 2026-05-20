@@ -48,7 +48,7 @@ public class FileServiceImpl implements FileService {
     private final FileMapper fileMapper;
     private final FileStorageProperties fileStorageProperties;
 
-    @Value("${nullbot.file.init}")
+    @Value("${file.init}")
     private boolean init;
 
     @EventListener(ApplicationReadyEvent.class)
