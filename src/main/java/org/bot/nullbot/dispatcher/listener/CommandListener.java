@@ -43,9 +43,8 @@ public class CommandListener {
 
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
-    // // 通知管理员使用
-    // @Value("${nullbot.admin-id}")
-    // private Long adminId;
+    @Value("${nullbot.admin-id}")
+    private Long adminId;
 
     // ================================== 私聊动作捕获 ==================================
 
@@ -140,7 +139,7 @@ public class CommandListener {
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupPokeInteraction(Bot bot, PokeNoticeEvent event) throws Exception {
-        if (!settingService.isPokeDetect(event.getGroupId())) return;
+        if (!settingService.getMonitorOption(event.getGroupId()).isPokeDetect()) return;
         if (Objects.equals(event.getTargetId(), event.getSelfId())) {
             log.info("◉ [GroupAction:Poke] 群聊 {} -> From {} to {} (仅戳Bot)", event.getGroupId(), event.getUserId(), event.getTargetId());
             commandProcessor.processQQ(bot, new CommandEvent<>(event));
@@ -170,7 +169,7 @@ public class CommandListener {
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupRecallInteraction(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
-        if (!settingService.isRecallDetect(event.getGroupId())) return;
+        if (!settingService.getMonitorOption(event.getGroupId()).isRecallDetect()) return;
         log.info("◉ [GroupAction:Recall] 群聊 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, new CommandEvent<>(event));
     }
