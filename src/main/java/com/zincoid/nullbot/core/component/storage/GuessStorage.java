@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.component.storage;
 
 import lombok.Data;
-import com.zincoid.nullbot.core.config.prop.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.entity.info.GuessInfo;
 import com.zincoid.nullbot.core.entity.po.FilePO;
 import com.zincoid.nullbot.core.service.FileService;

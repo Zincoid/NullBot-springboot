@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.component.render;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.config.prop.ChromeProperties;
+import com.zincoid.nullbot.core.properties.ChromeProperties;
 import com.zincoid.nullbot.core.util.Base64Util;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;

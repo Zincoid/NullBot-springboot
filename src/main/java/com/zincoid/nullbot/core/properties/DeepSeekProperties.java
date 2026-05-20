@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.config.prop;
+package com.zincoid.nullbot.core.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

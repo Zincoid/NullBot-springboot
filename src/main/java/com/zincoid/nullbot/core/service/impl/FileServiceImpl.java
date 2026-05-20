@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import com.zincoid.nullbot.core.config.prop.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.entity.po.FilePO;
 import com.zincoid.nullbot.core.entity.page.DataPage;
 import com.zincoid.nullbot.core.entity.info.FileInfo;

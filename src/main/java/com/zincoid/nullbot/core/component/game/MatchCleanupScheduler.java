@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.game.manager.MatchManager;
 import com.zincoid.nullbot.core.component.game.manager.MatchPoolManager;
 import com.zincoid.nullbot.core.component.game.manager.PlayerManager;
-import com.zincoid.nullbot.core.config.prop.MatchProperties;
+import com.zincoid.nullbot.core.properties.MatchProperties;
 import com.zincoid.nullbot.core.entity.game.basic.Match;
 import com.zincoid.nullbot.core.entity.game.basic.Player;
 import org.springframework.beans.factory.annotation.Value;

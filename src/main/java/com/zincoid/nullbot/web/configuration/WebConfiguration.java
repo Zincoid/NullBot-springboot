@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.config;
+package com.zincoid.nullbot.web.configuration;
 
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.web.interceptor.WebInterceptor;
@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @RequiredArgsConstructor
-public class WebConfig implements WebMvcConfigurer {
+public class WebConfiguration implements WebMvcConfigurer {
 
     private final WebInterceptor webInterceptor;
 

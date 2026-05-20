@@ -3,7 +3,7 @@ package com.zincoid.nullbot.web.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.security.JwtTool;
-import com.zincoid.nullbot.core.config.prop.JwtProperties;
+import com.zincoid.nullbot.core.properties.JwtProperties;
 import com.zincoid.nullbot.core.entity.dto.AdminUpdateDTO;
 import com.zincoid.nullbot.core.entity.dto.PwdChangeDTO;
 import com.zincoid.nullbot.core.entity.dto.RegistDTO;

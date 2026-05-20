@@ -6,7 +6,7 @@ import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.config.prop.RateLimitProperties;
+import com.zincoid.nullbot.core.properties.RateLimitProperties;
 import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
 import com.zincoid.nullbot.core.entity.CommandEvent;

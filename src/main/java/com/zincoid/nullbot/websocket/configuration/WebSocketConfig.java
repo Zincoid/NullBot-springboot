@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.config;
+package com.zincoid.nullbot.websocket.configuration;
 
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.websocket.interceptor.IpHandshakeInterceptor;

@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.component.render;
 
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
-import com.zincoid.nullbot.core.config.prop.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.entity.svg.SvgCanvas;
 import com.zincoid.nullbot.core.util.Base64Util;
 import org.springframework.stereotype.Component;

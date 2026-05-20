@@ -8,7 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
-import com.zincoid.nullbot.core.config.prop.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.entity.info.FileInfo;
 import com.zincoid.nullbot.core.entity.po.DriftBottlePO;
 import com.zincoid.nullbot.core.enums.BniMode;

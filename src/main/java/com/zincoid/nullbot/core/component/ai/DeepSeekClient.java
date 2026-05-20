@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.component.storage.ChatStorage;
 import com.zincoid.nullbot.core.component.storage.SysMsgStorage;
-import com.zincoid.nullbot.core.config.prop.DeepSeekProperties;
+import com.zincoid.nullbot.core.properties.DeepSeekProperties;
 import com.zincoid.nullbot.core.entity.po.SettingPO;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.bot.dispatcher.CommandRegistry;

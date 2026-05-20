@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.component.resource;
 
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.config.prop.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import org.springframework.stereotype.Component;
 import java.io.*;
 import java.nio.file.Files;

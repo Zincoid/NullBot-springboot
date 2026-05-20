@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.component.storage;
 
 import lombok.Data;
-import com.zincoid.nullbot.core.config.prop.DeepSeekProperties;
+import com.zincoid.nullbot.core.properties.DeepSeekProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

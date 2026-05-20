@@ -1,8 +1,8 @@
 package com.zincoid.nullbot.core.component.tool;
 
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.config.prop.ApiProperties;
-import com.zincoid.nullbot.core.config.prop.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.ApiProperties;
+import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import org.springframework.stereotype.Component;
 
 @Component

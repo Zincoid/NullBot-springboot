@@ -1,6 +1,6 @@
-package com.zincoid.nullbot.core.config;
+package com.zincoid.nullbot.web.configuration;
 
-import com.zincoid.nullbot.core.config.prop.JwtProperties;
+import com.zincoid.nullbot.core.properties.JwtProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.security.KeyPair;
 
 @Configuration
-public class SecurityConfig {
+public class SecurityConfiguration {
 
     // // Spring Security 拦截器 (引入完整 Spring Security 依赖时需配置默认放行)
     // @Bean

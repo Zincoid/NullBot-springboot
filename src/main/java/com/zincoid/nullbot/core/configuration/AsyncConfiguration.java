@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.config;
+package com.zincoid.nullbot.core.configuration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 @Slf4j
 @EnableAsync
 @Configuration
-public class AsyncConfig implements AsyncConfigurer {
+public class AsyncConfiguration implements AsyncConfigurer {
 
     @Bean(name = "ThreadExecutor", destroyMethod = "shutdown")
     public ExecutorService ThreadExecutor() {
