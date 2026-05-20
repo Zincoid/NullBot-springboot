@@ -3,6 +3,7 @@ package org.bot.nullbot.component.control;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.annotation.FunctionControl;
+import org.bot.nullbot.exception.NullBotMsgException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
@@ -42,7 +43,7 @@ public class FunctionManager {
     public boolean isEnabled(String function) {
         Boolean enabled = enableFlags.get(function);
         if (enabled == null)
-            throw new NullPointerException("未定义的功能");
+            throw new NullBotMsgException("[全局设置] ❌功能不存在");
         return enabled;
     }
 

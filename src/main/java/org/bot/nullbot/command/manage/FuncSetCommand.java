@@ -36,13 +36,10 @@ public class FuncSetCommand implements Command {
             if (params.size() < 2)
                 throw new NullBotMsgException("[全局设置] ❌参数不足");
             String func = params.get(1);
-            Boolean isEnabled = functionManager.switchEnabled(func);
-            if (isEnabled == null)
-                throw new NullBotMsgException("[全局设置] ❌无此选项");
+            boolean enabled = functionManager.switchEnabled(func);
             bot.sendGroupMsg(event.getGroupId(), """
-                    [全局设置] \uD83D\uDD04状态已切换
-                    - 变动详情: %s""".formatted(isEnabled ? "OFF -> ON" : "ON -> OFF"), false);
-            log.info("\t\t\t\t├─[FuncSet] 已更改全局设置 {} -> {}", func, isEnabled ? "ON" : "OFF");
+                    [全局设置] \uD83D\uDD04状态已切换: %s""".formatted(enabled ? "ON" : "OFF"), false);
+            log.info("\t\t\t\t├─[FuncSet] 已更改全局设置 {} -> {}", func, enabled ? "ON" : "OFF");
             return;
         }
         throw new NullBotMsgException("[全局设置] ❌无此操作");
