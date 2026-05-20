@@ -17,7 +17,6 @@ import com.zincoid.nullbot.core.component.security.SecurityCodeScheduler;
 import com.zincoid.nullbot.bot.dispatcher.CommandProcessor;
 import com.zincoid.nullbot.bot.dispatcher.handler.impl.PermissionHandler;
 import com.zincoid.nullbot.core.entity.CommandEvent;
-import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +40,6 @@ public class CommandListener {
     private final MonitorListener monitorListener;
     private final SecurityCodeScheduler securityCodeScheduler;
     private final PermissionHandler  permissionHandler;
-    private final SettingService settingService;
 
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
