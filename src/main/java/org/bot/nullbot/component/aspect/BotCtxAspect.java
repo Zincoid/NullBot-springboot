@@ -22,8 +22,8 @@ public class BotCtxAspect {
 
     private final SettingService settingService;
 
-    @Around("@annotation(ctx)")
-    public Object load(ProceedingJoinPoint joinPoint, BotContext ctx) throws Throwable {
+    @Around("@annotation(context)")
+    public Object load(ProceedingJoinPoint joinPoint, BotContext context) throws Throwable {
         for (Object arg : joinPoint.getArgs()) {
             Long userId = null;
             Long groupId = null;

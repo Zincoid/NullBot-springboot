@@ -19,7 +19,7 @@ public class FunctionAspect {
     private final FunctionManager functionManager;
 
     @Around("@annotation(function)")
-    public Object checkFunction(ProceedingJoinPoint joinPoint, FunctionControl function) throws Throwable {
+    public Object check(ProceedingJoinPoint joinPoint, FunctionControl function) throws Throwable {
         if (functionManager.isEnabled(function.value()))
             return joinPoint.proceed();
         // 根据方法返回类型返回默认值
