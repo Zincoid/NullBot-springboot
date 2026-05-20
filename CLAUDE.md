@@ -5,15 +5,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build & Run
 
 ```bash
-# Build
-mvn clean package -DskipTests
-
-# Run (jar deploys to /root/Nullbot)
-java -jar target/NullBot-springboot-0.0.1-SNAPSHOT.jar
-
-# Run a single test
-mvn test -Dtest=YourTestClass -pl .
-```
 
 - Java 21, Spring Boot 4.0.0, Maven. Compiler plugin is set to Java 19 source/target.
 - Active config is `src/main/resources/application.yml`. Secrets are in that file — do not commit these publicly.

@@ -42,7 +42,7 @@ logging:  # 可移入 logback.xml 配置
     name: /root/Nullbot/output.log  # 日志路径
 #  level:
 #    root: INFO
-#    org.bot.nullbot: WARN
+#    com.zincoid.nullbot: WARN
 
 chrome:
     driver-auto: false
@@ -62,7 +62,7 @@ shiro:
     max-binary-message-buffer-size: 5120000
     max-text-message-buffer-size: 512000
     access-token:
-  interceptor: org.bot.nullbot.interceptor.BotInterceptor
+  interceptor: interceptor.com.zincoid.nullbot.BotInterceptor
   limiter:
     enable: true
     rate: 10

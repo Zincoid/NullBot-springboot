@@ -5,7 +5,7 @@
 ### 快捷运行
 
 screen -dmS napcat bash -c "xvfb-run -a /root/Napcat/opt/QQ/qq --no-sandbox -q 3408240018"
-screen -dmS nullbot bash -c "java -jar /root/Nullbot/target/NullBot-springboot-0.0.1-SNAPSHOT.jar"
+screen -dmS nullbot bash -c "java -jar /root/Nullbot/target/NullBot-2.0.0.jar"
 
 ### 使用 syswatch.sh 监控系统崩溃
 

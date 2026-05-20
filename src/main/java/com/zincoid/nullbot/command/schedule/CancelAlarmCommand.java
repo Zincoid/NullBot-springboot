@@ -1,0 +1,48 @@
+package com.zincoid.nullbot.command.schedule;
+
+import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import com.zincoid.nullbot.annotation.CommandMapping;
+import com.zincoid.nullbot.command.Command;
+import com.zincoid.nullbot.component.control.BotTaskScheduler;
+import com.zincoid.nullbot.exception.NullBotMsgException;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@CommandMapping({"CancelAlarm", "取消闹钟"})
+@Component
+@Slf4j
+@RequiredArgsConstructor
+public class CancelAlarmCommand implements Command {
+
+    private final BotTaskScheduler botTaskScheduler;
+
+    @Override
+    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        if (params.isEmpty())
+            throw new NullBotMsgException("[取消闹钟] ❌参数不足");
+        String alarmId = params.getFirst();
+
+        String taskId = "Alarm-%s-%s".formatted(userId, alarmId);
+        boolean cancelled = botTaskScheduler.cancelTask(taskId);
+
+        bot.sendGroupMsg(groupId, "[取消闹钟] %s".formatted(cancelled ? "✅已取消" : "❌未取消"), false);
+        log.info("\t\t\t\t├─[CancelAlarm] 闹钟取消{} - AlarmID: {}", cancelled ? "成功" : "失败", alarmId);
+    }
+
+    @Override
+    public String getHelp() {
+        return String.format("""
+                ◉ CancelAlarm 命令
+                功能: 取消个人闹钟
+                限权: %d 级
+                格式: CancelAlarm [AlarmID]
+                别名: 取消闹钟""", getAccess()
+        );
+    }
+}
