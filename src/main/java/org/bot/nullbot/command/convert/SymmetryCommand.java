@@ -58,7 +58,7 @@ public class SymmetryCommand implements Command {
                         long qqNumber = Long.parseLong(params.get(1));
                         urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
                     } else {
-                        List<Long> qqNumbers = MsgParseUtil.extractAtQQNumbers(event.getRawMessage());
+                        List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
                         for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
                     }
                 } else {
@@ -69,7 +69,7 @@ public class SymmetryCommand implements Command {
                 throw new NullBotMsgException("[对称] ❌参数格式错误");
             }
         } else {
-            List<Long> qqNumbers = MsgParseUtil.extractAtQQNumbers(event.getRawMessage());
+            List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
             for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
         }
 

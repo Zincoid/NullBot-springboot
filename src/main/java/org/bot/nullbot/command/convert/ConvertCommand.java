@@ -62,7 +62,7 @@ public class ConvertCommand implements Command {
             }
             urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         }else{
-            List<Long> qqNumbers = MsgParseUtil.extractAtQQNumbers(event.getRawMessage());
+            List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
             for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         }
 

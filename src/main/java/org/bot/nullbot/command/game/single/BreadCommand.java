@@ -97,7 +97,7 @@ public class BreadCommand implements Command {
     }
 
     private void rob(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
-        List<Long> qqNumbers = MsgParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+        List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(groupMessageEvent.getRawMessage());
         if (qqNumbers.isEmpty()) {
             bot.sendGroupMsg(groupId, "[抢面包] ❌未指定对象", false);
             log.info("\t\t\t\t├─[Bread-Rob] 未指定对象");
@@ -124,7 +124,7 @@ public class BreadCommand implements Command {
     }
 
     private void gift(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
-        List<Long> qqNumbers = MsgParseUtil.extractAtQQNumbers(groupMessageEvent.getRawMessage());
+        List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(groupMessageEvent.getRawMessage());
         if (qqNumbers.isEmpty()) {
             bot.sendGroupMsg(groupId, "[送面包] ❌未指定对象", false);
             log.info("\t\t\t\t├─[Bread-Gift] 未指定对象");

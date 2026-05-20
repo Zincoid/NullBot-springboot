@@ -17,11 +17,11 @@ public final class MsgParseUtil {
 
     // =================== @QQ号提取方法 ===================
 
-    public static List<Long> extractAtQQNumbers(String message) {
+    public static List<Long> extractAtNumbers(String rawMsg) {
         List<Long> qqNumbers = new ArrayList<>();
         // 正则表达式匹配 [CQ:at,qq=数字]
         Pattern pattern = Pattern.compile("\\[CQ:at,qq=(\\d+)]");
-        Matcher matcher = pattern.matcher(message);
+        Matcher matcher = pattern.matcher(rawMsg);
         while (matcher.find()) {
             try {
                 long qq = Long.parseLong(matcher.group(1));
@@ -36,7 +36,7 @@ public final class MsgParseUtil {
 
     // =================== 消息格式化方法 ===================
 
-    public static String parseArrayMsgToSimple(Bot bot, List<ArrayMsg> arrayMsgs) {
+    public static String simplifyArrayMsg(Bot bot, List<ArrayMsg> arrayMsgs) {
         StringBuilder message = new StringBuilder();
         for (ArrayMsg msg : arrayMsgs) {
             JsonNode data = msg.getData();
@@ -69,8 +69,8 @@ public final class MsgParseUtil {
     // =================== 语录格式化方法 ===================
 
     @Deprecated
-    public static String parseRawSaying(String rawSaying) {
-        String text = rawSaying.replaceAll("\\[CQ:at,qq=(\\d+)]", "@$1").replaceAll("\\[CQ:.*?]", "");
+    public static String parseRawSaying(String rawMsg) {
+        String text = rawMsg.replaceAll("\\[CQ:at,qq=(\\d+)]", "@$1").replaceAll("\\[CQ:.*?]", "");
         if(Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(text)))
             throw new IllegalArgumentException("禁止套娃");
         if(text.trim().isEmpty())
@@ -78,12 +78,12 @@ public final class MsgParseUtil {
         return text;
     }
 
-    public static String parseRawSaying(Bot bot, String rawSaying) {
-        if(Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(rawSaying)))
+    public static String parseRawSaying(Bot bot, String rawMsg) {
+        if(Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(rawMsg)))
             throw new IllegalArgumentException("禁止套娃");
 
         Pattern atPattern = Pattern.compile("\\[CQ:at,qq=(\\d+)]");
-        Matcher matcher = atPattern.matcher(rawSaying);
+        Matcher matcher = atPattern.matcher(rawMsg);
         StringBuilder result = new StringBuilder();
         while (matcher.find()) {
             try {
@@ -111,25 +111,25 @@ public final class MsgParseUtil {
 
     // =================== 资源 URL 提取方法 ===================
 
-    public static Map<String, String> parseRawMsgAsImgMap(String rawMessage) {
-        return parseCqCodeAsMap(rawMessage, Pattern.compile("\\[CQ:image([^]]+)]"));
+    public static Map<String, String> parseRawMsgAsImgMap(String rawMsg) {
+        return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:image([^]]+)]"));
     }
 
-    public static Map<String, String> parseRawMsgAsVidMap(String rawMessage) {
-        return parseCqCodeAsMap(rawMessage, Pattern.compile("\\[CQ:video([^]]+)]"));
+    public static Map<String, String> parseRawMsgAsVidMap(String rawMsg) {
+        return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:video([^]]+)]"));
     }
 
-    public static Map<String, String> parseRawMsgAsRecMap(String rawMessage) {
-        return parseCqCodeAsMap(rawMessage, Pattern.compile("\\[CQ:record([^]]+)]"));
+    public static Map<String, String> parseRawMsgAsRecMap(String rawMsg) {
+        return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:record([^]]+)]"));
     }
 
-    public static Map<String, String> parseRawMsgAsFileMap(String rawMessage) {
-        return parseCqCodeAsMap(rawMessage, Pattern.compile("\\[CQ:file([^]]+)]"));
+    public static Map<String, String> parseRawMsgAsFileMap(String rawMsg) {
+        return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:file([^]]+)]"));
     }
 
-    private static Map<String, String> parseCqCodeAsMap(String rawMessage, Pattern cqPattern) {
+    private static Map<String, String> parseCqCodeAsMap(String rawMsg, Pattern cqPattern) {
         return cqPattern
-                .matcher(rawMessage == null ? "" : rawMessage)
+                .matcher(rawMsg == null ? "" : rawMsg)
                 .results()
                 .map(match -> match.group(1))
                 .map(params -> new AbstractMap.SimpleEntry<>(
