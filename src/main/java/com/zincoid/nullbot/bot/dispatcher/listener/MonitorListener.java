@@ -16,7 +16,6 @@ import com.zincoid.nullbot.core.entity.CommandEvent;
 import com.zincoid.nullbot.core.component.storage.ChatStorage;
 import com.zincoid.nullbot.core.entity.info.FileInfo;
 import com.zincoid.nullbot.core.service.FileService;
-import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +36,6 @@ public class MonitorListener {
     private final ChatStorage chatStorage;
     private final DeepSeekProperties deepSeekProperties;
     private final FileStorageProperties fileStorageProperties;
-    private final SettingService settingService;
     private final FileService fileService;
 
     @Value("${nullbot.command.prefix}")
