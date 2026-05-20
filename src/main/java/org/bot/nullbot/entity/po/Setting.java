@@ -1,5 +1,6 @@
 package org.bot.nullbot.entity.po;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.enums.ChatScope;
@@ -7,6 +8,7 @@ import org.bot.nullbot.enums.LimitScope;
 
 @Data
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class Setting {
 
     private final Long groupId;
