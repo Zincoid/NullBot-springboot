@@ -564,20 +564,21 @@ public class DeepSeekClient {
      */
     private Integer sendMsg(Bot bot, Long targetId, String message, boolean isPrivate, boolean voice) {
         ActionData<MsgId> msgIdActionData;
-        if (isPrivate)
+        if (isPrivate) {
             msgIdActionData = bot.sendPrivateMsg(
                     targetId,
                     voice ? MsgUtils.builder()
                             .voice("base64://" + ttsClient.synthesize(message)).build() : message,
                     false
             );
-        else
+        } else {
             msgIdActionData = bot.sendGroupMsg(
                     targetId,
                     voice ? MsgUtils.builder()
                             .voice("base64://" + ttsClient.synthesize(message)).build() : message,
                     false
             );
+        }
         return msgIdActionData.getData().getMessageId();
     }
 
