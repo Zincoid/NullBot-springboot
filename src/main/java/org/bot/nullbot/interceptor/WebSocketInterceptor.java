@@ -6,7 +6,7 @@ import org.bot.nullbot.component.security.JwtTool;
 import org.bot.nullbot.entity.StompPrincipal;
 import org.bot.nullbot.entity.po.AdminPO;
 import org.bot.nullbot.service.AdminService;
-import org.bot.nullbot.util.UserCtxUtil;
+import org.bot.nullbot.util.WebCtxUtil;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -57,7 +57,7 @@ public class WebSocketInterceptor implements ChannelInterceptor {
                 }
                 Long userId = jwtTool.getAs(jwt, "id", Long.class);
                 Integer userType = jwtTool.getAs(jwt, "type", Integer.class);
-                UserCtxUtil.set(userId, userType);  // 存储此次用户信息
+                WebCtxUtil.set(userId, userType);  // 存储此次用户信息
                 AdminPO admin = adminService.info(userId);
                 if (admin == null) {
                     log.info("├─[WebSocketInterceptor] 管理员不存在");
