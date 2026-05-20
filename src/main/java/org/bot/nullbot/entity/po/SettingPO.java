@@ -2,12 +2,10 @@ package org.bot.nullbot.entity.po;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.enums.ChatScope;
 import org.bot.nullbot.enums.LimitScope;
 
 @Data
-@RequiredArgsConstructor
 @NoArgsConstructor
 public class SettingPO {
 
