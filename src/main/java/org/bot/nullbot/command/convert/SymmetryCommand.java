@@ -46,7 +46,7 @@ public class SymmetryCommand implements Command {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-            Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
+            Map<String, String> imageMap = MessageParseUtil.parseGroupRawMsgAsImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
         }
 

@@ -42,7 +42,7 @@ public class DriftBottleCommand implements Command {
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
         String message = event.getMessage();
-        Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(event.getRawMessage());
+        Map<String, String> imageMap = MessageParseUtil.parseGroupRawMsgAsImgMap(event.getRawMessage());
 
         if (!imageMap.isEmpty()) {
             boolean autoThrow = !params.isEmpty() && "-auto".equals(params.getFirst());

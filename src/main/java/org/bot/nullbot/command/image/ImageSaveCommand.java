@@ -36,8 +36,8 @@ public class ImageSaveCommand implements Command {
             throw new NullBotMsgException("[保存图片] ❌需引用图片");
 
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-        Map<String, String> imageMap = MessageParseUtil.parseGroupRawMessageAsImageMap(replyMsg.getRawMessage());
-        if(imageMap.isEmpty())
+        Map<String, String> imageMap = MessageParseUtil.parseGroupRawMsgAsImgMap(replyMsg.getRawMessage());
+        if (imageMap.isEmpty())
             throw new NullBotMsgException("[保存图片] ❌未包含图片");
 
         Long groupId = event.getGroupId();

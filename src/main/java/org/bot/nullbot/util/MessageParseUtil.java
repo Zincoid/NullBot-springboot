@@ -111,19 +111,19 @@ public final class MessageParseUtil {
 
     // =================== 资源 URL 提取方法 ===================
 
-    public static Map<String, String> parseGroupRawMessageAsImageMap(String rawMessage) {
+    public static Map<String, String> parseGroupRawMsgAsImgMap(String rawMessage) {
         return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:image([^]]+)]"));
     }
 
-    public static Map<String, String> parseGroupRawMessageAsVideoMap(String rawMessage) {
+    public static Map<String, String> parseGroupRawMsgAsVidMap(String rawMessage) {
         return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:video([^]]+)]"));
     }
 
-    public static Map<String, String> parseGroupRawMessageAsRecordMap(String rawMessage) {
+    public static Map<String, String> parseGroupRawMsgAsRecMap(String rawMessage) {
         return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:record([^]]+)]"));
     }
 
-    public static Map<String, String> parseGroupRawMessageAsFileMap(String rawMessage) {
+    public static Map<String, String> parseGroupRawMsgAsFileMap(String rawMessage) {
         return parseCqCodeToMap(rawMessage, Pattern.compile("\\[CQ:file([^]]+)]"));
     }
 
