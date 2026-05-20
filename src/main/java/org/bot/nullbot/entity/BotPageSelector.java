@@ -6,7 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bot.nullbot.component.control.BotInputManager;
 import org.bot.nullbot.enums.BniMode;
 import org.bot.nullbot.exception.NullBotMsgException;
-import org.bot.nullbot.function.BotFunction;
+import org.bot.nullbot.function.BotConsumer;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -25,7 +25,7 @@ public class BotPageSelector<K, V> {
 
     private final List<K> keys;
     private final List<V> values;
-    private final BotFunction<Bot, Long, K, Void> action;
+    private final BotConsumer<Bot, Long, K> action;
 
     private final int total;
     private final int size;
@@ -58,7 +58,7 @@ public class BotPageSelector<K, V> {
         private final boolean continuous;
         private final List<K> keys;
         private final List<V> values;
-        private final BotFunction<Bot, Long, K, Void> action;
+        private final BotConsumer<Bot, Long, K> action;
 
         private Long userId;
         private String info = "";
@@ -68,7 +68,7 @@ public class BotPageSelector<K, V> {
         public Builder(Bot bot, Long groupId,
                        String title, boolean continuous,
                        List<K> keys, List<V> values,
-                       BotFunction<Bot, Long, K, Void> action) {
+                       BotConsumer<Bot, Long, K> action) {
             this.bot = bot;
             this.groupId = groupId;
             this.title = title;
@@ -222,7 +222,7 @@ public class BotPageSelector<K, V> {
             bot.sendGroupMsg(groupId, "[%s] ❌索引越界".formatted(title), false);
             return true;
         }
-        action.apply(bot, groupId, keys.get(i - 1));
+        action.accept(bot, groupId, keys.get(i - 1));
         return continuous;
     }
 }

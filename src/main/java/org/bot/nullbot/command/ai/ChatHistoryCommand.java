@@ -61,10 +61,9 @@ public class ChatHistoryCommand implements Command {
         pager.start(in);
     }
 
-    private Void sendInfo(Bot bot, Long groupId, ChatMessage message) {
+    private void sendInfo(Bot bot, Long groupId, ChatMessage message) {
         bot.sendGroupMsg(groupId, message.toString(), true);
         log.info("\t\t\t\t├─[ChatHistory] 已获取记录 - {}", message.getMessageId());
-        return null;
     }
 
     @Override

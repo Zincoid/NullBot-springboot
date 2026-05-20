@@ -117,7 +117,7 @@ public class EndfieldCommand implements Command {
         // pager.start(in);
     }
 
-    private Void sendResource(Bot bot, Long groupId, FilePO file) {
+    private void sendResource(Bot bot, Long groupId, FilePO file) {
         if (file.getFileName().endsWith(".txt")) {  // TXT文件类型 读取文本内容
             try {
                 String response = Files.readString(
@@ -134,7 +134,6 @@ public class EndfieldCommand implements Command {
             bot.sendGroupMsg(groupId, response, false);
             log.info("\t\t\t\t├─[Endfield] 已获取图片 - {}", file.getFileName());
         }
-        return null;
     }
 
     private void setGroupVersion(Long groupId, String version) {

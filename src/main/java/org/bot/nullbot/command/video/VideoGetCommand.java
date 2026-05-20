@@ -75,13 +75,12 @@ public class VideoGetCommand implements Command {
         // pager.start(in);
     }
 
-    private Void sendVideo(Bot bot, Long groupId, FilePO video) {
+    private void sendVideo(Bot bot, Long groupId, FilePO video) {
         String response = MsgUtils.builder()
                 .video(ossUrlBuilder.from(video.getId()), "")
                 .build();
         bot.sendGroupMsg(groupId, response, false);
         log.info("\t\t\t\t├─[VideoGet] 已获取视频 - {}", video.getFileName());
-        return null;
     }
 
     @Override
