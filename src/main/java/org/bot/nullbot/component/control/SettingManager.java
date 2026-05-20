@@ -1,10 +1,8 @@
 package org.bot.nullbot.component.control;
 
 import lombok.extern.slf4j.Slf4j;
-import org.bot.nullbot.config.prop.DefaultProperties;
 import org.bot.nullbot.config.prop.FileStorageProperties;
-import org.bot.nullbot.entity.ChatOption;
-import org.bot.nullbot.entity.info.SettingInfo;
+import org.bot.nullbot.entity.setting.Setting;
 import org.bot.nullbot.util.CsvImportUtil;
 import org.springframework.stereotype.Component;
 
@@ -18,17 +16,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class SettingManager {
 
-    /* TODO: 使用数据库重构设置管理 */
+    private final Map<Long, Setting> settings;
 
-    private final DefaultProperties defaultProperties;
-    private final Map<Long, SettingInfo> settings;
-
-    public SettingManager(DefaultProperties defaultProperties, FileStorageProperties fileStorageProperties) {
-        this.defaultProperties = defaultProperties;
+    public SettingManager(FileStorageProperties fileStorageProperties) {
         settings = new ConcurrentHashMap<>();
         try {
-            List<SettingInfo> defaultSettings = CsvImportUtil.importFromCsv(
-                    fileStorageProperties.getConfigPath() + "/Settings.csv", SettingInfo.class);
+            List<Setting> defaultSettings = CsvImportUtil.importFromCsv(
+                    fileStorageProperties.getConfigPath() + "/Settings.csv", Setting.class);
             setSettings(defaultSettings);
             log.info("▽ [SettingManager] 群组配置文件已载入");
         } catch (IOException e) {
@@ -36,24 +30,20 @@ public class SettingManager {
         }
     }
 
-    public ChatOption getChatOption(Long groupId) {
-        return getSetting(groupId).getChatOption();
+    public Setting getSetting(Long groupId) {
+        return settings.computeIfAbsent(groupId, k -> new Setting(groupId));
     }
 
-    public SettingInfo getSetting(Long groupId) {
-        return settings.computeIfAbsent(groupId, k -> new SettingInfo(groupId, defaultProperties));
-    }
-
-    public boolean setSetting(SettingInfo setting) {
+    public boolean setSetting(Setting setting) {
         return settings.put(setting.getGroupId(), setting) != null;
     }
 
-    public List<SettingInfo> getSettings() {
+    public List<Setting> getSettings() {
         return new ArrayList<>(settings.values());
     }
 
-    public void setSettings(List<SettingInfo> newSettings) {
-        for (SettingInfo setting : newSettings)
+    public void setSettings(List<Setting> newSettings) {
+        for (Setting setting : newSettings)
             settings.put(setting.getGroupId(), setting);
     }
 }
