@@ -5,23 +5,22 @@ spring:
     multipart:
       max-file-size: 1024MB
       max-request-size: 1024MB
-  datasource:
+  datasource:  # 数据库配置
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/nullbot  # 本地部署
-    # url: jdbc:mysql://nullbot-mysql:3306/nullbot  # 容器化部署
-    # url: jdbc:mysql://172.17.0.1:3306/nullbot  # 容器化部署但MySql在宿主机时
+    # url: jdbc:mysql://nullbot-mysql:3306/nullbot  # 容器部署
+    # url: jdbc:mysql://172.17.0.1:3306/nullbot  # 宿主数据库
     username:
     password:
   api:
-    base-url: http://nullbot.zincoid.online/api  # OSS 配置
+    base-url: http://localhost:8080/api  # 后端 Url (OSS使用)
 
 server:
-#  address: 127.0.0.1  # 仅监听本地回环
   port: 8080
   tomcat:
-    max-swallow-size: -1  # -1 表示不限制 默认 2MB
-    max-http-form-post-size: 1073741824  # 1GB 单位: Byte
-    connection-timeout: 300000  # 5 Min
+    max-swallow-size: -1
+    max-http-form-post-size: 1073741824
+    connection-timeout: 300000
     max-connections: 10000
   compression:
     enabled: true
@@ -31,45 +30,45 @@ server:
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
 
-jwt:
-  location: classpath:secret/JwtSignKey.jks  # .jks 密钥文件路径
+jwt:  # jks 密钥配置
+  location: classpath:secret/JwtSignKey.jks
   alias:
   password:
   tokenTTL: 24h
 
 logging:  # 可移入 logback.xml 配置
   file:
-    name: /root/Nullbot/output.log  # 日志路径
-#  level:
-#    root: INFO
-#    com.zincoid.nullbot: WARN
+    name: ./output.log  # 日志路径
+  level:
+    root: INFO
+    com.zincoid.nullbot: INFO  # 日志级别
 
 chrome:
-    driver-auto: false
-    # 在 Docker 环境下指向 /root/Nullbot/driver/chromedriver 且容器内无该文件时
-    # 将使用由 Dockerfile.base 构建的 nullbot-jre-chrome:21 环境中的内置驱动
-    driver-path: /root/Nullbot/driver/chromedriver  # Linux
-#    driver-path: src/test/driver/chromedriver.exe  # Windows
-    max-retries: 3
-    load-timeout: 10
+  driver-auto: false  # 是否自动下载 ChromeDriver
+  # 注: Docker 环境下指向 /root/Nullbot/driver/chromedriver 且容器内无该文件时
+  # 将使用由 Dockerfile.base 构建的 nullbot-jre-chrome:21 环境中的内置驱动程序
+  driver-path: ./chromedriver  # Linux
+  # driver-path: ./chromedriver.exe  # Windows
+  max-retries: 3
+  load-timeout: 10
 
 shiro:
   ws:
     server:
       enable: true
-      url: /NullBot
-    timeout: 20  # 10
-    max-binary-message-buffer-size: 5120000
+      url: /napcat  # Ws 服务端端点
+    timeout: 20
+    max-binary-message-buffer-size: 512000
     max-text-message-buffer-size: 512000
-    access-token:
-  interceptor: interceptor.com.zincoid.nullbot.BotInterceptor
+    access-token:  # NapCat Ws 鉴权口令
+  interceptor: com.zincoid.nullbot.bot.interceptor.BotInterceptor
   limiter:
     enable: true
     rate: 10
     capacity: 30
     awaitTask: true
-    timeout: 20  # 10
-#  task-pool:  #  内置线程池
+    timeout: 20
+#  task-pool:  # Shiro 内置线程池 (暂不使用)
 #    core-pool-size: 10
 #    queue-capacity: 200
 #    keep-alive-time: 10
@@ -78,34 +77,42 @@ shiro:
 
 nullbot:
   bot-id:  # 机器人账号
-  admin-id:  # 管理账号
-  log-id:  # 管理群聊
+  admin-id:  # 管理员账号
+  log-id:  # 日志用群聊
   command:
-    prefix: /
+    prefix: /  # 指令前缀
     rate-limit:
-      enabled: true
+      enabled: true  # 指令限速
   file:
     storage:
-      # 网页文件管理根目录
-      file-directory: /root/Nullbot/file
-      # 以下路径需选择管理根下子目录
-      config-path: /root/Nullbot/file/config  # 可配置文件 - 群设置: Settings.csv
-      resource-path: /root/Nullbot/file/resource  # 资源文件夹 - ai/meme/*, endfield/public或版本文件夹/*, pubg/*, duel/data.csv, duel/icon/*.png
-      temp-path: /root/Nullbot/file/temp
-      image-path: /root/Nullbot/file/image
-      video-path: /root/Nullbot/file/video
-      audio-path: /root/Nullbot/file/audio
+      # 机器人文件管理根目录
+      file-directory: /root/file
+      # 需设置子目录完整路径
+      # config-path 下可配置文件:
+      # - 持久化群设置: Settings.csv
+      config-path: /root/file/config
+      # resource-path 下需资源文件:
+      # - AI表情包: ai/meme/*
+      # - 终末地资源: endfield/public或版本号/*
+      # - PUBG地图: pubg/固定图片
+      # - 斗蛐蛐资源: duel/data.csv, duel/icon/*.png
+      resource-path: /root/file/resource
+      temp-path: /root/file/temp
+      image-path: /root/file/image
+      video-path: /root/file/video
+      audio-path: /root/file/audio
 
   ai:
-    deepseek:
+    deepseek:  # DeepSeek API
       api-url: https://api.deepseek.com/chat/completions
       api-key:
       model: deepseek-v4-flash
       max-history-length: 50
       max-monitor-length: 100
-      max-tokens: 250
-      default-system-message: 你是一只猫娘，你的名字叫Null。
-    tts:
+      max-tokens: 750
+      default-system-message: """
+      你是一只猫娘，你的名字叫Null。"""
+    tts:  # TTS API
       api-url: https://gsv2p.acgnai.top
       api-key:
       version: v4
