@@ -1,11 +1,11 @@
 package org.bot.nullbot.util;
 
-public class UserCtxUtil {
+public final class WebCtxUtil {
 
     private static final ThreadLocal<Long> userId = new ThreadLocal<>();
     private static final ThreadLocal<Integer> userType = new ThreadLocal<>();
 
-    private UserCtxUtil() {}
+    private WebCtxUtil() {}
 
     public static void set(Long id, Integer type) {
         setId(id);
@@ -15,7 +15,6 @@ public class UserCtxUtil {
     public static void setId(Long id) {
         userId.set(id);
     }
-
     public static void setType(Integer type) {
         userType.set(type);
     }
