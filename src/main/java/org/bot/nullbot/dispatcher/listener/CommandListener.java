@@ -11,6 +11,7 @@ import com.mikuac.shiro.enums.AtEnum;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bot.nullbot.annotation.BotContext;
 import org.bot.nullbot.annotation.FunctionControl;
 import org.bot.nullbot.component.security.SecurityCodeScheduler;
 import org.bot.nullbot.dispatcher.CommandProcessor;
@@ -99,16 +100,11 @@ public class CommandListener {
 
     // ================================== 群聊动作捕获 ==================================
 
+    @BotContext
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)
     @Async("ThreadExecutor")
     public void onGroupMessageInteraction(Bot bot, GroupMessageEvent event) throws Exception {
-
-        // // 记录会话信息至 ThreadLocal
-        // Long groupId = event.getGroupId();
-        // Long userId = event.getUserId();
-        // SettingPO setting = settingService.get(groupId);
-        // BotCtxUtil.set(userId, groupId, setting);
 
         // 串行调用 消息预处理 指令输入捕获
         if (monitorListener.doGroupInputResponse(event)) {
@@ -141,6 +137,7 @@ public class CommandListener {
         }
     }
 
+    @BotContext
     @FunctionControl("PokeDetect")
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
@@ -152,6 +149,7 @@ public class CommandListener {
         }
     }
 
+    @BotContext
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NEED)
     @Async("ThreadExecutor")
@@ -171,6 +169,7 @@ public class CommandListener {
                 event, "Chat", List.of(parsed), true, true));
     }
 
+    @BotContext
     @FunctionControl("RecallDetect")
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
