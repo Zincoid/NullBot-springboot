@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.websocket.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -15,8 +16,8 @@ public class IpHandshakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public boolean beforeHandshake(
-            ServerHttpRequest request, ServerHttpResponse response,
-            WebSocketHandler wsHandler, Map<String, Object> attributes
+            @NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response,
+            @NonNull WebSocketHandler wsHandler, @NonNull Map<String, Object> attributes
     ) {
         if (request instanceof ServletServerHttpRequest) {
             HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
@@ -28,8 +29,8 @@ public class IpHandshakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public void afterHandshake(
-            ServerHttpRequest request, ServerHttpResponse response,
-            WebSocketHandler wsHandler, Exception exception
+            @NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response,
+            @NonNull WebSocketHandler wsHandler, Exception exception
     ) {
         // 无需处理
     }
