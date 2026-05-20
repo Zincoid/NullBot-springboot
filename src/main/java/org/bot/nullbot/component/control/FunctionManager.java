@@ -1,10 +1,8 @@
 package org.bot.nullbot.component.control;
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.annotation.FunctionControl;
-import org.bot.nullbot.config.prop.DefaultProperties;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
@@ -13,81 +11,50 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@RequiredArgsConstructor
 public class FunctionManager {
 
     private final ApplicationContext applicationContext;
-    private final DefaultProperties defaultProperties;
-    private final Map<String, Boolean> enableFlags = new ConcurrentHashMap<>();
 
-    public FunctionManager(ApplicationContext applicationContext, DefaultProperties defaultProperties) {
-        this.applicationContext = applicationContext;
-        this.defaultProperties = defaultProperties;
-        // 不在构造函数中初始化 enableFlags 避免循环依赖
-    }
+    private final Map<String, Boolean> enableFlags = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init() {
-        // loadPropsViaDefault();
-        loadPropsViaAnnotation();
-    }
-
-    private void loadPropsViaDefault() {
-        try {
-            BeanWrapper wrapper = new BeanWrapperImpl(defaultProperties);
-            for (java.beans.PropertyDescriptor pd : wrapper.getPropertyDescriptors()) {
-                if (pd.getPropertyType() == Boolean.class || pd.getPropertyType() == boolean.class) {
-                    Object value = wrapper.getPropertyValue(pd.getName());
-                    if (value != null) {
-                        enableFlags.put(pd.getName(), true);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadPropsViaAnnotation() {
         String[] beanNames = applicationContext.getBeanDefinitionNames();
         for (String beanName : beanNames) {
-            if (beanName.equals("functionManager")) {
-                continue;
-            }
+            if (beanName.equals("functionManager")) continue;
             Class<?> beanType = applicationContext.getType(beanName);
             if (beanType == null) continue;
-            // 扫描类注解
-            FunctionControl classAnnotation = AnnotationUtils.findAnnotation(
-                    beanType, FunctionControl.class);
-            if (classAnnotation != null) {
-                enableFlags.put(classAnnotation.value(), true);
-            }
-            // 扫描方法注解
+            FunctionControl classAnno = AnnotationUtils
+                    .findAnnotation(beanType, FunctionControl.class);
+            if (classAnno != null)
+                enableFlags.put(classAnno.value(), true);
             Arrays.stream(beanType.getDeclaredMethods())
                     .forEach(method -> {
-                        FunctionControl methodAnnotation = AnnotationUtils.findAnnotation(
-                                method, FunctionControl.class);
-                        if (methodAnnotation != null) {
-                            enableFlags.put(methodAnnotation.value(), methodAnnotation.enabled());
-                        }
+                        FunctionControl methodAnno = AnnotationUtils
+                                .findAnnotation(method, FunctionControl.class);
+                        if (methodAnno != null)
+                            enableFlags.put(methodAnno.value(), methodAnno.enabled());
                     });
         }
     }
 
-    public Boolean isEnabled(String functionName) {
-        return enableFlags.get(functionName);
+    public boolean isEnabled(String function) {
+        Boolean enabled = enableFlags.get(function);
+        if (enabled == null)
+            throw new NullPointerException("未定义的功能");
+        return enabled;
     }
 
-    public void setEnabled(String functionName, boolean enabled) {
-        enableFlags.put(functionName, enabled);
+    public boolean setEnabled(String function, boolean enabled) {
+        isEnabled(function);
+        enableFlags.put(function, enabled);
+        return enabled;
     }
 
-    public Boolean switchEnabled(String functionName) {
-        Boolean flag = enableFlags.get(functionName);
-        if (flag != null) {
-            enableFlags.put(functionName, !flag);
-            return !flag;
-        }
-        return null;
+    public boolean switchEnabled(String function) {
+        boolean enabled = isEnabled(function);
+        return setEnabled(function, !enabled);
     }
 
     public String getStatus() {
