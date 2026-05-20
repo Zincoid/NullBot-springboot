@@ -17,6 +17,7 @@ import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.service.UserService;
 import org.bot.nullbot.util.Base64Util;
+import org.bot.nullbot.util.BotCtxUtil;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -58,7 +59,7 @@ public class GuessCommand implements Command {
 
         try {
             GuessInfo guess = guessStorage.initGuess(groupId, params.getFirst());
-            SettingPO setting = settingService.get(groupId);
+            SettingPO setting = BotCtxUtil.getSetting();
 
             String start = MsgUtils.builder()
                     .text("[猜角色] ✨题目是\n")

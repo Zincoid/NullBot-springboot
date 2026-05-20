@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bot.nullbot.entity.po.SettingPO;
 import org.bot.nullbot.service.SettingService;
+import org.bot.nullbot.util.BotCtxUtil;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,7 +26,7 @@ public class CommandRateLimiter {
 
     public boolean tryConsume(Long groupId, Long userId, String commandType) {
         if (isSpam(groupId, 500)) return false;
-        SettingPO setting = settingService.get(groupId);
+        SettingPO setting = BotCtxUtil.getSetting();
         String key = switch (setting.getLimitScope()) {
             case Group -> "[%s]".formatted(groupId);
             case User -> "[%s][User:%s]".formatted(groupId, userId);

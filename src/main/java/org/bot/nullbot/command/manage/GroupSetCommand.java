@@ -13,6 +13,7 @@ import org.bot.nullbot.enums.ChatScope;
 import org.bot.nullbot.enums.LimitScope;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SettingService;
+import org.bot.nullbot.util.BotCtxUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class GroupSetCommand implements Command {
         try {
             if (params.isEmpty()) throw new NullBotMsgException("[群设置] ❌参数不足");
             String option = params.getFirst();
-            SettingPO setting = settingService.get(groupId);
+            SettingPO setting = BotCtxUtil.getSetting();
 
             if ("-view".equals(option)) {
                 bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);

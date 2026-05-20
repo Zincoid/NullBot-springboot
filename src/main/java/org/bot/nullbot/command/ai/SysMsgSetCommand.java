@@ -12,6 +12,7 @@ import org.bot.nullbot.component.storage.SysMsgStorage;
 import org.bot.nullbot.exception.NullBotMsgException;
 import org.bot.nullbot.service.SettingService;
 import org.bot.nullbot.service.UserService;
+import org.bot.nullbot.util.BotCtxUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public class SysMsgSetCommand implements Command {
             throw new NullBotMsgException("[提示词设置] ❌参数不足");
 
         if ("-default".equals(option)) {
-            if (settingService.get(groupId).isCustom())
+            if (BotCtxUtil.getSetting().isCustom())
                 throw new NullBotMsgException("[提示词设置] ❌非Default模式");
             int userAccess = userService.getAccess(userId);
             if (userAccess < 1)
@@ -71,7 +72,7 @@ public class SysMsgSetCommand implements Command {
         }
 
         if ("-custom".equals(option)) {
-            if (!settingService.get(groupId).isCustom())
+            if (!BotCtxUtil.getSetting().isCustom())
                 throw new NullBotMsgException("[提示词设置] ❌非Custom模式");
             String customMessage = String.join(" ", params.subList(1, params.size()));
             deepSeekClient.clearGroupHistory(groupId, userId);

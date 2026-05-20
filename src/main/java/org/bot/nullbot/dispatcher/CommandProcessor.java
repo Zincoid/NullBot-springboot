@@ -21,7 +21,7 @@ public class CommandProcessor {
     private final CommandRegistry registry;
     private final List<Handler> handlers;
 
-    @Async("ThreadExecutor")
+    // 处理普通消息指令
     public void processQQ(Bot bot, CommandEvent<?> event) throws Exception {
         Command command = registry.getCommand(event.getCommandType());
         if (command != null) {
@@ -32,7 +32,7 @@ public class CommandProcessor {
             log.info("└─[CommandProcessor] 命令不存在");
     }
 
-    // 监听事件 - 同步处理嵌入指令
+    // 监听处理嵌入指令
     @EventListener
     public void processEmbeddedQQ(EmbeddedCommandEvent embeddedEvent) throws Exception {
         String commandType = embeddedEvent.getEvent().getCommandType();
@@ -46,7 +46,6 @@ public class CommandProcessor {
             log.info("\t\t◉ [CommandProcessor-Embed] 内嵌命令不存在");
     }
 
-    @Async("ThreadExecutor")
     public void processTest(CommandEvent<?> event) throws Exception {
         Command command = registry.getCommand(event.getCommandType());
         if (command != null) {

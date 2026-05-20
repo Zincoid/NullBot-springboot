@@ -783,5 +783,7 @@
   - 移除默认设置配置相关使用和配置文件内容；
   - 移除 ChatOption 类；
   - 简化 SettingService 并优化相关使用；
-  - 使用 BotCtxUtil 存储当前会话群配置等信息 (暂不使用)；
+  - 使用 BotCtxUtil 存储当前会话群配置等信息；
+  - 新增 注解 @BotContext 用于通过 AOP 自动注册会话信息；
+- 移除 CommandProcessor 组件的 Async 注解；
 - 优化部分代码。
