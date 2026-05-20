@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class FunctionAspect {
+public class BotFuncAspect {
 
     private final FunctionManager functionManager;
 
