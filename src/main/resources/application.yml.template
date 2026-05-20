@@ -79,33 +79,6 @@ nullbot:
   bot-id:  # 机器人账号
   admin-id:  # 管理账号
   log-id:  # 管理群聊
-  default:  # 默认群设置
-    # Limit
-    limit-scope: Group
-    limit-capacity: 25
-    limit-refill: 10
-    limit-interval: 1  # 单位: Min
-    # AI - Basic
-    chat-scope: Group
-    anti-injection: true
-    thinking: false
-    voice: false
-    embedding: true
-    embedding-auth: false
-    custom: false
-    # AI - AutoReply
-    auto-reply: false
-    reply-frequency: 0.02
-    # Monitor
-    image-collect: false
-    message-collect: true  # 某些功能需启用该项 如: AI Monitor/Recall Detect
-    keyword-detect: true
-    poke-detect: true
-    recall-detect: false
-    # Guess
-    guess-crop-ratio: 0.1
-    guess-transparent-ratio: 0.75
-    guess-padding: 250
   command:
     prefix: /
     rate-limit:
