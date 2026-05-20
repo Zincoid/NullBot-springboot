@@ -30,6 +30,7 @@ public final class WebUtil {
     }
 
     /** 获取 token **/
+    @Deprecated
     public static String getToken() {
         return getRequest().getHeader("token");
     }
