@@ -36,7 +36,7 @@ public final class MsgParseUtil {
 
     // =================== 消息格式化方法 ===================
 
-    public static String simplifyArrayMsg(Bot bot, List<ArrayMsg> arrayMsgs) {
+    public static String formatUserMsg(Bot bot, List<ArrayMsg> arrayMsgs) {
         StringBuilder message = new StringBuilder();
         for (ArrayMsg msg : arrayMsgs) {
             JsonNode data = msg.getData();
@@ -69,7 +69,7 @@ public final class MsgParseUtil {
     // =================== 语录格式化方法 ===================
 
     @Deprecated
-    public static String parseRawSaying(String rawMsg) {
+    public static String formatSaying(String rawMsg) {
         String text = rawMsg.replaceAll("\\[CQ:at,qq=(\\d+)]", "@$1").replaceAll("\\[CQ:.*?]", "");
         if(Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(text)))
             throw new IllegalArgumentException("禁止套娃");
@@ -78,7 +78,7 @@ public final class MsgParseUtil {
         return text;
     }
 
-    public static String parseRawSaying(Bot bot, String rawMsg) {
+    public static String formatSaying(Bot bot, String rawMsg) {
         if(Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(rawMsg)))
             throw new IllegalArgumentException("禁止套娃");
 
@@ -111,19 +111,19 @@ public final class MsgParseUtil {
 
     // =================== 资源 URL 提取方法 ===================
 
-    public static Map<String, String> parseRawMsgAsImgMap(String rawMsg) {
+    public static Map<String, String> extractImgMap(String rawMsg) {
         return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:image([^]]+)]"));
     }
 
-    public static Map<String, String> parseRawMsgAsVidMap(String rawMsg) {
+    public static Map<String, String> extractVidMap(String rawMsg) {
         return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:video([^]]+)]"));
     }
 
-    public static Map<String, String> parseRawMsgAsRecMap(String rawMsg) {
+    public static Map<String, String> extractRecMap(String rawMsg) {
         return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:record([^]]+)]"));
     }
 
-    public static Map<String, String> parseRawMsgAsFileMap(String rawMsg) {
+    public static Map<String, String> extractFileMap(String rawMsg) {
         return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:file([^]]+)]"));
     }
 

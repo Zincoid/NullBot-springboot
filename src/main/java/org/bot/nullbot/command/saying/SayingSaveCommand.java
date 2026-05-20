@@ -34,7 +34,7 @@ public class SayingSaveCommand implements Command {
         String userName = replyMsg.getSender().getNickname();
         String text;
         try {
-            text = MsgParseUtil.parseRawSaying(bot, replyMsg.getRawMessage());
+            text = MsgParseUtil.formatSaying(bot, replyMsg.getRawMessage());
         } catch (Exception e) {
             throw new NullBotMsgException("[保存语录] ❌" + e.getMessage());
         }

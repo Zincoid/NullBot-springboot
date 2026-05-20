@@ -36,7 +36,7 @@ public class VideoSaveCommand implements Command {
 
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         // 可优化为单个键值对?
-        Map<String, String> videoMap = MsgParseUtil.parseRawMsgAsVidMap(replyMsg.getRawMessage());
+        Map<String, String> videoMap = MsgParseUtil.extractVidMap(replyMsg.getRawMessage());
         if(videoMap.isEmpty())
             throw new NullBotMsgException("[保存视频] ❌未包含视频");
         if(videoMap.size() > 1)

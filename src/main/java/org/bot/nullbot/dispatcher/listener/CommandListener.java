@@ -81,7 +81,7 @@ public class CommandListener {
             bot.sendPrivateMsg(userId, "❌访问码错误", false);
         } else {
             // 私聊对话处理
-            String parsed = MsgParseUtil.simplifyArrayMsg(bot, event.getArrayMsg());
+            String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
             log.info("◉ [PrivateAction:Chat] 私聊 {}({}) -> {}", userName, userId, parsed);
             commandProcessor.processQQ(bot, new CommandEvent<>(
                     event, "Chat", List.of(parsed), false, false));
@@ -159,7 +159,7 @@ public class CommandListener {
         monitorListener.doGroupImgCollect(event);
         monitorListener.doGroupBottleAutoThrow(bot, event);
 
-        String parsed = MsgParseUtil.simplifyArrayMsg(bot, event.getArrayMsg());
+        String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupAction:At] 群聊 {} - {}({}) -> {}",
                 event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         commandProcessor.processQQ(bot, new CommandEvent<>(
