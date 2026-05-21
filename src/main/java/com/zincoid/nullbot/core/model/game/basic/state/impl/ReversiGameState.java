@@ -1,8 +1,8 @@
-package com.zincoid.nullbot.core.model.game.state.impl;
+package com.zincoid.nullbot.core.model.game.basic.state.impl;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.zincoid.nullbot.core.model.game.state.GameState;
+import com.zincoid.nullbot.core.model.game.basic.state.GameState;
 
 import java.util.Arrays;
 

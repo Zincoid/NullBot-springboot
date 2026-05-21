@@ -1,9 +1,9 @@
 package com.zincoid.nullbot.core.component.game.logic.impl;
 
 import com.zincoid.nullbot.core.component.game.logic.GameLogic;
-import com.zincoid.nullbot.core.model.game.looting.AiEnemyState;
-import com.zincoid.nullbot.core.model.game.state.impl.LootingGameState;
-import com.zincoid.nullbot.core.model.game.looting.LootingPlayerState;
+import com.zincoid.nullbot.core.model.game.looting.AiEnemy;
+import com.zincoid.nullbot.core.model.game.basic.state.impl.LootingGameState;
+import com.zincoid.nullbot.core.model.game.looting.LootingPlayer;
 import com.zincoid.nullbot.core.model.game.looting.MapNode;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.component.game.factory.LootingMapFactory;
@@ -32,9 +32,9 @@ public class LootingGameLogic extends GameLogic {
                 .map(MapNode::getName).toList();
 
         s.getPlayers().put(match.getPlayer1().getUserId(),
-                new LootingPlayerState(match.getPlayer1().getUserId(), spawns.get(R.nextInt(spawns.size()))));
+                new LootingPlayer(match.getPlayer1().getUserId(), spawns.get(R.nextInt(spawns.size()))));
         s.getPlayers().put(match.getPlayer2().getUserId(),
-                new LootingPlayerState(match.getPlayer2().getUserId(), spawns.get(R.nextInt(spawns.size()))));
+                new LootingPlayer(match.getPlayer2().getUserId(), spawns.get(R.nextInt(spawns.size()))));
 
         initAi(s);
         return s;
@@ -46,7 +46,7 @@ public class LootingGameLogic extends GameLogic {
 
         // 定制 AI
         if("航天基地".equals(s.getMap().getName())){
-            AiEnemyState ai = new AiEnemyState();
+            AiEnemy ai = new AiEnemy();
             ai.setName("德穆兰");
             ai.setHp(100);
             ai.setAtk(20);
@@ -57,7 +57,7 @@ public class LootingGameLogic extends GameLogic {
 
         // 通用 AI
         for (int i = 0; i < n; i++) {
-            AiEnemyState ai = new AiEnemyState();
+            AiEnemy ai = new AiEnemy();
             ai.setName("士兵-" + (i + 1));
             ai.setLocation(nodes.get(R.nextInt(nodes.size())));
             ai.getBackpack().addAll(mapFactory.randItems(false));
@@ -68,7 +68,7 @@ public class LootingGameLogic extends GameLogic {
     public void checkFinished(LootingGameState s) {
         boolean isFinished = true;
         if (s.getTick() <= 25) {
-            for(LootingPlayerState p : s.getPlayers().values()){
+            for(LootingPlayer p : s.getPlayers().values()){
                 if (p.isAlive() && !p.isEvacuated()) {
                     isFinished = false;
                     break;
@@ -78,9 +78,9 @@ public class LootingGameLogic extends GameLogic {
         s.setFinished(isFinished);
     }
 
-    public String checkEnemies(LootingGameState s, LootingPlayerState p) {
+    public String checkEnemies(LootingGameState s, LootingPlayer p) {
         StringBuilder sb = new StringBuilder();
-        for (AiEnemyState ai : s.getEnemies()) {
+        for (AiEnemy ai : s.getEnemies()) {
             if (ai.alive() && ai.getLocation().equals(p.getLocation())) {
                 sb.append("⚠️ 发现AI敌人: ")
                         .append(ai.getName())
@@ -88,7 +88,7 @@ public class LootingGameLogic extends GameLogic {
                         .append("\n");
             }
         }
-        for (LootingPlayerState other : s.getPlayers().values()) {
+        for (LootingPlayer other : s.getPlayers().values()) {
             if (other != p && other.isAlive() && !other.isEvacuated() && other.getLocation().equals(p.getLocation())) {
                 sb.append("⚠️ 发现玩家: ")
                         .append(other.getUserId())
@@ -112,7 +112,7 @@ public class LootingGameLogic extends GameLogic {
 
     // ===== 移动 / 侦察 / 搜刮 / 攻击 / AI行为 / 撤离 =====
 
-    public String move(LootingGameState s, LootingPlayerState p, String target) {
+    public String move(LootingGameState s, LootingPlayer p, String target) {
         MapNode cur = s.getMap().node(p.getLocation());
         if (!cur.getNeighbors().contains(target)) {
             return "\n❌ 无法移动到该位置";
@@ -122,14 +122,14 @@ public class LootingGameLogic extends GameLogic {
                 s.getMap().node(target).printWithoutItems();
     }
 
-    public String view(LootingGameState s, LootingPlayerState p) {
+    public String view(LootingGameState s, LootingPlayer p) {
         StringBuilder sb = new StringBuilder("\n");
         MapNode node = s.getMap().node(p.getLocation());
         sb.append(node.print());
         return sb.toString();
     }
 
-    public String loot(LootingGameState s, LootingPlayerState p) {
+    public String loot(LootingGameState s, LootingPlayer p) {
         MapNode node = s.getMap().node(p.getLocation());
         if (node.getItems().isEmpty()) {
             return "\n📦 这里没有可以搜刮的物品";
@@ -145,8 +145,8 @@ public class LootingGameLogic extends GameLogic {
         return sb.toString();
     }
 
-    public String attackAi(LootingGameState s, LootingPlayerState p) {
-        for (AiEnemyState ai : s.getEnemies()) {
+    public String attackAi(LootingGameState s, LootingPlayer p) {
+        for (AiEnemy ai : s.getEnemies()) {
             if (ai.alive() && ai.getLocation().equals(p.getLocation())) {
                 int dmg = p.getAtk();
                 ai.setHp(Math.max(ai.getHp() - dmg, 0));
@@ -169,8 +169,8 @@ public class LootingGameLogic extends GameLogic {
         return "\n❌ 当前位置没有 AI 敌人";
     }
 
-    public List<String> attackPlayer(LootingGameState s, LootingPlayerState p) {
-        for (LootingPlayerState other : s.getPlayers().values()) {
+    public List<String> attackPlayer(LootingGameState s, LootingPlayer p) {
+        for (LootingPlayer other : s.getPlayers().values()) {
             if (other != p && other.isAlive() && !other.isEvacuated() && other.getLocation().equals(p.getLocation())) {
                 int dmg = p.getAtk();
                 other.setHp(Math.max(other.getHp() - dmg, 0));
@@ -197,10 +197,10 @@ public class LootingGameLogic extends GameLogic {
     private List<String> aiAction(LootingGameState s, Long selfId) {
         StringBuilder sb1 = new StringBuilder();
         StringBuilder sb2 = new StringBuilder();
-        for (AiEnemyState ai : s.getEnemies()) {
+        for (AiEnemy ai : s.getEnemies()) {
             if (!ai.alive()) continue;
             if(R.nextBoolean()){
-                for (LootingPlayerState p : s.getPlayers().values()) {
+                for (LootingPlayer p : s.getPlayers().values()) {
                     if (p.isAlive() && p.getLocation().equals(ai.getLocation())) {
                         if(Objects.equals(p.getUserId(), selfId)){
                             int dmg = ai.getAtk();
@@ -237,7 +237,7 @@ public class LootingGameLogic extends GameLogic {
         return List.of(sb1.toString(), sb2.toString());
     }
 
-    public String evac(LootingGameState s, LootingPlayerState p) {
+    public String evac(LootingGameState s, LootingPlayer p) {
         MapNode node = s.getMap().node(p.getLocation());
         if (!node.isEvac()) {
             return "\n❌ 这里不是撤离点";

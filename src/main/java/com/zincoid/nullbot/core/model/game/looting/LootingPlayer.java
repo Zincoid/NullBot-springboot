@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 @Data
-public class LootingPlayerState {
+public class LootingPlayer {
 
     private Long userId;
     private String location;
@@ -20,7 +20,7 @@ public class LootingPlayerState {
 
     private List<ItemPO> backpack = new ArrayList<>();
 
-    public LootingPlayerState(Long userId, String spawn) {
+    public LootingPlayer(Long userId, String spawn) {
         this.userId = userId;
         this.location = spawn;
     }

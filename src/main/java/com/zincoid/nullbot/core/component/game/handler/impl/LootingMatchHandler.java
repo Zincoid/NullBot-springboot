@@ -7,8 +7,8 @@ import com.zincoid.nullbot.core.component.game.manager.PlayerManager;
 import com.zincoid.nullbot.core.component.game.logic.impl.LootingGameLogic;
 import com.zincoid.nullbot.core.model.result.GameResult;
 import com.zincoid.nullbot.core.model.game.basic.Match;
-import com.zincoid.nullbot.core.model.game.state.impl.LootingGameState;
-import com.zincoid.nullbot.core.model.game.looting.LootingPlayerState;
+import com.zincoid.nullbot.core.model.game.basic.state.impl.LootingGameState;
+import com.zincoid.nullbot.core.model.game.looting.LootingPlayer;
 import com.zincoid.nullbot.core.model.po.ItemPO;
 import com.zincoid.nullbot.core.service.InventoryService;
 import com.zincoid.nullbot.core.service.UserService;
@@ -64,7 +64,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
     {
         LootingGameState state = games.get(match.getMatchId());
         // 摸金 奖励逻辑
-        for (LootingPlayerState p : state.getPlayers().values()) {
+        for (LootingPlayer p : state.getPlayers().values()) {
             if (p.isEvacuated()) {
                 userService.plusExperience(p.getUserId(), 200);
                 for (ItemPO item : p.getBackpack())
@@ -85,7 +85,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
         if (state == null) return getErrorResult("[摸金] ❌游戏状态不存在");
         if (state.isFinished()) return GameResult.error("[摸金] ❌对局已结束");
 
-        LootingPlayerState p = state.getPlayers().get(userId);
+        LootingPlayer p = state.getPlayers().get(userId);
         if (!p.isAlive()) return getSuccessResult(userId, match, true, "💀 你已死亡，无法继续行动", "");
         if (p.isEvacuated()) return getSuccessResult(userId, match, true, "🚪 你已撤离，无法继续行动", "");
 
@@ -133,7 +133,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
 
     // ================== 工具方法 ==================
 
-    public String nextActions(LootingGameState s, LootingPlayerState p) {
+    public String nextActions(LootingGameState s, LootingPlayer p) {
         if (s.isFinished()) return "";
         StringBuilder sb = new StringBuilder("\n[可执行操作(格式:/摸金 [动作])]");
         sb.append("\n侦察 - 移动 [地点] - 搜刮");
