@@ -153,7 +153,13 @@
             <artifactId>batik-svggen</artifactId>
             <version>1.17</version>
         </dependency>
-        <!-- mvn install:install-file -Dfile=src/tool/resvg-jni-0.1.4.jar -DgroupId=io.github.apeuriox -DartifactId=resvg-jni -Dversion=0.1.4 -Dpackaging=jar -DgeneratePom=true -->
+        <!-- mvn install:install-file \
+        -Dfile=src/tool/resvg-jni-0.1.4.jar \
+        -DgroupId=io.github.apeuriox \
+        -DartifactId=resvg-jni \
+        -Dversion=0.1.4 \
+        -Dpackaging=jar \
+        -DgeneratePom=true -->
         <dependency>  <!-- Resvg JNI (Manually install) -->
             <groupId>io.github.apeuriox</groupId>
             <artifactId>resvg-jni</artifactId>
