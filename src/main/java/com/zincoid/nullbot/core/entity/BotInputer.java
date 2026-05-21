@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.entity;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
@@ -8,7 +8,7 @@ import com.zincoid.nullbot.core.enums.BniMode;
 
 import java.util.List;
 
-@Getter
+@Data
 @RequiredArgsConstructor
 public class BotInputer {
 
