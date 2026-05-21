@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.model.po.TtsTemplatePO;
+import com.zincoid.nullbot.core.model.data.po.TtsTemplatePO;
 import com.zincoid.nullbot.core.mapper.TtsTemplateMapper;
 import com.zincoid.nullbot.core.service.TtsTemplateService;
 import org.springframework.stereotype.Service;

@@ -11,7 +11,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
 import com.zincoid.nullbot.core.component.storage.DuelStorage;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
-import com.zincoid.nullbot.core.model.info.DuelInfo;
+import com.zincoid.nullbot.core.model.information.DuelInfo;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.util.Base64Util;

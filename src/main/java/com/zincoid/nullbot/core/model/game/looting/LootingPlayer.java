@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.model.game.looting;
 
 import lombok.Data;
-import com.zincoid.nullbot.core.model.po.ItemPO;
+import com.zincoid.nullbot.core.model.data.po.ItemPO;
 
 import java.util.ArrayList;
 import java.util.List;

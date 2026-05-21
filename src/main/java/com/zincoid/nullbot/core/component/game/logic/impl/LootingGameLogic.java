@@ -8,7 +8,7 @@ import com.zincoid.nullbot.core.model.game.looting.MapNode;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.component.game.factory.LootingMapFactory;
 import com.zincoid.nullbot.core.model.game.basic.Match;
-import com.zincoid.nullbot.core.model.po.ItemPO;
+import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

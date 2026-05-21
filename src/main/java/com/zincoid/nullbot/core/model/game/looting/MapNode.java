@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.model.game.looting;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.zincoid.nullbot.core.model.po.ItemPO;
+import com.zincoid.nullbot.core.model.data.po.ItemPO;
 
 import java.util.ArrayList;
 import java.util.List;

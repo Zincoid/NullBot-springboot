@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.component.control.SettingManager;
-import com.zincoid.nullbot.core.model.po.SettingPO;
+import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.service.SettingService;
 import org.springframework.stereotype.Service;
 

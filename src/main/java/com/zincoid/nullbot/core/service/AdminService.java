@@ -1,10 +1,10 @@
 package com.zincoid.nullbot.core.service;
 
-import com.zincoid.nullbot.core.model.dto.AdminUpdateDTO;
-import com.zincoid.nullbot.core.model.dto.LoginDTO;
-import com.zincoid.nullbot.core.model.dto.PwdChangeDTO;
-import com.zincoid.nullbot.core.model.dto.RegistDTO;
-import com.zincoid.nullbot.core.model.po.AdminPO;
+import com.zincoid.nullbot.core.model.data.dto.AdminUpdateDTO;
+import com.zincoid.nullbot.core.model.data.dto.LoginDTO;
+import com.zincoid.nullbot.core.model.data.dto.PwdChangeDTO;
+import com.zincoid.nullbot.core.model.data.dto.RegistDTO;
+import com.zincoid.nullbot.core.model.data.po.AdminPO;
 
 public interface AdminService {
 

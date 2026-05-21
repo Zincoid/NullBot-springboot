@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.model.po.DriftBottlePO;
+import com.zincoid.nullbot.core.model.data.po.DriftBottlePO;
 import com.zincoid.nullbot.core.mapper.DriftBottleMapper;
 import com.zincoid.nullbot.core.service.DriftBottleService;
 import org.springframework.stereotype.Service;

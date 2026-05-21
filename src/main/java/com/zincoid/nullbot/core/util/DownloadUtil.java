@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.util;
 
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.model.info.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileInfo;
 
 import java.io.File;
 import java.io.IOException;

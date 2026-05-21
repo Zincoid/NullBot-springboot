@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.ai.DeepSeekClient;
 import com.zincoid.nullbot.core.component.control.CommandRateLimiter;
-import com.zincoid.nullbot.core.model.po.SettingPO;
+import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.util.CsvUtil;

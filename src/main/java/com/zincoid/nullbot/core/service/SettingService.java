@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.service;
 
-import com.zincoid.nullbot.core.model.po.SettingPO;
+import com.zincoid.nullbot.core.model.data.po.SettingPO;
 
 import java.util.List;
 

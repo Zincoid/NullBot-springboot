@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
-import com.zincoid.nullbot.core.model.bot.CommandEvent;
+import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import com.zincoid.nullbot.core.service.GroupService;
 import com.zincoid.nullbot.core.service.UserService;
 import org.springframework.core.annotation.Order;

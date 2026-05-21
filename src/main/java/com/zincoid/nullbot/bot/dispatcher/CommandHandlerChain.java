@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.dispatcher;
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
-import com.zincoid.nullbot.core.model.bot.CommandEvent;
+import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 
 import java.util.Iterator;
 import java.util.List;

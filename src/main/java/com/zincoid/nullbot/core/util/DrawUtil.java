@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.util;
 
-import com.zincoid.nullbot.core.model.po.ItemPO;
+import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.enums.Rarity;
 
 import java.util.List;

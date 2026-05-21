@@ -8,7 +8,7 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.ai.DeepSeekClient;
 import com.zincoid.nullbot.core.component.control.CommandRateLimiter;
-import com.zincoid.nullbot.core.model.po.SettingPO;
+import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.core.enums.LimitScope;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;

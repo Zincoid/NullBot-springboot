@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.component.storage;
 
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
-import com.zincoid.nullbot.core.model.info.DuelInfo;
+import com.zincoid.nullbot.core.model.information.DuelInfo;
 import com.zincoid.nullbot.core.util.DuelUtil;
 import org.springframework.stereotype.Component;
 

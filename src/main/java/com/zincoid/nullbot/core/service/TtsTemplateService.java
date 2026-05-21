@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.service;
 
-import com.zincoid.nullbot.core.model.po.TtsTemplatePO;
+import com.zincoid.nullbot.core.model.data.po.TtsTemplatePO;
 
 import java.util.List;
 

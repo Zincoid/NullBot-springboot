@@ -2,7 +2,7 @@ package com.zincoid.nullbot.websocket.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.model.auth.StompPrincipal;
+import com.zincoid.nullbot.core.model.authentication.StompPrincipal;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.service.SystemService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
