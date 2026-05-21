@@ -1,8 +1,8 @@
 package com.zincoid.nullbot.core.converter;
 
-import com.zincoid.nullbot.core.entity.dto.AdminUpdateDTO;
-import com.zincoid.nullbot.core.entity.po.AdminPO;
-import com.zincoid.nullbot.core.entity.po.UserPO;
+import com.zincoid.nullbot.core.model.dto.AdminUpdateDTO;
+import com.zincoid.nullbot.core.model.po.AdminPO;
+import com.zincoid.nullbot.core.model.po.UserPO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

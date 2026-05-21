@@ -5,10 +5,10 @@ import com.mikuac.shiro.core.BotContainer;
 import lombok.AllArgsConstructor;
 import com.zincoid.nullbot.core.component.game.manager.MatchManager;
 import com.zincoid.nullbot.core.component.game.manager.PlayerManager;
-import com.zincoid.nullbot.core.entity.game.GameState;
-import com.zincoid.nullbot.core.entity.result.GameResult;
-import com.zincoid.nullbot.core.entity.game.basic.Match;
-import com.zincoid.nullbot.core.entity.game.basic.Player;
+import com.zincoid.nullbot.core.model.game.GameState;
+import com.zincoid.nullbot.core.model.result.GameResult;
+import com.zincoid.nullbot.core.model.game.basic.Match;
+import com.zincoid.nullbot.core.model.game.basic.Player;
 
 import java.util.Map;
 import java.util.Objects;

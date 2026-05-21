@@ -2,8 +2,8 @@ package com.zincoid.nullbot.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.entity.result.WebResult;
-import com.zincoid.nullbot.core.entity.vo.StatisticVO;
+import com.zincoid.nullbot.core.model.result.WebResult;
+import com.zincoid.nullbot.core.model.vo.StatisticVO;
 import com.zincoid.nullbot.core.service.StatisticService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

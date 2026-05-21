@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.component.resource.SpringCtxHolder;
-import com.zincoid.nullbot.core.entity.BotInputer;
+import com.zincoid.nullbot.core.model.bot.BotInputer;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;

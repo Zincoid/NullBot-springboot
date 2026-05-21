@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.util;
 
-import com.zincoid.nullbot.core.entity.info.DuelInfo;
+import com.zincoid.nullbot.core.model.info.DuelInfo;
 
 import java.io.*;
 import java.nio.file.*;

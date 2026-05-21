@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.service;
 
-import com.zincoid.nullbot.core.entity.page.DataPage;
-import com.zincoid.nullbot.core.entity.po.GroupPO;
+import com.zincoid.nullbot.core.model.dto.page.DataPage;
+import com.zincoid.nullbot.core.model.po.GroupPO;
 
 import java.util.List;
 

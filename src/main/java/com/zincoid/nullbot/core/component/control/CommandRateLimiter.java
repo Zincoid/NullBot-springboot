@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import io.github.bucket4j.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.entity.po.SettingPO;
+import com.zincoid.nullbot.core.model.po.SettingPO;
 import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import org.springframework.stereotype.Component;

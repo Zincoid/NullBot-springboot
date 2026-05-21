@@ -11,7 +11,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.tool.WsSender;
 import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
-import com.zincoid.nullbot.core.entity.CommandEvent;
+import com.zincoid.nullbot.core.model.bot.CommandEvent;
 import com.zincoid.nullbot.bot.exception.NullBotLogException;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.core.annotation.Order;

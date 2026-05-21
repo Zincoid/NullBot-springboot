@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.component.game.manager;
 
-import com.zincoid.nullbot.core.entity.game.basic.Match;
-import com.zincoid.nullbot.core.entity.game.basic.Player;
+import com.zincoid.nullbot.core.model.game.basic.Match;
+import com.zincoid.nullbot.core.model.game.basic.Player;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

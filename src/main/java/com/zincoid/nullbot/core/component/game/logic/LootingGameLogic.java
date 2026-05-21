@@ -1,14 +1,14 @@
 package com.zincoid.nullbot.core.component.game.logic;
 
-import com.zincoid.nullbot.core.entity.game.looting.AiEnemyState;
-import com.zincoid.nullbot.core.entity.game.looting.LootingGameState;
-import com.zincoid.nullbot.core.entity.game.looting.LootingPlayerState;
-import com.zincoid.nullbot.core.entity.game.looting.MapNode;
+import com.zincoid.nullbot.core.model.game.looting.AiEnemyState;
+import com.zincoid.nullbot.core.model.game.looting.LootingGameState;
+import com.zincoid.nullbot.core.model.game.looting.LootingPlayerState;
+import com.zincoid.nullbot.core.model.game.looting.MapNode;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.component.game.GameLogic;
 import com.zincoid.nullbot.core.component.game.factory.LootingMapFactory;
-import com.zincoid.nullbot.core.entity.game.basic.Match;
-import com.zincoid.nullbot.core.entity.po.ItemPO;
+import com.zincoid.nullbot.core.model.game.basic.Match;
+import com.zincoid.nullbot.core.model.po.ItemPO;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

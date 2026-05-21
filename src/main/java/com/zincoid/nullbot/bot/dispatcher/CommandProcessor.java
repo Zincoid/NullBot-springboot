@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
-import com.zincoid.nullbot.core.entity.CommandEvent;
-import com.zincoid.nullbot.core.entity.EmbeddedCommandEvent;
+import com.zincoid.nullbot.core.model.bot.CommandEvent;
+import com.zincoid.nullbot.core.model.bot.EmbeddedCommandEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 

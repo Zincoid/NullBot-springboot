@@ -1,8 +1,8 @@
 package com.zincoid.nullbot.core.service;
 
-import com.zincoid.nullbot.core.entity.page.DataPage;
-import com.zincoid.nullbot.core.entity.po.InventoryPO;
-import com.zincoid.nullbot.core.entity.vo.InventoryVO;
+import com.zincoid.nullbot.core.model.dto.page.DataPage;
+import com.zincoid.nullbot.core.model.po.InventoryPO;
+import com.zincoid.nullbot.core.model.vo.InventoryVO;
 import com.zincoid.nullbot.core.enums.Rarity;
 
 import java.util.List;

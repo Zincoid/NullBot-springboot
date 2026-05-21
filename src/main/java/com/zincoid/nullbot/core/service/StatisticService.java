@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.service;
 
-import com.zincoid.nullbot.core.entity.vo.StatisticVO;
+import com.zincoid.nullbot.core.model.vo.StatisticVO;
 
 public interface StatisticService {
 

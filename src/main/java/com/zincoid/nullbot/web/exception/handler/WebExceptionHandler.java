@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
-import com.zincoid.nullbot.core.entity.result.WebResult;
+import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.web.exception.CommonException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.web.bind.MethodArgumentNotValidException;

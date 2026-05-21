@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.component.control;
 
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
-import com.zincoid.nullbot.core.entity.po.SettingPO;
+import com.zincoid.nullbot.core.model.po.SettingPO;
 import com.zincoid.nullbot.core.util.CsvUtil;
 import org.springframework.stereotype.Component;
 

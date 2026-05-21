@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BoundedInputStream;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
-import com.zincoid.nullbot.core.entity.po.FilePO;
+import com.zincoid.nullbot.core.model.po.FilePO;
 import com.zincoid.nullbot.core.mapper.FileMapper;
 import com.zincoid.nullbot.core.service.OssService;
 import org.springframework.core.io.FileSystemResource;

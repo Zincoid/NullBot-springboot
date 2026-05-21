@@ -16,7 +16,7 @@ import com.zincoid.nullbot.core.annotation.FunctionControl;
 import com.zincoid.nullbot.core.component.security.SecurityCodeScheduler;
 import com.zincoid.nullbot.bot.dispatcher.CommandProcessor;
 import com.zincoid.nullbot.bot.dispatcher.handler.impl.PermissionHandler;
-import com.zincoid.nullbot.core.entity.CommandEvent;
+import com.zincoid.nullbot.core.model.bot.CommandEvent;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.beans.factory.annotation.Value;

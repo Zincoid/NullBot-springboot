@@ -1,9 +1,9 @@
 package com.zincoid.nullbot.core.component.game.factory;
 
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.entity.game.looting.LootingMap;
-import com.zincoid.nullbot.core.entity.game.looting.MapNode;
-import com.zincoid.nullbot.core.entity.po.ItemPO;
+import com.zincoid.nullbot.core.model.game.looting.LootingMap;
+import com.zincoid.nullbot.core.model.game.looting.MapNode;
+import com.zincoid.nullbot.core.model.po.ItemPO;
 import com.zincoid.nullbot.core.service.ItemService;
 import org.springframework.stereotype.Component;
 

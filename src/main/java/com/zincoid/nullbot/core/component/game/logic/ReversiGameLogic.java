@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.component.game.logic;
 
 import com.zincoid.nullbot.core.component.game.GameLogic;
-import com.zincoid.nullbot.core.entity.game.reversi.ReversiGameState;
+import com.zincoid.nullbot.core.model.game.reversi.ReversiGameState;
 import org.springframework.stereotype.Component;
 
 @Component

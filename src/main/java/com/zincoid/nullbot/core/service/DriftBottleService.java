@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.service;
 
-import com.zincoid.nullbot.core.entity.po.DriftBottlePO;
+import com.zincoid.nullbot.core.model.po.DriftBottlePO;
 
 public interface DriftBottleService {
 

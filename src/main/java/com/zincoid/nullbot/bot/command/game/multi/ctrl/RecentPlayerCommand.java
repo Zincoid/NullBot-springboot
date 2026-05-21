@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.game.manager.PlayerManager;
-import com.zincoid.nullbot.core.entity.game.basic.Player;
+import com.zincoid.nullbot.core.model.game.basic.Player;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 

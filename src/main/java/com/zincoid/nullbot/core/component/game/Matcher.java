@@ -5,9 +5,9 @@ import com.mikuac.shiro.core.BotContainer;
 import com.zincoid.nullbot.core.component.game.manager.MatchManager;
 import com.zincoid.nullbot.core.component.game.manager.MatchPoolManager;
 import com.zincoid.nullbot.core.component.game.manager.PlayerManager;
-import com.zincoid.nullbot.core.entity.result.MatchResult;
-import com.zincoid.nullbot.core.entity.game.basic.Match;
-import com.zincoid.nullbot.core.entity.game.basic.Player;
+import com.zincoid.nullbot.core.model.result.MatchResult;
+import com.zincoid.nullbot.core.model.game.basic.Match;
+import com.zincoid.nullbot.core.model.game.basic.Player;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

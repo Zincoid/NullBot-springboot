@@ -2,10 +2,10 @@ package com.zincoid.nullbot.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.entity.po.InventoryPO;
-import com.zincoid.nullbot.core.entity.po.ItemPO;
-import com.zincoid.nullbot.core.entity.po.UserPO;
-import com.zincoid.nullbot.core.entity.vo.InventoryVO;
+import com.zincoid.nullbot.core.model.po.InventoryPO;
+import com.zincoid.nullbot.core.model.po.ItemPO;
+import com.zincoid.nullbot.core.model.po.UserPO;
+import com.zincoid.nullbot.core.model.vo.InventoryVO;
 import com.zincoid.nullbot.core.enums.Category;
 import com.zincoid.nullbot.core.enums.Rarity;
 import com.zincoid.nullbot.core.mapper.InventoryMapper;

@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.util;
 
-import com.zincoid.nullbot.core.entity.po.SettingPO;
+import com.zincoid.nullbot.core.model.po.SettingPO;
 
 public final class BotCtxUtil {
 

@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.service;
 
-import com.zincoid.nullbot.core.entity.po.ItemPO;
-import com.zincoid.nullbot.core.entity.vo.InventoryVO;
+import com.zincoid.nullbot.core.model.po.ItemPO;
+import com.zincoid.nullbot.core.model.vo.InventoryVO;
 
 import java.util.List;
 

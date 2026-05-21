@@ -6,9 +6,9 @@ import com.zincoid.nullbot.core.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import com.zincoid.nullbot.core.component.game.GameMatchHandler;
 import com.zincoid.nullbot.core.component.game.manager.MatchManager;
-import com.zincoid.nullbot.core.entity.result.GameResult;
-import com.zincoid.nullbot.core.entity.game.basic.Match;
-import com.zincoid.nullbot.core.entity.game.reversi.ReversiGameState;
+import com.zincoid.nullbot.core.model.result.GameResult;
+import com.zincoid.nullbot.core.model.game.basic.Match;
+import com.zincoid.nullbot.core.model.game.reversi.ReversiGameState;
 import com.zincoid.nullbot.core.component.game.logic.ReversiGameLogic;
 import org.springframework.stereotype.Component;
 

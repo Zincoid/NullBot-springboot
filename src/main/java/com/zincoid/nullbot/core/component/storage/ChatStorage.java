@@ -1,8 +1,8 @@
 package com.zincoid.nullbot.core.component.storage;
 
 import lombok.Data;
-import com.zincoid.nullbot.core.entity.ChatMessage;
-import com.zincoid.nullbot.core.entity.po.SettingPO;
+import com.zincoid.nullbot.core.model.msg.ChatMessage;
+import com.zincoid.nullbot.core.model.po.SettingPO;
 import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import org.springframework.stereotype.Component;

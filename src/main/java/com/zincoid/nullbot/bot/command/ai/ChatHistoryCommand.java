@@ -7,9 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.ai.DeepSeekClient;
-import com.zincoid.nullbot.core.entity.BotInputer;
-import com.zincoid.nullbot.core.entity.BotPageSelector;
-import com.zincoid.nullbot.core.entity.ChatMessage;
+import com.zincoid.nullbot.core.model.bot.BotInputer;
+import com.zincoid.nullbot.core.model.bot.BotPageSelector;
+import com.zincoid.nullbot.core.model.msg.ChatMessage;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
