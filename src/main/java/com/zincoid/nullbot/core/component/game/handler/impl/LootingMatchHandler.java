@@ -7,7 +7,7 @@ import com.zincoid.nullbot.core.component.game.manager.PlayerManager;
 import com.zincoid.nullbot.core.component.game.logic.impl.LootingGameLogic;
 import com.zincoid.nullbot.core.model.result.GameResult;
 import com.zincoid.nullbot.core.model.game.basic.Match;
-import com.zincoid.nullbot.core.model.game.looting.LootingGameState;
+import com.zincoid.nullbot.core.model.game.state.impl.LootingGameState;
 import com.zincoid.nullbot.core.model.game.looting.LootingPlayerState;
 import com.zincoid.nullbot.core.model.po.ItemPO;
 import com.zincoid.nullbot.core.service.InventoryService;

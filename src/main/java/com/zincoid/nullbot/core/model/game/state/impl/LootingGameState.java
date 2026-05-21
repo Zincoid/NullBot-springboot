@@ -1,8 +1,11 @@
-package com.zincoid.nullbot.core.model.game.looting;
+package com.zincoid.nullbot.core.model.game.state.impl;
 
+import com.zincoid.nullbot.core.model.game.looting.AiEnemyState;
+import com.zincoid.nullbot.core.model.game.looting.LootingMap;
+import com.zincoid.nullbot.core.model.game.looting.LootingPlayerState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.zincoid.nullbot.core.model.game.GameState;
+import com.zincoid.nullbot.core.model.game.state.GameState;
 
 import java.util.ArrayList;
 import java.util.HashMap;

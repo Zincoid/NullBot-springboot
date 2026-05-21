@@ -1,8 +1,8 @@
-package com.zincoid.nullbot.core.model.game.tictactoe;
+package com.zincoid.nullbot.core.model.game.state.impl;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.zincoid.nullbot.core.model.game.GameState;
+import com.zincoid.nullbot.core.model.game.state.GameState;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

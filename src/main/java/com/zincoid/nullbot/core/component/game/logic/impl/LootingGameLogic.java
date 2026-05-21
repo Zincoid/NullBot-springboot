@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.component.game.logic.impl;
 
 import com.zincoid.nullbot.core.component.game.logic.GameLogic;
 import com.zincoid.nullbot.core.model.game.looting.AiEnemyState;
-import com.zincoid.nullbot.core.model.game.looting.LootingGameState;
+import com.zincoid.nullbot.core.model.game.state.impl.LootingGameState;
 import com.zincoid.nullbot.core.model.game.looting.LootingPlayerState;
 import com.zincoid.nullbot.core.model.game.looting.MapNode;
 import lombok.RequiredArgsConstructor;

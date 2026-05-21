@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.zincoid.nullbot.core.component.game.manager.MatchManager;
 import com.zincoid.nullbot.core.model.result.GameResult;
 import com.zincoid.nullbot.core.model.game.basic.Match;
-import com.zincoid.nullbot.core.model.game.reversi.ReversiGameState;
+import com.zincoid.nullbot.core.model.game.state.impl.ReversiGameState;
 import com.zincoid.nullbot.core.component.game.logic.impl.ReversiGameLogic;
 import org.springframework.stereotype.Component;
 
