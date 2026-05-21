@@ -1,6 +1,6 @@
-package com.zincoid.nullbot.core.component.game.logic;
+package com.zincoid.nullbot.core.component.game.logic.impl;
 
-import com.zincoid.nullbot.core.component.game.GameLogic;
+import com.zincoid.nullbot.core.component.game.logic.GameLogic;
 import com.zincoid.nullbot.core.model.game.tictactoe.TicTacToeGameState;
 import org.springframework.stereotype.Component;
 

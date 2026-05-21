@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.game.handler.TicTacToeMatchHandler;
+import com.zincoid.nullbot.core.component.game.handler.impl.TicTacToeMatchHandler;
 import com.zincoid.nullbot.core.model.result.GameResult;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;

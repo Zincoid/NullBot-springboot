@@ -1,10 +1,10 @@
-package com.zincoid.nullbot.core.component.game.handler;
+package com.zincoid.nullbot.core.component.game.handler.impl;
 
 import com.mikuac.shiro.core.BotContainer;
-import com.zincoid.nullbot.core.component.game.GameMatchHandler;
+import com.zincoid.nullbot.core.component.game.handler.GameMatchHandler;
 import com.zincoid.nullbot.core.component.game.manager.MatchManager;
 import com.zincoid.nullbot.core.component.game.manager.PlayerManager;
-import com.zincoid.nullbot.core.component.game.logic.TicTacToeGameLogic;
+import com.zincoid.nullbot.core.component.game.logic.impl.TicTacToeGameLogic;
 import com.zincoid.nullbot.core.model.result.GameResult;
 import com.zincoid.nullbot.core.model.game.basic.Match;
 import com.zincoid.nullbot.core.model.game.tictactoe.TicTacToeGameState;

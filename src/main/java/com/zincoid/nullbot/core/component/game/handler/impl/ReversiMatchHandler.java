@@ -1,15 +1,15 @@
-package com.zincoid.nullbot.core.component.game.handler;
+package com.zincoid.nullbot.core.component.game.handler.impl;
 
 import com.mikuac.shiro.core.BotContainer;
+import com.zincoid.nullbot.core.component.game.handler.GameMatchHandler;
 import com.zincoid.nullbot.core.component.game.manager.PlayerManager;
 import com.zincoid.nullbot.core.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
-import com.zincoid.nullbot.core.component.game.GameMatchHandler;
 import com.zincoid.nullbot.core.component.game.manager.MatchManager;
 import com.zincoid.nullbot.core.model.result.GameResult;
 import com.zincoid.nullbot.core.model.game.basic.Match;
 import com.zincoid.nullbot.core.model.game.reversi.ReversiGameState;
-import com.zincoid.nullbot.core.component.game.logic.ReversiGameLogic;
+import com.zincoid.nullbot.core.component.game.logic.impl.ReversiGameLogic;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentHashMap;

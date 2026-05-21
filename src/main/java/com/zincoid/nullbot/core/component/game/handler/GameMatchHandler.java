@@ -1,7 +1,8 @@
-package com.zincoid.nullbot.core.component.game;
+package com.zincoid.nullbot.core.component.game.handler;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
+import com.zincoid.nullbot.core.component.game.logic.GameLogic;
 import lombok.AllArgsConstructor;
 import com.zincoid.nullbot.core.component.game.manager.MatchManager;
 import com.zincoid.nullbot.core.component.game.manager.PlayerManager;
