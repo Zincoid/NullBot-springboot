@@ -34,40 +34,42 @@
     <properties>
         <java.version>21</java.version>
         <mybatis-plus.version>3.5.15</mybatis-plus.version>
+        <lombok.version>1.18.46</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
     </properties>
 
     <dependencies>
-        <dependency>  <!-- Spring Boot 起步依赖 -->
+        <!-- Spring -->
+        <dependency>  <!-- Boot -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
-        <dependency>  <!-- Spring Test 起步依赖 -->
+        <dependency>  <!-- Test -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>  <!-- Spring Web 起步依赖 -->
+        <dependency>  <!-- Web -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>  <!-- Spring WebSocket 起步依赖 -->
+        <dependency>  <!-- WebSocket -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
-        <dependency>  <!-- Spring AOP 起步依赖 -->
+        <dependency>  <!-- AOP -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
-<!--        <dependency>-->  <!-- Spring Security 起步依赖 -->
+<!--        <dependency>-->  <!-- Security -->
 <!--            <groupId>org.springframework.boot</groupId>-->
 <!--            <artifactId>spring-boot-starter-security</artifactId>-->
 <!--        </dependency>-->
-        <dependency>  <!-- Spring Security 加密依赖 -->
+        <dependency>  <!-- Security Crypto -->
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
         </dependency>
-        <dependency>  <!-- Spring 数据校验 起步依赖 -->
+        <dependency>  <!-- Validation -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
@@ -76,6 +78,20 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- MapStruct -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${mapstruct.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -93,19 +109,6 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-jsqlparser</artifactId>
-        </dependency>
-
-        <!-- MapStruct -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-            <version>${mapstruct.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- QQ Bot -->
@@ -146,7 +149,7 @@
             <version>1.17</version>
         </dependency>
         <!-- mvn install:install-file -Dfile=src/tool/resvg-jni-0.1.4.jar -DgroupId=io.github.apeuriox -DartifactId=resvg-jni -Dversion=0.1.4 -Dpackaging=jar -DgeneratePom=true -->
-        <dependency>  <!-- Resvg JNI (手动安装) -->
+        <dependency>  <!-- Resvg JNI (Manually install) -->
             <groupId>io.github.apeuriox</groupId>
             <artifactId>resvg-jni</artifactId>
             <version>0.1.4</version>
@@ -168,7 +171,7 @@
             <artifactId>ashot</artifactId>
             <version>1.5.4</version>
         </dependency>
-        <dependency>  <!-- WebP 支持 -->
+        <dependency>  <!-- WebP Support -->
             <groupId>org.sejda.imageio</groupId>
             <artifactId>webp-imageio</artifactId>
             <version>0.1.6</version>
