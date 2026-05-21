@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.entity;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
@@ -8,7 +8,7 @@ import com.zincoid.nullbot.core.enums.BniMode;
 
 import java.util.List;
 
-@Data
+@Getter
 @RequiredArgsConstructor
 public class BotInputer {
 
@@ -23,17 +23,14 @@ public class BotInputer {
         this.mode = mode;
         return this;
     }
-
     public BotInputer pattern(String pattern) {
         this.pattern = pattern;
         return this;
     }
-
     public BotInputer timeout(long timeout) {
         this.timeout = timeout;
         return this;
     }
-
     public BotInputer coverable() {
         this.coverable = true;
         return this;
