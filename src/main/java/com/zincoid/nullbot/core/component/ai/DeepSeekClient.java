@@ -163,8 +163,8 @@ public class DeepSeekClient {
                     
                     请只回复 YES 或 NO，不要解释。
                     """;
-            String res = chatSingle(req, false, 50);
-            if ("YES".equals(res.trim())) {
+            String res = chatSingle(req, false, 100);
+            if (res.toUpperCase().contains("YES")) {
                 String response = buildRefusedMsg();
                 bot.sendGroupMsg(groupId, response, false);
                 return "Refused";
