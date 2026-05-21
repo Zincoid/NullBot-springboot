@@ -60,7 +60,7 @@ public class VideoGetCommand implements Command {
 
         files.sort(Comparator.comparing(FilePO::getFileName));
 
-        BotPageSelector<FilePO, String> pager = new BotPageSelector.Builder<>(
+        BotPageSelector<FilePO, String> pager = BotPageSelector.builder(
                 bot, groupId, "视频检索", false,
                 files,
                 files.stream().map(FilePO::getFileName).toList(),

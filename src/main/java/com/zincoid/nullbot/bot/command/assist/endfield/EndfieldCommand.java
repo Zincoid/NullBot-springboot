@@ -98,7 +98,7 @@ public class EndfieldCommand implements Command {
                 globalQuery ? "\n[版本 %s 无匹配资源]".formatted(version) : ""
         );
 
-        BotPageSelector<FilePO, String> pager = new BotPageSelector.Builder<>(
+        BotPageSelector<FilePO, String> pager = BotPageSelector.builder(
                 bot, groupId, "终末地", continuousQuery,
                 allFiles,
                 allFiles.stream().map(f -> {

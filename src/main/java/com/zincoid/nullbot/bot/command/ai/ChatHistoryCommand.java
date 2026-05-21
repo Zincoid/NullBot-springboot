@@ -36,7 +36,7 @@ public class ChatHistoryCommand implements Command {
         if (history == null || history.isEmpty())
             throw new NullBotMsgException("[聊天历史] ⚠️无对话历史");
 
-        BotPageSelector<ChatMessage, String> pager = new BotPageSelector.Builder<>(
+        BotPageSelector<ChatMessage, String> pager = BotPageSelector.builder(
                 bot, groupId, "聊天历史", true,
                 history,
                 history.stream()

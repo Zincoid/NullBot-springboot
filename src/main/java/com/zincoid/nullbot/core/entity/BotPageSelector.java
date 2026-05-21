@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.core.entity;
 
 import com.mikuac.shiro.core.Bot;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
@@ -51,7 +52,9 @@ public class BotPageSelector<K, V> {
         this.current = Math.max(1, Math.min(builder.current, pages));
     }
 
+    @RequiredArgsConstructor
     public static class Builder<K, V> {
+
         private final Bot bot;
         private final Long groupId;
         private final String title;
@@ -65,34 +68,18 @@ public class BotPageSelector<K, V> {
         private int size = 10;
         private int current = 1;
 
-        public Builder(Bot bot, Long groupId,
-                       String title, boolean continuous,
-                       List<K> keys, List<V> values,
-                       BotConsumer<Bot, Long, K> action) {
-            this.bot = bot;
-            this.groupId = groupId;
-            this.title = title;
-            this.continuous = continuous;
-            this.keys = keys;
-            this.values = values;
-            this.action = action;
-        }
-
         public Builder<K, V> userId(Long userId) {
             this.userId = userId;
             return this;
         }
-
         public Builder<K, V> info(String info) {
             this.info = info;
             return this;
         }
-
         public Builder<K, V> size(int size) {
             this.size = size;
             return this;
         }
-
         public Builder<K, V> current(int current) {
             this.current = current;
             return this;
@@ -101,6 +88,15 @@ public class BotPageSelector<K, V> {
         public BotPageSelector<K, V> build() {
             return new BotPageSelector<>(this);
         }
+    }
+
+    public static <K, V> Builder<K, V> builder(
+            Bot bot, Long groupId,
+            String title, boolean continuous,
+            List<K> keys, List<V> values,
+            BotConsumer<Bot, Long, K> action
+    ) {
+        return new Builder<>(bot, groupId, title, continuous, keys, values, action);
     }
 
     // =================== BotInputer 控制方案 ====================
