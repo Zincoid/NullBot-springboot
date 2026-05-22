@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.develop.ai.client;
 
+import com.mikuac.shiro.dto.event.Event;
 import com.zincoid.nullbot.develop.ai.plugin.QQMsgExecutor;
 import com.zincoid.nullbot.develop.ai.memory.ChatMemory;
 import com.zincoid.nullbot.develop.ai.message.Message;
@@ -41,11 +42,18 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     public void chatBasic(String chatId, String prompt, QQMessage message, boolean voice) {
         QQMessage _message = call(chatId, prompt, message);
-        qqMsgExecutor.basic(_message, message.getUserId(), false);
-
+        List<QQMessage> messages = qqMsgExecutor.basic(_message, message.getUserId(), voice);
+        for (QQMessage msg : messages) {
+            chatMemory.add(chatId, msg);
+        }
     }
 
-    public void chatEmbedding() {
-
+    public void chatEmbedding(String chatId, String prompt, QQMessage message,
+                              Event event, boolean voice, boolean auth) {
+        QQMessage _message = call(chatId, prompt, message);
+        List<QQMessage> messages = qqMsgExecutor.chain(_message, message.getUserId(), event, voice, auth);
+        for (QQMessage msg : messages) {
+            chatMemory.add(chatId, msg);
+        }
     }
 }
