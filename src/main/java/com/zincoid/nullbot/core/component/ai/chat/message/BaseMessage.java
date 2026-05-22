@@ -1,10 +1,12 @@
 package com.zincoid.nullbot.core.component.ai.chat.message;
 
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@ToString
 public class BaseMessage extends AbstractMessage {
 
     private BaseMessage(Role role, String content) {
