@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"Chat"})
+@CommandMapping({"Chat", "对话"})
 @Component
 @RequiredArgsConstructor
 @Slf4j
