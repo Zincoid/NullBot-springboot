@@ -2,12 +2,13 @@ package com.zincoid.nullbot.bot.command.recall;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
+import com.zincoid.nullbot.core.component.chat.current.memory.MsgWindowChatMemory;
+import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
+import com.zincoid.nullbot.core.enums.ChatScope;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.model.message.ChatMessage;
-import com.zincoid.nullbot.core.component.chat.previous.ChatStore;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,7 @@ import java.util.Objects;
 @Slf4j
 public class RecallReactCommand implements Command {
 
-    private final ChatStore chatStore;
+    private final MsgWindowChatMemory msgWindowChatMemory;
 
     @Override
     public void execute(Bot bot, GroupMsgDeleteNoticeEvent event, List<String> params) {
@@ -31,20 +32,22 @@ public class RecallReactCommand implements Command {
         String operatorName = bot.getStrangerInfo(operatorId, true).getData().getNickname();
         Integer messageId = event.getMessageId();
 
-        for (ChatMessage chatMessage : chatStore.getMonitorHistory(groupId)) {
-            if (!Objects.equals(chatMessage.getMessageId(), messageId)) continue;
+        List<QQMessage> messages = msgWindowChatMemory.get(ChatScope.Monitor + "_" + groupId)
+                .stream().map(m -> (QQMessage) m).toList();
+        for (QQMessage message : messages) {
+            if (!Objects.equals(message.getMessageId(), messageId)) continue;
             if (userId.equals(operatorId)) {
                 bot.sendGroupMsg(groupId, """
                             %s(%s)撤回了消息:
-                            %s""".formatted(userName, userId, chatMessage.getContent()), false
+                            %s""".formatted(userName, userId, message.getContent()), false
                 );
             } else {
                 bot.sendGroupMsg(groupId, """
                             %s(%s)撤回了%s(%s)的消息:
-                            %s""".formatted(operatorName, operatorId, userName, userId, chatMessage.getContent()), false
+                            %s""".formatted(operatorName, operatorId, userName, userId, message.getContent()), false
                 );
             }
-            log.info("\t\t\t\t├─[RecallReact] 已重发撤回消息 - {}", chatMessage.getContent());
+            log.info("\t\t\t\t├─[RecallReact] 已重发撤回消息 - {}", message.getContent());
             return;
         }
 
