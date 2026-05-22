@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.aspect;
+package com.zincoid.nullbot.core.aspect;
 
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;

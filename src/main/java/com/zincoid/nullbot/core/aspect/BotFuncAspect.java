@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.aspect;
+package com.zincoid.nullbot.core.aspect;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
