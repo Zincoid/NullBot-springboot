@@ -1,9 +1,6 @@
 package com.zincoid.nullbot.develop.ai.client;
 
-import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.dto.event.Event;
-import com.zincoid.nullbot.core.component.resource.ResourceLoader;
-import com.zincoid.nullbot.core.util.Base64Util;
 import com.zincoid.nullbot.develop.ai.plugin.QQAntiInjector;
 import com.zincoid.nullbot.develop.ai.plugin.QQMsgExecutor;
 import com.zincoid.nullbot.develop.ai.memory.ChatMemory;
@@ -20,7 +17,6 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     private final ChatMemory chatMemory;
     private final Model model;
-    private final ResourceLoader resourceLoader;
     private final QQAntiInjector qqAntiInjector;
     private final QQMsgExecutor qqMsgExecutor;
 
@@ -52,7 +48,7 @@ public class QQAiClient implements AiClient<QQMessage> {
             return;
         }
         QQMessage _message = call(chatId, prompt, message);
-        List<QQMessage> messages = qqMsgExecutor.basic(_message, voice);
+        List<QQMessage> messages = qqMsgExecutor.direct(_message, voice);
         for (QQMessage msg : messages) {
             chatMemory.add(chatId, msg);
         }

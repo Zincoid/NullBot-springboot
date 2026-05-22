@@ -42,7 +42,7 @@ public class QQMsgExecutor {
 
     // =================== 执行方法 ===================
 
-    public List<QQMessage> basic(QQMessage message, boolean voice) {
+    public List<QQMessage> direct(QQMessage message, boolean voice) {
 
         Bot bot = botOperator.getBot(3, 5000);
         boolean isPrivate = message.isPrivate();
