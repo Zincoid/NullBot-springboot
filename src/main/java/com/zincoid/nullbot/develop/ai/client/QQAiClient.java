@@ -37,6 +37,8 @@ public class QQAiClient implements AiClient<QQMessage> {
                 );
     }
 
+    // =================== 应用方法 ===================
+
     public void chat(String chatId, String prompt, QQMessage message, boolean check, boolean voice) {
         if (check && qqAntiInjector.check(message)) {
             chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
