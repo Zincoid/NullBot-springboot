@@ -1,9 +1,9 @@
 package com.zincoid.nullbot.web.controller;
 
+import com.zincoid.nullbot.core.component.chat.current.client.QQAiClient;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.component.chat.previous.DeepSeekClient;
 import com.zincoid.nullbot.core.component.control.CommandRateLimiter;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
@@ -24,7 +24,7 @@ public class SettingController {
 
     private final SettingService settingService;
     private final CommandRateLimiter commandRateLimiter;
-    private final DeepSeekClient deepSeekClient;
+    private final QQAiClient qqAiClient;
 
     @GetMapping("/{id}")
     public WebResult getSetting(@PathVariable Long id) {
@@ -40,7 +40,7 @@ public class SettingController {
     public WebResult setSetting(@RequestBody SettingPO setting) {
         if (settingService.set(setting)) {
             commandRateLimiter.reset(setting.getGroupId());
-            deepSeekClient.clearGroupHistory(setting.getGroupId(), null);
+            qqAiClient.reset(setting.getGroupId(), null);
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新失败");

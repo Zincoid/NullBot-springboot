@@ -45,6 +45,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Data
+@Deprecated
 public class DeepSeekClient {
 
     @Value("${nullbot.bot-id}")
@@ -610,7 +611,7 @@ public class DeepSeekClient {
      *
      * @return 消息字符串
      */
-    private String buildRefusedMsg() throws IOException {
+    private String buildRefusedMsg() {
         return MsgUtils.builder()
                 .text("[AI] ⚠️对话被拒绝")
                 .img("base64://" + Base64Util.from(
@@ -623,7 +624,7 @@ public class DeepSeekClient {
      *
      * @return 消息字符串
      */
-    private String buildFilteredMsg() throws IOException {
+    private String buildFilteredMsg() {
         return MsgUtils.builder()
                 .text("[AI] ⚠️回复被过滤")
                 .img("base64://" + Base64Util.from(

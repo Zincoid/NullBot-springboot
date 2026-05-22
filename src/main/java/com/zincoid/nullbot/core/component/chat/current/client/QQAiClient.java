@@ -88,10 +88,13 @@ public class QQAiClient implements AiClient<QQMessage> {
         chatMemory.clear("Private_" + userId);
     }
 
-    public void reset(Long groupId, Long userId) {  // 群聊重置
-        chatMemory.clear(ChatScope.Personal + "_" + userId);
-        chatMemory.clear(ChatScope.Group + "_" + groupId);
-        chatMemory.clear(ChatScope.Monitor + "_" + groupId);
+    public ChatScope reset(Long groupId, Long userId) {  // 群聊重置
+        ChatScope scope = settingService.get(groupId).getChatScope();
+        switch (scope) {
+            case Group, Monitor -> chatMemory.clear(scope + "_" + groupId);
+            case Personal -> chatMemory.clear(scope + "_" + userId);
+        }
+        return scope;
     }
 
     public List<QQMessage> history(Long userId) {

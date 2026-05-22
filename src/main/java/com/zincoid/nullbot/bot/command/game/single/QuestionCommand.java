@@ -5,12 +5,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.core.component.chat.current.message.BaseMessage;
+import com.zincoid.nullbot.core.component.chat.current.model.DsModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.chat.previous.DeepSeekClient;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
 import com.zincoid.nullbot.bot.dispatcher.handler.impl.PermissionHandler;
 import com.zincoid.nullbot.core.enums.BniMode;
@@ -26,7 +27,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class QuestionCommand implements Command {
 
-    private final DeepSeekClient deepSeekClient;
+    private final DsModel dsModel;
     private final BotInputManager botInputManager;
     private final PermissionHandler permissionHandler;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -50,14 +51,15 @@ public class QuestionCommand implements Command {
             bot.sendGroupMsg(groupId, "⏳问题生成中, 请稍候...", false);
             String raw;
             try {
-                raw = deepSeekClient.chatSingle("""
+                raw = dsModel.invoke(
+                        List.of(BaseMessage.system("""
                                 出一道单选题并给出题目和答案，问题主题：%s。请严格按照以下JSON格式回复，不要包含任何其他内容：
                                 {"answer":"正确选项字母","timeout":回答限时秒数,"question":"题目内容(选项要换行)"}
                                 注:
                                 1. timeout根据题目难度设定，简单题15-30秒，中等题45-60秒，困难题90-120秒，
                                 2. 公式相关内容不要使用Latex格式
                                 3. 禁止生成中国国内政治事件和政治人物相关问题，当主题涉及时仅回复REFUSED"""
-                                .formatted(params.isEmpty() ? "二次元" : String.join(" ", params)),
+                                .formatted(params.isEmpty() ? "二次元" : String.join(" ", params)))),
                         thinking, 2500
                 );
             } catch (Exception e) {
