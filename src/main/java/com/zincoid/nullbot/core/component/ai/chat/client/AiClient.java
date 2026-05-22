@@ -1,6 +1,6 @@
-package com.zincoid.nullbot.core.component.chat.current.client;
+package com.zincoid.nullbot.core.component.ai.chat.client;
 
-import com.zincoid.nullbot.core.component.chat.current.message.Message;
+import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 
 public interface AiClient<M extends Message> {
 

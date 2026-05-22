@@ -1,6 +1,6 @@
-package com.zincoid.nullbot.core.component.chat.current.repository;
+package com.zincoid.nullbot.core.component.ai.chat.repository;
 
-import com.zincoid.nullbot.core.component.chat.current.message.Message;
+import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.chat.current.plugin;
+package com.zincoid.nullbot.core.component.ai.chat.plugin;
 
 import com.zincoid.nullbot.bot.dispatcher.CommandRegistry;
 import com.zincoid.nullbot.core.component.control.SysMsgManager;

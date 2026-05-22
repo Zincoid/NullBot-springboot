@@ -1,9 +1,9 @@
-package com.zincoid.nullbot.core.component.chat.current.client;
+package com.zincoid.nullbot.core.component.ai.chat.client;
 
-import com.zincoid.nullbot.core.component.chat.current.memory.ChatMemory;
-import com.zincoid.nullbot.core.component.chat.current.message.BaseMessage;
-import com.zincoid.nullbot.core.component.chat.current.message.Message;
-import com.zincoid.nullbot.core.component.chat.current.model.Model;
+import com.zincoid.nullbot.core.component.ai.chat.memory.ChatMemory;
+import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
+import com.zincoid.nullbot.core.component.ai.chat.message.Message;
+import com.zincoid.nullbot.core.component.ai.chat.model.Model;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;

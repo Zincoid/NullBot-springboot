@@ -1,13 +1,13 @@
-package com.zincoid.nullbot.core.component.chat.current.client;
+package com.zincoid.nullbot.core.component.ai.chat.client;
 
 import com.mikuac.shiro.dto.event.Event;
-import com.zincoid.nullbot.core.component.chat.current.plugin.QQAntiInjector;
-import com.zincoid.nullbot.core.component.chat.current.plugin.QQMsgExecutor;
-import com.zincoid.nullbot.core.component.chat.current.memory.ChatMemory;
-import com.zincoid.nullbot.core.component.chat.current.message.Message;
-import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
-import com.zincoid.nullbot.core.component.chat.current.model.Model;
-import com.zincoid.nullbot.core.component.chat.current.plugin.QQPrompter;
+import com.zincoid.nullbot.core.component.ai.chat.plugin.QQAntiInjector;
+import com.zincoid.nullbot.core.component.ai.chat.plugin.QQMsgExecutor;
+import com.zincoid.nullbot.core.component.ai.chat.memory.ChatMemory;
+import com.zincoid.nullbot.core.component.ai.chat.message.Message;
+import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
+import com.zincoid.nullbot.core.component.ai.chat.model.Model;
+import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.service.SettingService;

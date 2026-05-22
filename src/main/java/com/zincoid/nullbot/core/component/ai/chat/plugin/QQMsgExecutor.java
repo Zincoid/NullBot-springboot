@@ -1,17 +1,17 @@
-package com.zincoid.nullbot.core.component.chat.current.plugin;
+package com.zincoid.nullbot.core.component.ai.chat.plugin;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
 import com.mikuac.shiro.dto.event.Event;
-import com.zincoid.nullbot.core.component.voice.TtsClient;
+import com.zincoid.nullbot.core.component.ai.voice.TtsClient;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.component.tool.BotOperator;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import com.zincoid.nullbot.core.model.bot.event.EmbeddedCommandEvent;
 import com.zincoid.nullbot.core.util.Base64Util;
-import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
+import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;

@@ -2,9 +2,9 @@ package com.zincoid.nullbot.bot.command.ai.embedding;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.core.component.chat.current.enums.Role;
-import com.zincoid.nullbot.core.component.chat.current.memory.MsgWindowChatMemory;
-import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
+import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
+import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowChatMemory;
+import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.util.BotCtxUtil;

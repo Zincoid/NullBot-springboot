@@ -1,18 +1,18 @@
-package com.zincoid.nullbot.core.component.chat.current;
+package com.zincoid.nullbot;
 
-import com.zincoid.nullbot.core.component.chat.current.client.AiClient;
-import com.zincoid.nullbot.core.component.chat.current.client.BaseAiClient;
-import com.zincoid.nullbot.core.component.chat.current.memory.ChatMemory;
-import com.zincoid.nullbot.core.component.chat.current.memory.MsgWindowChatMemory;
-import com.zincoid.nullbot.core.component.chat.current.message.BaseMessage;
-import com.zincoid.nullbot.core.component.chat.current.model.DsModel;
-import com.zincoid.nullbot.core.component.chat.current.model.Model;
-import com.zincoid.nullbot.core.component.chat.current.repository.ChatRepository;
-import com.zincoid.nullbot.core.component.chat.current.repository.InMemoryChatRepository;
+import com.zincoid.nullbot.core.component.ai.chat.client.AiClient;
+import com.zincoid.nullbot.core.component.ai.chat.client.BaseAiClient;
+import com.zincoid.nullbot.core.component.ai.chat.memory.ChatMemory;
+import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowChatMemory;
+import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
+import com.zincoid.nullbot.core.component.ai.chat.model.DsModel;
+import com.zincoid.nullbot.core.component.ai.chat.model.Model;
+import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
+import com.zincoid.nullbot.core.component.ai.chat.repository.InMemoryChatRepository;
 
 import java.util.Scanner;
 
-public class AiTests {
+public class NullBotAiTests {
 
     private static final ChatRepository repository = new InMemoryChatRepository();
     private static final ChatMemory memory = new MsgWindowChatMemory(repository, 5);

@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.voice;
+package com.zincoid.nullbot.core.component.ai.voice;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

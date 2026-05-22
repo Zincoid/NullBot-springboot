@@ -1,6 +1,6 @@
-package com.zincoid.nullbot.core.component.chat.current.message;
+package com.zincoid.nullbot.core.component.ai.chat.message;
 
-import com.zincoid.nullbot.core.component.chat.current.enums.Role;
+import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
 import lombok.Getter;
 
 import java.util.HashMap;

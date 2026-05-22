@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.web.controller;
 
-import com.zincoid.nullbot.core.component.chat.current.client.QQAiClient;
+import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

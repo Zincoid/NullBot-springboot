@@ -1,7 +1,7 @@
-package com.zincoid.nullbot.core.component.chat.current.memory;
+package com.zincoid.nullbot.core.component.ai.chat.memory;
 
-import com.zincoid.nullbot.core.component.chat.current.message.Message;
-import com.zincoid.nullbot.core.component.chat.current.repository.ChatRepository;
+import com.zincoid.nullbot.core.component.ai.chat.message.Message;
+import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

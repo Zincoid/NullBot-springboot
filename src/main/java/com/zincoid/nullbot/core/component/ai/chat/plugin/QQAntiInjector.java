@@ -1,12 +1,12 @@
-package com.zincoid.nullbot.core.component.chat.current.plugin;
+package com.zincoid.nullbot.core.component.ai.chat.plugin;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.component.tool.BotOperator;
 import com.zincoid.nullbot.core.util.Base64Util;
-import com.zincoid.nullbot.core.component.chat.current.message.BaseMessage;
-import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
-import com.zincoid.nullbot.core.component.chat.current.model.Model;
+import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
+import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
+import com.zincoid.nullbot.core.component.ai.chat.model.Model;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

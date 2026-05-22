@@ -2,8 +2,8 @@ package com.zincoid.nullbot.bot.command.ai;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
-import com.zincoid.nullbot.core.component.chat.current.client.QQAiClient;
-import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
+import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;

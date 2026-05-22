@@ -1,6 +1,6 @@
-package com.zincoid.nullbot.core.component.chat.current.model;
+package com.zincoid.nullbot.core.component.ai.chat.model;
 
-import com.zincoid.nullbot.core.component.chat.current.message.Message;
+import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 
 import java.util.List;
 
