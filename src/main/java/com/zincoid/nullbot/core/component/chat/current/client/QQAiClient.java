@@ -7,6 +7,7 @@ import com.zincoid.nullbot.core.component.chat.current.memory.ChatMemory;
 import com.zincoid.nullbot.core.component.chat.current.message.Message;
 import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
 import com.zincoid.nullbot.core.component.chat.current.model.Model;
+import com.zincoid.nullbot.core.enums.ChatScope;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -39,7 +40,11 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     // =================== 应用方法 ===================
 
-    public void chat(String chatId, String prompt, QQMessage message, boolean check, boolean voice) {
+    public void chat(
+            ChatScope scope, Long TargetId, String prompt,
+            QQMessage message, boolean check, boolean voice
+    ) {
+        String chatId = scope.name() + "_" + TargetId;
         if (check && qqAntiInjector.check(message)) {
             chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
             return;
@@ -51,8 +56,12 @@ public class QQAiClient implements AiClient<QQMessage> {
         }
     }
 
-    public void chat(String chatId, String prompt, QQMessage message, boolean check, boolean voice,
-                     Event event, boolean auth) {
+    public void chat(
+            ChatScope scope, Long TargetId, String prompt,
+            QQMessage message, boolean check, boolean voice,
+            Event event, boolean auth
+    ) {
+        String chatId = scope.name() + "_" + TargetId;
         if (check && qqAntiInjector.check(message)) {
             chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
             return;
