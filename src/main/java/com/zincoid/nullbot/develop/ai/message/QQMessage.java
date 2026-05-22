@@ -9,6 +9,7 @@ import java.util.Map;
 @Getter
 public class QQMessage extends AbstractMessage {
 
+    private boolean isPrivate;
     private Integer messageId;
     private Long groupId;
     private Long userId;
@@ -56,15 +57,22 @@ public class QQMessage extends AbstractMessage {
         return new QQMessage(Role.SYSTEM, content);
     }
 
-    public QQMessage info(Integer messageId, Long groupId, Long userId, String userName) {
-        this.messageId = messageId;
+    public QQMessage gc(Long groupId, Long userId, String userName) {
+        this.isPrivate = false;
         this.groupId = groupId;
         this.userId = userId;
         this.userName = userName;
         return this;
     }
 
-    public QQMessage info(Integer messageId) {
+    public QQMessage pm(Long userId, String userName) {
+        this.isPrivate = true;
+        this.userId = userId;
+        this.userName = userName;
+        return this;
+    }
+
+    public QQMessage id(Integer messageId) {
         this.messageId = messageId;
         return this;
     }

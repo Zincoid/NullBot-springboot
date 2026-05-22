@@ -25,12 +25,13 @@ public class QQAiClient implements AiClient<QQMessage> {
         _messages.add(QQMessage.system(prompt));
         _messages.addAll(messages);
         String content = model.invoke(_messages, false, 1024);
-        return QQMessage.assistant(content).info(
-                message.getMessageId(),
-                message.getGroupId(),
-                message.getUserId(),
-                message.getUserName()
-        );
+        return QQMessage.assistant(content)
+                .id(message.getMessageId())
+                .gc(
+                        message.getGroupId(),
+                        message.getUserId(),
+                        message.getUserName()
+                );
     }
 
     @Override
@@ -38,10 +39,10 @@ public class QQAiClient implements AiClient<QQMessage> {
         chatMemory.clear(chatId);
     }
 
-    public void chatBasic(String chatId, String prompt, QQMessage message) {
-        boolean isPrivate = message.getGroupId() == null;
+    public void chatBasic(String chatId, String prompt, QQMessage message, boolean voice) {
         QQMessage _message = call(chatId, prompt, message);
-        qqMsgExecutor.basic(_message, message.getUserId(), isPrivate, false);
+        qqMsgExecutor.basic(_message, message.getUserId(), false);
+
     }
 
     public void chatEmbedding() {

@@ -40,10 +40,10 @@ public class QQMsgExecutor {
         SEGMENT_PATTERN = Pattern.compile("(\\{.*?}|[^{]+)");
     }
 
-    public List<QQMessage> basic(QQMessage message, Long targetId, boolean isPrivate,
-                          boolean voice) {
+    public List<QQMessage> basic(QQMessage message, Long targetId, boolean voice) {
 
         Bot bot = botOperator.getBot(3, 5000);
+        boolean isPrivate = message.isPrivate();
         String content = message.getContent();
         if (content.contains("{Discard}"))
             return List.of(QQMessage.assistant("回复被拒绝"));
@@ -55,19 +55,20 @@ public class QQMsgExecutor {
             content = content.replaceAll("(\r?\n)+", "\n").trim();
             messageId = sendMsg(bot, targetId, content, isPrivate, voice);
         }
-        return List.of(QQMessage.assistant(content).info(messageId));
+        return List.of(QQMessage.assistant(content).id(messageId));
     }
 
-    public List<QQMessage> chain(QQMessage message, Long targetId, boolean isPrivate,
+    public List<QQMessage> chain(QQMessage message, Long targetId,
                           Event event, boolean voice, boolean embeddingAuth) {
 
         Bot bot = botOperator.getBot(3, 5000);
+        boolean isPrivate = message.isPrivate();
         String content = message.getContent();
         if (content.contains("{Discard}"))
             return List.of(QQMessage.assistant("回复被拒绝"));
         if (messageFilter(content)) {
             Integer messageId = sendMsg(bot, targetId, buildFilteredMsg(), isPrivate, voice);
-            return List.of(QQMessage.assistant("回复被过滤").info(messageId));
+            return List.of(QQMessage.assistant("回复被过滤").id(messageId));
         }
         content = content.replaceAll("(\r?\n)+", "\n").trim();
         Matcher matcher = SEGMENT_PATTERN.matcher(content);
@@ -83,7 +84,7 @@ public class QQMsgExecutor {
             } else {
                 if (segment.isEmpty()) continue;
                 Integer messageId = sendMsg(bot, targetId, segment, isPrivate, voice);
-                messages.add(QQMessage.assistant(segment).info(messageId));
+                messages.add(QQMessage.assistant(segment).id(messageId));
             }
         }
         return messages;
@@ -115,14 +116,6 @@ public class QQMsgExecutor {
     boolean messageFilter(String message) {
         return USER_INFO_PATTERN.matcher(message).find();
     }
-
-    // private String buildRefusedMsg() {
-    //     return MsgUtils.builder()
-    //             .text("[AI] ⚠️对话被拒绝")
-    //             .img("base64://" + Base64Util.from(resourceLoader
-    //                     .getCached("static/image/Filtered.jpg")))
-    //             .build();
-    // }
 
     private String buildFilteredMsg() {
         return MsgUtils.builder()
