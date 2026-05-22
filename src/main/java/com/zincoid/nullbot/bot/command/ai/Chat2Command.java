@@ -30,15 +30,8 @@ public class Chat2Command implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        SettingPO setting = BotCtxUtil.getSetting();
         try {
-            qqAiClient.chatGc(
-                    """
-                            你是一只猫娘，名字叫Null，你在一个聊天软件中回复消息。
-                            你可以通过{}在指令中嵌入命令或分割多条消息，例如：
-                            1. 这是第一条{}这是第二条
-                            2. 发送二次元图片 -> {Anime}
-                            注意：目前在测试中""",
+            qqAiClient.gc(
                     QQMessage.user(String.join(" ", params))
                             .gc(
                                     event.getGroupId(),
