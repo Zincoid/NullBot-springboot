@@ -7,8 +7,6 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.core.component.chat.current.client.QQAiClient;
 import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
-import com.zincoid.nullbot.core.model.data.po.SettingPO;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
