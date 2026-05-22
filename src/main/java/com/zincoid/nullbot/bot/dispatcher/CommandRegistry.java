@@ -2,7 +2,6 @@ package com.zincoid.nullbot.bot.dispatcher;
 
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -12,9 +11,8 @@ public class CommandRegistry {
 
     private final Map<String, Command> commandMap = new HashMap<>();
 
-    public CommandRegistry(ApplicationContext context) {
-        Map<String, Command> beans = context.getBeansOfType(Command.class);
-        for (Command command : beans.values()) {
+    public CommandRegistry(List<Command> commands) {
+        for (Command command : commands) {
             CommandMapping mapping = command.getClass().getAnnotation(CommandMapping.class);
             if (mapping != null) {
                 for(String commandName : mapping.value()) {
