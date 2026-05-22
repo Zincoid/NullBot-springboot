@@ -15,18 +15,20 @@ import org.springframework.context.annotation.Configuration;
 public class AiConfiguration {
 
     @Bean
-    public QQAiClient qqAiClient(ChatRepository repository, Model model,
+    public MsgWindowChatMemory msgWindowChatMemory(ChatRepository repository) {
+        return new MsgWindowChatMemory(repository, 10);
+    }
+
+    @Bean
+    public QQAiClient qqAiClient(MsgWindowChatMemory memory, Model model,
                                  QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor,
                                  SettingService service
     ) {
         return new QQAiClient(
-                new MsgWindowChatMemory(repository, 10),
-                model,
+                memory, model,
                 antiInjector.withModel(model),
-                prompter,
-                executor,
+                prompter, executor,
                 service
-
         ).withMaxTokens(512);
     }
 }

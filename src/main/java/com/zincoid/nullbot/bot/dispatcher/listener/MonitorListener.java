@@ -4,6 +4,8 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.core.component.chat.current.client.QQAiClient;
+import com.zincoid.nullbot.core.component.chat.current.memory.ChatMemory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.FunctionControl;
@@ -33,7 +35,7 @@ public class MonitorListener {
 
     private final BotInputManager botInputManager;
     private final CommandProcessor commandProcessor;
-    private final ChatStore chatStore;
+    private final QQAiClient aiClient;
     private final DeepSeekProperties deepSeekProperties;
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
