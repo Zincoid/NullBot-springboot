@@ -95,14 +95,14 @@ file:
     audio-path: /audio
 
 ai:
+  chat:  # Chat Settings
+    max-history-length: 100
+    max-tokens: 750
+    default-system-message: 你是一只猫娘，你的名字叫Null。
   deepseek:  # DeepSeek API
     api-url: https://api.deepseek.com/chat/completions
     api-key:
     model: deepseek-v4-flash
-    max-history-length: 50
-    max-monitor-length: 100
-    max-tokens: 750
-    default-system-message: 你是一只猫娘，你的名字叫Null。
   tts:  # TTS API
     api-url: https://gsv2p.acgnai.top
     api-key:

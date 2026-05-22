@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "ai.deepseek")
-public class DeepSeekProperties {
-    private String apiKey;
-    private String apiUrl;
-    private String model;
+@ConfigurationProperties(prefix = "ai.chat")
+public class AiChatProperties {
+    private Integer maxHistoryLength;
+    private Integer maxTokens;
+    private String DefaultSystemMessage;
 }
