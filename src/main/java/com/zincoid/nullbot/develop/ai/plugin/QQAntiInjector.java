@@ -53,7 +53,10 @@ public class QQAntiInjector {
         return this;
     }
 
+    // =================== 检查方法 ===================
+
     public boolean check(QQMessage message) {
+        if (model == null) throw new NullPointerException("Model is null");
         String res = model.invoke(
                 List.of(BaseMessage.system(PROMPT.formatted(message.getContent()))),
                 false, 100
@@ -66,6 +69,8 @@ public class QQAntiInjector {
         }
         return true;
     }
+
+    // =================== 消息方法 ===================
 
     private String refused() {
         return MsgUtils.builder()
