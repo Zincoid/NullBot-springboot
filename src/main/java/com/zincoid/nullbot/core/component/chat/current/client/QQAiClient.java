@@ -40,7 +40,6 @@ public class QQAiClient implements AiClient<QQMessage> {
         _messages.addAll(messages);
         String content = model.invoke(_messages, false, 1024);
         return QQMessage.assistant(content)
-                .id(message.getMessageId())
                 .gc(
                         message.getGroupId(),
                         message.getUserId(),
