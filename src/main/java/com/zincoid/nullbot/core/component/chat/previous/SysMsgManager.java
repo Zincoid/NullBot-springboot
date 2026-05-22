@@ -28,10 +28,8 @@ public class SysMsgManager {
 
     public String getDefaultMessage(Long groupId) { return defaultMessages.computeIfAbsent(groupId, k -> deepSeekProperties.getDefaultSystemMessage()); }
     public void setDefaultMessage(Long groupId, String message) { defaultMessages.put(groupId, message); }
-
     public String getCustomMessage(Long groupId) { return customMessages.computeIfAbsent(groupId, k -> "你是一个AI助手，名字叫Null。"); }
     public void setCustomMessage(Long groupId, String message) { customMessages.put(groupId, message); }
-
     public String getUserMessage(Long userId) { return userMessages.computeIfAbsent(userId, k -> deepSeekProperties.getDefaultSystemMessage()); }
     public void setUserMessage(Long userId, String message) { userMessages.put(userId, message); }
 
@@ -45,7 +43,6 @@ public class SysMsgManager {
     }
     public String removeLongTermGroupMemory(Long groupId, int i) { return getLongTermGroupMemory(groupId).remove(i); }
     public void clearLongTermGroupMemory(Long groupId) { longTermGroupMemories.remove(groupId); }
-
     public List<String> getLongTermUserMemory(Long userId) { return longTermUserMemories.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>()); }
     public synchronized boolean addLongTermUserMemory(Long userId, String memory) {
         List<String> userMemory = getLongTermUserMemory(userId);
@@ -62,7 +59,6 @@ public class SysMsgManager {
         customMessages.remove(groupId);
         longTermGroupMemories.remove(groupId);
     }
-
     public void resetUser(Long userId) {
         userMessages.remove(userId);
         longTermUserMemories.remove(userId);
