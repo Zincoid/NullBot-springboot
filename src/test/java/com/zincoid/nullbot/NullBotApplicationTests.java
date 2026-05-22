@@ -3,6 +3,7 @@ package com.zincoid.nullbot;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.util.*;
 import jakarta.annotation.Resource;
 // import jdash.client.GDClient;
@@ -43,17 +44,19 @@ class NullBotApplicationTests {
     @Resource
     private CommandProcessor commandProcessor;
     @Resource
-    Matcher matcher;
+    private Matcher matcher;
     @Resource
-    TicTacToeMatchHandler ticTacToeMatchHandler;
+    private TicTacToeMatchHandler ticTacToeMatchHandler;
     @Resource
-    TicTacToeGameLogic ticTacToeGameLogic;
+    private TicTacToeGameLogic ticTacToeGameLogic;
     @Resource
-    WebScreenCapturer webScreenCapturer;
+    private WebScreenCapturer webScreenCapturer;
     @Resource
-    HtmlRenderer htmlRenderer;
+    private HtmlRenderer htmlRenderer;
     @Resource
     private BotInputManager botInputManager;
+    @Resource
+    private ResourceLoader resourceLoader;
 
     @Test
     void regexTest() {
@@ -147,7 +150,7 @@ class NullBotApplicationTests {
         //         // .bold()
         //         .stroke("#FFFFFF", 6);
 
-        Path prts = ResourceUtil.getCached("static/image/invsPRTS.png", "/root/Nullbot/file/temp/font");
+        Path prts = resourceLoader.getCached("static/image/invsPRTS.png", "/root/Nullbot/file/temp/font");
         // 创建 SVG 画布
         SvgCanvas canvas = SvgCanvas.create(640, 640);
         // 添加用户头像

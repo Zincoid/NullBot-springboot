@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.service;
 
-import com.zincoid.nullbot.core.model.data.page.DataPage;
+import com.zincoid.nullbot.core.model.data.DataPage;
 import com.zincoid.nullbot.core.model.data.po.InventoryPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
 import com.zincoid.nullbot.core.enums.Rarity;

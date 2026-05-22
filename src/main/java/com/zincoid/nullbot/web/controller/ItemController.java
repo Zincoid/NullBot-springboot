@@ -3,7 +3,7 @@ package com.zincoid.nullbot.web.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.model.data.page.DataPage;
+import com.zincoid.nullbot.core.model.data.DataPage;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.service.ItemService;

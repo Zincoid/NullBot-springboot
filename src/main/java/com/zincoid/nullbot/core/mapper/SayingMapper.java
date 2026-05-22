@@ -7,10 +7,6 @@ import com.zincoid.nullbot.core.model.data.po.SayingPO;
 @Mapper
 public interface SayingMapper extends BaseMapper<SayingPO> {
 
-    @Deprecated
-    @Select("SELECT * FROM saying ORDER BY RAND() LIMIT 1")
-    SayingPO getRand();
-
     @Select("SELECT * FROM saying LIMIT 1 OFFSET #{offset}")
     SayingPO getOneByOffset(long offset);
 

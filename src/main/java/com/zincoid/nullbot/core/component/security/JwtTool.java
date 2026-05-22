@@ -25,12 +25,7 @@ public class JwtTool {
         this.objectMapper = new ObjectMapper();
     }
 
-    /**
-     * 创建 Token
-     * @param id 用户ID
-     * @param type 用户类型
-     * @return Token
-     */
+    // 创建Jwt
     public String createJwt(Long id, Integer type, Duration ttl) {
         return JWT.create()
                 .setPayload("id", id)
@@ -40,46 +35,27 @@ public class JwtTool {
                 .sign();
     }
 
-    /**
-     * 解析 token
-     * @param token token
-     * @return JWT对象
-     */
+    // 解析Jwt
     public JWT parseJwt(String token) {
-        // 校验Token非空
         if (!StringUtils.hasLength(token))
             throw new UnauthorizedException("No Token");
-
         JWT jwt;
-
-        // 设置JWT对象
         try {
             jwt = JWT.of(token).setSigner(jwtSigner);
         } catch (Exception e) {
             throw new UnauthorizedException("Invalid Token", e);
         }
-
-        // 校验是否有效
         if (!jwt.verify())
             throw new UnauthorizedException("Invalid Token");
-
-        // 校验是否过期
         try {
             JWTValidator.of(jwt).validateDate();
         } catch (ValidateException e) {
             throw new UnauthorizedException("Expired Token");
         }
-
         return jwt;
     }
 
-    /**
-     * 解析 JWT 获取数据
-     * @param jwt JWT对象
-     * @param attr 属性名
-     * @param clazz 类型
-     * @return Jwt中的指定数据
-     */
+    // 获取Data
     public <T> T getAs(JWT jwt, String attr, Class<T> clazz) {
         Object payload = jwt.getPayload(attr);
         if (payload == null) return null;
@@ -90,27 +66,5 @@ public class JwtTool {
         } catch (RuntimeException e) {
             throw new IllegalArgumentException("Invalid Attr: " + e.getMessage());
         }
-    }
-
-    /**
-     * 解析 token 获取 用户ID
-     * @param token token
-     * @return 用户ID
-     */
-    @Deprecated
-    public Long getLoginId(String token) {
-        JWT jwt = parseJwt(token);
-        return getAs(jwt, "id", Long.class);
-    }
-
-    /**
-     * 解析 token 获取 用户Type
-     * @param token token
-     * @return 用户Type
-     */
-    @Deprecated
-    public Integer getLoginType(String token) {
-        JWT jwt = parseJwt(token);
-        return getAs(jwt, "type", Integer.class);
     }
 }

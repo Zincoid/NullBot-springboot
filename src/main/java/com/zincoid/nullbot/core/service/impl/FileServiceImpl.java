@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.core.model.data.page.DataPage;
+import com.zincoid.nullbot.core.model.data.DataPage;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.web.exception.CommonException;
 import com.zincoid.nullbot.core.mapper.AdminMapper;
