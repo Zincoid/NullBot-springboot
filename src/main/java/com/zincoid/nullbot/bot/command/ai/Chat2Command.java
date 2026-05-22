@@ -29,7 +29,7 @@ public class Chat2Command implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         try {
-            qqAiClient.chatEmbedding(
+            qqAiClient.chat(
                     "GROUP_" + event.getGroupId(),
                     """
                             你是一只猫娘，名字叫Null，你在一个聊天软件中回复消息。
@@ -43,9 +43,7 @@ public class Chat2Command implements Command {
                                     event.getUserId(),
                                     event.getSender().getNickname()
                             ),
-                    event,
-                    false,
-                    false
+                    false, event, false
             );
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
