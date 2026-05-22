@@ -49,7 +49,7 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     // =================== 应用方法 ===================
 
-    public void pm(
+    public void chatPm(
             String prompt, QQMessage message, Event event
     ) {
         String chatId = "Private_" + message.getUserId();
@@ -60,7 +60,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         }
     }
 
-    public void gc(
+    public void chatGc(
             String prompt, QQMessage message, Event event
     ) {
         SettingPO setting = BotCtxUtil.getSetting();
@@ -79,11 +79,14 @@ public class QQAiClient implements AiClient<QQMessage> {
         }
     }
 
-    public void clearPm(Long userId) {
+    public void resetPm(Long userId) {
         chatMemory.clear("Private_" + userId);
     }
 
-    public void clearGc(Long groupId) {
-        chatMemory.clear("Group_" + groupId);
+    public void resetGc(Long groupId, Long userId) {
+        SettingPO setting = BotCtxUtil.getSetting();
+        String chatId = setting.getChatScope() + "_" +
+                (setting.getChatScope() == ChatScope.Personal ? userId : groupId);
+        chatMemory.clear(chatId);
     }
 }
