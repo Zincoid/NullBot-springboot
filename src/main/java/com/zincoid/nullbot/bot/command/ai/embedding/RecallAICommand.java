@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.storage.ChatStorage;
+import com.zincoid.nullbot.core.component.chat.ChatMemory;
 import com.zincoid.nullbot.core.model.message.ChatMessage;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 public class RecallAICommand implements Command {
 
-    private final ChatStorage chatStorage;
+    private final ChatMemory chatMemory;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -36,7 +36,7 @@ public class RecallAICommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
-        List<ChatMessage> messages = chatStorage.getAIMessagesForRecall(groupId, userId, n);
+        List<ChatMessage> messages = chatMemory.getAIMessagesForRecall(groupId, userId, n);
         for (ChatMessage message : messages) bot.deleteMsg(message.getMessageId());
 
         log.info("\t\t\t\t├─[RecallAI] 已撤回AI消息 -> {}条", n);

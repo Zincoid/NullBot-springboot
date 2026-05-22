@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.storage.ChatStorage;
+import com.zincoid.nullbot.core.component.chat.ChatMemory;
 import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
@@ -27,7 +27,7 @@ import java.util.List;
 public class MemeCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
-    private final ChatStorage chatStorage;
+    private final ChatMemory chatMemory;
     private final FileService fileService;
     private final OssUrlBuilder ossUrlBuilder;
 
@@ -60,7 +60,7 @@ public class MemeCommand implements Command {
 
         // 自动记录表情错误使用
         if (memes.isEmpty()) {
-            chatStorage.recordError("表情文件 " + memeName + " 不存在，不要再使用了");
+            chatMemory.recordError("表情文件 " + memeName + " 不存在，不要再使用了");
             throw new NullBotLogException("[表情] ❌" + memeName + " 不存在");
         }
 

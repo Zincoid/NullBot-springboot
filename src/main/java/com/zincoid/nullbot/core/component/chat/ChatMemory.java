@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.storage;
+package com.zincoid.nullbot.core.component.chat;
 
 import lombok.Data;
 import com.zincoid.nullbot.core.model.message.ChatMessage;
@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Component
 @Data
-public class ChatStorage {
+public class ChatMemory {
 
     private final Map<Long, List<ChatMessage>> userHistories = new ConcurrentHashMap<>();
     private final Map<Long, List<ChatMessage>> groupHistories = new ConcurrentHashMap<>();
