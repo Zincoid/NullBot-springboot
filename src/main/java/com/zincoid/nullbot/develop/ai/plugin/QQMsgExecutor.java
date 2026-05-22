@@ -40,6 +40,8 @@ public class QQMsgExecutor {
         SEGMENT_PATTERN = Pattern.compile("(\\{.*?}|[^{]+)");
     }
 
+    // =================== 执行方法 ===================
+
     public List<QQMessage> basic(QQMessage message, boolean voice) {
 
         Bot bot = botOperator.getBot(3, 5000);
@@ -49,12 +51,12 @@ public class QQMsgExecutor {
         if (content.contains("{Discard}"))
             return List.of(QQMessage.assistant("回复被拒绝"));
         Integer messageId;
-        if (messageFilter(content)) {
+        if (filter(content)) {
             content = "回复被过滤";
-            messageId = sendMsg(bot, targetId, buildFilteredMsg(), isPrivate, voice);
+            messageId = send(bot, targetId, filtered(), isPrivate, voice);
         } else {
             content = content.replaceAll("(\r?\n)+", "\n").trim();
-            messageId = sendMsg(bot, targetId, content, isPrivate, voice);
+            messageId = send(bot, targetId, content, isPrivate, voice);
         }
         return List.of(QQMessage.assistant(content).id(messageId));
     }
@@ -68,8 +70,8 @@ public class QQMsgExecutor {
         String content = message.getContent();
         if (content.contains("{Discard}"))
             return List.of(QQMessage.assistant("回复被拒绝"));
-        if (messageFilter(content)) {
-            Integer messageId = sendMsg(bot, targetId, buildFilteredMsg(), isPrivate, voice);
+        if (filter(content)) {
+            Integer messageId = send(bot, targetId, filtered(), isPrivate, voice);
             return List.of(QQMessage.assistant("回复被过滤").id(messageId));
         }
         content = content.replaceAll("(\r?\n)+", "\n").trim();
@@ -85,7 +87,7 @@ public class QQMsgExecutor {
                 messages.add(QQMessage.assistant(segment));
             } else {
                 if (segment.isEmpty()) continue;
-                Integer messageId = sendMsg(bot, targetId, segment, isPrivate, voice);
+                Integer messageId = send(bot, targetId, segment, isPrivate, voice);
                 messages.add(QQMessage.assistant(segment).id(messageId));
             }
         }
@@ -94,36 +96,36 @@ public class QQMsgExecutor {
 
     // =================== 工具方法 ===================
 
-    private Integer sendMsg(Bot bot, Long targetId, String message,
-                            boolean isPrivate, boolean voice) {
+    private Integer send(Bot bot, Long targetId, String message,
+                         boolean isPrivate, boolean voice) {
         ActionData<MsgId> msgIdActionData;
         if (isPrivate) {
-            msgIdActionData = bot.sendPrivateMsg(
-                    targetId,
-                    voice ? MsgUtils.builder()
-                            .voice("base64://" + ttsClient.synthesize(message)).build() : message,
-                    false
-            );
+            msgIdActionData = bot.sendPrivateMsg(targetId,
+                    voice ? voiced(message) : message, false);
         } else {
-            msgIdActionData = bot.sendGroupMsg(
-                    targetId,
-                    voice ? MsgUtils.builder()
-                            .voice("base64://" + ttsClient.synthesize(message)).build() : message,
-                    false
-            );
+            msgIdActionData = bot.sendGroupMsg(targetId,
+                    voice ? voiced(message) : message, false);
         }
         return msgIdActionData.getData().getMessageId();
     }
 
-    boolean messageFilter(String message) {
+    boolean filter(String message) {
         return USER_INFO_PATTERN.matcher(message).find();
     }
 
-    private String buildFilteredMsg() {
+    // =================== 消息方法 ===================
+
+    private String filtered() {
         return MsgUtils.builder()
                 .text("[AI] ⚠️回复被过滤")
                 .img("base64://" + Base64Util.from(resourceLoader
                         .getCached("static/image/Filtered.jpg")))
+                .build();
+    }
+
+    private String voiced(String message) {
+        return MsgUtils.builder()
+                .voice("base64://" + ttsClient.synthesize(message))
                 .build();
     }
 }

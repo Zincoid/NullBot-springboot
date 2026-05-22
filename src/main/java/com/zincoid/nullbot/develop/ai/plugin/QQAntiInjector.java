@@ -60,14 +60,14 @@ public class QQAntiInjector {
         );
         if (!"YES".equals(res.trim())) return false;
         if (message.isPrivate()) {
-            botOperator.sendPrivateMsg(message.getUserId(), buildRefusedMsg());
+            botOperator.sendPrivateMsg(message.getUserId(), refused());
         } else {
-            botOperator.sendGroupMsg(message.getGroupId(), buildRefusedMsg());
+            botOperator.sendGroupMsg(message.getGroupId(), refused());
         }
         return true;
     }
 
-    private String buildRefusedMsg() {
+    private String refused() {
         return MsgUtils.builder()
                 .text("[AI] ⚠️对话被拒绝")
                 .img("base64://" + Base64Util.from(resourceLoader
