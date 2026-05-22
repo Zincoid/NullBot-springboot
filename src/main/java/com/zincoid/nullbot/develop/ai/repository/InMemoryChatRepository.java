@@ -1,12 +1,14 @@
 package com.zincoid.nullbot.develop.ai.repository;
 
 import com.zincoid.nullbot.develop.ai.message.Message;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
 public class InMemoryChatRepository implements ChatRepository {
 
     private final Map<String, List<Message>> data = new ConcurrentHashMap<>();

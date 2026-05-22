@@ -27,9 +27,4 @@ public class BaseAiClient implements AiClient<BaseMessage> {
         chatMemory.add(chatId, _message);
         return _message;
     }
-
-    @Override
-    public void clear(String chatId) {
-        chatMemory.clear(chatId);
-    }
 }
