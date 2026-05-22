@@ -1,8 +1,11 @@
 package com.zincoid.nullbot.develop.ai.plugin;
 
+import com.mikuac.shiro.common.utils.MsgUtils;
+import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.component.tool.BotOperator;
+import com.zincoid.nullbot.core.util.Base64Util;
 import com.zincoid.nullbot.develop.ai.message.BaseMessage;
-import com.zincoid.nullbot.develop.ai.message.Message;
+import com.zincoid.nullbot.develop.ai.message.QQMessage;
 import com.zincoid.nullbot.develop.ai.model.Model;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +16,12 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AntiInjector {
+public class QQAntiInjector {
 
-    private final Model model;
+    private Model model;
+
     private final BotOperator botOperator;
+    private final ResourceLoader resourceLoader;
 
     private static final String PROMPT;
 
@@ -43,11 +48,30 @@ public class AntiInjector {
                 请只回复 YES 或 NO，不要解释。""";
     }
 
-    public boolean check(Message message) {
+    public QQAntiInjector withModel(Model model) {
+        this.model = model;
+        return this;
+    }
+
+    public boolean check(QQMessage message) {
         String res = model.invoke(
                 List.of(BaseMessage.system(PROMPT.formatted(message.getContent()))),
                 false, 100
         );
-        return "YES".equals(res.trim());
+        if (!"YES".equals(res.trim())) return false;
+        if (message.isPrivate()) {
+            botOperator.sendPrivateMsg(message.getUserId(), buildRefusedMsg());
+        } else {
+            botOperator.sendGroupMsg(message.getGroupId(), buildRefusedMsg());
+        }
+        return true;
+    }
+
+    private String buildRefusedMsg() {
+        return MsgUtils.builder()
+                .text("[AI] ⚠️对话被拒绝")
+                .img("base64://" + Base64Util.from(resourceLoader
+                        .getCached("static/image/Filtered.jpg")))
+                .build();
     }
 }
