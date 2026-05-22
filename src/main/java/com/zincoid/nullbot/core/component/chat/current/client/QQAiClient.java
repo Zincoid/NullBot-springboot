@@ -10,6 +10,7 @@ import com.zincoid.nullbot.core.component.chat.current.model.Model;
 import com.zincoid.nullbot.core.component.chat.current.plugin.QQPrompter;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
+import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -21,9 +22,12 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     private final ChatMemory chatMemory;
     private final Model model;
+
     private final QQAntiInjector qqAntiInjector;
     private final QQPrompter qqPrompter;
     private final QQMsgExecutor qqMsgExecutor;
+
+    private final SettingService settingService;
 
     private int maxTokens = 512;
 
@@ -88,5 +92,18 @@ public class QQAiClient implements AiClient<QQMessage> {
         chatMemory.clear(ChatScope.Personal + "_" + userId);
         chatMemory.clear(ChatScope.Group + "_" + groupId);
         chatMemory.clear(ChatScope.Monitor + "_" + groupId);
+    }
+
+    public List<Message> history(Long userId) {
+        return chatMemory.get("Private_" + userId);
+    }
+
+    public List<Message> history(Long groupId, Long userId) {
+        ChatScope scope = settingService.get(groupId).getChatScope();
+        return switch (scope) {
+            case Group -> chatMemory.get(ChatScope.Group + "_" + groupId);
+            case Monitor -> chatMemory.get(ChatScope.Monitor + "_" + groupId);
+            case Personal -> chatMemory.get(ChatScope.Personal + "_" + userId);
+        };
     }
 }

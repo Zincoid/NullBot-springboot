@@ -7,6 +7,7 @@ import com.zincoid.nullbot.core.component.chat.current.plugin.QQAntiInjector;
 import com.zincoid.nullbot.core.component.chat.current.plugin.QQMsgExecutor;
 import com.zincoid.nullbot.core.component.chat.current.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.chat.current.repository.ChatRepository;
+import com.zincoid.nullbot.core.service.SettingService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,13 +16,17 @@ public class AiConfiguration {
 
     @Bean
     public QQAiClient qqAiClient(ChatRepository repository, Model model,
-                                 QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor) {
+                                 QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor,
+                                 SettingService service
+    ) {
         return new QQAiClient(
                 new MsgWindowChatMemory(repository, 10),
                 model,
                 antiInjector.withModel(model),
                 prompter,
-                executor
+                executor,
+                service
+
         ).withMaxTokens(512);
     }
 }

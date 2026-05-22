@@ -2,11 +2,17 @@ package com.zincoid.nullbot.bot.command.ai;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.core.component.chat.current.client.QQAiClient;
+import com.zincoid.nullbot.core.component.chat.current.message.Message;
+import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
+import com.zincoid.nullbot.core.component.chat.current.repository.ChatRepository;
+import com.zincoid.nullbot.core.enums.ChatScope;
+import com.zincoid.nullbot.core.model.data.po.SettingPO;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.chat.previous.DeepSeekClient;
 import com.zincoid.nullbot.core.model.bot.interaction.BotInputer;
 import com.zincoid.nullbot.core.model.bot.interaction.BotPageSelector;
 import com.zincoid.nullbot.core.model.message.ChatMessage;
@@ -21,7 +27,7 @@ import java.util.List;
 @Slf4j
 public class ChatHistoryCommand implements Command {
 
-    private final DeepSeekClient deepSeekClient;
+    private final QQAiClient qqAiClient;
     // private final BotInputManager botInputManager;
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
@@ -32,7 +38,7 @@ public class ChatHistoryCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
-        List<ChatMessage> history = deepSeekClient.getGroupHistory(groupId, userId);
+        List<Message> history = qqAiClient.history(groupId, userId);
         if (history == null || history.isEmpty())
             throw new NullBotMsgException("[聊天历史] ⚠️无对话历史");
 
