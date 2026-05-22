@@ -792,3 +792,16 @@
 - 调整 配置文件模板；
 - 移除 部分冗余的配置属性类；
 - 其他部分代码优化纠错。
+
+### 2026.5.21 - v2.1.0
+
+- 完全重构 AI 功能框架：
+  - 新增四层 AI 架构 (Model, ChatRepository, ChatMemory, AiClient)；
+  - 新增 多种组件用于拓展 QQ 的对话功能：
+  - 新增 AiConfiguration 配置类用于注册相关 bean；
+  - 拆分原 AI 相关属性类；
+  - 优化项目结构并移除旧框架；
+- 移除在 Web 服务路径上对 BotCtxUtil 的调用漏洞；
+- 优化 配置文件模板；
+- 优化 ResourceLoader 组件；
+- 修复 CommandRegistry 组件初始化 Command 时未完全加载的问题。

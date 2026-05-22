@@ -14,9 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class ResourceLoader {
 
-    private final FileStorageProperties fileStorageProperties;
-
     private final Map<String, Path> CACHE = new ConcurrentHashMap<>();
+
+    private final FileStorageProperties fileStorageProperties;
 
     // =================== 应用方法 ===================
 
