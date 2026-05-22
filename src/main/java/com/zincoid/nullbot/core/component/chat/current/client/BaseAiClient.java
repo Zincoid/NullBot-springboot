@@ -16,13 +16,13 @@ public class BaseAiClient implements AiClient<BaseMessage> {
     private final Model model;
 
     @Override
-    public BaseMessage call(String chatId, String prompt, BaseMessage message) {
+    public BaseMessage call(String chatId, String prompt, BaseMessage message, boolean thinking, int maxTokens) {
         chatMemory.add(chatId, message);
         List<Message> messages = chatMemory.get(chatId);
         List<Message> _messages = new ArrayList<>();
         _messages.add(BaseMessage.system(prompt));
         _messages.addAll(messages);
-        String content = model.invoke(_messages, false, 1024);
+        String content = model.invoke(_messages, thinking, maxTokens);
         BaseMessage _message = BaseMessage.assistant(content);
         chatMemory.add(chatId, _message);
         return _message;

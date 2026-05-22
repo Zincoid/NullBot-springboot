@@ -20,6 +20,6 @@ public class AiConfiguration {
                 model,
                 antiInjector.withModel(model),
                 executor
-        );
+        ).withMaxTokens(512);
     }
 }

@@ -28,7 +28,7 @@ public class AiTests {
 
         while (sc.hasNext()) {
             String msg = sc.next();
-            BaseMessage message = aiClient.call(chatId, prompt, BaseMessage.user(msg));
+            BaseMessage message = aiClient.call(chatId, prompt, BaseMessage.user(msg), false, 1024);
             System.out.println(message.getContent());
         }
     }

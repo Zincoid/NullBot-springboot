@@ -8,6 +8,8 @@ import com.zincoid.nullbot.core.component.chat.current.message.Message;
 import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
 import com.zincoid.nullbot.core.component.chat.current.model.Model;
 import com.zincoid.nullbot.core.enums.ChatScope;
+import com.zincoid.nullbot.core.model.data.po.SettingPO;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -21,8 +23,10 @@ public class QQAiClient implements AiClient<QQMessage> {
     private final QQAntiInjector qqAntiInjector;
     private final QQMsgExecutor qqMsgExecutor;
 
+    private int maxTokens = 512;
+
     @Override
-    public QQMessage call(String chatId, String prompt, QQMessage message) {
+    public QQMessage call(String chatId, String prompt, QQMessage message, boolean thinking, int maxTokens) {
         chatMemory.add(chatId, message);
         List<Message> messages = chatMemory.get(chatId);
         List<Message> _messages = new ArrayList<>();
@@ -38,38 +42,48 @@ public class QQAiClient implements AiClient<QQMessage> {
                 );
     }
 
+    public QQAiClient withMaxTokens(int maxTokens) {
+        this.maxTokens = maxTokens;
+        return this;
+    }
+
     // =================== 应用方法 ===================
 
-    public void chat(
-            ChatScope scope, Long TargetId, String prompt,
-            QQMessage message, boolean check, boolean voice
+    public void pm(
+            String prompt, QQMessage message, Event event
     ) {
-        String chatId = scope.name() + "_" + TargetId;
-        if (check && qqAntiInjector.check(message)) {
-            chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
-            return;
-        }
-        QQMessage _message = call(chatId, prompt, message);
-        List<QQMessage> messages = qqMsgExecutor.direct(_message, voice);
+        String chatId = "Private_" + message.getUserId();
+        QQMessage _message = call(chatId, prompt, message, false, maxTokens);
+        List<QQMessage> messages = qqMsgExecutor.chain(_message, event, false, false);
         for (QQMessage msg : messages) {
             chatMemory.add(chatId, msg);
         }
     }
 
-    public void chat(
-            ChatScope scope, Long TargetId, String prompt,
-            QQMessage message, boolean check, boolean voice,
-            Event event, boolean auth
+    public void gc(
+            String prompt, QQMessage message, Event event
     ) {
-        String chatId = scope.name() + "_" + TargetId;
-        if (check && qqAntiInjector.check(message)) {
+        SettingPO setting = BotCtxUtil.getSetting();
+        String chatId = setting.getChatScope() + "_" +
+                (setting.getChatScope() == ChatScope.Personal
+                        ? message.getUserId() : message.getGroupId());
+        if (setting.isAntiInjection() && qqAntiInjector.check(message)) {
             chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
             return;
         }
-        QQMessage _message = call(chatId, prompt, message);
-        List<QQMessage> messages = qqMsgExecutor.chain(_message, event, voice, auth);
+        QQMessage _message = call(chatId, prompt, message, setting.isThinking(), maxTokens);
+        List<QQMessage> messages = qqMsgExecutor.chain(_message, event,
+                setting.isVoice(), setting.isEmbeddingAuth());
         for (QQMessage msg : messages) {
             chatMemory.add(chatId, msg);
         }
+    }
+
+    public void clearPm(Long userId) {
+        chatMemory.clear("Private_" + userId);
+    }
+
+    public void clearGc(Long groupId) {
+        chatMemory.clear("Group_" + groupId);
     }
 }
