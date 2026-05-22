@@ -30,14 +30,14 @@ public class TtsClient {
 
     private final RestTemplate restTemplate;
 
-    public TtsClient(TtsProperties props) {
-        apiUrl = props.getApiUrl();
-        apiKey = props.getApiKey();
-        version = props.getVersion();
-        modelName = props.getModelName();
-        promptTextLang = props.getPromptTextLang();
-        textLang = props.getTextLang();
-        emotion = props.getEmotion();
+    public TtsClient(TtsProperties ttsProperties) {
+        apiUrl = ttsProperties.getApiUrl();
+        apiKey = ttsProperties.getApiKey();
+        version = ttsProperties.getVersion();
+        modelName = ttsProperties.getModelName();
+        promptTextLang = ttsProperties.getPromptTextLang();
+        textLang = ttsProperties.getTextLang();
+        emotion = ttsProperties.getEmotion();
         restTemplate = new RestTemplate();
     }
 
