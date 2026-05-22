@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
+import com.zincoid.nullbot.core.properties.DeepSeekProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -17,7 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class DsModel implements Model {
+
+    private final DeepSeekProperties deepSeekProperties;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newBuilder()
@@ -29,7 +34,7 @@ public class DsModel implements Model {
             List<Map<String, String>> _messages = messages.stream().map(Message::toMap).toList();
 
             ObjectNode requestBody = objectMapper.createObjectNode();
-            requestBody.put("model", "deepseek-v4-flash");
+            requestBody.put("model", deepSeekProperties.getModel());
             if (thinking) {
                 ObjectNode thinkingNode = objectMapper.createObjectNode();
                 thinkingNode.put("type", "enabled");
@@ -47,8 +52,8 @@ public class DsModel implements Model {
 
             String jsonBody = objectMapper.writeValueAsString(requestBody);
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.deepseek.com/chat/completions"))
-                    .header("Authorization", "Bearer sk-9a6e7622692449ee90df32a29a57a9ca")
+                    .uri(URI.create(deepSeekProperties.getApiUrl()))
+                    .header("Authorization", "Bearer " + deepSeekProperties.getApiKey())
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
