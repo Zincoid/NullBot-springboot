@@ -11,5 +11,6 @@ public class QQPrompter {
     private final SysMsgManager sysMsgManager;
 
     public String getPrompt() {
+        return null;
     }
 }

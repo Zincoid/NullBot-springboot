@@ -32,8 +32,7 @@ public class Chat2Command implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         SettingPO setting = BotCtxUtil.getSetting();
         try {
-            qqAiClient.chat(
-                    setting.getChatScope(), event.getGroupId(),
+            qqAiClient.gc(
                     """
                             你是一只猫娘，名字叫Null，你在一个聊天软件中回复消息。
                             你可以通过{}在指令中嵌入命令或分割多条消息，例如：
@@ -46,7 +45,7 @@ public class Chat2Command implements Command {
                                     event.getUserId(),
                                     event.getSender().getNickname()
                             ),
-                    true, false, event, false
+                    event
             );
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
