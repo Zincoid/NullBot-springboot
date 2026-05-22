@@ -54,7 +54,7 @@ public class QQAiClient implements AiClient<QQMessage> {
     public String chat(QQMessage message, Event event) {
         if (message.isPrivate()) {
             String chatId = "Private_" + message.getUserId();
-            String prompt = qqPrompter.pm(message.getUserId());
+            String prompt = qqPrompter.prompt(message.getUserId());
             QQMessage _message = call(chatId, prompt, message, false, maxTokens);
             List<QQMessage> messages = qqMsgExecutor.chain(_message, event, false, false);
             for (QQMessage msg : messages) {
@@ -70,7 +70,7 @@ public class QQAiClient implements AiClient<QQMessage> {
             chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
             return "Refused";
         }
-        String prompt = qqPrompter.gc(message.getGroupId(), setting.isEmbedding(), setting.isCustom());
+        String prompt = qqPrompter.prompt(message.getGroupId(), setting.isEmbedding(), setting.isCustom());
         QQMessage _message = call(chatId, prompt, message, setting.isThinking(), maxTokens);
         List<QQMessage> messages = qqMsgExecutor.chain(_message, event,
                 setting.isVoice(), setting.isEmbeddingAuth());
