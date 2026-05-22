@@ -94,16 +94,22 @@ public class QQAiClient implements AiClient<QQMessage> {
         chatMemory.clear(ChatScope.Monitor + "_" + groupId);
     }
 
-    public List<Message> history(Long userId) {
-        return chatMemory.get("Private_" + userId);
+    public List<QQMessage> history(Long userId) {
+        return chatMemory.get("Private_" + userId).stream()
+                .filter(msg -> msg instanceof QQMessage)
+                .map(msg -> (QQMessage) msg)
+                .toList();
     }
 
-    public List<Message> history(Long groupId, Long userId) {
+    public List<QQMessage> history(Long groupId, Long userId) {
         ChatScope scope = settingService.get(groupId).getChatScope();
-        return switch (scope) {
+        return (switch (scope) {
             case Group -> chatMemory.get(ChatScope.Group + "_" + groupId);
             case Monitor -> chatMemory.get(ChatScope.Monitor + "_" + groupId);
             case Personal -> chatMemory.get(ChatScope.Personal + "_" + userId);
-        };
+        }).stream()
+                .filter(msg -> msg instanceof QQMessage)
+                .map(msg -> (QQMessage) msg)
+                .toList();
     }
 }
