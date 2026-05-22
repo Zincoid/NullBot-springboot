@@ -31,11 +31,5 @@ public class AiTests {
             BaseMessage message = aiClient.call(chatId, prompt, BaseMessage.user(msg));
             System.out.println(message.getContent());
         }
-
-        // System.out.println(aiClient.chat("1", prompt, BaseMessage.user("你好")));
-        // System.out.println(aiClient.chat("1", prompt, BaseMessage.user("我刚刚说了什么")));
-        // aiClient.remove("1");
-        // System.out.println(aiClient.chat("1", prompt, BaseMessage.user("我刚刚说了什么")));
-        // System.out.println(aiClient.chat("2", new BaseMessage(Role.USER, "我刚刚说了什么")));
     }
 }
