@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.message.ChatMessage;
-import com.zincoid.nullbot.core.component.chat.previous.ChatMemory;
+import com.zincoid.nullbot.core.component.chat.previous.ChatStore;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ import java.util.Objects;
 @Slf4j
 public class RecallReactCommand implements Command {
 
-    private final ChatMemory chatMemory;
+    private final ChatStore chatStore;
 
     @Override
     public void execute(Bot bot, GroupMsgDeleteNoticeEvent event, List<String> params) {
@@ -31,7 +31,7 @@ public class RecallReactCommand implements Command {
         String operatorName = bot.getStrangerInfo(operatorId, true).getData().getNickname();
         Integer messageId = event.getMessageId();
 
-        for (ChatMessage chatMessage : chatMemory.getMonitorHistory(groupId)) {
+        for (ChatMessage chatMessage : chatStore.getMonitorHistory(groupId)) {
             if (!Objects.equals(chatMessage.getMessageId(), messageId)) continue;
             if (userId.equals(operatorId)) {
                 bot.sendGroupMsg(groupId, """

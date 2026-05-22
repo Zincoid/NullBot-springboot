@@ -30,7 +30,7 @@ public class Chat2Command implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        // SettingPO settingPO = BotCtxUtil.getSetting();
+        SettingPO settingPO = BotCtxUtil.getSetting();
         try {
             qqAiClient.chat(
                     "GROUP_" + event.getGroupId(),

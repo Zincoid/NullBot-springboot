@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Component
 @Data
-public class ChatMemory {
+public class ChatStore {
 
     private final Map<Long, List<ChatMessage>> userHistories = new ConcurrentHashMap<>();
     private final Map<Long, List<ChatMessage>> groupHistories = new ConcurrentHashMap<>();
