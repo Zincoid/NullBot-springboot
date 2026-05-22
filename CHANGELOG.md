@@ -804,6 +804,6 @@
 - 移除在 Web 服务路径上对 BotCtxUtil 的调用漏洞；
 - 优化 配置文件模板；
 - 优化 ResourceLoader 组件；
-- 修复 CommandRegistry 组件初始化 Command 时未完全加载的问题。
+- 修复 CommandRegistry 组件初始化 Command 时未完全加载的问题；
 - 移除已弃用的 FileUtil, ResourceUtil, JwtUtil, Page 等类；
-- 移除已弃用的全部方法；
+- 移除未弃用类的弃用方法。
