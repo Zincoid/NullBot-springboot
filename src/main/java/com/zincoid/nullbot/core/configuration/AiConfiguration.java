@@ -31,7 +31,7 @@ public class AiConfiguration {
 
     @Bean
     public QQAiClient qqAiClient(
-            ChatMemory memory, Model model, SettingService service,
+            ChatMemory memory, Model model, SettingService service, AiChatProperties properties,
             QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
     ) {
         QQAiClient qqAiClient = new QQAiClient(
@@ -39,7 +39,7 @@ public class AiConfiguration {
                 antiInjector.withModel(model),
                 prompter, executor,
                 service
-        ).withMaxTokens(512);
+        ).withMaxTokens(properties.getMaxTokens());
         log.info("▽ [QQAiClient] 已初始化");
         return qqAiClient;
     }
