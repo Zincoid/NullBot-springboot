@@ -7,6 +7,7 @@ import com.zincoid.nullbot.core.component.chat.current.memory.ChatMemory;
 import com.zincoid.nullbot.core.component.chat.current.message.Message;
 import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
 import com.zincoid.nullbot.core.component.chat.current.model.Model;
+import com.zincoid.nullbot.core.component.chat.current.plugin.QQPrompter;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
@@ -21,6 +22,7 @@ public class QQAiClient implements AiClient<QQMessage> {
     private final ChatMemory chatMemory;
     private final Model model;
     private final QQAntiInjector qqAntiInjector;
+    private final QQPrompter qqPrompter;
     private final QQMsgExecutor qqMsgExecutor;
 
     private int maxTokens = 512;
