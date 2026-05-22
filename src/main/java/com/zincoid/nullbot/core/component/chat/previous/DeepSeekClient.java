@@ -47,8 +47,6 @@ import org.springframework.stereotype.Component;
 @Data
 public class DeepSeekClient {
 
-    /* TODO: 使用 Spring AI 框架重构对话功能 */
-
     @Value("${nullbot.bot-id}")
     private Long botId;
 
