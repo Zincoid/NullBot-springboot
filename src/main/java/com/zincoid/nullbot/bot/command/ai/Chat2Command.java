@@ -6,6 +6,8 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.core.component.chat.current.client.QQAiClient;
 import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
+import com.zincoid.nullbot.core.model.data.po.SettingPO;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -28,6 +30,7 @@ public class Chat2Command implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        // SettingPO settingPO = BotCtxUtil.getSetting();
         try {
             qqAiClient.chat(
                     "GROUP_" + event.getGroupId(),
