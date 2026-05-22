@@ -51,7 +51,7 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     // =================== 应用方法 ===================
 
-    public void pm(QQMessage message, Event event) {
+    public String pm(QQMessage message, Event event) {
         String chatId = "Private_" + message.getUserId();
         String prompt = qqPrompter.pm(message.getUserId());
         QQMessage _message = call(chatId, prompt, message, false, maxTokens);
@@ -59,16 +59,17 @@ public class QQAiClient implements AiClient<QQMessage> {
         for (QQMessage msg : messages) {
             chatMemory.add(chatId, msg);
         }
+        return _message.getContent();
     }
 
-    public void gc(QQMessage message, Event event) {
+    public String gc(QQMessage message, Event event) {
         SettingPO setting = BotCtxUtil.getSetting();
         String chatId = setting.getChatScope() + "_" +
                 (setting.getChatScope() == ChatScope.Personal
                         ? message.getUserId() : message.getGroupId());
         if (setting.isAntiInjection() && qqAntiInjector.check(message)) {
             chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
-            return;
+            return "Refused";
         }
         String prompt = qqPrompter.gc(message.getGroupId(), setting.isEmbedding(), setting.isCustom());
         QQMessage _message = call(chatId, prompt, message, setting.isThinking(), maxTokens);
@@ -77,6 +78,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         for (QQMessage msg : messages) {
             chatMemory.add(chatId, msg);
         }
+        return _message.getContent();
     }
 
     public void reset(Long userId) {

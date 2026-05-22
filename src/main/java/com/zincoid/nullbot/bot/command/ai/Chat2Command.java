@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.ai;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.core.component.chat.current.client.QQAiClient;
@@ -30,20 +31,19 @@ public class Chat2Command implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        String userName = event.getSender().getNickname();
+        String message = String.join(" ", params);
+        String response;
         try {
-            qqAiClient.gc(
-                    QQMessage.user(String.join(" ", params))
-                            .gc(
-                                    event.getGroupId(),
-                                    event.getUserId(),
-                                    event.getSender().getNickname()
-                            ),
+            response = qqAiClient.gc(
+                    QQMessage.user(message).gc(groupId, userId, userName),
                     event
             );
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
-
         for (ArrayMsg msg : event.getArrayMsg()) {
             if (msg.getType() != MsgTypeEnum.text) continue;
             String text = msg.getData().get("text").asString().trim();
@@ -58,8 +58,24 @@ public class Chat2Command implements Command {
                 break;
             }
         }
+        log.info("\t\t\t\t├─[Chat] 群聊已回复: {}", response);
+    }
 
-        log.info("\t\t\t\t├─[Chat] 群聊已回复");
+    @Override
+    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
+        Long userId = event.getUserId();
+        String userName = event.getPrivateSender().getNickname();
+        String message = String.join(" ", params);
+        String response;
+        try {
+            response = qqAiClient.pm(
+                    QQMessage.user(message).pm(userId, userName),
+                    event
+            );
+        } catch (Exception e) {
+            throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
+        }
+        log.info("\t\t\t\t├─[Chat] 私聊已回复: {}", response);
     }
 
     @Override
