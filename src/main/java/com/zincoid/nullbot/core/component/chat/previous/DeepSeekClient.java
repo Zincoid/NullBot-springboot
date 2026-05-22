@@ -27,7 +27,6 @@ import com.zincoid.nullbot.core.component.voice.TtsClient;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
-import com.zincoid.nullbot.core.component.storage.SysMsgStorage;
 import com.zincoid.nullbot.core.properties.DeepSeekProperties;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.enums.ChatScope;
@@ -57,7 +56,7 @@ public class DeepSeekClient {
     private final TtsClient ttsClient;
     private final SettingService settingService;
     private final ChatStore chatStore;
-    private final SysMsgStorage sysMsgStorage;
+    private final SysMsgManager sysMsgManager;
     private final ResourceLoader resourceLoader;
     private final ApplicationEventPublisher eventPublisher;
     private final CommandRegistry commandRegistry;
@@ -102,7 +101,7 @@ public class DeepSeekClient {
             TtsClient ttsClient,
             SettingService settingService,
             ChatStore chatStore,
-            SysMsgStorage sysMsgStorage,
+            SysMsgManager sysMsgManager,
             ResourceLoader resourceLoader,
             ApplicationEventPublisher eventPublisher,
             @Lazy CommandRegistry commandRegistry
@@ -111,7 +110,7 @@ public class DeepSeekClient {
         this.ttsClient = ttsClient;
         this.settingService = settingService;
         this.chatStore = chatStore;
-        this.sysMsgStorage = sysMsgStorage;
+        this.sysMsgManager = sysMsgManager;
         this.resourceLoader = resourceLoader;
         this.eventPublisher = eventPublisher;
         this.commandRegistry = commandRegistry;
@@ -335,9 +334,9 @@ public class DeepSeekClient {
         String systemMessage;
 
         if (custom) {
-            systemMessage = sysMsgStorage.getCustomMessage(groupId);
+            systemMessage = sysMsgManager.getCustomMessage(groupId);
         } else {
-            systemMessage = sysMsgStorage.getDefaultMessage(groupId);
+            systemMessage = sysMsgManager.getDefaultMessage(groupId);
         }
 
         systemMessage = systemMessage + """
@@ -351,7 +350,7 @@ public class DeepSeekClient {
                 你可以在回复内容中嵌入 {Discard} 来放弃回复/保持静默，此时回复内容不会被发送。""";
 
         if (!custom && embedding)
-            systemMessage = appendAiInstructions(systemMessage, sysMsgStorage.getLongTermGroupMemory(groupId), GROUP_AI_CMD_WHITE_LIST);
+            systemMessage = appendAiInstructions(systemMessage, sysMsgManager.getLongTermGroupMemory(groupId), GROUP_AI_CMD_WHITE_LIST);
 
         return buildMessageList(chatMessages, systemMessage);
     }
@@ -364,7 +363,7 @@ public class DeepSeekClient {
      * @return 发送给 API 的消息列表
      */
     private List<Map<String, String>> buildPrivateMsgs(List<ChatMessage> chatMessages, Long userId) {
-        String systemMessage = sysMsgStorage.getUserMessage(userId);
+        String systemMessage = sysMsgManager.getUserMessage(userId);
 
         systemMessage = systemMessage + """
                 
@@ -374,7 +373,7 @@ public class DeepSeekClient {
                 [CQ:reply,id=1234567890]你好。
                 你可以在回复内容中嵌入 {Discard} 来放弃回复/保持静默，此时回复内容不会被发送。""";
 
-        systemMessage = appendAiInstructions(systemMessage, sysMsgStorage.getLongTermUserMemory(userId), PRIVATE_AI_CMD_WHITE_LIST);
+        systemMessage = appendAiInstructions(systemMessage, sysMsgManager.getLongTermUserMemory(userId), PRIVATE_AI_CMD_WHITE_LIST);
 
         return buildMessageList(chatMessages, systemMessage);
     }

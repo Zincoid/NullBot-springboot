@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.chat.previous.DeepSeekClient;
-import com.zincoid.nullbot.core.component.storage.SysMsgStorage;
+import com.zincoid.nullbot.core.component.chat.previous.SysMsgManager;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.service.UserService;
@@ -24,7 +24,7 @@ import java.util.List;
 public class SysMsgSetCommand implements Command {
 
     private final DeepSeekClient deepSeekClient;
-    private final SysMsgStorage sysMsgStorage;
+    private final SysMsgManager sysMsgManager;
     private final SettingService settingService;
     private final UserService userService;
 
@@ -45,7 +45,7 @@ public class SysMsgSetCommand implements Command {
                         - 仅限权等级I及以上用户可重置提示词
                         - 你的限权等级: %s""".formatted(userAccess));
             deepSeekClient.clearGroupHistory(groupId, userId);
-            sysMsgStorage.resetGroup(groupId);
+            sysMsgManager.resetGroup(groupId);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅已重置", false);
             log.info("\t\t\t\t├─[SysMsgSet] 群聊提示词已重置 - {}", groupId);
             return;
@@ -65,7 +65,7 @@ public class SysMsgSetCommand implements Command {
                         - 你的限权等级: %s""".formatted(userAccess));
             String defaultMessage = String.join(" ", params.subList(1, params.size()));
             deepSeekClient.clearGroupHistory(groupId, userId);
-            sysMsgStorage.setDefaultMessage(groupId, defaultMessage);
+            sysMsgManager.setDefaultMessage(groupId, defaultMessage);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅Default模式: 已设置", false);
             log.info("\t\t\t\t├─[SysMsgSet] 群聊 Default 提示词已设置 - {} -> {}", groupId, defaultMessage);
             return;
@@ -76,7 +76,7 @@ public class SysMsgSetCommand implements Command {
                 throw new NullBotMsgException("[提示词设置] ❌非Custom模式");
             String customMessage = String.join(" ", params.subList(1, params.size()));
             deepSeekClient.clearGroupHistory(groupId, userId);
-            sysMsgStorage.setCustomMessage(groupId, customMessage);
+            sysMsgManager.setCustomMessage(groupId, customMessage);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅Custom模式: 已设置", false);
             log.info("\t\t\t\t├─[SysMsgSet] 群聊 Custom 提示词已设置 - {} -> {}", groupId, customMessage);
             return;
@@ -95,7 +95,7 @@ public class SysMsgSetCommand implements Command {
 
         if ("-reset".equals(option)) {
             deepSeekClient.clearUserHistory(userId);
-            sysMsgStorage.resetUser(userId);
+            sysMsgManager.resetUser(userId);
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已重置", false);
             log.info("\t\t\t\t├─[SysMsgSet] 私聊提示词已重置 - {}", userId);
             return;
@@ -107,7 +107,7 @@ public class SysMsgSetCommand implements Command {
         if ("-set".equals(option)) {
             String newMessage = String.join(" ", params.subList(1, params.size()));
             deepSeekClient.clearUserHistory(userId);
-            sysMsgStorage.setUserMessage(userId, newMessage);
+            sysMsgManager.setUserMessage(userId, newMessage);
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已设置", false);
             log.info("\t\t\t\t├─[SysMsgSet] 私聊提示词已设置 - {} -> {}", userId, newMessage);
             return;

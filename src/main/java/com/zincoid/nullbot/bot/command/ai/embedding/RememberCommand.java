@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.storage.SysMsgStorage;
+import com.zincoid.nullbot.core.component.chat.previous.SysMsgManager;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class RememberCommand implements Command {
 
-    private final SysMsgStorage sysMsgStorage;
+    private final SysMsgManager sysMsgManager;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -44,14 +44,14 @@ public class RememberCommand implements Command {
         if (params.isEmpty())
             throw new NullBotMsgException("[记忆] ❌参数不足");
         if (isPrivate) {
-            if (!sysMsgStorage.addLongTermUserMemory(targetId, params.getFirst()))
+            if (!sysMsgManager.addLongTermUserMemory(targetId, params.getFirst()))
                 throw new NullBotMsgException("[记忆] ❌容量已满");
             bot.sendPrivateMsg(targetId, """
                     [记忆] \uD83D\uDCA1长时记忆已添加
                     - 内容: %s""".formatted(params.getFirst()), false);
             log.info("\t\t\t\t├─[Remember] 用户长时记忆已添加 - {} : {}", targetId, params.getFirst());
         } else {
-            if (!sysMsgStorage.addLongTermGroupMemory(targetId, params.getFirst()))
+            if (!sysMsgManager.addLongTermGroupMemory(targetId, params.getFirst()))
                 throw new NullBotMsgException("[记忆] ❌容量已满");
             bot.sendGroupMsg(targetId, """
                     [记忆] \uD83D\uDCA1长时记忆已添加

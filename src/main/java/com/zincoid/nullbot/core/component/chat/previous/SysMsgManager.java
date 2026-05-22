@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.storage;
+package com.zincoid.nullbot.core.component.chat.previous;
 
 import lombok.Data;
 import com.zincoid.nullbot.core.properties.DeepSeekProperties;
@@ -11,7 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
 @Data
-public class SysMsgStorage {
+public class SysMsgManager {
 
     private final DeepSeekProperties deepSeekProperties;
 
