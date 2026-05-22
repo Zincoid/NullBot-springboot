@@ -53,8 +53,8 @@ public class HelpCommand implements Command {
                     .getCached("static/help/help.jpg", fileStorageProperties.getTempPath())
                     .toAbsolutePath().toString();
             return MsgUtils.builder().img("base64://" + Base64Util.from(helpPath)).build();
-        } catch (IOException e) {
-            throw new NullBotMsgException("[帮助] ❌资源缺失");
+        } catch (Exception e) {
+            throw new NullBotMsgException("[帮助] ❌资源获取失败");
         }
     }
 

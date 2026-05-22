@@ -2,12 +2,16 @@ package com.zincoid.nullbot.bot.command.ai.embedding;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
+import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowChatMemory;
+import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
+import com.zincoid.nullbot.core.enums.ChatScope;
+import com.zincoid.nullbot.core.model.data.po.SettingPO;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.storage.ChatStorage;
-import com.zincoid.nullbot.core.model.message.ChatMessage;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +23,7 @@ import java.util.List;
 @Slf4j
 public class RecallAICommand implements Command {
 
-    private final ChatStorage chatStorage;
+    private final MsgWindowChatMemory msgWindowChatMemory;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -35,9 +39,20 @@ public class RecallAICommand implements Command {
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
+        SettingPO setting = BotCtxUtil.getSetting();
+        String chatId = setting.getChatScope() + "_" +
+                (setting.getChatScope() == ChatScope.Personal
+                        ? userId : groupId);
 
-        List<ChatMessage> messages = chatStorage.getAIMessagesForRecall(groupId, userId, n);
-        for (ChatMessage message : messages) bot.deleteMsg(message.getMessageId());
+        List<QQMessage> messages = msgWindowChatMemory.get(chatId)
+                .stream().map(m -> (QQMessage) m).toList();
+        List<QQMessage> filtered = messages.stream()
+                .filter(msg -> msg != null && msg.getMessageId() != null && msg.getRole() == Role.ASSISTANT)
+                .toList();
+        int startIndex = Math.max(0, filtered.size() - n);
+        List<QQMessage> targets = filtered.subList(startIndex, filtered.size());
+
+        for (QQMessage target : targets) bot.deleteMsg(target.getMessageId());
 
         log.info("\t\t\t\t├─[RecallAI] 已撤回AI消息 -> {}条", n);
     }

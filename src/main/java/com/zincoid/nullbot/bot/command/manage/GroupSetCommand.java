@@ -2,11 +2,11 @@ package com.zincoid.nullbot.bot.command.manage;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.ai.DeepSeekClient;
 import com.zincoid.nullbot.core.component.control.CommandRateLimiter;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.enums.ChatScope;
@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j
 public class GroupSetCommand implements Command {
 
-    private final DeepSeekClient deepSeekClient;
+    private final QQAiClient qqAiClient;
     private final SettingService settingService;
     private final CommandRateLimiter commandRateLimiter;
 
@@ -112,7 +112,7 @@ public class GroupSetCommand implements Command {
                         msg = "语音模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "ebd" -> {
-                        deepSeekClient.clearGroupHistory(groupId, userId);
+                        qqAiClient.reset(groupId, userId);
                         boolean enabled = setting.switchEmbedding();
                         msg = "指令模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
@@ -121,7 +121,7 @@ public class GroupSetCommand implements Command {
                         msg = "指令校验 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "cus" -> {
-                        deepSeekClient.clearGroupHistory(groupId, userId);
+                        qqAiClient.reset(groupId, userId);
                         boolean enabled = setting.switchCustom();
                         msg = "自定模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }

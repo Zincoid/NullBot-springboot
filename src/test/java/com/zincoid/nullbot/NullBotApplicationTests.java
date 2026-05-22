@@ -11,7 +11,6 @@ import jakarta.annotation.Resource;
 // import jdash.common.LevelSearchMode;
 // import jdash.common.entity.GDLevel;
 import org.apache.commons.lang3.tuple.Pair;
-import com.zincoid.nullbot.core.component.ai.DeepSeekClient;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
 import com.zincoid.nullbot.core.component.game.handler.impl.TicTacToeMatchHandler;
 import com.zincoid.nullbot.core.component.game.logic.impl.TicTacToeGameLogic;
@@ -53,8 +52,6 @@ class NullBotApplicationTests {
     WebScreenCapturer webScreenCapturer;
     @Resource
     HtmlRenderer htmlRenderer;
-    @Resource
-    private DeepSeekClient deepSeekClient;
     @Resource
     private BotInputManager botInputManager;
 
@@ -355,13 +352,6 @@ class NullBotApplicationTests {
         //     System.out.println(levels.get(scanner.nextInt() - 1));
         //     scanner.nextLine();
         // }
-    }
-
-    @Test
-    void ChatTest() throws Exception {
-        String response = deepSeekClient.chatSingle("出一道单选题并给出题目和答案,问题主题:%s,生成种子:%s (注:将答案用{}包围放在开头,例如{正确选项字母},无需答案解析)"
-                .formatted("二次元", UUID.randomUUID()), true, 2500);
-        System.out.println(response);
     }
 
     @Test

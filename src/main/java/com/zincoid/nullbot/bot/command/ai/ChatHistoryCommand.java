@@ -2,14 +2,15 @@ package com.zincoid.nullbot.bot.command.ai;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
+import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.ai.DeepSeekClient;
 import com.zincoid.nullbot.core.model.bot.interaction.BotInputer;
 import com.zincoid.nullbot.core.model.bot.interaction.BotPageSelector;
-import com.zincoid.nullbot.core.model.message.ChatMessage;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ import java.util.List;
 @Slf4j
 public class ChatHistoryCommand implements Command {
 
-    private final DeepSeekClient deepSeekClient;
+    private final QQAiClient qqAiClient;
     // private final BotInputManager botInputManager;
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
@@ -32,16 +33,16 @@ public class ChatHistoryCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
-        List<ChatMessage> history = deepSeekClient.getGroupHistory(groupId, userId);
-        if (history == null || history.isEmpty())
+        List<QQMessage> history = qqAiClient.history(groupId, userId);
+        if (history.isEmpty())
             throw new NullBotMsgException("[聊天历史] ⚠️无对话历史");
 
-        BotPageSelector<ChatMessage, String> pager = BotPageSelector.builder(
+        BotPageSelector<QQMessage, String> pager = BotPageSelector.builder(
                 bot, groupId, "聊天历史", true,
                 history,
                 history.stream()
                         .map(msg ->
-                                "user".equals(msg.getRole()) ?
+                                msg.getRole() == Role.USER ?
                                         "%s(%s): %s".formatted(
                                                 msg.getUserName(),
                                                 msg.getUserId(),
@@ -60,7 +61,7 @@ public class ChatHistoryCommand implements Command {
         pager.start(in);
     }
 
-    private void sendInfo(Bot bot, Long groupId, ChatMessage message) {
+    private void sendInfo(Bot bot, Long groupId, QQMessage message) {
         bot.sendGroupMsg(groupId, message.toString(), true);
         log.info("\t\t\t\t├─[ChatHistory] 已获取记录 - {}", message.getMessageId());
     }

@@ -2,11 +2,12 @@ package com.zincoid.nullbot.bot.command.ai;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
+import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.ai.DeepSeekClient;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ import java.util.Objects;
 @Slf4j
 public class PokeReactCommand implements Command {
 
-    private final DeepSeekClient deepSeekClient;
+    private final QQAiClient qqAiClient;
 
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
@@ -29,25 +30,11 @@ public class PokeReactCommand implements Command {
         String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
         String response;
         try {
-            if (groupId != null)
-                response = deepSeekClient.chatGroup(
-                        null,
-                        groupId,
-                        userId,
-                        userName,
-                        "揉了你一下",
-                        bot,
-                        event
-                );
-            else
-                response = deepSeekClient.chatPrivate(
-                        null,
-                        userId,
-                        userName,
-                        "揉了你一下",
-                        bot,
-                        event
-                );
+            if (groupId != null) {
+                response = qqAiClient.chat(QQMessage.user("揉了你一下").gc(groupId, userId, userName), event);
+            } else {
+                response = qqAiClient.chat(QQMessage.user("揉了你一下").pm(userId, userName), event);
+            }
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }

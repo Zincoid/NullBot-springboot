@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.storage.SysMsgStorage;
+import com.zincoid.nullbot.core.component.control.SysMsgManager;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class ForgetCommand implements Command {
 
-    private final SysMsgStorage sysMsgStorage;
+    private final SysMsgManager sysMsgManager;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
@@ -50,13 +50,13 @@ public class ForgetCommand implements Command {
             throw new NullBotMsgException("[遗忘] ❌参数格式错误");
         }
         if (isPrivate) {
-            String removed = sysMsgStorage.removeLongTermUserMemory(targetId, i);
+            String removed = sysMsgManager.removeLongTermUserMemory(targetId, i);
             bot.sendPrivateMsg(targetId, """
                     [遗忘] \uD83D\uDCA1长时记忆已移除
                     - 内容: %s""".formatted(removed), false);
             log.info("\t\t\t\t├─[Forget] 用户长时记忆已移除 - {} : {}", targetId, removed);
         } else {
-            String removed = sysMsgStorage.removeLongTermGroupMemory(targetId, i);
+            String removed = sysMsgManager.removeLongTermGroupMemory(targetId, i);
             bot.sendGroupMsg(targetId, """
                     [遗忘] \uD83D\uDCA1长时记忆已移除
                     - 内容: %s""".formatted(removed), false);

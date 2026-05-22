@@ -3,14 +3,13 @@ package com.zincoid.nullbot.bot.command.ai;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
+import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.ai.DeepSeekClient;
-import com.zincoid.nullbot.core.component.storage.SysMsgStorage;
+import com.zincoid.nullbot.core.component.control.SysMsgManager;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
-import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.service.UserService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import org.springframework.stereotype.Component;
@@ -23,9 +22,8 @@ import java.util.List;
 @Slf4j
 public class SysMsgSetCommand implements Command {
 
-    private final DeepSeekClient deepSeekClient;
-    private final SysMsgStorage sysMsgStorage;
-    private final SettingService settingService;
+    private final QQAiClient qqAiClient;
+    private final SysMsgManager sysMsgManager;
     private final UserService userService;
 
     @Override
@@ -44,8 +42,8 @@ public class SysMsgSetCommand implements Command {
                         [提示词设置] \uD83D\uDEAB重置失败
                         - 仅限权等级I及以上用户可重置提示词
                         - 你的限权等级: %s""".formatted(userAccess));
-            deepSeekClient.clearGroupHistory(groupId, userId);
-            sysMsgStorage.resetGroup(groupId);
+            qqAiClient.reset(groupId, userId);
+            sysMsgManager.resetGroup(groupId);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅已重置", false);
             log.info("\t\t\t\t├─[SysMsgSet] 群聊提示词已重置 - {}", groupId);
             return;
@@ -64,8 +62,8 @@ public class SysMsgSetCommand implements Command {
                         - 仅限权等级I及以上用户可修改默认提示词
                         - 你的限权等级: %s""".formatted(userAccess));
             String defaultMessage = String.join(" ", params.subList(1, params.size()));
-            deepSeekClient.clearGroupHistory(groupId, userId);
-            sysMsgStorage.setDefaultMessage(groupId, defaultMessage);
+            qqAiClient.reset(groupId, userId);
+            sysMsgManager.setDefaultMessage(groupId, defaultMessage);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅Default模式: 已设置", false);
             log.info("\t\t\t\t├─[SysMsgSet] 群聊 Default 提示词已设置 - {} -> {}", groupId, defaultMessage);
             return;
@@ -75,8 +73,8 @@ public class SysMsgSetCommand implements Command {
             if (!BotCtxUtil.getSetting().isCustom())
                 throw new NullBotMsgException("[提示词设置] ❌非Custom模式");
             String customMessage = String.join(" ", params.subList(1, params.size()));
-            deepSeekClient.clearGroupHistory(groupId, userId);
-            sysMsgStorage.setCustomMessage(groupId, customMessage);
+            qqAiClient.reset(groupId, userId);
+            sysMsgManager.setCustomMessage(groupId, customMessage);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅Custom模式: 已设置", false);
             log.info("\t\t\t\t├─[SysMsgSet] 群聊 Custom 提示词已设置 - {} -> {}", groupId, customMessage);
             return;
@@ -94,8 +92,8 @@ public class SysMsgSetCommand implements Command {
         String option = params.getFirst();
 
         if ("-reset".equals(option)) {
-            deepSeekClient.clearUserHistory(userId);
-            sysMsgStorage.resetUser(userId);
+            qqAiClient.reset(userId);
+            sysMsgManager.resetUser(userId);
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已重置", false);
             log.info("\t\t\t\t├─[SysMsgSet] 私聊提示词已重置 - {}", userId);
             return;
@@ -106,8 +104,8 @@ public class SysMsgSetCommand implements Command {
 
         if ("-set".equals(option)) {
             String newMessage = String.join(" ", params.subList(1, params.size()));
-            deepSeekClient.clearUserHistory(userId);
-            sysMsgStorage.setUserMessage(userId, newMessage);
+            qqAiClient.reset(userId);
+            sysMsgManager.setUserMessage(userId, newMessage);
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已设置", false);
             log.info("\t\t\t\t├─[SysMsgSet] 私聊提示词已设置 - {} -> {}", userId, newMessage);
             return;

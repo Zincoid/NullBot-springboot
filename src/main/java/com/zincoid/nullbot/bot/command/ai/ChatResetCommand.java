@@ -2,11 +2,11 @@ package com.zincoid.nullbot.bot.command.ai;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.ai.DeepSeekClient;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +18,13 @@ import java.util.List;
 @Slf4j
 public class ChatResetCommand implements Command {
 
-    private final DeepSeekClient deepSeekClient;
+    private final QQAiClient qqAiClient;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        ChatScope chatScope = deepSeekClient.clearGroupHistory(groupId, userId);
+        ChatScope chatScope = qqAiClient.reset(groupId, userId);
         Long id = switch (chatScope) {
             case Group, Monitor ->  groupId;
             case Personal -> userId;
