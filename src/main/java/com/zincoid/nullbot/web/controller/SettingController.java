@@ -40,7 +40,7 @@ public class SettingController {
     public WebResult setSetting(@RequestBody SettingPO setting) {
         if (settingService.set(setting)) {
             commandRateLimiter.reset(setting.getGroupId());
-            qqAiClient.reset(setting.getGroupId(), null);
+            qqAiClient.clear(setting.getGroupId(), null);
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新失败");

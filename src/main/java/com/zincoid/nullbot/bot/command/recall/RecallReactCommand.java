@@ -34,18 +34,17 @@ public class RecallReactCommand implements Command {
 
         List<QQMessage> messages = msgWindowChatMemory.get(ChatScope.Monitor + "_" + groupId)
                 .stream().map(m -> (QQMessage) m).toList();
+
         for (QQMessage message : messages) {
             if (!Objects.equals(message.getMessageId(), messageId)) continue;
             if (userId.equals(operatorId)) {
                 bot.sendGroupMsg(groupId, """
-                            %s(%s)撤回了消息:
-                            %s""".formatted(userName, userId, message.getContent()), false
-                );
+                        %s(%s)撤回了消息:
+                        %s""".formatted(userName, userId, message.getContent()), false);
             } else {
                 bot.sendGroupMsg(groupId, """
-                            %s(%s)撤回了%s(%s)的消息:
-                            %s""".formatted(operatorName, operatorId, userName, userId, message.getContent()), false
-                );
+                        %s(%s)撤回了%s(%s)的消息:
+                        %s""".formatted(operatorName, operatorId, userName, userId, message.getContent()), false);
             }
             log.info("\t\t\t\t├─[RecallReact] 已重发撤回消息 - {}", message.getContent());
             return;

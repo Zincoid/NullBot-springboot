@@ -43,16 +43,15 @@ public class ChatCommand implements Command {
         for (ArrayMsg msg : event.getArrayMsg()) {
             if (msg.getType() != MsgTypeEnum.text) continue;
             String text = msg.getData().get("text").asString().trim();
-            if (text.startsWith(commandPrefix) && !text.startsWith(commandPrefix + "Chat") && !text.startsWith(commandPrefix + "对话")) {
-                bot.sendGroupMsg(groupId, """
-                                [AI] ⚠️检测到指令前缀
-                                - 使用指令时请不要@Null
-                                - @Null仅触发AI对话
-                                - Null仅可执行部分指令""",
-                        false
-                );
-                break;
-            }
+            if (!text.startsWith(commandPrefix) || text.startsWith(commandPrefix + "Chat") || text.startsWith(commandPrefix + "对话")) continue;
+            bot.sendGroupMsg(groupId, """
+                            [AI] ⚠️检测到指令前缀
+                            - 使用指令时请不要@Null
+                            - @Null仅触发AI对话
+                            - Null仅可执行部分指令""",
+                    false
+            );
+            break;
         }
         log.info("\t\t\t\t├─[Chat] 群聊已回复: {}", response);
     }

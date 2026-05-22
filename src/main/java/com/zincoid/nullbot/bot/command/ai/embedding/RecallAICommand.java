@@ -40,18 +40,16 @@ public class RecallAICommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         SettingPO setting = BotCtxUtil.getSetting();
-        String chatId = setting.getChatScope() + "_" +
-                (setting.getChatScope() == ChatScope.Personal
-                        ? userId : groupId);
+        String chatId = setting.getChatScope() + "_" + (setting.getChatScope() == ChatScope.Personal ? userId : groupId);
 
         List<QQMessage> messages = msgWindowChatMemory.get(chatId)
                 .stream().map(m -> (QQMessage) m).toList();
         List<QQMessage> filtered = messages.stream()
                 .filter(msg -> msg != null && msg.getMessageId() != null && msg.getRole() == Role.ASSISTANT)
                 .toList();
+
         int startIndex = Math.max(0, filtered.size() - n);
         List<QQMessage> targets = filtered.subList(startIndex, filtered.size());
-
         for (QQMessage target : targets) bot.deleteMsg(target.getMessageId());
 
         log.info("\t\t\t\t├─[RecallAI] 已撤回AI消息 -> {}条", n);
