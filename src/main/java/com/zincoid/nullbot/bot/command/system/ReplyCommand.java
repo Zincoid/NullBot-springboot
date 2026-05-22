@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Deprecated
 @CommandMapping({"Reply", "回复"})
 @Component
 @Slf4j

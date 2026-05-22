@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.service;
 
-import com.zincoid.nullbot.core.model.data.page.DataPage;
+import com.zincoid.nullbot.core.model.data.DataPage;
 import com.zincoid.nullbot.core.model.data.po.SayingPO;
 
 import java.util.List;

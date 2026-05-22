@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.model.data.page.DataPage;
+import com.zincoid.nullbot.core.model.data.DataPage;
 import com.zincoid.nullbot.core.mapper.SayingMapper;
 import com.zincoid.nullbot.core.model.data.po.SayingPO;
 import com.zincoid.nullbot.core.service.SayingService;

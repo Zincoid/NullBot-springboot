@@ -13,7 +13,6 @@ public class WebResult {
 
     private WebResult() {}
 
-    @Deprecated
     public static WebResult build() {
         return new WebResult();
     }
@@ -53,13 +52,11 @@ public class WebResult {
         return webResult;
     }
 
-    @Deprecated
     public WebResult withCode(Integer code) {
         this.setCode(code);
         return this;
     }
 
-    @Deprecated
     public WebResult withMsg(String message) {
         this.setMessage(message);
         return this;

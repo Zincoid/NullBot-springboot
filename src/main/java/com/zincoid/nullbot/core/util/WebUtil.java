@@ -1,6 +1,5 @@
 package com.zincoid.nullbot.core.util;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.context.request.RequestAttributes;
@@ -27,26 +26,6 @@ public final class WebUtil {
             return null;
         }
         return ((ServletRequestAttributes)requestAttributes).getResponse();
-    }
-
-    /** 获取 token **/
-    @Deprecated
-    public static String getToken() {
-        return getRequest().getHeader("token");
-    }
-
-    /** 获取 登录用户 ID **/
-    @Deprecated
-    public static Long getLoginId() {
-        Claims token = JwtUtil.parseJwt(getRequest().getHeader("token"));
-        return token.get("id", Long.class);
-    }
-
-    /** 获取 登录用户 Type **/
-    @Deprecated
-    public static Integer getLoginType() {
-        Claims token = JwtUtil.parseJwt(getRequest().getHeader("token"));
-        return token.get("type", Integer.class);
     }
 
     /** 获取 客户端 IP 地址 **/

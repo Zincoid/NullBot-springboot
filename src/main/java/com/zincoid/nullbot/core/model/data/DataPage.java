@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.model.data.page;
+package com.zincoid.nullbot.core.model.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
