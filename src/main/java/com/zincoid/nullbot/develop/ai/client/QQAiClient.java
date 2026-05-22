@@ -42,7 +42,7 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     public void chatBasic(String chatId, String prompt, QQMessage message, boolean voice) {
         QQMessage _message = call(chatId, prompt, message);
-        List<QQMessage> messages = qqMsgExecutor.basic(_message, message.getUserId(), voice);
+        List<QQMessage> messages = qqMsgExecutor.basic(_message, voice);
         for (QQMessage msg : messages) {
             chatMemory.add(chatId, msg);
         }
@@ -51,7 +51,7 @@ public class QQAiClient implements AiClient<QQMessage> {
     public void chatEmbedding(String chatId, String prompt, QQMessage message,
                               Event event, boolean voice, boolean auth) {
         QQMessage _message = call(chatId, prompt, message);
-        List<QQMessage> messages = qqMsgExecutor.chain(_message, message.getUserId(), event, voice, auth);
+        List<QQMessage> messages = qqMsgExecutor.chain(_message, event, voice, auth);
         for (QQMessage msg : messages) {
             chatMemory.add(chatId, msg);
         }

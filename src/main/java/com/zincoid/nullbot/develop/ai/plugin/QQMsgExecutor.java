@@ -40,10 +40,11 @@ public class QQMsgExecutor {
         SEGMENT_PATTERN = Pattern.compile("(\\{.*?}|[^{]+)");
     }
 
-    public List<QQMessage> basic(QQMessage message, Long targetId, boolean voice) {
+    public List<QQMessage> basic(QQMessage message, boolean voice) {
 
         Bot bot = botOperator.getBot(3, 5000);
         boolean isPrivate = message.isPrivate();
+        Long targetId = isPrivate ? message.getUserId() : message.getGroupId();
         String content = message.getContent();
         if (content.contains("{Discard}"))
             return List.of(QQMessage.assistant("回复被拒绝"));
@@ -58,11 +59,12 @@ public class QQMsgExecutor {
         return List.of(QQMessage.assistant(content).id(messageId));
     }
 
-    public List<QQMessage> chain(QQMessage message, Long targetId,
-                          Event event, boolean voice, boolean embeddingAuth) {
+    public List<QQMessage> chain(QQMessage message, Event event,
+                                 boolean voice, boolean embeddingAuth) {
 
         Bot bot = botOperator.getBot(3, 5000);
         boolean isPrivate = message.isPrivate();
+        Long targetId = message.isPrivate() ? message.getUserId() : message.getGroupId();
         String content = message.getContent();
         if (content.contains("{Discard}"))
             return List.of(QQMessage.assistant("回复被拒绝"));
