@@ -43,7 +43,7 @@ public class Chat2Command implements Command {
                                     event.getUserId(),
                                     event.getSender().getNickname()
                             ),
-                    false, event, false
+                    true, false, event, false
             );
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
