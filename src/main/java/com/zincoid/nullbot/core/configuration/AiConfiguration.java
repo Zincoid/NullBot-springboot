@@ -19,7 +19,7 @@ public class AiConfiguration {
     @Bean
     public MsgWindowChatMemory msgWindowChatMemory(ChatRepository repository) {
         MsgWindowChatMemory msgWindowChatMemory = new MsgWindowChatMemory(repository, 100);
-        log.info("MsgWindowChatMemory 已初始化");
+        log.info("▽ [MsgWindowChatMemory] 已初始化");
         return msgWindowChatMemory;
     }
 
@@ -34,7 +34,7 @@ public class AiConfiguration {
                 prompter, executor,
                 service
         ).withMaxTokens(512);
-        log.info("QQAiClient 已初始化");
+        log.info("▽ [QQAiClient] 已初始化");
         return qqAiClient;
     }
 }

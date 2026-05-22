@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.component.chat.current.plugin;
 
 import com.zincoid.nullbot.bot.dispatcher.CommandRegistry;
 import com.zincoid.nullbot.core.component.chat.previous.SysMsgManager;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -10,13 +10,17 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
-@RequiredArgsConstructor
 public class QQPrompter {
 
     private final List<String> errors = new CopyOnWriteArrayList<>();
 
     private final SysMsgManager sysMsgManager;
     private final CommandRegistry commandRegistry;
+
+    public QQPrompter(SysMsgManager sysMsgManager, @Lazy CommandRegistry commandRegistry) {
+        this.sysMsgManager = sysMsgManager;
+        this.commandRegistry = commandRegistry;
+    }
 
     private static final Set<String> GC_CMD_ALLOWS;
     private static final Set<String> PM_CMD_ALLOWS;
