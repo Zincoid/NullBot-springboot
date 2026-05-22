@@ -29,13 +29,14 @@ public class ChatCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+        Integer messageId = event.getMessageId();
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
         String message = String.join(" ", params);
         String response;
         try {
-            response = qqAiClient.chat(QQMessage.user(message).gc(groupId, userId, userName), event);
+            response = qqAiClient.chat(QQMessage.user(message).gc(groupId, userId, userName).id(messageId), event);
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
@@ -58,12 +59,13 @@ public class ChatCommand implements Command {
 
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
+        Integer messageId = event.getMessageId();
         Long userId = event.getUserId();
         String userName = event.getPrivateSender().getNickname();
         String message = String.join(" ", params);
         String response;
         try {
-            response = qqAiClient.chat(QQMessage.user(message).pm(userId, userName), event);
+            response = qqAiClient.chat(QQMessage.user(message).pm(userId, userName).id(messageId), event);
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }

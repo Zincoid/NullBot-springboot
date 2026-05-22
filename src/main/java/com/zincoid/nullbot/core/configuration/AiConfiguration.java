@@ -16,7 +16,7 @@ public class AiConfiguration {
 
     @Bean
     public MsgWindowChatMemory msgWindowChatMemory(ChatRepository repository) {
-        return new MsgWindowChatMemory(repository, 10);
+        return new MsgWindowChatMemory(repository, 100);
     }
 
     @Bean

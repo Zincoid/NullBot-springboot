@@ -4,18 +4,16 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
-import com.zincoid.nullbot.core.component.chat.current.client.QQAiClient;
-import com.zincoid.nullbot.core.component.chat.current.memory.ChatMemory;
+import com.zincoid.nullbot.core.component.chat.current.memory.MsgWindowChatMemory;
+import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
+import com.zincoid.nullbot.core.enums.ChatScope;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.FunctionControl;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
-import com.zincoid.nullbot.core.properties.DeepSeekProperties;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.bot.dispatcher.CommandProcessor;
-import com.zincoid.nullbot.core.model.message.ChatMessage;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
-import com.zincoid.nullbot.core.component.chat.previous.ChatStore;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.service.FileService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
@@ -35,8 +33,7 @@ public class MonitorListener {
 
     private final BotInputManager botInputManager;
     private final CommandProcessor commandProcessor;
-    private final QQAiClient aiClient;
-    private final DeepSeekProperties deepSeekProperties;
+    private final MsgWindowChatMemory msgWindowChatMemory;
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
 
@@ -114,10 +111,10 @@ public class MonitorListener {
         if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // 按需 AI自动记录
         String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:MsgCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
-        List<ChatMessage> chatMessages = chatStore.getMonitorHistory(event.getGroupId());
-        chatMessages.add(new ChatMessage(event.getMessageId() , event.getUserId(), event.getSender().getNickname(), "user", parsed));
-        chatStore.trimHistory(chatMessages, deepSeekProperties.getMaxMonitorLength());
-        // log.info("└─[Recorded] {} Message(s)", chatMessages.size());
+        msgWindowChatMemory.add(
+                ChatScope.Monitor + "_" + event.getGroupId(),
+                QQMessage.user(parsed).gc(event.getGroupId(), event.getUserId(), event.getSender().getNickname()).id(event.getMessageId())
+        );
     }
 
     @FunctionControl("KeywordAct")
