@@ -223,7 +223,7 @@ public class DeepSeekClient {
      * @return 清除模式
      */
     public ChatScope clearGroupHistory(Long groupId, Long userId) {
-        ChatScope chatScope = BotCtxUtil.getSetting().getChatScope();
+        ChatScope chatScope = settingService.get(groupId).getChatScope();
         switch (chatScope) {
             case Group -> chatStore.clearGroupHistory(groupId);
             case Personal -> {
@@ -242,7 +242,7 @@ public class DeepSeekClient {
      * @return 聊天记录列表
      */
     public List<ChatMessage> getGroupHistory(Long groupId, Long userId) {
-        return switch (BotCtxUtil.getSetting().getChatScope()) {
+        return switch (settingService.get(groupId).getChatScope()) {
             case Group -> chatStore.getGroupHistory(groupId);
             case Personal -> chatStore.getUserHistory(userId);
             case Monitor -> chatStore.getMonitorHistory(groupId);
