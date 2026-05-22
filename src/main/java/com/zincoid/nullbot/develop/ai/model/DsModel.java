@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zincoid.nullbot.develop.ai.message.Message;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,6 +16,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class DsModel implements Model {
 
     private final ObjectMapper objectMapper = new ObjectMapper();

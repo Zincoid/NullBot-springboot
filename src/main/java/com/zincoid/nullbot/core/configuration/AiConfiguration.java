@@ -3,7 +3,6 @@ package com.zincoid.nullbot.core.configuration;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.develop.ai.client.QQAiClient;
 import com.zincoid.nullbot.develop.ai.memory.MsgWindowChatMemory;
-import com.zincoid.nullbot.develop.ai.model.DsModel;
 import com.zincoid.nullbot.develop.ai.model.Model;
 import com.zincoid.nullbot.develop.ai.plugin.AntiInjector;
 import com.zincoid.nullbot.develop.ai.plugin.QQMsgExecutor;
@@ -15,8 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class AiConfiguration {
 
     @Bean
-    public QQAiClient qqAiClient(QQMsgExecutor executor, ResourceLoader loader) {
-        Model model = new DsModel();
+    public QQAiClient qqAiClient(Model model, QQMsgExecutor executor, ResourceLoader loader) {
         return new QQAiClient(
                 new MsgWindowChatMemory(
                         new InMemoryChatRepository(),
