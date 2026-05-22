@@ -23,6 +23,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
 import com.mikuac.shiro.dto.event.Event;
+import com.zincoid.nullbot.core.component.control.SysMsgManager;
 import com.zincoid.nullbot.core.component.voice.TtsClient;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

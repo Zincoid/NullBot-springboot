@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.chat.previous;
+package com.zincoid.nullbot.core.component.control;
 
 import com.zincoid.nullbot.core.properties.AiChatProperties;
 import lombok.Data;

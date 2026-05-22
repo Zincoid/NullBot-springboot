@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.core.configuration;
 
 import com.zincoid.nullbot.core.component.chat.current.client.QQAiClient;
+import com.zincoid.nullbot.core.component.chat.current.memory.ChatMemory;
 import com.zincoid.nullbot.core.component.chat.current.memory.MsgWindowChatMemory;
 import com.zincoid.nullbot.core.component.chat.current.model.Model;
 import com.zincoid.nullbot.core.component.chat.current.plugin.QQAntiInjector;
@@ -24,9 +25,9 @@ public class AiConfiguration {
     }
 
     @Bean
-    public QQAiClient qqAiClient(MsgWindowChatMemory memory, Model model,
-                                 QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor,
-                                 SettingService service
+    public QQAiClient qqAiClient(
+            ChatMemory memory, Model model, SettingService service,
+            QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
     ) {
         QQAiClient qqAiClient = new QQAiClient(
                 memory, model,

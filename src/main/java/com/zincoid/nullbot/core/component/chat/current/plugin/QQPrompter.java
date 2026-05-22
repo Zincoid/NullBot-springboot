@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.component.chat.current.plugin;
 
 import com.zincoid.nullbot.bot.dispatcher.CommandRegistry;
-import com.zincoid.nullbot.core.component.chat.previous.SysMsgManager;
+import com.zincoid.nullbot.core.component.control.SysMsgManager;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
