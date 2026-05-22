@@ -39,12 +39,13 @@ public class QQAiClient implements AiClient<QQMessage> {
         _messages.add(QQMessage.system(prompt));
         _messages.addAll(messages);
         String content = model.invoke(_messages, false, 1024);
-        return QQMessage.assistant(content)
-                .gc(
-                        message.getGroupId(),
-                        message.getUserId(),
-                        message.getUserName()
-                );
+        QQMessage _message = QQMessage.assistant(content);
+        if (message.isPrivate()) {
+            _message.pm(message.getUserId(), message.getUserName());
+        } else {
+            _message.gc(message.getGroupId(), message.getUserId(), message.getUserName());
+        }
+        return _message;
     }
 
     public QQAiClient withMaxTokens(int maxTokens) {
@@ -75,8 +76,13 @@ public class QQAiClient implements AiClient<QQMessage> {
         }
         String prompt = qqPrompter.prompt(message.getGroupId(), setting.isEmbedding(), setting.isCustom());
         QQMessage _message = call(chatId, prompt, message, setting.isThinking(), maxTokens);
-        List<QQMessage> messages = qqMsgExecutor.chain(_message, event,
-                setting.isVoice(), setting.isEmbeddingAuth());
+        List<QQMessage> messages;
+        if (setting.isEmbedding() && !setting.isCustom()) {
+            messages = qqMsgExecutor.chain(_message, event,
+                    setting.isVoice(), setting.isEmbeddingAuth());
+        } else {
+            messages = qqMsgExecutor.direct(_message, setting.isVoice());
+        }
         for (QQMessage msg : messages) {
             chatMemory.add(chatId, msg);
         }
