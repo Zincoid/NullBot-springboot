@@ -32,11 +32,11 @@ public class QQMsgExecutor {
     private final ResourceLoader resourceLoader;
     private final ApplicationEventPublisher eventPublisher;
 
-    private static final Pattern USER_INFO_PATTERN;
+    private static final Pattern INFO_PATTERN;
     private static final Pattern SEGMENT_PATTERN;
 
     static {
-        USER_INFO_PATTERN = Pattern.compile("\\[\\d+]\\[.+?\\(\\d+\\)]:");
+        INFO_PATTERN = Pattern.compile("\\[\\d+]\\[.+?\\(\\d+\\)]:");
         SEGMENT_PATTERN = Pattern.compile("(\\{.*?}|[^{]+)");
     }
 
@@ -110,7 +110,7 @@ public class QQMsgExecutor {
     }
 
     boolean filter(String message) {
-        return USER_INFO_PATTERN.matcher(message).find();
+        return INFO_PATTERN.matcher(message).find();
     }
 
     // =================== 消息方法 ===================
