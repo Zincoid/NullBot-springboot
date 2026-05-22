@@ -28,9 +28,9 @@ import java.util.regex.Pattern;
 public class QQMsgExecutor {
 
     private final BotOperator botOperator;
-    private final TtsClient ttsClient;
     private final ResourceLoader resourceLoader;
     private final ApplicationEventPublisher eventPublisher;
+    private final TtsClient ttsClient;
 
     private static final Pattern INFO_PATTERN;
     private static final Pattern SEGMENT_PATTERN;
