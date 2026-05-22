@@ -25,15 +25,15 @@ public class ChatResetCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         ChatScope chatScope = qqAiClient.clear(groupId, userId);
-        Long id = switch (chatScope) {
+        Long targetId = switch (chatScope) {
             case Group, Monitor ->  groupId;
             case Personal -> userId;
         };
         bot.sendGroupMsg(groupId, """
                     [重置聊天] ♻️历史已重置
                     - Chat Scope: %s
-                    - Target ID: %s""".formatted(chatScope, id), false);
-        log.info("\t\t\t\t├─[ChatReset] 历史已重置 - {}: {}", chatScope, id);
+                    - Target ID: %s""".formatted(chatScope, targetId), false);
+        log.info("\t\t\t\t├─[ChatReset] 历史已重置 - {}: {}", chatScope, targetId);
     }
 
     @Override

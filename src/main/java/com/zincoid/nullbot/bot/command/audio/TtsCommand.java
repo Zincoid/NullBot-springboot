@@ -133,7 +133,7 @@ public class TtsCommand implements Command {
                             .voice("base64://" + base64)
                             .build();
                     bot.sendGroupMsg(event.getGroupId(), response, false);
-                    log.info("\t\t\t\t├─[Tts] 已回复克隆语音: {}", targetText.replaceAll("\\R", " "));
+                    log.info("\t\t\t\t├─[Tts] 已回复克隆语音: {}", targetText);
                 }
 
                 case "list" -> {
@@ -192,7 +192,7 @@ public class TtsCommand implements Command {
                     .voice("base64://" + base64)
                     .build();
             bot.sendPrivateMsg(event.getUserId(), response, false);
-            log.info("\t\t\t\t├─[Tts] 已私信合成语音: {}", targetText.replaceAll("\\R", " "));
+            log.info("\t\t\t\t├─[Tts] 已私信合成语音: {}", targetText);
             return;
         }
 

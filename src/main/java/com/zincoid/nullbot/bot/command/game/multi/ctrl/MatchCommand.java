@@ -38,7 +38,7 @@ public class MatchCommand implements Command {
         if (result.getIsMatched() && !result.getIsSameGroup())
             bot.sendGroupMsg(result.getOpponentGroupId(), result.getInfo(), false);
         bot.sendGroupMsg(groupId, result.getInfo(), false);
-        log.info("\t\t\t\t├─[Match] 匹配结果 - {}", result.getInfo().replaceAll("\\R", " "));
+        log.info("\t\t\t\t├─[Match] 匹配结果 - {}", result.getInfo());
     }
 
     @Override
