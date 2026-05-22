@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.develop.ai.client;
 
+import com.zincoid.nullbot.develop.ai.plugin.QQMsgExecutor;
 import com.zincoid.nullbot.develop.ai.memory.ChatMemory;
 import com.zincoid.nullbot.develop.ai.message.Message;
 import com.zincoid.nullbot.develop.ai.message.QQMessage;
@@ -14,6 +15,7 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     private final ChatMemory chatMemory;
     private final Model model;
+    private final QQMsgExecutor qqMsgExecutor;
 
     @Override
     public QQMessage call(String chatId, String prompt, QQMessage message) {
@@ -23,9 +25,12 @@ public class QQAiClient implements AiClient<QQMessage> {
         _messages.add(QQMessage.system(prompt));
         _messages.addAll(messages);
         String content = model.invoke(_messages, false, 1024);
-        QQMessage _message = QQMessage.assistant(content);
-        chatMemory.add(chatId, _message);
-        return _message;
+        return QQMessage.assistant(content).info(
+                message.getMessageId(),
+                message.getGroupId(),
+                message.getUserId(),
+                message.getUserName()
+        );
     }
 
     @Override
@@ -33,8 +38,10 @@ public class QQAiClient implements AiClient<QQMessage> {
         chatMemory.clear(chatId);
     }
 
-    public void chatBasic() {
-
+    public void chatBasic(String chatId, String prompt, QQMessage message) {
+        boolean isPrivate = message.getGroupId() == null;
+        QQMessage _message = call(chatId, prompt, message);
+        qqMsgExecutor.basic(_message, message.getUserId(), isPrivate, false);
     }
 
     public void chatEmbedding() {

@@ -20,11 +20,11 @@ public class ResourceLoader {
 
     // =================== 应用方法 ===================
 
-    public Path getCached(String resourcePath) throws IOException {
+    public Path getCached(String resourcePath) {
         return getCached(resourcePath, fileStorageProperties.getTempPath());
     }
 
-    public Path getCached(String resourcePath, String tempPath) throws IOException {
+    public Path getCached(String resourcePath, String tempPath) {
         // 尝试获取缓存
         Path cachedPath = getCachedOrigin(resourcePath, tempPath);
         // 检查文件存在
@@ -41,7 +41,7 @@ public class ResourceLoader {
             } catch (IOException e) {
                 // 重载失败 清除缓存
                 CACHE.remove(resourcePath);
-                throw e;
+                throw new RuntimeException("重载失败", e);
             }
         }
     }
@@ -62,7 +62,7 @@ public class ResourceLoader {
             try {
                 return loadFromResources(key, tempPath);
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new RuntimeException("加载出错", e);
             }
         });
     }
@@ -70,13 +70,17 @@ public class ResourceLoader {
     public Path loadFromResources(String resourcePath, String tempPath) throws IOException {
         Path tempDir = Paths.get(tempPath);
         // 确保目录存在
-        if (!Files.exists(tempDir)) Files.createDirectories(tempDir);
+        if (!Files.exists(tempDir))
+            Files.createDirectories(tempDir);
         // 获取资源流
-        InputStream resourceStream = ResourceLoader.class.getClassLoader().getResourceAsStream(resourcePath);
-        if (resourceStream == null) throw new FileNotFoundException("资源未找到: " + resourcePath);
+        InputStream resourceStream = this.getClass()
+                .getClassLoader().getResourceAsStream(resourcePath);
+        if (resourceStream == null)
+            throw new FileNotFoundException("资源缺失: " + resourcePath);
         // 创建临时文件
-        String fileName = Paths.get(resourcePath).getFileName().toString();
-        Path tempFile = Files.createTempFile(tempDir, "resource-", "-" + fileName);
+        String tempName = Paths.get(resourcePath).getFileName().toString();
+        Path tempFile = Files.createTempFile(
+                tempDir, "resource-", "-" + tempName);
         // 资源复制
         try (OutputStream out = Files.newOutputStream(tempFile)) {
             resourceStream.transferTo(out);

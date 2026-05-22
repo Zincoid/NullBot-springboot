@@ -63,4 +63,9 @@ public class QQMessage extends AbstractMessage {
         this.userName = userName;
         return this;
     }
+
+    public QQMessage info(Integer messageId) {
+        this.messageId = messageId;
+        return this;
+    }
 }
