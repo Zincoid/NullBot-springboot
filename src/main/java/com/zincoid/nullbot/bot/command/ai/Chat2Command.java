@@ -37,10 +37,7 @@ public class Chat2Command implements Command {
         String message = String.join(" ", params);
         String response;
         try {
-            response = qqAiClient.gc(
-                    QQMessage.user(message).gc(groupId, userId, userName),
-                    event
-            );
+            response = qqAiClient.chat(QQMessage.user(message).gc(groupId, userId, userName), event);
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
@@ -48,7 +45,7 @@ public class Chat2Command implements Command {
             if (msg.getType() != MsgTypeEnum.text) continue;
             String text = msg.getData().get("text").asString().trim();
             if (text.startsWith(commandPrefix) && !text.startsWith(commandPrefix + "Chat") && !text.startsWith(commandPrefix + "对话")) {
-                bot.sendGroupMsg(event.getGroupId(), """
+                bot.sendGroupMsg(groupId, """
                                 [AI] ⚠️检测到指令前缀
                                 - 使用指令时请不要@Null
                                 - @Null仅触发AI对话
@@ -68,10 +65,7 @@ public class Chat2Command implements Command {
         String message = String.join(" ", params);
         String response;
         try {
-            response = qqAiClient.pm(
-                    QQMessage.user(message).pm(userId, userName),
-                    event
-            );
+            response = qqAiClient.chat(QQMessage.user(message).pm(userId, userName), event);
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }

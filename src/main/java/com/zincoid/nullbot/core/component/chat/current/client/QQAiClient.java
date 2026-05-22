@@ -51,18 +51,17 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     // =================== 应用方法 ===================
 
-    public String pm(QQMessage message, Event event) {
-        String chatId = "Private_" + message.getUserId();
-        String prompt = qqPrompter.pm(message.getUserId());
-        QQMessage _message = call(chatId, prompt, message, false, maxTokens);
-        List<QQMessage> messages = qqMsgExecutor.chain(_message, event, false, false);
-        for (QQMessage msg : messages) {
-            chatMemory.add(chatId, msg);
+    public String chat(QQMessage message, Event event) {
+        if (message.isPrivate()) {
+            String chatId = "Private_" + message.getUserId();
+            String prompt = qqPrompter.pm(message.getUserId());
+            QQMessage _message = call(chatId, prompt, message, false, maxTokens);
+            List<QQMessage> messages = qqMsgExecutor.chain(_message, event, false, false);
+            for (QQMessage msg : messages) {
+                chatMemory.add(chatId, msg);
+            }
+            return _message.getContent();
         }
-        return _message.getContent();
-    }
-
-    public String gc(QQMessage message, Event event) {
         SettingPO setting = BotCtxUtil.getSetting();
         String chatId = setting.getChatScope() + "_" +
                 (setting.getChatScope() == ChatScope.Personal
@@ -81,14 +80,13 @@ public class QQAiClient implements AiClient<QQMessage> {
         return _message.getContent();
     }
 
-    public void reset(Long userId) {
+    public void reset(Long userId) {  // 私聊重置
         chatMemory.clear("Private_" + userId);
     }
 
-    public void reset(Long groupId, Long userId) {
-        SettingPO setting = BotCtxUtil.getSetting();
-        String chatId = setting.getChatScope() + "_" +
-                (setting.getChatScope() == ChatScope.Personal ? userId : groupId);
-        chatMemory.clear(chatId);
+    public void reset(Long groupId, Long userId) {  // 群聊重置
+        chatMemory.clear(ChatScope.Personal + "_" + userId);
+        chatMemory.clear(ChatScope.Group + "_" + groupId);
+        chatMemory.clear(ChatScope.Monitor + "_" + groupId);
     }
 }
