@@ -8,6 +8,7 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQAntiInjector;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQMsgExecutor;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
+import com.zincoid.nullbot.core.properties.AiChatProperties;
 import com.zincoid.nullbot.core.service.SettingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +19,12 @@ import org.springframework.context.annotation.Configuration;
 public class AiConfiguration {
 
     @Bean
-    public MsgWindowChatMemory msgWindowChatMemory(ChatRepository repository) {
-        MsgWindowChatMemory msgWindowChatMemory = new MsgWindowChatMemory(repository, 100);
+    public MsgWindowChatMemory msgWindowChatMemory(
+            ChatRepository repository, AiChatProperties properties
+    ) {
+        MsgWindowChatMemory msgWindowChatMemory = new MsgWindowChatMemory(
+                repository, properties.getMaxHistoryLength()
+        );
         log.info("▽ [MsgWindowChatMemory] 已初始化");
         return msgWindowChatMemory;
     }
