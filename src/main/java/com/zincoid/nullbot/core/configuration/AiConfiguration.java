@@ -1,11 +1,11 @@
 package com.zincoid.nullbot.core.configuration;
 
-import com.zincoid.nullbot.develop.ai.client.QQAiClient;
-import com.zincoid.nullbot.develop.ai.memory.MsgWindowChatMemory;
-import com.zincoid.nullbot.develop.ai.model.Model;
-import com.zincoid.nullbot.develop.ai.plugin.QQAntiInjector;
-import com.zincoid.nullbot.develop.ai.plugin.QQMsgExecutor;
-import com.zincoid.nullbot.develop.ai.repository.ChatRepository;
+import com.zincoid.nullbot.core.component.chat.current.client.QQAiClient;
+import com.zincoid.nullbot.core.component.chat.current.memory.MsgWindowChatMemory;
+import com.zincoid.nullbot.core.component.chat.current.model.Model;
+import com.zincoid.nullbot.core.component.chat.current.plugin.QQAntiInjector;
+import com.zincoid.nullbot.core.component.chat.current.plugin.QQMsgExecutor;
+import com.zincoid.nullbot.core.component.chat.current.repository.ChatRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

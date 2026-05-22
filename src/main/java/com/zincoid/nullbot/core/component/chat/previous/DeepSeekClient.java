@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.chat;
+package com.zincoid.nullbot.core.component.chat.previous;
 
 import java.io.IOException;
 import java.net.URI;

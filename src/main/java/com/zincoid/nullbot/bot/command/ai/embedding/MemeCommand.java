@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.chat.ChatMemory;
+import com.zincoid.nullbot.core.component.chat.previous.ChatMemory;
 import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;

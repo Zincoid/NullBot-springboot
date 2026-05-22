@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.chat;
+package com.zincoid.nullbot.core.component.chat.previous;
 
 import lombok.Data;
 import com.zincoid.nullbot.core.model.message.ChatMessage;

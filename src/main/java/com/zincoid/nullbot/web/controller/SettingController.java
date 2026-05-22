@@ -3,7 +3,7 @@ package com.zincoid.nullbot.web.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.component.chat.DeepSeekClient;
+import com.zincoid.nullbot.core.component.chat.previous.DeepSeekClient;
 import com.zincoid.nullbot.core.component.control.CommandRateLimiter;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.model.result.WebResult;

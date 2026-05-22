@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.chat.DeepSeekClient;
+import com.zincoid.nullbot.core.component.chat.previous.DeepSeekClient;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
 import com.zincoid.nullbot.bot.dispatcher.handler.impl.PermissionHandler;
 import com.zincoid.nullbot.core.enums.BniMode;

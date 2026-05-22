@@ -1,12 +1,12 @@
-package com.zincoid.nullbot.develop.ai.client;
+package com.zincoid.nullbot.core.component.chat.current.client;
 
 import com.mikuac.shiro.dto.event.Event;
-import com.zincoid.nullbot.develop.ai.plugin.QQAntiInjector;
-import com.zincoid.nullbot.develop.ai.plugin.QQMsgExecutor;
-import com.zincoid.nullbot.develop.ai.memory.ChatMemory;
-import com.zincoid.nullbot.develop.ai.message.Message;
-import com.zincoid.nullbot.develop.ai.message.QQMessage;
-import com.zincoid.nullbot.develop.ai.model.Model;
+import com.zincoid.nullbot.core.component.chat.current.plugin.QQAntiInjector;
+import com.zincoid.nullbot.core.component.chat.current.plugin.QQMsgExecutor;
+import com.zincoid.nullbot.core.component.chat.current.memory.ChatMemory;
+import com.zincoid.nullbot.core.component.chat.current.message.Message;
+import com.zincoid.nullbot.core.component.chat.current.message.QQMessage;
+import com.zincoid.nullbot.core.component.chat.current.model.Model;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;

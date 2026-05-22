@@ -1,14 +1,14 @@
-package com.zincoid.nullbot.develop.ai;
+package com.zincoid.nullbot.core.component.chat.current;
 
-import com.zincoid.nullbot.develop.ai.client.AiClient;
-import com.zincoid.nullbot.develop.ai.client.BaseAiClient;
-import com.zincoid.nullbot.develop.ai.memory.ChatMemory;
-import com.zincoid.nullbot.develop.ai.memory.MsgWindowChatMemory;
-import com.zincoid.nullbot.develop.ai.message.BaseMessage;
-import com.zincoid.nullbot.develop.ai.model.DsModel;
-import com.zincoid.nullbot.develop.ai.model.Model;
-import com.zincoid.nullbot.develop.ai.repository.ChatRepository;
-import com.zincoid.nullbot.develop.ai.repository.InMemoryChatRepository;
+import com.zincoid.nullbot.core.component.chat.current.client.AiClient;
+import com.zincoid.nullbot.core.component.chat.current.client.BaseAiClient;
+import com.zincoid.nullbot.core.component.chat.current.memory.ChatMemory;
+import com.zincoid.nullbot.core.component.chat.current.memory.MsgWindowChatMemory;
+import com.zincoid.nullbot.core.component.chat.current.message.BaseMessage;
+import com.zincoid.nullbot.core.component.chat.current.model.DsModel;
+import com.zincoid.nullbot.core.component.chat.current.model.Model;
+import com.zincoid.nullbot.core.component.chat.current.repository.ChatRepository;
+import com.zincoid.nullbot.core.component.chat.current.repository.InMemoryChatRepository;
 
 import java.util.Scanner;
 

@@ -1,6 +1,6 @@
-package com.zincoid.nullbot.develop.ai.message;
+package com.zincoid.nullbot.core.component.chat.current.message;
 
-import com.zincoid.nullbot.develop.ai.enums.Role;
+import com.zincoid.nullbot.core.component.chat.current.enums.Role;
 
 public abstract class AbstractMessage implements Message {
 

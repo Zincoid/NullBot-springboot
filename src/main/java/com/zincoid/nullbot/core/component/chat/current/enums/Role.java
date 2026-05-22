@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.develop.ai.enums;
+package com.zincoid.nullbot.core.component.chat.current.enums;
 
 import lombok.Getter;
 

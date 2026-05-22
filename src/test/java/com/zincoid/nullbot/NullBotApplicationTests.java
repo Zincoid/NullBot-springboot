@@ -11,7 +11,7 @@ import jakarta.annotation.Resource;
 // import jdash.common.LevelSearchMode;
 // import jdash.common.entity.GDLevel;
 import org.apache.commons.lang3.tuple.Pair;
-import com.zincoid.nullbot.core.component.chat.DeepSeekClient;
+import com.zincoid.nullbot.core.component.chat.previous.DeepSeekClient;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
 import com.zincoid.nullbot.core.component.game.handler.impl.TicTacToeMatchHandler;
 import com.zincoid.nullbot.core.component.game.logic.impl.TicTacToeGameLogic;

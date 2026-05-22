@@ -1,10 +1,10 @@
-package com.zincoid.nullbot.develop.ai.model;
+package com.zincoid.nullbot.core.component.chat.current.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.zincoid.nullbot.develop.ai.message.Message;
+import com.zincoid.nullbot.core.component.chat.current.message.Message;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
