@@ -51,10 +51,9 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     // =================== 应用方法 ===================
 
-    public void chatPm(
-            String prompt, QQMessage message, Event event
-    ) {
+    public void pm(QQMessage message, Event event) {
         String chatId = "Private_" + message.getUserId();
+        String prompt = qqPrompter.pm(message.getUserId());
         QQMessage _message = call(chatId, prompt, message, false, maxTokens);
         List<QQMessage> messages = qqMsgExecutor.chain(_message, event, false, false);
         for (QQMessage msg : messages) {
@@ -62,9 +61,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         }
     }
 
-    public void chatGc(
-            String prompt, QQMessage message, Event event
-    ) {
+    public void gc(QQMessage message, Event event) {
         SettingPO setting = BotCtxUtil.getSetting();
         String chatId = setting.getChatScope() + "_" +
                 (setting.getChatScope() == ChatScope.Personal
@@ -73,6 +70,7 @@ public class QQAiClient implements AiClient<QQMessage> {
             chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
             return;
         }
+        String prompt = qqPrompter.gc(message.getGroupId(), setting.isEmbedding(), setting.isCustom());
         QQMessage _message = call(chatId, prompt, message, setting.isThinking(), maxTokens);
         List<QQMessage> messages = qqMsgExecutor.chain(_message, event,
                 setting.isVoice(), setting.isEmbeddingAuth());
@@ -81,11 +79,11 @@ public class QQAiClient implements AiClient<QQMessage> {
         }
     }
 
-    public void resetPm(Long userId) {
+    public void reset(Long userId) {
         chatMemory.clear("Private_" + userId);
     }
 
-    public void resetGc(Long groupId, Long userId) {
+    public void reset(Long groupId, Long userId) {
         SettingPO setting = BotCtxUtil.getSetting();
         String chatId = setting.getChatScope() + "_" +
                 (setting.getChatScope() == ChatScope.Personal ? userId : groupId);

@@ -99,7 +99,7 @@ public class QQPrompter {
 
     // =================== 生成方法 ===================
 
-    public String pmPrompt(Long userId) {
+    public String pm(Long userId) {
         return sysMsgManager.getUserMessage(userId)
                 + BASE_PM_PROMPT
                 + MEMORY_PROMPT.formatted(
@@ -108,7 +108,7 @@ public class QQPrompter {
                         commandRegistry.getCommandHelpsForAI(PM_CMD_ALLOWS), getErrors());
     }
 
-    public String gcPrompt(Long groupId, boolean chain, boolean custom) {
+    public String gc(Long groupId, boolean chain, boolean custom) {
         StringBuilder sb = new StringBuilder();
         if (custom) {
             sb.append(sysMsgManager.getCustomMessage(groupId));
