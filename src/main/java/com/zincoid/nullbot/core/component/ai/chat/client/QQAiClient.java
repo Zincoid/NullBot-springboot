@@ -48,20 +48,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         return QQMessage.assistant(res).gc(message.getGroupId(), message.getUserId(), message.getUserName());
     }
 
-    // =================== 应用方法 (BotCtx) ===================
-
-    void clear() {
-        chatMemory.clear(BotCtxUtil.getChatId());
-    }
-
-    public List<QQMessage> history() {
-        return chatMemory.get(BotCtxUtil.getChatId()).stream()
-                .filter(msg -> msg instanceof QQMessage)
-                .map(msg -> (QQMessage) msg)
-                .toList();
-    }
-
-    // =================== 应用方法 (通用) ===================
+    // =========================================== 应用方法 ===========================================
 
     public String chat(String chatId, QQMessage message, Event event, SettingPO setting) {
         if (message.isPrivate())
@@ -96,28 +83,8 @@ public class QQAiClient implements AiClient<QQMessage> {
         chatMemory.clear(chatId);
     }
 
-    public ChatScope clear(Long groupId, Long userId) {
-        ChatScope scope = settingService.get(groupId).getChatScope();
-        switch (scope) {
-            case Group, Monitor -> chatMemory.clear(scope + "_" + groupId);
-            case Personal -> chatMemory.clear(scope + "_" + userId);
-        }
-        return scope;
-    }
-
-    public List<QQMessage> history(Long userId) {
-        return chatMemory.get("Private_" + userId).stream()
-                .filter(msg -> msg instanceof QQMessage)
-                .map(msg -> (QQMessage) msg)
-                .toList();
-    }
-
-    public List<QQMessage> history(Long groupId, Long userId) {
-        ChatScope scope = settingService.get(groupId).getChatScope();
-        return (switch (scope) {
-            case Group, Monitor -> chatMemory.get(scope + "_" + groupId);
-            case Personal -> chatMemory.get(scope + "_" + userId);
-        }).stream()
+    public List<QQMessage> history(String chatId) {
+        return chatMemory.get(chatId).stream()
                 .filter(msg -> msg instanceof QQMessage)
                 .map(msg -> (QQMessage) msg)
                 .toList();

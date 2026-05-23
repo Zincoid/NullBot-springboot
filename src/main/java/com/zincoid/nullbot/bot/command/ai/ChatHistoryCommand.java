@@ -5,6 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -33,7 +34,7 @@ public class ChatHistoryCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
-        List<QQMessage> history = qqAiClient.history(groupId, userId);
+        List<QQMessage> history = qqAiClient.history(BotCtxUtil.getChatId());
         if (history.isEmpty())
             throw new NullBotMsgException("[聊天历史] ⚠️无对话历史");
 
