@@ -48,6 +48,7 @@ public class CommandListener {
 
     // ================================== 私聊动作捕获 ==================================
 
+    @BotContext
     @FunctionControl("PrivateCmd")
     @PrivateMessageHandler
     @Async("ThreadExecutor")
@@ -87,6 +88,7 @@ public class CommandListener {
         }
     }
 
+    @BotContext
     @FunctionControl("PrivateCmd")
     @PrivatePokeNoticeHandler
     @Async("ThreadExecutor")

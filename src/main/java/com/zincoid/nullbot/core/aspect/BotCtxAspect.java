@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.core.aspect;
 
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
@@ -25,23 +26,28 @@ public class BotCtxAspect {
     @Around("@annotation(context)")
     public Object load(ProceedingJoinPoint joinPoint, BotContext context) throws Throwable {
         for (Object arg : joinPoint.getArgs()) {
-            Long userId = null;
             Long groupId = null;
+            Long userId = null;
             if (arg instanceof GroupMessageEvent event) {
-                userId = event.getUserId();
                 groupId = event.getGroupId();
+                userId = event.getUserId();
             } else if (arg instanceof PokeNoticeEvent event) {
-                userId = event.getUserId();
                 groupId = event.getGroupId();
+                userId = event.getUserId();
             } else if (arg instanceof GroupMsgDeleteNoticeEvent event) {
-                userId = event.getUserId();
                 groupId = event.getGroupId();
+                userId = event.getUserId();
+            } else if (arg instanceof PrivateMessageEvent event) {
+                userId = event.getUserId();
             }
-            if (userId != null && groupId != null) {
+            if (userId == null) continue;
+            if (groupId == null) {
+                BotCtxUtil.setPrivate(userId);
+            } else {
                 SettingPO setting = settingService.get(groupId);
-                BotCtxUtil.set(userId, groupId, setting);
-                break;
+                BotCtxUtil.setGroup(userId, groupId, setting);
             }
+            break;
         }
         try {
             return joinPoint.proceed();

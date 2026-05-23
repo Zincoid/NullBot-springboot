@@ -1,21 +1,33 @@
 package com.zincoid.nullbot.core.util;
 
+import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 
 public final class BotCtxUtil {
 
+    public static final ThreadLocal<Boolean> isPrivate = new ThreadLocal<>();
     public static final ThreadLocal<Long> userId = new ThreadLocal<>();
     public static final ThreadLocal<Long> groupId = new ThreadLocal<>();
     public static final ThreadLocal<SettingPO> setting = new ThreadLocal<>();
 
     private BotCtxUtil() {}
 
-    public static void set(Long userId, Long groupId, SettingPO setting) {
+    // =================== 基本方法 ===================
+
+    public static void setGroup(Long userId, Long groupId, SettingPO setting) {
+        setIsPrivate(false);
         setUserId(userId);
         setGroupId(groupId);
         setSetting(setting);
     }
+    public static void setPrivate(Long userId) {
+        setIsPrivate(true);
+        setUserId(userId);
+    }
 
+    public static void setIsPrivate(boolean isPrivate) {
+        BotCtxUtil.isPrivate.set(isPrivate);
+    }
     public static void setUserId(Long userId) {
         BotCtxUtil.userId.set(userId);
     }
@@ -26,6 +38,9 @@ public final class BotCtxUtil {
         BotCtxUtil.setting.set(setting);
     }
 
+    public static boolean getIsPrivate() {
+        return isPrivate.get();
+    }
     public static Long getUserId() {
         return userId.get();
     }
@@ -37,8 +52,18 @@ public final class BotCtxUtil {
     }
 
     public static void remove() {
+        isPrivate.remove();
         userId.remove();
         groupId.remove();
         setting.remove();
+    }
+
+    // =================== 应用方法 ===================
+
+    public static String getChatId() {
+        if (getIsPrivate()) return "Private_" + getUserId();
+        ChatScope scope = getSetting().getChatScope();
+        return scope + "_" + (scope == ChatScope.Personal
+                ? getUserId() : getGroupId());
     }
 }
