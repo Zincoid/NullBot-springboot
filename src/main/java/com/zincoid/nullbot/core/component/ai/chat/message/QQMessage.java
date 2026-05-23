@@ -78,7 +78,7 @@ public class QQMessage extends AbstractMessage {
         return this;
     }
 
-    public QQMessage mid(Integer messageId) {
+    public QQMessage id(Integer messageId) {
         this.messageId = messageId;
         return this;
     }
