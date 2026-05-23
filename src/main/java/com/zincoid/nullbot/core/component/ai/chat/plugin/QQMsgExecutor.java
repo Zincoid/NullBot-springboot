@@ -58,7 +58,7 @@ public class QQMsgExecutor {
             content = content.replaceAll("(\r?\n)+", "\n").trim();
             messageId = send(bot, targetId, content, isPrivate, voice);
         }
-        return List.of(QQMessage.assistant(content).id(messageId));
+        return List.of(QQMessage.assistant(content).mid(messageId));
     }
 
     public List<QQMessage> chain(QQMessage message, Event event,
@@ -72,7 +72,7 @@ public class QQMsgExecutor {
             return List.of(QQMessage.assistant("回复被拒绝"));
         if (filter(content)) {
             Integer messageId = send(bot, targetId, filtered(), isPrivate, voice);
-            return List.of(QQMessage.assistant("回复被过滤").id(messageId));
+            return List.of(QQMessage.assistant("回复被过滤").mid(messageId));
         }
         content = content.replaceAll("(\r?\n)+", "\n").trim();
         Matcher matcher = SEGMENT_PATTERN.matcher(content);
@@ -88,7 +88,7 @@ public class QQMsgExecutor {
             } else {
                 if (segment.isEmpty()) continue;
                 Integer messageId = send(bot, targetId, segment, isPrivate, voice);
-                messages.add(QQMessage.assistant(segment).id(messageId));
+                messages.add(QQMessage.assistant(segment).mid(messageId));
             }
         }
         return messages;
