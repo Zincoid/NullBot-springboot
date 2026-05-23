@@ -57,7 +57,9 @@ public class OpenAiModel implements Model {
             String baseUrl = openAiProperties.getApiUrl();
             String fullUrl = baseUrl.endsWith("/chat/completions")
                     ? baseUrl
-                    : (baseUrl.endsWith("/") ? baseUrl + "chat/completions" : baseUrl + "/chat/completions");
+                    : (baseUrl.endsWith("/")
+                    ? baseUrl + "chat/completions"
+                    : baseUrl + "/chat/completions");
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(fullUrl))
@@ -67,16 +69,15 @@ public class OpenAiModel implements Model {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
 
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient
+                    .send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
                 JsonNode rootNode = objectMapper.readTree(response.body());
                 return rootNode
-                        .path("choices")
-                        .get(0)
+                        .path("choices").get(0)
                         .path("message")
-                        .path("content")
-                        .asText();
+                        .path("content").asText();
             } else {
                 throw new RuntimeException("OpenAI API请求失败: " + response.statusCode() + " - " + response.body());
             }
