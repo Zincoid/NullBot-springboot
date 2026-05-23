@@ -17,7 +17,7 @@ public class QQMessage extends AbstractMessage {
     private Long userId;
     private String userName;
 
-    public QQMessage(Role role, String content) {
+    private QQMessage(Role role, String content) {
         super(role, content);
     }
 
