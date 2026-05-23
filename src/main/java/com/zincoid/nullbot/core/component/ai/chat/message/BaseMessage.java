@@ -14,16 +14,6 @@ public class BaseMessage extends AbstractMessage {
     }
 
     @Override
-    public Role getRole() {
-        return super.getRole();
-    }
-
-    @Override
-    public String getContent() {
-        return super.getContent();
-    }
-
-    @Override
     public Map<String, String> toMap() {
         Map<String, String> map = new HashMap<>();
         map.put("role", super.role.getValue());
@@ -31,16 +21,14 @@ public class BaseMessage extends AbstractMessage {
         return map;
     }
 
-    // 构建方法
+    // ==================== 构建方法 ====================
 
     public static BaseMessage user(String content) {
         return new BaseMessage(Role.USER, content);
     }
-
     public static BaseMessage assistant(String content) {
         return new BaseMessage(Role.ASSISTANT, content);
     }
-
     public static BaseMessage system(String content) {
         return new BaseMessage(Role.SYSTEM, content);
     }

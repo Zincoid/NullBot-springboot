@@ -22,16 +22,6 @@ public class QQMessage extends AbstractMessage {
     }
 
     @Override
-    public Role getRole() {
-        return super.getRole();
-    }
-
-    @Override
-    public String getContent() {
-        return super.getContent();
-    }
-
-    @Override
     public Map<String, String> toMap() {
         Map<String, String> map = new HashMap<>();
         String r = super.role.getValue();
@@ -45,29 +35,27 @@ public class QQMessage extends AbstractMessage {
         return map;
     }
 
-    // 构建方法
+    // ====================== 构建方法 ======================
 
     public static QQMessage from(Message message) {
         return new QQMessage(message.getRole(), message.getContent());
     }
-
     public static QQMessage user(String content) {
         return new QQMessage(Role.USER, content);
     }
-
     public static QQMessage assistant(String content) {
         return new QQMessage(Role.ASSISTANT, content);
     }
-
     public static QQMessage system(String content) {
         return new QQMessage(Role.SYSTEM, content);
     }
+
+    // ====================== 设置方法 ======================
 
     public QQMessage id(Integer messageId) {
         this.messageId = messageId;
         return this;
     }
-
     public QQMessage with(Long groupId, Long userId, String userName) {
         this.isPrivate = false;
         this.groupId = groupId;
@@ -75,7 +63,6 @@ public class QQMessage extends AbstractMessage {
         this.userName = userName;
         return this;
     }
-
     public QQMessage with(Long userId, String userName) {
         this.isPrivate = true;
         this.userId = userId;
