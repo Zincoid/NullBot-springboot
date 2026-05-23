@@ -793,7 +793,7 @@
 - 移除 部分冗余的配置属性类；
 - 其他部分代码优化纠错。
 
-### 2026.5.21 - v2.1.0
+### 2026.5.22
 
 - 完全重构 AI 功能框架：
   - 新增四层 AI 架构 (Model, ChatRepository, ChatMemory, AiClient)；
@@ -807,3 +807,10 @@
 - 修复 CommandRegistry 组件初始化 Command 时未完全加载的问题；
 - 移除已弃用的 FileUtil, ResourceUtil, JwtUtil, Page 等类；
 - 移除未弃用类的弃用方法。
+
+### 2026.5.23 - v2.1.0
+
+- 增强 BotCtxUtil：
+  - 对群聊私信进行区分并注解相关私信入口方法；
+  - 新增 ChatId 获取方法；
+- 增强 QQAiClient - 添加从 BotCtx 中获取 ChatId 的重载方法。
