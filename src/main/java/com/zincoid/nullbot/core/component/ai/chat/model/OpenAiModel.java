@@ -31,31 +31,29 @@ public class OpenAiModel implements Model {
     @Override
     public String invoke(List<Message> messages, boolean thinking, int maxTokens) {
         try {
-            List<Map<String, String>> _messages = messages.stream()
-                    .map(Message::toMap)
-                    .toList();
-
             ObjectNode requestBody = objectMapper.createObjectNode();
+
+            List<Map<String, String>> _messages = messages.stream()
+                    .map(Message::toMap).toList();
+            requestBody.set("messages", objectMapper.valueToTree(_messages));
+
             requestBody.put("model", openAiProperties.getModel());
-
+            ObjectNode thinkingNode = objectMapper.createObjectNode();
             if (thinking) {
-                ObjectNode thinkingNode = objectMapper.createObjectNode();
                 thinkingNode.put("type", "enabled");
-                requestBody.set("thinking", thinkingNode);
-                requestBody.put("reasoning_effort", "high");
+                requestBody.put("reasoning_effort", "max");
             } else {
-                requestBody.set("thinking", NullNode.getInstance());
+                thinkingNode.put("type", "disabled");
+                requestBody.put("reasoning_effort", "high");
             }
-
+            requestBody.set("thinking", thinkingNode);
             requestBody.put("stream", false);
             requestBody.put("max_tokens", maxTokens);
             requestBody.put("temperature", 0.8);
             requestBody.put("frequency_penalty", 0.3);
             requestBody.put("presence_penalty", 0.2);
-            requestBody.set("messages", objectMapper.valueToTree(_messages));
 
             String jsonBody = objectMapper.writeValueAsString(requestBody);
-
             String baseUrl = openAiProperties.getApiUrl();
             String fullUrl = baseUrl.endsWith("/chat/completions")
                     ? baseUrl
