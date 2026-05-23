@@ -23,12 +23,12 @@ public class QQMessage extends AbstractMessage {
 
     @Override
     public Role getRole() {
-        return super.role;
+        return super.getRole();
     }
 
     @Override
     public String getContent() {
-        return super.content;
+        return super.getContent();
     }
 
     @Override
