@@ -11,4 +11,14 @@ public abstract class AbstractMessage implements Message {
         this.role = role;
         this.content = content;
     }
+
+    @Override
+    public Role getRole() {
+        return role;
+    }
+
+    @Override
+    public String getContent() {
+        return content;
+    }
 }
