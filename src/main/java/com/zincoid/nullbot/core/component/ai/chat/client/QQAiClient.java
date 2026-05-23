@@ -11,6 +11,7 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.service.SettingService;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -47,7 +48,20 @@ public class QQAiClient implements AiClient<QQMessage> {
         return QQMessage.assistant(res).gc(message.getGroupId(), message.getUserId(), message.getUserName());
     }
 
-    // =================== 应用方法 ===================
+    // =================== 应用方法 (BotCtx) ===================
+
+    void clear() {
+        chatMemory.clear(BotCtxUtil.getChatId());
+    }
+
+    public List<QQMessage> history() {
+        return chatMemory.get(BotCtxUtil.getChatId()).stream()
+                .filter(msg -> msg instanceof QQMessage)
+                .map(msg -> (QQMessage) msg)
+                .toList();
+    }
+
+    // =================== 应用方法 (通用) ===================
 
     public String chat(QQMessage message, Event event) {
         if (message.isPrivate()) {
@@ -77,10 +91,12 @@ public class QQAiClient implements AiClient<QQMessage> {
         return _message.getContent();
     }
 
+    @Deprecated
     public void clear(Long userId) {
         chatMemory.clear("Private_" + userId);
     }
 
+    @Deprecated
     public ChatScope clear(Long groupId, Long userId) {
         ChatScope scope = settingService.get(groupId).getChatScope();
         switch (scope) {
@@ -90,6 +106,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         return scope;
     }
 
+    @Deprecated
     public List<QQMessage> history(Long userId) {
         return chatMemory.get("Private_" + userId).stream()
                 .filter(msg -> msg instanceof QQMessage)
@@ -97,6 +114,7 @@ public class QQAiClient implements AiClient<QQMessage> {
                 .toList();
     }
 
+    @Deprecated
     public List<QQMessage> history(Long groupId, Long userId) {
         ChatScope scope = settingService.get(groupId).getChatScope();
         return (switch (scope) {
