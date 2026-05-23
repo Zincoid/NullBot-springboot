@@ -100,7 +100,7 @@ ai:
     max-tokens: 750
     default-sys-msg: 你是一只猫娘，你的名字叫Null。
     openai:
-      api-url: https://api.deepseek.com/chat/completions
+      api-url: https://api.deepseek.com
       api-key:
       model: deepseek-v4-flash
   tts:  # TTS Settings
