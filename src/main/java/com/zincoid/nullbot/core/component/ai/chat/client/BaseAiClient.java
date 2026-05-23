@@ -22,8 +22,7 @@ public class BaseAiClient implements AiClient<BaseMessage> {
         List<Message> _messages = new ArrayList<>();
         _messages.add(BaseMessage.system(prompt));
         _messages.addAll(messages);
-        String content = model.invoke(_messages, thinking, maxTokens);
-        BaseMessage _message = BaseMessage.assistant(content);
+        BaseMessage _message = (BaseMessage) model.invoke(_messages, thinking, maxTokens);
         chatMemory.add(chatId, _message);
         return _message;
     }
