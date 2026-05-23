@@ -7,6 +7,7 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -33,10 +34,11 @@ public class ChatCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
-        String message = String.join(" ", params);
+        String content = String.join(" ", params);
         String response;
         try {
-            response = qqAiClient.chat(QQMessage.user(message).gc(groupId, userId, userName).id(messageId), event);
+            QQMessage message = QQMessage.user(content).gc(groupId, userId, userName).id(messageId);
+            response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event);
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
@@ -61,10 +63,11 @@ public class ChatCommand implements Command {
         Integer messageId = event.getMessageId();
         Long userId = event.getUserId();
         String userName = event.getPrivateSender().getNickname();
-        String message = String.join(" ", params);
+        String content = String.join(" ", params);
         String response;
         try {
-            response = qqAiClient.chat(QQMessage.user(message).pm(userId, userName).id(messageId), event);
+            QQMessage message = QQMessage.user(content).pm(userId, userName).id(messageId);
+            response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event);
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }

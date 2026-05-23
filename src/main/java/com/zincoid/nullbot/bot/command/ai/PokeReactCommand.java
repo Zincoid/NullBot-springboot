@@ -4,6 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -31,9 +32,11 @@ public class PokeReactCommand implements Command {
         String response;
         try {
             if (groupId != null) {
-                response = qqAiClient.chat(QQMessage.user("揉了你一下").gc(groupId, userId, userName), event);
+                QQMessage message = QQMessage.user("揉了你一下").gc(groupId, userId, userName);
+                response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event);
             } else {
-                response = qqAiClient.chat(QQMessage.user("揉了你一下").pm(userId, userName), event);
+                QQMessage message = QQMessage.user("揉了你一下").pm(userId, userName);
+                response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event);
             }
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
