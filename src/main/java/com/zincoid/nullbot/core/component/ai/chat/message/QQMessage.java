@@ -63,6 +63,11 @@ public class QQMessage extends AbstractMessage {
         return new QQMessage(Role.SYSTEM, content);
     }
 
+    public QQMessage id(Integer messageId) {
+        this.messageId = messageId;
+        return this;
+    }
+
     public QQMessage with(Long groupId, Long userId, String userName) {
         this.isPrivate = false;
         this.groupId = groupId;
@@ -75,11 +80,6 @@ public class QQMessage extends AbstractMessage {
         this.isPrivate = true;
         this.userId = userId;
         this.userName = userName;
-        return this;
-    }
-
-    public QQMessage id(Integer messageId) {
-        this.messageId = messageId;
         return this;
     }
 }
