@@ -24,7 +24,7 @@ public class AiConfiguration {
         MsgWindowChatMemory msgWindowChatMemory = new MsgWindowChatMemory(
                 repository, properties.getMaxHistoryLength()
         );
-        log.info("▽ [MsgWindowChatMemory] 已初始化");
+        log.info("▽ [MsgWindowChatMemory] 聊天存储已初始化 - Window Size: {}", properties.getMaxHistoryLength());
         return msgWindowChatMemory;
     }
 
@@ -38,7 +38,7 @@ public class AiConfiguration {
                 antiInjector.withModel(model),
                 prompter, executor
         ).withMaxTokens(properties.getMaxTokens());
-        log.info("▽ [QQAiClient] 已初始化");
+        log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}", model.getClass().getSimpleName());
         return qqAiClient;
     }
 }
