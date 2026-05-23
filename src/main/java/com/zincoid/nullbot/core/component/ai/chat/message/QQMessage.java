@@ -47,6 +47,10 @@ public class QQMessage extends AbstractMessage {
 
     // 构建方法
 
+    public static QQMessage from(Message message) {
+        return new QQMessage(message.getRole(), message.getContent());
+    }
+
     public static QQMessage user(String content) {
         return new QQMessage(Role.USER, content);
     }
@@ -59,7 +63,7 @@ public class QQMessage extends AbstractMessage {
         return new QQMessage(Role.SYSTEM, content);
     }
 
-    public QQMessage gc(Long groupId, Long userId, String userName) {
+    public QQMessage with(Long groupId, Long userId, String userName) {
         this.isPrivate = false;
         this.groupId = groupId;
         this.userId = userId;
@@ -67,14 +71,14 @@ public class QQMessage extends AbstractMessage {
         return this;
     }
 
-    public QQMessage pm(Long userId, String userName) {
+    public QQMessage with(Long userId, String userName) {
         this.isPrivate = true;
         this.userId = userId;
         this.userName = userName;
         return this;
     }
 
-    public QQMessage id(Integer messageId) {
+    public QQMessage mid(Integer messageId) {
         this.messageId = messageId;
         return this;
     }
