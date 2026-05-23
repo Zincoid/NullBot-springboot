@@ -25,7 +25,7 @@ public class ChatResetCommand implements Command {
         String chatId = BotCtxUtil.getChatId();
         qqAiClient.clear(chatId);
         bot.sendGroupMsg(event.getGroupId(), """
-                    [重置聊天] ♻️历史已重置
+                    [重置聊天] ♻️记忆存储已重置
                     - ChatID: %s""".formatted(chatId), false);
         log.info("\t\t\t\t├─[ChatReset] 历史已重置 - ChatID: {}", chatId);
     }
