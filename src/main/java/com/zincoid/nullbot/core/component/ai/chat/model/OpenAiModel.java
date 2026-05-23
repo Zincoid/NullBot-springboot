@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
-import com.zincoid.nullbot.core.properties.DeepSeekProperties;
+import com.zincoid.nullbot.core.properties.OpenAiProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,21 +20,24 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class DsModel implements Model {
+public class OpenAiModel implements Model {
 
-    private final DeepSeekProperties deepSeekProperties;
-
+    private final OpenAiProperties openAiProperties;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(30))
             .build();
 
+    @Override
     public String invoke(List<Message> messages, boolean thinking, int maxTokens) {
         try {
-            List<Map<String, String>> _messages = messages.stream().map(Message::toMap).toList();
+            List<Map<String, String>> _messages = messages.stream()
+                    .map(Message::toMap)
+                    .toList();
 
             ObjectNode requestBody = objectMapper.createObjectNode();
-            requestBody.put("model", deepSeekProperties.getModel());
+            requestBody.put("model", openAiProperties.getModel());
+
             if (thinking) {
                 ObjectNode thinkingNode = objectMapper.createObjectNode();
                 thinkingNode.put("type", "enabled");
@@ -43,21 +46,29 @@ public class DsModel implements Model {
             } else {
                 requestBody.set("thinking", NullNode.getInstance());
             }
+
             requestBody.put("stream", false);
             requestBody.put("max_tokens", maxTokens);
-            requestBody.set("messages", objectMapper.valueToTree(_messages));
+            requestBody.put("temperature", 0.8);
             requestBody.put("frequency_penalty", 0.3);
             requestBody.put("presence_penalty", 0.2);
-            requestBody.put("temperature", 0.8);
+            requestBody.set("messages", objectMapper.valueToTree(_messages));
 
             String jsonBody = objectMapper.writeValueAsString(requestBody);
+
+            String baseUrl = openAiProperties.getApiUrl();
+            String fullUrl = baseUrl.endsWith("/chat/completions")
+                    ? baseUrl
+                    : (baseUrl.endsWith("/") ? baseUrl + "chat/completions" : baseUrl + "/chat/completions");
+
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(deepSeekProperties.getApiUrl()))
-                    .header("Authorization", "Bearer " + deepSeekProperties.getApiKey())
+                    .uri(URI.create(fullUrl))
+                    .header("Authorization", "Bearer " + openAiProperties.getApiKey())
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
+
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
@@ -68,8 +79,9 @@ public class DsModel implements Model {
                         .path("message")
                         .path("content")
                         .asText();
-            } else
-                throw new RuntimeException("API请求失败: " + response.statusCode() + " - " + response.body());
+            } else {
+                throw new RuntimeException("OpenAI API请求失败: " + response.statusCode() + " - " + response.body());
+            }
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

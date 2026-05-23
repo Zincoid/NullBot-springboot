@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
-import com.zincoid.nullbot.core.component.ai.chat.model.DsModel;
+import com.zincoid.nullbot.core.component.ai.chat.model.OpenAiModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,7 +27,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class QuestionCommand implements Command {
 
-    private final DsModel dsModel;
+    private final OpenAiModel openAiModel;
     private final BotInputManager botInputManager;
     private final PermissionHandler permissionHandler;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -51,7 +51,7 @@ public class QuestionCommand implements Command {
             bot.sendGroupMsg(groupId, "⏳问题生成中, 请稍候...", false);
             String raw;
             try {
-                raw = dsModel.invoke(
+                raw = openAiModel.invoke(
                         List.of(BaseMessage.system("""
                                 出一道单选题并给出题目和答案，问题主题：%s。请严格按照以下JSON格式回复，不要包含任何其他内容：
                                 {"answer":"正确选项字母","timeout":回答限时秒数,"question":"题目内容(选项要换行)"}
