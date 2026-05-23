@@ -91,12 +91,10 @@ public class QQAiClient implements AiClient<QQMessage> {
         return _message.getContent();
     }
 
-    @Deprecated
     public void clear(Long userId) {
         chatMemory.clear("Private_" + userId);
     }
 
-    @Deprecated
     public ChatScope clear(Long groupId, Long userId) {
         ChatScope scope = settingService.get(groupId).getChatScope();
         switch (scope) {
@@ -106,7 +104,6 @@ public class QQAiClient implements AiClient<QQMessage> {
         return scope;
     }
 
-    @Deprecated
     public List<QQMessage> history(Long userId) {
         return chatMemory.get("Private_" + userId).stream()
                 .filter(msg -> msg instanceof QQMessage)
@@ -114,7 +111,6 @@ public class QQAiClient implements AiClient<QQMessage> {
                 .toList();
     }
 
-    @Deprecated
     public List<QQMessage> history(Long groupId, Long userId) {
         ChatScope scope = settingService.get(groupId).getChatScope();
         return (switch (scope) {
