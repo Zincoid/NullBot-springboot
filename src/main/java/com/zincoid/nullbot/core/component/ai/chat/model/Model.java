@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface Model {
 
-    public String invoke(List<Message> messages, boolean thinking, int maxTokens);
+    public Message invoke(List<Message> messages, boolean thinking, int maxTokens);
 }
