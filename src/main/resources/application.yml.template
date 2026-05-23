@@ -99,11 +99,11 @@ ai:
     max-history-length: 100
     max-tokens: 750
     default-system-message: 你是一只猫娘，你的名字叫Null。
-  deepseek:  # DeepSeek API
-    api-url: https://api.deepseek.com/chat/completions
-    api-key:
-    model: deepseek-v4-flash
-  tts:  # TTS API
+    deepseek:  # DeepSeek API
+      api-url: https://api.deepseek.com/chat/completions
+      api-key:
+      model: deepseek-v4-flash
+  tts:  # TTS Settings
     api-url: https://gsv2p.acgnai.top
     api-key:
     version: v4
