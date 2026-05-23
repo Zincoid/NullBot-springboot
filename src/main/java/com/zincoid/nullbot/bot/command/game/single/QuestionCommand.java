@@ -49,6 +49,7 @@ public class QuestionCommand implements Command {
         try {
             inGameUsers.add(userId);
             bot.sendGroupMsg(groupId, "⏳问题生成中, 请稍候...", false);
+
             String raw;
             try {
                 raw = openAiModel.invoke(
@@ -61,7 +62,7 @@ public class QuestionCommand implements Command {
                                 3. 禁止生成中国国内政治事件和政治人物相关问题，当主题涉及时仅回复REFUSED"""
                                 .formatted(params.isEmpty() ? "二次元" : String.join(" ", params)))),
                         thinking, 2500
-                );
+                ).getContent();
             } catch (Exception e) {
                 throw new NullBotMsgException("""
                         [问答] ❌生成请求出错
