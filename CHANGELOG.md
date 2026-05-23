@@ -812,4 +812,5 @@
 
 - 增强 BotCtxUtil：
   - 对群聊私信进行区分并注解相关私信入口方法；
-  - 新增 ChatId 获取方法。
+  - 新增 ChatId 获取方法；
+- 增强 QQAiClient - 添加从 BotCtx 中获取 ChatId 的重载方法。

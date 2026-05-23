@@ -48,6 +48,19 @@ public class QQAiClient implements AiClient<QQMessage> {
         return QQMessage.assistant(res).gc(message.getGroupId(), message.getUserId(), message.getUserName());
     }
 
+    // =================== 应用方法 (BotCtx) ===================
+
+    void clear() {
+        chatMemory.clear(BotCtxUtil.getChatId());
+    }
+
+    public List<QQMessage> history() {
+        return chatMemory.get(BotCtxUtil.getChatId()).stream()
+                .filter(msg -> msg instanceof QQMessage)
+                .map(msg -> (QQMessage) msg)
+                .toList();
+    }
+
     // =================== 应用方法 (通用) ===================
 
     public String chat(String chatId, QQMessage message, Event event) {
