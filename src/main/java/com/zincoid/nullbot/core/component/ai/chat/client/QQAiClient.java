@@ -11,7 +11,6 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.service.SettingService;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class QQAiClient implements AiClient<QQMessage> {
             for (QQMessage msg : messages) chatMemory.add(chatId, msg);
             return _message.getContent();
         }
-        SettingPO setting = BotCtxUtil.getSetting();
+        SettingPO setting = settingService.get(message.getGroupId());
         String chatId = setting.getChatScope() + "_" +
                 (setting.getChatScope() == ChatScope.Personal ? message.getUserId() : message.getGroupId());
         if (setting.isAntiInjection() && qqAntiInjector.check(message)) {
