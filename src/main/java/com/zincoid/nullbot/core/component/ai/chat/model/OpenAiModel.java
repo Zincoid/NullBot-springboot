@@ -41,10 +41,9 @@ public class OpenAiModel implements Model {
             ObjectNode thinkingNode = objectMapper.createObjectNode();
             if (thinking) {
                 thinkingNode.put("type", "enabled");
-                requestBody.put("reasoning_effort", "max");
+                requestBody.put("reasoning_effort", "high");
             } else {
                 thinkingNode.put("type", "disabled");
-                requestBody.put("reasoning_effort", "high");
             }
             requestBody.set("thinking", thinkingNode);
             requestBody.put("stream", false);
