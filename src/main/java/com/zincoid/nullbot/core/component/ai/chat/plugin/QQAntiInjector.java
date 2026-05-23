@@ -60,7 +60,7 @@ public class QQAntiInjector {
         String res = model.invoke(
                 List.of(BaseMessage.system(PROMPT.formatted(message.getContent()))),
                 false, 100
-        );
+        ).getContent();
         if (!"YES".equals(res.trim())) return false;
         if (message.isPrivate()) {
             botOperator.sendPrivateMsg(message.getUserId(), refused());
