@@ -37,8 +37,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         _messages.add(QQMessage.system(prompt));
         _messages.addAll(chatMemory.get(chatId));
         QQMessage _message = QQMessage.from(model.invoke(_messages, thinking, maxTokens));
-        if (message.isPrivate())
-            return _message.with(message.getUserId(), message.getUserName());
+        if (message.isPrivate()) return _message.with(message.getUserId(), message.getUserName());
         return _message.with(message.getGroupId(), message.getUserId(), message.getUserName());
     }
 
