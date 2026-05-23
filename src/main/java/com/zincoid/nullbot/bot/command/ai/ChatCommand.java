@@ -37,7 +37,7 @@ public class ChatCommand implements Command {
         String content = String.join(" ", params);
         String response;
         try {
-            QQMessage message = QQMessage.user(content).gc(groupId, userId, userName).id(messageId);
+            QQMessage message = QQMessage.user(content).with(groupId, userId, userName).mid(messageId);
             response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event, BotCtxUtil.getSetting());
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
@@ -66,7 +66,7 @@ public class ChatCommand implements Command {
         String content = String.join(" ", params);
         String response;
         try {
-            QQMessage message = QQMessage.user(content).pm(userId, userName).id(messageId);
+            QQMessage message = QQMessage.user(content).with(userId, userName).mid(messageId);
             response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event);
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
