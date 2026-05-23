@@ -98,7 +98,7 @@ ai:
   chat:  # Chat Settings
     max-history-length: 100
     max-tokens: 750
-    default-system-message: 你是一只猫娘，你的名字叫Null。
+    default-sys-msg: 你是一只猫娘，你的名字叫Null。
     openai:
       api-url: https://api.deepseek.com/chat/completions
       api-key:

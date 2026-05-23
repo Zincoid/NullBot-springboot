@@ -26,11 +26,11 @@ public class SysMsgManager {
 
     // =================== 提示词功能相关 ===================
 
-    public String getDefaultMessage(Long groupId) { return defaultMessages.computeIfAbsent(groupId, k -> aiChatProperties.getDefaultSystemMessage()); }
+    public String getDefaultMessage(Long groupId) { return defaultMessages.computeIfAbsent(groupId, k -> aiChatProperties.getDefaultSysMsg()); }
     public void setDefaultMessage(Long groupId, String message) { defaultMessages.put(groupId, message); }
     public String getCustomMessage(Long groupId) { return customMessages.computeIfAbsent(groupId, k -> "你是一个AI助手，名字叫Null。"); }
     public void setCustomMessage(Long groupId, String message) { customMessages.put(groupId, message); }
-    public String getUserMessage(Long userId) { return userMessages.computeIfAbsent(userId, k -> aiChatProperties.getDefaultSystemMessage()); }
+    public String getUserMessage(Long userId) { return userMessages.computeIfAbsent(userId, k -> aiChatProperties.getDefaultSysMsg()); }
     public void setUserMessage(Long userId, String message) { userMessages.put(userId, message); }
 
     // =================== 长时记忆功能相关 ===================

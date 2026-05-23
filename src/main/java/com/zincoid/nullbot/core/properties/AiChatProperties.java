@@ -10,5 +10,5 @@ import org.springframework.stereotype.Component;
 public class AiChatProperties {
     private Integer maxHistoryLength;
     private Integer maxTokens;
-    private String DefaultSystemMessage;
+    private String DefaultSysMsg;
 }
