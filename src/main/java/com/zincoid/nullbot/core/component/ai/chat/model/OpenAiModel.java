@@ -3,6 +3,7 @@ package com.zincoid.nullbot.core.component.ai.chat.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 import com.zincoid.nullbot.core.properties.OpenAiProperties;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class OpenAiModel implements Model {
             .build();
 
     @Override
-    public String invoke(List<Message> messages, boolean thinking, int maxTokens) {
+    public Message invoke(List<Message> messages, boolean thinking, int maxTokens) {
         try {
             ObjectNode requestBody = objectMapper.createObjectNode();
 
@@ -72,10 +73,12 @@ public class OpenAiModel implements Model {
 
             if (response.statusCode() == 200) {
                 JsonNode rootNode = objectMapper.readTree(response.body());
-                return rootNode
-                        .path("choices").get(0)
-                        .path("message")
-                        .path("content").asText();
+                return BaseMessage.assistant(
+                        rootNode
+                                .path("choices").get(0)
+                                .path("message")
+                                .path("content").asText()
+                );
             } else {
                 throw new RuntimeException("OpenAI API请求失败: " + response.statusCode() + " - " + response.body());
             }
