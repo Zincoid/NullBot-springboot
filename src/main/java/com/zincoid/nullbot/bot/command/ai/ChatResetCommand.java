@@ -3,11 +3,11 @@ package com.zincoid.nullbot.bot.command.ai;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.enums.ChatScope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,18 +22,12 @@ public class ChatResetCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        Long groupId = event.getGroupId();
-        Long userId = event.getUserId();
-        ChatScope chatScope = qqAiClient.clear(groupId, userId);
-        Long targetId = switch (chatScope) {
-            case Group, Monitor ->  groupId;
-            case Personal -> userId;
-        };
-        bot.sendGroupMsg(groupId, """
+        String chatId = BotCtxUtil.getChatId();
+        qqAiClient.clear(chatId);
+        bot.sendGroupMsg(event.getGroupId(), """
                     [重置聊天] ♻️历史已重置
-                    - Chat Scope: %s
-                    - Target ID: %s""".formatted(chatScope, targetId), false);
-        log.info("\t\t\t\t├─[ChatReset] 历史已重置 - {}: {}", chatScope, targetId);
+                    - ChatID: %s""".formatted(chatId), false);
+        log.info("\t\t\t\t├─[ChatReset] 历史已重置 - ChatID: {}", chatId);
     }
 
     @Override

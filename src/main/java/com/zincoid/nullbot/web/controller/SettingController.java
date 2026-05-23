@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.web.controller;
 
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.enums.ChatScope;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +39,12 @@ public class SettingController {
 
     @PutMapping("/set")
     public WebResult setSetting(@RequestBody SettingPO setting) {
+        Long groupId = setting.getGroupId();
+        ChatScope oldScope = settingService.get(groupId).getChatScope();
         if (settingService.set(setting)) {
-            commandRateLimiter.reset(setting.getGroupId());
-            qqAiClient.clear(setting.getGroupId(), null);
+            if (oldScope != ChatScope.Personal)
+                qqAiClient.clear(oldScope + "_" + groupId);
+            commandRateLimiter.reset(groupId);
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新失败");

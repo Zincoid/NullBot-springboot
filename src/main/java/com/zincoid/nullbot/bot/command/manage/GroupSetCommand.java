@@ -112,7 +112,7 @@ public class GroupSetCommand implements Command {
                         msg = "语音模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "ebd" -> {
-                        qqAiClient.clear(groupId, userId);
+                        qqAiClient.clear(BotCtxUtil.getChatId());
                         boolean enabled = setting.switchEmbedding();
                         msg = "指令模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
@@ -121,7 +121,7 @@ public class GroupSetCommand implements Command {
                         msg = "指令校验 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "cus" -> {
-                        qqAiClient.clear(groupId, userId);
+                        qqAiClient.clear(BotCtxUtil.getChatId());
                         boolean enabled = setting.switchCustom();
                         msg = "自定模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }

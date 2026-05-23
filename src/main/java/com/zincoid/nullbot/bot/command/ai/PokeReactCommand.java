@@ -33,7 +33,7 @@ public class PokeReactCommand implements Command {
         try {
             if (groupId != null) {
                 QQMessage message = QQMessage.user("揉了你一下").gc(groupId, userId, userName);
-                response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event);
+                response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event, BotCtxUtil.getSetting());
             } else {
                 QQMessage message = QQMessage.user("揉了你一下").pm(userId, userName);
                 response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event);

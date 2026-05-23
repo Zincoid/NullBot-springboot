@@ -63,15 +63,9 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     // =================== 应用方法 (通用) ===================
 
-    public String chat(String chatId, QQMessage message, Event event) {
-        if (message.isPrivate()) {
-            String prompt = qqPrompter.prompt(message.getUserId());
-            QQMessage _message = call(chatId, prompt, message, false, maxTokens);
-            List<QQMessage> messages = qqMsgExecutor.chain(_message, event, false, false);
-            for (QQMessage msg : messages) chatMemory.add(chatId, msg);
-            return _message.getContent();
-        }
-        SettingPO setting = settingService.get(message.getGroupId());
+    public String chat(String chatId, QQMessage message, Event event, SettingPO setting) {
+        if (message.isPrivate())
+            throw new IllegalArgumentException("消息类型应为群聊消息");
         if (setting.isAntiInjection() && qqAntiInjector.check(message)) {
             chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
             return "Refused";
@@ -88,8 +82,18 @@ public class QQAiClient implements AiClient<QQMessage> {
         return _message.getContent();
     }
 
-    public void clear(Long userId) {
-        chatMemory.clear("Private_" + userId);
+    public String chat(String chatId, QQMessage message, Event event) {
+        if (!message.isPrivate())
+            throw new IllegalArgumentException("消息类型应为私聊消息");
+        String prompt = qqPrompter.prompt(message.getUserId());
+        QQMessage _message = call(chatId, prompt, message, false, maxTokens);
+        List<QQMessage> messages = qqMsgExecutor.chain(_message, event, false, false);
+        for (QQMessage msg : messages) chatMemory.add(chatId, msg);
+        return _message.getContent();
+    }
+
+    public void clear(String chatId) {
+        chatMemory.clear(chatId);
     }
 
     public ChatScope clear(Long groupId, Long userId) {

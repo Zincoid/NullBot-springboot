@@ -38,7 +38,7 @@ public class ChatCommand implements Command {
         String response;
         try {
             QQMessage message = QQMessage.user(content).gc(groupId, userId, userName).id(messageId);
-            response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event);
+            response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event, BotCtxUtil.getSetting());
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
