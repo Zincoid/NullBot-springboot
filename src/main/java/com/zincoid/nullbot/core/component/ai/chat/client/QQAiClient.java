@@ -8,10 +8,7 @@ import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.component.ai.chat.model.Model;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
-import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
-import com.zincoid.nullbot.core.service.SettingService;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -27,8 +24,6 @@ public class QQAiClient implements AiClient<QQMessage> {
     private final QQPrompter qqPrompter;
     private final QQMsgExecutor qqMsgExecutor;
 
-    private final SettingService settingService;
-
     private int maxTokens = 512;
 
     public QQAiClient withMaxTokens(int maxTokens) {
@@ -38,7 +33,6 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     @Override
     public QQMessage call(String chatId, String prompt, QQMessage message, boolean thinking, int maxTokens) {
-        chatMemory.add(chatId, message);
         List<Message> _messages = new ArrayList<>();
         _messages.add(QQMessage.system(prompt));
         _messages.addAll(chatMemory.get(chatId));
@@ -53,6 +47,7 @@ public class QQAiClient implements AiClient<QQMessage> {
     public String chat(String chatId, QQMessage message, Event event, SettingPO setting) {
         if (message.isPrivate())
             throw new IllegalArgumentException("消息类型应为群聊消息");
+        chatMemory.add(chatId, message);
         if (setting.isAntiInjection() && qqAntiInjector.check(message)) {
             chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
             return "Refused";
@@ -72,6 +67,7 @@ public class QQAiClient implements AiClient<QQMessage> {
     public String chat(String chatId, QQMessage message, Event event) {
         if (!message.isPrivate())
             throw new IllegalArgumentException("消息类型应为私聊消息");
+        chatMemory.add(chatId, message);
         String prompt = qqPrompter.prompt(message.getUserId());
         QQMessage _message = call(chatId, prompt, message, false, maxTokens);
         List<QQMessage> messages = qqMsgExecutor.chain(_message, event, false, false);

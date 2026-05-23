@@ -9,7 +9,6 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQMsgExecutor;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
 import com.zincoid.nullbot.core.properties.AiChatProperties;
-import com.zincoid.nullbot.core.service.SettingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,14 +30,13 @@ public class AiConfiguration {
 
     @Bean
     public QQAiClient qqAiClient(
-            ChatMemory memory, Model model, SettingService service, AiChatProperties properties,
+            ChatMemory memory, Model model, AiChatProperties properties,
             QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
     ) {
         QQAiClient qqAiClient = new QQAiClient(
                 memory, model,
                 antiInjector.withModel(model),
-                prompter, executor,
-                service
+                prompter, executor
         ).withMaxTokens(properties.getMaxTokens());
         log.info("▽ [QQAiClient] 已初始化");
         return qqAiClient;
