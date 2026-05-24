@@ -4,11 +4,14 @@ import com.zincoid.nullbot.core.component.ai.chat.memory.ChatMemory;
 import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 import com.zincoid.nullbot.core.component.ai.chat.model.Model;
+import com.zincoid.nullbot.core.component.ai.chat.model.ModelResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+// @Component
 @RequiredArgsConstructor
 public class BaseAiClient implements AiClient<BaseMessage> {
 
@@ -22,7 +25,8 @@ public class BaseAiClient implements AiClient<BaseMessage> {
         List<Message> _messages = new ArrayList<>();
         _messages.add(BaseMessage.system(prompt));
         _messages.addAll(messages);
-        BaseMessage _message = (BaseMessage) model.invoke(_messages, thinking, maxTokens);
+        ModelResponse response = model.invoke(_messages, thinking, maxTokens);
+        BaseMessage _message = BaseMessage.assistant(response.getContent());
         chatMemory.add(chatId, _message);
         return _message;
     }

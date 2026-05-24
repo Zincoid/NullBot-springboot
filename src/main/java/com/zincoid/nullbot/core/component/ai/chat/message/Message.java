@@ -12,6 +12,8 @@ public interface Message {
 
     String getContent();
 
+    default String getToolCallId() { return null; };
+
     default List<ToolCall> getToolCalls() { return List.of(); }
 
     Map<String, Object> toMap();

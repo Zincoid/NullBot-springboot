@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 public class QQMessage extends AbstractMessage {
 
     private boolean isPrivate;
@@ -22,8 +22,8 @@ public class QQMessage extends AbstractMessage {
     }
 
     @Override
-    public Map<String, String> toMap() {
-        Map<String, String> map = new HashMap<>();
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
         String r = super.role.getValue();
         map.put("role", r);
         if ("user".equals(r)) {
