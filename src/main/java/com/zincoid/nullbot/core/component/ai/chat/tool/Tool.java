@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.component.ai.chat.tool;
 
 public interface Tool {
 
-    String execute(Object ...args);
+    String execute(String args);
 
     ToolDef getDef();
 }
