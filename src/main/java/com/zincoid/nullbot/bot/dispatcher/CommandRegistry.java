@@ -33,6 +33,6 @@ public class CommandRegistry {
                 sb.append(entry.getValue().getHelpForAI()).append("\n");
             }
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 }
