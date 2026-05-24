@@ -108,11 +108,11 @@ public class OpenAiModel implements Model {
                         String arguments = fnNode.path("arguments").asText();
                         toolCalls.add(new ToolCall(id, name, arguments));
                     }
-                    return ModelResponse.ofToolCalls(toolCalls);
+                    return ModelResponse.of(toolCalls);
                 }
 
                 String content = messageNode.path("content").asText(null);
-                return ModelResponse.ofContent(content != null ? content : "");
+                return ModelResponse.of(content != null ? content : "");
             } else {
                 throw new RuntimeException("OpenAI API请求失败: " + response.statusCode() + " - " + response.body());
             }
