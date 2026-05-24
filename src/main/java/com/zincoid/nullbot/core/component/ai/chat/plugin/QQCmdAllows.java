@@ -10,6 +10,8 @@ public class QQCmdAllows {
     static {
 
         GC_CMD_ALLOWS = Set.of(
+                /* ========== 中间回复 ========== */
+                "Reply",
                 /* ========== 普通命令 ========== */
                 "aud", "vid", "img", "say",
                 "ChatReset", "UserBan",
@@ -24,6 +26,8 @@ public class QQCmdAllows {
         );
 
         PM_CMD_ALLOWS = Set.of(
+                /* ========== 中间回复 ========== */
+                "Reply",
                 /* ========== 普通命令 ========== */
                 "Help",
                 /* ========== 合成命令 ========== */

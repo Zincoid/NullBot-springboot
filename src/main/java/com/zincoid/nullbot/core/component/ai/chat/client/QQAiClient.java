@@ -51,6 +51,10 @@ public class QQAiClient implements AiClient<QQMessage> {
         return this;
     }
 
+    public boolean switchToolCallEnabled() {
+        return toolCallEnabled = !toolCallEnabled;
+    }
+
     // =========================================== 模型方法 ===========================================
 
     @Override
