@@ -1,6 +1,5 @@
 package com.zincoid.nullbot.core.component.ai.chat.client;
 
-import com.mikuac.shiro.dto.event.Event;
 import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.model.ModelResponse;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQAntiInjector;
@@ -14,6 +13,7 @@ import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolCall;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +22,12 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public class QQAiClient implements AiClient<QQMessage> {
+public class QQAiClient {
+
+    private enum ChatStrategy {
+        WITH_COMMANDS,
+        WITH_TOOLS
+    }
 
     private final ChatMemory chatMemory;
     private final Model model;
@@ -31,13 +36,13 @@ public class QQAiClient implements AiClient<QQMessage> {
     private final QQPrompter qqPrompter;
     private final QQMsgExecutor qqMsgExecutor;
 
-    private boolean enableToolCall = false;
+    private ChatStrategy chatStrategy = ChatStrategy.WITH_COMMANDS;
     private int maxToolCalls = 0;
     private ToolRegistry toolRegistry;
 
     private int maxTokens = 512;
 
-    // =========================================== 配置方法 ===========================================
+    // =========================================== 系统方法 ===========================================
 
     public QQAiClient withMaxTokens(int maxTokens) {
         this.maxTokens = maxTokens;
@@ -46,14 +51,24 @@ public class QQAiClient implements AiClient<QQMessage> {
     }
 
     public QQAiClient withToolCall(ToolRegistry toolRegistry, int maxToolCalls) {
-        enableToolCall = true;
+        this.chatStrategy = ChatStrategy.WITH_TOOLS;
         this.maxToolCalls = maxToolCalls;
         this.toolRegistry = toolRegistry;
         log.info("▽ [QQAiClient] 工具调用已配置 - MaxToolCalls: {}", maxToolCalls);
         return this;
     }
 
-    // =========================================== 系统方法 ===========================================
+    public boolean switchStrategy() {
+        if (toolRegistry == null) {
+            log.warn("▽ [QQAiClient] 工具调用未配置 无法切换");
+            return false;
+        }
+        chatStrategy = chatStrategy == ChatStrategy.WITH_TOOLS
+                ? ChatStrategy.WITH_COMMANDS
+                : ChatStrategy.WITH_TOOLS;
+        log.info("▽ [QQAiClient] 策略已切换 - {}", chatStrategy);
+        return true;
+    }
 
     public void clear(String chatId) {
         chatMemory.clear(chatId);
@@ -63,90 +78,41 @@ public class QQAiClient implements AiClient<QQMessage> {
         return chatMemory.get(chatId);
     }
 
-    public boolean switchToolCall() {
-        if (toolRegistry == null || maxToolCalls <= 0) {
-            log.warn("▽ [QQAiClient] 工具调用未配置");
-            return false;
-        }
-        log.info("▽ [QQAiClient] 工具调用启用状态 - {}", !enableToolCall ? "ON" : "OFF");
-        return enableToolCall = !enableToolCall;
-    }
-
-    // =========================================== 模型方法 ===========================================
-
-    @Override
-    public QQMessage call(String chatId, String prompt, QQMessage message, boolean thinking, int maxTokens) {
-        List<Message> _messages = new ArrayList<>();
-        _messages.add(QQMessage.system(prompt));
-        _messages.addAll(chatMemory.get(chatId));
-        QQMessage _message = QQMessage.assistant(model.invoke(_messages, thinking, maxTokens).getContent());
-        if (message.isPrivate()) return _message.with(message.getUserId(), message.getUserName());
-        return _message.with(message.getGroupId(), message.getUserId(), message.getUserName());
-    }
-
     // =========================================== 应用方法 ===========================================
 
-    public String chat(String chatId, QQMessage message, Event event, SettingPO setting) {
-        if (message.isPrivate())
-            throw new IllegalArgumentException("消息类型应为群聊消息");
+    public String chat(QQMessage message) {
+        String chatId = BotCtxUtil.getChatId();
         chatMemory.add(chatId, message);
-        if (setting.isAntiInjection() && qqAntiInjector.check(message)) {
-            chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
-            return "Refused";
+        if (!message.isPrivate()) {
+            SettingPO setting = BotCtxUtil.getSetting();
+            if (setting.isAntiInjection() && qqAntiInjector.check(message)) {
+                chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
+                return "Refused";
+            }
         }
-        if (enableToolCall) {
-            String prompt = qqPrompter.prompt(message.getGroupId(), false, setting.isCustom());
-            QQMessage _message = callWithTools(chatId, prompt, message, false, maxTokens);
-            return _message.getContent();
-        } else {
-            String prompt = qqPrompter.prompt(message.getGroupId(), setting.isEmbedding(), setting.isCustom());
-            QQMessage _message = call(chatId, prompt, message, setting.isThinking(), maxTokens);
-            List<QQMessage> messages = (setting.isEmbedding() && !setting.isCustom())
-                    ? qqMsgExecutor.chain(_message, event, setting.isVoice(), setting.isEmbeddingAuth())
-                    : qqMsgExecutor.direct(_message, setting.isVoice());
-            for (QQMessage msg : messages) chatMemory.add(chatId, msg);
-            return _message.getContent();
-        }
+        return chatStrategy == ChatStrategy.WITH_TOOLS
+                ? chatWithTools(message)
+                : chatWithCommands(message);
     }
 
-    public String chat(String chatId, QQMessage message, Event event) {
-        if (!message.isPrivate())
-            throw new IllegalArgumentException("消息类型应为私聊消息");
-        chatMemory.add(chatId, message);
-        if (enableToolCall) {
-            String prompt = qqPrompter.prompt(message.getUserId(), false);
-            QQMessage _message = callWithTools(chatId, prompt, message, false, maxTokens);
-            return _message.getContent();
-        } else {
-            String prompt = qqPrompter.prompt(message.getUserId(), true);
-            QQMessage _message = call(chatId, prompt, message, false, maxTokens);
-            List<QQMessage> messages = qqMsgExecutor.chain(_message, event, false, false);
-            for (QQMessage msg : messages) chatMemory.add(chatId, msg);
-            return _message.getContent();
-        }
+    // ----------------------------------------- 工具调用方案 -----------------------------------------
+
+    private String chatWithTools(QQMessage message) {
+        String prompt = message.isPrivate()
+                ? qqPrompter.prompt(message.getUserId(), false)
+                : qqPrompter.prompt(message.getGroupId(), false, BotCtxUtil.getSetting().isCustom());
+        QQMessage result = callWithTools(prompt, message);
+        return result.getContent();
     }
 
-    // =========================================== 工具调用方案 ===========================================
-
-    private String executeTool(ToolCall toolCall) {
-        Tool tool = toolRegistry.get(toolCall.getName());
-        if (tool == null)
-            return "错误: 工具 " + toolCall.getName() + " 不存在";
-        try {
-            return tool.execute(toolCall.getArguments());
-        } catch (Exception e) {
-            log.warn("◉ [ToolCall] 工具执行失败: {}", e.getMessage());
-            return "错误: " + e.getMessage();
-        }
-    }
-
-    private QQMessage callWithTools(String chatId, String prompt, QQMessage message, boolean thinking, int maxTokens) {
+    private QQMessage callWithTools(String prompt, QQMessage message) {
+        String chatId = BotCtxUtil.getChatId();
         ModelResponse finalResp = null;
         for (int i = 0; i < maxToolCalls; i++) {
             List<Message> messages = new ArrayList<>();
             messages.add(QQMessage.system(prompt));
             messages.addAll(chatMemory.get(chatId));
-            ModelResponse response = model.invoke(messages, toolRegistry.getAll(), thinking, maxTokens);
+            ModelResponse response = model.invoke(messages, toolRegistry.getAll(), false, maxTokens);
             if (!response.hasToolCalls()) {
                 finalResp = response;
                 break;
@@ -162,7 +128,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         }
         if (finalResp == null) {
             log.warn("◉ [ToolCall] 达到最大迭代次数({})，进行最终调用", maxToolCalls);
-            finalResp = model.invoke(chatMemory.get(chatId), thinking, maxTokens);
+            finalResp = model.invoke(chatMemory.get(chatId), false, maxTokens);
         }
         QQMessage finalMessage = message.isPrivate()
                 ? QQMessage.assistant(finalResp.getContent()).with(message.getUserId(), message.getUserName())
@@ -170,5 +136,56 @@ public class QQAiClient implements AiClient<QQMessage> {
         List<QQMessage> _messages = qqMsgExecutor.direct(finalMessage, false);
         for (QQMessage msg : _messages) chatMemory.add(chatId, msg);
         return finalMessage;
+    }
+
+    private String executeTool(ToolCall toolCall) {
+        Tool tool = toolRegistry.get(toolCall.getName());
+        if (tool == null)
+            return "错误: 工具 " + toolCall.getName() + " 不存在";
+        try {
+            return tool.execute(toolCall.getArguments());
+        } catch (Exception e) {
+            log.warn("◉ [ToolCall] 工具执行失败: {}", e.getMessage());
+            return "错误: " + e.getMessage();
+        }
+    }
+
+    // ----------------------------------------- 指令嵌入方案 -----------------------------------------
+
+    private String chatWithCommands(QQMessage message) {
+        SettingPO setting = message.isPrivate() ? null : BotCtxUtil.getSetting();
+        boolean embed = setting != null && setting.isEmbedding();
+        boolean custom = setting != null && setting.isCustom();
+        boolean thinking = setting != null && setting.isThinking();
+
+        String prompt = message.isPrivate()
+                ? qqPrompter.prompt(message.getUserId(), true)
+                : qqPrompter.prompt(message.getGroupId(), embed, custom);
+
+        QQMessage result = plainCall(prompt, message, thinking);
+
+        List<QQMessage> messages;
+        if (embed && !custom) {
+            boolean voice = setting.isVoice();
+            boolean auth = setting.isEmbeddingAuth();
+            messages = qqMsgExecutor.chain(result, BotCtxUtil.getEvent(), voice, auth);
+        } else {
+            boolean voice = setting != null && setting.isVoice();
+            messages = qqMsgExecutor.direct(result, voice);
+        }
+
+        String chatId = BotCtxUtil.getChatId();
+        for (QQMessage msg : messages) chatMemory.add(chatId, msg);
+        return result.getContent();
+    }
+
+    private QQMessage plainCall(String prompt, QQMessage message, boolean thinking) {
+        String chatId = BotCtxUtil.getChatId();
+        List<Message> messages = new ArrayList<>();
+        messages.add(QQMessage.system(prompt));
+        messages.addAll(chatMemory.get(chatId));
+        QQMessage result = QQMessage.assistant(model.invoke(messages, thinking, maxTokens).getContent());
+        if (message.isPrivate()) return result.with(message.getUserId(), message.getUserName());
+        return result.with(message.getGroupId(), message.getUserId(), message.getUserName());
     }
 }
