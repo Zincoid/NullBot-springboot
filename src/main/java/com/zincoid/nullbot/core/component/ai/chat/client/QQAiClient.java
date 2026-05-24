@@ -22,7 +22,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public class QQAiClient {
+public class QQAiClient implements AiClient<QQMessage> {
 
     private enum ChatStrategy {
         WITH_COMMANDS,
@@ -80,7 +80,13 @@ public class QQAiClient {
 
     // =========================================== 应用方法 ===========================================
 
-    public String chat(QQMessage message) {
+    @Override
+    @Deprecated
+    public QQMessage call(String chatId, String prompt, QQMessage message, boolean thinking, int maxTokens) {
+        return QQMessage.assistant(chat(message));
+    }
+
+    public String chat(QQMessage message) {  // 实际方法
         String chatId = BotCtxUtil.getChatId();
         chatMemory.add(chatId, message);
         if (!message.isPrivate()) {
