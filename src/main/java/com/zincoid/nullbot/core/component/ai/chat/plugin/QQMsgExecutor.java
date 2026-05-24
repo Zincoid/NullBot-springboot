@@ -4,7 +4,6 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
-import com.mikuac.shiro.dto.event.Event;
 import com.zincoid.nullbot.core.component.ai.voice.TtsClient;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
@@ -60,9 +59,7 @@ public class QQMsgExecutor {
         return List.of(QQMessage.assistant(content).id(messageId));
     }
 
-    public List<QQMessage> chain(QQMessage message, Event event,
-                                 boolean voice, boolean embeddingAuth) {
-
+    public List<QQMessage> chain(QQMessage message, boolean voice, boolean embeddingAuth) {
         Bot bot = BotCtxUtil.getBot();
         boolean isPrivate = message.isPrivate();
         Long targetId = message.isPrivate() ? message.getUserId() : message.getGroupId();
@@ -82,7 +79,7 @@ public class QQMsgExecutor {
                 String command = segment.substring(1, segment.length() - 1).trim();
                 if (command.isEmpty()) continue;
                 eventPublisher.publishEvent(new EmbeddedCommandEvent(bot,
-                        new CommandEvent<>(event, command, embeddingAuth, false)));
+                        new CommandEvent<>(BotCtxUtil.getEvent(), command, embeddingAuth, false)));
                 messages.add(QQMessage.assistant(segment));
             } else {
                 if (segment.isEmpty()) continue;
