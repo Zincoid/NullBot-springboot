@@ -50,7 +50,7 @@ public class CommandProcessor {
         if (command != null) {
             log.info("[CommandProcessor] 正在处理 {} 命令 (TEST)...", event.getCommandType());
             chainProcess(null, event, command);
-            log.info("[CommandProcessor] {} 命令处理完毕", event.getCommandType());
+            log.info("◉ [CommandProcessor] {} 命令处理完毕", event.getCommandType());
 
             // 在 Command 组件中使用
             // if (bot == null) {
