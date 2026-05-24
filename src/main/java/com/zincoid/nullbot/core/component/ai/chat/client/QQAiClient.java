@@ -137,16 +137,14 @@ public class QQAiClient implements AiClient<QQMessage> {
     }
 
     private QQMessage callWithTools(String chatId, String prompt, QQMessage message, boolean thinking, int maxTokens) {
-        QQMessage finalMessage = null;
+        ModelResponse finalResp = null;
         for (int i = 0; i < maxToolCalls; i++) {
             List<Message> messages = new ArrayList<>();
             messages.add(QQMessage.system(prompt));
             messages.addAll(chatMemory.get(chatId));
             ModelResponse response = model.invoke(messages, toolRegistry.getAll(), thinking, maxTokens);
             if (!response.hasToolCalls()) {
-                finalMessage = message.isPrivate()
-                        ? QQMessage.assistant(response.getContent()).with(message.getUserId(), message.getUserName())
-                        : QQMessage.assistant(response.getContent()).with(message.getGroupId(), message.getUserId(), message.getUserName());
+                finalResp = response;
                 break;
             }
             log.info("◉ [ToolCall] 第{}轮: 收到{}个工具调用", i + 1, response.getToolCalls().size());
@@ -158,13 +156,13 @@ public class QQAiClient implements AiClient<QQMessage> {
                 chatMemory.add(chatId, BaseMessage.tool(toolCall.getId(), result));
             }
         }
-        if (finalMessage == null) {
+        if (finalResp == null) {
             log.warn("◉ [ToolCall] 达到最大迭代次数({})，进行最终调用", maxToolCalls);
-            ModelResponse response = model.invoke(chatMemory.get(chatId), thinking, maxTokens);
-            finalMessage = message.isPrivate()
-                    ? QQMessage.assistant(response.getContent()).with(message.getUserId(), message.getUserName())
-                    : QQMessage.assistant(response.getContent()).with(message.getGroupId(), message.getUserId(), message.getUserName());
+            finalResp = model.invoke(chatMemory.get(chatId), thinking, maxTokens);
         }
+        QQMessage finalMessage = message.isPrivate()
+                ? QQMessage.assistant(finalResp.getContent()).with(message.getUserId(), message.getUserName())
+                : QQMessage.assistant(finalResp.getContent()).with(message.getGroupId(), message.getUserId(), message.getUserName());
         List<QQMessage> _messages = qqMsgExecutor.direct(finalMessage, false);
         for (QQMessage msg : _messages) chatMemory.add(chatId, msg);
         return finalMessage;
