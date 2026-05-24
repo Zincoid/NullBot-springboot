@@ -46,8 +46,8 @@ public class BotOperator {
 
     // =================== 默认方法 ===================
 
-    public Integer sendLogGroupMsg(String message) {
-        return sendGroupMsg(logId ,message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
+    public void sendLogGroupMsg(String message) {
+        sendGroupMsg(logId ,message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
     }
 
     public void sendAllGroupMsg(String message) {
