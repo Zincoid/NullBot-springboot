@@ -31,7 +31,7 @@ public class QQAiClient implements AiClient<QQMessage> {
     private final QQPrompter qqPrompter;
     private final QQMsgExecutor qqMsgExecutor;
 
-    private boolean toolCallEnabled = false;
+    private boolean enableToolCall = false;
     private int maxToolCalls = 0;
     private ToolRegistry toolRegistry;
 
@@ -45,15 +45,27 @@ public class QQAiClient implements AiClient<QQMessage> {
     }
 
     public QQAiClient withToolCall(ToolRegistry toolRegistry, int maxToolCalls) {
-        toolCallEnabled = true;
+        enableToolCall = true;
         this.maxToolCalls = maxToolCalls;
         this.toolRegistry = toolRegistry;
         return this;
     }
 
-    public boolean switchToolCallEnabled() {
-        log.info("▽ [QQAiClient] 工具调用启用状态 - toolCallEnabled: {}", !toolCallEnabled);
-        return toolCallEnabled = !toolCallEnabled;
+    // =========================================== 系统方法 ===========================================
+
+    public void clear(String chatId) {
+        chatMemory.clear(chatId);
+    }
+
+    public List<QQMessage> history(String chatId) {
+        return chatMemory.get(chatId).stream().filter(msg -> msg instanceof QQMessage)
+                .map(msg -> (QQMessage) msg)
+                .toList();
+    }
+
+    public boolean switchToolCall() {
+        log.info("▽ [QQAiClient] 工具调用启用状态 - {}", !enableToolCall ? "ON" : "OFF");
+        return enableToolCall = !enableToolCall;
     }
 
     // =========================================== 模型方法 ===========================================
@@ -68,18 +80,6 @@ public class QQAiClient implements AiClient<QQMessage> {
         return _message.with(message.getGroupId(), message.getUserId(), message.getUserName());
     }
 
-    // =========================================== 存储方法 ===========================================
-
-    public void clear(String chatId) {
-        chatMemory.clear(chatId);
-    }
-
-    public List<QQMessage> history(String chatId) {
-        return chatMemory.get(chatId).stream().filter(msg -> msg instanceof QQMessage)
-                .map(msg -> (QQMessage) msg)
-                .toList();
-    }
-
     // =========================================== 应用方法 ===========================================
 
     public String chat(String chatId, QQMessage message, Event event, SettingPO setting) {
@@ -90,7 +90,7 @@ public class QQAiClient implements AiClient<QQMessage> {
             chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
             return "Refused";
         }
-        if (toolCallEnabled) {
+        if (enableToolCall) {
             String prompt = qqPrompter.prompt(message.getGroupId(), false, setting.isCustom());
             QQMessage _message = callWithTools(chatId, prompt, message, setting.isThinking(), maxTokens);
             return _message.getContent();
@@ -109,7 +109,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         if (!message.isPrivate())
             throw new IllegalArgumentException("消息类型应为私聊消息");
         chatMemory.add(chatId, message);
-        if (toolCallEnabled) {
+        if (enableToolCall) {
             String prompt = qqPrompter.prompt(message.getUserId(), false);
             QQMessage _message = callWithTools(chatId, prompt, message, false, maxTokens);
             return _message.getContent();
