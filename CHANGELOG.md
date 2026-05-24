@@ -821,4 +821,5 @@
 - 增强 AI 框架：
   - 添加工具调用功能，大幅修改相关结构代码；
   - 修改所有 QQAiClient 的注入为懒加载；
-  - 优化 QQAiClient 的调用逻辑兼容两种工具调用方案。
+  - 优化 QQAiClient 的调用逻辑兼容两种工具调用方案；
+- 增强 BotCtxUtil - 存储 Bot 和 Event 对象。
