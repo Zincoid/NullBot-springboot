@@ -1,9 +1,14 @@
 package com.zincoid.nullbot.core.util;
 
+import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.dto.event.Event;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 
 public final class BotCtxUtil {
+
+    public static final ThreadLocal<Bot> bot = new ThreadLocal<>();
+    public static final ThreadLocal<Event> event = new ThreadLocal<>();
 
     public static final ThreadLocal<Boolean> isPrivate = new ThreadLocal<>();
     public static final ThreadLocal<Long> userId = new ThreadLocal<>();
@@ -12,7 +17,28 @@ public final class BotCtxUtil {
 
     private BotCtxUtil() {}
 
-    // =================== 基本方法 ===================
+    // =================== 系统资源方法 ===================
+
+    public static void setSystem(Bot bot, Event event) {
+        setBot(bot);
+        setEvent(event);
+    }
+
+    public static void setBot(Bot bot) {
+        BotCtxUtil.bot.set(bot);
+    }
+    public static void setEvent(Event event) {
+        BotCtxUtil.event.set(event);
+    }
+
+    public static Bot getBot() {
+        return bot.get();
+    }
+    public static Event getEvent() {
+        return event.get();
+    }
+
+    // =================== 基本数据方法 ===================
 
     public static void setGroup(Long userId, Long groupId, SettingPO setting) {
         setIsPrivate(false);
@@ -51,7 +77,11 @@ public final class BotCtxUtil {
         return setting.get();
     }
 
+    // =================== 清除数据方法 ===================
+
     public static void remove() {
+        bot.remove();
+        event.remove();
         isPrivate.remove();
         userId.remove();
         groupId.remove();

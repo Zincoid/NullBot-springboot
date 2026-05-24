@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.dto.event.Event;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandProcessor;
 import com.zincoid.nullbot.bot.dispatcher.CommandRegistry;
@@ -13,30 +11,35 @@ import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
+@Component
 public class QQCmdTool implements Tool {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
     private final CommandProcessor commandProcessor;
     private final CommandRegistry commandRegistry;
-    private final Set<String> commandAllowSet;
-    private final Set<String> commandNames;
 
+    private final Set<String> commandAllows;
+    private final Set<String> commandDescs;
     private final ToolDef toolDef;
 
     public QQCmdTool(
             CommandProcessor commandProcessor,
             CommandRegistry commandRegistry,
-            Set<String> commandAllowSet
+            Set<String> commandAllows
     ) {
         this.commandProcessor = commandProcessor;
         this.commandRegistry = commandRegistry;
-        this.commandAllowSet = commandAllowSet;
-        this.commandNames = commandAllowSet;
+        this.commandAllows = commandAllows;
+        this.commandDescs = commandAllows.stream()
+                .map(commandRegistry::getCommand)
+                .map(Command::getHelpForAI).collect(Collectors.toSet());
         this.toolDef = buildToolDef();
     }
 
@@ -50,7 +53,7 @@ public class QQCmdTool implements Tool {
         cmdProp.put("type", "string");
         cmdProp.put("description", "要调用的QQ指令名称");
         ArrayNode enumNode = mapper.createArrayNode();
-        commandAllowSet.stream().sorted().forEach(enumNode::add);
+        commandAllows.stream().sorted().forEach(enumNode::add);
         cmdProp.set("enum", enumNode);
         props.set("command", cmdProp);
 
@@ -65,7 +68,11 @@ public class QQCmdTool implements Tool {
         required.add("command");
         params.set("required", required);
 
-        return new ToolDef("qq_command", "执行QQ机器人指令。可用指令: " + commandNames, params);
+        return new ToolDef(
+                "qq_command",
+                "执行QQ聊天机器人指令。可用指令详情: " + commandDescs,
+                params
+        );
     }
 
     @Override
@@ -74,20 +81,19 @@ public class QQCmdTool implements Tool {
     }
 
     @Override
-    public String execute(Object ...args) {
+    public String execute(String jsonArgs) {
         try {
-            JsonNode root = mapper.readTree(arguments);
+            JsonNode root = mapper.readTree(jsonArgs);
             String cmdName = root.path("command").asText();
             String argsStr = root.path("args").asText("");
 
             Command command = commandRegistry.getCommand(cmdName);
-            if (command == null) {
+            if (command == null)
                 return "错误: 指令 " + cmdName + " 不存在";
-            }
 
             String cmdStr = cmdName + (argsStr.isEmpty() ? "" : " " + argsStr);
             CommandEvent<?> toolEvent = new CommandEvent<>(event, cmdStr, false, false);
-            commandProcessor.chainProcess(bot, toolEvent, command);
+            commandProcessor.chainProcess(null, toolEvent, command);
             return "指令 " + cmdName + " 执行成功";
         } catch (Exception e) {
             log.warn("[QQCmdTool] 执行失败: {}", e.getMessage());
