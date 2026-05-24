@@ -16,7 +16,7 @@ public class QQPrompter {
     private final SysMsgManager sysMsgManager;
     private final CommandRegistry commandRegistry;
 
-    public QQPrompter(SysMsgManager sysMsgManager, @Lazy CommandRegistry commandRegistry) {
+    public QQPrompter(SysMsgManager sysMsgManager, CommandRegistry commandRegistry) {
         this.sysMsgManager = sysMsgManager;
         this.commandRegistry = commandRegistry;
     }

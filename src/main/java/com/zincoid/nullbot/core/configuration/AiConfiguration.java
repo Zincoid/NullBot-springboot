@@ -32,7 +32,6 @@ public class AiConfiguration {
     }
 
     @Bean
-    @Lazy
     public QQAiClient qqAiClient(
             ChatMemory memory, Model model, AiChatProperties properties, QQCmdTool qqCmdTool,
                     QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor

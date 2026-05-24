@@ -14,7 +14,6 @@ import com.zincoid.nullbot.core.model.bot.event.EmbeddedCommandEvent;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -30,27 +29,20 @@ public class QQCmdTool implements Tool {
     private final CommandRegistry commandRegistry;
 
     private final Set<String> commandAllows;
-    private volatile Set<String> commandDescs;
-    private volatile ToolDef toolDef;
+    private final Set<String> commandDescs;
+    private final ToolDef toolDef;
 
     public QQCmdTool(
             ApplicationEventPublisher eventPublisher,
-            @Lazy CommandRegistry commandRegistry
+            CommandRegistry commandRegistry
     ) {
         this.eventPublisher = eventPublisher;
         this.commandRegistry = commandRegistry;
         this.commandAllows = QQCmdAllows.getGc();
-    }
-
-    private void ensureInitialized() {
-        if (toolDef != null) return;
-        synchronized (this) {
-            if (toolDef != null) return;
-            this.commandDescs = commandAllows.stream()
-                    .map(commandRegistry::getCommand)
-                    .map(Command::getHelpForAI).collect(Collectors.toSet());
-            this.toolDef = buildToolDef();
-        }
+        this.commandDescs = commandAllows.stream()
+                .map(commandRegistry::getCommand)
+                .map(Command::getHelpForAI).collect(Collectors.toSet());
+        this.toolDef = buildToolDef();
     }
 
     private ToolDef buildToolDef() {
@@ -87,13 +79,11 @@ public class QQCmdTool implements Tool {
 
     @Override
     public ToolDef getDef() {
-        ensureInitialized();
         return toolDef;
     }
 
     @Override
     public String execute(String jsonArgs) {
-        ensureInitialized();
         try {
             JsonNode root = mapper.readTree(jsonArgs);
             String cmdName = root.path("command").asText();
