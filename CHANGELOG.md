@@ -823,4 +823,5 @@
   - 修改所有 QQAiClient 的注入为懒加载；
   - 优化 QQAiClient 的调用逻辑兼容两种工具调用方案；
   - 工具调用只支持 DsV4 非思考模式；
-- 增强 BotCtxUtil - 存储 Bot 和 Event 对象。
+- 增强 BotCtxUtil - 存储 Bot 和 Event 对象；
+- 优化 日志输出。
