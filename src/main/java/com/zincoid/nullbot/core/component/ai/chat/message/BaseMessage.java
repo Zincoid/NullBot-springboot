@@ -14,8 +14,13 @@ import java.util.Map;
 @ToString(callSuper = true)
 public class BaseMessage extends AbstractMessage {
 
+    String toolCallId;
+    List<ToolCall> toolCalls;
+
     private BaseMessage(Role role, String content, String toolCallId, List<ToolCall> toolCalls) {
-        super(role, content, toolCallId, toolCalls);
+        super(role, content);
+        this.toolCallId = toolCallId;
+        this.toolCalls = toolCalls;
     }
 
     @Override
