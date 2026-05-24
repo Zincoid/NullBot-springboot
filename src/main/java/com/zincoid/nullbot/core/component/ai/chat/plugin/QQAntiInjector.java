@@ -50,6 +50,7 @@ public class QQAntiInjector {
 
     public QQAntiInjector withModel(Model model) {
         this.model = model;
+        log.info("▽ [QQAntiInjector] 检测模型已挂载 - Model: {}", model.getClass().getSimpleName());
         return this;
     }
 

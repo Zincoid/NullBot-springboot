@@ -8,7 +8,9 @@ import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolCall;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.properties.OpenAiProperties;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -21,15 +23,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
-@RequiredArgsConstructor
 public class OpenAiModel implements Model {
 
     private final OpenAiProperties openAiProperties;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(30))
-            .build();
+    private final ObjectMapper objectMapper;
+    private final HttpClient httpClient;
+
+    public OpenAiModel(OpenAiProperties openAiProperties) {
+        this.openAiProperties = openAiProperties;
+        this.objectMapper = new ObjectMapper();
+        this.httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(30)).build();
+        log.info("▽ [OpenAiModel] 模型已初始化 - ModelName: {}", openAiProperties.getModel());
+    }
 
     @Override
     public ModelResponse invoke(List<Message> messages, boolean thinking, int maxTokens) {
