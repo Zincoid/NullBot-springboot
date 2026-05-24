@@ -27,7 +27,7 @@ public class QQPrivateCmdTool implements Tool {
 
     private final ApplicationEventPublisher eventPublisher;
     private final CommandRegistry commandRegistry;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     public QQPrivateCmdTool(
             ApplicationEventPublisher eventPublisher,
@@ -35,6 +35,7 @@ public class QQPrivateCmdTool implements Tool {
     ) {
         this.eventPublisher = eventPublisher;
         this.commandRegistry = commandRegistry;
+        this.objectMapper = new ObjectMapper();
         this.toolDef = buildToolDef();
     }
 

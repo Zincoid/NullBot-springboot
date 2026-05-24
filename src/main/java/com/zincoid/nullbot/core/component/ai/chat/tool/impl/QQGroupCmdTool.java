@@ -27,7 +27,7 @@ public class QQGroupCmdTool implements Tool {
 
     private final ApplicationEventPublisher eventPublisher;
     private final CommandRegistry commandRegistry;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     public QQGroupCmdTool(
             ApplicationEventPublisher eventPublisher,
@@ -35,6 +35,7 @@ public class QQGroupCmdTool implements Tool {
     ) {
         this.eventPublisher = eventPublisher;
         this.commandRegistry = commandRegistry;
+        this.objectMapper = new ObjectMapper();
         this.toolDef = buildToolDef();
     }
 
@@ -86,20 +87,22 @@ public class QQGroupCmdTool implements Tool {
             JsonNode root = objectMapper.readTree(jsonArgs);
             String cmdName = root.path("command").asText();
             String argsStr = root.path("args").asText("");
-
             Command command = commandRegistry.getCommand(cmdName);
             if (command == null)
                 return "错误: 指令 " + cmdName + " 不存在";
-
             String cmdStr = cmdName + (argsStr.isEmpty() ? "" : " " + argsStr);
             eventPublisher.publishEvent(
                     new EmbeddedCommandEvent(
                             BotCtxUtil.getBot(),
-                            new CommandEvent<>(BotCtxUtil.getEvent(), cmdStr, false, false)
+                            new CommandEvent<>(
+                                    BotCtxUtil.getEvent(),
+                                    cmdStr,
+                                    !BotCtxUtil.getIsPrivate() && BotCtxUtil.getSetting().isEmbeddingAuth(),
+                                    false
+                            )
                     )
             );
             return "指令 " + cmdName + " 执行成功";
-
         } catch (Exception e) {
             log.warn("◉ [QQGroupCmdTool] 执行失败: {}", e.getMessage());
             return "错误: " + e.getMessage();
