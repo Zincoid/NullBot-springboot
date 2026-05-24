@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandRegistry;
+import com.zincoid.nullbot.core.component.ai.chat.plugin.QQCmdAllows;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
@@ -28,38 +29,21 @@ public class QQGroupCmdTool implements Tool {
     private final CommandRegistry commandRegistry;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final Set<String> GC_CMD_ALLOWS;
-
-    static {
-
-        GC_CMD_ALLOWS = Set.of(
-                /* ========== 普通命令 ========== */
-                "aud", "vid", "img", "say",
-                "ChatReset", "UserBan",
-                "Help", "ImageFolder", "PUBG",
-                "Anime", "OneTimeAlarm",
-                /* ========== 合成命令 ========== */
-                "Convert", "Symmetry", "Tts",
-                /* ========== 加密命令 ========== */
-                "eb0f8545", "4ed1314d", "65275d24",
-                "1e7bd161", "b6713262", "db3fbe2b",
-                "0167a25a", "bab329aa"
-        );
-
-    }
-
     public QQGroupCmdTool(
             ApplicationEventPublisher eventPublisher,
             CommandRegistry commandRegistry
     ) {
         this.eventPublisher = eventPublisher;
         this.commandRegistry = commandRegistry;
-        this.toolDef = buildToolDef(GC_CMD_ALLOWS.stream()
-                .map(commandRegistry::getCommand)
-                .map(Command::getHelpForAI).collect(Collectors.toSet()));
+        this.toolDef = buildToolDef();
     }
 
-    private ToolDef buildToolDef(Set<String> commandDescs) {
+    private ToolDef buildToolDef() {
+        Set<String> cmdAllows = QQCmdAllows.getGc();
+        Set<String> cmdDescs = cmdAllows.stream()
+                .map(commandRegistry::getCommand)
+                .map(Command::getHelpForAI).collect(Collectors.toSet());
+
         ObjectNode params = objectMapper.createObjectNode();
         params.put("type", "object");
 
@@ -69,7 +53,7 @@ public class QQGroupCmdTool implements Tool {
         cmdProp.put("type", "string");
         cmdProp.put("description", "要调用的QQ指令名称");
         ArrayNode enumNode = objectMapper.createArrayNode();
-        GC_CMD_ALLOWS.stream().sorted().forEach(enumNode::add);
+        cmdAllows.stream().sorted().forEach(enumNode::add);
         cmdProp.set("enum", enumNode);
         props.set("command", cmdProp);
 
@@ -86,7 +70,7 @@ public class QQGroupCmdTool implements Tool {
 
         return new ToolDef(
                 "qq_group_command",
-                "执行QQ群聊机器人指令。可用指令详情: " + commandDescs,
+                "执行QQ群聊机器人指令。可用指令详情: " + cmdDescs,
                 params
         );
     }
