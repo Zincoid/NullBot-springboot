@@ -133,22 +133,9 @@ public class QQAiClient implements AiClient<QQMessage> {
     // =========================================== 工具方法 ===========================================
 
     private String chatWithTools(String chatId, String prompt, QQMessage message, boolean thinking, boolean voice) {
-        List<Message> toolMessages = new ArrayList<>();
-        toolMessages.add(QQMessage.system(prompt));
-        toolMessages.addAll(chatMemory.get(chatId));
-        String finalContent = runToolCalls(toolMessages, thinking, maxTokens);
-        QQMessage finalMessage = QQMessage.assistant(finalContent);
-        if (message.isPrivate()) {
-            finalMessage = finalMessage.with(message.getUserId(), message.getUserName());
-        } else {
-            finalMessage = finalMessage.with(message.getGroupId(), message.getUserId(), message.getUserName());
-        }
-        List<QQMessage> sent = qqMsgExecutor.direct(finalMessage, voice);
-        for (QQMessage msg : sent) chatMemory.add(chatId, msg);
-        return finalContent;
-    }
-
-    public String runToolCalls(List<Message> messages, boolean thinking, int maxTokens) {
+        List<Message> messages = new ArrayList<>();
+        messages.add(QQMessage.system(prompt));
+        messages.addAll(chatMemory.get(chatId));
         for (int i = 0; i < maxToolCalls; i++) {
             ModelResponse response = model.invoke(messages, toolRegistry.getAll(), thinking, maxTokens);
             if (!response.hasToolCalls()) return response.getContent();
@@ -162,7 +149,16 @@ public class QQAiClient implements AiClient<QQMessage> {
             }
         }
         log.warn("◉ [ToolCall] 达到最大迭代次数({})，进行最终调用", maxToolCalls);
-        return model.invoke(messages, thinking, maxTokens).getContent();
+        String finalContent = model.invoke(messages, thinking, maxTokens).getContent();
+        QQMessage finalMessage = QQMessage.assistant(finalContent);
+        if (message.isPrivate()) {
+            finalMessage = finalMessage.with(message.getUserId(), message.getUserName());
+        } else {
+            finalMessage = finalMessage.with(message.getGroupId(), message.getUserId(), message.getUserName());
+        }
+        List<QQMessage> sent = qqMsgExecutor.direct(finalMessage, voice);
+        for (QQMessage msg : sent) chatMemory.add(chatId, msg);
+        return finalContent;
     }
 
     private String executeTool(ToolCall toolCall) {
