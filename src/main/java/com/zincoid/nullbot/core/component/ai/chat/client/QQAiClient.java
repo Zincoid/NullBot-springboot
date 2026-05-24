@@ -12,7 +12,6 @@ import com.zincoid.nullbot.core.component.ai.chat.model.Model;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolCall;
-import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import lombok.RequiredArgsConstructor;

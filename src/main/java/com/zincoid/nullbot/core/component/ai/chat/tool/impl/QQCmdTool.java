@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandRegistry;
+import com.zincoid.nullbot.core.component.ai.chat.plugin.QQCmdAllows;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
@@ -13,6 +14,7 @@ import com.zincoid.nullbot.core.model.bot.event.EmbeddedCommandEvent;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -28,21 +30,27 @@ public class QQCmdTool implements Tool {
     private final CommandRegistry commandRegistry;
 
     private final Set<String> commandAllows;
-    private final Set<String> commandDescs;
-    private final ToolDef toolDef;
+    private volatile Set<String> commandDescs;
+    private volatile ToolDef toolDef;
 
     public QQCmdTool(
             ApplicationEventPublisher eventPublisher,
-            CommandRegistry commandRegistry,
-            Set<String> commandAllows
+            @Lazy CommandRegistry commandRegistry
     ) {
         this.eventPublisher = eventPublisher;
         this.commandRegistry = commandRegistry;
-        this.commandAllows = commandAllows;
-        this.commandDescs = commandAllows.stream()
-                .map(commandRegistry::getCommand)
-                .map(Command::getHelpForAI).collect(Collectors.toSet());
-        this.toolDef = buildToolDef();
+        this.commandAllows = QQCmdAllows.getGc();
+    }
+
+    private void ensureInitialized() {
+        if (toolDef != null) return;
+        synchronized (this) {
+            if (toolDef != null) return;
+            this.commandDescs = commandAllows.stream()
+                    .map(commandRegistry::getCommand)
+                    .map(Command::getHelpForAI).collect(Collectors.toSet());
+            this.toolDef = buildToolDef();
+        }
     }
 
     private ToolDef buildToolDef() {
@@ -79,11 +87,13 @@ public class QQCmdTool implements Tool {
 
     @Override
     public ToolDef getDef() {
+        ensureInitialized();
         return toolDef;
     }
 
     @Override
     public String execute(String jsonArgs) {
+        ensureInitialized();
         try {
             JsonNode root = mapper.readTree(jsonArgs);
             String cmdName = root.path("command").asText();
