@@ -1,10 +1,12 @@
 package com.zincoid.nullbot.core.component.ai.chat.message;
 
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
+import com.zincoid.nullbot.core.component.ai.chat.tool.ToolCall;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -17,8 +19,8 @@ public class QQMessage extends AbstractMessage {
     private Long userId;
     private String userName;
 
-    private QQMessage(Role role, String content) {
-        super(role, content);
+    private QQMessage(Role role, String content, String toolCallId, List<ToolCall> toolCalls) {
+        super(role, content, toolCallId, toolCalls);
     }
 
     @Override
