@@ -10,6 +10,7 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupCmdTool;
+import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQPrivateCmdTool;
 import com.zincoid.nullbot.core.properties.AiChatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -32,20 +33,22 @@ public class AiConfiguration {
 
     @Bean
     public QQAiClient qqAiClient(
-            ChatMemory memory, Model model, AiChatProperties properties, QQGroupCmdTool qqGroupCmdTool,
+            ChatMemory memory, Model model, AiChatProperties properties,
+            QQGroupCmdTool qqGroupCmdTool, QQPrivateCmdTool qqPrivateCmdTool,
             QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
     ) {
         ToolRegistry toolRegistry = new ToolRegistry();
-        // toolRegistry.register(qqGroupCmdTool);
+        toolRegistry.register(qqGroupCmdTool);
+        toolRegistry.register(qqPrivateCmdTool);
         QQAiClient qqAiClient = new QQAiClient(
                 memory, model,
                 antiInjector.withModel(model),
                 prompter, executor
         )
                 .withMaxTokens(properties.getMaxTokens())
-                // .withToolCall(toolRegistry, 5)
+                .withToolCall(toolRegistry, 5)
                 ;
-        log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}, ToolCall: disabled", model.getClass().getSimpleName());
+        log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}, ToolCall: enabled", model.getClass().getSimpleName());
         return qqAiClient;
     }
 }
