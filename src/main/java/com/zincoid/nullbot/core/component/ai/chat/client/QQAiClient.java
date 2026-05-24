@@ -98,7 +98,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         }
         if (enableToolCall) {
             String prompt = qqPrompter.prompt(message.getGroupId(), false, setting.isCustom());
-            QQMessage _message = callWithTools(chatId, prompt, message, setting.isThinking(), maxTokens);
+            QQMessage _message = callWithTools(chatId, prompt, message, false, maxTokens);
             return _message.getContent();
         } else {
             String prompt = qqPrompter.prompt(message.getGroupId(), setting.isEmbedding(), setting.isCustom());
