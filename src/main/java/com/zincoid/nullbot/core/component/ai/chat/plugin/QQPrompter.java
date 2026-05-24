@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
@@ -22,38 +21,12 @@ public class QQPrompter {
         this.commandRegistry = commandRegistry;
     }
 
-    private static final Set<String> GC_CMD_ALLOWS;
-    private static final Set<String> PM_CMD_ALLOWS;
-
     private static final String BASE_PM_PROMPT;
     private static final String BASE_GC_PROMPT;
     private static final String CMD_PROMPT;
     private static final String MEMORY_PROMPT;
 
     static {
-
-        GC_CMD_ALLOWS = Set.of(
-                /* ========== 普通命令 ========== */
-                "aud", "vid", "img", "say",
-                "ChatReset", "UserBan",
-                "Help", "ImageFolder", "PUBG",
-                "Anime", "OneTimeAlarm",
-                /* ========== 合成命令 ========== */
-                "Convert", "Symmetry", "Tts",
-                /* ========== 加密命令 ========== */
-                "eb0f8545", "4ed1314d", "65275d24",
-                "1e7bd161", "b6713262", "db3fbe2b",
-                "0167a25a", "bab329aa"
-        );
-
-        PM_CMD_ALLOWS = Set.of(
-                /* ========== 普通命令 ========== */
-                "Help",
-                /* ========== 合成命令 ========== */
-                "Tts",
-                /* ========== 加密命令 ========== */
-                "65275d24", "0167a25a", "bab329aa"
-        );
 
         BASE_PM_PROMPT = """
                 
@@ -104,15 +77,27 @@ public class QQPrompter {
     // =================== 生成方法 ===================
 
     public String prompt(Long userId) {
-        return sysMsgManager.getUserMessage(userId)
-                + BASE_PM_PROMPT
-                + MEMORY_PROMPT.formatted(
-                        formatMemories(sysMsgManager.getLongTermUserMemory(userId)))
-                + CMD_PROMPT.formatted(
-                        commandRegistry.getCommandHelpsForAI(PM_CMD_ALLOWS), getErrors());
+        return prompt(userId, false);
+    }
+
+    public String prompt(Long userId, boolean funcCall) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(sysMsgManager.getUserMessage(userId));
+        sb.append(BASE_PM_PROMPT);
+        sb.append(MEMORY_PROMPT.formatted(
+                formatMemories(sysMsgManager.getLongTermUserMemory(userId))));
+        if (!funcCall) {
+            sb.append(CMD_PROMPT.formatted(
+                    commandRegistry.getCommandHelpsForAI(QQCmdAllows.getPm()), getErrors()));
+        }
+        return sb.toString();
     }
 
     public String prompt(Long groupId, boolean chain, boolean custom) {
+        return prompt(groupId, chain, custom, false);
+    }
+
+    public String prompt(Long groupId, boolean chain, boolean custom, boolean funcCall) {
         StringBuilder sb = new StringBuilder();
         if (custom) {
             sb.append(sysMsgManager.getCustomMessage(groupId));
@@ -123,8 +108,10 @@ public class QQPrompter {
             if (chain) {
                 sb.append(MEMORY_PROMPT.formatted(
                         sysMsgManager.getLongTermGroupMemory(groupId)));
-                sb.append(CMD_PROMPT.formatted(
-                        commandRegistry.getCommandHelpsForAI(GC_CMD_ALLOWS), getErrors()));
+                if (!funcCall) {
+                    sb.append(CMD_PROMPT.formatted(
+                            commandRegistry.getCommandHelpsForAI(QQCmdAllows.getGc()), getErrors()));
+                }
             }
         }
         return sb.toString();
