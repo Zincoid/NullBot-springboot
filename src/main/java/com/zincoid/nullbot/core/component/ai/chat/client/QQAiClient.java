@@ -109,20 +109,20 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     // =========================================== 工具方法 ===========================================
 
-    public String runToolCalls(List<Message> messages, List<ToolDef> tools, boolean thinking, int maxTokens) {
+    public String runToolCalls(List<Message> messages, boolean thinking, int maxTokens) {
         for (int i = 0; i < maxToolCalls; i++) {
-            ModelResponse response = model.invoke(messages, tools, thinking, maxTokens);
+            ModelResponse response = model.invoke(messages, toolRegistry.getAll(), thinking, maxTokens);
             if (!response.hasToolCalls()) return response.getContent();
-            log.info("[ToolCallLooper] 第{}轮: 收到{}个工具调用", i + 1, response.getToolCalls().size());
+            log.info("◉ [ToolCall] 第{}轮: 收到{}个工具调用", i + 1, response.getToolCalls().size());
             messages.add(BaseMessage.assistant(response.getToolCalls()));
             for (ToolCall toolCall : response.getToolCalls()) {
-                log.info("[ToolCallLooper] 执行工具: {}({})", toolCall.getName(), toolCall.getArguments());
+                log.info("◉ [ToolCall] 执行工具: {}({})", toolCall.getName(), toolCall.getArguments());
                 String result = executeTool(toolCall);
-                log.info("[ToolCallLooper] 工具结果: {}", result);
+                log.info("◉ [ToolCall] 工具结果: {}", result);
                 messages.add(BaseMessage.tool(toolCall.getId(), result));
             }
         }
-        log.warn("[ToolCallLooper] 达到最大迭代次数({})，进行最终调用", maxIterations);
+        log.warn("◉ [ToolCall] 达到最大迭代次数({})，进行最终调用", maxToolCalls);
         return model.invoke(messages, thinking, maxTokens).getContent();
     }
 
@@ -133,7 +133,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         try {
             return tool.execute(toolCall.getArguments());
         } catch (Exception e) {
-            log.warn("[ToolCallLooper] 工具执行失败: {}", e.getMessage());
+            log.warn("◉ [ToolCall] 工具执行失败: {}", e.getMessage());
             return "错误: " + e.getMessage();
         }
     }
