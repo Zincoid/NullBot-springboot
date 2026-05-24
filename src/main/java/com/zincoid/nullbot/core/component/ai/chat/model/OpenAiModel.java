@@ -2,9 +2,11 @@ package com.zincoid.nullbot.core.component.ai.chat.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
+import com.zincoid.nullbot.core.component.ai.chat.tool.ToolCall;
+import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.properties.OpenAiProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,11 +32,16 @@ public class OpenAiModel implements Model {
             .build();
 
     @Override
-    public Message invoke(List<Message> messages, boolean thinking, int maxTokens) {
+    public ModelResponse invoke(List<Message> messages, boolean thinking, int maxTokens) {
+        return invoke(messages, null, thinking, maxTokens);
+    }
+
+    @Override
+    public ModelResponse invoke(List<Message> messages, List<ToolDef> tools, boolean thinking, int maxTokens) {
         try {
             ObjectNode requestBody = objectMapper.createObjectNode();
 
-            List<Map<String, String>> _messages = messages.stream()
+            List<Map<String, Object>> _messages = messages.stream()
                     .map(Message::toMap).toList();
             requestBody.set("messages", objectMapper.valueToTree(_messages));
 
@@ -51,6 +59,21 @@ public class OpenAiModel implements Model {
             requestBody.put("temperature", 0.8);
             requestBody.put("frequency_penalty", 0.3);
             requestBody.put("presence_penalty", 0.2);
+
+            if (tools != null && !tools.isEmpty()) {
+                ArrayNode toolsNode = objectMapper.createArrayNode();
+                for (ToolDef tool : tools) {
+                    ObjectNode toolNode = objectMapper.createObjectNode();
+                    toolNode.put("type", "function");
+                    ObjectNode fnNode = objectMapper.createObjectNode();
+                    fnNode.put("name", tool.getName());
+                    fnNode.put("description", tool.getDescription());
+                    fnNode.set("parameters", tool.getParameters());
+                    toolNode.set("function", fnNode);
+                    toolsNode.add(toolNode);
+                }
+                requestBody.set("tools", toolsNode);
+            }
 
             String jsonBody = objectMapper.writeValueAsString(requestBody);
             String baseUrl = openAiProperties.getApiUrl();
@@ -73,12 +96,23 @@ public class OpenAiModel implements Model {
 
             if (response.statusCode() == 200) {
                 JsonNode rootNode = objectMapper.readTree(response.body());
-                return BaseMessage.assistant(
-                        rootNode
-                                .path("choices").get(0)
-                                .path("message")
-                                .path("content").asText()
-                );
+                JsonNode messageNode = rootNode.path("choices").get(0).path("message");
+
+                JsonNode toolCallsNode = messageNode.path("tool_calls");
+                if (!toolCallsNode.isMissingNode() && toolCallsNode.isArray()) {
+                    List<ToolCall> toolCalls = new ArrayList<>();
+                    for (JsonNode tcNode : toolCallsNode) {
+                        String id = tcNode.path("id").asText();
+                        JsonNode fnNode = tcNode.path("function");
+                        String name = fnNode.path("name").asText();
+                        String arguments = fnNode.path("arguments").asText();
+                        toolCalls.add(new ToolCall(id, name, arguments));
+                    }
+                    return ModelResponse.ofToolCalls(toolCalls);
+                }
+
+                String content = messageNode.path("content").asText(null);
+                return ModelResponse.ofContent(content != null ? content : "");
             } else {
                 throw new RuntimeException("OpenAI API请求失败: " + response.statusCode() + " - " + response.body());
             }
