@@ -75,7 +75,7 @@ public class QQPrompter {
         sb.append(BASE_PM_PROMPT);
         sb.append(MEMORY_PROMPT.formatted(
                 formatMemories(sysMsgManager.getLongTermUserMemory(userId))));
-        if (!cmd) sb.append(CMD_PROMPT.formatted(
+        if (cmd) sb.append(CMD_PROMPT.formatted(
                 commandRegistry.getCommandHelpsForAI(QQCmdAllows.getPm())));
         return sb.toString();
     }
