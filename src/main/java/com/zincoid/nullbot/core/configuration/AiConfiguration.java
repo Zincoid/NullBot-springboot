@@ -48,7 +48,7 @@ public class AiConfiguration {
                 .withMaxTokens(properties.getMaxTokens())
                 .withToolCall(toolRegistry, 5)
                 ;
-        log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}, ToolCall: enabled", model.getClass().getSimpleName());
+        log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}", model.getClass().getSimpleName());
         return qqAiClient;
     }
 }

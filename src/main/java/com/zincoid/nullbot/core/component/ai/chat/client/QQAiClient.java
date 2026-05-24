@@ -41,6 +41,7 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     public QQAiClient withMaxTokens(int maxTokens) {
         this.maxTokens = maxTokens;
+        log.info("▽ [QQAiClient] 词元限制已配置 - MaxTokens: {}", maxTokens);
         return this;
     }
 
@@ -48,6 +49,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         enableToolCall = true;
         this.maxToolCalls = maxToolCalls;
         this.toolRegistry = toolRegistry;
+        log.info("▽ [QQAiClient] 工具调用已配置 - MaxToolCalls: {}", maxToolCalls);
         return this;
     }
 
@@ -64,6 +66,10 @@ public class QQAiClient implements AiClient<QQMessage> {
     }
 
     public boolean switchToolCall() {
+        if (toolRegistry == null || maxToolCalls <= 0) {
+            log.warn("▽ [QQAiClient] 工具调用未配置");
+            return false;
+        }
         log.info("▽ [QQAiClient] 工具调用启用状态 - {}", !enableToolCall ? "ON" : "OFF");
         return enableToolCall = !enableToolCall;
     }
