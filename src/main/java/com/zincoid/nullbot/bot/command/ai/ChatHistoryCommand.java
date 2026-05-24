@@ -22,15 +22,15 @@ import java.util.List;
 @Slf4j
 public class ChatHistoryCommand implements Command {
 
+    // private final BotInputManager botInputManager;
     private final QQAiClient qqAiClient;
+
+    private static final int PAGE_SIZE = 10;  // 查询单页大小
+    private static final int WAIT_TIMEOUT = 60;  // 等待超时时间 (单位: Second)
 
     public ChatHistoryCommand(@Lazy QQAiClient qqAiClient) {
         this.qqAiClient = qqAiClient;
     }
-    // private final BotInputManager botInputManager;
-
-    private static final int PAGE_SIZE = 10;  // 查询单页大小
-    private static final int WAIT_TIMEOUT = 60;  // 等待超时时间 (单位: Second)
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
