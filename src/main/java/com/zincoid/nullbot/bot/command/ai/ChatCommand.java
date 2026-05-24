@@ -7,7 +7,6 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
@@ -41,7 +40,7 @@ public class ChatCommand implements Command {
         String response;
         try {
             QQMessage message = QQMessage.user(content).with(groupId, userId, userName).id(messageId);
-            response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event, BotCtxUtil.getSetting());
+            response = qqAiClient.chat(message);
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
@@ -70,7 +69,7 @@ public class ChatCommand implements Command {
         String response;
         try {
             QQMessage message = QQMessage.user(content).with(userId, userName).id(messageId);
-            response = qqAiClient.chat(BotCtxUtil.getChatId(), message, event);
+            response = qqAiClient.chat(message);
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
