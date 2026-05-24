@@ -75,7 +75,7 @@ public class ChatHistoryCommand implements Command {
 
     private void sendInfo(Bot bot, Long groupId, Message message) {
         bot.sendGroupMsg(groupId, message.toMap().toString(), true);
-        log.info("\t\t\t\t├─[ChatHistory] 已获取记录 - {}", message);
+        log.info("\t\t\t\t├─[ChatHistory] 已获取记录 - {}", message.toMap());
     }
 
     @Override
