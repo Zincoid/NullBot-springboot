@@ -2,19 +2,20 @@ package com.zincoid.nullbot.core.component.ai.chat.tool.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 
-public class QQGroupInfoTool implements Tool {
+public class QQUserInfoTool implements Tool {
 
     private final ToolDef toolDef;
 
     private final ObjectMapper objectMapper;
 
-    public QQGroupInfoTool() {
+    public QQUserInfoTool() {
         this.objectMapper = new ObjectMapper();
         this.toolDef = buildToolDef();
     }
@@ -25,10 +26,13 @@ public class QQGroupInfoTool implements Tool {
         ObjectNode props = objectMapper.createObjectNode();
         ObjectNode idProp = objectMapper.createObjectNode();
         idProp.put("type", "string");
-        idProp.put("description", "群号(可选参数,不设置时查询本群)");
+        idProp.put("description", "QQ号");
         props.set("id", idProp);
         params.set("properties", props);
-        return new ToolDef("qq_group_info", "查询QQ群信息", params);
+        ArrayNode required = objectMapper.createArrayNode();
+        required.add("userId");
+        params.set("required", required);
+        return new ToolDef("qq_user_info", "查询QQ用户信息", params);
     }
 
     @Override
@@ -40,12 +44,10 @@ public class QQGroupInfoTool implements Tool {
     public String execute(String jsonArgs) {
         try {
             JsonNode root = objectMapper.readTree(jsonArgs);
-            Long groupId = root.path("id").asLong(0L);
-            if (groupId == 0) groupId = BotCtxUtil.getGroupId();
+            Long userId = root.path("id").asLong(0L);
+            if (userId == 0) return "未指定QQ号";
             Bot bot = BotCtxUtil.getBot();
-            String groupInfo = bot.getGroupInfo(groupId, true).toString();
-            String groupUsers = bot.getGroupMemberList(groupId).toString();
-            return "群信息: " + groupInfo + " 群成员: " + groupUsers;
+            return bot.getStrangerInfo(userId, true).toString();
         } catch (Exception e) {
             return "错误: " + e.getMessage();
         }
