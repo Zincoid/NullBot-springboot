@@ -59,10 +59,8 @@ public class QQAiClient implements AiClient<QQMessage> {
         chatMemory.clear(chatId);
     }
 
-    public List<QQMessage> history(String chatId) {
-        return chatMemory.get(chatId).stream().filter(msg -> msg instanceof QQMessage)
-                .map(msg -> (QQMessage) msg)
-                .toList();
+    public List<Message> history(String chatId) {
+        return chatMemory.get(chatId);
     }
 
     public boolean switchToolCall() {
