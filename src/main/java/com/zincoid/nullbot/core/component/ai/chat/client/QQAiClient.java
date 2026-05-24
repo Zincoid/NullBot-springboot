@@ -169,12 +169,9 @@ public class QQAiClient implements AiClient<QQMessage> {
         SettingPO setting = BotCtxUtil.getSetting();
         String prompt = qqPrompter.prompt(message.getGroupId(), setting.isEmbedding(), setting.isCustom());
         QQMessage result = plainCall(prompt, message, setting.isThinking());
-        List<QQMessage> messages;
-        if (setting.isEmbedding() && !setting.isCustom()) {
-            messages = qqMsgExecutor.chain(result, setting.isVoice(), setting.isEmbeddingAuth());
-        } else {
-            messages = qqMsgExecutor.direct(result, setting.isVoice());
-        }
+        List<QQMessage> messages = (setting.isEmbedding() && !setting.isCustom())
+                ? qqMsgExecutor.chain(result, setting.isVoice(), setting.isEmbeddingAuth())
+                : qqMsgExecutor.direct(result, setting.isVoice());
         for (QQMessage msg : messages) chatMemory.add(BotCtxUtil.getChatId(), msg);
         return result.getContent();
     }
