@@ -10,6 +10,7 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupCmdTool;
+import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupInfoTool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQPrivateCmdTool;
 import com.zincoid.nullbot.core.properties.AiChatProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ public class AiConfiguration {
         ToolRegistry toolRegistry = new ToolRegistry();
         toolRegistry.register(qqGroupCmdTool);
         toolRegistry.register(qqPrivateCmdTool);
+        toolRegistry.register(new QQGroupInfoTool());
         QQAiClient qqAiClient = new QQAiClient(
                 memory, model,
                 antiInjector.withModel(model),
