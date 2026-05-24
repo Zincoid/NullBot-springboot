@@ -153,37 +153,30 @@ public class QQAiClient {
     // ----------------------------------------- 指令嵌入方案 -----------------------------------------
 
     private String chatWithCommands(QQMessage message) {
-        SettingPO setting = message.isPrivate() ? null : BotCtxUtil.getSetting();
-        boolean embed = setting != null && setting.isEmbedding();
-        boolean custom = setting != null && setting.isCustom();
-        boolean thinking = setting != null && setting.isThinking();
-
-        String prompt = message.isPrivate()
-                ? qqPrompter.prompt(message.getUserId(), true)
-                : qqPrompter.prompt(message.getGroupId(), embed, custom);
-
-        QQMessage result = plainCall(prompt, message, thinking);
-
-        List<QQMessage> messages;
-        if (embed && !custom) {
-            boolean voice = setting.isVoice();
-            boolean auth = setting.isEmbeddingAuth();
-            messages = qqMsgExecutor.chain(result, BotCtxUtil.getEvent(), voice, auth);
-        } else {
-            boolean voice = setting != null && setting.isVoice();
-            messages = qqMsgExecutor.direct(result, voice);
+        if (message.isPrivate()) {
+            String prompt = qqPrompter.prompt(message.getUserId(), true);
+            QQMessage result = plainCall(prompt, message, false);
+            List<QQMessage> messages = qqMsgExecutor.chain(result, false, false);
+            for (QQMessage msg : messages) chatMemory.add(BotCtxUtil.getChatId(), msg);
+            return result.getContent();
         }
-
-        String chatId = BotCtxUtil.getChatId();
-        for (QQMessage msg : messages) chatMemory.add(chatId, msg);
+        SettingPO setting = BotCtxUtil.getSetting();
+        String prompt = qqPrompter.prompt(message.getGroupId(), setting.isEmbedding(), setting.isCustom());
+        QQMessage result = plainCall(prompt, message, setting.isThinking());
+        List<QQMessage> messages;
+        if (setting.isEmbedding() && !setting.isCustom()) {
+            messages = qqMsgExecutor.chain(result, setting.isVoice(), setting.isEmbeddingAuth());
+        } else {
+            messages = qqMsgExecutor.direct(result, setting.isVoice());
+        }
+        for (QQMessage msg : messages) chatMemory.add(BotCtxUtil.getChatId(), msg);
         return result.getContent();
     }
 
     private QQMessage plainCall(String prompt, QQMessage message, boolean thinking) {
-        String chatId = BotCtxUtil.getChatId();
         List<Message> messages = new ArrayList<>();
         messages.add(QQMessage.system(prompt));
-        messages.addAll(chatMemory.get(chatId));
+        messages.addAll(chatMemory.get(BotCtxUtil.getChatId()));
         QQMessage result = QQMessage.assistant(model.invoke(messages, thinking, maxTokens).getContent());
         if (message.isPrivate()) return result.with(message.getUserId(), message.getUserName());
         return result.with(message.getGroupId(), message.getUserId(), message.getUserName());
