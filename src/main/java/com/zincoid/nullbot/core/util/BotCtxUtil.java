@@ -19,11 +19,6 @@ public final class BotCtxUtil {
 
     // =================== 系统资源方法 ===================
 
-    public static void setSystem(Bot bot, Event event) {
-        setBot(bot);
-        setEvent(event);
-    }
-
     public static void setBot(Bot bot) {
         BotCtxUtil.bot.set(bot);
     }

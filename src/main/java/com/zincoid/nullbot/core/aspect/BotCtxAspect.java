@@ -1,5 +1,7 @@
 package com.zincoid.nullbot.core.aspect;
 
+import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.dto.event.Event;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
@@ -26,6 +28,10 @@ public class BotCtxAspect {
     @Around("@annotation(context)")
     public Object load(ProceedingJoinPoint joinPoint, BotContext context) throws Throwable {
         for (Object arg : joinPoint.getArgs()) {
+            if (arg instanceof Bot bot) {
+                BotCtxUtil.setBot(bot);
+                continue;
+            }
             Long groupId = null;
             Long userId = null;
             if (arg instanceof GroupMessageEvent event) {
@@ -47,6 +53,7 @@ public class BotCtxAspect {
                 SettingPO setting = settingService.get(groupId);
                 BotCtxUtil.setGroup(userId, groupId, setting);
             }
+            BotCtxUtil.setEvent((Event) arg);
             break;
         }
         try {
