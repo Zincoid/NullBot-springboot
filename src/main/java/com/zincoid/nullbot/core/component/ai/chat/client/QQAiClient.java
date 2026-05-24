@@ -52,6 +52,7 @@ public class QQAiClient implements AiClient<QQMessage> {
     }
 
     public boolean switchToolCallEnabled() {
+        log.info("▽ [QQAiClient] 工具调用启用状态 - toolCallEnabled: {}", !toolCallEnabled);
         return toolCallEnabled = !toolCallEnabled;
     }
 
