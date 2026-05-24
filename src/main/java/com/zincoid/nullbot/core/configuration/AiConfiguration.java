@@ -33,7 +33,7 @@ public class AiConfiguration {
     @Bean
     public QQAiClient qqAiClient(
             ChatMemory memory, Model model, AiChatProperties properties, QQCmdTool qqCmdTool,
-                    QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
+            QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
     ) {
         ToolRegistry toolRegistry = new ToolRegistry();
         toolRegistry.register(qqCmdTool);
@@ -43,8 +43,9 @@ public class AiConfiguration {
                 prompter, executor
         )
                 .withMaxTokens(properties.getMaxTokens())
-                .withToolCall(toolRegistry, 5);
-        log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}", model.getClass().getSimpleName());
+                // .withToolCall(toolRegistry, 5)
+                ;
+        log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}, ToolCall: disabled", model.getClass().getSimpleName());
         return qqAiClient;
     }
 }
