@@ -1,6 +1,5 @@
 package com.zincoid.nullbot.core.component.ai.chat.client;
 
-import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.Event;
 import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.model.ModelResponse;
@@ -16,12 +15,13 @@ import com.zincoid.nullbot.core.component.ai.chat.tool.ToolCall;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 public class QQAiClient implements AiClient<QQMessage> {
 
@@ -112,33 +112,26 @@ public class QQAiClient implements AiClient<QQMessage> {
     public String runToolCalls(List<Message> messages, List<ToolDef> tools, boolean thinking, int maxTokens) {
         for (int i = 0; i < maxToolCalls; i++) {
             ModelResponse response = model.invoke(messages, tools, thinking, maxTokens);
-
-            if (!response.hasToolCalls()) {
-                return response.getContent();
-            }
-
+            if (!response.hasToolCalls()) return response.getContent();
             log.info("[ToolCallLooper] 第{}轮: 收到{}个工具调用", i + 1, response.getToolCalls().size());
-
             messages.add(BaseMessage.assistant(response.getToolCalls()));
-
-            for (ToolCall tc : response.getToolCalls()) {
-                log.info("[ToolCallLooper] 执行工具: {}({})", tc.getName(), tc.getArguments());
-                String result = executeTool(tc);
+            for (ToolCall toolCall : response.getToolCalls()) {
+                log.info("[ToolCallLooper] 执行工具: {}({})", toolCall.getName(), toolCall.getArguments());
+                String result = executeTool(toolCall);
                 log.info("[ToolCallLooper] 工具结果: {}", result);
-                messages.add(BaseMessage.tool(tc.getId(), result));
+                messages.add(BaseMessage.tool(toolCall.getId(), result));
             }
         }
-
         log.warn("[ToolCallLooper] 达到最大迭代次数({})，进行最终调用", maxIterations);
         return model.invoke(messages, thinking, maxTokens).getContent();
     }
 
-    private String executeTool(ToolCall tc) {
-        Tool tool = toolRegistry.get(tc.getName());
+    private String executeTool(ToolCall toolCall) {
+        Tool tool = toolRegistry.get(toolCall.getName());
         if (tool == null)
-            return "错误: 工具 " + tc.getName() + " 不存在";
+            return "错误: 工具 " + toolCall.getName() + " 不存在";
         try {
-            return tool.executetc.getArguments());
+            return tool.execute(toolCall.getArguments());
         } catch (Exception e) {
             log.warn("[ToolCallLooper] 工具执行失败: {}", e.getMessage());
             return "错误: " + e.getMessage();
