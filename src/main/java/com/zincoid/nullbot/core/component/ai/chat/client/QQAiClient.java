@@ -68,6 +68,18 @@ public class QQAiClient implements AiClient<QQMessage> {
         return _message.with(message.getGroupId(), message.getUserId(), message.getUserName());
     }
 
+    // =========================================== 存储方法 ===========================================
+
+    public void clear(String chatId) {
+        chatMemory.clear(chatId);
+    }
+
+    public List<QQMessage> history(String chatId) {
+        return chatMemory.get(chatId).stream().filter(msg -> msg instanceof QQMessage)
+                .map(msg -> (QQMessage) msg)
+                .toList();
+    }
+
     // =========================================== 应用方法 ===========================================
 
     public String chat(String chatId, QQMessage message, Event event, SettingPO setting) {
@@ -78,14 +90,14 @@ public class QQAiClient implements AiClient<QQMessage> {
             chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
             return "Refused";
         }
-        boolean realToolCallEnabled = setting.isEmbedding() && !setting.isCustom() && toolCallEnabled;
-        String prompt = qqPrompter.prompt(message.getGroupId(), setting.isEmbedding(), setting.isCustom(), realToolCallEnabled);
         List<QQMessage> messages;
         String responseContent;
-        if (realToolCallEnabled) {
+        if (toolCallEnabled) {
+            String prompt = qqPrompter.prompt(message.getGroupId(), false, setting.isCustom());
             responseContent = chatWithTools(chatId, prompt, message, event, setting);
             messages = List.of();
         } else {
+            String prompt = qqPrompter.prompt(message.getGroupId(), setting.isEmbedding(), setting.isCustom());
             QQMessage _message = call(chatId, prompt, message, setting.isThinking(), maxTokens);
             responseContent = _message.getContent();
             if (setting.isEmbedding() && !setting.isCustom()) {
@@ -102,29 +114,20 @@ public class QQAiClient implements AiClient<QQMessage> {
         if (!message.isPrivate())
             throw new IllegalArgumentException("消息类型应为私聊消息");
         chatMemory.add(chatId, message);
-        String prompt = qqPrompter.prompt(message.getUserId(), toolCallEnabled);
         List<QQMessage> messages;
         String responseContent;
         if (toolCallEnabled) {
+            String prompt = qqPrompter.prompt(message.getUserId(), false);
             responseContent = chatWithTools(chatId, prompt, message, event, null);
             messages = List.of();
         } else {
+            String prompt = qqPrompter.prompt(message.getUserId(), true);
             QQMessage _message = call(chatId, prompt, message, false, maxTokens);
             responseContent = _message.getContent();
             messages = qqMsgExecutor.chain(_message, event, false, false);
         }
         for (QQMessage msg : messages) chatMemory.add(chatId, msg);
         return responseContent;
-    }
-
-    public void clear(String chatId) {
-        chatMemory.clear(chatId);
-    }
-
-    public List<QQMessage> history(String chatId) {
-        return chatMemory.get(chatId).stream().filter(msg -> msg instanceof QQMessage)
-                .map(msg -> (QQMessage) msg)
-                .toList();
     }
 
     // =========================================== 工具方法 ===========================================

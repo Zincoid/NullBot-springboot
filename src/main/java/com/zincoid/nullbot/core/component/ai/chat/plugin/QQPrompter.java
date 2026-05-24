@@ -69,28 +69,18 @@ public class QQPrompter {
 
     // =================== 生成方法 ===================
 
-    public String prompt(Long userId) {
-        return prompt(userId, false);
-    }
-
-    public String prompt(Long userId, boolean funcCall) {
+    public String prompt(Long userId, boolean cmd) {
         StringBuilder sb = new StringBuilder();
         sb.append(sysMsgManager.getUserMessage(userId));
         sb.append(BASE_PM_PROMPT);
         sb.append(MEMORY_PROMPT.formatted(
                 formatMemories(sysMsgManager.getLongTermUserMemory(userId))));
-        if (!funcCall) {
-            sb.append(CMD_PROMPT.formatted(
-                    commandRegistry.getCommandHelpsForAI(QQCmdAllows.getPm())));
-        }
+        if (!cmd) sb.append(CMD_PROMPT.formatted(
+                commandRegistry.getCommandHelpsForAI(QQCmdAllows.getPm())));
         return sb.toString();
     }
 
-    public String prompt(Long groupId, boolean chain, boolean custom) {
-        return prompt(groupId, chain, custom, false);
-    }
-
-    public String prompt(Long groupId, boolean chain, boolean custom, boolean funcCall) {
+    public String prompt(Long groupId, boolean cmd, boolean custom) {
         StringBuilder sb = new StringBuilder();
         if (custom) {
             sb.append(sysMsgManager.getCustomMessage(groupId));
@@ -98,14 +88,10 @@ public class QQPrompter {
         } else {
             sb.append(sysMsgManager.getDefaultMessage(groupId));
             sb.append(BASE_GC_PROMPT);
-            if (chain) {
-                sb.append(MEMORY_PROMPT.formatted(
-                        sysMsgManager.getLongTermGroupMemory(groupId)));
-                if (!funcCall) {
-                    sb.append(CMD_PROMPT.formatted(
-                            commandRegistry.getCommandHelpsForAI(QQCmdAllows.getGc())));
-                }
-            }
+            sb.append(MEMORY_PROMPT.formatted(
+                    sysMsgManager.getLongTermGroupMemory(groupId)));
+            if (cmd) sb.append(CMD_PROMPT.formatted(
+                    commandRegistry.getCommandHelpsForAI(QQCmdAllows.getGc())));
         }
         return sb.toString();
     }
