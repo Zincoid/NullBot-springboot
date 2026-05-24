@@ -8,6 +8,8 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQAntiInjector;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQMsgExecutor;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
+import com.zincoid.nullbot.core.component.ai.chat.tool.ToolCallLooper;
+import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
 import com.zincoid.nullbot.core.properties.AiChatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +39,9 @@ public class AiConfiguration {
                 memory, model,
                 antiInjector.withModel(model),
                 prompter, executor
-        ).withMaxTokens(properties.getMaxTokens());
+        )
+                .withMaxTokens(properties.getMaxTokens())
+                .withToolCall(new ToolRegistry(), 5);
         log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}", model.getClass().getSimpleName());
         return qqAiClient;
     }

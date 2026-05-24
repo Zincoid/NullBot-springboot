@@ -7,13 +7,13 @@ import com.zincoid.nullbot.core.model.data.po.SettingPO;
 
 public final class BotCtxUtil {
 
-    public static final ThreadLocal<Bot> bot = new ThreadLocal<>();
-    public static final ThreadLocal<Event> event = new ThreadLocal<>();
+    private static final ThreadLocal<Bot> bot = new ThreadLocal<>();
+    private static final ThreadLocal<Event> event = new ThreadLocal<>();
 
-    public static final ThreadLocal<Boolean> isPrivate = new ThreadLocal<>();
-    public static final ThreadLocal<Long> userId = new ThreadLocal<>();
-    public static final ThreadLocal<Long> groupId = new ThreadLocal<>();
-    public static final ThreadLocal<SettingPO> setting = new ThreadLocal<>();
+    private static final ThreadLocal<Boolean> isPrivate = new ThreadLocal<>();
+    private static final ThreadLocal<Long> userId = new ThreadLocal<>();
+    private static final ThreadLocal<Long> groupId = new ThreadLocal<>();
+    private static final ThreadLocal<SettingPO> setting = new ThreadLocal<>();
 
     private BotCtxUtil() {}
 
