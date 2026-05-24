@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandRegistry;
-import com.zincoid.nullbot.core.component.ai.chat.plugin.QQCmdAllows;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
@@ -21,58 +20,73 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class QQCmdTool implements Tool {
+public class QQGroupCmdTool implements Tool {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ToolDef toolDef;
 
     private final ApplicationEventPublisher eventPublisher;
     private final CommandRegistry commandRegistry;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final Set<String> commandAllows;
-    private final Set<String> commandDescs;
-    private final ToolDef toolDef;
+    private static final Set<String> GC_CMD_ALLOWS;
 
-    public QQCmdTool(
+    static {
+
+        GC_CMD_ALLOWS = Set.of(
+                /* ========== 普通命令 ========== */
+                "aud", "vid", "img", "say",
+                "ChatReset", "UserBan",
+                "Help", "ImageFolder", "PUBG",
+                "Anime", "OneTimeAlarm",
+                /* ========== 合成命令 ========== */
+                "Convert", "Symmetry", "Tts",
+                /* ========== 加密命令 ========== */
+                "eb0f8545", "4ed1314d", "65275d24",
+                "1e7bd161", "b6713262", "db3fbe2b",
+                "0167a25a", "bab329aa"
+        );
+
+    }
+
+    public QQGroupCmdTool(
             ApplicationEventPublisher eventPublisher,
             CommandRegistry commandRegistry
     ) {
         this.eventPublisher = eventPublisher;
         this.commandRegistry = commandRegistry;
-        this.commandAllows = QQCmdAllows.getGc();
-        this.commandDescs = commandAllows.stream()
+        this.toolDef = buildToolDef(GC_CMD_ALLOWS.stream()
                 .map(commandRegistry::getCommand)
-                .map(Command::getHelpForAI).collect(Collectors.toSet());
-        this.toolDef = buildToolDef();
+                .map(Command::getHelpForAI).collect(Collectors.toSet()));
     }
 
-    private ToolDef buildToolDef() {
-        ObjectNode params = mapper.createObjectNode();
+    private ToolDef buildToolDef(Set<String> commandDescs) {
+        ObjectNode params = objectMapper.createObjectNode();
         params.put("type", "object");
 
-        ObjectNode props = mapper.createObjectNode();
+        ObjectNode props = objectMapper.createObjectNode();
 
-        ObjectNode cmdProp = mapper.createObjectNode();
+        ObjectNode cmdProp = objectMapper.createObjectNode();
         cmdProp.put("type", "string");
         cmdProp.put("description", "要调用的QQ指令名称");
-        ArrayNode enumNode = mapper.createArrayNode();
-        commandAllows.stream().sorted().forEach(enumNode::add);
+        ArrayNode enumNode = objectMapper.createArrayNode();
+        GC_CMD_ALLOWS.stream().sorted().forEach(enumNode::add);
         cmdProp.set("enum", enumNode);
         props.set("command", cmdProp);
 
-        ObjectNode argsProp = mapper.createObjectNode();
+        ObjectNode argsProp = objectMapper.createObjectNode();
         argsProp.put("type", "string");
         argsProp.put("description", "指令参数，多个参数用空格分隔，无参数则留空");
         props.set("args", argsProp);
 
         params.set("properties", props);
 
-        ArrayNode required = mapper.createArrayNode();
+        ArrayNode required = objectMapper.createArrayNode();
         required.add("command");
         params.set("required", required);
 
         return new ToolDef(
-                "qq_command",
-                "执行QQ聊天机器人指令。可用指令详情: " + commandDescs,
+                "qq_group_command",
+                "执行QQ群聊机器人指令。可用指令详情: " + commandDescs,
                 params
         );
     }
@@ -85,7 +99,7 @@ public class QQCmdTool implements Tool {
     @Override
     public String execute(String jsonArgs) {
         try {
-            JsonNode root = mapper.readTree(jsonArgs);
+            JsonNode root = objectMapper.readTree(jsonArgs);
             String cmdName = root.path("command").asText();
             String argsStr = root.path("args").asText("");
 
@@ -103,7 +117,7 @@ public class QQCmdTool implements Tool {
             return "指令 " + cmdName + " 执行成功";
 
         } catch (Exception e) {
-            log.warn("◉ [QQCmdTool] 执行失败: {}", e.getMessage());
+            log.warn("◉ [QQGroupCmdTool] 执行失败: {}", e.getMessage());
             return "错误: " + e.getMessage();
         }
     }

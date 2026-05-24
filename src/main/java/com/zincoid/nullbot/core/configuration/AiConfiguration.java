@@ -9,7 +9,7 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQMsgExecutor;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
-import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQCmdTool;
+import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupCmdTool;
 import com.zincoid.nullbot.core.properties.AiChatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -32,11 +32,11 @@ public class AiConfiguration {
 
     @Bean
     public QQAiClient qqAiClient(
-            ChatMemory memory, Model model, AiChatProperties properties, QQCmdTool qqCmdTool,
+            ChatMemory memory, Model model, AiChatProperties properties, QQGroupCmdTool qqGroupCmdTool,
             QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
     ) {
         ToolRegistry toolRegistry = new ToolRegistry();
-        toolRegistry.register(qqCmdTool);
+        // toolRegistry.register(qqGroupCmdTool);
         QQAiClient qqAiClient = new QQAiClient(
                 memory, model,
                 antiInjector.withModel(model),
