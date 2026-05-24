@@ -11,4 +11,6 @@ public interface ChatMemory {
     List<Message> get(String chatId);
 
     void clear(String chatId);
+
+    void reset();
 }

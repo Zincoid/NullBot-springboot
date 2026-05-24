@@ -66,6 +66,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         chatStrategy = chatStrategy == ChatStrategy.WITH_TOOLS
                 ? ChatStrategy.WITH_COMMANDS
                 : ChatStrategy.WITH_TOOLS;
+        chatMemory.reset();
         log.info("▽ [QQAiClient] 策略已切换 - {}", chatStrategy);
         return true;
     }

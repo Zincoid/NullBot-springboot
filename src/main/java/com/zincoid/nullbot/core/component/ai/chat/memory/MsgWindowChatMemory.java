@@ -30,4 +30,9 @@ public class MsgWindowChatMemory implements ChatMemory {
     public void clear(String chatId) {
         chatRepository.clear(chatId);
     }
+
+    @Override
+    public void reset() {
+    	chatRepository.reset();
+    }
 }

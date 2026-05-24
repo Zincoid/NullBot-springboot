@@ -11,4 +11,6 @@ public interface ChatRepository {
     void update(String chatId, List<Message> messages);
 
     void clear(String chatId);
+
+    void reset();
 }

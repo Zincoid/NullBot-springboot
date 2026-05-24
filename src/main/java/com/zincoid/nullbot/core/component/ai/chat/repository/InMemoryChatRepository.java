@@ -28,4 +28,9 @@ public class InMemoryChatRepository implements ChatRepository {
     public void clear(String chatId) {
         data.remove(chatId);
     }
+
+    @Override
+    public void reset() {
+    	data.clear();
+    }
 }
