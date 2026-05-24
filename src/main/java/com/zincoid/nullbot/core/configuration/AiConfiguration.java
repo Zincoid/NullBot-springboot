@@ -12,6 +12,7 @@ import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupCmdTool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupInfoTool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQPrivateCmdTool;
+import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQUserInfoTool;
 import com.zincoid.nullbot.core.properties.AiChatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -42,14 +43,16 @@ public class AiConfiguration {
         toolRegistry.register(qqGroupCmdTool);
         toolRegistry.register(qqPrivateCmdTool);
         toolRegistry.register(new QQGroupInfoTool());
+        toolRegistry.register(new QQUserInfoTool());
+
         QQAiClient qqAiClient = new QQAiClient(
                 memory, model,
                 antiInjector.withModel(model),
                 prompter, executor
         )
                 .withMaxTokens(properties.getMaxTokens())
-                .withToolCall(toolRegistry, 5)
-                ;
+                .withToolCall(toolRegistry, 5);
+
         log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}", model.getClass().getSimpleName());
         return qqAiClient;
     }
