@@ -39,10 +39,14 @@ public class ReplyCommand implements Command {
     public String getHelp() {
         return String.format("""
                 ◉ Reply 命令
-                功能: 文本输出 (可用于AI中间回复)
+                功能: 文本输出 (用于AI工具调用模式中间回复)
                 限权: %d 级
                 格式: Reply [内容]
-                别名: 回复""", getAccess()
+                别名: 回复
+                注意：
+                1. 仅在工具调用模式下可使用
+                2. 需要在回复文本后继续执行工具调用时，使用该指令进行文本回复
+                3. 此次回复会视作一次工具调用，对话因此不会中断""", getAccess()
         );
     }
 }
