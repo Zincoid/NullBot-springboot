@@ -4,7 +4,6 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
@@ -12,19 +11,25 @@ import com.zincoid.nullbot.core.component.control.SysMsgManager;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.UserService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @CommandMapping({"SysMsgSet", "提示词设置"})
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class SysMsgSetCommand implements Command {
 
     private final QQAiClient qqAiClient;
     private final SysMsgManager sysMsgManager;
     private final UserService userService;
+
+    public SysMsgSetCommand(@Lazy QQAiClient qqAiClient, SysMsgManager sysMsgManager, UserService userService) {
+        this.qqAiClient = qqAiClient;
+        this.sysMsgManager = sysMsgManager;
+        this.userService = userService;
+    }
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {

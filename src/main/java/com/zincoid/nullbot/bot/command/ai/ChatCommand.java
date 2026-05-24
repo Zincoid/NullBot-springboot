@@ -8,25 +8,28 @@ import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @CommandMapping({"Chat", "对话"})
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class ChatCommand implements Command {
 
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
     private final QQAiClient qqAiClient;
+
+    public ChatCommand(@Lazy QQAiClient qqAiClient) {
+        this.qqAiClient = qqAiClient;
+    }
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {

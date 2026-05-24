@@ -6,24 +6,27 @@ import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.bot.interaction.BotInputer;
 import com.zincoid.nullbot.core.model.bot.interaction.BotPageSelector;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @CommandMapping({"ChatHistory", "聊天历史"})
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class ChatHistoryCommand implements Command {
 
     private final QQAiClient qqAiClient;
+
+    public ChatHistoryCommand(@Lazy QQAiClient qqAiClient) {
+        this.qqAiClient = qqAiClient;
+    }
     // private final BotInputManager botInputManager;
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小

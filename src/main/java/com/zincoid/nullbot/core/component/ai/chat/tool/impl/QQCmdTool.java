@@ -103,7 +103,7 @@ public class QQCmdTool implements Tool {
             return "指令 " + cmdName + " 执行成功";
 
         } catch (Exception e) {
-            log.warn("[QQCmdTool] 执行失败: {}", e.getMessage());
+            log.warn("◉ [QQCmdTool] 执行失败: {}", e.getMessage());
             return "错误: " + e.getMessage();
         }
     }

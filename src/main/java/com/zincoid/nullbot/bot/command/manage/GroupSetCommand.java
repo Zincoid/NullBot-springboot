@@ -3,7 +3,6 @@ package com.zincoid.nullbot.bot.command.manage;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
@@ -14,19 +13,25 @@ import com.zincoid.nullbot.core.enums.LimitScope;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @CommandMapping({"GroupSet", "群设置"})
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class GroupSetCommand implements Command {
 
     private final QQAiClient qqAiClient;
     private final SettingService settingService;
     private final CommandRateLimiter commandRateLimiter;
+
+    public GroupSetCommand(@Lazy QQAiClient qqAiClient, SettingService settingService, CommandRateLimiter commandRateLimiter) {
+        this.qqAiClient = qqAiClient;
+        this.settingService = settingService;
+        this.commandRateLimiter = commandRateLimiter;
+    }
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {

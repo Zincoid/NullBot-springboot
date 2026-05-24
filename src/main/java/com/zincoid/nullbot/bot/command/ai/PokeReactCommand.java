@@ -5,11 +5,11 @@ import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,11 +17,14 @@ import java.util.Objects;
 
 @CommandMapping({"PokeReact"})
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class PokeReactCommand implements Command {
 
     private final QQAiClient qqAiClient;
+
+    public PokeReactCommand(@Lazy QQAiClient qqAiClient) {
+        this.qqAiClient = qqAiClient;
+    }
 
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {

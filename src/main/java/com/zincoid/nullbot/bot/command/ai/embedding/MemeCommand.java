@@ -5,7 +5,6 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
-import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -13,7 +12,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.NullBotLogException;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.FileService;
 import org.springframework.stereotype.Component;
@@ -27,7 +25,6 @@ import java.util.List;
 public class MemeCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
-    private final QQPrompter qqPrompter;
     private final FileService fileService;
     private final OssUrlBuilder ossUrlBuilder;
 
@@ -57,12 +54,6 @@ public class MemeCommand implements Command {
         String memePath = fileStorageProperties.getResourcePath() + "/ai/meme";
         String memeName = params.getFirst();
         List<FilePO> memes = fileService.search(memeName, memePath);
-
-        // 自动记录表情错误使用
-        if (memes.isEmpty()) {
-            qqPrompter.addError("表情文件 " + memeName + " 不存在，不要再使用了");
-            throw new NullBotLogException("[表情] ❌" + memeName + " 不存在");
-        }
 
         FilePO meme = memes.getFirst();
         String response = MsgUtils.builder()

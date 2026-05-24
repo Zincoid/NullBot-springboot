@@ -3,13 +3,13 @@ package com.zincoid.nullbot.web.controller;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.control.CommandRateLimiter;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.util.CsvUtil;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,12 +20,17 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/nullbot/setting")
 @RestController
-@RequiredArgsConstructor
 public class SettingController {
 
     private final SettingService settingService;
     private final CommandRateLimiter commandRateLimiter;
     private final QQAiClient qqAiClient;
+
+    public SettingController(SettingService settingService, CommandRateLimiter commandRateLimiter, @Lazy QQAiClient qqAiClient) {
+        this.settingService = settingService;
+        this.commandRateLimiter = commandRateLimiter;
+        this.qqAiClient = qqAiClient;
+    }
 
     @GetMapping("/{id}")
     public WebResult getSetting(@PathVariable Long id) {

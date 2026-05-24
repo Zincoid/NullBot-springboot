@@ -4,21 +4,24 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @CommandMapping({"ChatReset", "重置聊天"})
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class ChatResetCommand implements Command {
 
     private final QQAiClient qqAiClient;
+
+    public ChatResetCommand(@Lazy QQAiClient qqAiClient) {
+        this.qqAiClient = qqAiClient;
+    }
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
