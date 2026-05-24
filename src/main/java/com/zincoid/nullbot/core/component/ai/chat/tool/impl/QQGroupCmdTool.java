@@ -1,9 +1,6 @@
 package com.zincoid.nullbot.core.component.ai.chat.tool.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandRegistry;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQCmdAllows;
@@ -27,7 +24,6 @@ public class QQGroupCmdTool implements Tool {
 
     private final ApplicationEventPublisher eventPublisher;
     private final CommandRegistry commandRegistry;
-    private final ObjectMapper objectMapper;
 
     public QQGroupCmdTool(
             ApplicationEventPublisher eventPublisher,
@@ -35,7 +31,6 @@ public class QQGroupCmdTool implements Tool {
     ) {
         this.eventPublisher = eventPublisher;
         this.commandRegistry = commandRegistry;
-        this.objectMapper = new ObjectMapper();
         this.toolDef = buildToolDef();
     }
 
@@ -44,36 +39,10 @@ public class QQGroupCmdTool implements Tool {
         Set<String> cmdDescs = cmdAllows.stream()
                 .map(commandRegistry::getCommand)
                 .map(Command::getHelpForAI).collect(Collectors.toSet());
-
-        ObjectNode params = objectMapper.createObjectNode();
-        params.put("type", "object");
-
-        ObjectNode props = objectMapper.createObjectNode();
-
-        ObjectNode cmdProp = objectMapper.createObjectNode();
-        cmdProp.put("type", "string");
-        cmdProp.put("description", "要调用的QQ指令名称");
-        ArrayNode enumNode = objectMapper.createArrayNode();
-        cmdAllows.stream().sorted().forEach(enumNode::add);
-        cmdProp.set("enum", enumNode);
-        props.set("command", cmdProp);
-
-        ObjectNode argsProp = objectMapper.createObjectNode();
-        argsProp.put("type", "string");
-        argsProp.put("description", "指令参数，多个参数用空格分隔，无参数则留空");
-        props.set("args", argsProp);
-
-        params.set("properties", props);
-
-        ArrayNode required = objectMapper.createArrayNode();
-        required.add("command");
-        params.set("required", required);
-
-        return new ToolDef(
-                "qq_group_command",
-                "执行QQ群聊机器人指令。可用指令详情: " + cmdDescs,
-                params
-        );
+        return ToolDef.builder("qq_group_command", "执行QQ群聊机器人指令。可用指令详情: " + cmdDescs)
+                .addEnum("command", "要调用的QQ指令名称", cmdAllows, true)
+                .addString("args", "指令参数，多个参数用空格分隔，无参数则留空")
+                .build();
     }
 
     @Override
@@ -84,7 +53,7 @@ public class QQGroupCmdTool implements Tool {
     @Override
     public String execute(String jsonArgs) {
         try {
-            JsonNode root = objectMapper.readTree(jsonArgs);
+            JsonNode root = ToolDef.parseArgs(jsonArgs);
             String cmdName = root.path("command").asText();
             String argsStr = root.path("args").asText("");
             Command command = commandRegistry.getCommand(cmdName);

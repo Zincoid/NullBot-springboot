@@ -1,8 +1,6 @@
 package com.zincoid.nullbot.core.component.ai.chat.tool.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
@@ -12,23 +10,10 @@ public class QQGroupInfoTool implements Tool {
 
     private final ToolDef toolDef;
 
-    private final ObjectMapper objectMapper;
-
     public QQGroupInfoTool() {
-        this.objectMapper = new ObjectMapper();
-        this.toolDef = buildToolDef();
-    }
-
-    private ToolDef buildToolDef() {
-        ObjectNode params = objectMapper.createObjectNode();
-        params.put("type", "object");
-        ObjectNode props = objectMapper.createObjectNode();
-        ObjectNode idProp = objectMapper.createObjectNode();
-        idProp.put("type", "string");
-        idProp.put("description", "群号(可选参数,不设置时查询本群)");
-        props.set("id", idProp);
-        params.set("properties", props);
-        return new ToolDef("qq_group_info", "查询QQ群信息", params);
+        this.toolDef = ToolDef.builder("qq_group_info", "查询QQ群信息")
+                .addString("id", "群号(可选参数,不设置时查询本群)")
+                .build();
     }
 
     @Override
@@ -39,7 +24,7 @@ public class QQGroupInfoTool implements Tool {
     @Override
     public String execute(String jsonArgs) {
         try {
-            JsonNode root = objectMapper.readTree(jsonArgs);
+            JsonNode root = ToolDef.parseArgs(jsonArgs);
             Long groupId = root.path("id").asLong(0L);
             if (groupId == 0) groupId = BotCtxUtil.getGroupId();
             Bot bot = BotCtxUtil.getBot();
