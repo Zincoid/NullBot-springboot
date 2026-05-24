@@ -94,7 +94,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         String responseContent;
         if (toolCallEnabled) {
             String prompt = qqPrompter.prompt(message.getGroupId(), false, setting.isCustom());
-            responseContent = chatWithTools(chatId, prompt, message, event, setting);
+            responseContent = chatWithTools(chatId, prompt, message, setting.isThinking(), setting.isVoice());
             messages = List.of();
         } else {
             String prompt = qqPrompter.prompt(message.getGroupId(), setting.isEmbedding(), setting.isCustom());
@@ -118,7 +118,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         String responseContent;
         if (toolCallEnabled) {
             String prompt = qqPrompter.prompt(message.getUserId(), false);
-            responseContent = chatWithTools(chatId, prompt, message, event, null);
+            responseContent = chatWithTools(chatId, prompt, message, false, false);
             messages = List.of();
         } else {
             String prompt = qqPrompter.prompt(message.getUserId(), true);
@@ -132,13 +132,10 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     // =========================================== 工具方法 ===========================================
 
-    private String chatWithTools(String chatId, String prompt, QQMessage message, Event event, SettingPO setting) {
+    private String chatWithTools(String chatId, String prompt, QQMessage message, boolean thinking, boolean voice) {
         List<Message> toolMessages = new ArrayList<>();
         toolMessages.add(QQMessage.system(prompt));
         toolMessages.addAll(chatMemory.get(chatId));
-        boolean thinking = setting != null && setting.isThinking();
-        boolean voice = setting != null && setting.isVoice();
-        boolean embeddingAuth = setting != null && setting.isEmbeddingAuth();
         String finalContent = runToolCalls(toolMessages, thinking, maxTokens);
         QQMessage finalMessage = QQMessage.assistant(finalContent);
         if (message.isPrivate()) {
@@ -146,13 +143,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         } else {
             finalMessage = finalMessage.with(message.getGroupId(), message.getUserId(), message.getUserName());
         }
-        boolean chain = setting == null || (setting.isEmbedding() && !setting.isCustom());
-        List<QQMessage> sent;
-        if (chain) {
-            sent = qqMsgExecutor.chain(finalMessage, event, voice, embeddingAuth);
-        } else {
-            sent = qqMsgExecutor.direct(finalMessage, voice);
-        }
+        List<QQMessage> sent = qqMsgExecutor.direct(finalMessage, voice);
         for (QQMessage msg : sent) chatMemory.add(chatId, msg);
         return finalContent;
     }
