@@ -14,13 +14,18 @@ import java.util.Map;
 @ToString(callSuper = true)
 public class BaseMessage extends AbstractMessage {
 
-    String toolCallId;
-    List<ToolCall> toolCalls;
+    private final List<ToolCall> toolCalls;
+    private final String toolCallId;
 
-    private BaseMessage(Role role, String content, String toolCallId, List<ToolCall> toolCalls) {
+    private BaseMessage(Role role, String content, List<ToolCall> toolCalls, String toolCallId) {
         super(role, content);
-        this.toolCallId = toolCallId;
         this.toolCalls = toolCalls;
+        this.toolCallId = toolCallId;
+    }
+
+    @Override
+    public List<ToolCall> getToolCalls() {
+        return toolCalls;
     }
 
     @Override
@@ -56,12 +61,12 @@ public class BaseMessage extends AbstractMessage {
         return new BaseMessage(Role.ASSISTANT, content, null, null);
     }
     public static BaseMessage assistant(List<ToolCall> toolCalls) {
-        return new BaseMessage(Role.ASSISTANT, null, null, toolCalls);
+        return new BaseMessage(Role.ASSISTANT, null, toolCalls, null);
     }
     public static BaseMessage system(String content) {
         return new BaseMessage(Role.SYSTEM, content, null, null);
     }
     public static BaseMessage tool(String toolCallId, String content) {
-        return new BaseMessage(Role.TOOL, content, toolCallId, null);
+        return new BaseMessage(Role.TOOL, content, null, toolCallId);
     }
 }
