@@ -14,6 +14,7 @@ import com.zincoid.nullbot.core.properties.AiChatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Slf4j
 @Configuration
@@ -31,6 +32,7 @@ public class AiConfiguration {
     }
 
     @Bean
+    @Lazy
     public QQAiClient qqAiClient(
             ChatMemory memory, Model model, AiChatProperties properties, QQCmdTool qqCmdTool,
                     QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
