@@ -15,7 +15,7 @@ public class CommandRegistry {
         for (Command command : commands) {
             CommandMapping mapping = command.getClass().getAnnotation(CommandMapping.class);
             if (mapping != null) {
-                for(String commandName : mapping.value()) {
+                for (String commandName : mapping.value()) {
                     commandMap.put(commandName, command);
                 }
             }
@@ -29,7 +29,7 @@ public class CommandRegistry {
     public String getCommandHelpsForAI(Set<String> commandSet) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, Command> entry : commandMap.entrySet()) {
-            if(commandSet.contains(entry.getKey())){
+            if (commandSet.contains(entry.getKey())) {
                 sb.append(entry.getValue().getHelpForAI()).append("\n");
             }
         }

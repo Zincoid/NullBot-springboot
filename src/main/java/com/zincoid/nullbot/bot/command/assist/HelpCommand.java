@@ -14,7 +14,6 @@ import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.util.Base64Util;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.List;
 
 @CommandMapping({"Help", "help", "帮助"})
