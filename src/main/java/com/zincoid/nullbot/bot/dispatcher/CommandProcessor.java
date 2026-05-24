@@ -26,9 +26,9 @@ public class CommandProcessor {
         if (command != null) {
             log.info("└─[CommandProcessor] 正在处理 {} 命令...", event.getCommandType());
             chainProcess(bot, event, command);
-            log.info("  [CommandProcessor] {} 命令处理完毕", event.getCommandType());
+            log.info("■ [CommandProcessor] {} 命令处理完毕", event.getCommandType());
         } else
-            log.info("└─[CommandProcessor] 命令不存在");
+            log.info("■ [CommandProcessor] 命令不存在");
     }
 
     // 监听处理嵌入指令
@@ -37,20 +37,20 @@ public class CommandProcessor {
         String commandType = embeddedEvent.getEvent().getCommandType();
         Command command = registry.getCommand(commandType);
         if (command != null) {
-            log.info("\t\t◉ [CommandProcessor-Embed] 正在处理内嵌 {} 命令...", commandType);
+            log.info("\t\t▶ [CommandProcessor::Embed] 正在处理内嵌 {} 命令...", commandType);
             // Thread.sleep(500);  // 防止触发间隔限制 (已优化 - 忽略速率限制)
             chainProcess(embeddedEvent.getBot(), embeddedEvent.getEvent(), command);
-            log.info("\t\t◉ [CommandProcessor-Embed] 内嵌 {} 命令处理完毕", commandType);
+            log.info("\t\t■ [CommandProcessor::Embed] 内嵌 {} 命令处理完毕", commandType);
         } else
-            log.info("\t\t◉ [CommandProcessor-Embed] 内嵌命令不存在");
+            log.info("\t\t■ [CommandProcessor::Embed] 内嵌命令不存在");
     }
 
     public void processTest(CommandEvent<?> event) throws Exception {
         Command command = registry.getCommand(event.getCommandType());
         if (command != null) {
-            log.info("[CommandProcessor] 正在处理 {} 命令 (TEST)...", event.getCommandType());
+            log.info("▶ [CommandProcessor::Test] 正在处理 {} 命令 (TEST)...", event.getCommandType());
             chainProcess(null, event, command);
-            log.info("◉ [CommandProcessor] {} 命令处理完毕", event.getCommandType());
+            log.info("■ [CommandProcessor::Test] {} 命令处理完毕", event.getCommandType());
 
             // 在 Command 组件中使用
             // if (bot == null) {
@@ -58,7 +58,7 @@ public class CommandProcessor {
             // }
 
         } else
-            log.info("[CommandProcessor] 命令不存在");
+            log.info("■ [CommandProcessor::Test] 命令不存在");
     }
 
     public void chainProcess(Bot bot, CommandEvent<?> event, Command command) throws Exception {
