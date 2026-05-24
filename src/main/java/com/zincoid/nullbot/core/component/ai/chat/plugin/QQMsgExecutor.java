@@ -7,10 +7,10 @@ import com.mikuac.shiro.dto.action.common.MsgId;
 import com.mikuac.shiro.dto.event.Event;
 import com.zincoid.nullbot.core.component.ai.voice.TtsClient;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
-import com.zincoid.nullbot.core.component.tool.BotOperator;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import com.zincoid.nullbot.core.model.bot.event.EmbeddedCommandEvent;
 import com.zincoid.nullbot.core.util.Base64Util;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class QQMsgExecutor {
 
-    private final BotOperator botOperator;
     private final ResourceLoader resourceLoader;
     private final ApplicationEventPublisher eventPublisher;
     private final TtsClient ttsClient;
@@ -44,7 +43,7 @@ public class QQMsgExecutor {
 
     public List<QQMessage> direct(QQMessage message, boolean voice) {
 
-        Bot bot = botOperator.getBot(3, 5000);
+        Bot bot = BotCtxUtil.getBot();
         boolean isPrivate = message.isPrivate();
         Long targetId = isPrivate ? message.getUserId() : message.getGroupId();
         String content = message.getContent();
@@ -64,7 +63,7 @@ public class QQMsgExecutor {
     public List<QQMessage> chain(QQMessage message, Event event,
                                  boolean voice, boolean embeddingAuth) {
 
-        Bot bot = botOperator.getBot(3, 5000);
+        Bot bot = BotCtxUtil.getBot();
         boolean isPrivate = message.isPrivate();
         Long targetId = message.isPrivate() ? message.getUserId() : message.getGroupId();
         String content = message.getContent();
