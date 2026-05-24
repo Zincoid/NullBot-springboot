@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.dispatcher.CommandProcessor;
 import com.zincoid.nullbot.bot.dispatcher.CommandRegistry;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
+import com.zincoid.nullbot.core.model.bot.event.EmbeddedCommandEvent;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -22,7 +24,7 @@ public class QQCmdTool implements Tool {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    private final CommandProcessor commandProcessor;
+    private final ApplicationEventPublisher eventPublisher;
     private final CommandRegistry commandRegistry;
 
     private final Set<String> commandAllows;
@@ -30,11 +32,11 @@ public class QQCmdTool implements Tool {
     private final ToolDef toolDef;
 
     public QQCmdTool(
-            CommandProcessor commandProcessor,
+            ApplicationEventPublisher eventPublisher,
             CommandRegistry commandRegistry,
             Set<String> commandAllows
     ) {
-        this.commandProcessor = commandProcessor;
+        this.eventPublisher = eventPublisher;
         this.commandRegistry = commandRegistry;
         this.commandAllows = commandAllows;
         this.commandDescs = commandAllows.stream()
@@ -92,9 +94,14 @@ public class QQCmdTool implements Tool {
                 return "错误: 指令 " + cmdName + " 不存在";
 
             String cmdStr = cmdName + (argsStr.isEmpty() ? "" : " " + argsStr);
-            CommandEvent<?> toolEvent = new CommandEvent<>(event, cmdStr, false, false);
-            commandProcessor.chainProcess(null, toolEvent, command);
+            eventPublisher.publishEvent(
+                    new EmbeddedCommandEvent(
+                            BotCtxUtil.getBot(),
+                            new CommandEvent<>(BotCtxUtil.getEvent(), cmdStr, false, false)
+                    )
+            );
             return "指令 " + cmdName + " 执行成功";
+
         } catch (Exception e) {
             log.warn("[QQCmdTool] 执行失败: {}", e.getMessage());
             return "错误: " + e.getMessage();
