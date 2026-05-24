@@ -2,6 +2,8 @@ package com.zincoid.nullbot.core.component.tool;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
+import com.mikuac.shiro.dto.action.common.ActionData;
+import com.mikuac.shiro.dto.action.common.MsgId;
 import com.mikuac.shiro.dto.action.response.GroupInfoResp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,20 +46,20 @@ public class BotOperator {
 
     // =================== 默认方法 ===================
 
-    public void sendLogGroupMsg(String message) {
-        sendGroupMsg(logId ,message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
+    public Integer sendLogGroupMsg(String message) {
+        return sendGroupMsg(logId ,message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
     }
 
     public void sendAllGroupMsg(String message) {
         sendAllGroupMsg(message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
     }
 
-    public void sendGroupMsg(Long groupId, String message) {
-        sendGroupMsg(groupId, message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
+    public Integer sendGroupMsg(Long groupId, String message) {
+        return sendGroupMsg(groupId, message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
     }
 
-    public void sendPrivateMsg(Long userId, String message) {
-        sendPrivateMsg(userId, message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
+    public Integer sendPrivateMsg(Long userId, String message) {
+        return sendPrivateMsg(userId, message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
     }
 
     // =================== 消息方法 ===================
@@ -69,15 +71,17 @@ public class BotOperator {
         log.info("▽ [BotOperator] 全群消息已发送: {}", message);
     }
 
-    public void sendGroupMsg(Long groupId, String message, int maxRetries, long retryInterval) {
+    public Integer sendGroupMsg(Long groupId, String message, int maxRetries, long retryInterval) {
         Bot bot = getBot(maxRetries, retryInterval);
-        bot.sendGroupMsg(groupId, message, false);
+        ActionData<MsgId> actionData = bot.sendGroupMsg(groupId, message, false);
         log.info("▽ [BotOperator] 群聊({})消息已发送: {}", groupId, message);
+        return actionData.getData().getMessageId();
     }
 
-    public void sendPrivateMsg(Long userId, String message, int maxRetries, long retryInterval) {
+    public Integer sendPrivateMsg(Long userId, String message, int maxRetries, long retryInterval) {
         Bot bot = getBot(maxRetries, retryInterval);
-        bot.sendPrivateMsg(userId, message, false);
+        ActionData<MsgId> actionData = bot.sendPrivateMsg(userId, message, false);
         log.info("▽ [BotOperator] 私聊({})消息已发送: {}", userId, message);
+        return actionData.getData().getMessageId();
     }
 }
