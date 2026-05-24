@@ -35,6 +35,14 @@ public class ToolDef {
         }
     }
 
+    public static <T> T parseArgs(String jsonArgs, Class<T> clazz) {
+        try {
+            return MAPPER.readValue(jsonArgs, clazz);
+        } catch (Exception e) {
+            throw new RuntimeException("JSON参数解析失败: " + jsonArgs, e);
+        }
+    }
+
     public static class Builder {
         private final String name;
         private final String description;

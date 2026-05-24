@@ -1,6 +1,5 @@
 package com.zincoid.nullbot.core.component.ai.chat.tool.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandRegistry;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQCmdAllows;
@@ -19,6 +18,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class QQPrivateCmdTool implements Tool {
+
+    private record Args(String command, String args) {}
 
     private final ToolDef toolDef;
 
@@ -53,23 +54,23 @@ public class QQPrivateCmdTool implements Tool {
     @Override
     public String execute(String jsonArgs) {
         try {
-            JsonNode root = ToolDef.parseArgs(jsonArgs);
-            String cmdName = root.path("command").asText();
-            String argsStr = root.path("args").asText("");
-
-            Command command = commandRegistry.getCommand(cmdName);
+            Args args = ToolDef.parseArgs(jsonArgs, Args.class);
+            Command command = commandRegistry.getCommand(args.command());
             if (command == null)
-                return "错误: 指令 " + cmdName + " 不存在";
-
-            String cmdStr = cmdName + (argsStr.isEmpty() ? "" : " " + argsStr);
+                return "错误: 指令 " + args.command() + " 不存在";
+            String cmdStr = args.command() + (args.args().isEmpty() ? "" : " " + args.args());
             eventPublisher.publishEvent(
                     new EmbeddedCommandEvent(
                             BotCtxUtil.getBot(),
-                            new CommandEvent<>(BotCtxUtil.getEvent(), cmdStr, false, false)
+                            new CommandEvent<>(
+                                    BotCtxUtil.getEvent(),
+                                    cmdStr,
+                                    false,
+                                    false
+                            )
                     )
             );
-            return "指令 " + cmdName + " 执行成功";
-
+            return "指令 " + args.command() + " 执行成功";
         } catch (Exception e) {
             log.warn("◉ [QQGroupCmdTool] 执行失败: {}", e.getMessage());
             return "错误: " + e.getMessage();

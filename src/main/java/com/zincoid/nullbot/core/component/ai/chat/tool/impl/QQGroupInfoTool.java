@@ -1,12 +1,13 @@
 package com.zincoid.nullbot.core.component.ai.chat.tool.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 
 public class QQGroupInfoTool implements Tool {
+
+    private record Args(long id) {}
 
     private final ToolDef toolDef;
 
@@ -24,9 +25,8 @@ public class QQGroupInfoTool implements Tool {
     @Override
     public String execute(String jsonArgs) {
         try {
-            JsonNode root = ToolDef.parseArgs(jsonArgs);
-            Long groupId = root.path("id").asLong(0L);
-            if (groupId == 0) groupId = BotCtxUtil.getGroupId();
+            Args args = ToolDef.parseArgs(jsonArgs, Args.class);
+            long groupId = args.id() == 0 ? BotCtxUtil.getGroupId() : args.id();
             Bot bot = BotCtxUtil.getBot();
             String groupInfo = bot.getGroupInfo(groupId, true).toString();
             String groupUsers = bot.getGroupMemberList(groupId).toString();
