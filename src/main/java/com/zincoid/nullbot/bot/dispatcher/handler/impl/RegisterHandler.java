@@ -47,7 +47,7 @@ public class RegisterHandler implements Handler {
             groupId = 0L;  // 群号 0 代表私聊
             userId = privateMessageEvent.getUserId();
         } else {
-            log.info("\t\t├─[RegisterHandler] 默认不注册的事件");
+            log.info("├─[RegisterHandler] 默认不注册的事件");
             chain.doHandle(bot, event, command);
             return;
         }
@@ -68,10 +68,10 @@ public class RegisterHandler implements Handler {
         GroupPO group = groupService.get(groupId);
         if (group == null) {
             groupService.add(groupId, groupName);
-            log.info("\t\t├─[RegisterHandler] 新群聊注册完成");
+            log.info("├─[RegisterHandler] 新群聊注册完成");
         } else {
             groupService.updateName(groupId, groupName);
-            log.info("\t\t├─[RegisterHandler] 群聊信息已更新");
+            log.info("├─[RegisterHandler] 群聊信息已更新");
         }
     }
 
@@ -79,10 +79,10 @@ public class RegisterHandler implements Handler {
         UserPO user = userService.get(userId);
         if (user == null) {
             userService.add(userId, userName);
-            log.info("\t\t├─[RegisterHandler] 新用户注册完成");
+            log.info("├─[RegisterHandler] 新用户注册完成");
         } else {
             userService.updateName(userId, userName);
-            log.info("\t\t├─[RegisterHandler] 用户信息已更新");
+            log.info("├─[RegisterHandler] 用户信息已更新");
         }
     }
 }

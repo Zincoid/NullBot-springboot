@@ -38,7 +38,7 @@ public class RandomImageCommand implements Command {
                 .img(ossUrlBuilder.from(image.getId()))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("\t\t\t\t├─[RandomImage] 已发送图片 - {}", image.getFileName());
+        log.info("├─[RandomImage] 已发送图片 - {}", image.getFileName());
     }
 
     @Override

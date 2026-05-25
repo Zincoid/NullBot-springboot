@@ -31,7 +31,7 @@ public class DbUpdateCommand implements Command {
         userService.updateAllNames();
 
         bot.sendGroupMsg(event.getGroupId(), "[数据库更新] ✅已完成", false);
-        log.info("\t\t\t\t├─[DbUpdate] 数据库已更新");
+        log.info("├─[DbUpdate] 数据库已更新");
     }
 
     @Override

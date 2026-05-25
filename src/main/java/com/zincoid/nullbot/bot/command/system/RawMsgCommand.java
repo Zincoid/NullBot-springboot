@@ -25,7 +25,7 @@ public class RawMsgCommand implements Command {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply) throw new NullBotMsgException("[原始消息] ❌需引用消息");
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-        log.info("\t\t\t\t├─[RawMsg] 已输出\n{}", replyMsg.getRawMessage());
+        log.info("├─[RawMsg] 已输出\n{}", replyMsg.getRawMessage());
         bot.sendGroupMsg(event.getGroupId(), "[原始消息] ✅已输出至控制台", false);
     }
 

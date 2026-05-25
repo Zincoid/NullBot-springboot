@@ -43,7 +43,7 @@ public class PokeReactCommand implements Command {
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
-        log.info("\t\t\t\t├─[PokeReact] 已回复{}戳戳: {}", groupId != null ? "群聊" : "私聊", response);
+        log.info("├─[PokeReact] 已回复{}戳戳: {}", groupId != null ? "群聊" : "私聊", response);
     }
 
     // 特殊命令 无帮助

@@ -43,7 +43,7 @@ public class TicTacToeCommand implements Command {
         } else
             bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
 
-        log.info("\t\t\t\t├─[TicTacToe] 落子 - {} {}", x, y);
+        log.info("├─[TicTacToe] 落子 - {} {}", x, y);
     }
 
     @Override

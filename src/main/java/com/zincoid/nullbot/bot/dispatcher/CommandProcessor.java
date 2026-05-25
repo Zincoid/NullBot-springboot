@@ -24,7 +24,7 @@ public class CommandProcessor {
     public void processQQ(Bot bot, CommandEvent<?> event) throws Exception {
         Command command = registry.getCommand(event.getCommandType());
         if (command != null) {
-            log.info("└─[CommandProcessor::QQ] 正在处理 {} 命令...", event.getCommandType());
+            log.info("▶ [CommandProcessor::QQ] 正在处理 {} 命令...", event.getCommandType());
             chainProcess(bot, event, command);
             log.info("■ [CommandProcessor::QQ] {} 命令处理完毕", event.getCommandType());
         } else
@@ -36,11 +36,11 @@ public class CommandProcessor {
     public void processInner(InnerCommandEvent event) throws Exception {
         Command command = registry.getCommand(event.getEvent().getCommandType());
         if (command != null) {
-            log.info("\t\t▶ [CommandProcessor::Inner] 正在处理 {} 命令...", event.getEvent().getCommandType());
+            log.info("▷ [CommandProcessor::Inner] 正在处理 {} 命令...", event.getEvent().getCommandType());
             chainProcess(event.getBot(), event.getEvent(), command);
-            log.info("\t\t■ [CommandProcessor::Inner] {} 命令处理完毕", event.getEvent().getCommandType());
+            log.info("□ [CommandProcessor::Inner] {} 命令处理完毕", event.getEvent().getCommandType());
         } else
-            log.info("\t\t■ [CommandProcessor::Inner] 命令不存在");
+            log.info("□ [CommandProcessor::Inner] 命令不存在");
     }
 
     // 处理测试指令

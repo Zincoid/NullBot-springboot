@@ -32,7 +32,7 @@ public class CancelAlarmCommand implements Command {
         boolean cancelled = botTaskScheduler.cancelTask(taskId);
 
         bot.sendGroupMsg(groupId, "[取消闹钟] %s".formatted(cancelled ? "✅已取消" : "❌未取消"), false);
-        log.info("\t\t\t\t├─[CancelAlarm] 闹钟取消{} - AlarmID: {}", cancelled ? "成功" : "失败", alarmId);
+        log.info("├─[CancelAlarm] 闹钟取消{} - AlarmID: {}", cancelled ? "成功" : "失败", alarmId);
     }
 
     @Override

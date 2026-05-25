@@ -30,7 +30,7 @@ public class ChatResetCommand implements Command {
         bot.sendGroupMsg(event.getGroupId(), """
                     [重置聊天] ♻️记忆存储已重置
                     - ChatID: %s""".formatted(chatId), false);
-        log.info("\t\t\t\t├─[ChatReset] 历史已重置 - ChatID: {}", chatId);
+        log.info("├─[ChatReset] 历史已重置 - ChatID: {}", chatId);
     }
 
     @Override

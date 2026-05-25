@@ -38,7 +38,7 @@ public class RandomVideoCommand implements Command {
                 .video(ossUrlBuilder.from(video.getId()), "")
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("\t\t\t\t├─[RandomVideo] 已发送视频 - {}", video.getFileName());
+        log.info("├─[RandomVideo] 已发送视频 - {}", video.getFileName());
     }
 
     @Override

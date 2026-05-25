@@ -50,7 +50,7 @@ public class ChoyenCommand implements Command {
         }
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);
-        log.info("\t\t\t\t├─[Choyen] 处理完成 - {} {}", params.get(0), params.get(1));
+        log.info("├─[Choyen] 处理完成 - {} {}", params.get(0), params.get(1));
     }
 
     @Override

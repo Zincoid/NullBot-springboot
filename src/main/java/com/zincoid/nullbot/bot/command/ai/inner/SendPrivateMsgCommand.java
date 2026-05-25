@@ -29,7 +29,7 @@ public class SendPrivateMsgCommand implements Command {
 
         String message = String.join(" ", params.subList(1, params.size()));  // 拼接信息
         bot.sendPrivateMsg(qqNumber, message, false);
-        log.info("\t\t\t\t├─[SendPrivateMsg] 私信已发送 - {} -> {}", qqNumber, message);
+        log.info("├─[SendPrivateMsg] 私信已发送 - {} -> {}", qqNumber, message);
     }
 
     @Override

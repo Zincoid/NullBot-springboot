@@ -37,7 +37,7 @@ public class RandomSayingCommand implements Command {
         if (saying == null)
             throw new NullBotMsgException("[随机语录] ❌暂无用户记录");
         bot.sendGroupMsg(event.getGroupId(), saying.toString(), false);
-        log.info("\t\t\t\t├─[RandomSaying] 已发送语录 - No.{}", saying.getId());
+        log.info("├─[RandomSaying] 已发送语录 - No.{}", saying.getId());
     }
 
     @Override

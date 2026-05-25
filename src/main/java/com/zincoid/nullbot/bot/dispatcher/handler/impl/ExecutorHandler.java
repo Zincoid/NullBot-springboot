@@ -27,7 +27,7 @@ public class ExecutorHandler implements Handler {
 
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
-        log.info("\t\t└─[ExecutorHandler] 执行开始");
+        log.info("└─[ExecutorHandler] 执行开始");
 
         Long groupId = 0L;  // 群号 0 代表私聊
         Long userId = 0L;  // 用户 0 代表群聊
@@ -46,26 +46,26 @@ public class ExecutorHandler implements Handler {
                 userId = privateMessageEvent.getUserId();
                 command.execute(bot, privateMessageEvent, event.getCommandParameters());
             } else
-                log.warn("\t\t  [ExecutorHandler] 不支持的事件类型");
+                log.warn("  [ExecutorHandler] 不支持的事件类型");
 
         } catch (NullBotMsgException e) {
             if (groupId != 0L) {
                 bot.sendGroupMsg(groupId, e.getMessage(), false);
-                log.warn("\t\t  [ExecutorHandler] 群聊警告: {}", e.getMessage());
+                log.warn("  [ExecutorHandler] 群聊警告: {}", e.getMessage());
             }
             if (userId != 0L) {
                 bot.sendPrivateMsg(userId, e.getMessage(), false);
-                log.warn("\t\t  [ExecutorHandler] 私聊警告: {}", e.getMessage());
+                log.warn("  [ExecutorHandler] 私聊警告: {}", e.getMessage());
             }
         } catch (NullBotLogException e) {
-            log.warn("\t\t  [ExecutorHandler] 日志警告: {}", e.getMessage());
+            log.warn("  [ExecutorHandler] 日志警告: {}", e.getMessage());
             wsSender.broadcast("WARN", "服务器日志警告: " + e.getMessage());
         } catch (Exception e) {
-            log.error("\t\t  [ExecutorHandler] 未知错误: {}", e.getMessage());
+            log.error("  [ExecutorHandler] 未知错误: {}", e.getMessage());
             wsSender.broadcast("ERROR", "服务器内部错误: " + e.getMessage());
             throw e;
         }
 
-        log.info("\t\t┌─[ExecutorHandler] 执行结束");
+        log.info("┌─[ExecutorHandler] 执行结束");
     }
 }

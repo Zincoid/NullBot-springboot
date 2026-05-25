@@ -23,7 +23,7 @@ public class UserBanCommand implements Command {
             long userId = Long.parseLong(params.get(0));
             int time = Integer.parseInt(params.get(1));
             bot.setGroupBan(event.getGroupId(), userId, time * 60);
-            log.info("\t\t\t\t├─[UserBan] 已执行禁言 - {} -> {} Min", userId, time);
+            log.info("├─[UserBan] 已执行禁言 - {} -> {} Min", userId, time);
         } catch (NumberFormatException e) {
             throw new NullBotMsgException("[用户禁言] ❌参数格式错误");
         }

@@ -39,7 +39,7 @@ public class ReversiCommand implements Command {
         } else
             bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
 
-        log.info("\t\t\t\t├─[Reversi] 落子 - {}", pos);
+        log.info("├─[Reversi] 落子 - {}", pos);
     }
 
     @Override

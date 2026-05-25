@@ -38,7 +38,7 @@ public class AnimeCommand implements Command {
                 .img(ossUrlBuilder.from(image.getId()))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("\t\t\t\t├─[Anime] 获取二次元图片 - {}", image.getFileName());
+        log.info("├─[Anime] 获取二次元图片 - {}", image.getFileName());
     }
 
     @Override

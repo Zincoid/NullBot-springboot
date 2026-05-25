@@ -57,7 +57,7 @@ public class ChatCommand implements Command {
             );
             break;
         }
-        log.info("\t\t\t\t├─[Chat] 群聊已回复: {}", response);
+        log.info("├─[Chat] 群聊已回复: {}", response);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class ChatCommand implements Command {
         } catch (Exception e) {
             throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
         }
-        log.info("\t\t\t\t├─[Chat] 私聊已回复: {}", response);
+        log.info("├─[Chat] 私聊已回复: {}", response);
     }
 
     @Override

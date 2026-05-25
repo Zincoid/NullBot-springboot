@@ -50,7 +50,7 @@ public class SysMsgSetCommand implements Command {
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.resetGroup(groupId);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅已重置", false);
-            log.info("\t\t\t\t├─[SysMsgSet] 群聊提示词已重置 - {}", groupId);
+            log.info("├─[SysMsgSet] 群聊提示词已重置 - {}", groupId);
             return;
         }
 
@@ -69,7 +69,7 @@ public class SysMsgSetCommand implements Command {
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.setGroupMessage(groupId, groupMessage);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅已设置", false);
-            log.info("\t\t\t\t├─[SysMsgSet] 群聊提示词已设置 - {} -> {}", groupId, groupMessage);
+            log.info("├─[SysMsgSet] 群聊提示词已设置 - {} -> {}", groupId, groupMessage);
             return;
         }
 
@@ -88,7 +88,7 @@ public class SysMsgSetCommand implements Command {
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.resetUser(userId);
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已重置", false);
-            log.info("\t\t\t\t├─[SysMsgSet] 私聊提示词已重置 - {}", userId);
+            log.info("├─[SysMsgSet] 私聊提示词已重置 - {}", userId);
             return;
         }
 
@@ -100,7 +100,7 @@ public class SysMsgSetCommand implements Command {
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.setUserMessage(userId, newMessage);
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已设置", false);
-            log.info("\t\t\t\t├─[SysMsgSet] 私聊提示词已设置 - {} -> {}", userId, newMessage);
+            log.info("├─[SysMsgSet] 私聊提示词已设置 - {} -> {}", userId, newMessage);
             return;
         }
 

@@ -111,7 +111,7 @@ public class EndfieldCommand implements Command {
 
         pager.init();
         while (pager.input(botInputManager, WAIT_TIMEOUT)) {
-            log.info("\t\t\t\t├─[Endfield] 已操作分页器");
+            log.info("├─[Endfield] 已操作分页器");
         }
         // BotInputer in = new BotInputer(userId).timeout(WAIT_TIMEOUT);
         // pager.start(in);
@@ -123,7 +123,7 @@ public class EndfieldCommand implements Command {
                 String response = Files.readString(
                         Paths.get(file.getPath()), StandardCharsets.UTF_8);
                 bot.sendGroupMsg(groupId, response, false);
-                log.info("\t\t\t\t├─[Endfield] 已获取文本 - {}", file.getFileName());
+                log.info("├─[Endfield] 已获取文本 - {}", file.getFileName());
             } catch (IOException e) {
                 throw new NullBotMsgException("[终末地] ❌读取出错");
             }
@@ -132,7 +132,7 @@ public class EndfieldCommand implements Command {
                     .img(ossUrlBuilder.from(file.getId()))
                     .build();
             bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[Endfield] 已获取图片 - {}", file.getFileName());
+            log.info("├─[Endfield] 已获取图片 - {}", file.getFileName());
         }
     }
 

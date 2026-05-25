@@ -142,18 +142,18 @@ public class QQAiClient implements AiClient<QQMessage> {
                 finalResp = resp;
                 break;
             }
-            log.info("◉ [ToolCall] 第{}轮: {}个工具调用", i + 1, resp.getToolCalls().size());
+            log.info("◎ [ToolCall] 第{}轮: {}个工具调用", i + 1, resp.getToolCalls().size());
             chatMemory.add(chatId, BaseMessage.assistant(resp.getToolCalls())
                     .withReasoning(resp.getReasoningContent()));
             for (ToolCall tc : resp.getToolCalls()) {
-                log.info("◉ [ToolCall] 执行工具: {}({})", tc.getName(), tc.getArguments());
+                log.info("◎ [ToolCall] 执行工具: {}({})", tc.getName(), tc.getArguments());
                 String result = executeTool(tc);
-                log.info("◉ [ToolCall] 工具结果: {}", result);
+                log.info("◎ [ToolCall] 工具结果: {}", result);
                 chatMemory.add(chatId, BaseMessage.tool(tc.getId(), result));
             }
         }
         if (finalResp == null) {
-            log.warn("◉ [ToolCall] 最终调用: 达到最大迭代次数{} ", maxToolCalls);
+            log.warn("◎ [ToolCall] 最终调用: 达到最大迭代次数{} ", maxToolCalls);
             finalResp = model.invoke(chatMemory.get(chatId), false, maxTokens);
         }
         QQMessage _message = QQMessage.send(message, finalResp.getContent());
@@ -170,7 +170,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         try {
             return tool.execute(toolCall.getArguments());
         } catch (Exception e) {
-            log.warn("◉ [ToolCall] 工具执行失败: {}", e.getMessage());
+            log.warn("◎ [ToolCall] 工具执行失败: {}", e.getMessage());
             return "错误: " + e.getMessage();
         }
     }

@@ -38,7 +38,7 @@ public class RandomAudioCommand implements Command {
                 .voice(ossUrlBuilder.from(audio.getId()))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("\t\t\t\t├─[RandomAudio] 已发送音频 - {}", audio.getFileName());
+        log.info("├─[RandomAudio] 已发送音频 - {}", audio.getFileName());
     }
 
     @Override

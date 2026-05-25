@@ -67,7 +67,7 @@ public class ChatHistoryCommand implements Command {
 
         // pager.init();
         // while (pager.input(botInputManager, WAIT_TIMEOUT)) {
-        //     log.info("\t\t\t\t├─[ChatHistory] 已操作分页器");
+        //     log.info("├─[ChatHistory] 已操作分页器");
         // }
         BotInputer in = new BotInputer(userId).timeout(WAIT_TIMEOUT);
         pager.start(in);
@@ -75,7 +75,7 @@ public class ChatHistoryCommand implements Command {
 
     private void sendInfo(Bot bot, Long groupId, Message message) {
         bot.sendGroupMsg(groupId, message.toMap().toString(), true);
-        log.info("\t\t\t\t├─[ChatHistory] 已获取记录 - {}", message.toMap());
+        log.info("├─[ChatHistory] 已获取记录 - {}", message.toMap());
     }
 
     @Override

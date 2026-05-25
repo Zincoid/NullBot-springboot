@@ -28,7 +28,7 @@ public class HelpCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         bot.sendGroupMsg(event.getGroupId(), buildHelpMsg(), false);
-        log.info("\t\t\t\t├─[Help] 已获取群聊帮助");
+        log.info("├─[Help] 已获取群聊帮助");
     }
 
     @Override
@@ -43,7 +43,7 @@ public class HelpCommand implements Command {
                 - 参数: [-synth] [文本]
                 
                 注: 私聊目前仅实现AI聊天及以上指令且AI永久处于无验证/无限速/非防注入/非语音/指令模式下""", true);
-        log.info("\t\t\t\t├─[Help] 已获取私聊帮助");
+        log.info("├─[Help] 已获取私聊帮助");
     }
 
     private String buildHelpMsg() {

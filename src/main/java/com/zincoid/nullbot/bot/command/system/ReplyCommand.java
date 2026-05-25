@@ -21,7 +21,7 @@ public class ReplyCommand implements Command {
         if (params.isEmpty()) throw new NullBotMsgException("[回复] ❌无参数");
         String message = String.join(" ", params.subList(0, params.size()));
         bot.sendGroupMsg(event.getGroupId(), message, false);
-        log.info("\t\t\t\t├─[Reply] 群聊已回复 - {}", message);
+        log.info("├─[Reply] 群聊已回复 - {}", message);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ReplyCommand implements Command {
         if (params.isEmpty()) throw new NullBotMsgException("[回复] ❌无参数");
         String message = String.join(" ", params.subList(0, params.size()));
         bot.sendPrivateMsg(event.getUserId(), message, false);
-        log.info("\t\t\t\t├─[Reply] 私聊已回复 - {}", message);
+        log.info("├─[Reply] 私聊已回复 - {}", message);
     }
 
     @Override

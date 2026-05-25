@@ -41,7 +41,7 @@ public class ImageGetCommand implements Command {
                 .img(ossUrlBuilder.from(image.getId()))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("\t\t\t\t├─[ImageGet] 已获取图片 - {}", image.getFileName());
+        log.info("├─[ImageGet] 已获取图片 - {}", image.getFileName());
     }
 
     @Override

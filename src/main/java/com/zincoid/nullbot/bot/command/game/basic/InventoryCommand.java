@@ -53,7 +53,7 @@ public class InventoryCommand implements Command {
         }
         sb.append("[第").append(inventoryVOPage.getCurrent()).append("页").append(" / 共").append(inventoryVOPage.getPages()).append("页 (每页").append(inventoryVOPage.getSize()).append("条)]");
         bot.sendGroupMsg(event.getGroupId(), sb.toString(), false);
-        log.info("\t\t\t\t├─[Inventory] 已获取库存 - {}({})", userName, userId);
+        log.info("├─[Inventory] 已获取库存 - {}({})", userName, userId);
     }
 
     @Override

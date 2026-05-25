@@ -24,7 +24,7 @@ public class FinishMatchCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if(!matcher.finishMatch(event.getUserId()))
             throw new NullBotMsgException("[终止对局] ❌未找到玩家/对局");
-        log.info("\t\t\t\t├─[FinishMatch] 终止对局结果 - 已终止");
+        log.info("├─[FinishMatch] 终止对局结果 - 已终止");
     }
 
     @Override

@@ -53,7 +53,7 @@ public class ImageSaveCommand implements Command {
             try {
                 FileInfo fileInfo = fileService.saveFile(url, filePath, fileName, userId, userName);
                 bot.sendGroupMsg(groupId, "\uD83D\uDCBD 已保存！", false);
-                log.info("\t\t\t\t├─[ImageSave] 已保存 - {}", fileInfo.getFileName());
+                log.info("├─[ImageSave] 已保存 - {}", fileInfo.getFileName());
             } catch (Exception e) {
                 throw new NullBotMsgException("[保存图片] ❌出错: " + e.getMessage());
             }

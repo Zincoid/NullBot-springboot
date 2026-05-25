@@ -46,7 +46,7 @@ public class RecallReactCommand implements Command {
                         %s(%s)撤回了%s(%s)的消息:
                         %s""".formatted(operatorName, operatorId, userName, userId, message.getContent()), false);
             }
-            log.info("\t\t\t\t├─[RecallReact] 已重发撤回消息 - {}", message.getContent());
+            log.info("├─[RecallReact] 已重发撤回消息 - {}", message.getContent());
             return;
         }
 

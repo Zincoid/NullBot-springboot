@@ -47,14 +47,14 @@ public class AccessSetCommand implements Command {
                             [限权设置] \uD83D\uDEAB修改失败
                             - 仅限权等级II用户可修改群限权
                             - 你的限权等级: %s""".formatted(selfAccess), false);
-                    log.info("\t\t\t\t├─[AccessSet] 修改失败 - 仅限权等级2用户可修改群限权 用户限权为{}", selfAccess);
+                    log.info("├─[AccessSet] 修改失败 - 仅限权等级2用户可修改群限权 用户限权为{}", selfAccess);
                 } else {
                     groupService.setAccess(targetId, targetNewAccess);
                     bot.sendGroupMsg(event.getGroupId(), """
                             [限权设置] ✅群限权已修改
                             - 变动群聊: %s
                             - 变动详情: %s -> %s""".formatted(targetId, targetAccess, targetNewAccess), false);
-                    log.info("\t\t\t\t├─[AccessSet] 已修改群聊 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
+                    log.info("├─[AccessSet] 已修改群聊 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
                 }
             }
 
@@ -68,21 +68,21 @@ public class AccessSetCommand implements Command {
                             - 目标限权高于或等于你的限权
                             - 目标限权等级: %s
                             - 你的限权等级: %s""".formatted(targetAccess, selfAccess), false);
-                    log.info("\t\t\t\t├─[AccessSet] 修改失败 - 目标限权等级{} 高于或等于 自身限权等级{}", targetAccess, selfAccess);
+                    log.info("├─[AccessSet] 修改失败 - 目标限权等级{} 高于或等于 自身限权等级{}", targetAccess, selfAccess);
                 } else if(targetNewAccess >= selfAccess) {
                     bot.sendGroupMsg(event.getGroupId(), """
                             [限权设置] \uD83D\uDEAB修改失败
                             - 新的限权高于或等于你的限权
                             - 新的限权等级: %s
                             - 你的限权等级: %s""".formatted(targetNewAccess, selfAccess), false);
-                    log.info("\t\t\t\t├─[AccessSet] 修改失败 - 新限权等级{} 高于或等于 自身限权等级{}", targetNewAccess, selfAccess);
+                    log.info("├─[AccessSet] 修改失败 - 新限权等级{} 高于或等于 自身限权等级{}", targetNewAccess, selfAccess);
                 } else {
                     userService.setAccess(targetId, targetNewAccess);
                     bot.sendGroupMsg(event.getGroupId(), """
                             [限权设置] ✅用户限权已修改
                             - 变动用户: %s
                             - 变动详情: %s -> %s""".formatted(targetId, targetAccess, targetNewAccess), false);
-                    log.info("\t\t\t\t├─[AccessSet] 已修改用户 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
+                    log.info("├─[AccessSet] 已修改用户 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
                 }
             }
 

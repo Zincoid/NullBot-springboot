@@ -40,7 +40,7 @@ public class SayingSaveCommand implements Command {
         }
         int inserted = sayingService.add(userId, userName, text);
         bot.sendGroupMsg(event.getGroupId(), inserted == 1 ? "\uD83D\uDCBE 已记录！" : "[保存语录] ❌出错", false);
-        log.info("\t\t\t\t├─[SayingSave] 语录保存 - {} -> {}", text, inserted == 1 ? "已记录" : "出错");
+        log.info("├─[SayingSave] 语录保存 - {} -> {}", text, inserted == 1 ? "已记录" : "出错");
     }
 
     @Override

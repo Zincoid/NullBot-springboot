@@ -32,7 +32,7 @@ public class RestartCommand implements Command {
                         [重启] ⚠️指令已下发
                         - 模式: APPLICATION
                         - 将于3s后重启, 请稍候...""", false);
-                log.info("\t\t\t\t├─[Restart] APP 重启指令已下发");
+                log.info("├─[Restart] APP 重启指令已下发");
                 systemService.restart();
             }
             case "-jar" -> {
@@ -40,7 +40,7 @@ public class RestartCommand implements Command {
                         [重启] ⚠️指令已下发
                         - 模式: JAR FILE
                         - 将于3s后重启, 请稍候...""", false);
-                log.info("\t\t\t\t├─[Restart] JAR 重启指令已下发");
+                log.info("├─[Restart] JAR 重启指令已下发");
                 try {
                     if (params.size() > 1)
                         systemService.restartViaJar(params.get(1));

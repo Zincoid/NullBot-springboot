@@ -23,18 +23,18 @@ public class HelpHandler implements Handler {
         List<String> params = event.getCommandParameters();
         if (!params.isEmpty() && ("-help".equalsIgnoreCase(params.getFirst()) || "-h".equalsIgnoreCase(params.getFirst()))) {
             if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-                log.info("\t\t├─[HelpHandler] 已输出群消息帮助");
+                log.info("├─[HelpHandler] 已输出群消息帮助");
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), command.getHelp(), false);
             } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
-                log.info("\t\t├─[HelpHandler] 暂无私信帮助功能");
+                log.info("├─[HelpHandler] 暂无私信帮助功能");
                 bot.sendPrivateMsg(privateMessageEvent.getUserId(), "[帮助] ⚠️暂无私信帮助功能", false);
             } else {
-                log.info("\t\t├─[HelpHandler] 默认无帮助的事件");
+                log.info("├─[HelpHandler] 默认无帮助的事件");
             }
             return;
         }
 
-        log.info("\t\t├─[HelpHandler] 非帮助命令");
+        log.info("├─[HelpHandler] 非帮助命令");
         chain.doHandle(bot, event, command);
     }
 }

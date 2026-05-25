@@ -56,7 +56,7 @@ public class VideoDeleteCommand implements Command {
             throw new NullBotMsgException("[删除视频] ❌失败");
         bot.sendGroupMsg(event.getGroupId(), "[删除视频] ⚠️已删除\n- " +
                 StringUtil.truncateFileName(fileName, 12), false);
-        log.info("\t\t\t\t├─[VideoDelete] 视频已删除 - {}", fileName);
+        log.info("├─[VideoDelete] 视频已删除 - {}", fileName);
     }
 
     @Override

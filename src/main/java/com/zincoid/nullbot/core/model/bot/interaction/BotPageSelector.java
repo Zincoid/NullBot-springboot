@@ -104,7 +104,7 @@ public class BotPageSelector<K, V> {
     public void start(BotInputer inputer) {
         init();
         while (input(inputer)) {
-            log.info("\t\t\t\t├─[BotPageSelector] 已操作{}分页器", title);
+            log.info("├─[BotPageSelector] 已操作{}分页器", title);
         }
     }
 
@@ -123,7 +123,7 @@ public class BotPageSelector<K, V> {
     public void start(BotInputManager manager) {
         init();
         while (input(manager)) {
-            log.info("\t\t\t\t├─[BotPageSelector] 已操作{}分页器", title);
+            log.info("├─[BotPageSelector] 已操作{}分页器", title);
         }
     }
 

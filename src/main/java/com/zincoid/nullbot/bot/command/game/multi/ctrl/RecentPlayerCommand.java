@@ -36,7 +36,7 @@ public class RecentPlayerCommand implements Command {
               .append(player.getStatus()).append(" ~ ").append(player.getLastActionTime().format(formatter));
         }
         bot.sendGroupMsg(event.getGroupId(), sb.toString(), false);
-        log.info("\t\t\t\t├─[RecentPlayer] 已获取");
+        log.info("├─[RecentPlayer] 已获取");
     }
 
     @Override

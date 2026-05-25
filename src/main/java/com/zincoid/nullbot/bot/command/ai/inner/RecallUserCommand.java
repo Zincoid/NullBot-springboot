@@ -24,7 +24,7 @@ public class RecallUserCommand implements Command {
         try {
             int messageId = Integer.parseInt(params.getFirst());
             bot.deleteMsg(messageId);
-            log.info("\t\t\t\t├─[RecallUser] 已撤回用户消息 -> Message Id: {}", messageId);
+            log.info("├─[RecallUser] 已撤回用户消息 -> Message Id: {}", messageId);
         } catch (NumberFormatException e) {
             throw new NullBotMsgException("[撤回用户消息] ❌参数格式错误");
         }

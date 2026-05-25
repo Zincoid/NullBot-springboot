@@ -24,7 +24,7 @@ public class DisMatchCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         MatchResult result = matcher.cancelMatch(event.getUserId());
         bot.sendGroupMsg(event.getGroupId(), result.getInfo(), false);
-        log.info("\t\t\t\t├─[DisMatch] 取消匹配结果 - {}", result);
+        log.info("├─[DisMatch] 取消匹配结果 - {}", result);
     }
 
     @Override

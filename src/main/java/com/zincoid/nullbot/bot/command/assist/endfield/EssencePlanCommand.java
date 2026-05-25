@@ -46,7 +46,7 @@ public class EssencePlanCommand implements Command {
 
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("\t\t\t\t├─[EssencePlan] 已查询 - {}", weapon);
+        log.info("├─[EssencePlan] 已查询 - {}", weapon);
     }
 
     @Override

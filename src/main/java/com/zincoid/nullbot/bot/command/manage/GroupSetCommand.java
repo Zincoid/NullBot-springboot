@@ -45,7 +45,7 @@ public class GroupSetCommand implements Command {
 
             if ("-view".equals(option)) {
                 bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);
-                log.info("\t\t\t\t├─[GroupSet] 已获取群设置 - {}", groupId);
+                log.info("├─[GroupSet] 已获取群设置 - {}", groupId);
                 return;
             }
 
@@ -85,7 +85,7 @@ public class GroupSetCommand implements Command {
                 bot.sendGroupMsg(groupId, """
                         [限速] ✅设置已更新
                         %s""".formatted(msg), false);
-                log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 限速设置 - {}", groupId, msg);
+                log.info("├─[GroupSet] 已更改群 {} 限速设置 - {}", groupId, msg);
                 return;
             }
 
@@ -142,7 +142,7 @@ public class GroupSetCommand implements Command {
                 bot.sendGroupMsg(groupId, """
                         [AI] ✅设置已更新
                         %s""".formatted(msg), false);
-                log.info("\t\t\t\t├─[GroupSet] 已更改群 {} AI设置 - {}", groupId, msg);
+                log.info("├─[GroupSet] 已更改群 {} AI设置 - {}", groupId, msg);
                 return;
             }
 
@@ -159,7 +159,7 @@ public class GroupSetCommand implements Command {
                 };
                 settingService.set(setting);
                 bot.sendGroupMsg(event.getGroupId(), "[监听] ✅已切换: %s".formatted(enabled ? "ON" : "OFF"), false);
-                log.info("\t\t\t\t├─[GroupSet] 已更改群 {} 监听设置 - {} -> {}", groupId, name, enabled ? "ON" : "OFF");
+                log.info("├─[GroupSet] 已更改群 {} 监听设置 - {} -> {}", groupId, name, enabled ? "ON" : "OFF");
                 return;
             }
 
@@ -173,7 +173,7 @@ public class GroupSetCommand implements Command {
                 setting.setGuessPadding(padding);
                 settingService.set(setting);
                 bot.sendGroupMsg(groupId, "[猜角色] ✅参数已更新", false);
-                log.info("\t\t\t\t├─[GroupSet] 已更改群 {} Guess参数 -> {} {} {}", groupId, cropRatio, transparentRatio, padding);
+                log.info("├─[GroupSet] 已更改群 {} Guess参数 -> {} {} {}", groupId, cropRatio, transparentRatio, padding);
                 return;
             }
 

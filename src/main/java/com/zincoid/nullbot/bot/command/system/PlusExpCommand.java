@@ -45,7 +45,7 @@ public class PlusExpCommand implements Command {
             i--;
         }
         bot.sendGroupMsg(event.getGroupId(), sb.toString(), false);
-        log.info("\t\t\t\t├─[PlusExp] 已给予经验 - {} -> {} Exp", userId, exp);
+        log.info("├─[PlusExp] 已给予经验 - {} -> {} Exp", userId, exp);
     }
 
     @Override

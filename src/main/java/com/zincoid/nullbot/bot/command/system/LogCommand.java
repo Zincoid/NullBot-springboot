@@ -28,7 +28,7 @@ public class LogCommand implements Command {
                 logPath,
                 logPath.substring(logPath.lastIndexOf("/") + 1)
         );
-        log.info("\t\t\t\t├─[Log] 日志已发送");
+        log.info("├─[Log] 日志已发送");
     }
 
     // public static String getLogFilePath() {  // 通过 xml 配置时获取日志文件路径

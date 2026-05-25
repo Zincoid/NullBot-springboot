@@ -54,19 +54,19 @@ public class BreadCommand implements Command {
             int i = breadService.buyBasic(userId, cost);
             if (i > 0) {
                 bot.sendGroupMsg(groupId, userName + " 花费￥" + cost + "...\n- 买到" + i + "个面包！", false);
-                log.info("\t\t\t\t├─[Bread-Buy] 已购买普通面包 - {}({}) -> {}个", userName, userId, i);
+                log.info("├─[Bread-Buy] 已购买普通面包 - {}({}) -> {}个", userName, userId, i);
                 return;
             }
         } else {
             ItemPO bread = breadService.buySpecial(userId, cost);
             if (bread != null) {
                 bot.sendGroupMsg(groupId, userName + " 花费￥" + cost + "...\n- 买到1个特殊面包！\n" + bread, false);
-                log.info("\t\t\t\t├─[Bread-Buy] 已购买特殊面包 - {}({}) -> {}", userName, userId, bread.getName());
+                log.info("├─[Bread-Buy] 已购买特殊面包 - {}({}) -> {}", userName, userId, bread.getName());
                 return;
             }
         }
         bot.sendGroupMsg(groupId, userName + " 库容或现金不足！", false);
-        log.info("\t\t\t\t├─[Bread-Buy] 库容或现金不足");
+        log.info("├─[Bread-Buy] 库容或现金不足");
     }
 
     private void eat(Bot bot, Long userId, String userName, Long groupId) {
@@ -82,25 +82,25 @@ public class BreadCommand implements Command {
                     j--;
                 }
                 bot.sendGroupMsg(groupId, sb.toString(), false);
-                log.info("\t\t\t\t├─[Bread-Eat] 已吃面包 - {}({}) -> {}个", userName, userId, i);
+                log.info("├─[Bread-Eat] 已吃面包 - {}({}) -> {}个", userName, userId, i);
                 return;
             }
         } else {
             if (breadService.eatRotten(userId)) {
                 bot.sendGroupMsg(groupId, userName + " 吃到1个烂面包！\n- Exp清空了！", false);
-                log.info("\t\t\t\t├─[Bread-Eat] 吃到烂面包 - {}({})", userName, userId);
+                log.info("├─[Bread-Eat] 吃到烂面包 - {}({})", userName, userId);
                 return;
             }
         }
         bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
-        log.info("\t\t\t\t├─[Bread-Buy] 普通面包不足");
+        log.info("├─[Bread-Buy] 普通面包不足");
     }
 
     private void rob(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
         List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(groupMessageEvent.getRawMessage());
         if (qqNumbers.isEmpty()) {
             bot.sendGroupMsg(groupId, "[抢面包] ❌未指定对象", false);
-            log.info("\t\t\t\t├─[Bread-Rob] 未指定对象");
+            log.info("├─[Bread-Rob] 未指定对象");
             return;
         }
 
@@ -109,17 +109,17 @@ public class BreadCommand implements Command {
 
         if (!userService.exist(targetId)) {
             bot.sendGroupMsg(groupId, "[抢面包] ❌对象未注册", false);
-            log.info("\t\t\t\t├─[Bread-Rob] 对象未注册 - {}({})", targetName, targetId);
+            log.info("├─[Bread-Rob] 对象未注册 - {}({})", targetName, targetId);
             return;
         }
 
         int i = breadService.transferBasic(targetId, userId);
         if (i > 0) {
             bot.sendGroupMsg(groupId, userName + " 抢了 " + targetName + " " + i + "个面包！", false);
-            log.info("\t\t\t\t├─[Bread-Rob] 已抢面包 - {}({}) -> {}个", targetName, targetId, i);
+            log.info("├─[Bread-Rob] 已抢面包 - {}({}) -> {}个", targetName, targetId, i);
         } else {
             bot.sendGroupMsg(groupId, targetName + " 面包没了！", false);
-            log.info("\t\t\t\t├─[Bread-Rob] 对方无面包 - {}({})", targetName, targetId);
+            log.info("├─[Bread-Rob] 对方无面包 - {}({})", targetName, targetId);
         }
     }
 
@@ -127,7 +127,7 @@ public class BreadCommand implements Command {
         List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(groupMessageEvent.getRawMessage());
         if (qqNumbers.isEmpty()) {
             bot.sendGroupMsg(groupId, "[送面包] ❌未指定对象", false);
-            log.info("\t\t\t\t├─[Bread-Gift] 未指定对象");
+            log.info("├─[Bread-Gift] 未指定对象");
             return;
         }
 
@@ -136,17 +136,17 @@ public class BreadCommand implements Command {
 
         if (!userService.exist(targetId)) {
             bot.sendGroupMsg(groupId, "[送面包] ❌对象未注册", false);
-            log.info("\t\t\t\t├─[Bread-Gift] 对象未注册 - {}({})", targetName, targetId);
+            log.info("├─[Bread-Gift] 对象未注册 - {}({})", targetName, targetId);
             return;
         }
 
         int i = breadService.transferBasic(userId, targetId);
         if (i > 0) {
             bot.sendGroupMsg(groupId, userName + " 送了 " + targetName + " " + i + "个面包！", false);
-            log.info("\t\t\t\t├─[Bread-Gift] 已送面包 - {}({}) -> {}个", targetName, targetId, i);
+            log.info("├─[Bread-Gift] 已送面包 - {}({}) -> {}个", targetName, targetId, i);
         } else {
             bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
-            log.info("\t\t\t\t├─[Bread-Gift] 自身无面包 - {}({})", userName, userId);
+            log.info("├─[Bread-Gift] 自身无面包 - {}({})", userName, userId);
         }
     }
 
@@ -165,7 +165,7 @@ public class BreadCommand implements Command {
             sb.append("无面包...");
         }
         bot.sendGroupMsg(groupId, sb.toString().trim(), false);
-        log.info("\t\t\t\t├─[Bread-Look] 已获取面包库存 - {}({})", userName, userId);
+        log.info("├─[Bread-Look] 已获取面包库存 - {}({})", userName, userId);
     }
 
     @Override

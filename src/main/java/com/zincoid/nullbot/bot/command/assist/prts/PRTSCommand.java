@@ -95,7 +95,7 @@ public class PRTSCommand implements Command {
 
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("\t\t\t\t├─[PRTS] 已查询 - {}", keyword);
+        log.info("├─[PRTS] 已查询 - {}", keyword);
     }
 
     @Override

@@ -50,7 +50,7 @@ public class GuessCommand implements Command {
             if (guessStorage.getGuess(groupId) == null)
                 throw new NullBotMsgException("[猜角色] ❌未在游戏中");
             botInputManager.cancelWait(BniMode.GS, groupId);
-            log.info("\t\t\t\t├─[Guess] 群聊 {} 放弃猜测", groupId);
+            log.info("├─[Guess] 群聊 {} 放弃猜测", groupId);
             return;
         }
 
@@ -71,7 +71,7 @@ public class GuessCommand implements Command {
                     .text("注: 请发送\"#内容\"")
                     .build();
             bot.sendGroupMsg(groupId, start, false);
-            log.info("\t\t\t\t├─[Guess] 群聊 {} 初始化猜谜 -> {}", groupId, guess.getName());
+            log.info("├─[Guess] 群聊 {} 初始化猜谜 -> {}", groupId, guess.getName());
 
             while (guess.getTimes() < MAX_RETRIES) {
                 guessStorage.increaseTimes(groupId);
@@ -86,7 +86,7 @@ public class GuessCommand implements Command {
                             .img("base64://" + Base64Util.from(guess.getPath()))
                             .build();
                     bot.sendGroupMsg(groupId, end, false);
-                    log.info("\t\t\t\t├─[Guess] 群聊 {} 已结束", groupId);
+                    log.info("├─[Guess] 群聊 {} 已结束", groupId);
                     return;
                 }
 
@@ -111,11 +111,11 @@ public class GuessCommand implements Command {
                             .img("base64://" + Base64Util.from(guess.getPath()))
                             .build();
                     bot.sendGroupMsg(groupId, correct, false);
-                    log.info("\t\t\t\t├─[Guess] 用户 {} 猜测正确", answererId);
+                    log.info("├─[Guess] 用户 {} 猜测正确", answererId);
                     return;
                 } else {
                     bot.sendGroupMsg(groupId, "[CQ:at,qq=%s] 猜错啦！".formatted(answererId), false);
-                    log.info("\t\t\t\t├─[Guess] 用户 {} 猜测错误", answererId);
+                    log.info("├─[Guess] 用户 {} 猜测错误", answererId);
                 }
             }
 
@@ -126,7 +126,7 @@ public class GuessCommand implements Command {
                     .img("base64://" + Base64Util.from(guess.getPath()))
                     .build();
             bot.sendGroupMsg(groupId, fail, false);
-            log.info("\t\t\t\t├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
+            log.info("├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
 
         } catch (Exception e) {
             throw new NullBotMsgException("[猜角色] ❌" + e.getMessage());

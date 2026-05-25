@@ -66,7 +66,7 @@ public class MemeCommand implements Command {
             bot.sendGroupMsg(targetId, response, false);
         }
 
-        log.info("\t\t\t\t├─[Meme] 已发送表情: {}", meme.getFileName());
+        log.info("├─[Meme] 已发送表情: {}", meme.getFileName());
     }
 
     @Override

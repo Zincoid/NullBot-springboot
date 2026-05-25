@@ -57,12 +57,12 @@ public class BanChatCommand implements Command {
                     [停用AI] ⛔️已封禁
                     - 用户: [CQ:at,qq=%s]
                     - 时长: %s Min""".formatted(userId, banTime), false);
-            log.info("\t\t\t\t├─[BanChat] 已封禁对话 - {} -> {} Min", userId, banTime);
+            log.info("├─[BanChat] 已封禁对话 - {} -> {} Min", userId, banTime);
         } else {
             bot.sendGroupMsg(groupId, """
                     [停用AI] ✅已解封
                     - 用户: [CQ:at,qq=%s]""".formatted(userId), false);
-            log.info("\t\t\t\t├─[BanChat] 已解封对话 - {}", userId);
+            log.info("├─[BanChat] 已解封对话 - {}", userId);
         }
     }
 

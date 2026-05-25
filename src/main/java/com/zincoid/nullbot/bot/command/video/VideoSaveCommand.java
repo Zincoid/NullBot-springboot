@@ -56,7 +56,7 @@ public class VideoSaveCommand implements Command {
         try {
             FileInfo fileInfo = fileService.saveFile(url, filePath, fileName, userId, userName);
             bot.sendGroupMsg(groupId, "\uD83C\uDFA5 已保存！", false);
-            log.info("\t\t\t\t├─[VideoSave] 已保存 - {}", fileInfo.getFileName());
+            log.info("├─[VideoSave] 已保存 - {}", fileInfo.getFileName());
         } catch (Exception e) {
             throw new NullBotMsgException("[保存视频] ❌出错: " + e.getMessage());
         }

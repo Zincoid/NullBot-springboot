@@ -69,7 +69,7 @@ public class VideoGetCommand implements Command {
 
         pager.init();
         while (pager.input(botInputManager, WAIT_TIMEOUT)) {
-            log.info("\t\t\t\t├─[VideoGet] 已操作分页器");
+            log.info("├─[VideoGet] 已操作分页器");
         }
         // BotInputer in = new BotInputer(userId).timeout(WAIT_TIMEOUT);
         // pager.start(in);
@@ -80,7 +80,7 @@ public class VideoGetCommand implements Command {
                 .video(ossUrlBuilder.from(video.getId()), "")
                 .build();
         bot.sendGroupMsg(groupId, response, false);
-        log.info("\t\t\t\t├─[VideoGet] 已获取视频 - {}", video.getFileName());
+        log.info("├─[VideoGet] 已获取视频 - {}", video.getFileName());
     }
 
     @Override

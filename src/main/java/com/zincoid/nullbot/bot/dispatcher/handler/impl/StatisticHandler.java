@@ -44,7 +44,7 @@ public class StatisticHandler implements Handler {
             groupId = 0L;  // 群号 0 代表私聊
             userId = privateMessageEvent.getUserId();
         } else {
-            log.info("\t\t├─[StatisticHandler] 默认不记录的事件");
+            log.info("├─[StatisticHandler] 默认不记录的事件");
             chain.doHandle(bot, event, command);
             return;
         }
@@ -72,7 +72,7 @@ public class StatisticHandler implements Handler {
         String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
         statisticService.increase(groupId, userId, userName, commandType);
         statisticService.increaseOnDate();
-        log.info("\t\t├─[StatisticHandler] 指令记录完成");
+        log.info("├─[StatisticHandler] 指令记录完成");
 
         chain.doHandle(bot, event, command);
     }

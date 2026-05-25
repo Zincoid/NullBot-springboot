@@ -82,7 +82,7 @@ public class OneTimeAlarmCommand implements Command {
                     - Time: %s""".formatted(alarmId, alarmTime.format(formatter)),
                 false
         );
-        log.info("\t\t\t\t├─[OneTimeAlarm] 已设置 - AlarmID: {}", alarmId);
+        log.info("├─[OneTimeAlarm] 已设置 - AlarmID: {}", alarmId);
     }
 
     private LocalDateTime parseDateTime(String str, List<DateTimeFormatter> formatters) {

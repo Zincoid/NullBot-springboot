@@ -60,7 +60,7 @@ public class WifeCommand implements Command {
                         .img(avatarUrl)
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
-                log.info("\t\t\t\t├─[Wife] 今日群友老婆: {} -> {}", userId, wifeId);
+                log.info("├─[Wife] 今日群友老婆: {} -> {}", userId, wifeId);
             } else {
                 Long wifeId = memberWifeMap.get(userId);
                 String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
@@ -70,7 +70,7 @@ public class WifeCommand implements Command {
                         .img(avatarUrl)
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
-                log.info("\t\t\t\t├─[Wife] 今日已选过群友老婆: {} -> {}", userId, wifeId);
+                log.info("├─[Wife] 今日已选过群友老婆: {} -> {}", userId, wifeId);
             }
         } else {
             Long userId = event.getUserId();
@@ -91,7 +91,7 @@ public class WifeCommand implements Command {
                         .img("base64://" + Base64Util.from(wife.getPath()))
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
-                log.info("\t\t\t\t├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
+                log.info("├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
             } else {
                 FilePO wife = acgWifeMap.get(userId);
                 String wifeName = wife.getName().split("_")[0];
@@ -100,7 +100,7 @@ public class WifeCommand implements Command {
                         .img("base64://" + Base64Util.from(wife.getPath()))
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
-                log.info("\t\t\t\t├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);
+                log.info("├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);
             }
         }
     }

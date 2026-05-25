@@ -63,7 +63,7 @@ public class ImageDeleteCommand implements Command {
             throw new NullBotMsgException("[删除图片] ❌失败");
         bot.sendGroupMsg(event.getGroupId(), "[删除图片] ⚠️已删除\n- " +
                 StringUtil.truncateFileName(fileName, 12), false);
-        log.info("\t\t\t\t├─[ImageDelete] 图片已删除 - {}", fileName);
+        log.info("├─[ImageDelete] 图片已删除 - {}", fileName);
     }
 
     @Override

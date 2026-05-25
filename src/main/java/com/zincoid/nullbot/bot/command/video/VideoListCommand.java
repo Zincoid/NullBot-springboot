@@ -28,7 +28,7 @@ public class VideoListCommand implements Command {
         List<FilePO> videos = fileMapper.searchFile("", videoPath);
         List<String> fileNames = videos.stream().map(FilePO::getFileName).toList();
         if (videos.size() > 50) {
-            log.info("\t\t\t\t├─[VideoList] 视频列表数据过多 - {}", fileNames);
+            log.info("├─[VideoList] 视频列表数据过多 - {}", fileNames);
             bot.sendGroupMsg(event.getGroupId(), """
                     [视频列表] ✅过多暂不展示
                     - 共 %s 个视频""".formatted(videos.size()), false);
@@ -36,7 +36,7 @@ public class VideoListCommand implements Command {
         }
         bot.sendGroupMsg(event.getGroupId(), "[视频列表] ✅已获取\n"
                 + String.join("\n", fileNames), false);
-        log.info("\t\t\t\t├─[VideoList] 已获取视频列表");
+        log.info("├─[VideoList] 已获取视频列表");
     }
 
     @Override

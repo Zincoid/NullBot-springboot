@@ -63,7 +63,7 @@ public class PermissionHandler implements Handler {
             groupId = 0L;  // 群号 0 代表私聊
             userId = privateMessageEvent.getUserId();
         } else {
-            log.info("\t\t├─[PermissionHandler] 默认通过的事件类型");
+            log.info("├─[PermissionHandler] 默认通过的事件类型");
             chain.doHandle(bot, event, command);
             return;
         }
@@ -72,16 +72,16 @@ public class PermissionHandler implements Handler {
 
         if (groupId == 0L) {
             if (inMaintenance) {
-                log.info("\t\t├─[PermissionHandler] 系统已锁定");
+                log.info("├─[PermissionHandler] 系统已锁定");
                 bot.sendPrivateMsg(userId, "[访问] 🔐系统已锁定", false);
                 return;
             }
             if (allowedPrivateUsers.contains(userId)) {
-                log.info("\t\t├─[PermissionHandler] 私聊用户已授权");
+                log.info("├─[PermissionHandler] 私聊用户已授权");
                 chain.doHandle(bot, event, command);
                 return;
             }
-            log.info("\t\t├─[PermissionHandler] 私聊用户未授权");
+            log.info("├─[PermissionHandler] 私聊用户未授权");
             bot.sendPrivateMsg(userId, """
                     [访问] 🚫私聊未授权
                     - 请输入"#访问码\"""", false);
@@ -97,7 +97,7 @@ public class PermissionHandler implements Handler {
         // =================== 系统锁定验证 ===================
 
         if (inMaintenance && userAccess < 2) {
-            log.info("\t\t├─[PermissionHandler] 系统已锁定");
+            log.info("├─[PermissionHandler] 系统已锁定");
             bot.sendGroupMsg(groupId, """
                         [访问] 🔐系统已锁定
                         - 操作需限权等级II""", false);
@@ -107,17 +107,17 @@ public class PermissionHandler implements Handler {
         // =================== 指令限权验证 ===================
 
         if (groupAccess >= commandAccess) {
-            log.info("\t\t├─[PermissionHandler] 群限权满足");
+            log.info("├─[PermissionHandler] 群限权满足");
         } else {
-            log.info("\t\t├─[PermissionHandler] 群限权不足");
+            log.info("├─[PermissionHandler] 群限权不足");
             return;
         }
 
         if (event.isAuthRequired()) {
             if (userAccess >= commandAccess) {
-                log.info("\t\t├─[PermissionHandler] 用户限权满足");
+                log.info("├─[PermissionHandler] 用户限权满足");
             } else {
-                log.info("\t\t├─[PermissionHandler] 用户限权不足");
+                log.info("├─[PermissionHandler] 用户限权不足");
                 bot.sendGroupMsg(groupId, """
                         [访问] 🚫限权不足
                         - 需要限权等级: %s
@@ -125,14 +125,14 @@ public class PermissionHandler implements Handler {
                 return;
             }
         } else {
-            log.info("\t\t├─[PermissionHandler] 无需验证用户限权");
+            log.info("├─[PermissionHandler] 无需验证用户限权");
         }
 
         // =================== 群组停用验证 ===================
 
         if (!params.isEmpty() && "-x".equals(params.getFirst())) {
             if (userAccess < 1) {
-                log.info("\t\t├─[PermissionHandler] 停用限权不足");
+                log.info("├─[PermissionHandler] 停用限权不足");
                 bot.sendGroupMsg(groupId, """
                     [访问] 🚫限权不足
                     - 需要限权等级: 1
@@ -140,14 +140,14 @@ public class PermissionHandler implements Handler {
                 return;
             }
             boolean banned = switchCmdBan(groupId, commandClass);
-            log.info("\t\t├─[PermissionHandler] 群组指令 {}-{} {}",
+            log.info("├─[PermissionHandler] 群组指令 {}-{} {}",
                     groupId, commandClass.getSimpleName(), banned ? "已停用" : "已启用");
             bot.sendGroupMsg(groupId, "[访问] %s".formatted(banned ? "⛔️已停用" : "✅已启用"), false);
             return;
         }
 
         if (isCmdBanned(groupId, commandClass)) {
-            log.info("\t\t├─[PermissionHandler] 群组指令 {}-{} 停用中",
+            log.info("├─[PermissionHandler] 群组指令 {}-{} 停用中",
                     groupId, commandClass.getSimpleName());
             bot.sendGroupMsg(groupId, "[访问] ⛔️停用中", false);
             return;
@@ -157,7 +157,7 @@ public class PermissionHandler implements Handler {
 
         if (!params.isEmpty() && "-b".equals(params.getFirst())) {
             if (userAccess < 1) {
-                log.info("\t\t├─[PermissionHandler] 封禁限权不足");
+                log.info("├─[PermissionHandler] 封禁限权不足");
                 bot.sendGroupMsg(groupId, """
                         [访问] 🚫限权不足
                         - 需要限权等级: 1
@@ -165,7 +165,7 @@ public class PermissionHandler implements Handler {
                 return;
             }
             if (params.size() < 3) {
-                log.info("\t\t├─[PermissionHandler] 封禁参数不足");
+                log.info("├─[PermissionHandler] 封禁参数不足");
                 bot.sendGroupMsg(groupId, "[访问] ❌封禁参数不足", false);
                 return;
             }
@@ -175,17 +175,17 @@ public class PermissionHandler implements Handler {
                 targetId = Long.parseLong(params.get(1));
                 banTime = Integer.parseInt(params.get(2));
             } catch (NumberFormatException e) {
-                log.info("\t\t├─[PermissionHandler] 封禁参数非法");
+                log.info("├─[PermissionHandler] 封禁参数非法");
                 bot.sendGroupMsg(groupId, "[访问] ❌封禁参数非法", false);
                 return;
             }
             if (!userService.exist(targetId)) {
-                log.info("\t\t├─[PermissionHandler] 封禁用户未注册");
+                log.info("├─[PermissionHandler] 封禁用户未注册");
                 bot.sendGroupMsg(groupId, "[访问] ❌封禁用户未注册", false);
                 return;
             }
             setUserBan(targetId, commandClass, banTime);
-            log.info("\t\t├─[PermissionHandler] 用户指令 {}-{} {}",
+            log.info("├─[PermissionHandler] 用户指令 {}-{} {}",
                     targetId, commandClass.getSimpleName(), banTime > 0 ? "已封禁 " + banTime + " Min" : "已解封");
             bot.sendGroupMsg(groupId, "[访问] %s".formatted(banTime > 0 ? "⛔️已封禁" : "✅已解封"), false);
             return;
@@ -198,7 +198,7 @@ public class PermissionHandler implements Handler {
             long hours = totalSeconds / 3600;
             long minutes = (totalSeconds % 3600) / 60;
             long seconds = totalSeconds % 60;
-            log.info("\t\t├─[PermissionHandler] 用户指令 {}-{} 被封禁至 {}",
+            log.info("├─[PermissionHandler] 用户指令 {}-{} 被封禁至 {}",
                     userId, commandClass.getSimpleName(), until.format(formatter));
             bot.sendGroupMsg(groupId, """
                     [访问] ⛔️你已被禁用该指令

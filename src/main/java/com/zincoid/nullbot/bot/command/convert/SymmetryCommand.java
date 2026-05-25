@@ -82,7 +82,7 @@ public class SymmetryCommand implements Command {
             String tempName = UUID.randomUUID().toString();
             String downloadedName;
             try {
-                FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "\t\t\t\t├─ ");
+                FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "├─ ");
                 downloadedName = fileInfo.getFileName();
             } catch (Exception e) {
                 throw new NullBotMsgException("[对称] ❌下载时出错: " + e.getMessage());
@@ -117,7 +117,7 @@ public class SymmetryCommand implements Command {
             }
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);
-            log.info("\t\t\t\t├─[Symmetry] 处理完成 - {}", downloadedName);
+            log.info("├─[Symmetry] 处理完成 - {}", downloadedName);
         }
     }
 

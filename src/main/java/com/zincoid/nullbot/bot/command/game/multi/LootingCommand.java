@@ -37,7 +37,7 @@ public class LootingCommand implements Command {
         } else
             bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
 
-        log.info("\t\t\t\t├─[Looting] 玩家 {} 执行指令 [{}]", userId, commandText);
+        log.info("├─[Looting] 玩家 {} 执行指令 [{}]", userId, commandText);
     }
 
     @Override

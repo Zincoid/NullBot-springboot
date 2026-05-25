@@ -29,13 +29,13 @@ public class RateLimitHandler implements Handler {
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception
     {
         if (!enabled) {
-            log.info("\t\t├─[RateLimitHandler] 未启用速率限制");
+            log.info("├─[RateLimitHandler] 未启用速率限制");
             chain.doHandle(bot, event, command);
             return;
         }
 
         if (!event.isRateLimit()) {
-            log.info("\t\t├─[RateLimitHandler] 无需速率限制");
+            log.info("├─[RateLimitHandler] 无需速率限制");
             chain.doHandle(bot, event, command);
             return;
         }
@@ -47,15 +47,15 @@ public class RateLimitHandler implements Handler {
                             groupMessageEvent.getUserId(),
                             event.getCommandType())
             ) {
-                log.info("\t\t├─[RateLimitHandler] 基本消息未达到速率限制");
+                log.info("├─[RateLimitHandler] 基本消息未达到速率限制");
                 chain.doHandle(bot, event, command);
             } else {
-                log.info("\t\t├─[RateLimitHandler] 基本消息达到速率限制");
+                log.info("├─[RateLimitHandler] 基本消息达到速率限制");
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), "请求太多啦！", false);
             }
         } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
             if (pokeNoticeEvent.getGroupId() == null) {
-                log.info("\t\t├─[PermissionHandler] 私信戳戳事件不限速");
+                log.info("├─[PermissionHandler] 私信戳戳事件不限速");
                 chain.doHandle(bot, event, command);
                 return;
             }
@@ -65,13 +65,13 @@ public class RateLimitHandler implements Handler {
                             pokeNoticeEvent.getUserId(),
                             event.getCommandType())
             ) {
-                log.info("\t\t├─[RateLimitHandler] 戳一戳未达到速率限制");
+                log.info("├─[RateLimitHandler] 戳一戳未达到速率限制");
                 chain.doHandle(bot, event, command);
             } else {
-                log.info("\t\t├─[RateLimitHandler] 戳一戳达到速率限制");
+                log.info("├─[RateLimitHandler] 戳一戳达到速率限制");
             }
         } else {
-            log.info("\t\t├─[RateLimitHandler] 默认不限速的事件类型");
+            log.info("├─[RateLimitHandler] 默认不限速的事件类型");
             chain.doHandle(bot, event, command);
         }
     }

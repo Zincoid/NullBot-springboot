@@ -63,7 +63,7 @@ public class DriftBottleCommand implements Command {
                     );
                     if (!autoThrow) {
                         bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
-                        log.info("\t\t\t\t├─[DriftBottle] 扔漂流瓶(图片) - {} -> {}", userId, thrown ? "已投出" : "出错");
+                        log.info("├─[DriftBottle] 扔漂流瓶(图片) - {} -> {}", userId, thrown ? "已投出" : "出错");
                     }
                 } catch (Exception e) {
                     if (!autoThrow) throw new NullBotMsgException("[漂流瓶] ❌出错: " + e.getMessage());
@@ -86,7 +86,7 @@ public class DriftBottleCommand implements Command {
             );
             if (!autoThrow) {
                 bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
-                log.info("\t\t\t\t├─[DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown ? "已投出" : "出错");
+                log.info("├─[DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown ? "已投出" : "出错");
             }
             return;
         }
@@ -104,9 +104,9 @@ public class DriftBottleCommand implements Command {
             bottle.plusRethrowTimes();
             thrownBack = driftBottleService.throwBottle(bottle);
             bot.sendGroupMsg(groupId, thrownBack ? "✉️ 已投回！" : "[漂流瓶] ❌投回出错", true);
-            log.info("\t\t\t\t├─[DriftBottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());
+            log.info("├─[DriftBottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());
         } else {
-            log.info("\t\t\t\t├─[DriftBottle] 捡漂流瓶并销毁 - {} -> #{}", userId, bottle.getId());
+            log.info("├─[DriftBottle] 捡漂流瓶并销毁 - {} -> #{}", userId, bottle.getId());
         }
 
         if (!thrownBack && bottle.getIsImage()) {

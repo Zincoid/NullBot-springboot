@@ -33,10 +33,10 @@ public class DrawCommand implements Command {
             ItemPO item = itemService.drawAndKeepRandom(userId);
             if (item != null) {
                 bot.sendGroupMsg(groupId, "[抽奖] " + userName + "抽到了...\n" + item, false);
-                log.info("\t\t\t\t├─[Draw] 已抽取 - {}({}) -> {}", userName, userId, item.getName());
+                log.info("├─[Draw] 已抽取 - {}({}) -> {}", userName, userId, item.getName());
             } else {
                 bot.sendGroupMsg(groupId, "[抽奖] ❌抽数耗尽或仓库已满", false);
-                log.info("\t\t\t\t├─[Draw] - {}({}) -> 抽数(单抽)耗尽或仓库已满", userName, userId);
+                log.info("├─[Draw] - {}({}) -> 抽数(单抽)耗尽或仓库已满", userName, userId);
             }
         } else {
             try {
@@ -61,14 +61,14 @@ public class DrawCommand implements Command {
                         sb.append("[").append(item.getRarity().getDescription()).append(":").append(item.getName()).append("]");
                     }
                     bot.sendGroupMsg(groupId, sb.toString(), false);
-                    log.info("\t\t\t\t├─[Draw] 已抽取次数 - {}({}) -> {}", userName, userId, items.size());
+                    log.info("├─[Draw] 已抽取次数 - {}({}) -> {}", userName, userId, items.size());
                 } else {
                     bot.sendGroupMsg(groupId, "[抽奖] ❌抽数耗尽或仓库已满", false);
-                    log.info("\t\t\t\t├─[Draw] - {}({}) -> 抽数(多抽)耗尽或仓库已满", userName, userId);
+                    log.info("├─[Draw] - {}({}) -> 抽数(多抽)耗尽或仓库已满", userName, userId);
                 }
             } catch (NumberFormatException e) {
                 bot.sendGroupMsg(groupId, "[抽奖] ❌参数格式错误", false);
-                log.info("\t\t\t\t├─[Draw] 参数格式错误");
+                log.info("├─[Draw] 参数格式错误");
             }
         }
     }

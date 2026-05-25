@@ -52,7 +52,7 @@ public class RecallAICommand implements Command {
         List<QQMessage> targets = filtered.subList(startIndex, filtered.size());
         for (QQMessage target : targets) bot.deleteMsg(target.getMessageId());
 
-        log.info("\t\t\t\t├─[RecallAI] 已撤回AI消息 -> {}条", n);
+        log.info("├─[RecallAI] 已撤回AI消息 -> {}条", n);
     }
 
     @Override

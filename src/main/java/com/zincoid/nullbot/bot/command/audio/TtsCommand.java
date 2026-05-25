@@ -80,7 +80,7 @@ public class TtsCommand implements Command {
                         String downloadedName;
 
                         try {
-                            FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "\t\t\t\t├─ ");
+                            FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "├─ ");
                             downloadedName = fileInfo.getFileName();
                         } catch (Exception e) {
                             throw new NullBotMsgException("[语音合成] ❌模板临时文件下载失败: " + e.getMessage());
@@ -100,7 +100,7 @@ public class TtsCommand implements Command {
 
                         bot.sendGroupMsg(groupId, "[语音合成] \uD83D\uDCBE模板已保存！\n" +
                                 templateName + " : " + templateText + " -> " + uploadedPath, false);
-                        log.info("\t\t\t\t├─[语音合成] 模板已保存 - {}:{} -> {}", templateName, templateText, uploadedPath);
+                        log.info("├─[语音合成] 模板已保存 - {}:{} -> {}", templateName, templateText, uploadedPath);
                     }
                 }
 
@@ -111,7 +111,7 @@ public class TtsCommand implements Command {
                     if (!ttsTemplateService.deleteByName(templateName))
                         throw new NullBotMsgException("[语音合成] ❌该模板不存在");
                     bot.sendGroupMsg(event.getGroupId(), "[语音合成] ⚠️模板已删除", false);
-                    log.info("\t\t\t\t├─[Tts] 已删除模板 - {}", templateName);
+                    log.info("├─[Tts] 已删除模板 - {}", templateName);
                 }
 
                 case "use" -> {
@@ -133,7 +133,7 @@ public class TtsCommand implements Command {
                             .voice("base64://" + base64)
                             .build();
                     bot.sendGroupMsg(event.getGroupId(), response, false);
-                    log.info("\t\t\t\t├─[Tts] 已回复克隆语音: {}", targetText);
+                    log.info("├─[Tts] 已回复克隆语音: {}", targetText);
                 }
 
                 case "list" -> {
@@ -147,7 +147,7 @@ public class TtsCommand implements Command {
                                 .append(" | ").append(template.getUsed());
                     }
                     bot.sendGroupMsg(event.getGroupId(), "[语音合成] ✅已获取模板列表" + sb, false);
-                    log.info("\t\t\t\t├─[Tts] 已获取模板列表");
+                    log.info("├─[Tts] 已获取模板列表");
                 }
 
                 default -> throw new NullBotMsgException("[语音合成] ❌无此克隆选项");
@@ -167,7 +167,7 @@ public class TtsCommand implements Command {
                     .voice("base64://" + base64)
                     .build();
             bot.sendGroupMsg(event.getGroupId(), response, false);
-            log.info("\t\t\t\t├─[Tts] 已回复合成语音");
+            log.info("├─[Tts] 已回复合成语音");
             return;
         }
 
@@ -192,7 +192,7 @@ public class TtsCommand implements Command {
                     .voice("base64://" + base64)
                     .build();
             bot.sendPrivateMsg(event.getUserId(), response, false);
-            log.info("\t\t\t\t├─[Tts] 已私信合成语音: {}", targetText);
+            log.info("├─[Tts] 已私信合成语音: {}", targetText);
             return;
         }
 

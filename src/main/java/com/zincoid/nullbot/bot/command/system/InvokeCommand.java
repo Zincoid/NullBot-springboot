@@ -39,7 +39,7 @@ public class InvokeCommand implements Command {
                     The method returned:
                     %s""".formatted(result), false
             );
-            log.info("\t\t\t\t├─[Invoke] 调用结果 -> {}", result);
+            log.info("├─[Invoke] 调用结果 -> {}", result);
         } catch (Exception e) {
             throw new NullBotMsgException("[Spring] ⚠️方法调用失败\n" + e.getMessage());
         }

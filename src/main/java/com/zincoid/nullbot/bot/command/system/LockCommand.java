@@ -26,7 +26,7 @@ public class LockCommand implements Command {
                 "[锁定] " + (locked ? "\uD83D\uDD12系统已锁定" : "\uD83D\uDD13系统已解锁"),
                 false
         );
-        log.info("\t\t\t\t├─[Lock] 系统已{}", locked ? "锁定" : "解锁");
+        log.info("├─[Lock] 系统已{}", locked ? "锁定" : "解锁");
     }
 
     @Override
