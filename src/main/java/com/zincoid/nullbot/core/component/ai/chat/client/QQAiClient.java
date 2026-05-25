@@ -69,24 +69,29 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     public String chat(QQMessage message) {
         String chatId = BotCtxUtil.getChatId();
-        chatMemory.add(chatId, message);
-        if (!message.isPrivate() && BotCtxUtil.getSetting().isAntiInjection()) {
-            if (qqAntiInjector.check(message)) {
-                chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
-                return "Refused";
+        chatMemory.lock(chatId);
+        try {
+            chatMemory.add(chatId, message);
+            if (!message.isPrivate() && BotCtxUtil.getSetting().isAntiInjection()) {
+                if (qqAntiInjector.check(message)) {
+                    chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
+                    return "Refused";
+                }
             }
+            ChatStrategy strategy = message.isPrivate()
+                    ? ChatStrategy.EMBEDDING : BotCtxUtil.getSetting().getChatStrategy();
+            return switch (strategy) {
+                case DIRECT -> chatDirect(message);
+                case EMBEDDING -> chatEmbedding(message);
+                case TOOLS -> {
+                    if (toolRegistry == null || maxToolCalls <= 0)
+                        throw new RuntimeException("工具调用未配置");
+                    yield chatTools(message);
+                }
+            };
+        } finally {
+            chatMemory.unlock(chatId);
         }
-        ChatStrategy strategy = message.isPrivate()
-                ? ChatStrategy.EMBEDDING : BotCtxUtil.getSetting().getChatStrategy();
-        return switch (strategy) {
-            case DIRECT -> chatDirect(message);
-            case EMBEDDING -> chatEmbedding(message);
-            case TOOLS -> {
-                if (toolRegistry == null || maxToolCalls <= 0)
-                    throw new RuntimeException("工具调用未配置");
-                yield chatTools(message);
-            }
-        };
     }
 
     // ------------------------------------- DIRECT 方案 ------------------------------------
