@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AiCommandEvent {
+
     private Bot bot;
     private CommandEvent<?> event;
 }
