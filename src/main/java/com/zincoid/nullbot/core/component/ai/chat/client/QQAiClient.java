@@ -143,7 +143,8 @@ public class QQAiClient implements AiClient<QQMessage> {
                 break;
             }
             log.info("◉ [ToolCall] 第{}轮: {}个工具调用", i + 1, resp.getToolCalls().size());
-            chatMemory.add(chatId, BaseMessage.assistant(resp.getToolCalls()));
+            chatMemory.add(chatId, BaseMessage.assistant(resp.getToolCalls())
+                    .withReasoning(resp.getReasoningContent()));
             for (ToolCall tc : resp.getToolCalls()) {
                 log.info("◉ [ToolCall] 执行工具: {}({})", tc.getName(), tc.getArguments());
                 String result = executeTool(tc);

@@ -14,18 +14,15 @@ import java.util.Map;
 @ToString(callSuper = true)
 public class BaseMessage extends AbstractMessage {
 
+    private String reasoningContent;
     private final List<ToolCall> toolCalls;
     private final String toolCallId;
 
-    private BaseMessage(Role role, String content, List<ToolCall> toolCalls, String toolCallId) {
+    private BaseMessage(Role role, String content, String reasoningContent, List<ToolCall> toolCalls, String toolCallId) {
         super(role, content);
+        this.reasoningContent = reasoningContent;
         this.toolCalls = toolCalls;
         this.toolCallId = toolCallId;
-    }
-
-    @Override
-    public List<ToolCall> getToolCalls() {
-        return toolCalls;
     }
 
     @Override
@@ -34,6 +31,9 @@ public class BaseMessage extends AbstractMessage {
         map.put("role", super.role.getValue());
         if (super.content != null && !super.content.isEmpty()) {
             map.put("content", super.content);
+        }
+        if (reasoningContent != null && !reasoningContent.isEmpty()) {
+            map.put("reasoning_content", reasoningContent);
         }
         if (toolCalls != null && !toolCalls.isEmpty()) {
             List<Map<String, Object>> tcList = new ArrayList<>();
@@ -54,19 +54,24 @@ public class BaseMessage extends AbstractMessage {
 
     // ==================== 构建方法 ====================
 
+    public BaseMessage withReasoning(String content) {
+        this.reasoningContent = content;
+        return this;
+    }
+
     public static BaseMessage user(String content) {
-        return new BaseMessage(Role.USER, content, null, null);
+        return new BaseMessage(Role.USER, content, null, null, null);
     }
     public static BaseMessage assistant(String content) {
-        return new BaseMessage(Role.ASSISTANT, content, null, null);
+        return new BaseMessage(Role.ASSISTANT, content, null, null, null);
     }
     public static BaseMessage assistant(List<ToolCall> toolCalls) {
-        return new BaseMessage(Role.ASSISTANT, null, toolCalls, null);
+        return new BaseMessage(Role.ASSISTANT, null, null, toolCalls, null);
     }
     public static BaseMessage system(String content) {
-        return new BaseMessage(Role.SYSTEM, content, null, null);
+        return new BaseMessage(Role.SYSTEM, content, null, null, null);
     }
     public static BaseMessage tool(String toolCallId, String content) {
-        return new BaseMessage(Role.TOOL, content, null, toolCallId);
+        return new BaseMessage(Role.TOOL, content, null, null, toolCallId);
     }
 }

@@ -104,6 +104,7 @@ public class OpenAiModel implements Model {
             if (response.statusCode() == 200) {
                 JsonNode rootNode = objectMapper.readTree(response.body());
                 JsonNode messageNode = rootNode.path("choices").get(0).path("message");
+                String reasoningContent = messageNode.path("reasoning_content").asText("");
 
                 JsonNode toolCallsNode = messageNode.path("tool_calls");
                 if (!toolCallsNode.isMissingNode() && toolCallsNode.isArray()) {
@@ -115,11 +116,11 @@ public class OpenAiModel implements Model {
                         String arguments = fnNode.path("arguments").asText();
                         toolCalls.add(new ToolCall(id, name, arguments));
                     }
-                    return ModelResponse.of(toolCalls);
+                    return ModelResponse.of(toolCalls, reasoningContent);
                 }
 
-                String content = messageNode.path("content").asText(null);
-                return ModelResponse.of(content != null ? content : "");
+                String content = messageNode.path("content").asText("");
+                return ModelResponse.of(content, reasoningContent);
             } else {
                 throw new RuntimeException("OpenAI API请求失败: " + response.statusCode() + " - " + response.body());
             }
