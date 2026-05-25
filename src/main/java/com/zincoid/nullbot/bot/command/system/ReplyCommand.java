@@ -1,8 +1,12 @@
 package com.zincoid.nullbot.bot.command.system;
 
+import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
+import com.zincoid.nullbot.core.component.ai.voice.TtsClient;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
@@ -11,16 +15,21 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @CommandMapping({"Reply", "回复"})
 @Component
-@Slf4j
+@RequiredArgsConstructor
 public class ReplyCommand implements Command {
+
+    private final TtsClient ttsClient;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.isEmpty()) throw new NullBotMsgException("[回复] ❌无参数");
         String message = String.join(" ", params.subList(0, params.size()));
-        bot.sendGroupMsg(event.getGroupId(), message, false);
+        String content = BotCtxUtil.getSetting().isVoice() ?
+                MsgUtils.builder().voice("base64://" + ttsClient.synthesize(message)).build() : message;
+        bot.sendGroupMsg(event.getGroupId(), content, false);
         log.info("├─[Reply] 群聊已回复 - {}", message);
     }
 
