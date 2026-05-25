@@ -6,7 +6,7 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowChatMemory;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
-import com.zincoid.nullbot.core.enums.ChatScope;
+import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.FunctionControl;

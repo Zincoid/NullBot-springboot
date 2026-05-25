@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.model.data.po;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.zincoid.nullbot.core.enums.ChatScope;
+import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
 import com.zincoid.nullbot.core.enums.LimitScope;
 
 @Data

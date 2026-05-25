@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.enums;
+package com.zincoid.nullbot.core.component.ai.chat.enums;
 
 public enum ChatScope {
 
