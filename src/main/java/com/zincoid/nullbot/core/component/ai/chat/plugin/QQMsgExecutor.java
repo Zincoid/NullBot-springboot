@@ -40,7 +40,6 @@ public class QQMsgExecutor {
     // =================== 执行方法 ===================
 
     public QQMessage direct(QQMessage message, boolean voice) {
-
         Bot bot = BotCtxUtil.getBot();
         boolean isPrivate = message.isPrivate();
         Long targetId = isPrivate ? message.getUserId() : message.getGroupId();
