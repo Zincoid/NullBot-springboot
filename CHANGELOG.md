@@ -826,3 +826,10 @@
   - 新增 群消息和用户信息查询 AI 工具；
 - 增强 BotCtxUtil - 存储 Bot 和 Event 对象；
 - 优化 日志输出。
+
+### 2026.5.25 - v2.1.2
+
+- 优化 EmbedCommandEvent：
+  - 更名 InnerCommandEvent；
+  - 优化构造方法和相关使用；
+- 优化部分代码和日志。
