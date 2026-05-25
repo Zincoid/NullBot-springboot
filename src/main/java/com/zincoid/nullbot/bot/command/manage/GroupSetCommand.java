@@ -123,7 +123,7 @@ public class GroupSetCommand implements Command {
                     }
                     case "ica" -> {
                         boolean enabled = setting.switchInnerCmdAuth();
-                        msg = "指令鉴权 -> %s".formatted(enabled ? "ON" : "OFF");
+                        msg = "内令鉴权 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "cus" -> {
                         qqAiClient.clear(BotCtxUtil.getChatId());
