@@ -122,38 +122,42 @@ public class QQAiClient implements AiClient<QQMessage> {
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), false)
                 : qqPrompter.group(message.getGroupId(), false);
-        QQMessage result = callWithTools(prompt, message, false, false);
+        QQMessage result = callAndStoreWithTools(prompt, message, false, false);
         return result.getContent();
     }
 
-    private QQMessage callWithTools(String prompt, QQMessage message, boolean thinking, boolean voice) {
+    private QQMessage callAndStoreWithTools(String prompt, QQMessage message,
+                                            boolean thinking, boolean voice) {
         String chatId = BotCtxUtil.getChatId();
         ModelResponse finalResp = null;
         for (int i = 0; i < maxToolCalls; i++) {
             List<Message> messages = new ArrayList<>();
             messages.add(QQMessage.system(prompt));
             messages.addAll(chatMemory.get(chatId));
-            ModelResponse response = model.invoke(messages, toolRegistry.getAll(), thinking, maxTokens);
-            if (!response.hasToolCalls()) {
-                finalResp = response;
+            ModelResponse resp = model
+                    .invoke(messages, toolRegistry.getAll(), thinking, maxTokens);
+            if (!resp.hasToolCalls()) {
+                finalResp = resp;
                 break;
             }
-            log.info("◉ [ToolCall] 第{}轮: 收到{}个工具调用", i + 1, response.getToolCalls().size());
-            chatMemory.add(chatId, BaseMessage.assistant(response.getToolCalls()));
-            for (ToolCall toolCall : response.getToolCalls()) {
-                log.info("◉ [ToolCall] 执行工具: {}({})", toolCall.getName(), toolCall.getArguments());
-                String result = executeTool(toolCall);
+            log.info("◉ [ToolCall] 第{}轮: {}个工具调用", i + 1, resp.getToolCalls().size());
+            chatMemory.add(chatId, BaseMessage.assistant(resp.getToolCalls()));
+            for (ToolCall tc : resp.getToolCalls()) {
+                log.info("◉ [ToolCall] 执行工具: {}({})", tc.getName(), tc.getArguments());
+                String result = executeTool(tc);
                 log.info("◉ [ToolCall] 工具结果: {}", result);
-                chatMemory.add(chatId, BaseMessage.tool(toolCall.getId(), result));
+                chatMemory.add(chatId, BaseMessage.tool(tc.getId(), result));
             }
         }
         if (finalResp == null) {
-            log.warn("◉ [ToolCall] 达到最大迭代次数({})，进行最终调用", maxToolCalls);
+            log.warn("◉ [ToolCall] 最终调用: 达到最大迭代次数{} ", maxToolCalls);
             finalResp = model.invoke(chatMemory.get(chatId), false, maxTokens);
         }
         QQMessage finalMessage = message.isPrivate()
-                ? QQMessage.assistant(finalResp.getContent()).with(message.getUserId(), message.getUserName())
-                : QQMessage.assistant(finalResp.getContent()).with(message.getGroupId(), message.getUserId(), message.getUserName());
+                ? QQMessage.assistant(finalResp.getContent())
+                .with(message.getUserId(), message.getUserName())
+                : QQMessage.assistant(finalResp.getContent())
+                .with(message.getGroupId(), message.getUserId(), message.getUserName());
         List<QQMessage> _messages = qqMsgExecutor.direct(finalMessage, voice);
         for (QQMessage msg : _messages) chatMemory.add(chatId, msg);
         return finalMessage;
