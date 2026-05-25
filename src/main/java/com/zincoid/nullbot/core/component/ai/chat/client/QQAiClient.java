@@ -105,17 +105,13 @@ public class QQAiClient implements AiClient<QQMessage> {
     // ------------------------------------------ EMBEDDING 方案 ------------------------------------------
 
     private String chatWithEmbedding(QQMessage message) {
-        if (message.isPrivate()) {
-            String prompt = qqPrompter.user(message.getUserId(), true);
-            QQMessage result = plainCall(prompt, message, false, maxTokens);
-            List<QQMessage> messages = qqMsgExecutor.chain(result, false, false);
-            for (QQMessage msg : messages) chatMemory.add(BotCtxUtil.getChatId(), msg);
-            return result.getContent();
-        }
-        SettingPO setting = BotCtxUtil.getSetting();
-        String prompt = qqPrompter.group(message.getGroupId(), true);
-        QQMessage result = plainCall(prompt, message, setting.isThinking(), maxTokens);
-        List<QQMessage> messages = qqMsgExecutor.chain(result, setting.isVoice(), setting.isInnerCmdAuth());
+        boolean thinking = !message.isPrivate() && BotCtxUtil.getSetting().isThinking();
+        boolean voice = !message.isPrivate() && BotCtxUtil.getSetting().isVoice();
+        String prompt = message.isPrivate()
+                ? qqPrompter.user(message.getUserId(), false)
+                : qqPrompter.group(message.getGroupId(), false);
+        QQMessage result = plainCall(prompt, message, thinking, maxTokens);
+        List<QQMessage> messages = qqMsgExecutor.chain(result, voice);
         for (QQMessage msg : messages) chatMemory.add(BotCtxUtil.getChatId(), msg);
         return result.getContent();
     }
@@ -126,18 +122,18 @@ public class QQAiClient implements AiClient<QQMessage> {
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), false)
                 : qqPrompter.group(message.getGroupId(), false);
-        QQMessage result = callWithTools(prompt, message);
+        QQMessage result = callWithTools(prompt, message, false, false);
         return result.getContent();
     }
 
-    private QQMessage callWithTools(String prompt, QQMessage message) {
+    private QQMessage callWithTools(String prompt, QQMessage message, boolean thinking, boolean voice) {
         String chatId = BotCtxUtil.getChatId();
         ModelResponse finalResp = null;
         for (int i = 0; i < maxToolCalls; i++) {
             List<Message> messages = new ArrayList<>();
             messages.add(QQMessage.system(prompt));
             messages.addAll(chatMemory.get(chatId));
-            ModelResponse response = model.invoke(messages, toolRegistry.getAll(), false, maxTokens);
+            ModelResponse response = model.invoke(messages, toolRegistry.getAll(), thinking, maxTokens);
             if (!response.hasToolCalls()) {
                 finalResp = response;
                 break;
@@ -158,7 +154,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         QQMessage finalMessage = message.isPrivate()
                 ? QQMessage.assistant(finalResp.getContent()).with(message.getUserId(), message.getUserName())
                 : QQMessage.assistant(finalResp.getContent()).with(message.getGroupId(), message.getUserId(), message.getUserName());
-        List<QQMessage> _messages = qqMsgExecutor.direct(finalMessage, false);
+        List<QQMessage> _messages = qqMsgExecutor.direct(finalMessage, voice);
         for (QQMessage msg : _messages) chatMemory.add(chatId, msg);
         return finalMessage;
     }

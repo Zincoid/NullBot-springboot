@@ -58,7 +58,7 @@ public class QQMsgExecutor {
         return List.of(QQMessage.assistant(content).id(messageId));
     }
 
-    public List<QQMessage> chain(QQMessage message, boolean voice, boolean embeddingAuth) {
+    public List<QQMessage> chain(QQMessage message, boolean voice) {
         Bot bot = BotCtxUtil.getBot();
         boolean isPrivate = message.isPrivate();
         Long targetId = message.isPrivate() ? message.getUserId() : message.getGroupId();
@@ -77,7 +77,7 @@ public class QQMsgExecutor {
             if (segment.startsWith("{") && segment.endsWith("}")) {
                 String command = segment.substring(1, segment.length() - 1).trim();
                 if (command.isEmpty()) continue;
-                eventPublisher.publishEvent(InnerCommandEvent.of(command, embeddingAuth));
+                eventPublisher.publishEvent(InnerCommandEvent.of(command));
                 messages.add(QQMessage.assistant(segment));
             } else {
                 if (segment.isEmpty()) continue;
