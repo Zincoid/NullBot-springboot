@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.bot.event.InnerCommandEvent;
-import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.InventoryService;
 import com.zincoid.nullbot.core.service.ItemService;
