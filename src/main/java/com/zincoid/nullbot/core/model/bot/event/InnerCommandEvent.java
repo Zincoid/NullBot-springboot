@@ -16,7 +16,7 @@ public class InnerCommandEvent {
         return new InnerCommandEvent(
                 BotCtxUtil.getBot(),
                 new CommandEvent<>(BotCtxUtil.getEvent(), command,
-                        !BotCtxUtil.getIsPrivate() && BotCtxUtil.getSetting().isEmbeddingAuth(),
+                        !BotCtxUtil.getIsPrivate() && BotCtxUtil.getSetting().isInnerCmdAuth(),
                         false)
         );
     }

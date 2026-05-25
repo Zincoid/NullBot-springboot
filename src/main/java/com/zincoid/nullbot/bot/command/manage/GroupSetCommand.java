@@ -122,7 +122,7 @@ public class GroupSetCommand implements Command {
                         msg = "指令模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "eau" -> {
-                        boolean enabled = setting.switchEmbeddingAuth();
+                        boolean enabled = setting.switchInnerCmdAuth();
                         msg = "指令校验 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "cus" -> {
