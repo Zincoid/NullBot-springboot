@@ -13,4 +13,8 @@ public interface ChatMemory {
     void clear(String chatId);
 
     void reset();
+
+    void lock(String chatId);
+
+    void unlock(String chatId);
 }
