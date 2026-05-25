@@ -70,7 +70,7 @@ public class QQPrompter {
 
     // =================== 生成方法 ===================
 
-    public String prompt(Long userId, boolean cmd) {
+    public String user(Long userId, boolean cmd) {
         StringBuilder sb = new StringBuilder();
         sb.append(sysMsgManager.getUserMessage(userId));
         sb.append(BASE_PM_PROMPT);
@@ -81,25 +81,20 @@ public class QQPrompter {
         return sb.toString();
     }
 
-    public String prompt(Long groupId, boolean cmd, boolean custom) {
+    public String group(Long groupId, boolean cmd) {
         StringBuilder sb = new StringBuilder();
-        if (custom) {
-            sb.append(sysMsgManager.getCustomMessage(groupId));
-            sb.append(BASE_GC_PROMPT);
-        } else {
-            sb.append(sysMsgManager.getDefaultMessage(groupId));
-            sb.append(BASE_GC_PROMPT);
-            sb.append(MEMORY_PROMPT.formatted(
-                    sysMsgManager.getLongTermGroupMemory(groupId)));
-            if (cmd) sb.append(CMD_PROMPT.formatted(
-                    commandRegistry.getCommandHelpsForAI(QQCmdAllows.getGc())));
-        }
+        sb.append(sysMsgManager.getGroupMessage(groupId));
+        sb.append(BASE_GC_PROMPT);
+        sb.append(MEMORY_PROMPT.formatted(
+                sysMsgManager.getLongTermGroupMemory(groupId)));
+        if (cmd) sb.append(CMD_PROMPT.formatted(
+                commandRegistry.getCommandHelpsForAI(QQCmdAllows.getGc())));
         return sb.toString();
     }
 
     // =================== 工具方法 ===================
 
-    public String formatMemories(List<String> memories) {
+    private String formatMemories(List<String> memories) {
         if (memories == null || memories.isEmpty())
             return "无长时记忆";
         StringBuilder sb = new StringBuilder();

@@ -57,31 +57,19 @@ public class SysMsgSetCommand implements Command {
         if (params.size() < 2)
             throw new NullBotMsgException("[提示词设置] ❌参数不足");
 
-        if ("-default".equals(option)) {
-            if (BotCtxUtil.getSetting().isCustom())
-                throw new NullBotMsgException("[提示词设置] ❌非Default模式");
+        if ("-set".equals(option)) {
             int userAccess = userService.getAccess(userId);
-            if (userAccess < 1)
+            if (userAccess < 1 && !BotCtxUtil.getSetting().isCustom())
                 throw new NullBotMsgException("""
                         [提示词设置] \uD83D\uDEAB设置失败
-                        - 仅限权等级I及以上用户可修改默认提示词
+                        - 当前为非自定义提示词模式
+                        - 该模式仅限权等级I及以上用户可修改
                         - 你的限权等级: %s""".formatted(userAccess));
-            String defaultMessage = String.join(" ", params.subList(1, params.size()));
+            String groupMessage = String.join(" ", params.subList(1, params.size()));
             qqAiClient.clear(BotCtxUtil.getChatId());
-            sysMsgManager.setDefaultMessage(groupId, defaultMessage);
-            bot.sendGroupMsg(groupId, "[提示词设置] ✅Default模式: 已设置", false);
-            log.info("\t\t\t\t├─[SysMsgSet] 群聊 Default 提示词已设置 - {} -> {}", groupId, defaultMessage);
-            return;
-        }
-
-        if ("-custom".equals(option)) {
-            if (!BotCtxUtil.getSetting().isCustom())
-                throw new NullBotMsgException("[提示词设置] ❌非Custom模式");
-            String customMessage = String.join(" ", params.subList(1, params.size()));
-            qqAiClient.clear(BotCtxUtil.getChatId());
-            sysMsgManager.setCustomMessage(groupId, customMessage);
-            bot.sendGroupMsg(groupId, "[提示词设置] ✅Custom模式: 已设置", false);
-            log.info("\t\t\t\t├─[SysMsgSet] 群聊 Custom 提示词已设置 - {} -> {}", groupId, customMessage);
+            sysMsgManager.setGroupMessage(groupId, groupMessage);
+            bot.sendGroupMsg(groupId, "[提示词设置] ✅已设置", false);
+            log.info("\t\t\t\t├─[SysMsgSet] 群聊提示词已设置 - {} -> {}", groupId, groupMessage);
             return;
         }
 

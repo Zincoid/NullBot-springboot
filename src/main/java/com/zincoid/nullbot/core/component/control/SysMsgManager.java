@@ -15,10 +15,8 @@ public class SysMsgManager {
 
     private final AiChatProperties aiChatProperties;
 
-    private final Map<Long, String> defaultMessages = new ConcurrentHashMap<>();  // 群聊默认提示词
-    private final Map<Long, String> customMessages = new ConcurrentHashMap<>();  // 群聊自定提示词
+    private final Map<Long, String> groupMessages = new ConcurrentHashMap<>();  // 群聊提示词
     private final Map<Long, List<String>> longTermGroupMemories = new ConcurrentHashMap<>();  // 群聊长时记忆
-
     private final Map<Long, String> userMessages = new ConcurrentHashMap<>();  // 私聊提示词
     private final Map<Long, List<String>> longTermUserMemories = new ConcurrentHashMap<>();  // 私聊长时记忆
 
@@ -26,10 +24,8 @@ public class SysMsgManager {
 
     // =================== 提示词功能相关 ===================
 
-    public String getDefaultMessage(Long groupId) { return defaultMessages.computeIfAbsent(groupId, k -> aiChatProperties.getDefaultSysMsg()); }
-    public void setDefaultMessage(Long groupId, String message) { defaultMessages.put(groupId, message); }
-    public String getCustomMessage(Long groupId) { return customMessages.computeIfAbsent(groupId, k -> "你是一个AI助手，名字叫Null。"); }
-    public void setCustomMessage(Long groupId, String message) { customMessages.put(groupId, message); }
+    public String getGroupMessage(Long groupId) { return groupMessages.computeIfAbsent(groupId, k -> aiChatProperties.getDefaultSysMsg()); }
+    public void setGroupMessage(Long groupId, String message) { groupMessages.put(groupId, message); }
     public String getUserMessage(Long userId) { return userMessages.computeIfAbsent(userId, k -> aiChatProperties.getDefaultSysMsg()); }
     public void setUserMessage(Long userId, String message) { userMessages.put(userId, message); }
 
@@ -55,8 +51,7 @@ public class SysMsgManager {
     // =================== 重置功能相关 ===================
 
     public void resetGroup(Long groupId) {
-        defaultMessages.remove(groupId);
-        customMessages.remove(groupId);
+        groupMessages.remove(groupId);
         longTermGroupMemories.remove(groupId);
     }
     public void resetUser(Long userId) {
