@@ -28,9 +28,9 @@ public class CommandRateLimiter {
         if (isSpam(groupId, 500)) return false;
         SettingPO setting = BotCtxUtil.getSetting();
         String key = switch (setting.getLimitScope()) {
-            case Group -> "[%s]".formatted(groupId);
-            case User -> "[%s][User:%s]".formatted(groupId, userId);
-            case Cmd -> "[%s][Cmd:%s]".formatted(groupId, commandType);
+            case GROUP -> "[%s]".formatted(groupId);
+            case USER -> "[%s][User:%s]".formatted(groupId, userId);
+            case CMD -> "[%s][Cmd:%s]".formatted(groupId, commandType);
         };
         return resolveBucket(key, setting).tryConsume(1);
     }

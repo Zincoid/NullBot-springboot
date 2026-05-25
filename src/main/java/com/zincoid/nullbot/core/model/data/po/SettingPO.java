@@ -12,7 +12,7 @@ public class SettingPO {
 
     private Long groupId;
 
-    private LimitScope limitScope = LimitScope.Group;
+    private LimitScope limitScope = LimitScope.GROUP;
     private int limitCapacity = 25;
     private int limitRefill = 10;
     private int limitInterval = 1;
