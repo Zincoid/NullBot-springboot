@@ -13,7 +13,6 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolCall;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
-import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +31,8 @@ public class QQAiClient implements AiClient<QQMessage> {
     private final QQPrompter qqPrompter;
     private final QQMsgExecutor qqMsgExecutor;
 
-    private int maxToolCalls = 0;
     private ToolRegistry toolRegistry;
+    private int maxToolCalls = 0;
 
     private int maxTokens = 512;
 
@@ -71,9 +70,8 @@ public class QQAiClient implements AiClient<QQMessage> {
     public String chat(QQMessage message) {
         String chatId = BotCtxUtil.getChatId();
         chatMemory.add(chatId, message);
-        if (!message.isPrivate()) {
-            SettingPO setting = BotCtxUtil.getSetting();
-            if (setting.isAntiInjection() && qqAntiInjector.check(message)) {
+        if (!message.isPrivate() && BotCtxUtil.getSetting().isAntiInjection()) {
+            if (qqAntiInjector.check(message)) {
                 chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
                 return "Refused";
             }
@@ -82,9 +80,12 @@ public class QQAiClient implements AiClient<QQMessage> {
                 ? ChatStrategy.EMBEDDING : BotCtxUtil.getSetting().getChatStrategy();
         return switch (strategy) {
             case DIRECT -> chatDirect(message);
-            case EMBEDDING -> chatWithEmbedding(message);
-            case TOOLS -> toolRegistry != null
-                    ? chatWithTools(message) : chatWithEmbedding(message);
+            case EMBEDDING -> chatEmbedding(message);
+            case TOOLS -> {
+                if (toolRegistry == null || maxToolCalls <= 0)
+                    throw new RuntimeException("工具调用未配置");
+                yield chatTools(message);
+            }
         };
     }
 
@@ -104,7 +105,7 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     // ------------------------------------------ EMBEDDING 方案 ------------------------------------------
 
-    private String chatWithEmbedding(QQMessage message) {
+    private String chatEmbedding(QQMessage message) {
         boolean thinking = !message.isPrivate() && BotCtxUtil.getSetting().isThinking();
         boolean voice = !message.isPrivate() && BotCtxUtil.getSetting().isVoice();
         String prompt = message.isPrivate()
@@ -118,7 +119,7 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     // ------------------------------------------ TOOLS 方案 ------------------------------------------
 
-    private String chatWithTools(QQMessage message) {
+    private String chatTools(QQMessage message) {
         boolean thinking = !message.isPrivate() && BotCtxUtil.getSetting().isThinking();
         boolean voice = !message.isPrivate() && BotCtxUtil.getSetting().isVoice();
         String prompt = message.isPrivate()
