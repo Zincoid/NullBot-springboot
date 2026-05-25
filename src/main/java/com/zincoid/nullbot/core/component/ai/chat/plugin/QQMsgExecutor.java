@@ -90,16 +90,10 @@ public class QQMsgExecutor {
 
     // =================== 工具方法 ===================
 
-    private Integer send(Bot bot, Long targetId, String message,
-                         boolean isPrivate, boolean voice) {
-        ActionData<MsgId> msgIdActionData;
-        if (isPrivate) {
-            msgIdActionData = bot.sendPrivateMsg(targetId,
-                    voice ? voiced(message) : message, false);
-        } else {
-            msgIdActionData = bot.sendGroupMsg(targetId,
-                    voice ? voiced(message) : message, false);
-        }
+    private Integer send(Bot bot, Long targetId, String message, boolean isPrivate, boolean voice) {
+        ActionData<MsgId> msgIdActionData = isPrivate
+                ? bot.sendPrivateMsg(targetId, voice ? voiced(message) : message, false)
+                : bot.sendGroupMsg(targetId, voice ? voiced(message) : message, false);
         return msgIdActionData.getData().getMessageId();
     }
 
