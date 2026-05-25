@@ -9,6 +9,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.CommandRateLimiter;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
+import com.zincoid.nullbot.core.component.ai.chat.enums.ChatStrategy;
 import com.zincoid.nullbot.core.enums.LimitScope;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.SettingService;
@@ -98,6 +99,11 @@ public class GroupSetCommand implements Command {
                         ChatScope newScope = setting.switchChatScope();
                         msg = "会话范围 -> %s".formatted(newScope);
                     }
+                    case "stg" -> {
+                        qqAiClient.clear(BotCtxUtil.getChatId());
+                        ChatStrategy strategy = setting.switchChatStrategy();
+                        msg = "对话策略 -> %s".formatted(strategy);
+                    }
                     case "frq" -> {
                         if (params.size() < 3) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
                         double freq = Double.parseDouble(params.get(2));
@@ -115,11 +121,6 @@ public class GroupSetCommand implements Command {
                     case "voi" -> {
                         boolean enabled = setting.switchVoice();
                         msg = "语音模式 -> %s".formatted(enabled ? "ON" : "OFF");
-                    }
-                    case "ebd" -> {
-                        qqAiClient.clear(BotCtxUtil.getChatId());
-                        boolean enabled = setting.switchEmbedding();
-                        msg = "指令模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "ica" -> {
                         boolean enabled = setting.switchInnerCmdAuth();
