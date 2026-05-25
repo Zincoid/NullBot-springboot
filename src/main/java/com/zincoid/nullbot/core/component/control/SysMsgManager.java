@@ -20,7 +20,7 @@ public class SysMsgManager {
     private final Map<Long, String> userMessages = new ConcurrentHashMap<>();  // 私聊提示词
     private final Map<Long, List<String>> longTermUserMemories = new ConcurrentHashMap<>();  // 私聊长时记忆
 
-    private static final int longTermMemoryCapacity = 10;  // 长时记忆容量
+    private static final int LONG_TERM_MEMORY_CAPACITY = 10;  // 长时记忆容量
 
     // =================== 提示词功能相关 ===================
 
@@ -34,7 +34,7 @@ public class SysMsgManager {
     public List<String> getLongTermGroupMemory(Long groupId) { return longTermGroupMemories.computeIfAbsent(groupId, k -> new CopyOnWriteArrayList<>()); }
     public synchronized boolean addLongTermGroupMemory(Long groupId, String memory) {
         List<String> groupMemory = getLongTermGroupMemory(groupId);
-        if (groupMemory.size() >= longTermMemoryCapacity) return false;
+        if (groupMemory.size() >= LONG_TERM_MEMORY_CAPACITY) return false;
         return groupMemory.add(memory);
     }
     public String removeLongTermGroupMemory(Long groupId, int i) { return getLongTermGroupMemory(groupId).remove(i); }
@@ -42,7 +42,7 @@ public class SysMsgManager {
     public List<String> getLongTermUserMemory(Long userId) { return longTermUserMemories.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>()); }
     public synchronized boolean addLongTermUserMemory(Long userId, String memory) {
         List<String> userMemory = getLongTermUserMemory(userId);
-        if (userMemory.size() >= longTermMemoryCapacity) return false;
+        if (userMemory.size() >= LONG_TERM_MEMORY_CAPACITY) return false;
         return userMemory.add(memory);
     }
     public String removeLongTermUserMemory(Long userId, int i) { return getLongTermUserMemory(userId).remove(i); }
