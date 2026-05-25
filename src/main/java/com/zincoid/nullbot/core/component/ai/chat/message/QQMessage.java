@@ -42,7 +42,6 @@ public class QQMessage extends AbstractMessage {
                 ? QQMessage.assistant(content).with(message.userId, message.userName)
                 : QQMessage.assistant(content).with(message.groupId, message.userId, message.userName);
     }
-
     public static QQMessage user(String content) {
         return new QQMessage(Role.USER, content);
     }
