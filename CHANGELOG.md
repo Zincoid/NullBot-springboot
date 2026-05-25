@@ -832,6 +832,6 @@
 - 优化 EmbedCommandEvent：
   - 更名 InnerCommandEvent；
   - 优化构造方法和相关使用；
-- 优化 ChatScope 枚举类属性为全大写；
+- 优化 枚举类属性为全大写；
 - 新增 群设置属性 ChatStrategy 枚举类 - 用于控制群聊对话策略并修改相关代码；
 - 优化部分代码和日志。
