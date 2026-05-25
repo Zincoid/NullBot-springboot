@@ -6,7 +6,7 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQCmdAllows;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
-import com.zincoid.nullbot.core.model.bot.event.EmbeddedCommandEvent;
+import com.zincoid.nullbot.core.model.bot.event.AiCommandEvent;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -60,7 +60,7 @@ public class QQGroupCmdTool implements Tool {
                 return "错误: 指令 " + args.command() + " 不存在";
             String cmdStr = args.command() + (args.args().isEmpty() ? "" : " " + args.args());
             eventPublisher.publishEvent(
-                    new EmbeddedCommandEvent(
+                    new AiCommandEvent(
                             BotCtxUtil.getBot(),
                             new CommandEvent<>(
                                     BotCtxUtil.getEvent(),

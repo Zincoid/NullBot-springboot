@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.model.bot.event.EmbeddedCommandEvent;
+import com.zincoid.nullbot.core.model.bot.event.AiCommandEvent;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.InventoryService;
@@ -55,7 +55,7 @@ public class UseCommand implements Command {
             command = command.replace("userId", userId.toString());
 
         // 执行命令
-        eventPublisher.publishEvent(new EmbeddedCommandEvent(bot, new CommandEvent<>(event, command, false, false)));
+        eventPublisher.publishEvent(new AiCommandEvent(bot, new CommandEvent<>(event, command, false, false)));
 
         // 发送通知
         String itemName = itemService.get(itemId).getName();

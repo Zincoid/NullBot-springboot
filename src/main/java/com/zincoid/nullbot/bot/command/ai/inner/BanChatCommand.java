@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.bot.command.ai.embedding;
+package com.zincoid.nullbot.bot.command.ai.inner;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;

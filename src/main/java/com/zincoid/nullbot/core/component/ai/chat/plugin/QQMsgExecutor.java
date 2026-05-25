@@ -7,7 +7,7 @@ import com.mikuac.shiro.dto.action.common.MsgId;
 import com.zincoid.nullbot.core.component.ai.voice.TtsClient;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
-import com.zincoid.nullbot.core.model.bot.event.EmbeddedCommandEvent;
+import com.zincoid.nullbot.core.model.bot.event.AiCommandEvent;
 import com.zincoid.nullbot.core.util.Base64Util;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
@@ -78,7 +78,7 @@ public class QQMsgExecutor {
             if (segment.startsWith("{") && segment.endsWith("}")) {
                 String command = segment.substring(1, segment.length() - 1).trim();
                 if (command.isEmpty()) continue;
-                eventPublisher.publishEvent(new EmbeddedCommandEvent(bot,
+                eventPublisher.publishEvent(new AiCommandEvent(bot,
                         new CommandEvent<>(BotCtxUtil.getEvent(), command, embeddingAuth, false)));
                 messages.add(QQMessage.assistant(segment));
             } else {

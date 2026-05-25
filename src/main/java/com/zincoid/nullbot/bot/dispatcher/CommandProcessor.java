@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
-import com.zincoid.nullbot.core.model.bot.event.EmbeddedCommandEvent;
+import com.zincoid.nullbot.core.model.bot.event.AiCommandEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -24,25 +24,23 @@ public class CommandProcessor {
     public void processQQ(Bot bot, CommandEvent<?> event) throws Exception {
         Command command = registry.getCommand(event.getCommandType());
         if (command != null) {
-            log.info("└─[CommandProcessor] 正在处理 {} 命令...", event.getCommandType());
+            log.info("└─[CommandProcessor::QQ] 正在处理 {} 命令...", event.getCommandType());
             chainProcess(bot, event, command);
-            log.info("■ [CommandProcessor] {} 命令处理完毕", event.getCommandType());
+            log.info("■ [CommandProcessor::QQ] {} 命令处理完毕", event.getCommandType());
         } else
-            log.info("■ [CommandProcessor] 命令不存在");
+            log.info("■ [CommandProcessor::QQ] 命令不存在");
     }
 
     // 监听处理嵌入指令
     @EventListener
-    public void processEmbeddedQQ(EmbeddedCommandEvent embeddedEvent) throws Exception {
-        String commandType = embeddedEvent.getEvent().getCommandType();
-        Command command = registry.getCommand(commandType);
+    public void processAI(AiCommandEvent event) throws Exception {
+        Command command = registry.getCommand(event.getEvent().getCommandType());
         if (command != null) {
-            log.info("\t\t▶ [CommandProcessor::Embed] 正在处理内嵌 {} 命令...", commandType);
-            // Thread.sleep(500);  // 防止触发间隔限制 (已优化 - 忽略速率限制)
-            chainProcess(embeddedEvent.getBot(), embeddedEvent.getEvent(), command);
-            log.info("\t\t■ [CommandProcessor::Embed] 内嵌 {} 命令处理完毕", commandType);
+            log.info("\t\t▶ [CommandProcessor::AI] 正在处理 {} 命令...", event.getEvent().getCommandType());
+            chainProcess(event.getBot(), event.getEvent(), command);
+            log.info("\t\t■ [CommandProcessor::AI] {} 命令处理完毕", event.getEvent().getCommandType());
         } else
-            log.info("\t\t■ [CommandProcessor::Embed] 内嵌命令不存在");
+            log.info("\t\t■ [CommandProcessor::AI] 命令不存在");
     }
 
     public void processTest(CommandEvent<?> event) throws Exception {
