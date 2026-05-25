@@ -37,17 +37,17 @@ public class QQMessage extends AbstractMessage {
 
     // ====================== 构建方法 ======================
 
-    public static QQMessage from(Message message) {
-        return new QQMessage(message.getRole(), message.getContent());
+    public static QQMessage send(QQMessage message, String content) {
+        return message.isPrivate
+                ? QQMessage.assistant(content).with(message.userId, message.userName)
+                : QQMessage.assistant(content).with(message.groupId, message.userId, message.userName);
     }
+
     public static QQMessage user(String content) {
         return new QQMessage(Role.USER, content);
     }
     public static QQMessage assistant(String content) {
         return new QQMessage(Role.ASSISTANT, content);
-    }
-    public static QQMessage system(String content) {
-        return new QQMessage(Role.SYSTEM, content);
     }
 
     // ====================== 设置方法 ======================

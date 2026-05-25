@@ -39,7 +39,7 @@ public class QQMsgExecutor {
 
     // =================== 执行方法 ===================
 
-    public List<QQMessage> direct(QQMessage message, boolean voice) {
+    public QQMessage direct(QQMessage message, boolean voice) {
 
         Bot bot = BotCtxUtil.getBot();
         boolean isPrivate = message.isPrivate();
@@ -55,7 +55,7 @@ public class QQMsgExecutor {
             content = content.replaceAll("(\r?\n)+", "\n").trim();
             messageId = send(bot, targetId, content, isPrivate, voice);
         }
-        return List.of(QQMessage.assistant(content).id(messageId));
+        return QQMessage.assistant(content).id(messageId);
     }
 
     public List<QQMessage> chain(QQMessage message, boolean voice) {

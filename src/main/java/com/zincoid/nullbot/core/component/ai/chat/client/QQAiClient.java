@@ -98,8 +98,7 @@ public class QQAiClient implements AiClient<QQMessage> {
                 ? qqPrompter.user(message.getUserId(), false)
                 : qqPrompter.group(message.getGroupId(), false);
         QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
-        List<QQMessage> messages = qqMsgExecutor.direct(_message, voice);
-        for (QQMessage msg : messages) chatMemory.add(BotCtxUtil.getChatId(), msg);
+        chatMemory.add(BotCtxUtil.getChatId(), qqMsgExecutor.direct(_message, voice));
         return _message.getContent();
     }
 
@@ -135,7 +134,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         ModelResponse finalResp = null;
         for (int i = 0; i < maxToolCalls; i++) {
             List<Message> messages = new ArrayList<>();
-            messages.add(QQMessage.system(prompt));
+            messages.add(BaseMessage.system(prompt));
             messages.addAll(chatMemory.get(chatId));
             ModelResponse resp = model
                     .invoke(messages, toolRegistry.getAll(), thinking, maxTokens);
@@ -156,13 +155,8 @@ public class QQAiClient implements AiClient<QQMessage> {
             log.warn("◉ [ToolCall] 最终调用: 达到最大迭代次数{} ", maxToolCalls);
             finalResp = model.invoke(chatMemory.get(chatId), false, maxTokens);
         }
-        QQMessage _message = message.isPrivate()
-                ? QQMessage.assistant(finalResp.getContent())
-                .with(message.getUserId(), message.getUserName())
-                : QQMessage.assistant(finalResp.getContent())
-                .with(message.getGroupId(), message.getUserId(), message.getUserName());
-        List<QQMessage> _messages = qqMsgExecutor.direct(_message, voice);
-        for (QQMessage msg : _messages) chatMemory.add(chatId, msg);
+        QQMessage _message = QQMessage.send(message, finalResp.getContent());
+        chatMemory.add(chatId, qqMsgExecutor.direct(_message, voice));
         return _message;
     }
 
@@ -182,10 +176,9 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     private QQMessage plainCall(String prompt, QQMessage message, boolean thinking, int maxTokens) {
         List<Message> messages = new ArrayList<>();
-        messages.add(QQMessage.system(prompt));
+        messages.add(BaseMessage.system(prompt));
         messages.addAll(chatMemory.get(BotCtxUtil.getChatId()));
-        QQMessage _message = QQMessage.assistant(model.invoke(messages, thinking, maxTokens).getContent());
-        if (message.isPrivate()) return _message.with(message.getUserId(), message.getUserName());
-        return _message.with(message.getGroupId(), message.getUserId(), message.getUserName());
+        ModelResponse resp = model.invoke(messages, thinking, maxTokens);
+        return QQMessage.send(message, resp.getContent());
     }
 }
