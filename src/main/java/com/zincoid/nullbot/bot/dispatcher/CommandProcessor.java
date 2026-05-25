@@ -20,7 +20,7 @@ public class CommandProcessor {
     private final CommandRegistry registry;
     private final List<Handler> handlers;
 
-    // 处理普通消息指令
+    // 处理 QQ 指令
     public void processQQ(Bot bot, CommandEvent<?> event) throws Exception {
         Command command = registry.getCommand(event.getCommandType());
         if (command != null) {
@@ -31,7 +31,7 @@ public class CommandProcessor {
             log.info("■ [CommandProcessor::QQ] 命令不存在");
     }
 
-    // 监听处理嵌入指令
+    // 处理 AI 指令
     @EventListener
     public void processAI(AiCommandEvent event) throws Exception {
         Command command = registry.getCommand(event.getEvent().getCommandType());
@@ -43,18 +43,13 @@ public class CommandProcessor {
             log.info("\t\t■ [CommandProcessor::AI] 命令不存在");
     }
 
+    // 处理 测试指令
     public void processTest(CommandEvent<?> event) throws Exception {
         Command command = registry.getCommand(event.getCommandType());
         if (command != null) {
-            log.info("▶ [CommandProcessor::Test] 正在处理 {} 命令 (TEST)...", event.getCommandType());
+            log.info("▶ [CommandProcessor::Test] 正在处理 {} 命令...", event.getCommandType());
             chainProcess(null, event, command);
             log.info("■ [CommandProcessor::Test] {} 命令处理完毕", event.getCommandType());
-
-            // 在 Command 组件中使用
-            // if (bot == null) {
-            //     log.info("[Test] 测试结果");
-            // }
-
         } else
             log.info("■ [CommandProcessor::Test] 命令不存在");
     }
