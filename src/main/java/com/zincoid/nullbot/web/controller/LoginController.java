@@ -114,7 +114,7 @@ public class LoginController {
         } else if (type == 1) {
             // Long id = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
             Long id = WebCtxUtil.getId();
-            log.info("└─[LoginController] 获取管理员信息 - ID {}", id);
+            log.info("└─[LoginController] 获取管理员信息 - ID: {}", id);
             AdminPO admin = adminService.info(id);
             if (admin != null) {
                 admin.setPassword(null);  // 安全
