@@ -46,7 +46,7 @@ public class QQMsgExecutor {
         Long targetId = isPrivate ? message.getUserId() : message.getGroupId();
         String content = message.getContent();
         if (content.contains("{Discard}"))
-            return List.of(QQMessage.assistant("回复被拒绝"));
+            return QQMessage.assistant("回复被拒绝");
         Integer messageId;
         if (filter(content)) {
             content = "回复被过滤";
