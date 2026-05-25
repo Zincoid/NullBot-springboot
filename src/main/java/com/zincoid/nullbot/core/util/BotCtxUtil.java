@@ -88,7 +88,7 @@ public final class BotCtxUtil {
     public static String getChatId() {
         if (getIsPrivate()) return "Private_" + getUserId();
         ChatScope scope = getSetting().getChatScope();
-        return scope + "_" + (scope == ChatScope.Personal
+        return scope + "_" + (scope == ChatScope.PERSONAL
                 ? getUserId() : getGroupId());
     }
 }

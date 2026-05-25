@@ -17,7 +17,7 @@ public class SettingPO {
     private int limitRefill = 10;
     private int limitInterval = 1;
 
-    private ChatScope chatScope = ChatScope.Group;
+    private ChatScope chatScope = ChatScope.GROUP;
     private ChatStrategy chatStrategy = ChatStrategy.EMBEDDING;
     private boolean antiInjection = true;
     private boolean thinking = false;

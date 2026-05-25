@@ -40,7 +40,7 @@ public class RecallAICommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         SettingPO setting = BotCtxUtil.getSetting();
-        String chatId = setting.getChatScope() + "_" + (setting.getChatScope() == ChatScope.Personal ? userId : groupId);
+        String chatId = setting.getChatScope() + "_" + (setting.getChatScope() == ChatScope.PERSONAL ? userId : groupId);
 
         List<QQMessage> messages = msgWindowChatMemory.get(chatId)
                 .stream().map(m -> (QQMessage) m).toList();

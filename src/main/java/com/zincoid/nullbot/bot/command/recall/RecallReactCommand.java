@@ -32,7 +32,7 @@ public class RecallReactCommand implements Command {
         String operatorName = bot.getStrangerInfo(operatorId, true).getData().getNickname();
         Integer messageId = event.getMessageId();
 
-        List<QQMessage> messages = msgWindowChatMemory.get(ChatScope.Monitor + "_" + groupId)
+        List<QQMessage> messages = msgWindowChatMemory.get(ChatScope.MONITOR + "_" + groupId)
                 .stream().map(m -> (QQMessage) m).toList();
 
         for (QQMessage message : messages) {

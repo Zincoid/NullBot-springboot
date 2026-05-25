@@ -47,7 +47,7 @@ public class SettingController {
         Long groupId = setting.getGroupId();
         ChatScope oldScope = settingService.get(groupId).getChatScope();
         if (settingService.set(setting)) {
-            if (oldScope != ChatScope.Personal)
+            if (oldScope != ChatScope.PERSONAL)
                 qqAiClient.clear(oldScope + "_" + groupId);
             commandRateLimiter.reset(groupId);
             return WebResult.success("更新成功");

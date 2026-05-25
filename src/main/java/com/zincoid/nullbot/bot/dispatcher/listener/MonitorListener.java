@@ -112,7 +112,7 @@ public class MonitorListener {
         String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:MsgCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         msgWindowChatMemory.add(
-                ChatScope.Monitor + "_" + event.getGroupId(),
+                ChatScope.MONITOR + "_" + event.getGroupId(),
                 QQMessage.user(parsed).with(event.getGroupId(), event.getUserId(), event.getSender().getNickname()).id(event.getMessageId())
         );
     }
