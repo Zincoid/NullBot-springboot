@@ -121,9 +121,9 @@ public class GroupSetCommand implements Command {
                         boolean enabled = setting.switchEmbedding();
                         msg = "指令模式 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
-                    case "eau" -> {
+                    case "iau" -> {
                         boolean enabled = setting.switchInnerCmdAuth();
-                        msg = "指令校验 -> %s".formatted(enabled ? "ON" : "OFF");
+                        msg = "内部鉴权 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
                     case "cus" -> {
                         qqAiClient.clear(BotCtxUtil.getChatId());
