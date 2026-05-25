@@ -209,11 +209,11 @@ public class GroupSetCommand implements Command {
                 • [-ai] [模式选项|其他]
                    模式选项:
                    scp - 会话范围
+                   stg - 对话策略
                    ati - 防注模式
                    tkn - 思考模式
                    voi - 语音模式
-                   ebd - 指令模式
-                   eau - 指令验证
+                   ica - 内令鉴权
                    cus - 自定模式
                    aur - 自动发言
                    其他:
