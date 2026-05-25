@@ -97,10 +97,10 @@ public class QQAiClient implements AiClient<QQMessage> {
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), false)
                 : qqPrompter.group(message.getGroupId(), false);
-        QQMessage result = plainCall(prompt, message, thinking, maxTokens);
-        List<QQMessage> messages = qqMsgExecutor.direct(result, voice);
+        QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
+        List<QQMessage> messages = qqMsgExecutor.direct(_message, voice);
         for (QQMessage msg : messages) chatMemory.add(BotCtxUtil.getChatId(), msg);
-        return result.getContent();
+        return _message.getContent();
     }
 
     // ------------------------------------------ EMBEDDING 方案 ------------------------------------------
@@ -111,10 +111,10 @@ public class QQAiClient implements AiClient<QQMessage> {
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), false)
                 : qqPrompter.group(message.getGroupId(), false);
-        QQMessage result = plainCall(prompt, message, thinking, maxTokens);
-        List<QQMessage> messages = qqMsgExecutor.chain(result, voice);
+        QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
+        List<QQMessage> messages = qqMsgExecutor.chain(_message, voice);
         for (QQMessage msg : messages) chatMemory.add(BotCtxUtil.getChatId(), msg);
-        return result.getContent();
+        return _message.getContent();
     }
 
     // ------------------------------------------ TOOLS 方案 ------------------------------------------
@@ -125,8 +125,8 @@ public class QQAiClient implements AiClient<QQMessage> {
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), false)
                 : qqPrompter.group(message.getGroupId(), false);
-        QQMessage result = callAndStoreWithTools(prompt, message, thinking, voice);
-        return result.getContent();
+        QQMessage _message = callAndStoreWithTools(prompt, message, thinking, voice);
+        return _message.getContent();
     }
 
     private QQMessage callAndStoreWithTools(String prompt, QQMessage message,
@@ -156,14 +156,14 @@ public class QQAiClient implements AiClient<QQMessage> {
             log.warn("◉ [ToolCall] 最终调用: 达到最大迭代次数{} ", maxToolCalls);
             finalResp = model.invoke(chatMemory.get(chatId), false, maxTokens);
         }
-        QQMessage finalMessage = message.isPrivate()
+        QQMessage _message = message.isPrivate()
                 ? QQMessage.assistant(finalResp.getContent())
                 .with(message.getUserId(), message.getUserName())
                 : QQMessage.assistant(finalResp.getContent())
                 .with(message.getGroupId(), message.getUserId(), message.getUserName());
-        List<QQMessage> _messages = qqMsgExecutor.direct(finalMessage, voice);
+        List<QQMessage> _messages = qqMsgExecutor.direct(_message, voice);
         for (QQMessage msg : _messages) chatMemory.add(chatId, msg);
-        return finalMessage;
+        return _message;
     }
 
     // =========================================== 工具方法 ===========================================
@@ -184,8 +184,8 @@ public class QQAiClient implements AiClient<QQMessage> {
         List<Message> messages = new ArrayList<>();
         messages.add(QQMessage.system(prompt));
         messages.addAll(chatMemory.get(BotCtxUtil.getChatId()));
-        QQMessage result = QQMessage.assistant(model.invoke(messages, thinking, maxTokens).getContent());
-        if (message.isPrivate()) return result.with(message.getUserId(), message.getUserName());
-        return result.with(message.getGroupId(), message.getUserId(), message.getUserName());
+        QQMessage _message = QQMessage.assistant(model.invoke(messages, thinking, maxTokens).getContent());
+        if (message.isPrivate()) return _message.with(message.getUserId(), message.getUserName());
+        return _message.with(message.getGroupId(), message.getUserId(), message.getUserName());
     }
 }
