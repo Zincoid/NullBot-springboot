@@ -3,6 +3,7 @@ package com.zincoid.nullbot.core.model.data.po;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
+import com.zincoid.nullbot.core.component.ai.chat.enums.ChatStrategy;
 import com.zincoid.nullbot.core.enums.LimitScope;
 
 @Data
@@ -17,10 +18,10 @@ public class SettingPO {
     private int limitInterval = 1;
 
     private ChatScope chatScope = ChatScope.Group;
+    private ChatStrategy chatStrategy = ChatStrategy.EMBEDDING;
     private boolean antiInjection = true;
     private boolean thinking = false;
     private boolean voice = false;
-    private boolean embedding = true;
     private boolean innerCmdAuth = false;
     private boolean custom = false;
     private boolean autoReply = false;
@@ -46,7 +47,7 @@ public class SettingPO {
     public boolean switchAntiInjection() { return antiInjection = !antiInjection; }
     public boolean switchThinking() { return thinking = !thinking; }
     public boolean switchVoice() { return voice = !voice; }
-    public boolean switchEmbedding() { return embedding = !embedding; }
+    public ChatStrategy switchChatStrategy() { return chatStrategy = chatStrategy.next(); }
     public boolean switchInnerCmdAuth() { return innerCmdAuth = !innerCmdAuth; }
     public boolean switchCustom() { return custom = !custom; }
     public boolean switchAutoReply() { return autoReply = !autoReply; }
@@ -70,7 +71,7 @@ public class SettingPO {
                 ├ 防注模式 - %s
                 ├ 思考模式 - %s
                 ├ 语音模式 - %s
-                ├ 指令模式 - %s
+                ├ 对话策略 - %s
                 ├ 指令校验 - %s
                 └ 自定模式 - %s
                 ┌ 自动回复 - %s
@@ -93,7 +94,7 @@ public class SettingPO {
                 antiInjection ? "ON" : "OFF",
                 thinking ? "ON" : "OFF",
                 voice ? "ON" : "OFF",
-                embedding ? "ON" : "OFF",
+                chatStrategy,
                 innerCmdAuth ? "ON" : "OFF",
                 custom ? "ON" : "OFF",
                 autoReply ? "ON" : "OFF",
