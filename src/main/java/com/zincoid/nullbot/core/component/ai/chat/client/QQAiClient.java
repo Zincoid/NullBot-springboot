@@ -79,14 +79,12 @@ public class QQAiClient implements AiClient<QQMessage> {
             }
         }
         ChatStrategy strategy = message.isPrivate()
-                ? ChatStrategy.EMBEDDING
-                : BotCtxUtil.getSetting().getChatStrategy();
+                ? ChatStrategy.EMBEDDING : BotCtxUtil.getSetting().getChatStrategy();
         return switch (strategy) {
             case DIRECT -> chatDirect(message);
             case EMBEDDING -> chatWithEmbedding(message);
             case TOOLS -> toolRegistry != null
-                    ? chatWithTools(message)
-                    : chatWithEmbedding(message);
+                    ? chatWithTools(message) : chatWithEmbedding(message);
         };
     }
 
