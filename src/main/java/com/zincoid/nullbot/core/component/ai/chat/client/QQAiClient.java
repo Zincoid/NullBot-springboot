@@ -119,10 +119,12 @@ public class QQAiClient implements AiClient<QQMessage> {
     // ------------------------------------------ TOOLS 方案 ------------------------------------------
 
     private String chatWithTools(QQMessage message) {
+        boolean thinking = !message.isPrivate() && BotCtxUtil.getSetting().isThinking();
+        boolean voice = !message.isPrivate() && BotCtxUtil.getSetting().isVoice();
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), false)
                 : qqPrompter.group(message.getGroupId(), false);
-        QQMessage result = callAndStoreWithTools(prompt, message, false, false);
+        QQMessage result = callAndStoreWithTools(prompt, message, thinking, voice);
         return result.getContent();
     }
 
@@ -163,6 +165,8 @@ public class QQAiClient implements AiClient<QQMessage> {
         return finalMessage;
     }
 
+    // =========================================== 工具方法 ===========================================
+
     private String executeTool(ToolCall toolCall) {
         Tool tool = toolRegistry.get(toolCall.getName());
         if (tool == null)
@@ -174,8 +178,6 @@ public class QQAiClient implements AiClient<QQMessage> {
             return "错误: " + e.getMessage();
         }
     }
-
-    // =========================================== 工具方法 ===========================================
 
     private QQMessage plainCall(String prompt, QQMessage message, boolean thinking, int maxTokens) {
         List<Message> messages = new ArrayList<>();
