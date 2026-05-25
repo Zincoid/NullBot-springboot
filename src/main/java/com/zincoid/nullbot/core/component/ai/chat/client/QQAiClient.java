@@ -36,7 +36,7 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     private int maxTokens = 512;
 
-    // =========================================== 系统方法 ===========================================
+    // ======================================= 系统方法 ======================================
 
     public QQAiClient withMaxTokens(int maxTokens) {
         this.maxTokens = maxTokens;
@@ -59,7 +59,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         return chatMemory.get(chatId);
     }
 
-    // =========================================== 应用方法 ===========================================
+    // ======================================= 应用方法 ======================================
 
     @Override
     @Deprecated
@@ -89,7 +89,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         };
     }
 
-    // ------------------------------------------ DIRECT 方案 ------------------------------------------
+    // ------------------------------------- DIRECT 方案 ------------------------------------
 
     private String chatDirect(QQMessage message) {
         boolean thinking = !message.isPrivate() && BotCtxUtil.getSetting().isThinking();
@@ -102,7 +102,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         return _message.getContent();
     }
 
-    // ------------------------------------------ EMBEDDING 方案 ------------------------------------------
+    // ----------------------------------- EMBEDDING 方案 -----------------------------------
 
     private String chatEmbedding(QQMessage message) {
         boolean thinking = !message.isPrivate() && BotCtxUtil.getSetting().isThinking();
@@ -116,7 +116,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         return _message.getContent();
     }
 
-    // ------------------------------------------ TOOLS 方案 ------------------------------------------
+    // ------------------------------------- TOOLS 方案 -------------------------------------
 
     private String chatTools(QQMessage message) {
         boolean thinking = !message.isPrivate() && BotCtxUtil.getSetting().isThinking();
@@ -161,7 +161,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         return _message;
     }
 
-    // =========================================== 工具方法 ===========================================
+    // ====================================== 工具方法 ======================================
 
     private String executeTool(ToolCall toolCall) {
         Tool tool = toolRegistry.get(toolCall.getName());
