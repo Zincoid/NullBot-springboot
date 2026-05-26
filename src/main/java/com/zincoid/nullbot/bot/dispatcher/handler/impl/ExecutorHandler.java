@@ -29,25 +29,25 @@ public class ExecutorHandler implements Handler {
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         log.info("└─[ExecutorHandler] 执行开始");
 
-        String commandClassName = command.getClass().getSimpleName();   // 指令类名
-        CommandArgs a = new CommandArgs(event.getCommandParameters());  // 包装参数
-        Long groupId = 0L;                                              // 群组ID - 0 代表私聊
-        Long userId = 0L;                                               // 用户ID - 0 代表群聊
+        String commandClassName = command.getClass().getSimpleName();        // 指令类名
+        CommandArgs params = new CommandArgs(event.getCommandParameters());  // 包装参数
+        Long groupId = 0L;                                                   // 群组ID - 0 代表私聊
+        Long userId = 0L;                                                    // 用户ID - 0 代表群聊
 
         try {
             if (event.getEvent() instanceof GroupMessageEvent _event) {
                 groupId = _event.getGroupId();
-                command.execute(bot, _event, event.getCommandParameters());
+                command.execute(bot, _event, params);
             } else if (event.getEvent() instanceof PokeNoticeEvent _event) {
                 groupId = _event.getGroupId() == null ? 0L : _event.getGroupId();
                 if (groupId == 0L) userId = _event.getUserId();
-                command.execute(bot, _event, event.getCommandParameters());
+                command.execute(bot, _event, params);
             } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent _event) {
                 groupId = _event.getGroupId();
-                command.execute(bot, _event, event.getCommandParameters());
+                command.execute(bot, _event, params);
             } else if (event.getEvent() instanceof PrivateMessageEvent _event) {
                 userId = _event.getUserId();
-                command.execute(bot, _event, event.getCommandParameters());
+                command.execute(bot, _event, params);
             } else log.warn("  [ExecutorHandler] 不支持的事件类型");
 
         } catch (NullBotException e) {
