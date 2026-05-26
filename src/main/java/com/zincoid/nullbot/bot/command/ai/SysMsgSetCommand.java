@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.ai;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +15,9 @@ import com.zincoid.nullbot.core.util.BotCtxUtil;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"SysMsgSet", "提示词设置"})
 @Component
-@Slf4j
 public class SysMsgSetCommand implements Command {
 
     private final QQAiClient qqAiClient;
@@ -32,19 +31,16 @@ public class SysMsgSetCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.isEmpty())
-            throw new NullBotException("[提示词设置] ❌参数不足");
-
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String option = params.getFirst();
+        String option = params.nextString();
 
         if ("-reset".equals(option)) {
             int userAccess = userService.getAccess(userId);
             if (userAccess < 1)
                 throw new NullBotException("""
-                        [提示词设置] \uD83D\uDEAB重置失败
+                        重置失败
                         - 仅限权等级I及以上用户可重置提示词
                         - 你的限权等级: %s""".formatted(userAccess));
             qqAiClient.clear(BotCtxUtil.getChatId());
@@ -54,57 +50,51 @@ public class SysMsgSetCommand implements Command {
             return;
         }
 
-        if (params.size() < 2)
-            throw new NullBotException("[提示词设置] ❌参数不足");
-
         if ("-set".equals(option)) {
             int userAccess = userService.getAccess(userId);
             if (userAccess < 1 && !BotCtxUtil.getSetting().isCustom())
                 throw new NullBotException("""
-                        [提示词设置] \uD83D\uDEAB设置失败
+                        设置失败
                         - 当前为非自定义提示词模式
                         - 该模式仅限权等级I及以上用户可修改
                         - 你的限权等级: %s""".formatted(userAccess));
-            String groupMessage = String.join(" ", params.subList(1, params.size()));
+            String newMessage = params.nextRestString();
             qqAiClient.clear(BotCtxUtil.getChatId());
-            sysMsgManager.setGroupMessage(groupId, groupMessage);
+            sysMsgManager.setGroupMessage(groupId, newMessage);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅已设置", false);
-            log.info("├─[SysMsgSet] 群聊提示词已设置 - {} -> {}", groupId, groupMessage);
+            log.info("☑ [SysMsgSet] 群聊提示词已设置 - {} -> {}", groupId, newMessage);
             return;
         }
 
-        throw new NullBotException("[提示词设置] ❌无此操作");
+        throw new NullBotException("无此操作");
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        if (params.isEmpty())
-            throw new NullBotException("[提示词设置] ❌参数不足");
-
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
         Long userId = event.getUserId();
-        String option = params.getFirst();
+        String option = params.nextString();
 
         if ("-reset".equals(option)) {
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.resetUser(userId);
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已重置", false);
-            log.info("├─[SysMsgSet] 私聊提示词已重置 - {}", userId);
+            log.info("☑ [SysMsgSet] 私聊提示词已重置 - {}", userId);
             return;
         }
 
         if (params.size() < 2)
-            throw new NullBotException("[提示词设置] ❌参数不足");
+            throw new NullBotException("参数不足");
 
         if ("-set".equals(option)) {
-            String newMessage = String.join(" ", params.subList(1, params.size()));
+            String newMessage = params.nextRestString();
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.setUserMessage(userId, newMessage);
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已设置", false);
-            log.info("├─[SysMsgSet] 私聊提示词已设置 - {} -> {}", userId, newMessage);
+            log.info("☑ [SysMsgSet] 私聊提示词已设置 - {} -> {}", userId, newMessage);
             return;
         }
 
-        throw new NullBotException("[提示词设置] ❌无此操作");
+        throw new NullBotException("无此操作");
     }
 
     @Override
