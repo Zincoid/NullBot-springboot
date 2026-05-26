@@ -19,10 +19,10 @@ public class SettingPO {
 
     private ChatScope chatScope = ChatScope.GROUP;
     private ChatStrategy chatStrategy = ChatStrategy.EMBEDDING;
-    private boolean antiInjection = true;
     private boolean thinking = false;
     private boolean voice = false;
     private boolean innerCmdAuth = false;
+    private boolean antiInjection = true;
     private boolean custom = false;
     private boolean autoReply = false;
     private double replyFrequency = 0.001;
@@ -68,14 +68,14 @@ public class SettingPO {
                 └ 补充间隔 - %s Min
                  ◉ AI 设置
                 ├ 会话范围 - %s
-                ├ 防注模式 - %s
-                ├ 思考模式 - %s
-                ├ 语音模式 - %s
                 ├ 对话策略 - %s
-                ├ 指令校验 - %s
-                └ 自定模式 - %s
-                ┌ 自动回复 - %s
-                └ 回复频率 - %s
+                ├ 思考模式 - %s
+                └ 语音模式 - %s
+                ┌ 注入保护 - %s
+                ├ 内令鉴权 - %s
+                └ 允许自定 - %s
+                ┌ 自主发言 - %s
+                └ 发言频率 - %s
                  ◉ Monitor 设置
                 ├ 图片收集 - %s
                 ├ 消息收集 - %s
