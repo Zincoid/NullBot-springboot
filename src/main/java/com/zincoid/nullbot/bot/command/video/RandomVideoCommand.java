@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.video;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -17,10 +18,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Slf4j
 @CommandMapping({"RandomVideo", "Video", "video", "vid", "随机视频", "视频"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class RandomVideoCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
@@ -28,17 +29,17 @@ public class RandomVideoCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         String videoPath = fileStorageProperties.getVideoPath() + "/collect";
         List<FilePO> videos = fileService.search("", videoPath);
         if (videos.isEmpty())
-            throw new NullBotException("[随机视频] ❌暂无视频");
+            throw new NullBotException("暂无视频");
         FilePO video = videos.get(ThreadLocalRandom.current().nextInt(videos.size()));
         String response = MsgUtils.builder()
                 .video(ossUrlBuilder.from(video.getId()), "")
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("├─[RandomVideo] 已发送视频 - {}", video.getFileName());
+        log.info("☑ [RandomVideo] 视频已发送: {}", video.getFileName());
     }
 
     @Override

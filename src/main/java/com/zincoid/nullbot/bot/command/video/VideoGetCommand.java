@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.video;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,40 +20,40 @@ import org.springframework.stereotype.Component;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @CommandMapping({"VideoGet", "获取视频", "视频检索"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class VideoGetCommand implements Command {
+
+    private static final int PAGE_SIZE = 5;  // 查询单页大小
+    private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
 
     private final OssUrlBuilder ossUrlBuilder;
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
     private final BotInputManager botInputManager;
 
-    private static final int PAGE_SIZE = 5;  // 查询单页大小
-    private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
-
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String secondary;
         String keyword;
 
-        if (!params.isEmpty() && "-c".equals(params.getFirst())) {
+        if (!params.isEmpty() && "-c".equals(params.getString(0))) {
             secondary = "collect";
-            keyword = String.join(" ", params.subList(1, params.size()));
+            keyword = params.getFullString(1);
         } else {
             secondary = "storage";
-            keyword = String.join(" ", params);
+            keyword = params.getFullString(0);
         }
 
         List<FilePO> files = fileService.search(
                 keyword, fileStorageProperties.getVideoPath() + "/" + secondary);
 
         if (files.isEmpty())
-            throw new NullBotException("[获取视频] ❌无匹配项");
+            throw new NullBotException("无匹配项");
         if (files.size() == 1) {
             sendVideo(bot, groupId, files.getFirst());
             return;
@@ -69,7 +70,7 @@ public class VideoGetCommand implements Command {
 
         pager.init();
         while (pager.input(botInputManager, WAIT_TIMEOUT)) {
-            log.info("├─[VideoGet] 已操作分页器");
+            log.info("☑ [VideoGet] 已操作分页器");
         }
         // BotInputer in = new BotInputer(userId).timeout(WAIT_TIMEOUT);
         // pager.start(in);
@@ -80,7 +81,7 @@ public class VideoGetCommand implements Command {
                 .video(ossUrlBuilder.from(video.getId()), "")
                 .build();
         bot.sendGroupMsg(groupId, response, false);
-        log.info("├─[VideoGet] 已获取视频 - {}", video.getFileName());
+        log.info("☑ [VideoGet] 视频已获取: {}", video.getFileName());
     }
 
     @Override

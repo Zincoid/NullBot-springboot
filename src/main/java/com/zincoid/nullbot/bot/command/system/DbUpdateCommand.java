@@ -2,36 +2,33 @@ package com.zincoid.nullbot.bot.command.system;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.service.GroupService;
-import com.zincoid.nullbot.core.service.InventoryService;
 import com.zincoid.nullbot.core.service.UserService;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"DbUpdate", "数据库更新"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class DbUpdateCommand implements Command {
 
     private final GroupService groupService;
     private final UserService userService;
-    private final InventoryService inventoryService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
 
         // 自定义更新方式
         groupService.updateAllNames();
         userService.updateAllNames();
 
         bot.sendGroupMsg(event.getGroupId(), "[数据库更新] ✅已完成", false);
-        log.info("├─[DbUpdate] 数据库已更新");
+        log.info("☑ [DbUpdate] 数据库已更新");
     }
 
     @Override

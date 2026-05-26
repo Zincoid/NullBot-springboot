@@ -4,16 +4,14 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.core.component.ai.voice.TtsClient;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Slf4j
 @CommandMapping({"Reply", "回复"})
@@ -24,21 +22,19 @@ public class ReplyCommand implements Command {
     private final TtsClient ttsClient;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.isEmpty()) throw new NullBotException("[回复] ❌无参数");
-        String message = String.join(" ", params.subList(0, params.size()));
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        String message = params.nextFullString();
         String content = BotCtxUtil.getSetting().isVoice() ?
                 MsgUtils.builder().voice("base64://" + ttsClient.synthesize(message)).build() : message;
         bot.sendGroupMsg(event.getGroupId(), content, false);
-        log.info("├─[Reply] 群聊已回复 - {}", message);
+        log.info("☑ [Reply] 群聊已回复: {}", message);
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        if (params.isEmpty()) throw new NullBotException("[回复] ❌无参数");
-        String message = String.join(" ", params.subList(0, params.size()));
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
+        String message = params.nextFullString();
         bot.sendPrivateMsg(event.getUserId(), message, false);
-        log.info("├─[Reply] 私聊已回复 - {}", message);
+        log.info("☑ [Reply] 私聊已回复: {}", message);
     }
 
     @Override

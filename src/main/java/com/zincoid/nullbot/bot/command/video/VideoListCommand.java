@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.video;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -13,22 +14,22 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @CommandMapping({"VideoList", "视频列表"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class VideoListCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
     private final FileMapper fileMapper;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         String videoPath = fileStorageProperties.getVideoPath();
         List<FilePO> videos = fileMapper.searchFile("", videoPath);
         List<String> fileNames = videos.stream().map(FilePO::getFileName).toList();
         if (videos.size() > 50) {
-            log.info("├─[VideoList] 视频列表数据过多 - {}", fileNames);
+            log.info("☑ [VideoList] 视频列表数据过多");
             bot.sendGroupMsg(event.getGroupId(), """
                     [视频列表] ✅过多暂不展示
                     - 共 %s 个视频""".formatted(videos.size()), false);
@@ -36,7 +37,7 @@ public class VideoListCommand implements Command {
         }
         bot.sendGroupMsg(event.getGroupId(), "[视频列表] ✅已获取\n"
                 + String.join("\n", fileNames), false);
-        log.info("├─[VideoList] 已获取视频列表");
+        log.info("☑ [VideoList] 视频列表已获取");
     }
 
     @Override

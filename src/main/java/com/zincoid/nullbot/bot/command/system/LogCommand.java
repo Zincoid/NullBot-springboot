@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.system;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -9,26 +10,24 @@ import com.zincoid.nullbot.bot.command.Command;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"Log", "log", "日志"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class LogCommand implements Command {
 
     @Value("${logging.file.name}")
     private String logPath;  // 通过 yaml 配置时获取日志文件路径
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         // String logPath = getLogFilePath();
         bot.uploadGroupFile(
                 event.getGroupId(),
                 logPath,
                 logPath.substring(logPath.lastIndexOf("/") + 1)
         );
-        log.info("├─[Log] 日志已发送");
+        log.info("☑ [Log] 日志已发送");
     }
 
     // public static String getLogFilePath() {  // 通过 xml 配置时获取日志文件路径
@@ -40,7 +39,7 @@ public class LogCommand implements Command {
     //     if (fileAppender != null) {
     //         return fileAppender.getFile();
     //     }
-    //     throw new RuntimeException("未找到日志文件路径");
+    //     throw new NullBotException("未找到日志文件路径");
     // }
 
     @Override

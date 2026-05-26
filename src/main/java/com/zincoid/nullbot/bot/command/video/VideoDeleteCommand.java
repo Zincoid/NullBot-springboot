@@ -5,6 +5,7 @@ import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,25 +17,24 @@ import com.zincoid.nullbot.core.util.MsgParseUtil;
 import com.zincoid.nullbot.core.util.StringUtil;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @CommandMapping({"VideoDel", "删除视频"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class VideoDeleteCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         String directory = fileStorageProperties.getVideoPath() + "/collect";
         ArrayMsg reply = event.getArrayMsg().getFirst();
 
         if (!params.isEmpty()) {
-            deleteFile(bot, event, directory, params.getFirst());
+            deleteFile(bot, event, directory, params.nextFullString());
             return;
         }
         if (reply.getType() == MsgTypeEnum.reply) {
@@ -42,21 +42,20 @@ public class VideoDeleteCommand implements Command {
             Map<String, String> videoMap = MsgParseUtil
                     .extractVidMap(replyMsg.getRawMessage());
             if (videoMap.isEmpty())
-                throw new NullBotException("[删除视频] ❌未引用视频");
+                throw new NullBotException("未引用视频");
             for (Map.Entry<String, String> entry : videoMap.entrySet())
                 deleteFile(bot, event, directory, entry.getKey());
             return;
         }
-
-        throw new NullBotException("[删除视频] ❌无文件名或引用");
+        throw new NullBotException("无文件名或引用");
     }
 
     private void deleteFile(Bot bot, GroupMessageEvent event, String directory, String fileName) {
         if(!fileService.deleteFile(directory, fileName))
-            throw new NullBotException("[删除视频] ❌失败");
+            throw new NullBotException("文件服务删除失败");
         bot.sendGroupMsg(event.getGroupId(), "[删除视频] ⚠️已删除\n- " +
                 StringUtil.truncateFileName(fileName, 12), false);
-        log.info("├─[VideoDelete] 视频已删除 - {}", fileName);
+        log.info("☑ [VideoDelete] 视频已删除: {}", fileName);
     }
 
     @Override

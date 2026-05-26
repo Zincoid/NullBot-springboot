@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.system;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,29 +11,25 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.service.SystemService;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"Restart", "reboot", "重启"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class RestartCommand implements Command {
 
     private final SystemService systemService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.isEmpty()) throw new NullBotException("[重启] ❌未指定方式");
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
-        String option = params.getFirst();
-        switch (option)
-        {
+        String option = params.nextString();
+        switch (option) {
             case "-app" -> {
                 bot.sendGroupMsg(groupId, """
                         [重启] ⚠️指令已下发
                         - 模式: APPLICATION
                         - 将于3s后重启, 请稍候...""", false);
-                log.info("├─[Restart] APP 重启指令已下发");
+                log.info("☑ [Restart] APP 重启指令已下发");
                 systemService.restart();
             }
             case "-jar" -> {
@@ -40,17 +37,14 @@ public class RestartCommand implements Command {
                         [重启] ⚠️指令已下发
                         - 模式: JAR FILE
                         - 将于3s后重启, 请稍候...""", false);
-                log.info("├─[Restart] JAR 重启指令已下发");
-                try {
-                    if (params.size() > 1)
-                        systemService.restartViaJar(params.get(1));
-                    else
-                        systemService.restartViaJar();
-                } catch (Exception e) {
-                    throw new NullBotException("[重启] ❌出错: " + e.getMessage());
+                log.info("☑ [Restart] JAR 重启指令已下发");
+                if (params.size() > 1) {
+                    systemService.restartViaJar(params.nextFullString());
+                } else {
+                    systemService.restartViaJar();
                 }
             }
-            default -> throw new NullBotException("[重启] ❌无此方式");
+            default -> throw new NullBotException("无此方式");
         }
     }
 

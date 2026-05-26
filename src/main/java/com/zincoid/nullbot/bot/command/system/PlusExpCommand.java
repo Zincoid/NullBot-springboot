@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.system;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,33 +11,20 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.service.UserService;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"PlusExp", "加经验"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class PlusExpCommand implements Command {
 
     private final UserService userService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.size() < 2)
-            throw new NullBotException("[加经验] ❌参数不足");
-
-        long userId;
-        int exp;
-        try {
-            userId = Long.parseLong(params.get(0));
-            exp = Integer.parseInt(params.get(1));
-        } catch (NumberFormatException e) {
-            throw new NullBotException("[加经验] ❌参数格式错误");
-        }
-
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        long userId = params.nextLong();
+        int exp = params.nextInt();
         if (!userService.exist(userId))
             throw new NullBotException("[加经验] ❌用户不存在");
-
         int i = userService.plusExperience(userId, exp);
         String userName = event.getSender().getNickname();
         StringBuilder sb = new StringBuilder(userName + " 获得 " + exp + "Exp！");
@@ -45,7 +33,7 @@ public class PlusExpCommand implements Command {
             i--;
         }
         bot.sendGroupMsg(event.getGroupId(), sb.toString(), false);
-        log.info("├─[PlusExp] 已给予经验 - {} -> {} Exp", userId, exp);
+        log.info("☑ [PlusExp] 经验已给予 - {} -> {} Exp", userId, exp);
     }
 
     @Override
