@@ -2,7 +2,7 @@ package com.zincoid.nullbot.bot.command.schedule;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -10,29 +10,23 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.BotTaskScheduler;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"CancelAlarm", "取消闹钟"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class CancelAlarmCommand implements Command {
 
     private final BotTaskScheduler botTaskScheduler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        if (params.isEmpty())
-            throw new NullBotException("[取消闹钟] ❌参数不足");
-        String alarmId = params.getFirst();
-
+        String alarmId = params.nextString();
         String taskId = "Alarm-%s-%s".formatted(userId, alarmId);
         boolean cancelled = botTaskScheduler.cancelTask(taskId);
-
         bot.sendGroupMsg(groupId, "[取消闹钟] %s".formatted(cancelled ? "✅已取消" : "❌未取消"), false);
-        log.info("├─[CancelAlarm] 闹钟取消{} - AlarmID: {}", cancelled ? "成功" : "失败", alarmId);
+        log.info("☑ [CancelAlarm] 闹钟取消{} - AlarmID: {}", cancelled ? "成功" : "失败", alarmId);
     }
 
     @Override

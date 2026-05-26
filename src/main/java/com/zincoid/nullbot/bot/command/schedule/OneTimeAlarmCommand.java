@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.schedule;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +18,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @CommandMapping({"OneTimeAlarm", "一次性闹钟"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class OneTimeAlarmCommand implements Command {
-
-    private final BotTaskScheduler botTaskScheduler;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private final List<DateTimeFormatter> formatters = Arrays.asList(
@@ -33,56 +32,42 @@ public class OneTimeAlarmCommand implements Command {
             DateTimeFormatter.ISO_LOCAL_DATE_TIME  // yyyy-MM-dd'T'HH:mm:ss
     );
 
+    private final BotTaskScheduler botTaskScheduler;
+
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
-        Long userId = event.getUserId();
-        if (params.size() < 3)
-            throw new NullBotException("[一次性闹钟] ❌参数不足");
-
-        String option = params.get(0);
-        String message = params.get(2);
-        String alarmId = UUID.randomUUID().toString().substring(0, 8);
+        String option = params.nextString();
+        String timeStr = params.nextString();
+        String message = params.nextString();
+        Long userId = params.nextLong(event.getUserId());
         LocalDateTime alarmTime;
-
+        String alarmId = UUID.randomUUID().toString().substring(0, 8);
         try {
-            switch (option)
-            {
+            switch (option) {
                 case "-t" -> {
-                    alarmTime = parseDateTime(params.get(1), formatters);
-                    if (params.size() > 3) userId = Long.parseLong(params.get(3));
+                    alarmTime = parseDateTime(timeStr, formatters);
                     botTaskScheduler.setOneTimeGroupAtMsgAlarm(
-                            alarmId, groupId, userId, message, alarmTime
-                    );
+                            alarmId, groupId, userId, message, alarmTime);
                 }
-
                 case "-d" -> {
-                    int delay = Integer.parseInt(params.get(1));
+                    int delay = Integer.parseInt(timeStr);
                     alarmTime = LocalDateTime.now().plusMinutes(delay);
-                    if (params.size() > 3) userId = Long.parseLong(params.get(3));
                     botTaskScheduler.setOneTimeGroupAtMsgAlarm(
-                            alarmId, groupId, userId, message, alarmTime
-                    );
+                            alarmId, groupId, userId, message, alarmTime);
                 }
-
-                default -> throw new IllegalArgumentException("无此模式");
+                default -> throw new NullBotException("无此模式");
             }
-
-        } catch (NumberFormatException e) {
-            throw new NullBotException("[一次性闹钟] ❌参数格式错误");
         } catch (DateTimeParseException e) {
-            throw new NullBotException("[一次性闹钟] ❌时间格式错误");
-        } catch (Exception e) {
-            throw new NullBotException("[一次性闹钟] ❌" + e.getMessage());
+            throw new NullBotException("时间格式错误");
         }
-
         bot.sendGroupMsg(groupId, """
                     [一次性闹钟] ⏰已设置！
                     - AlarmID: %s
                     - Time: %s""".formatted(alarmId, alarmTime.format(formatter)),
                 false
         );
-        log.info("├─[OneTimeAlarm] 已设置 - AlarmID: {}", alarmId);
+        log.info("☑ [OneTimeAlarm] 已设置 - AlarmID: {}", alarmId);
     }
 
     private LocalDateTime parseDateTime(String str, List<DateTimeFormatter> formatters) {
