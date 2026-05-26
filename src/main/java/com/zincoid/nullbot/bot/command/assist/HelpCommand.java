@@ -37,8 +37,6 @@ public class HelpCommand implements Command {
                 - 参数: 无
                 2. SysMsgSet  提示词设置
                 - 参数: [-set|-reset] [文本]
-                3. Tts  语言合成
-                - 参数: [-synth] [文本]
                 
                 注: 私聊目前仅实现AI聊天及以上指令且AI永久处于无验证/无限速/非防注入/非语音/指令模式下""", true);
         log.info("☑ [Help] 私聊帮助已获取");
