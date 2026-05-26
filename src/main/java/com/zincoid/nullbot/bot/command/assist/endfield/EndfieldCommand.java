@@ -46,7 +46,7 @@ public class EndfieldCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String version = getGroupVersion(groupId);
+        String curVersion = versions.computeIfAbsent(groupId, k -> DEFAULT_VERSION);
         boolean continuousQuery = false;  // 连续查询模式
         boolean globalQuery;  // 全局查询模式
         String keyword = params.nextStringOptional("");
@@ -55,8 +55,8 @@ public class EndfieldCommand implements Command {
             String newVersion = params.nextString();
             if (!ALLOWED_VERSIONS.contains(newVersion))
                 throw new NullBotException("版本非法");
-            setGroupVersion(groupId, newVersion);
-            bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD79️资源版本 - " + version, false);
+            versions.put(groupId, newVersion);
+            bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD79️资源版本 - " + curVersion, false);
             return;
         }
         if ("-c".equals(keyword)) {
@@ -68,13 +68,13 @@ public class EndfieldCommand implements Command {
         allFiles.addAll(fileService.search(keyword,
                 fileStorageProperties.getResourcePath() + "/endfield/public"));
         allFiles.addAll(fileService.search(keyword,
-                fileStorageProperties.getResourcePath() + "/endfield/" + version));
+                fileStorageProperties.getResourcePath() + "/endfield/" + curVersion));
 
         if (allFiles.isEmpty()) {
             globalQuery = true;
-            for (String ver : ALLOWED_VERSIONS) {
+            for (String version : ALLOWED_VERSIONS) {
                 allFiles.addAll(fileService.search(keyword,
-                        fileStorageProperties.getResourcePath() + "/endfield/" + ver));
+                        fileStorageProperties.getResourcePath() + "/endfield/" + version));
             }
         } else {
             globalQuery = false;
@@ -90,8 +90,8 @@ public class EndfieldCommand implements Command {
         allFiles.sort(Comparator.comparing(FilePO::getFileName));
 
         String info = "\n[当前资源版本 - %s]%s".formatted(
-                globalQuery ? "ALL" : version,
-                globalQuery ? "\n[版本 %s 无匹配资源]".formatted(version) : ""
+                globalQuery ? "ALL" : curVersion,
+                globalQuery ? "\n[版本 %s 无匹配资源]".formatted(curVersion) : ""
         );
 
         BotPageSelector<FilePO, String> pager = BotPageSelector.builder(
@@ -132,14 +132,6 @@ public class EndfieldCommand implements Command {
             bot.sendGroupMsg(groupId, response, false);
             log.info("☑ [Endfield] 已获取图片 - {}", file.getFileName());
         }
-    }
-
-    private void setGroupVersion(Long groupId, String version) {
-        versions.put(groupId, version);
-    }
-
-    private String getGroupVersion(Long groupId) {
-        return versions.computeIfAbsent(groupId, k -> DEFAULT_VERSION);
     }
 
     @Override
