@@ -10,7 +10,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.service.FileService;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +29,7 @@ public class PUBGCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.isEmpty())
-            throw new NullBotMsgException("[PUBG] ❌未指定地图");
+            throw new NullBotException("[PUBG] ❌未指定地图");
         String map = switch (params.getFirst()) {
             case "艾伦格" -> "Erangel.png";
             case "米拉玛" -> "Miramar.png";
@@ -40,11 +40,11 @@ public class PUBGCommand implements Command {
             default -> null;
         };
         if (map == null)
-            throw new NullBotMsgException("[PUBG] ❌不支持此地图");
+            throw new NullBotException("[PUBG] ❌不支持此地图");
         String helpPath = fileStorageProperties.getResourcePath() + "/pubg";
         List<FilePO> helps = fileService.search(map, helpPath);
         if (helps.isEmpty())
-            throw new NullBotMsgException("[PUBG] ❌资源缺失");
+            throw new NullBotException("[PUBG] ❌资源缺失");
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(helps.getFirst().getId()))
                 .build();

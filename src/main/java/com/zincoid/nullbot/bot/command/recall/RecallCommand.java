@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class RecallCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
-            throw new NullBotMsgException("[撤回] ❌需引用消息");
+            throw new NullBotException("[撤回] ❌需引用消息");
         int messageId = reply.getData().get("id").asInt();
         bot.deleteMsg(messageId);
         log.info("├─[Recall] 已撤回引用消息 - Message Id -> {}", messageId);

@@ -2,13 +2,13 @@ package com.zincoid.nullbot.bot.command.game.multi.ctrl;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.game.manager.PlayerManager;
 import com.zincoid.nullbot.core.model.game.basic.Player;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
@@ -26,7 +26,7 @@ public class RecentPlayerCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         List<Player> players = playerManager.getRecentPlayers(5);
         if (players == null || players.isEmpty())
-            throw new NullBotMsgException("[最近玩家] ❌暂无记录");
+            throw new NullBotException("[最近玩家] ❌暂无记录");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         StringBuilder sb = new StringBuilder().append("[最近玩家] 当前状态-上次活跃");

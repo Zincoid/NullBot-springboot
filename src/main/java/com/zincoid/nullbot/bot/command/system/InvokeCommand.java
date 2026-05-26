@@ -2,11 +2,11 @@ package com.zincoid.nullbot.bot.command.system;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.SystemService;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,7 @@ public class InvokeCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.size() < 2)
-            throw new NullBotMsgException("[Spring] ❌未指定Bean和Method");
+            throw new NullBotException("[Spring] ❌未指定Bean和Method");
 
         String beanName = params.get(0);
         String methodName = params.get(1);
@@ -41,7 +41,7 @@ public class InvokeCommand implements Command {
             );
             log.info("├─[Invoke] 调用结果 -> {}", result);
         } catch (Exception e) {
-            throw new NullBotMsgException("[Spring] ⚠️方法调用失败\n" + e.getMessage());
+            throw new NullBotException("[Spring] ⚠️方法调用失败\n" + e.getMessage());
         }
     }
 

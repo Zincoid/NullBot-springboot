@@ -2,11 +2,11 @@ package com.zincoid.nullbot.bot.command.system;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.SystemService;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,7 @@ public class RestartCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.isEmpty()) throw new NullBotMsgException("[重启] ❌未指定方式");
+        if (params.isEmpty()) throw new NullBotException("[重启] ❌未指定方式");
         Long groupId = event.getGroupId();
         String option = params.getFirst();
         switch (option)
@@ -47,10 +47,10 @@ public class RestartCommand implements Command {
                     else
                         systemService.restartViaJar();
                 } catch (Exception e) {
-                    throw new NullBotMsgException("[重启] ❌出错: " + e.getMessage());
+                    throw new NullBotException("[重启] ❌出错: " + e.getMessage());
                 }
             }
-            default -> throw new NullBotMsgException("[重启] ❌无此方式");
+            default -> throw new NullBotException("[重启] ❌无此方式");
         }
     }
 

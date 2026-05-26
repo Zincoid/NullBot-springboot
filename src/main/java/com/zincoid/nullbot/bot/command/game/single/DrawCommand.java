@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.service.ItemService;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +41,7 @@ public class DrawCommand implements Command {
         } else {
             try {
                 int times = Integer.parseInt(params.getFirst());
-                if(times <= 0) throw new NullBotMsgException("[抽奖] ❌抽取次数非正");
+                if(times <= 0) throw new NullBotException("[抽奖] ❌抽取次数非正");
 
                 List<ItemPO> items = new ArrayList<>();
                 boolean stop = false;

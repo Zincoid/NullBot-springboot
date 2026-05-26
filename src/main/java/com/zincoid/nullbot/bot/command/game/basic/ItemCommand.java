@@ -2,12 +2,12 @@ package com.zincoid.nullbot.bot.command.game.basic;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.ItemService;
 import org.springframework.stereotype.Component;
 
@@ -24,17 +24,17 @@ public class ItemCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.isEmpty())
-            throw new NullBotMsgException("[查询物品] ❌参数不足");
+            throw new NullBotException("[查询物品] ❌参数不足");
 
         int itemId;
         try {
             itemId = Integer.parseInt(params.getFirst());
         } catch (NumberFormatException e) {
-            throw new NullBotMsgException("[查询物品] ❌参数格式错误");
+            throw new NullBotException("[查询物品] ❌参数格式错误");
         }
 
         if (!itemService.exist(itemId))
-            throw new NullBotMsgException("[查询物品] ❌该物品不存在");
+            throw new NullBotException("[查询物品] ❌该物品不存在");
 
         ItemPO item = itemService.get(itemId);
         bot.sendGroupMsg(event.getGroupId(), item.toString(), false);

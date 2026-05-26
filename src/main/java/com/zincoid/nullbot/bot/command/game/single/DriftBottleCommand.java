@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -12,7 +13,6 @@ import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.model.data.po.DriftBottlePO;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.DriftBottleService;
 import com.zincoid.nullbot.core.service.FileService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
@@ -46,7 +46,7 @@ public class DriftBottleCommand implements Command {
         if (!imageMap.isEmpty()) {
             boolean autoThrow = !params.isEmpty() && "-auto".equals(params.getFirst());
             if (imageMap.size() != 1 && !autoThrow)
-                throw new NullBotMsgException("[漂流瓶] ❌仅可投单张图片");
+                throw new NullBotException("[漂流瓶] ❌仅可投单张图片");
             for (Map.Entry<String, String> entry : imageMap.entrySet()) {
                 String url = entry.getValue();
                 String fileName = UUID.randomUUID().toString();
@@ -66,7 +66,7 @@ public class DriftBottleCommand implements Command {
                         log.info("├─[DriftBottle] 扔漂流瓶(图片) - {} -> {}", userId, thrown ? "已投出" : "出错");
                     }
                 } catch (Exception e) {
-                    if (!autoThrow) throw new NullBotMsgException("[漂流瓶] ❌出错: " + e.getMessage());
+                    if (!autoThrow) throw new NullBotException("[漂流瓶] ❌出错: " + e.getMessage());
                 } finally {
                     if (fileInfo != null && !thrown) {
                         fileService.deleteFile(directory, fileInfo.getFileName());
@@ -93,7 +93,7 @@ public class DriftBottleCommand implements Command {
 
         DriftBottlePO bottle = driftBottleService.pickUpRand();
         if (bottle == null)
-            throw new NullBotMsgException("没有漂流瓶了！");
+            throw new NullBotException("没有漂流瓶了！");
         bot.sendGroupMsg(groupId, bottle.toString(), false);
 
         List<Pair<Long, String>> inputs = botInputManager

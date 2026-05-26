@@ -1,12 +1,12 @@
 package com.zincoid.nullbot.core.model.bot.interaction;
 
 import com.mikuac.shiro.core.Bot;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.function.BotConsumer;
 
 import java.util.List;
@@ -114,7 +114,7 @@ public class BotPageSelector<K, V> {
         inputer.setCoverable(false);
         List<Pair<Long, String>> inputs = inputer.next();
         if (inputs.isEmpty())
-            throw new NullBotMsgException("[%s] ⌛️输入超时".formatted(title));
+            throw new NullBotException("[%s] ⌛️输入超时".formatted(title));
         return input(inputs.getFirst().getRight().toUpperCase());
     }
 
@@ -145,7 +145,7 @@ public class BotPageSelector<K, V> {
         List<Pair<Long, String>> inputs = manager
                 .request(BniMode.PS, userId, "[1-9]\\d*|(?i)up|down|end", timeout);
         if (inputs.isEmpty())
-            throw new NullBotMsgException("[%s] ⌛️输入超时".formatted(title));
+            throw new NullBotException("[%s] ⌛️输入超时".formatted(title));
         return input(inputs.getFirst().getRight().toUpperCase());
     }
 

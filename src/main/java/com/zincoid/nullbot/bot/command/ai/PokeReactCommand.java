@@ -2,12 +2,12 @@ package com.zincoid.nullbot.bot.command.ai;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +41,7 @@ public class PokeReactCommand implements Command {
                 response = qqAiClient.chat(message);
             }
         } catch (Exception e) {
-            throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
+            throw new NullBotException("[AI] ❌出错: " + e.getMessage());
         }
         log.info("├─[PokeReact] 已回复{}戳戳: {}", groupId != null ? "群聊" : "私聊", response);
     }

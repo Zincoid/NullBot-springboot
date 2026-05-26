@@ -1,12 +1,12 @@
 package com.zincoid.nullbot.core.component.control;
 
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.component.resource.SpringCtxHolder;
 import com.zincoid.nullbot.core.model.bot.interaction.BotInputer;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ public class BotInputManager {
             if (inputEntries.get(id).coverable) {
                 cancelWait(mode, targetId);
                 log.info("▽ [BotInputManager] 已取消 {} 可覆盖的冲突输入 (Mode: {})", targetId, mode);
-            } else throw new NullBotMsgException("[输入] ❌事件冲突");
+            } else throw new NullBotException("[输入] ❌事件冲突");
         }
         if (mode == BniMode.GM)
             inputCaches.put(id, Collections.synchronizedList(new ArrayList<>()));
@@ -79,7 +79,7 @@ public class BotInputManager {
                     .get();
         } catch (Exception e) {
             log.error("▽ [BotInputManager] 输入事件异常 (Mode: {})", mode, e);
-            throw new NullBotMsgException("[输入] ❌事件异常");
+            throw new NullBotException("[输入] ❌事件异常");
         } finally {
             inputEntries.remove(id);
         }

@@ -4,13 +4,13 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.util.Base64Util;
 import org.springframework.stereotype.Component;
 
@@ -53,7 +53,7 @@ public class HelpCommand implements Command {
                     .toAbsolutePath().toString();
             return MsgUtils.builder().img("base64://" + Base64Util.from(helpPath)).build();
         } catch (Exception e) {
-            throw new NullBotMsgException("[帮助] ❌资源获取失败");
+            throw new NullBotException("[帮助] ❌资源获取失败");
         }
     }
 

@@ -5,7 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,13 +18,13 @@ public class SendPrivateMsgCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.size() < 2)
-            throw new NullBotMsgException("[私信] ❌参数不足");
+            throw new NullBotException("[私信] ❌参数不足");
 
         long qqNumber;
         try {
             qqNumber = Long.parseLong(params.getFirst());
         } catch (NumberFormatException e) {
-            throw new NullBotMsgException("[私信] ❌参数格式错误");
+            throw new NullBotException("[私信] ❌参数格式错误");
         }
 
         String message = String.join(" ", params.subList(1, params.size()));  // 拼接信息

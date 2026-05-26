@@ -5,13 +5,13 @@ import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.FileService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
@@ -32,15 +32,15 @@ public class VideoSaveCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
-            throw new NullBotMsgException("[保存视频] ❌需引用视频");
+            throw new NullBotException("[保存视频] ❌需引用视频");
 
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         // 可优化为单个键值对?
         Map<String, String> videoMap = MsgParseUtil.extractVidMap(replyMsg.getRawMessage());
         if(videoMap.isEmpty())
-            throw new NullBotMsgException("[保存视频] ❌未包含视频");
+            throw new NullBotException("[保存视频] ❌未包含视频");
         if(videoMap.size() > 1)
-            throw new NullBotMsgException("[保存视频] ❌视频数过多");
+            throw new NullBotException("[保存视频] ❌视频数过多");
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
@@ -50,7 +50,7 @@ public class VideoSaveCommand implements Command {
         String fileName = params.isEmpty() ? entry.getKey()
                 : String.join(" ", params) + "." + entry.getKey().split("\\.")[1];
         if (fileName.matches(".*[\\\\/:*?\"<>|].*"))
-            throw new NullBotMsgException("[保存视频] ❌文件名非法");
+            throw new NullBotException("[保存视频] ❌文件名非法");
         String filePath = fileStorageProperties.getVideoPath() + "/collect";
         String url = entry.getValue();
         try {
@@ -58,7 +58,7 @@ public class VideoSaveCommand implements Command {
             bot.sendGroupMsg(groupId, "\uD83C\uDFA5 已保存！", false);
             log.info("├─[VideoSave] 已保存 - {}", fileInfo.getFileName());
         } catch (Exception e) {
-            throw new NullBotMsgException("[保存视频] ❌出错: " + e.getMessage());
+            throw new NullBotException("[保存视频] ❌出错: " + e.getMessage());
         }
     }
 

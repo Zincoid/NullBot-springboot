@@ -1,9 +1,9 @@
 package com.zincoid.nullbot.core.component.control;
 
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.annotation.FunctionControl;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
@@ -43,7 +43,7 @@ public class FunctionManager {
     public boolean isEnabled(String function) {
         Boolean enabled = enableFlags.get(function);
         if (enabled == null)
-            throw new NullBotMsgException("[全局设置] ❌功能不存在");
+            throw new NullBotException("[全局设置] ❌功能不存在");
         return enabled;
     }
 

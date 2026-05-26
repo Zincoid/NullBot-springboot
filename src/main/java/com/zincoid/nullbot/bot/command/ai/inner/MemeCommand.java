@@ -5,6 +5,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -12,7 +13,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.FileService;
 import org.springframework.stereotype.Component;
 
@@ -49,7 +49,7 @@ public class MemeCommand implements Command {
 
     private void meme(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
         if (params.isEmpty())
-            throw new NullBotMsgException("[表情] ❌参数不足");
+            throw new NullBotException("[表情] ❌参数不足");
 
         String memePath = fileStorageProperties.getResourcePath() + "/ai/meme";
         String memeName = params.getFirst();

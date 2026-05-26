@@ -5,11 +5,11 @@ import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class RawMsgCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
-        if (reply.getType() != MsgTypeEnum.reply) throw new NullBotMsgException("[原始消息] ❌需引用消息");
+        if (reply.getType() != MsgTypeEnum.reply) throw new NullBotException("[原始消息] ❌需引用消息");
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         log.info("├─[RawMsg] 已输出\n{}", replyMsg.getRawMessage());
         bot.sendGroupMsg(event.getGroupId(), "[原始消息] ✅已输出至控制台", false);

@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -13,7 +14,6 @@ import com.zincoid.nullbot.core.component.storage.GuessStorage;
 import com.zincoid.nullbot.core.model.information.GuessInfo;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.service.UserService;
 import com.zincoid.nullbot.core.util.Base64Util;
@@ -44,18 +44,18 @@ public class GuessCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) throws Exception {
         Long groupId = event.getGroupId();
         if (params.isEmpty())
-            throw new NullBotMsgException("[猜角色] ❌参数不足");
+            throw new NullBotException("[猜角色] ❌参数不足");
 
         if ("-f".equals(params.getFirst())) {
             if (guessStorage.getGuess(groupId) == null)
-                throw new NullBotMsgException("[猜角色] ❌未在游戏中");
+                throw new NullBotException("[猜角色] ❌未在游戏中");
             botInputManager.cancelWait(BniMode.GS, groupId);
             log.info("├─[Guess] 群聊 {} 放弃猜测", groupId);
             return;
         }
 
         if (guessStorage.getGuess(groupId) != null)
-            throw new NullBotMsgException("[猜角色] ⚠️已在游戏中");
+            throw new NullBotException("[猜角色] ⚠️已在游戏中");
 
         try {
             GuessInfo guess = guessStorage.initGuess(groupId, params.getFirst());
@@ -129,7 +129,7 @@ public class GuessCommand implements Command {
             log.info("├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
 
         } catch (Exception e) {
-            throw new NullBotMsgException("[猜角色] ❌" + e.getMessage());
+            throw new NullBotException("[猜角色] ❌" + e.getMessage());
         } finally {
             guessStorage.removeGuess(groupId);
         }

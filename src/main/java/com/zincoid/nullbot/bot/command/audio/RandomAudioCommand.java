@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.audio;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -10,7 +11,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.FileService;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,7 @@ public class RandomAudioCommand implements Command {
         String audioPath = fileStorageProperties.getAudioPath();
         List<FilePO> audios = fileService.search("", audioPath);
         if (audios.isEmpty())
-            throw new NullBotMsgException("[随机音频] ❌暂无音频");
+            throw new NullBotException("[随机音频] ❌暂无音频");
         FilePO audio = audios.get(ThreadLocalRandom.current().nextInt(audios.size()));
         String response = MsgUtils.builder()
                 .voice(ossUrlBuilder.from(audio.getId()))

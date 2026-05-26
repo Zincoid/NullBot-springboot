@@ -2,12 +2,12 @@ package com.zincoid.nullbot.bot.command.manage;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.FunctionManager;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class FuncSetCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.isEmpty())
-            throw new NullBotMsgException("[全局设置] ❌参数不足");
+            throw new NullBotException("[全局设置] ❌参数不足");
 
         String option = params.get(0);
         if ("-view".equals(option)) {
@@ -34,7 +34,7 @@ public class FuncSetCommand implements Command {
         }
         if ("-change".equals(option)) {
             if (params.size() < 2)
-                throw new NullBotMsgException("[全局设置] ❌参数不足");
+                throw new NullBotException("[全局设置] ❌参数不足");
             String func = params.get(1);
             boolean enabled = functionManager.switchEnabled(func);
             bot.sendGroupMsg(event.getGroupId(), """
@@ -42,7 +42,7 @@ public class FuncSetCommand implements Command {
             log.info("├─[FuncSet] 已更改全局设置 {} -> {}", func, enabled ? "ON" : "OFF");
             return;
         }
-        throw new NullBotMsgException("[全局设置] ❌无此操作");
+        throw new NullBotException("[全局设置] ❌无此操作");
     }
 
     @Override

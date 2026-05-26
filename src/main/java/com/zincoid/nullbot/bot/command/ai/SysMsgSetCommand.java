@@ -3,12 +3,12 @@ package com.zincoid.nullbot.bot.command.ai;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.SysMsgManager;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.UserService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import org.springframework.context.annotation.Lazy;
@@ -34,7 +34,7 @@ public class SysMsgSetCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.isEmpty())
-            throw new NullBotMsgException("[提示词设置] ❌参数不足");
+            throw new NullBotException("[提示词设置] ❌参数不足");
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
@@ -43,7 +43,7 @@ public class SysMsgSetCommand implements Command {
         if ("-reset".equals(option)) {
             int userAccess = userService.getAccess(userId);
             if (userAccess < 1)
-                throw new NullBotMsgException("""
+                throw new NullBotException("""
                         [提示词设置] \uD83D\uDEAB重置失败
                         - 仅限权等级I及以上用户可重置提示词
                         - 你的限权等级: %s""".formatted(userAccess));
@@ -55,12 +55,12 @@ public class SysMsgSetCommand implements Command {
         }
 
         if (params.size() < 2)
-            throw new NullBotMsgException("[提示词设置] ❌参数不足");
+            throw new NullBotException("[提示词设置] ❌参数不足");
 
         if ("-set".equals(option)) {
             int userAccess = userService.getAccess(userId);
             if (userAccess < 1 && !BotCtxUtil.getSetting().isCustom())
-                throw new NullBotMsgException("""
+                throw new NullBotException("""
                         [提示词设置] \uD83D\uDEAB设置失败
                         - 当前为非自定义提示词模式
                         - 该模式仅限权等级I及以上用户可修改
@@ -73,13 +73,13 @@ public class SysMsgSetCommand implements Command {
             return;
         }
 
-        throw new NullBotMsgException("[提示词设置] ❌无此操作");
+        throw new NullBotException("[提示词设置] ❌无此操作");
     }
 
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
         if (params.isEmpty())
-            throw new NullBotMsgException("[提示词设置] ❌参数不足");
+            throw new NullBotException("[提示词设置] ❌参数不足");
 
         Long userId = event.getUserId();
         String option = params.getFirst();
@@ -93,7 +93,7 @@ public class SysMsgSetCommand implements Command {
         }
 
         if (params.size() < 2)
-            throw new NullBotMsgException("[提示词设置] ❌参数不足");
+            throw new NullBotException("[提示词设置] ❌参数不足");
 
         if ("-set".equals(option)) {
             String newMessage = String.join(" ", params.subList(1, params.size()));
@@ -104,7 +104,7 @@ public class SysMsgSetCommand implements Command {
             return;
         }
 
-        throw new NullBotMsgException("[提示词设置] ❌无此操作");
+        throw new NullBotException("[提示词设置] ❌无此操作");
     }
 
     @Override

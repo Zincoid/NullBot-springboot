@@ -10,7 +10,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.util.HtmlTemplateUtil;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,7 @@ public class ChoyenCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         if (params.size() < 2)
-            throw new NullBotMsgException("[5000兆] ❌需要两个参数");
+            throw new NullBotException("[5000兆] ❌需要两个参数");
 
         String base64;
         String tempFilePath = fileStorageProperties.getTempPath();
@@ -46,7 +46,7 @@ public class ChoyenCommand implements Command {
             base64 = htmlRenderer.renderElement(html, "#templateContainer");
 
         } catch (Exception e) {
-            throw new NullBotMsgException("[5000兆] ❌处理时出错: " + e.getMessage());
+            throw new NullBotException("[5000兆] ❌处理时出错: " + e.getMessage());
         }
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);

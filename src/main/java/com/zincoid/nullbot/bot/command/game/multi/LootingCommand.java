@@ -8,7 +8,7 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.game.handler.impl.LootingMatchHandler;
 import com.zincoid.nullbot.core.model.result.GameResult;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class LootingCommand implements Command {
         GameResult result = lootingMatchHandler.action(userId, commandText);
 
         if (result.getSuccess()) {
-            if (!result.getIsAsync()) throw new NullBotMsgException("[摸金] ❌该模式不发送同步消息");
+            if (!result.getIsAsync()) throw new NullBotException("[摸金] ❌该模式不发送同步消息");
             if (!result.getSelfInfo().isEmpty())
                 bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
             if (!result.getOpponentInfo().isEmpty())

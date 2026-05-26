@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.WebScreenCapturer;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class EssencePlanCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.isEmpty())
-            throw new NullBotMsgException("[基质规划] ❌未指定武器");
+            throw new NullBotException("[基质规划] ❌未指定武器");
         String weapon = params.getFirst();
         // String weapon = String.join(" ", params.subList(0, params.size()));
 
@@ -41,7 +41,7 @@ public class EssencePlanCommand implements Command {
                     )
             );
         } catch (Exception e) {
-            throw new NullBotMsgException("[基质规划] ❌查询失败: " + e.getMessage());
+            throw new NullBotException("[基质规划] ❌查询失败: " + e.getMessage());
         }
 
         String response = MsgUtils.builder().img("base64://" + base64).build();

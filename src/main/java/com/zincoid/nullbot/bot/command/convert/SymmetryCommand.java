@@ -7,6 +7,7 @@ import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -16,7 +17,6 @@ import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.util.DownloadUtil;
 import com.zincoid.nullbot.core.util.HtmlTemplateUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
@@ -66,7 +66,7 @@ public class SymmetryCommand implements Command {
                     urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
                 }
             } catch (NumberFormatException e) {
-                throw new NullBotMsgException("[对称] ❌参数格式错误");
+                throw new NullBotException("[对称] ❌参数格式错误");
             }
         } else {
             List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
@@ -74,7 +74,7 @@ public class SymmetryCommand implements Command {
         }
 
         if (urls.isEmpty())
-            throw new NullBotMsgException("[对称] ❌无引用图片或ID参数或At消息");
+            throw new NullBotException("[对称] ❌无引用图片或ID参数或At消息");
 
         // 开始处理
         String tempPath = fileStorageProperties.getTempPath();
@@ -85,7 +85,7 @@ public class SymmetryCommand implements Command {
                 FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "├─ ");
                 downloadedName = fileInfo.getFileName();
             } catch (Exception e) {
-                throw new NullBotMsgException("[对称] ❌下载时出错: " + e.getMessage());
+                throw new NullBotException("[对称] ❌下载时出错: " + e.getMessage());
             }
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
@@ -108,10 +108,10 @@ public class SymmetryCommand implements Command {
                 html = HtmlTemplateUtil.replaceImages(html, images);
                 base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
 
-            } catch (NullBotMsgException e) {
+            } catch (NullBotException e) {
                 throw e;
             } catch (Exception e) {
-                throw new NullBotMsgException("[对称] ❌处理时出错: " + e.getMessage());
+                throw new NullBotException("[对称] ❌处理时出错: " + e.getMessage());
             } finally {
                 FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
             }

@@ -5,7 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,14 +18,14 @@ public class UserBanCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.size() < 2)
-            throw new NullBotMsgException("[用户禁言] ❌参数不足");
+            throw new NullBotException("[用户禁言] ❌参数不足");
         try {
             long userId = Long.parseLong(params.get(0));
             int time = Integer.parseInt(params.get(1));
             bot.setGroupBan(event.getGroupId(), userId, time * 60);
             log.info("├─[UserBan] 已执行禁言 - {} -> {} Min", userId, time);
         } catch (NumberFormatException e) {
-            throw new NullBotMsgException("[用户禁言] ❌参数格式错误");
+            throw new NullBotException("[用户禁言] ❌参数格式错误");
         }
     }
 

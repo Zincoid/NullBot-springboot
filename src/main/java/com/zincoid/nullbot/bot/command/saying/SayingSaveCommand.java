@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import com.zincoid.nullbot.core.service.SayingService;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ public class SayingSaveCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
-            throw new NullBotMsgException("[保存语录] ❌需引用文本");
+            throw new NullBotException("[保存语录] ❌需引用文本");
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         long userId = Long.parseLong(replyMsg.getSender().getUserId());
         String userName = replyMsg.getSender().getNickname();
@@ -36,7 +36,7 @@ public class SayingSaveCommand implements Command {
         try {
             text = MsgParseUtil.formatSaying(bot, replyMsg.getRawMessage());
         } catch (Exception e) {
-            throw new NullBotMsgException("[保存语录] ❌" + e.getMessage());
+            throw new NullBotException("[保存语录] ❌" + e.getMessage());
         }
         int inserted = sayingService.add(userId, userName, text);
         bot.sendGroupMsg(event.getGroupId(), inserted == 1 ? "\uD83D\uDCBE 已记录！" : "[保存语录] ❌出错", false);

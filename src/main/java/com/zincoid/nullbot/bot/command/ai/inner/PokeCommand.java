@@ -5,7 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -38,12 +38,12 @@ public class PokeCommand implements Command {
 
     private void poke(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
         if (params.isEmpty())
-            throw new NullBotMsgException("[戳戳] ❌参数不足");
+            throw new NullBotException("[戳戳] ❌参数不足");
         long pokeId;
         try {
             pokeId = Long.parseLong(params.getFirst());
         } catch (NumberFormatException e) {
-            throw new NullBotMsgException("[对称] ❌参数格式错误");
+            throw new NullBotException("[对称] ❌参数格式错误");
         }
         if (isPrivate) {
             bot.sendFriendPoke(targetId, pokeId);

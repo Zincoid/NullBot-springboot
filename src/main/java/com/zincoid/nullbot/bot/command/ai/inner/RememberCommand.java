@@ -4,12 +4,12 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.SysMsgManager;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,17 +42,17 @@ public class RememberCommand implements Command {
 
     private void addMemory(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
         if (params.isEmpty())
-            throw new NullBotMsgException("[记忆] ❌参数不足");
+            throw new NullBotException("[记忆] ❌参数不足");
         if (isPrivate) {
             if (!sysMsgManager.addLongTermUserMemory(targetId, params.getFirst()))
-                throw new NullBotMsgException("[记忆] ❌容量已满");
+                throw new NullBotException("[记忆] ❌容量已满");
             bot.sendPrivateMsg(targetId, """
                     [记忆] \uD83D\uDCA1长时记忆已添加
                     - 内容: %s""".formatted(params.getFirst()), false);
             log.info("├─[Remember] 用户长时记忆已添加 - {} : {}", targetId, params.getFirst());
         } else {
             if (!sysMsgManager.addLongTermGroupMemory(targetId, params.getFirst()))
-                throw new NullBotMsgException("[记忆] ❌容量已满");
+                throw new NullBotException("[记忆] ❌容量已满");
             bot.sendGroupMsg(targetId, """
                     [记忆] \uD83D\uDCA1长时记忆已添加
                     - 内容: %s""".formatted(params.getFirst()), false);

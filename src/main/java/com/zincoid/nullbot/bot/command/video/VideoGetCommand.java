@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.video;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -12,7 +13,6 @@ import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.bot.interaction.BotPageSelector;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.FileService;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +52,7 @@ public class VideoGetCommand implements Command {
                 keyword, fileStorageProperties.getVideoPath() + "/" + secondary);
 
         if (files.isEmpty())
-            throw new NullBotMsgException("[获取视频] ❌无匹配项");
+            throw new NullBotException("[获取视频] ❌无匹配项");
         if (files.size() == 1) {
             sendVideo(bot, groupId, files.getFirst());
             return;

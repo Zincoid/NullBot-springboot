@@ -2,12 +2,12 @@ package com.zincoid.nullbot.bot.command.game.basic;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.bot.event.InnerCommandEvent;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.InventoryService;
 import com.zincoid.nullbot.core.service.ItemService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -29,24 +29,24 @@ public class UseCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         // 参数检查
         if (params.isEmpty())
-            throw new NullBotMsgException("[使用] ❌参数不足");
+            throw new NullBotException("[使用] ❌参数不足");
         // 解析物品
         int itemId;
         try {
             itemId = Integer.parseInt(params.getFirst());
         } catch (NumberFormatException e) {
-            throw new NullBotMsgException("[使用] ❌参数格式错误");
+            throw new NullBotException("[使用] ❌参数格式错误");
         }
         // 存在检查
         if (!itemService.exist(itemId))
-            throw new NullBotMsgException("[使用] ❌该物品不存在");
+            throw new NullBotException("[使用] ❌该物品不存在");
         // 可用检查
         if (!itemService.isUsable(itemId))
-            throw new NullBotMsgException("[使用] ❌该物品不可使用");
+            throw new NullBotException("[使用] ❌该物品不可使用");
         // 库存检查
         Long userId = event.getUserId();
         if (!inventoryService.decrease(userId, itemId, 1))
-            throw new NullBotMsgException("[使用] ❌该物品数量不足");
+            throw new NullBotException("[使用] ❌该物品数量不足");
 
         // 替换参数
         String command = itemService.getCommand(itemId);

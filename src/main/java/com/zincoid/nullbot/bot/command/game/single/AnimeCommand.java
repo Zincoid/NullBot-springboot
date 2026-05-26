@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -10,7 +11,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.FileService;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,7 @@ public class AnimeCommand implements Command {
         String animePath = fileStorageProperties.getImagePath() + "/acg/二次元";
         List<FilePO> images = fileService.search("", animePath);
         if (images.isEmpty())
-            throw new NullBotMsgException("[二次元] ❌暂无图片");
+            throw new NullBotException("[二次元] ❌暂无图片");
         FilePO image = images.get(ThreadLocalRandom.current().nextInt(images.size()));
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(image.getId()))

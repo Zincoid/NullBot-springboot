@@ -5,12 +5,12 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -42,7 +42,7 @@ public class ChatCommand implements Command {
             QQMessage message = QQMessage.user(content).with(groupId, userId, userName).id(messageId);
             response = qqAiClient.chat(message);
         } catch (Exception e) {
-            throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
+            throw new NullBotException("[AI] ❌出错: " + e.getMessage());
         }
         for (ArrayMsg msg : event.getArrayMsg()) {
             if (msg.getType() != MsgTypeEnum.text) continue;
@@ -71,7 +71,7 @@ public class ChatCommand implements Command {
             QQMessage message = QQMessage.user(content).with(userId, userName).id(messageId);
             response = qqAiClient.chat(message);
         } catch (Exception e) {
-            throw new NullBotMsgException("[AI] ❌出错: " + e.getMessage());
+            throw new NullBotException("[AI] ❌出错: " + e.getMessage());
         }
         log.info("├─[Chat] 私聊已回复: {}", response);
     }

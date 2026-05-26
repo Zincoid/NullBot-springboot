@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.assist.endfield;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -12,7 +13,6 @@ import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.bot.interaction.BotPageSelector;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.FileService;
 import org.springframework.stereotype.Component;
 
@@ -61,7 +61,7 @@ public class EndfieldCommand implements Command {
             if (params.size() > 1) {
                 String newVersion = params.get(1);
                 if (!ALLOWED_VERSIONS.contains(newVersion))
-                    throw new NullBotMsgException("[终末地] ❌版本非法");
+                    throw new NullBotException("[终末地] ❌版本非法");
                 setGroupVersion(groupId, newVersion);
             }
             bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD79当前️资源版本 - " + version, false);
@@ -85,7 +85,7 @@ public class EndfieldCommand implements Command {
         }
 
         if (allFiles.isEmpty())
-            throw new NullBotMsgException("[终末地] ❌无匹配项");
+            throw new NullBotException("[终末地] ❌无匹配项");
         if (!globalQuery && allFiles.size() == 1) {  // 非全局查询且单匹配项时直接发送
             sendResource(bot, groupId, allFiles.getFirst());
             return;
@@ -125,7 +125,7 @@ public class EndfieldCommand implements Command {
                 bot.sendGroupMsg(groupId, response, false);
                 log.info("├─[Endfield] 已获取文本 - {}", file.getFileName());
             } catch (IOException e) {
-                throw new NullBotMsgException("[终末地] ❌读取出错");
+                throw new NullBotException("[终末地] ❌读取出错");
             }
         } else {  // 其他文件类型 暂时按图片处理
             String response = MsgUtils.builder()

@@ -9,7 +9,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.service.BreadService;
 import com.zincoid.nullbot.core.service.InventoryService;
 import com.zincoid.nullbot.core.service.UserService;
@@ -37,14 +37,14 @@ public class BreadCommand implements Command {
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
         if (params.isEmpty())
-            throw new NullBotMsgException("[面包] ❌无操作");
+            throw new NullBotException("[面包] ❌无操作");
         switch (params.getFirst()) {
             case "-buy", "b" -> buy(bot, userId, groupId, userName);
             case "-eat", "e" -> eat(bot, userId, userName, groupId);
             case "-rob", "r" -> rob(bot, event, groupId, userId, userName);
             case "-gift", "g" -> gift(bot, event, groupId, userId, userName);
             case "-look", "l" -> look(bot, groupId, userId, userName);
-            default -> throw new NullBotMsgException("[面包] ❌操作不存在");
+            default -> throw new NullBotException("[面包] ❌操作不存在");
         }
     }
 

@@ -5,12 +5,12 @@ import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.FileService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import com.zincoid.nullbot.core.util.StringUtil;
@@ -42,18 +42,18 @@ public class VideoDeleteCommand implements Command {
             Map<String, String> videoMap = MsgParseUtil
                     .extractVidMap(replyMsg.getRawMessage());
             if (videoMap.isEmpty())
-                throw new NullBotMsgException("[删除视频] ❌未引用视频");
+                throw new NullBotException("[删除视频] ❌未引用视频");
             for (Map.Entry<String, String> entry : videoMap.entrySet())
                 deleteFile(bot, event, directory, entry.getKey());
             return;
         }
 
-        throw new NullBotMsgException("[删除视频] ❌无文件名或引用");
+        throw new NullBotException("[删除视频] ❌无文件名或引用");
     }
 
     private void deleteFile(Bot bot, GroupMessageEvent event, String directory, String fileName) {
         if(!fileService.deleteFile(directory, fileName))
-            throw new NullBotMsgException("[删除视频] ❌失败");
+            throw new NullBotException("[删除视频] ❌失败");
         bot.sendGroupMsg(event.getGroupId(), "[删除视频] ⚠️已删除\n- " +
                 StringUtil.truncateFileName(fileName, 12), false);
         log.info("├─[VideoDelete] 视频已删除 - {}", fileName);

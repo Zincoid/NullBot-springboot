@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.WebScreenCapturer;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class PRTSCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.isEmpty())
-            throw new NullBotMsgException("[PRTS] ❌参数不足");
+            throw new NullBotException("[PRTS] ❌参数不足");
 
         String option = params.getFirst();
         String keyword;
@@ -33,7 +33,7 @@ public class PRTSCommand implements Command {
         try {
             if (List.of("语音", "档案", "密录", "悖论").contains(option)) {
                 if (params.size() < 2)
-                    throw new NullBotMsgException("[PRTS] ❌参数不足");
+                    throw new NullBotException("[PRTS] ❌参数不足");
                 keyword = params.get(1);
                 base64 = switch (option)
                 {
@@ -65,7 +65,7 @@ public class PRTSCommand implements Command {
                             List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
                     );
 
-                    default ->  throw new NullBotMsgException("[PRTS] ❌无此操作");
+                    default ->  throw new NullBotException("[PRTS] ❌无此操作");
                 };
             } else {
                 keyword = String.join(" ", params.subList(0, params.size()));
@@ -87,10 +87,10 @@ public class PRTSCommand implements Command {
                 );
             }
 
-        } catch (NullBotMsgException e) {
+        } catch (NullBotException e) {
             throw e;
         } catch (Exception e) {
-            throw new NullBotMsgException("[PRTS] ❌查询失败: " + e.getMessage());
+            throw new NullBotException("[PRTS] ❌查询失败: " + e.getMessage());
         }
 
         String response = MsgUtils.builder().img("base64://" + base64).build();

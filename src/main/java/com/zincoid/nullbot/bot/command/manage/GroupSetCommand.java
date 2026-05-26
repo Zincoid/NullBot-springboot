@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.manage;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -11,7 +12,6 @@ import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatStrategy;
 import com.zincoid.nullbot.core.enums.LimitScope;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import org.springframework.context.annotation.Lazy;
@@ -39,7 +39,7 @@ public class GroupSetCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         try {
-            if (params.isEmpty()) throw new NullBotMsgException("[群设置] ❌参数不足");
+            if (params.isEmpty()) throw new NullBotException("[群设置] ❌参数不足");
             String option = params.getFirst();
             SettingPO setting = BotCtxUtil.getSetting();
 
@@ -50,7 +50,7 @@ public class GroupSetCommand implements Command {
             }
 
             if ("-limit".equals(option)) {
-                if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
+                if (params.size() < 2) throw new NullBotException("[群设置] ❌Limit设置参数不足");
                 String name = params.get(1);
                 String msg;
 
@@ -60,24 +60,24 @@ public class GroupSetCommand implements Command {
                         msg = "限速范围 -> %s".formatted(newLimitScope);
                     }
                     case "cap" -> {
-                        if (params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
+                        if (params.size() < 3) throw new NullBotException("[群设置] ❌Limit设置参数不足");
                         int capacity = Integer.parseInt(params.get(2));
                         setting.setLimitCapacity(capacity);
                         msg = "限速容量 -> %s".formatted(capacity);
                     }
                     case "ref" -> {
-                        if (params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
+                        if (params.size() < 3) throw new NullBotException("[群设置] ❌Limit设置参数不足");
                         int refill = Integer.parseInt(params.get(2));
                         setting.setLimitRefill(refill);
                         msg = "补充数量 -> %s".formatted(refill);
                     }
                     case "itv" -> {
-                        if (params.size() < 3) throw new NullBotMsgException("[群设置] ❌Limit设置参数不足");
+                        if (params.size() < 3) throw new NullBotException("[群设置] ❌Limit设置参数不足");
                         int interval = Integer.parseInt(params.get(2));
                         setting.setLimitInterval(interval);
                         msg = "补充间隔 -> %s".formatted(interval);
                     }
-                    default -> throw new NullBotMsgException("[群设置] ❌无此Limit设置");
+                    default -> throw new NullBotException("[群设置] ❌无此Limit设置");
                 }
 
                 settingService.set(setting);
@@ -90,7 +90,7 @@ public class GroupSetCommand implements Command {
             }
 
             if ("-ai".equals(option)) {
-                if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
+                if (params.size() < 2) throw new NullBotException("[群设置] ❌AI设置参数不足");
                 String name = params.get(1);
                 String msg;
 
@@ -105,7 +105,7 @@ public class GroupSetCommand implements Command {
                         msg = "对话策略 -> %s".formatted(strategy);
                     }
                     case "frq" -> {
-                        if (params.size() < 3) throw new NullBotMsgException("[群设置] ❌AI设置参数不足");
+                        if (params.size() < 3) throw new NullBotException("[群设置] ❌AI设置参数不足");
                         double freq = Double.parseDouble(params.get(2));
                         setting.setReplyFrequency(freq);
                         msg = "发言频率 -> %s".formatted(freq);
@@ -135,7 +135,7 @@ public class GroupSetCommand implements Command {
                         boolean enabled = setting.switchAutoReply();
                         msg = "自动发言 -> %s".formatted(enabled ? "ON" : "OFF");
                     }
-                    default -> throw new NullBotMsgException("[群设置] ❌无此AI设置");
+                    default -> throw new NullBotException("[群设置] ❌无此AI设置");
                 }
 
                 settingService.set(setting);
@@ -147,7 +147,7 @@ public class GroupSetCommand implements Command {
             }
 
             if ("-monitor".equals(option)) {
-                if (params.size() < 2) throw new NullBotMsgException("[群设置] ❌Monitor设置参数不足");
+                if (params.size() < 2) throw new NullBotException("[群设置] ❌Monitor设置参数不足");
                 String name = params.get(1);
                 boolean enabled = switch (name) {
                     case "img" -> setting.switchImageCollect();
@@ -155,7 +155,7 @@ public class GroupSetCommand implements Command {
                     case "key" -> setting.switchKeywordDetect();
                     case "pok" -> setting.switchPokeDetect();
                     case "rcl" -> setting.switchRecallDetect();
-                    default -> throw new NullBotMsgException("[群设置] ❌无此Monitor设置");
+                    default -> throw new NullBotException("[群设置] ❌无此Monitor设置");
                 };
                 settingService.set(setting);
                 bot.sendGroupMsg(event.getGroupId(), "[监听] ✅已切换: %s".formatted(enabled ? "ON" : "OFF"), false);
@@ -164,7 +164,7 @@ public class GroupSetCommand implements Command {
             }
 
             if ("-guess".equals(option)) {
-                if (params.size() < 4) throw new NullBotMsgException("[群设置] ❌Guess设置参数不足");
+                if (params.size() < 4) throw new NullBotException("[群设置] ❌Guess设置参数不足");
                 double cropRatio = Double.parseDouble(params.get(1));
                 double transparentRatio = Double.parseDouble(params.get(2));
                 int padding = Integer.parseInt(params.get(3));
@@ -177,9 +177,9 @@ public class GroupSetCommand implements Command {
                 return;
             }
 
-            throw new NullBotMsgException("[群设置] ❌无此操作类型");
+            throw new NullBotException("[群设置] ❌无此操作类型");
         } catch (NumberFormatException e) {
-            throw new NullBotMsgException("[群设置] ❌参数格式错误");
+            throw new NullBotException("[群设置] ❌参数格式错误");
         }
     }
 

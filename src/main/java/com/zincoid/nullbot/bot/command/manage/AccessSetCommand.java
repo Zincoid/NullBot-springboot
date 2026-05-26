@@ -2,11 +2,11 @@ package com.zincoid.nullbot.bot.command.manage;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.GroupService;
 import com.zincoid.nullbot.core.service.UserService;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,7 @@ public class AccessSetCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.size() < 3)
-            throw new NullBotMsgException("[限权设置] ❌参数不足");
+            throw new NullBotException("[限权设置] ❌参数不足");
 
         long targetId;
         int targetNewAccess;
@@ -33,13 +33,13 @@ public class AccessSetCommand implements Command {
             targetId = Long.parseLong(params.get(1));
             targetNewAccess = Integer.parseInt(params.get(2));
         } catch (NumberFormatException e) {
-            throw new NullBotMsgException("[限权设置] ❌参数格式错误");
+            throw new NullBotException("[限权设置] ❌参数格式错误");
         }
 
         switch (params.get(0))
         {
             case "-GROUP" -> {
-                if (!groupService.exist(targetId)) throw new NullBotMsgException("[限权设置] ❌群聊未注册");
+                if (!groupService.exist(targetId)) throw new NullBotException("[限权设置] ❌群聊未注册");
                 int targetAccess = groupService.getAccess(targetId);
                 int selfAccess = userService.getAccess(event.getUserId());
                 if (selfAccess < 2) {
@@ -59,7 +59,7 @@ public class AccessSetCommand implements Command {
             }
 
             case "-USER" -> {
-                if (!userService.exist(targetId)) throw new NullBotMsgException("[限权设置] ❌用户未注册");
+                if (!userService.exist(targetId)) throw new NullBotException("[限权设置] ❌用户未注册");
                 int targetAccess = userService.getAccess(targetId);
                 int selfAccess = userService.getAccess(event.getUserId());
                 if (targetAccess >= selfAccess) {
@@ -86,7 +86,7 @@ public class AccessSetCommand implements Command {
                 }
             }
 
-            default -> throw new NullBotMsgException("[限权设置] ❌修改选项不存在");
+            default -> throw new NullBotException("[限权设置] ❌修改选项不存在");
         }
     }
 

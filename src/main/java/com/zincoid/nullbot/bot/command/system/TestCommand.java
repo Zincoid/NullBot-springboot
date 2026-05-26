@@ -38,25 +38,25 @@ public class TestCommand implements Command {
         // bot.sendGroupMsg(groupId, msg2, false);
 
         // if (params.size() < 2)
-        //     throw new NullBotMsgException("[测试] ❌参数不足");
+        //     throw new NullBotException("[测试] ❌参数不足");
         // BniMode mode = switch (params.getFirst()) {
         //     case "PS" -> BniMode.PS;
         //     case "GS" -> BniMode.GS;
         //     case "GM" -> BniMode.GM;
-        //     default -> throw new NullBotMsgException("[测试] ❌无此模式");
+        //     default -> throw new NullBotException("[测试] ❌无此模式");
         // };
         // long timeout;
         // try {
         //     timeout = Long.parseLong(params.get(1));
         // } catch (NumberFormatException e) {
-        //     throw new NullBotMsgException("[测试] ❌格式错误");
+        //     throw new NullBotException("[测试] ❌格式错误");
         // }
         // bot.sendGroupMsg(groupId, "[测试] ⏳等待输入中...", false);
         // List<Pair<Long, String>> inputs;
         // try {
         //     inputs = botInputManager.request(mode, mode == BniMode.PS ? userId : groupId, ".*", timeout);
         // } catch (Exception e) {
-        //     throw new NullBotMsgException("[测试] ❌" + e.getMessage());
+        //     throw new NullBotException("[测试] ❌" + e.getMessage());
         // }
         // if (mode != BniMode.GM && inputs.isEmpty()) {
         //     bot.sendGroupMsg(groupId, "[测试] ⚠️输入超时", false);

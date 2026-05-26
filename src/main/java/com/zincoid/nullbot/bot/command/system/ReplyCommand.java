@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class ReplyCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.isEmpty()) throw new NullBotMsgException("[回复] ❌无参数");
+        if (params.isEmpty()) throw new NullBotException("[回复] ❌无参数");
         String message = String.join(" ", params.subList(0, params.size()));
         String content = BotCtxUtil.getSetting().isVoice() ?
                 MsgUtils.builder().voice("base64://" + ttsClient.synthesize(message)).build() : message;
@@ -35,7 +35,7 @@ public class ReplyCommand implements Command {
 
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        if (params.isEmpty()) throw new NullBotMsgException("[回复] ❌无参数");
+        if (params.isEmpty()) throw new NullBotException("[回复] ❌无参数");
         String message = String.join(" ", params.subList(0, params.size()));
         bot.sendPrivateMsg(event.getUserId(), message, false);
         log.info("├─[Reply] 私聊已回复 - {}", message);

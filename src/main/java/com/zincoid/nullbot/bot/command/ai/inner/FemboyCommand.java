@@ -10,7 +10,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.service.FileService;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,7 @@ public class FemboyCommand implements Command {
         String femboyPath = fileStorageProperties.getImagePath() + "/femboy";
         List<FilePO> photos = fileService.search("", femboyPath);
         if (photos.isEmpty())
-            throw new NullBotMsgException("[男娘] ❌暂无图片");
+            throw new NullBotException("[男娘] ❌暂无图片");
         FilePO photo = photos.get(ThreadLocalRandom.current().nextInt(photos.size()));
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(photo.getId()))

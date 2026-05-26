@@ -9,7 +9,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.DataPage;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.service.InventoryService;
 import com.zincoid.nullbot.core.service.UserService;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ public class InventoryCommand implements Command {
             try {
                 p = Integer.parseInt(params.getFirst());
             } catch (NumberFormatException e) {
-                throw new NullBotMsgException("[库存] ❌页码格式错误");
+                throw new NullBotException("[库存] ❌页码格式错误");
             }
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();

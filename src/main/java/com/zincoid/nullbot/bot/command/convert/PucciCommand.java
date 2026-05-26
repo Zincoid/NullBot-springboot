@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.convert;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -10,7 +11,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.util.HtmlTemplateUtil;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +34,7 @@ public class PucciCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         if (params.isEmpty())
-            throw new NullBotMsgException("[普奇] ❌参数不足");
+            throw new NullBotException("[普奇] ❌参数不足");
 
         String base64;
         String tempFilePath = fileStorageProperties.getTempPath();
@@ -55,7 +55,7 @@ public class PucciCommand implements Command {
             base64 = htmlRenderer.renderElement(html, "#wrap");
 
         } catch (Exception e) {
-            throw new NullBotMsgException("[普奇] ❌处理时出错: " + e.getMessage());
+            throw new NullBotException("[普奇] ❌处理时出错: " + e.getMessage());
         }
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);

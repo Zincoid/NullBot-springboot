@@ -7,6 +7,7 @@ import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -14,7 +15,6 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.util.DownloadUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import com.zincoid.nullbot.core.component.render.ImageConverter;
@@ -37,10 +37,10 @@ public class ConvertCommand implements Command {
         Long groupId = event.getGroupId();
 
         if (params.isEmpty())
-            throw new NullBotMsgException("[图像处理] ❌无方法参数");
+            throw new NullBotException("[图像处理] ❌无方法参数");
         String method = params.getFirst();
         if (!List.of("RIP", "PRTS", "InvsPRTS").contains(method))  // 用于减少不必要的图像下载
-            throw new NullBotMsgException("[图像处理] ❌方法不存在");
+            throw new NullBotException("[图像处理] ❌方法不存在");
 
         List<String> urls = new ArrayList<>();
 
@@ -58,7 +58,7 @@ public class ConvertCommand implements Command {
             try {
                 qqNumber = Long.parseLong(params.get(1));
             } catch (NumberFormatException e) {
-                throw new NullBotMsgException("[图像处理] ❌参数格式错误");
+                throw new NullBotException("[图像处理] ❌参数格式错误");
             }
             urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         }else{
@@ -67,7 +67,7 @@ public class ConvertCommand implements Command {
         }
 
         if (urls.isEmpty())
-            throw new NullBotMsgException("[图像处理] ❌无引用图片或ID参数或At消息");
+            throw new NullBotException("[图像处理] ❌无引用图片或ID参数或At消息");
 
         // 开始处理
         String tempPath = fileStorageProperties.getTempPath();
@@ -78,7 +78,7 @@ public class ConvertCommand implements Command {
                 FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "├─ ");
                 downloadedName = fileInfo.getFileName();
             } catch (Exception e) {
-                throw new NullBotMsgException("[图像处理] ❌下载时出错: " + e.getMessage());
+                throw new NullBotException("[图像处理] ❌下载时出错: " + e.getMessage());
             }
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
@@ -87,12 +87,12 @@ public class ConvertCommand implements Command {
                     case "RIP" -> imageConverter.RIP(imagePath);
                     case "PRTS" -> imageConverter.PRTS(imagePath);
                     case "InvsPRTS" -> imageConverter.invsPRTS(imagePath);
-                    default -> throw new NullBotMsgException("[图像处理] ❌方法不存在");
+                    default -> throw new NullBotException("[图像处理] ❌方法不存在");
                 };
-            } catch (NullBotMsgException e) {
+            } catch (NullBotException e) {
                 throw e;
             } catch (Exception e) {
-                throw new NullBotMsgException("[图像处理] ❌处理时出错: " + e.getMessage());
+                throw new NullBotException("[图像处理] ❌处理时出错: " + e.getMessage());
             } finally {
                 FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
             }

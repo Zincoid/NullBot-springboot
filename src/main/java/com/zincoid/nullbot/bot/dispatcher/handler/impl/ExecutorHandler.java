@@ -5,6 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.command.Command;
@@ -13,7 +14,6 @@ import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import com.zincoid.nullbot.bot.exception.NullBotLogException;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +48,7 @@ public class ExecutorHandler implements Handler {
             } else
                 log.warn("  [ExecutorHandler] 不支持的事件类型");
 
-        } catch (NullBotMsgException e) {
+        } catch (NullBotException e) {
             if (groupId != 0L) {
                 bot.sendGroupMsg(groupId, e.getMessage(), false);
                 log.warn("  [ExecutorHandler] 群聊警告: {}", e.getMessage());

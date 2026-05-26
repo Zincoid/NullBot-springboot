@@ -2,13 +2,13 @@ package com.zincoid.nullbot.bot.command.game.multi;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.game.handler.impl.ReversiMatchHandler;
 import com.zincoid.nullbot.core.model.result.GameResult;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,15 +24,15 @@ public class ReversiCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         if (params.size() != 1)
-            throw new NullBotMsgException("[黑白棋] ❌参数数量错误 示例: 黑白棋 D3");
+            throw new NullBotException("[黑白棋] ❌参数数量错误 示例: 黑白棋 D3");
         String pos = params.getFirst().toUpperCase();
         if (!pos.matches("^[A-H][1-8]$"))
-            throw new NullBotMsgException("[黑白棋] ❌坐标格式错误 范围: A1~H8");
+            throw new NullBotException("[黑白棋] ❌坐标格式错误 范围: A1~H8");
 
         GameResult result = reversiMatchHandler.move(event.getUserId(), pos);
 
         if (result.getSuccess()) {
-            if (result.getIsAsync()) throw new NullBotMsgException("[黑白棋] ❌该模式不发送异步消息");
+            if (result.getIsAsync()) throw new NullBotException("[黑白棋] ❌该模式不发送异步消息");
             if (!result.getIsSameGroup())
                 bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
             bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);

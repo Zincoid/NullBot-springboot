@@ -13,7 +13,7 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.bot.interaction.BotInputer;
 import com.zincoid.nullbot.core.model.bot.interaction.BotPageSelector;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +41,7 @@ public class ChatHistoryCommand implements Command {
 
         List<Message> history = qqAiClient.history(BotCtxUtil.getChatId());
         if (history.isEmpty())
-            throw new NullBotMsgException("[聊天历史] ⚠️无对话历史");
+            throw new NullBotException("[聊天历史] ⚠️无对话历史");
 
         BotPageSelector<Message, String> pager = BotPageSelector.builder(
                 bot, groupId, "聊天历史", true,

@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.ai.inner;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -10,7 +11,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.command.ai.ChatCommand;
 import com.zincoid.nullbot.bot.command.ai.PokeReactCommand;
 import com.zincoid.nullbot.bot.dispatcher.handler.impl.PermissionHandler;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.UserService;
 import org.springframework.stereotype.Component;
 
@@ -37,17 +37,17 @@ public class BanChatCommand implements Command {
 
     private void banChat(Bot bot, List<String> params, Long groupId) {
         if (params.size() < 2)
-            throw new NullBotMsgException("[停用AI] ❌参数不足");
+            throw new NullBotException("[停用AI] ❌参数不足");
         long userId;
         int banTime;
         try {
             userId = Long.parseLong(params.get(0));
             banTime = Integer.parseInt(params.get(1));
         } catch (NumberFormatException e) {
-            throw new NullBotMsgException("[停用AI] ❌参数格式错误");
+            throw new NullBotException("[停用AI] ❌参数格式错误");
         }
         if (!userService.exist(userId))
-            throw new NullBotMsgException("[停用AI] ❌用户不存在");
+            throw new NullBotException("[停用AI] ❌用户不存在");
 
         permissionHandler.setUserBan(userId, ChatCommand.class, banTime);
         permissionHandler.setUserBan(userId, PokeReactCommand.class, banTime);

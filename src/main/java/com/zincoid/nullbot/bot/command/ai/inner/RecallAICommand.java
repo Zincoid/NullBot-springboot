@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.ai.inner;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
 import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowChatMemory;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -31,9 +31,9 @@ public class RecallAICommand implements Command {
         if (!params.isEmpty()) {
             try {
                 n = Integer.parseInt(params.getFirst());
-                if(n <= 0) throw new NullBotMsgException("[撤回AI消息] ❌参数非正");
+                if(n <= 0) throw new NullBotException("[撤回AI消息] ❌参数非正");
             } catch (NumberFormatException e) {
-                throw new NullBotMsgException("[撤回AI消息] ❌参数格式错误");
+                throw new NullBotException("[撤回AI消息] ❌参数格式错误");
             }
         }
 

@@ -4,12 +4,12 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.SysMsgManager;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,12 +42,12 @@ public class ForgetCommand implements Command {
 
     private void removeMemory(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
         if (params.isEmpty())
-            throw new NullBotMsgException("[遗忘] ❌参数不足");
+            throw new NullBotException("[遗忘] ❌参数不足");
         int i;
         try {
             i = Integer.parseInt(params.getFirst());
         } catch (NumberFormatException e) {
-            throw new NullBotMsgException("[遗忘] ❌参数格式错误");
+            throw new NullBotException("[遗忘] ❌参数格式错误");
         }
         if (isPrivate) {
             String removed = sysMsgManager.removeLongTermUserMemory(targetId, i);

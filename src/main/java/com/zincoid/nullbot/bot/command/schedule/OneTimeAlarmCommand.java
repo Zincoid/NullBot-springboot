@@ -2,12 +2,12 @@ package com.zincoid.nullbot.bot.command.schedule;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.BotTaskScheduler;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ public class OneTimeAlarmCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         if (params.size() < 3)
-            throw new NullBotMsgException("[一次性闹钟] ❌参数不足");
+            throw new NullBotException("[一次性闹钟] ❌参数不足");
 
         String option = params.get(0);
         String message = params.get(2);
@@ -69,11 +69,11 @@ public class OneTimeAlarmCommand implements Command {
             }
 
         } catch (NumberFormatException e) {
-            throw new NullBotMsgException("[一次性闹钟] ❌参数格式错误");
+            throw new NullBotException("[一次性闹钟] ❌参数格式错误");
         } catch (DateTimeParseException e) {
-            throw new NullBotMsgException("[一次性闹钟] ❌时间格式错误");
+            throw new NullBotException("[一次性闹钟] ❌时间格式错误");
         } catch (Exception e) {
-            throw new NullBotMsgException("[一次性闹钟] ❌" + e.getMessage());
+            throw new NullBotException("[一次性闹钟] ❌" + e.getMessage());
         }
 
         bot.sendGroupMsg(groupId, """

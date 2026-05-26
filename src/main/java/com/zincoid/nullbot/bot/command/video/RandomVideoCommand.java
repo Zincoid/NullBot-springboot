@@ -10,7 +10,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.service.FileService;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,7 @@ public class RandomVideoCommand implements Command {
         String videoPath = fileStorageProperties.getVideoPath() + "/collect";
         List<FilePO> videos = fileService.search("", videoPath);
         if (videos.isEmpty())
-            throw new NullBotMsgException("[随机视频] ❌暂无视频");
+            throw new NullBotException("[随机视频] ❌暂无视频");
         FilePO video = videos.get(ThreadLocalRandom.current().nextInt(videos.size()));
         String response = MsgUtils.builder()
                 .video(ossUrlBuilder.from(video.getId()), "")

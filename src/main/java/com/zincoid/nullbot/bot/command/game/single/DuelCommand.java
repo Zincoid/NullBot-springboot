@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -13,7 +14,6 @@ import com.zincoid.nullbot.core.component.storage.DuelStorage;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.DuelInfo;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.util.Base64Util;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +38,7 @@ public class DuelCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
         Long groupId = event.getGroupId();
         if (duelStorage.getDuel(groupId) != null)
-            throw new NullBotMsgException("[斗蛐蛐] ⚠️已在游戏中");
+            throw new NullBotException("[斗蛐蛐] ⚠️已在游戏中");
 
         try {
             DuelInfo duel = duelStorage.initDuel(groupId);
@@ -79,7 +79,7 @@ public class DuelCommand implements Command {
                 winners = right;
                 losers = left;
             } else
-                throw new NullBotMsgException("[斗蛐蛐] ❌数据异常");
+                throw new NullBotException("[斗蛐蛐] ❌数据异常");
 
             List<String> winnerNames = winners.stream()
                     .map(u -> bot.getStrangerInfo(u, true).getData().getNickname())
@@ -99,7 +99,7 @@ public class DuelCommand implements Command {
             );
 
         } catch (Exception e) {
-            throw new NullBotMsgException("[斗蛐蛐] ❌" + e.getMessage());
+            throw new NullBotException("[斗蛐蛐] ❌" + e.getMessage());
         } finally {
             duelStorage.removeDuel(groupId);
         }

@@ -2,12 +2,12 @@ package com.zincoid.nullbot.bot.command.saying;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.po.SayingPO;
-import com.zincoid.nullbot.bot.exception.NullBotMsgException;
 import com.zincoid.nullbot.core.service.SayingService;
 import org.springframework.stereotype.Component;
 
@@ -31,11 +31,11 @@ public class RandomSayingCommand implements Command {
                 long qqNumber = Long.parseLong(params.getFirst());
                 saying = sayingService.getRandByUserId(qqNumber);
             } catch (NumberFormatException e) {
-                throw new NullBotMsgException("[随机语录] ❌参数格式错误");
+                throw new NullBotException("[随机语录] ❌参数格式错误");
             }
         }
         if (saying == null)
-            throw new NullBotMsgException("[随机语录] ❌暂无用户记录");
+            throw new NullBotException("[随机语录] ❌暂无用户记录");
         bot.sendGroupMsg(event.getGroupId(), saying.toString(), false);
         log.info("├─[RandomSaying] 已发送语录 - No.{}", saying.getId());
     }
