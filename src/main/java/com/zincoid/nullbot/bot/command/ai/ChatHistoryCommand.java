@@ -39,6 +39,7 @@ public class ChatHistoryCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
+
         List<Message> history = qqAiClient.history(BotCtxUtil.getChatId());
         if (history.isEmpty())
             throw new NullBotException("无对话历史");
