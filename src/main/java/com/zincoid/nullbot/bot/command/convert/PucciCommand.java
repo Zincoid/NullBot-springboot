@@ -24,19 +24,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PucciCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
     private final ResourceLoader resourceLoader;
     private final HtmlRenderer htmlRenderer;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
-        String tempFilePath = fileStorageProperties.getTempPath();
 
-        Path htmlPath = resourceLoader
-                .getCached("static/html/pucci.html", tempFilePath + "/html");
-        Path bgPath = resourceLoader
-                .getCached("static/image/pucci.png", tempFilePath + "/image");
+        Path htmlPath = resourceLoader.getCached("static/html/pucci.html");
+        Path bgPath = resourceLoader.getCached("static/image/pucci.png");
         Map<String, String> variables = new HashMap<>();
         Map<String, String> images = new HashMap<>();
 

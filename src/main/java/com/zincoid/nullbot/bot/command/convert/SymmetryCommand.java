@@ -70,7 +70,7 @@ public class SymmetryCommand implements Command {
         }
 
         if (urls.isEmpty())
-            throw new BotWarnException("无引用图片或ID参数或At消息");
+            throw new BotWarnException("无引用图片或ID参数或AT消息");
 
         // 开始处理
         String tempPath = fileStorageProperties.getTempPath();
@@ -81,7 +81,7 @@ public class SymmetryCommand implements Command {
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
-                Path htmlPath = resourceLoader.getCached("static/html/symmetry.html", tempPath + "/html");
+                Path htmlPath = resourceLoader.getCached("static/html/symmetry.html");
                 Map<String, String> variables = new HashMap<>();
                 variables.put("mode", "left");
                 if (!args.isEmpty()) {

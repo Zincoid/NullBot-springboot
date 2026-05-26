@@ -10,7 +10,6 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.util.HtmlTemplateUtil;
 import org.springframework.stereotype.Component;
 
@@ -23,17 +22,14 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ChoyenCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
     private final ResourceLoader resourceLoader;
     private final HtmlRenderer htmlRenderer;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
-        String tempFilePath = fileStorageProperties.getTempPath();
 
-        Path htmlPath = resourceLoader
-                .getCached("static/html/5000choyen.html", tempFilePath + "/html");
+        Path htmlPath = resourceLoader.getCached("static/html/5000choyen.html");
         Map<String, String> variables = new HashMap<>();
         variables.put("topText", args.nextString());
         variables.put("bottomText", args.nextString());
