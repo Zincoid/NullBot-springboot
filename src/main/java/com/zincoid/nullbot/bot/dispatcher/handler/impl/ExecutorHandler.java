@@ -29,7 +29,7 @@ public class ExecutorHandler implements Handler {
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         log.info("└─[ExecutorHandler] 执行开始");
 
-        String commandClassName = command.getClass().getSimpleName();        // 指令类名
+        // String commandClassName = command.getClass().getSimpleName();        // 指令类名
         CommandArgs params = new CommandArgs(event.getCommandParameters());  // 包装参数
         Long groupId = 0L;                                                   // 群组ID - 0 代表私聊
         Long userId = 0L;                                                    // 用户ID - 0 代表群聊
@@ -52,16 +52,16 @@ public class ExecutorHandler implements Handler {
 
         } catch (NullBotException e) {
             log.warn("  [ExecutorHandler] 指令警告: {}", e.getMessage());
-            String message = "[%s] Warn: %s".formatted(commandClassName, e.getMessage());
+            String message = "Warn: %s".formatted(e.getMessage());
             if (groupId != 0L) bot.sendGroupMsg(groupId, message, false);
             if (userId != 0L) bot.sendPrivateMsg(userId, message, false);
 
         } catch (Exception e) {
-            log.error("  [ExecutorHandler] 指令错误: {}", e.getMessage());
-            String message = "[%s] Error: %s".formatted(commandClassName, e.getMessage());
+            log.error("  [ExecutorHandler] 运行出错: {}", e.getMessage());
+            String message = "Error: %s".formatted(e.getMessage());
             if (groupId != 0L) bot.sendGroupMsg(groupId, message, false);
             if (userId != 0L) bot.sendPrivateMsg(userId, message, false);
-            wsSender.broadcast("ERROR", "服务器内部错误: " + e.getMessage());
+            wsSender.broadcast("ERROR", "运行出错: " + e.getMessage());
             throw e;
         }
 
