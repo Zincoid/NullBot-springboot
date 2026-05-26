@@ -50,7 +50,7 @@ public class PUBGCommand implements Command {
                 .img(ossUrlBuilder.from(helps.getFirst().getId()))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("├─[PUBG] 已获取地图 - {}", map);
+        log.info("☑ [PUBG] 地图已获取: {}", map);
     }
 
     @Override
