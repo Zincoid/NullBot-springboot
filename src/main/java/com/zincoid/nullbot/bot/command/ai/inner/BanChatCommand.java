@@ -25,7 +25,6 @@ public class BanChatCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         banChat(bot, event.getGroupId(), event.getUserId(), args.nextInt());
     }
-
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, CommandArgs args) {
         banChat(bot, event.getGroupId(), event.getUserId(), args.nextInt());

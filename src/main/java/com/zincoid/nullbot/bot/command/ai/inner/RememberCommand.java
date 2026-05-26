@@ -14,7 +14,7 @@ import com.zincoid.nullbot.core.component.control.SysMsgManager;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CommandMapping({"0167a25a"})  // 加密 仅供AI调用
+@CommandMapping({"0167a25a"})
 @Component
 @RequiredArgsConstructor
 public class RememberCommand implements Command {
@@ -25,12 +25,10 @@ public class RememberCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         remember(bot, event.getGroupId(), args.nextFullString(), false);
     }
-
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
         remember(bot, event.getUserId(), args.nextFullString(), true);
     }
-
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, CommandArgs args) {
         if (event.getGroupId() != null) {

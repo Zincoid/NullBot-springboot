@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CommandMapping({"1a0d3829"})  // 加密 仅供AI调用
+@CommandMapping({"1a0d3829"})
 @Component
 public class PokeCommand implements Command {
 
@@ -19,12 +19,10 @@ public class PokeCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         poke(bot, event.getGroupId(), args.nextLong(), false);
     }
-
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
         poke(bot, event.getUserId(), args.nextLong(), true);
     }
-
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, CommandArgs args) {
         if (event.getGroupId() != null) {

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
-@CommandMapping({"eb0f8545"})  // 加密 仅供AI调用
+@CommandMapping({"eb0f8545"})
 @Component
 @RequiredArgsConstructor
 public class FemboyCommand implements Command {

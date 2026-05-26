@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Slf4j
-@CommandMapping({"65275d24"})  // 加密 仅供AI调用
+@CommandMapping({"65275d24"})
 @Component
 @RequiredArgsConstructor
 public class MemeCommand implements Command {
@@ -32,12 +32,10 @@ public class MemeCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         meme(bot, event.getGroupId(), false, args.nextString());
     }
-
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
         meme(bot, event.getUserId(), true, args.nextString());
     }
-
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, CommandArgs args) {
         if (event.getGroupId() != null) {

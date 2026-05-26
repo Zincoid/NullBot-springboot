@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Slf4j
-@CommandMapping({"db3fbe2b"})  // 加密 仅供AI调用
+@CommandMapping({"db3fbe2b"})
 @Component
 @RequiredArgsConstructor
 public class RecallAICommand implements Command {

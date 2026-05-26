@@ -10,7 +10,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CommandMapping({"b6713262"})  // 加密 仅供AI调用
+@CommandMapping({"b6713262"})
 @Component
 @RequiredArgsConstructor
 public class RecallUserCommand implements Command {
