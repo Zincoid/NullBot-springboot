@@ -2,14 +2,12 @@ package com.zincoid.nullbot.bot.command.ai.inner;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Slf4j
 @CommandMapping({"b6713262"})  // 加密 仅供AI调用
@@ -18,16 +16,10 @@ import java.util.List;
 public class RecallUserCommand implements Command {
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.isEmpty())
-            throw new NullBotException("[撤回用户消息] ❌参数不足");
-        try {
-            int messageId = Integer.parseInt(params.getFirst());
-            bot.deleteMsg(messageId);
-            log.info("├─[RecallUser] 已撤回用户消息 -> Message Id: {}", messageId);
-        } catch (NumberFormatException e) {
-            throw new NullBotException("[撤回用户消息] ❌参数格式错误");
-        }
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        int messageId = params.nextInt();
+        bot.deleteMsg(messageId);
+        log.info("☑ [RecallUser] 撤回用户消息 -> MessageId: {}", messageId);
     }
 
     @Override
