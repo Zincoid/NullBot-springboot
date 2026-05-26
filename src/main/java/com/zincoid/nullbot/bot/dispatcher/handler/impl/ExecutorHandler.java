@@ -69,11 +69,11 @@ public class ExecutorHandler implements Handler {
             throw e;
 
         } catch (Exception e) {
-            log.error("  [ExecutorHandler] 未知异常: {}", e.getMessage());
+            log.error("  [ExecutorHandler] 错误异常: {}", e.getMessage());
             String message = "❌Error: %s".formatted(e.getMessage());
             if (groupId != 0L) bot.sendGroupMsg(groupId, message, false);
             if (userId != 0L) bot.sendPrivateMsg(userId, message, false);
-            wsSender.broadcast("ERROR", "未知异常: " + e.getMessage());
+            wsSender.broadcast("ERROR", "错误异常: " + e.getMessage());
             throw e;
         }
 

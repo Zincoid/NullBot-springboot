@@ -29,8 +29,6 @@ public class PUBGCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        if (args.isEmpty())
-            throw new BotWarnException("[PUBG] ❌未指定地图");
         String map = switch (args.nextString()) {
             case "艾伦格" -> "Erangel.png";
             case "米拉玛" -> "Miramar.png";
@@ -38,14 +36,11 @@ public class PUBGCommand implements Command {
             case "帝斯顿" -> "Deston.png";
             case "荣都" -> "Rondo.png";
             case "泰戈" -> "Tiger.png";
-            default -> null;
+            default -> throw new BotWarnException("暂不支持");
         };
-        if (map == null)
-            throw new BotWarnException("暂不支持");
         String helpPath = fileStorageProperties.getResourcePath() + "/pubg";
         List<FilePO> helps = fileService.search(map, helpPath);
-        if (helps.isEmpty())
-            throw new BotWarnException("资源缺失");
+        if (helps.isEmpty()) throw new BotWarnException("资源缺失");
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(helps.getFirst().getId()))
                 .build();

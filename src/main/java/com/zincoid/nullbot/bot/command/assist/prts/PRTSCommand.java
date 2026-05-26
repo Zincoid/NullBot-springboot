@@ -27,59 +27,65 @@ public class PRTSCommand implements Command {
         String option = args.getString(0);
         String keyword;
         String base64;
-
         if (List.of("语音", "档案", "密录", "悖论").contains(option)) {
             keyword = args.getFullString(1);
-            base64 = switch (option) {
-                case "语音" -> webScreenCapturer.capture(
-                        "https://prts.wiki/w/" + keyword, 1024, 5120,
-                        List.of("#voice-table-root"),
-                        List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
-                        List.of("a[class*='z-1 float-right select-none']")
-                );
-                case "档案" -> webScreenCapturer.capture(
-                        "https://prts.wiki/w/" + keyword, 1024, 5120,
-                        List.of("//table[.//th//b[contains(text(),'人员档案')]]"),
-                        List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                        List.of("//table[.//th//b[contains(.,'人员档案')]]//button[contains(@class,'mw-collapsible-toggle')]")
-                );
-                case "密录" -> webScreenCapturer.capture(
-                        "https://prts.wiki/w/" + keyword, 1024, 5120,
-                        List.of("//table[.//th//b[contains(text(),'干员密录')]]"),
-                        List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                        List.of("//table[.//th//b[contains(.,'干员密录')]]//button[contains(@class,'mw-collapsible-toggle')]")
-                );
-                case "悖论" -> webScreenCapturer.capture(
-                        "https://prts.wiki/w/" + keyword, 1024, 5120,
-                        List.of("//table[.//th//b[contains(text(),'悖论模拟')]]"),
-                        List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
-                        List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
-                );
-                default -> throw new BotWarnException("无此操作");
-            };
+            base64 = captureOpt(option, keyword);
         } else {
             keyword = args.getFullString(0);
-            base64 = webScreenCapturer.capture(
-                    "https://prts.wiki/w/" + keyword, 1024, 5120,
-                    List.of("#bodyContent"),
-                    List.of(
-                            ".backToTop", "#toc", "#rightToc",
-                            ".music-btn", "#calc", "#equip-selector",
-                            "#干员模型", "#敌人模型", "#spine-root",
-                            "#注释与链接", "#catlinks"
-                    ),
-                    List.of(
-                            // "input[onchange*='switchDisplay第一天赋算法']",
-                            "input[onchange*='switchDisplay第一天赋潜能']",
-                            // "input[onchange*='switchDisplay第二天赋算法']",
-                            "input[onchange*='switchDisplay第二天赋潜能']"
-                    )
-            );
+            base64 = captureAny(keyword);
         }
-
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [PRTS] 资料已查询 - Keyword: {}", keyword);
+    }
+
+    private String captureAny(String keyword) {
+        return webScreenCapturer.capture(
+                "https://prts.wiki/w/" + keyword, 1024, 5120,
+                List.of("#bodyContent"),
+                List.of(
+                        ".backToTop", "#toc", "#rightToc",
+                        ".music-btn", "#calc", "#equip-selector",
+                        "#干员模型", "#敌人模型", "#spine-root",
+                        "#注释与链接", "#catlinks"
+                ),
+                List.of(
+                        // "input[onchange*='switchDisplay第一天赋算法']",
+                        "input[onchange*='switchDisplay第一天赋潜能']",
+                        // "input[onchange*='switchDisplay第二天赋算法']",
+                        "input[onchange*='switchDisplay第二天赋潜能']"
+                )
+        );
+    }
+
+    private String captureOpt(String option, String keyword) {
+        return switch (option) {
+            case "语音" -> webScreenCapturer.capture(
+                    "https://prts.wiki/w/" + keyword, 1024, 5120,
+                    List.of("#voice-table-root"),
+                    List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
+                    List.of("a[class*='z-1 float-right select-none']")
+            );
+            case "档案" -> webScreenCapturer.capture(
+                    "https://prts.wiki/w/" + keyword, 1024, 5120,
+                    List.of("//table[.//th//b[contains(text(),'人员档案')]]"),
+                    List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                    List.of("//table[.//th//b[contains(.,'人员档案')]]//button[contains(@class,'mw-collapsible-toggle')]")
+            );
+            case "密录" -> webScreenCapturer.capture(
+                    "https://prts.wiki/w/" + keyword, 1024, 5120,
+                    List.of("//table[.//th//b[contains(text(),'干员密录')]]"),
+                    List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                    List.of("//table[.//th//b[contains(.,'干员密录')]]//button[contains(@class,'mw-collapsible-toggle')]")
+            );
+            case "悖论" -> webScreenCapturer.capture(
+                    "https://prts.wiki/w/" + keyword, 1024, 5120,
+                    List.of("//table[.//th//b[contains(text(),'悖论模拟')]]"),
+                    List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
+                    List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
+            );
+            default -> throw new BotWarnException("无此操作");
+        };
     }
 
     @Override
