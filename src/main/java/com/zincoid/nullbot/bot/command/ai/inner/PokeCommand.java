@@ -1,6 +1,5 @@
 package com.zincoid.nullbot.bot.command.ai.inner;
 
-import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
@@ -46,11 +45,10 @@ public class PokeCommand implements Command {
         } catch (NumberFormatException e) {
             throw new NullBotMsgException("[对称] ❌参数格式错误");
         }
-        String response = MsgUtils.builder().poke(pokeId).build();
         if (isPrivate) {
-            bot.sendPrivateMsg(targetId, response, false);
+            bot.sendGroupPoke(targetId, pokeId);
         } else {
-            bot.sendGroupMsg(targetId, response, false);
+            bot.sendFriendPoke(targetId, pokeId);
         }
         log.info("├─[Poke] 已戳戳: {}", pokeId);
     }
