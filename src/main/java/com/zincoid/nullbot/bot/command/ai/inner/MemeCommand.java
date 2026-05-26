@@ -6,6 +6,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotOmitException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -48,7 +49,7 @@ public class MemeCommand implements Command {
     private void meme(Bot bot, Long resourceId, boolean isPrivate, String memeName) {
         String memePath = fileStorageProperties.getResourcePath() + "/ai/meme";
         List<FilePO> memes = fileService.search(memeName, memePath);
-
+        if (memes.isEmpty()) throw new BotOmitException("表情未找到");
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(memes.getFirst().getId())).build();
         if (isPrivate) bot.sendPrivateMsg(resourceId, response, false);
