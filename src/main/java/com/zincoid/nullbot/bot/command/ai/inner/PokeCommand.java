@@ -5,12 +5,10 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Slf4j
 @CommandMapping({"1a0d3829"})  // 加密 仅供AI调用
@@ -18,45 +16,32 @@ import java.util.List;
 public class PokeCommand implements Command {
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        poke(bot, params, event.getGroupId(), false);
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        poke(bot, event.getGroupId(), params.nextLong(), false);
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        poke(bot, params, event.getUserId(), true);
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
+        poke(bot, event.getUserId(), params.nextLong(), true);
     }
 
     @Override
-    public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
+    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs params) {
         if (event.getGroupId() != null) {
-            poke(bot, params, event.getGroupId(), false);
+            poke(bot, event.getGroupId(), params.nextLong(), false);
         } else {
-            poke(bot, params, event.getUserId(), true);
+            poke(bot, event.getUserId(), params.nextLong(), true);
         }
     }
 
-    private void poke(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
-        if (params.isEmpty())
-            throw new NullBotException("[戳戳] ❌参数不足");
-        long pokeId;
-        try {
-            pokeId = Long.parseLong(params.getFirst());
-        } catch (NumberFormatException e) {
-            throw new NullBotException("[对称] ❌参数格式错误");
-        }
-        if (isPrivate) {
-            bot.sendFriendPoke(targetId, pokeId);
-        } else {
-            bot.sendGroupPoke(targetId, pokeId);
-        }
-        log.info("├─[Poke] 已戳戳: {}", pokeId);
+    private void poke(Bot bot, Long resourceId, Long targetId, boolean isPrivate) {
+        if (isPrivate) bot.sendFriendPoke(resourceId, targetId);
+        else bot.sendGroupPoke(resourceId, targetId);
+        log.info("☑ [Poke] 已戳戳: {}", targetId);
     }
 
     @Override
     public Integer getAccess() { return 2; }
-
-    // 加密命令 无用户帮助
 
     @Override
     public String getHelpForAI() {
