@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -15,61 +16,48 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @CommandMapping({"Draw", "抽奖"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class DrawCommand implements Command {
 
     private final ItemService itemService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
 
         if (params.isEmpty()) {
             ItemPO item = itemService.drawAndKeepRandom(userId);
-            if (item != null) {
-                bot.sendGroupMsg(groupId, "[抽奖] " + userName + "抽到了...\n" + item, false);
-                log.info("├─[Draw] 已抽取 - {}({}) -> {}", userName, userId, item.getName());
-            } else {
-                bot.sendGroupMsg(groupId, "[抽奖] ❌抽数耗尽或仓库已满", false);
-                log.info("├─[Draw] - {}({}) -> 抽数(单抽)耗尽或仓库已满", userName, userId);
-            }
+            if (item == null)
+                throw new NullBotException("抽数耗尽或仓库已满");
+            bot.sendGroupMsg(groupId, "[抽奖] " + userName + "抽到了...\n" + item, false);
+            log.info("☑ [Draw] 物品已抽取 - {} -> {}", userId, item.getName());
         } else {
-            try {
-                int times = Integer.parseInt(params.getFirst());
-                if(times <= 0) throw new NullBotException("[抽奖] ❌抽取次数非正");
-
-                List<ItemPO> items = new ArrayList<>();
-                boolean stop = false;
-                while (times > 0 && !stop) {
-                    ItemPO item = itemService.drawAndKeepRandom(userId);
-                    if (item != null) {
-                        items.add(item);
-                        times--;
-                    } else {
-                        stop = true;
-                    }
-                }
-                if (!items.isEmpty()) {
-                    items.sort(Comparator.comparing(ItemPO::getRarity).reversed());
-                    StringBuilder sb = new StringBuilder("[抽奖] " + userName + "抽取了" + items.size() + "个物品...\n");
-                    for (ItemPO item : items) {
-                        sb.append("[").append(item.getRarity().getDescription()).append(":").append(item.getName()).append("]");
-                    }
-                    bot.sendGroupMsg(groupId, sb.toString(), false);
-                    log.info("├─[Draw] 已抽取次数 - {}({}) -> {}", userName, userId, items.size());
+            int times = params.nextInt();
+            if (times <= 0) throw new NullBotException("次数非正");
+            List<ItemPO> items = new ArrayList<>();
+            boolean stop = false;
+            while (times > 0 && !stop) {
+                ItemPO item = itemService.drawAndKeepRandom(userId);
+                if (item != null) {
+                    items.add(item);
+                    times--;
                 } else {
-                    bot.sendGroupMsg(groupId, "[抽奖] ❌抽数耗尽或仓库已满", false);
-                    log.info("├─[Draw] - {}({}) -> 抽数(多抽)耗尽或仓库已满", userName, userId);
+                    stop = true;
                 }
-            } catch (NumberFormatException e) {
-                bot.sendGroupMsg(groupId, "[抽奖] ❌参数格式错误", false);
-                log.info("├─[Draw] 参数格式错误");
             }
+            if (items.isEmpty())
+                throw new NullBotException("抽数耗尽或仓库已满");
+            items.sort(Comparator.comparing(ItemPO::getRarity).reversed());
+            StringBuilder sb = new StringBuilder("[抽奖] " + userName + "抽取了" + items.size() + "个物品...\n");
+            for (ItemPO item : items)
+                sb.append("[").append(item.getRarity().getDescription()).append(":").append(item.getName()).append("]");
+            bot.sendGroupMsg(groupId, sb.toString(), false);
+            log.info("☑ [Draw] 物品已抽取 - {} -> {}次", userId, items.size());
         }
     }
 
