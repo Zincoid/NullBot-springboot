@@ -72,8 +72,6 @@ public class VideoGetCommand implements Command {
         while (pager.input(botInputManager, WAIT_TIMEOUT)) {
             log.info("☑ [VideoGet] 已操作分页器");
         }
-        // BotInputer in = new BotInputer(userId).timeout(WAIT_TIMEOUT);
-        // pager.start(in);
     }
 
     private void sendVideo(Bot bot, Long groupId, FilePO video) {

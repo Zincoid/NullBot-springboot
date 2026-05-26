@@ -3,18 +3,19 @@ package com.zincoid.nullbot.bot.command.ai;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
 import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
+import com.zincoid.nullbot.core.enums.Emoji;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.bot.interaction.BotInputer;
 import com.zincoid.nullbot.core.model.bot.interaction.BotPageSelector;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -41,21 +42,16 @@ public class ChatHistoryCommand implements Command {
 
         List<Message> history = qqAiClient.history(BotCtxUtil.getChatId());
         if (history.isEmpty())
-            throw new BotWarnException("无对话历史");
+            throw new BotInfoException(Emoji.WARN, "暂无历史");
 
         List<String> strings = history.stream().map(msg -> {
-                    if (msg instanceof QQMessage qMsg) {
-                        return qMsg.getRole() == Role.USER ?
-                                "%s(%s): %s".formatted(
-                                        qMsg.getUserName(),
-                                        qMsg.getUserId(),
-                                        qMsg.getContent()
-                                ) :
-                                "Null: %s".formatted(msg.getContent());
-                    } else if (msg instanceof BaseMessage bMsg) {
+                    if (msg instanceof QQMessage qMsg)
+                        return qMsg.getRole() == Role.USER
+                                ? qMsg.getUserName() + ": " + qMsg.getContent()
+                                : "Null: " + msg.getContent();
+                    if (msg instanceof BaseMessage bMsg)
                         return bMsg.getRole() == Role.ASSISTANT ?
                                 "Null: [ToolCalls]" : "Tool: [Results]";
-                    }
                     return "未知类型消息";
                 }
         ).toList();
@@ -64,7 +60,7 @@ public class ChatHistoryCommand implements Command {
                 bot, groupId, "聊天历史", true,
                 history, strings, this::sendInfo
         ).userId(userId).size(PAGE_SIZE).current(Integer.MAX_VALUE).build();
-        pager.start(new BotInputer(userId).timeout(WAIT_TIMEOUT));  // 方案2
+        pager.start(new BotInputer(userId).timeout(WAIT_TIMEOUT));  // 新方案
     }
 
     private void sendInfo(Bot bot, Long groupId, Message message) {

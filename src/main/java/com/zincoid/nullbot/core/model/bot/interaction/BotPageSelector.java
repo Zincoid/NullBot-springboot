@@ -1,7 +1,6 @@
 package com.zincoid.nullbot.core.model.bot.interaction;
 
 import com.mikuac.shiro.core.Bot;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -104,7 +103,7 @@ public class BotPageSelector<K, V> {
     public void start(BotInputer inputer) {
         init();
         while (input(inputer)) {
-            log.info("├─[BotPageSelector] 已操作{}分页器", title);
+            log.info("▽ [BotPageSelector] 已操作{}分页器", title);
         }
     }
 
@@ -113,8 +112,10 @@ public class BotPageSelector<K, V> {
         inputer.setPattern("[1-9]\\d*|(?i)up|down|end");
         inputer.setCoverable(false);
         List<Pair<Long, String>> inputs = inputer.next();
-        if (inputs.isEmpty())
-            throw new BotWarnException("[%s] ⌛️输入超时".formatted(title));
+        if (inputs.isEmpty()) {
+            bot.sendGroupMsg(groupId, "⚠️查询结束", false);
+            return false;
+        }
         return input(inputs.getFirst().getRight().toUpperCase());
     }
 
@@ -123,7 +124,7 @@ public class BotPageSelector<K, V> {
     public void start(BotInputManager manager) {
         init();
         while (input(manager)) {
-            log.info("├─[BotPageSelector] 已操作{}分页器", title);
+            log.info("▽ [BotPageSelector] 已操作{}分页器", title);
         }
     }
 
@@ -133,7 +134,7 @@ public class BotPageSelector<K, V> {
 
     public boolean input(BotInputManager manager, int timeout) {
         if (userId == null)
-            throw new NullPointerException("BotPageSelector未指定UserId");
+            throw new NullPointerException("选择器未设置用户信息");
         return input(manager, userId, timeout);
     }
 
@@ -144,8 +145,10 @@ public class BotPageSelector<K, V> {
     public boolean input(BotInputManager manager, Long userId, int timeout) {
         List<Pair<Long, String>> inputs = manager
                 .request(BniMode.PS, userId, "[1-9]\\d*|(?i)up|down|end", timeout);
-        if (inputs.isEmpty())
-            throw new BotWarnException("[%s] ⌛️输入超时".formatted(title));
+        if (inputs.isEmpty()) {
+            bot.sendGroupMsg(groupId, "⚠️查询结束", false);
+            return false;
+        }
         return input(inputs.getFirst().getRight().toUpperCase());
     }
 
@@ -157,14 +160,7 @@ public class BotPageSelector<K, V> {
             case "UP" -> prev();
             case "DOWN" -> next();
             case "END" -> end();
-            default -> {
-                try {
-                    yield select(Integer.parseInt(cmd));
-                } catch (NumberFormatException e) {
-                    bot.sendGroupMsg(groupId, "[%s] ❌格式错误".formatted(title), false);
-                    yield true;
-                }
-            }
+            default -> select(Integer.parseInt(cmd));
         };
     }
 
@@ -193,7 +189,7 @@ public class BotPageSelector<K, V> {
     }
 
     private boolean end() {
-        bot.sendGroupMsg(groupId, "[%s] ⛔️查询终止".formatted(title), false);
+        bot.sendGroupMsg(groupId, "⛔️查询终止", false);
         return false;
     }
 
@@ -214,10 +210,7 @@ public class BotPageSelector<K, V> {
     }
 
     private boolean select(int i) {
-        if (i < 1 || i > total) {
-            bot.sendGroupMsg(groupId, "[%s] ❌索引越界".formatted(title), false);
-            return true;
-        }
+        i = Math.max(1, Math.min(i, total));
         action.accept(bot, groupId, keys.get(i - 1));
         return continuous;
     }

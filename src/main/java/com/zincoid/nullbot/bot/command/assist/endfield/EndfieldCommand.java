@@ -95,8 +95,6 @@ public class EndfieldCommand implements Command {
                 this::sendResource
         ).userId(userId).info(info).size(PAGE_SIZE).build();
 
-        // BotInputer in = new BotInputer(userId).timeout(WAIT_TIMEOUT);
-        // pager.start(in);
         pager.init();
         while (pager.input(botInputManager, WAIT_TIMEOUT)) {
             log.info("☑ [Endfield] 已操作分页器");
