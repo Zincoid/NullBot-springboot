@@ -2,13 +2,11 @@ package com.zincoid.nullbot.bot.command.ai.inner;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Slf4j
 @CommandMapping({"4ed1314d"})  // 加密 仅供AI调用
@@ -16,26 +14,15 @@ import java.util.List;
 public class SendPrivateMsgCommand implements Command {
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.size() < 2)
-            throw new NullBotException("[私信] ❌参数不足");
-
-        long qqNumber;
-        try {
-            qqNumber = Long.parseLong(params.getFirst());
-        } catch (NumberFormatException e) {
-            throw new NullBotException("[私信] ❌参数格式错误");
-        }
-
-        String message = String.join(" ", params.subList(1, params.size()));  // 拼接信息
-        bot.sendPrivateMsg(qqNumber, message, false);
-        log.info("├─[SendPrivateMsg] 私信已发送 - {} -> {}", qqNumber, message);
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        long targetId = params.nextLong();
+        String message = params.nextRestString();
+        bot.sendPrivateMsg(targetId, message, false);
+        log.info("☑ [SendPrivateMsg] 私信已发送 - {} <- {}", targetId, message);
     }
 
     @Override
     public Integer getAccess() { return 2; }
-
-    // 加密命令 无用户帮助
 
     @Override
     public String getHelpForAI() {
