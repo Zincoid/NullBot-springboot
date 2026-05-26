@@ -5,6 +5,7 @@ import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,22 +21,21 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @CommandMapping({"ImageDel", "删除图片"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class ImageDeleteCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         String directory = fileStorageProperties.getImagePath() + "/collect";
         ArrayMsg reply = event.getArrayMsg().getFirst();
-
         if (!params.isEmpty()) {
-            deleteFile(bot, event, directory, params.getFirst());
+            deleteFile(bot, event, directory, params.nextFullString());
             return;
         }
         if (reply.getType() == MsgTypeEnum.reply) {
@@ -43,27 +43,26 @@ public class ImageDeleteCommand implements Command {
             Map<String, String> imageMap = MsgParseUtil
                     .extractImgMap(replyMsg.getRawMessage());
             if (imageMap.isEmpty())
-                throw new NullBotException("[删除图片] ❌未引用图片");
+                throw new NullBotException("未引用图片");
             for (Map.Entry<String, String> entry : imageMap.entrySet()) {
-                String originName = entry.getKey();  // QQ图片信息后缀全是jpg
+                String originName = entry.getKey();  // QQ 图片信息后缀全是 JPG
                 String name = originName.substring(0, originName.lastIndexOf("."));
                 List<FilePO> realFiles = fileService.search(name, directory);
                 if (realFiles.size() != 1)
-                    throw new NullBotException("[删除图片] ❌数据异常");
+                    throw new NullBotException("数据异常");
                 deleteFile(bot, event, directory, realFiles.getFirst().getFileName());
             }
             return;
         }
-
-        throw new NullBotException("[删除图片] ❌无文件名或引用");
+        throw new NullBotException("无文件名或引用");
     }
 
     private void deleteFile(Bot bot, GroupMessageEvent event, String directory, String fileName) {
         if (!fileService.deleteFile(directory, fileName))
-            throw new NullBotException("[删除图片] ❌失败");
+            throw new NullBotException("文件服务删除失败");
         bot.sendGroupMsg(event.getGroupId(), "[删除图片] ⚠️已删除\n- " +
                 StringUtil.truncateFileName(fileName, 12), false);
-        log.info("├─[ImageDelete] 图片已删除 - {}", fileName);
+        log.info("☑ [ImageDelete] 图片已删除: {}", fileName);
     }
 
     @Override
