@@ -5,6 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +14,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @CommandMapping({"Chat", "对话"})
 @Component
@@ -30,8 +29,8 @@ public class ChatCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        QQMessage message = QQMessage.user(String.join(" ", params))
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        QQMessage message = QQMessage.user(params.nextRestString())
                 .with(event.getGroupId(), event.getUserId(), event.getSender().getNickname())
                 .id(event.getMessageId());
         String response = qqAiClient.chat(message);
@@ -48,16 +47,16 @@ public class ChatCommand implements Command {
             );
             break;
         }
-        log.info("├─[Chat] 群聊已回复: {}", response);
+        log.info("☑ [Chat] 群聊已回复: {}", response);
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        QQMessage message = QQMessage.user(String.join(" ", params))
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
+        QQMessage message = QQMessage.user(params.nextRestString())
                 .with(event.getUserId(), event.getPrivateSender().getNickname())
                 .id(event.getMessageId());
         String response = qqAiClient.chat(message);
-        log.info("├─[Chat] 私聊已回复: {}", response);
+        log.info("☑ [Chat] 私聊已回复: {}", response);
     }
 
     @Override
