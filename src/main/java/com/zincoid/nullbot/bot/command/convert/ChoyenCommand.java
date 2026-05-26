@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.convert;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -10,47 +11,39 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.util.HtmlTemplateUtil;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 import java.util.*;
 
+@Slf4j
 @CommandMapping({"Choyen", "5000兆"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class ChoyenCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
-
     private final ResourceLoader resourceLoader;
     private final HtmlRenderer htmlRenderer;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws Exception {
         Long groupId = event.getGroupId();
-        if (params.size() < 2)
-            throw new NullBotException("[5000兆] ❌需要两个参数");
-
-        String base64;
         String tempFilePath = fileStorageProperties.getTempPath();
-        try {
-            Path htmlPath = resourceLoader.getCached("static/html/5000choyen.html", tempFilePath + "/html");
-            Map<String, String> variables = new HashMap<>();
-            variables.put("topText", params.get(0));
-            variables.put("bottomText", params.get(1));
-            String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
-            html = HtmlTemplateUtil.replaceVariables(html, variables);
-            base64 = htmlRenderer.renderElement(html, "#templateContainer");
-
-        } catch (Exception e) {
-            throw new NullBotException("[5000兆] ❌处理时出错: " + e.getMessage());
-        }
+        Path htmlPath = resourceLoader
+                .getCached("static/html/5000choyen.html", tempFilePath + "/html");
+        Map<String, String> variables = new HashMap<>();
+        variables.put("topText", params.nextString());
+        variables.put("bottomText", params.nextString());
+        String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+        String base64 = htmlRenderer.renderElement(
+                HtmlTemplateUtil.replaceVariables(html, variables),
+                "#templateContainer"
+        );
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);
-        log.info("├─[Choyen] 处理完成 - {} {}", params.get(0), params.get(1));
+        log.info("☑ [Choyen] 图像处理已完成");
     }
 
     @Override
