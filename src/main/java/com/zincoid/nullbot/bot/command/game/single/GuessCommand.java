@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,6 @@ import com.zincoid.nullbot.core.component.storage.GuessStorage;
 import com.zincoid.nullbot.core.model.information.GuessInfo;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.core.service.SettingService;
 import com.zincoid.nullbot.core.service.UserService;
 import com.zincoid.nullbot.core.util.Base64Util;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
@@ -31,34 +31,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GuessCommand implements Command {
 
-    private final BotInputManager botInputManager;
-    private final GuessStorage guessStorage;
-    private final SettingService settingService;
-    private final UserService userService;
-
     private static final int WAIT_TIMEOUT = 99;  // 等待超时时间 (单位: Second)
     private static final int MAX_RETRIES = 10;  // 最大回答次数
     private static final int MAX_CROP_ATTEMPTS = 100;  // 切图尝试限制
 
-    @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) throws Exception {
-        Long groupId = event.getGroupId();
-        if (params.isEmpty())
-            throw new NullBotException("[猜角色] ❌参数不足");
+    private final BotInputManager botInputManager;
+    private final GuessStorage guessStorage;
+    private final UserService userService;
 
-        if ("-f".equals(params.getFirst())) {
+    @Override
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws Exception {
+        Long groupId = event.getGroupId();
+
+        if ("-f".equals(params.getString(0))) {
             if (guessStorage.getGuess(groupId) == null)
-                throw new NullBotException("[猜角色] ❌未在游戏中");
+                throw new NullBotException("未在游戏中");
             botInputManager.cancelWait(BniMode.GS, groupId);
-            log.info("├─[Guess] 群聊 {} 放弃猜测", groupId);
+            log.info("☑ [Guess] 群聊 {} 放弃猜测", groupId);
             return;
         }
 
         if (guessStorage.getGuess(groupId) != null)
-            throw new NullBotException("[猜角色] ⚠️已在游戏中");
+            throw new NullBotException("已在游戏中");
 
         try {
-            GuessInfo guess = guessStorage.initGuess(groupId, params.getFirst());
+            GuessInfo guess = guessStorage.initGuess(groupId, params.nextString());
             SettingPO setting = BotCtxUtil.getSetting();
 
             String start = MsgUtils.builder()
@@ -71,7 +68,7 @@ public class GuessCommand implements Command {
                     .text("注: 请发送\"#内容\"")
                     .build();
             bot.sendGroupMsg(groupId, start, false);
-            log.info("├─[Guess] 群聊 {} 初始化猜谜 -> {}", groupId, guess.getName());
+            log.info("☑ [Guess] 群聊 {} 初始化猜谜 -> {}", groupId, guess.getName());
 
             while (guess.getTimes() < MAX_RETRIES) {
                 guessStorage.increaseTimes(groupId);
@@ -86,7 +83,7 @@ public class GuessCommand implements Command {
                             .img("base64://" + Base64Util.from(guess.getPath()))
                             .build();
                     bot.sendGroupMsg(groupId, end, false);
-                    log.info("├─[Guess] 群聊 {} 已结束", groupId);
+                    log.info("☑ [Guess] 群聊 {} 已结束", groupId);
                     return;
                 }
 
@@ -111,11 +108,11 @@ public class GuessCommand implements Command {
                             .img("base64://" + Base64Util.from(guess.getPath()))
                             .build();
                     bot.sendGroupMsg(groupId, correct, false);
-                    log.info("├─[Guess] 用户 {} 猜测正确", answererId);
+                    log.info("☑ [Guess] 用户 {} 猜测正确", answererId);
                     return;
                 } else {
                     bot.sendGroupMsg(groupId, "[CQ:at,qq=%s] 猜错啦！".formatted(answererId), false);
-                    log.info("├─[Guess] 用户 {} 猜测错误", answererId);
+                    log.info("☑ [Guess] 用户 {} 猜测错误", answererId);
                 }
             }
 
@@ -126,7 +123,7 @@ public class GuessCommand implements Command {
                     .img("base64://" + Base64Util.from(guess.getPath()))
                     .build();
             bot.sendGroupMsg(groupId, fail, false);
-            log.info("├─[Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
+            log.info("☑ [Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
 
         } catch (Exception e) {
             throw new NullBotException("[猜角色] ❌" + e.getMessage());
