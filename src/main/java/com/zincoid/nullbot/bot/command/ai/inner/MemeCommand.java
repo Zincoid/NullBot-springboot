@@ -48,13 +48,13 @@ public class MemeCommand implements Command {
         }
     }
 
-    private void meme(Bot bot, Long targetId, boolean isPrivate, String memeName) {
+    private void meme(Bot bot, Long resourceId, boolean isPrivate, String memeName) {
         String memePath = fileStorageProperties.getResourcePath() + "/ai/meme";
         List<FilePO> memes = fileService.search(memeName, memePath);
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(memes.getFirst().getId())).build();
-        if (isPrivate) bot.sendPrivateMsg(targetId, response, false);
-        else bot.sendGroupMsg(targetId, response, false);
+        if (isPrivate) bot.sendPrivateMsg(resourceId, response, false);
+        else bot.sendGroupMsg(resourceId, response, false);
         log.info("☑ [Meme] 已发送表情: {}", memeName);
     }
 
