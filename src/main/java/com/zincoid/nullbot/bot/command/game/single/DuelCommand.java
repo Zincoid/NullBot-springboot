@@ -29,11 +29,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DuelCommand implements Command {
 
+    private static final int SELECTION_TIME = 30;  // 抉择时间 (单位: Second)
+
     private final FileStorageProperties fileStorageProperties;
     private final DuelStorage duelStorage;
     private final BotInputManager botInputManager;
-
-    private static final int SELECTION_TIME = 30;  // 抉择时间 (单位: Second)
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
