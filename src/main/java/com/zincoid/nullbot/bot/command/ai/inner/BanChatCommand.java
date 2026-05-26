@@ -51,8 +51,6 @@ public class BanChatCommand implements Command {
     @Override
     public Integer getAccess() { return 2; }
 
-    // 加密命令 无用户帮助
-
     @Override
     public String getHelpForAI() {
         return """
