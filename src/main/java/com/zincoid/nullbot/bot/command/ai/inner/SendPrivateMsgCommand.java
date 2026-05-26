@@ -9,7 +9,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CommandMapping({"4ed1314d"})  // 加密 仅供AI调用
+@CommandMapping({"4ed1314d"})
 @Component
 public class SendPrivateMsgCommand implements Command {
 
