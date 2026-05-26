@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.saying;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,33 +12,26 @@ import com.zincoid.nullbot.core.model.data.po.SayingPO;
 import com.zincoid.nullbot.core.service.SayingService;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"RandomSaying", "Saying", "saying", "say", "随机语录", "语录"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class RandomSayingCommand implements Command {
 
     private final SayingService sayingService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         SayingPO saying;
         if (params.isEmpty()) {
             saying = sayingService.getRand();
         } else {
-            try {
-                long qqNumber = Long.parseLong(params.getFirst());
-                saying = sayingService.getRandByUserId(qqNumber);
-            } catch (NumberFormatException e) {
-                throw new NullBotException("[随机语录] ❌参数格式错误");
-            }
+            saying = sayingService.getRandByUserId(params.nextLong());
         }
         if (saying == null)
-            throw new NullBotException("[随机语录] ❌暂无用户记录");
+            throw new NullBotException("暂无用户记录");
         bot.sendGroupMsg(event.getGroupId(), saying.toString(), false);
-        log.info("├─[RandomSaying] 已发送语录 - No.{}", saying.getId());
+        log.info("☑ [RandomSaying] 语录已发送 -> No.{}", saying.getId());
     }
 
     @Override

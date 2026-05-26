@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.recall;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowChatMemory;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
@@ -9,22 +10,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @CommandMapping({"RecallReact"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class RecallReactCommand implements Command {
 
     private final MsgWindowChatMemory msgWindowChatMemory;
 
     @Override
-    public void execute(Bot bot, GroupMsgDeleteNoticeEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMsgDeleteNoticeEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         Long operatorId = event.getOperatorId();
@@ -46,16 +46,13 @@ public class RecallReactCommand implements Command {
                         %s(%s)撤回了%s(%s)的消息:
                         %s""".formatted(operatorName, operatorId, userName, userId, message.getContent()), false);
             }
-            log.info("├─[RecallReact] 已重发撤回消息 - {}", message.getContent());
+            log.info("☑ [RecallReact] 撤回消息已重发: {}", message.getContent());
             return;
         }
 
-        throw new NullBotException("[撤回反馈] ❌该消息已清理");
+        // throw new NullBotException("该消息已清理");
     }
 
-    // 仅校验群限权
     @Override
-    public Integer getAccess() { return -1; }
-
-    // 特殊命令 无帮助
+    public Integer getAccess() { return -1; }  // 仅校验群限权
 }
