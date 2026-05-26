@@ -45,7 +45,8 @@ public class ConvertCommand implements Command {
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
             Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
-        } else if (params.size() > 1) {
+        }
+        if (params.size() > 1) {
             // ID 收集
             long qqNumber = params.nextLong();
             urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
@@ -56,7 +57,7 @@ public class ConvertCommand implements Command {
         }
 
         if (urls.isEmpty())
-            throw new NullBotException("[图像处理] ❌无引用图片或ID参数或AT消息");
+            throw new NullBotException("无引用图片或ID参数或AT消息");
 
         String tempPath = fileStorageProperties.getTempPath();
         for (String url : urls) {

@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.convert;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -16,50 +16,43 @@ import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @CommandMapping({"Pucci", "普奇"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class PucciCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
-
     private final ResourceLoader resourceLoader;
     private final HtmlRenderer htmlRenderer;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws Exception {
         Long groupId = event.getGroupId();
-        if (params.isEmpty())
-            throw new NullBotException("[普奇] ❌参数不足");
-
-        String base64;
         String tempFilePath = fileStorageProperties.getTempPath();
-        try {
-            Path htmlPath = resourceLoader.getCached("static/html/pucci.html", tempFilePath + "/html");
-            Path bgPath = resourceLoader.getCached("static/image/pucci.png", tempFilePath + "/image");
-            Map<String, String> variables = new HashMap<>();
-            Map<String, String> images = new HashMap<>();
 
-            variables.put("text1", "普奇！！回答我！");
-            variables.put("text2", "为什么你要加速时间！！");
-            variables.put("text3", params.getFirst());
-            images.put("background", bgPath.toAbsolutePath().toString());
+        Path htmlPath = resourceLoader
+                .getCached("static/html/pucci.html", tempFilePath + "/html");
+        Path bgPath = resourceLoader
+                .getCached("static/image/pucci.png", tempFilePath + "/image");
+        Map<String, String> variables = new HashMap<>();
+        Map<String, String> images = new HashMap<>();
 
-            String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
-            html = HtmlTemplateUtil.replaceVariables(html, variables);
-            html = HtmlTemplateUtil.replaceImages(html, images);
-            base64 = htmlRenderer.renderElement(html, "#wrap");
+        variables.put("text1", "普奇！！回答我！");
+        variables.put("text2", "为什么你要加速时间！！");
+        variables.put("text3", params.nextString());
+        images.put("background", bgPath.toAbsolutePath().toString());
 
-        } catch (Exception e) {
-            throw new NullBotException("[普奇] ❌处理时出错: " + e.getMessage());
-        }
+        String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+        html = HtmlTemplateUtil.replaceVariables(html, variables);
+        html = HtmlTemplateUtil.replaceImages(html, images);
+        String base64 = htmlRenderer.renderElement(html, "#wrap");
+
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);
-        log.info("├─[Pucci] 处理完成 - {}", params.getFirst());
+        log.info("☑ [Pucci] 图像处理已完成");
     }
 
     @Override

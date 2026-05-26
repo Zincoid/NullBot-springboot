@@ -31,16 +31,19 @@ public class ChoyenCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws Exception {
         Long groupId = event.getGroupId();
         String tempFilePath = fileStorageProperties.getTempPath();
+
         Path htmlPath = resourceLoader
                 .getCached("static/html/5000choyen.html", tempFilePath + "/html");
         Map<String, String> variables = new HashMap<>();
         variables.put("topText", params.nextString());
         variables.put("bottomText", params.nextString());
+
         String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
         String base64 = htmlRenderer.renderElement(
                 HtmlTemplateUtil.replaceVariables(html, variables),
                 "#templateContainer"
         );
+
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);
         log.info("☑ [Choyen] 图像处理已完成");

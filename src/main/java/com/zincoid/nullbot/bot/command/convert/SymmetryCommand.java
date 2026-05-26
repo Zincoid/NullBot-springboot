@@ -7,6 +7,7 @@ import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,67 +27,57 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
+@Slf4j
 @CommandMapping({"Symmetry", "对称"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class SymmetryCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
-
     private final ResourceLoader resourceLoader;
     private final HtmlRenderer htmlRenderer;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws Exception {
         Long groupId = event.getGroupId();
+        ArrayMsg reply = event.getArrayMsg().getFirst();
         List<String> urls = new ArrayList<>();
 
-        // 引用收集
-        ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() == MsgTypeEnum.reply) {
+            // 引用收集
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
             Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
         }
-
-        // ID 收集 AT 收集
         if (!params.isEmpty()) {
-            try {
-                if (List.of("左", "右", "上", "下").contains(params.getFirst())) {
-                    if (params.size() > 1) {
-                        long qqNumber = Long.parseLong(params.get(1));
-                        urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
-                    } else {
-                        List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
-                        for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
-                    }
-                } else {
-                    long qqNumber = Long.parseLong(params.get(0));
+            // ID 收集
+            if (List.of("左", "右", "上", "下").contains(params.getString(0))) {
+                if (params.size() > 1) {
+                    long qqNumber = params.getLong(1);
                     urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
+                } else {
+                    List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
+                    for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
                 }
-            } catch (NumberFormatException e) {
-                throw new NullBotException("[对称] ❌参数格式错误");
+            } else {
+                long qqNumber = params.getLong(0);
+                urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
             }
         } else {
+            // AT 收集
             List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
             for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
         }
 
         if (urls.isEmpty())
-            throw new NullBotException("[对称] ❌无引用图片或ID参数或At消息");
+            throw new NullBotException("无引用图片或ID参数或At消息");
 
         // 开始处理
         String tempPath = fileStorageProperties.getTempPath();
         for (String url : urls) {
             String tempName = UUID.randomUUID().toString();
-            String downloadedName;
-            try {
-                FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "├─ ");
-                downloadedName = fileInfo.getFileName();
-            } catch (Exception e) {
-                throw new NullBotException("[对称] ❌下载时出错: " + e.getMessage());
-            }
+            FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName);
+            String downloadedName = fileInfo.getFileName();
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
@@ -94,7 +85,7 @@ public class SymmetryCommand implements Command {
                 Map<String, String> variables = new HashMap<>();
                 variables.put("mode", "left");
                 if (!params.isEmpty()) {
-                    switch (params.getFirst()) {
+                    switch (params.getString(0)) {
                         case "左" -> variables.put("mode", "left");
                         case "右" -> variables.put("mode", "right");
                         case "上" -> variables.put("mode", "top");
@@ -107,17 +98,12 @@ public class SymmetryCommand implements Command {
                 html = HtmlTemplateUtil.replaceVariables(html, variables);
                 html = HtmlTemplateUtil.replaceImages(html, images);
                 base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
-
-            } catch (NullBotException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new NullBotException("[对称] ❌处理时出错: " + e.getMessage());
             } finally {
                 FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
             }
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);
-            log.info("├─[Symmetry] 处理完成 - {}", downloadedName);
+            log.info("☑ [Symmetry] 图像处理已完成");
         }
     }
 
