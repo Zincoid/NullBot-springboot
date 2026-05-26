@@ -4,7 +4,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -14,11 +14,9 @@ import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.util.Base64Util;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"Help", "help", "帮助"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class HelpCommand implements Command {
 
@@ -26,13 +24,13 @@ public class HelpCommand implements Command {
     private final ResourceLoader resourceLoader;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         bot.sendGroupMsg(event.getGroupId(), buildHelpMsg(), false);
-        log.info("├─[Help] 已获取群聊帮助");
+        log.info("☑ [Help] 群聊帮助已获取");
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) throws Exception {
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) throws Exception {
         bot.sendPrivateMsg(event.getUserId(), """
                 [ ====== 可用指令 ====== ]
                 1. Help  帮助
@@ -43,18 +41,14 @@ public class HelpCommand implements Command {
                 - 参数: [-synth] [文本]
                 
                 注: 私聊目前仅实现AI聊天及以上指令且AI永久处于无验证/无限速/非防注入/非语音/指令模式下""", true);
-        log.info("├─[Help] 已获取私聊帮助");
+        log.info("☑ [Help] 私聊帮助已获取");
     }
 
     private String buildHelpMsg() {
-        try {
-            String helpPath = resourceLoader
-                    .getCached("static/help/help.jpg", fileStorageProperties.getTempPath())
-                    .toAbsolutePath().toString();
-            return MsgUtils.builder().img("base64://" + Base64Util.from(helpPath)).build();
-        } catch (Exception e) {
-            throw new NullBotException("[帮助] ❌资源获取失败");
-        }
+        String helpPath = resourceLoader
+                .getCached("static/help/help.jpg", fileStorageProperties.getTempPath())
+                .toAbsolutePath().toString();
+        return MsgUtils.builder().img("base64://" + Base64Util.from(helpPath)).build();
     }
 
     @Override
