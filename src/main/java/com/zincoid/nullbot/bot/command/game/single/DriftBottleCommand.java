@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,21 +23,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @CommandMapping({"DriftBottle", "漂流瓶"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class DriftBottleCommand implements Command {
+
+    private static final int KEEP_TIME = 30;  // 漂流瓶保留时间
 
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
     private final DriftBottleService driftBottleService;
     private final BotInputManager botInputManager;
 
-    private static final int KEEP_TIME = 30;  // 漂流瓶保留时间
-
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
@@ -44,9 +45,9 @@ public class DriftBottleCommand implements Command {
         Map<String, String> imageMap = MsgParseUtil.extractImgMap(event.getRawMessage());
 
         if (!imageMap.isEmpty()) {
-            boolean autoThrow = !params.isEmpty() && "-auto".equals(params.getFirst());
+            boolean autoThrow = !params.isEmpty() && "-auto".equals(params.nextString());
             if (imageMap.size() != 1 && !autoThrow)
-                throw new NullBotException("[漂流瓶] ❌仅可投单张图片");
+                throw new NullBotException("仅可投单张图片");
             for (Map.Entry<String, String> entry : imageMap.entrySet()) {
                 String url = entry.getValue();
                 String fileName = UUID.randomUUID().toString();
@@ -62,11 +63,9 @@ public class DriftBottleCommand implements Command {
                             true
                     );
                     if (!autoThrow) {
-                        bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
-                        log.info("├─[DriftBottle] 扔漂流瓶(图片) - {} -> {}", userId, thrown ? "已投出" : "出错");
+                        bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️ 已投出！" : "❌出错", false);
+                        log.info("☑ [DriftBottle] 扔漂流瓶(图片) - {} -> {}", userId, thrown ? "已投出" : "出错");
                     }
-                } catch (Exception e) {
-                    if (!autoThrow) throw new NullBotException("[漂流瓶] ❌出错: " + e.getMessage());
                 } finally {
                     if (fileInfo != null && !thrown) {
                         fileService.deleteFile(directory, fileInfo.getFileName());
@@ -77,7 +76,7 @@ public class DriftBottleCommand implements Command {
         }
 
         if (!params.isEmpty()) {
-            boolean autoThrow = "-auto".equals(params.getFirst());
+            boolean autoThrow = "-auto".equals(params.nextString());
             boolean thrown = driftBottleService.throwBottle(
                     userId,
                     bot.getStrangerInfo(userId, true).getData().getNickname(),
@@ -85,8 +84,8 @@ public class DriftBottleCommand implements Command {
                     false
             );
             if (!autoThrow) {
-                bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️ 已投出！" : "[漂流瓶] ❌出错", false);
-                log.info("├─[DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown ? "已投出" : "出错");
+                bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️ 已投出！" : "❌出错", false);
+                log.info("☑ [DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown ? "已投出" : "出错");
             }
             return;
         }
@@ -103,17 +102,16 @@ public class DriftBottleCommand implements Command {
         if (!inputs.isEmpty()) {
             bottle.plusRethrowTimes();
             thrownBack = driftBottleService.throwBottle(bottle);
-            bot.sendGroupMsg(groupId, thrownBack ? "✉️ 已投回！" : "[漂流瓶] ❌投回出错", true);
-            log.info("├─[DriftBottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());
+            bot.sendGroupMsg(groupId, thrownBack ? "✉️ 已投回！" : "❌投回出错", true);
+            log.info("☑ [DriftBottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());
         } else {
-            log.info("├─[DriftBottle] 捡漂流瓶并销毁 - {} -> #{}", userId, bottle.getId());
+            log.info("☑ [DriftBottle] 捡漂流瓶并销毁 - {} -> #{}", userId, bottle.getId());
         }
 
         if (!thrownBack && bottle.getIsImage()) {
             int index = bottle.getContent().lastIndexOf("/");
             String fileName = bottle.getContent().substring(index + 1);
             String directory = bottle.getContent().substring(0, index);
-            // log.info("[DEBUG] {} and {}", directory, fileName);
             fileService.deleteFile(directory, fileName);
         }
     }
