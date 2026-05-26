@@ -14,7 +14,8 @@ import java.util.stream.IntStream;
 @Slf4j
 public class BotPageSelector<K, V> {
 
-    private static final int DEFAULT_INPUTER_TIMEOUT = 30;
+    private static final int DEFAULT_INPUT_TIMEOUT = 30;
+    private static final String INPUT_REGEX = "[1-9]\\d*|(?i)up|down|end";
 
     private final Bot bot;
     private final Long groupId;
@@ -109,13 +110,10 @@ public class BotPageSelector<K, V> {
 
     public boolean input(BotInputer inputer) {
         inputer.setMode(BniMode.PS);
-        inputer.setPattern("[1-9]\\d*|(?i)up|down|end");
+        inputer.setPattern(INPUT_REGEX);
         inputer.setCoverable(false);
         List<Pair<Long, String>> inputs = inputer.next();
-        if (inputs.isEmpty()) {
-            bot.sendGroupMsg(groupId, "⚠️查询结束", false);
-            return false;
-        }
+        if (inputs.isEmpty()) return end();
         return input(inputs.getFirst().getRight().toUpperCase());
     }
 
@@ -129,7 +127,7 @@ public class BotPageSelector<K, V> {
     }
 
     public boolean input(BotInputManager manager) {
-        return input(manager, userId, DEFAULT_INPUTER_TIMEOUT);
+        return input(manager, userId, DEFAULT_INPUT_TIMEOUT);
     }
 
     public boolean input(BotInputManager manager, int timeout) {
@@ -139,16 +137,13 @@ public class BotPageSelector<K, V> {
     }
 
     public boolean input(BotInputManager manager, Long userId) {
-        return input(manager, userId, DEFAULT_INPUTER_TIMEOUT);
+        return input(manager, userId, DEFAULT_INPUT_TIMEOUT);
     }
 
     public boolean input(BotInputManager manager, Long userId, int timeout) {
         List<Pair<Long, String>> inputs = manager
-                .request(BniMode.PS, userId, "[1-9]\\d*|(?i)up|down|end", timeout);
-        if (inputs.isEmpty()) {
-            bot.sendGroupMsg(groupId, "⚠️查询结束", false);
-            return false;
-        }
+                .request(BniMode.PS, userId, INPUT_REGEX, timeout);
+        if (inputs.isEmpty()) return end();
         return input(inputs.getFirst().getRight().toUpperCase());
     }
 
@@ -175,7 +170,7 @@ public class BotPageSelector<K, V> {
             current++;
             return page();
         }
-        bot.sendGroupMsg(groupId, "到底啦！", false);
+        bot.sendGroupMsg(groupId, "\uD83D\uDCA6到底啦", false);
         return true;
     }
 
@@ -184,12 +179,12 @@ public class BotPageSelector<K, V> {
             current--;
             return page();
         }
-        bot.sendGroupMsg(groupId, "到顶啦！", false);
+        bot.sendGroupMsg(groupId, "\uD83D\uDCA6到顶啦", false);
         return true;
     }
 
     private boolean end() {
-        bot.sendGroupMsg(groupId, "⛔️查询终止", false);
+        bot.sendGroupMsg(groupId, "⛔️查询结束", false);
         return false;
     }
 
