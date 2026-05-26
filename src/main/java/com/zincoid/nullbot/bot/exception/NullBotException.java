@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.bot.exception;
 
-public class NullBotException extends RuntimeException {  // 捕获后发送控制台LOG和群提示消息
+public class NullBotException extends RuntimeException {
+
     public NullBotException(String message) {
         super(message);
     }
