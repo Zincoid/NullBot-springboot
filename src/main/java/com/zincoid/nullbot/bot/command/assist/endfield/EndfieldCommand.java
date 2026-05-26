@@ -48,7 +48,7 @@ public class EndfieldCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String curVersion = versions.computeIfAbsent(groupId, k -> DEFAULT_VERSION);
-        String keyword = params.nextStringOptional("");
+        String keyword = params.nextString("");
         boolean continuousQuery = false;
 
         if ("-v".equals(keyword)) {
@@ -61,7 +61,7 @@ public class EndfieldCommand implements Command {
         }
         if ("-c".equals(keyword)) {
             continuousQuery = true;
-            keyword = params.nextStringOptional("");
+            keyword = params.nextString("");
         }
 
         List<FilePO> allFiles = new ArrayList<>();

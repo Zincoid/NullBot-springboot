@@ -37,7 +37,7 @@ public class SellCommand implements Command {
             log.info("☑ [Sell] 按稀有度出售成功 - Rarity: {}", rarity);
         } else {
             int itemId = params.nextInt();
-            int amount = params.nextIntOptional(1);
+            int amount = params.nextInt(1);
             if (amount <= 0)
                 throw new NullBotException("数量非正");
             if (!inventoryService.sell(userId, itemId, amount))
