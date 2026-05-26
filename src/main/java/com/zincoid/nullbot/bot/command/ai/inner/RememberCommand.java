@@ -47,14 +47,14 @@ public class RememberCommand implements Command {
             bot.sendPrivateMsg(targetId, """
                     [记忆] \uD83D\uDCA1长时记忆已添加
                     - 内容: %s""".formatted(content), false);
-            log.info("☑ [Remember] 用户长时记忆已添加 - {} : {}", targetId, content);
+            log.info("☑ [Remember] 用户记忆已添加 - {} -> {}", targetId, content);
         } else {
             if (!sysMsgManager.addLongTermGroupMemory(targetId, content))
                 throw new NullBotException("记忆容量已满");
             bot.sendGroupMsg(targetId, """
                     [记忆] \uD83D\uDCA1长时记忆已添加
                     - 内容: %s""".formatted(content), false);
-            log.info("☑ [Remember] 群聊长时记忆已添加 - {} : {}", targetId, content);
+            log.info("☑ [Remember] 群聊记忆已添加 - {} -> {}", targetId, content);
         }
     }
 

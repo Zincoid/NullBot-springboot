@@ -44,7 +44,7 @@ public class BanChatCommand implements Command {
             bot.sendGroupMsg(groupId, """
                     [停用AI] ✅已解封
                     - 用户: [CQ:at,qq=%s]""".formatted(userId), false);
-            log.info("☑ [BanChat] 已解封对话 - {}", userId);
+            log.info("☑ [BanChat] 已解封对话 - {} -> Unblock", userId);
         }
     }
 

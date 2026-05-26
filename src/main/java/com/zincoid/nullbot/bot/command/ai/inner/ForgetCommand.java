@@ -45,13 +45,13 @@ public class ForgetCommand implements Command {
             bot.sendPrivateMsg(resourceId, """
                     [遗忘] \uD83D\uDCA1长时记忆已移除
                     - 内容: %s""".formatted(removed), false);
-            log.info("☑ [Forget] 用户长时记忆已移除 - {} : {}", resourceId, removed);
+            log.info("☑ [Forget] 用户记忆已移除 - {} -> {}", resourceId, removed);
         } else {
             String removed = sysMsgManager.removeLongTermGroupMemory(resourceId, i);
             bot.sendGroupMsg(resourceId, """
                     [遗忘] \uD83D\uDCA1长时记忆已移除
                     - 内容: %s""".formatted(removed), false);
-            log.info("☑ [Forget] 群聊长时记忆已移除 - {} : {}", resourceId, removed);
+            log.info("☑ [Forget] 群聊记忆已移除 - {} -> {}", resourceId, removed);
         }
     }
 

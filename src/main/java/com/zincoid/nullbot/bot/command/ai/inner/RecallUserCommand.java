@@ -19,7 +19,7 @@ public class RecallUserCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         int messageId = params.nextInt();
         bot.deleteMsg(messageId);
-        log.info("☑ [RecallUser] 撤回用户消息 -> MessageId: {}", messageId);
+        log.info("☑ [RecallUser] 用户消息已撤回 -> MessageId: {}", messageId);
     }
 
     @Override

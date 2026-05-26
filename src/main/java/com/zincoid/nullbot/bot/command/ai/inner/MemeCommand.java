@@ -6,7 +6,6 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -55,7 +54,7 @@ public class MemeCommand implements Command {
                 .img(ossUrlBuilder.from(memes.getFirst().getId())).build();
         if (isPrivate) bot.sendPrivateMsg(resourceId, response, false);
         else bot.sendGroupMsg(resourceId, response, false);
-        log.info("☑ [Meme] 已发送表情: {}", memeName);
+        log.info("☑ [Meme] 表情已发送: {}", memeName);
     }
 
     @Override

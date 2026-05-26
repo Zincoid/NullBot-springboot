@@ -37,7 +37,7 @@ public class PokeCommand implements Command {
     private void poke(Bot bot, Long resourceId, Long targetId, boolean isPrivate) {
         if (isPrivate) bot.sendFriendPoke(resourceId, targetId);
         else bot.sendGroupPoke(resourceId, targetId);
-        log.info("☑ [Poke] 已戳戳: {}", targetId);
+        log.info("☑ [Poke] 戳戳已发送 -> {}", targetId);
     }
 
     @Override
