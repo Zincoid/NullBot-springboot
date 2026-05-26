@@ -13,7 +13,6 @@ import com.zincoid.nullbot.core.component.tool.WsSender;
 import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
-import com.zincoid.nullbot.bot.exception.NullBotLogException;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -29,39 +28,37 @@ public class ExecutorHandler implements Handler {
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         log.info("└─[ExecutorHandler] 执行开始");
 
-        Long groupId = 0L;  // 群号 0 代表私聊
-        Long userId = 0L;  // 用户 0 代表群聊
+        String commandClassName = command.getClass().getSimpleName();   // 指令类名
+        Long groupId = 0L;                                              // 群组ID - 0 代表私聊
+        Long userId = 0L;                                               // 用户ID - 0 代表群聊
+
         try {
-            if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-                groupId = groupMessageEvent.getGroupId();
-                command.execute(bot, groupMessageEvent, event.getCommandParameters());
-            } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-                groupId = pokeNoticeEvent.getGroupId() == null ? 0L : pokeNoticeEvent.getGroupId();
-                if (groupId == 0L) userId = pokeNoticeEvent.getUserId();
-                command.execute(bot, pokeNoticeEvent, event.getCommandParameters());
-            } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
-                groupId = groupMsgDeleteNoticeEvent.getGroupId();
-                command.execute(bot, groupMsgDeleteNoticeEvent, event.getCommandParameters());
-            } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
-                userId = privateMessageEvent.getUserId();
-                command.execute(bot, privateMessageEvent, event.getCommandParameters());
-            } else
-                log.warn("  [ExecutorHandler] 不支持的事件类型");
+            if (event.getEvent() instanceof GroupMessageEvent _event) {
+                groupId = _event.getGroupId();
+                command.execute(bot, _event, event.getCommandParameters());
+            } else if (event.getEvent() instanceof PokeNoticeEvent _event) {
+                groupId = _event.getGroupId() == null ? 0L : _event.getGroupId();
+                if (groupId == 0L) userId = _event.getUserId();
+                command.execute(bot, _event, event.getCommandParameters());
+            } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent _event) {
+                groupId = _event.getGroupId();
+                command.execute(bot, _event, event.getCommandParameters());
+            } else if (event.getEvent() instanceof PrivateMessageEvent _event) {
+                userId = _event.getUserId();
+                command.execute(bot, _event, event.getCommandParameters());
+            } else log.warn("  [ExecutorHandler] 不支持的事件类型");
 
         } catch (NullBotException e) {
-            if (groupId != 0L) {
-                bot.sendGroupMsg(groupId, e.getMessage(), false);
-                log.warn("  [ExecutorHandler] 群聊警告: {}", e.getMessage());
-            }
-            if (userId != 0L) {
-                bot.sendPrivateMsg(userId, e.getMessage(), false);
-                log.warn("  [ExecutorHandler] 私聊警告: {}", e.getMessage());
-            }
-        } catch (NullBotLogException e) {
-            log.warn("  [ExecutorHandler] 日志警告: {}", e.getMessage());
-            wsSender.broadcast("WARN", "服务器日志警告: " + e.getMessage());
+            log.warn("  [ExecutorHandler] 指令警告: {}", e.getMessage());
+            String message = "[%s] Warn: %s".formatted(commandClassName, e.getMessage());
+            if (groupId != 0L) bot.sendGroupMsg(groupId, message, false);
+            if (userId != 0L) bot.sendPrivateMsg(userId, message, false);
+
         } catch (Exception e) {
-            log.error("  [ExecutorHandler] 未知错误: {}", e.getMessage());
+            log.error("  [ExecutorHandler] 指令错误: {}", e.getMessage());
+            String message = "[%s] Error: %s".formatted(commandClassName, e.getMessage());
+            if (groupId != 0L) bot.sendGroupMsg(groupId, message, false);
+            if (userId != 0L) bot.sendPrivateMsg(userId, message, false);
             wsSender.broadcast("ERROR", "服务器内部错误: " + e.getMessage());
             throw e;
         }
