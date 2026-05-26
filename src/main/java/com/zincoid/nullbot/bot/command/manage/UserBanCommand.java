@@ -2,31 +2,23 @@ package com.zincoid.nullbot.bot.command.manage;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"UserBan", "ban", "禁言"})
 @Component
-@Slf4j
 public class UserBanCommand implements Command {
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.size() < 2)
-            throw new NullBotException("[用户禁言] ❌参数不足");
-        try {
-            long userId = Long.parseLong(params.get(0));
-            int time = Integer.parseInt(params.get(1));
-            bot.setGroupBan(event.getGroupId(), userId, time * 60);
-            log.info("├─[UserBan] 已执行禁言 - {} -> {} Min", userId, time);
-        } catch (NumberFormatException e) {
-            throw new NullBotException("[用户禁言] ❌参数格式错误");
-        }
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        long userId = params.nextLong();
+        int time = params.nextInt();
+        bot.setGroupBan(event.getGroupId(), userId, time * 60);
+        log.info("☑ [UserBan] 禁言已执行 - {} -> {} Min", userId, time);
     }
 
     @Override

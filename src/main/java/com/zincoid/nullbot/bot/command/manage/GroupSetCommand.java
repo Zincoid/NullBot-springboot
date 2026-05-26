@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.manage;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +18,9 @@ import com.zincoid.nullbot.core.util.BotCtxUtil;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"GroupSet", "群设置"})
 @Component
-@Slf4j
 public class GroupSetCommand implements Command {
 
     private final QQAiClient qqAiClient;
@@ -35,152 +34,136 @@ public class GroupSetCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
-        Long userId = event.getUserId();
-        try {
-            if (params.isEmpty()) throw new NullBotException("[群设置] ❌参数不足");
-            String option = params.getFirst();
-            SettingPO setting = BotCtxUtil.getSetting();
+        String option = params.nextString();
+        SettingPO setting = BotCtxUtil.getSetting();
 
-            if ("-view".equals(option)) {
-                bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);
-                log.info("├─[GroupSet] 已获取群设置 - {}", groupId);
-                return;
-            }
-
-            if ("-limit".equals(option)) {
-                if (params.size() < 2) throw new NullBotException("[群设置] ❌Limit设置参数不足");
-                String name = params.get(1);
-                String msg;
-
-                switch (name) {
-                    case "scp" -> {
-                        LimitScope newLimitScope = setting.switchLimitScope();
-                        msg = "限速范围 -> %s".formatted(newLimitScope);
-                    }
-                    case "cap" -> {
-                        if (params.size() < 3) throw new NullBotException("[群设置] ❌Limit设置参数不足");
-                        int capacity = Integer.parseInt(params.get(2));
-                        setting.setLimitCapacity(capacity);
-                        msg = "限速容量 -> %s".formatted(capacity);
-                    }
-                    case "ref" -> {
-                        if (params.size() < 3) throw new NullBotException("[群设置] ❌Limit设置参数不足");
-                        int refill = Integer.parseInt(params.get(2));
-                        setting.setLimitRefill(refill);
-                        msg = "补充数量 -> %s".formatted(refill);
-                    }
-                    case "itv" -> {
-                        if (params.size() < 3) throw new NullBotException("[群设置] ❌Limit设置参数不足");
-                        int interval = Integer.parseInt(params.get(2));
-                        setting.setLimitInterval(interval);
-                        msg = "补充间隔 -> %s".formatted(interval);
-                    }
-                    default -> throw new NullBotException("[群设置] ❌无此Limit设置");
-                }
-
-                settingService.set(setting);
-                commandRateLimiter.reset(groupId);
-                bot.sendGroupMsg(groupId, """
-                        [限速] ✅设置已更新
-                        %s""".formatted(msg), false);
-                log.info("├─[GroupSet] 已更改群 {} 限速设置 - {}", groupId, msg);
-                return;
-            }
-
-            if ("-ai".equals(option)) {
-                if (params.size() < 2) throw new NullBotException("[群设置] ❌AI设置参数不足");
-                String name = params.get(1);
-                String msg;
-
-                switch (name) {
-                    case "scp" -> {
-                        ChatScope newScope = setting.switchChatScope();
-                        msg = "会话范围 -> %s".formatted(newScope);
-                    }
-                    case "stg" -> {
-                        qqAiClient.clear(BotCtxUtil.getChatId());
-                        ChatStrategy strategy = setting.switchChatStrategy();
-                        msg = "对话策略 -> %s".formatted(strategy);
-                    }
-                    case "frq" -> {
-                        if (params.size() < 3) throw new NullBotException("[群设置] ❌AI设置参数不足");
-                        double freq = Double.parseDouble(params.get(2));
-                        setting.setReplyFrequency(freq);
-                        msg = "发言频率 -> %s".formatted(freq);
-                    }
-                    case "ati" -> {
-                        boolean enabled = setting.switchAntiInjection();
-                        msg = "防注模式 -> %s".formatted(enabled ? "ON" : "OFF");
-                    }
-                    case "tkn" -> {
-                        boolean enabled = setting.switchThinking();
-                        msg = "思考模式 -> %s".formatted(enabled ? "ON" : "OFF");
-                    }
-                    case "voi" -> {
-                        boolean enabled = setting.switchVoice();
-                        msg = "语音模式 -> %s".formatted(enabled ? "ON" : "OFF");
-                    }
-                    case "ica" -> {
-                        boolean enabled = setting.switchInnerCmdAuth();
-                        msg = "内令鉴权 -> %s".formatted(enabled ? "ON" : "OFF");
-                    }
-                    case "cus" -> {
-                        qqAiClient.clear(BotCtxUtil.getChatId());
-                        boolean enabled = setting.switchCustom();
-                        msg = "自定模式 -> %s".formatted(enabled ? "ON" : "OFF");
-                    }
-                    case "aur" -> {
-                        boolean enabled = setting.switchAutoReply();
-                        msg = "自动发言 -> %s".formatted(enabled ? "ON" : "OFF");
-                    }
-                    default -> throw new NullBotException("[群设置] ❌无此AI设置");
-                }
-
-                settingService.set(setting);
-                bot.sendGroupMsg(groupId, """
-                        [AI] ✅设置已更新
-                        %s""".formatted(msg), false);
-                log.info("├─[GroupSet] 已更改群 {} AI设置 - {}", groupId, msg);
-                return;
-            }
-
-            if ("-monitor".equals(option)) {
-                if (params.size() < 2) throw new NullBotException("[群设置] ❌Monitor设置参数不足");
-                String name = params.get(1);
-                boolean enabled = switch (name) {
-                    case "img" -> setting.switchImageCollect();
-                    case "msg" -> setting.switchMessageCollect();
-                    case "key" -> setting.switchKeywordDetect();
-                    case "pok" -> setting.switchPokeDetect();
-                    case "rcl" -> setting.switchRecallDetect();
-                    default -> throw new NullBotException("[群设置] ❌无此Monitor设置");
-                };
-                settingService.set(setting);
-                bot.sendGroupMsg(event.getGroupId(), "[监听] ✅已切换: %s".formatted(enabled ? "ON" : "OFF"), false);
-                log.info("├─[GroupSet] 已更改群 {} 监听设置 - {} -> {}", groupId, name, enabled ? "ON" : "OFF");
-                return;
-            }
-
-            if ("-guess".equals(option)) {
-                if (params.size() < 4) throw new NullBotException("[群设置] ❌Guess设置参数不足");
-                double cropRatio = Double.parseDouble(params.get(1));
-                double transparentRatio = Double.parseDouble(params.get(2));
-                int padding = Integer.parseInt(params.get(3));
-                setting.setGuessCropRatio(cropRatio);
-                setting.setGuessTransparentRatio(transparentRatio);
-                setting.setGuessPadding(padding);
-                settingService.set(setting);
-                bot.sendGroupMsg(groupId, "[猜角色] ✅参数已更新", false);
-                log.info("├─[GroupSet] 已更改群 {} Guess参数 -> {} {} {}", groupId, cropRatio, transparentRatio, padding);
-                return;
-            }
-
-            throw new NullBotException("[群设置] ❌无此操作类型");
-        } catch (NumberFormatException e) {
-            throw new NullBotException("[群设置] ❌参数格式错误");
+        if ("-view".equals(option)) {
+            bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);
+            log.info("☑ [GroupSet] 群设置已获取 - GroupId: {}", groupId);
+            return;
         }
+        if ("-limit".equals(option)) {
+            String name = params.nextString();
+            String msg;
+            switch (name) {
+                case "scp" -> {
+                    LimitScope newLimitScope = setting.switchLimitScope();
+                    msg = "限速范围 -> %s".formatted(newLimitScope);
+                }
+                case "cap" -> {
+                    int capacity = params.nextInt();
+                    setting.setLimitCapacity(capacity);
+                    msg = "限速容量 -> %s".formatted(capacity);
+                }
+                case "ref" -> {
+                    int refill = params.nextInt();
+                    setting.setLimitRefill(refill);
+                    msg = "补充数量 -> %s".formatted(refill);
+                }
+                case "itv" -> {
+                    int interval = params.nextInt();
+                    setting.setLimitInterval(interval);
+                    msg = "补充间隔 -> %s".formatted(interval);
+                }
+                default -> throw new NullBotException("无此Limit设置");
+            }
+
+            settingService.set(setting);
+            commandRateLimiter.reset(groupId);
+            bot.sendGroupMsg(groupId, """
+                    [限速] ✅设置已更新
+                    %s""".formatted(msg), false);
+            log.info("☑ [GroupSet] 已更改群 {} 限速设置 - {}", groupId, msg);
+            return;
+        }
+
+        if ("-ai".equals(option)) {
+            String name = params.nextString();
+            String msg;
+
+            switch (name) {
+                case "scp" -> {
+                    ChatScope newScope = setting.switchChatScope();
+                    msg = "会话范围 -> %s".formatted(newScope);
+                }
+                case "stg" -> {
+                    qqAiClient.clear(BotCtxUtil.getChatId());
+                    ChatStrategy strategy = setting.switchChatStrategy();
+                    msg = "对话策略 -> %s".formatted(strategy);
+                }
+                case "frq" -> {
+                    double freq = params.nextDouble();
+                    setting.setReplyFrequency(freq);
+                    msg = "发言频率 -> %s".formatted(freq);
+                }
+                case "ati" -> {
+                    boolean enabled = setting.switchAntiInjection();
+                    msg = "防注模式 -> %s".formatted(enabled ? "ON" : "OFF");
+                }
+                case "tkn" -> {
+                    boolean enabled = setting.switchThinking();
+                    msg = "思考模式 -> %s".formatted(enabled ? "ON" : "OFF");
+                }
+                case "voi" -> {
+                    boolean enabled = setting.switchVoice();
+                    msg = "语音模式 -> %s".formatted(enabled ? "ON" : "OFF");
+                }
+                case "ica" -> {
+                    boolean enabled = setting.switchInnerCmdAuth();
+                    msg = "内令鉴权 -> %s".formatted(enabled ? "ON" : "OFF");
+                }
+                case "cus" -> {
+                    qqAiClient.clear(BotCtxUtil.getChatId());
+                    boolean enabled = setting.switchCustom();
+                    msg = "自定模式 -> %s".formatted(enabled ? "ON" : "OFF");
+                }
+                case "aur" -> {
+                    boolean enabled = setting.switchAutoReply();
+                    msg = "自动发言 -> %s".formatted(enabled ? "ON" : "OFF");
+                }
+                default -> throw new NullBotException("无此AI设置");
+            }
+
+            settingService.set(setting);
+            bot.sendGroupMsg(groupId, """
+                    [AI] ✅设置已更新
+                    %s""".formatted(msg), false);
+            log.info("☑ [GroupSet] 已更改群 {} AI设置 - {}", groupId, msg);
+            return;
+        }
+
+        if ("-monitor".equals(option)) {
+            String name = params.nextString();
+            boolean enabled = switch (name) {
+                case "img" -> setting.switchImageCollect();
+                case "msg" -> setting.switchMessageCollect();
+                case "key" -> setting.switchKeywordDetect();
+                case "pok" -> setting.switchPokeDetect();
+                case "rcl" -> setting.switchRecallDetect();
+                default -> throw new NullBotException("无此Monitor设置");
+            };
+            settingService.set(setting);
+            bot.sendGroupMsg(event.getGroupId(), "[监听] ✅已切换: %s".formatted(enabled ? "ON" : "OFF"), false);
+            log.info("☑ [GroupSet] 已更改群 {} 监听设置 - {} -> {}", groupId, name, enabled ? "ON" : "OFF");
+            return;
+        }
+
+        if ("-guess".equals(option)) {
+            double cropRatio = params.nextDouble();
+            double transparentRatio = params.nextDouble();
+            int padding = params.nextInt();
+            setting.setGuessCropRatio(cropRatio);
+            setting.setGuessTransparentRatio(transparentRatio);
+            setting.setGuessPadding(padding);
+            settingService.set(setting);
+            bot.sendGroupMsg(groupId, "[猜角色] ✅参数已更新", false);
+            log.info("☑ [GroupSet] 已更改群 {} Guess参数 -> {} {} {}", groupId, cropRatio, transparentRatio, padding);
+            return;
+        }
+
+        throw new NullBotException("无此操作类型");
     }
 
     @Override
