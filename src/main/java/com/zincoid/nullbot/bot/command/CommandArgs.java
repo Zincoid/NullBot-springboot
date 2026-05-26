@@ -52,17 +52,23 @@ public final class CommandArgs {
         catch (NumberFormatException e) { throw formatError(); }
     }
 
-    // public int nextIntOptional(int defaultVal) {
-    //     if (!hasNext()) return defaultVal;
-    //     try { return Integer.parseInt(params.get(cursor++)); }
-    //     catch (NumberFormatException e) { throw formatError(); }
-    // }
+    public int nextIntOptional(int defaultVal) {
+        if (!hasNext()) return defaultVal;
+        try { return Integer.parseInt(params.get(cursor++)); }
+        catch (NumberFormatException e) { throw formatError(); }
+    }
 
-    // public long nextLongOptional(long defaultVal) {
-    //     if (!hasNext()) return defaultVal;
-    //     try { return Long.parseLong(params.get(cursor++)); }
-    //     catch (NumberFormatException e) { throw formatError(); }
-    // }
+    public long nextLongOptional(long defaultVal) {
+        if (!hasNext()) return defaultVal;
+        try { return Long.parseLong(params.get(cursor++)); }
+        catch (NumberFormatException e) { throw formatError(); }
+    }
+
+    public double nextDoubleOptional(double defaultVal) {
+        if (!hasNext()) return defaultVal;
+        try { return Double.parseDouble(params.get(cursor++)); }
+        catch (NumberFormatException e) { throw formatError(); }
+    }
 
     // ── indexed access (non-advancing) ─────────────
 
