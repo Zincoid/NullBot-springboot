@@ -7,6 +7,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +27,9 @@ import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@Slf4j
 @CommandMapping({"Tts", "tts", "语音合成"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class TtsCommand implements Command {
 
@@ -37,103 +38,77 @@ public class TtsCommand implements Command {
     private final TtsClient ttsClient;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
 
-        if (params.size() < 2)
-            throw new NullBotException("[语音合成] ❌参数不足");
-
-        String option = params.getFirst();
+        String option = params.nextString();
         if ("-clone".equals(option)) {
-            switch (params.get(1)) {
+            switch (params.nextString()) {
                 case "save" -> {
                     ArrayMsg reply = event.getArrayMsg().getFirst();
                     if (reply.getType() != MsgTypeEnum.reply)
-                        throw new NullBotException("[语音合成] ❌需引用模板音频");
-                    if (params.size() < 4)
-                        throw new NullBotException("[语音合成] ❌新模板参数不足");
-
+                        throw new NullBotException("需引用模板音频");
                     MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
                     // 暂不支持 AMR 格式音频
                     // Map<String, String> recordMap = MsgParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());
                     Map<String, String> fileMap = MsgParseUtil.extractFileMap(replyMsg.getRawMessage());
-
                     Map<String, String> voiceMap = new HashMap<>();
                     // voiceMap.putAll(recordMap);
                     voiceMap.putAll(fileMap);
-
                     if (voiceMap.isEmpty())
-                        throw new NullBotException("[语音合成] ❌引用未包含音频");
+                        throw new NullBotException("引用未包含音频");
                     for (Map.Entry<String, String> entry : voiceMap.entrySet())
                         if (!isAudioFile(entry.getKey()))
-                            throw new NullBotException("[语音合成] ❌引用非音频文件");
+                            throw new NullBotException("引用非音频文件");
 
                     String tempPath = fileStorageProperties.getTempPath();
-                    String templateName = params.get(2);
-                    String templateText = params.get(3);
+                    String templateName = params.nextString();
+                    String templateText = params.nextString();
 
                     for (Map.Entry<String, String> entry : voiceMap.entrySet()) {
                         String tempName = entry.getKey();
                         String url = entry.getValue();
-                        String downloadedName;
-
-                        try {
-                            FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "├─ ");
-                            downloadedName = fileInfo.getFileName();
-                        } catch (Exception e) {
-                            throw new NullBotException("[语音合成] ❌模板临时文件下载失败: " + e.getMessage());
-                        }
-
+                        FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName);
+                        String downloadedName = fileInfo.getFileName();
                         String uploadedPath;
                         try {
                             uploadedPath = ttsClient.upload(tempPath + "/" + downloadedName);
-                        } catch (Exception e) {
-                            throw new NullBotException("[语音合成] ❌模板临时文件上传失败: " + e.getMessage());
                         } finally {
                             FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
                         }
-
                         if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
-                            throw new NullBotException("[语音合成] ❌存在重名冲突");
-
-                        bot.sendGroupMsg(groupId, "[语音合成] \uD83D\uDCBE模板已保存！\n" +
-                                templateName + " : " + templateText + " -> " + uploadedPath, false);
-                        log.info("├─[语音合成] 模板已保存 - {}:{} -> {}", templateName, templateText, uploadedPath);
+                            throw new NullBotException("存在重名冲突");
+                        bot.sendGroupMsg(groupId, """
+                                [语音合成] \uD83D\uDCBE模板已保存！
+                                %s : %s -> %s"""
+                                .formatted(templateName, templateText, uploadedPath), false);
+                        log.info("☑ [语音合成] 模板已保存 - {}:{} -> {}", templateName, templateText, uploadedPath);
                     }
                 }
 
                 case "delete" -> {
-                    if (params.size() < 3)
-                        throw new NullBotException("[语音合成] ❌删除参数不足");
-                    String templateName = params.get(2);
+                    String templateName = params.nextString();
                     if (!ttsTemplateService.deleteByName(templateName))
-                        throw new NullBotException("[语音合成] ❌该模板不存在");
+                        throw new NullBotException("该模板不存在");
                     bot.sendGroupMsg(event.getGroupId(), "[语音合成] ⚠️模板已删除", false);
-                    log.info("├─[Tts] 已删除模板 - {}", templateName);
+                    log.info("☑ [Tts] 已删除模板 -> {}", templateName);
                 }
 
                 case "use" -> {
-                    if (params.size() < 4)
-                        throw new NullBotException("[语音合成] ❌克隆参数不足");
-                    String templateName = params.get(2);
-                    String targetText = params.get(3);
+                    String templateName = params.nextString();
+                    String targetText = params.nextString();
                     TtsTemplatePO template = ttsTemplateService.getByName(templateName);
                     if (template == null)
-                        throw new NullBotException("[语音合成] ❌模板不存在");
-                    String base64;
-                    try {
-                        base64 = ttsClient.synthesize_clone(template.getPath(), template.getText(), targetText);
-                    } catch (Exception e) {
-                        throw new NullBotException("[语音合成] ❌克隆时出错: " + e.getMessage());
-                    }
+                        throw new NullBotException("模板不存在");
+                    String base64 = ttsClient.synthesize_clone(template.getPath(), template.getText(), targetText);
                     ttsTemplateService.increaseUsed(template.getId());
                     String response = MsgUtils.builder()
                             .voice("base64://" + base64)
                             .build();
                     bot.sendGroupMsg(event.getGroupId(), response, false);
-                    log.info("├─[Tts] 已回复克隆语音: {}", targetText);
+                    log.info("☑ [Tts] 已回复克隆语音: {}", targetText);
                 }
 
                 case "list" -> {
@@ -147,56 +122,39 @@ public class TtsCommand implements Command {
                                 .append(" | ").append(template.getUsed());
                     }
                     bot.sendGroupMsg(event.getGroupId(), "[语音合成] ✅已获取模板列表" + sb, false);
-                    log.info("├─[Tts] 已获取模板列表");
+                    log.info("☑ [Tts] 已获取模板列表");
                 }
 
-                default -> throw new NullBotException("[语音合成] ❌无此克隆选项");
+                default -> throw new NullBotException("无此克隆选项");
             }
             return;
         }
 
         if ("-synth".equals(option)) {
-            String targetText = String.join(" ", params.subList(1, params.size()));
-            String base64;
-            try {
-                base64 = ttsClient.synthesize(targetText);
-            } catch (Exception e) {
-                throw new NullBotException("[语音合成] ❌合成时出错: " + e.getMessage());
-            }
-            String response = MsgUtils.builder()
-                    .voice("base64://" + base64)
-                    .build();
+            String targetText = params.nextFullString();
+            String base64 = ttsClient.synthesize(targetText);
+            String response = MsgUtils.builder().voice("base64://" + base64).build();
             bot.sendGroupMsg(event.getGroupId(), response, false);
-            log.info("├─[Tts] 已回复合成语音");
+            log.info("☑ [Tts] 合成语音已回复");
             return;
         }
 
-        throw new NullBotException("[语音合成] ❌无此操作");
+        throw new NullBotException("无此操作");
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        if (params.size() < 2)
-            throw new NullBotException("[语音合成] ❌参数不足");
-
-        String option = params.getFirst();
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
+        String option = params.nextString();
         if ("-synth".equals(option)) {
-            String targetText = String.join(" ", params.subList(1, params.size()));
-            String base64;
-            try {
-                base64 = ttsClient.synthesize(targetText);
-            } catch (Exception e) {
-                throw new NullBotException("[语音合成] ❌合成时出错: " + e.getMessage());
-            }
-            String response = MsgUtils.builder()
-                    .voice("base64://" + base64)
-                    .build();
+            String targetText = params.nextFullString();
+            String base64 = ttsClient.synthesize(targetText);
+            String response = MsgUtils.builder().voice("base64://" + base64).build();
             bot.sendPrivateMsg(event.getUserId(), response, false);
-            log.info("├─[Tts] 已私信合成语音: {}", targetText);
+            log.info("☑ [Tts] 合成语音已回复: {}", targetText);
             return;
         }
 
-        throw new NullBotException("[语音合成] ❌无此操作");
+        throw new NullBotException("无此操作");
     }
 
     public static boolean isAudioFile(String fileName) {
