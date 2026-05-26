@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.util.Base64Util;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class HelpCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
     private final ResourceLoader resourceLoader;
 
     @Override
@@ -33,19 +31,17 @@ public class HelpCommand implements Command {
     public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) throws Exception {
         bot.sendPrivateMsg(event.getUserId(), """
                 [ ====== 可用指令 ====== ]
-                1. Help  帮助
-                - 参数: 无
-                2. SysMsgSet  提示词设置
+                1. Help 帮助
+                2. SysMsgSet 提示词设置
                 - 参数: [-set|-reset] [文本]
                 
-                注: 私聊目前仅实现AI聊天及以上指令且AI永久处于无验证/无限速/非防注入/非语音/指令模式下""", true);
+                注: 私聊仅实现AI聊天及以上指令且永久处于无鉴权限速/非语音防注入/EMBEDDING对话策略下""", true);
         log.info("☑ [Help] 私聊帮助已获取");
     }
 
     private String buildHelpMsg() {
         String helpPath = resourceLoader
-                .getCached("static/help/help.jpg", fileStorageProperties.getTempPath())
-                .toAbsolutePath().toString();
+                .getCached("static/help/help.jpg").toAbsolutePath().toString();
         return MsgUtils.builder().img("base64://" + Base64Util.from(helpPath)).build();
     }
 

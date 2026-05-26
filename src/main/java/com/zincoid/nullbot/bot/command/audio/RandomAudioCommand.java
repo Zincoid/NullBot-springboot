@@ -4,7 +4,8 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -32,12 +33,9 @@ public class RandomAudioCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String audioPath = fileStorageProperties.getAudioPath();
         List<FilePO> audios = fileService.search("", audioPath);
-        if (audios.isEmpty())
-            throw new BotWarnException("暂无音频");
+        if (audios.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无音频");
         FilePO audio = audios.get(ThreadLocalRandom.current().nextInt(audios.size()));
-        String response = MsgUtils.builder()
-                .voice(ossUrlBuilder.from(audio.getId()))
-                .build();
+        String response = MsgUtils.builder().voice(ossUrlBuilder.from(audio.getId())).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [RandomAudio] 音频已发送: {}", audio.getFileName());
     }

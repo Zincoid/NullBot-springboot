@@ -31,6 +31,7 @@ import java.util.*;
 @CommandMapping({"Tts", "tts", "语音合成"})
 @Component
 @RequiredArgsConstructor
+@Deprecated
 public class TtsCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
@@ -49,96 +50,75 @@ public class TtsCommand implements Command {
                 case "save" -> {
                     ArrayMsg reply = event.getArrayMsg().getFirst();
                     if (reply.getType() != MsgTypeEnum.reply)
-                        throw new BotWarnException("需引用模板音频");
+                        throw new BotWarnException("未引用模板音频");
                     MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-                    // 暂不支持 AMR 格式音频
-                    // Map<String, String> recordMap = MsgParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());
                     Map<String, String> fileMap = MsgParseUtil.extractFileMap(replyMsg.getRawMessage());
-                    Map<String, String> voiceMap = new HashMap<>();
-                    // voiceMap.putAll(recordMap);
-                    voiceMap.putAll(fileMap);
-                    if (voiceMap.isEmpty())
+                    if (fileMap.isEmpty())
                         throw new BotWarnException("引用未包含音频");
-                    for (Map.Entry<String, String> entry : voiceMap.entrySet())
-                        if (!isAudioFile(entry.getKey()))
-                            throw new BotWarnException("引用非音频文件");
+                    if (fileMap.size() > 1)
+                        throw new BotWarnException("引用音频数过多");
+                    Map.Entry<String, String> audio = fileMap.entrySet().iterator().next();
+                    if (!isAudioFile(audio.getKey()))
+                        throw new BotWarnException("引用文件非音频");
 
                     String tempPath = fileStorageProperties.getTempPath();
                     String templateName = args.nextString();
                     String templateText = args.nextString();
-
-                    for (Map.Entry<String, String> entry : voiceMap.entrySet()) {
-                        String tempName = entry.getKey();
-                        String url = entry.getValue();
-                        FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName);
-                        String downloadedName = fileInfo.getFileName();
-                        String uploadedPath;
-                        try {
-                            uploadedPath = ttsClient.upload(tempPath + "/" + downloadedName);
-                        } finally {
-                            FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
-                        }
-                        if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
-                            throw new BotWarnException("存在重名冲突");
-                        bot.sendGroupMsg(groupId, """
-                                [语音合成] \uD83D\uDCBE模板已保存！
-                                %s : %s -> %s"""
-                                .formatted(templateName, templateText, uploadedPath), false);
-                        log.info("☑ [语音合成] 模板已保存 - {}:{} -> {}", templateName, templateText, uploadedPath);
+                    FileInfo fileInfo = DownloadUtil.downloadFile(audio.getValue(), tempPath, audio.getKey());
+                    String downloadedName = fileInfo.getFileName();
+                    String uploadedPath;
+                    try {
+                        uploadedPath = ttsClient.upload(tempPath + "/" + downloadedName);
+                    } finally {
+                        FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
                     }
+                    if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
+                        throw new BotWarnException("存在重名模板");
+                    bot.sendGroupMsg(groupId, "\uD83D\uDCBE模板已保存: %s".formatted(uploadedPath), false);
+                    log.info("☑ [语音合成] 模板已保存 - {}: {} -> {}", templateName, templateText, uploadedPath);
                 }
-
                 case "delete" -> {
                     String templateName = args.nextString();
                     if (!ttsTemplateService.deleteByName(templateName))
                         throw new BotWarnException("该模板不存在");
-                    bot.sendGroupMsg(event.getGroupId(), "[语音合成] ⚠️模板已删除", false);
-                    log.info("☑ [Tts] 已删除模板 -> {}", templateName);
+                    bot.sendGroupMsg(event.getGroupId(), "⚠️模板已删除", false);
+                    log.info("☑ [Tts] 模板已删除 -> {}", templateName);
                 }
-
                 case "use" -> {
                     String templateName = args.nextString();
-                    String targetText = args.nextString();
+                    String text = args.nextString();
                     TtsTemplatePO template = ttsTemplateService.getByName(templateName);
-                    if (template == null)
-                        throw new BotWarnException("模板不存在");
-                    String base64 = ttsClient.synthesize_clone(template.getPath(), template.getText(), targetText);
+                    if (template == null) throw new BotWarnException("该模板不存在");
                     ttsTemplateService.increaseUsed(template.getId());
-                    String response = MsgUtils.builder()
-                            .voice("base64://" + base64)
-                            .build();
+                    String base64 = ttsClient.synthesize_clone(template.getPath(), template.getText(), text);
+                    String response = MsgUtils.builder().voice("base64://" + base64).build();
                     bot.sendGroupMsg(event.getGroupId(), response, false);
-                    log.info("☑ [Tts] 已回复克隆语音: {}", targetText);
+                    log.info("☑ [Tts] 克隆语音已回复: {}", text);
                 }
-
                 case "list" -> {
                     List<TtsTemplatePO> templates = ttsTemplateService.getList();
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
-                    StringBuilder sb = new StringBuilder("\n[名称 | 作者 - 创建日期 | 用量]");
-                    for (TtsTemplatePO template : templates) {
+                    StringBuilder sb = new StringBuilder("[名称 | 作者 - 创建日期 | 用量]");
+                    for (TtsTemplatePO template : templates)
                         sb.append("\n").append(template.getName())
                                 .append(" | ").append(template.getOwnerName())
                                 .append(" - ").append(template.getCreatedTime().format(formatter))
                                 .append(" | ").append(template.getUsed());
-                    }
-                    bot.sendGroupMsg(event.getGroupId(), "[语音合成] ✅已获取模板列表" + sb, false);
-                    log.info("☑ [Tts] 已获取模板列表");
+                    bot.sendGroupMsg(event.getGroupId(), "[语音合成模板列表] ✅已获取" + sb, false);
+                    log.info("☑ [Tts] 模板列表已获取");
                 }
-
-                default -> throw new BotWarnException("无此克隆选项");
+                default -> throw new BotWarnException("无此操作");
             }
             return;
         }
-
         if ("-synth".equals(option)) {
-            String targetText = args.nextFullString();
-            String base64 = ttsClient.synthesize(targetText);
+            String text = args.nextFullString();
+            String base64 = ttsClient.synthesize(text);
             String response = MsgUtils.builder().voice("base64://" + base64).build();
             bot.sendGroupMsg(event.getGroupId(), response, false);
-            log.info("☑ [Tts] 合成语音已回复");
+            log.info("☑ [Tts] 合成语音已回复: {}", text);
             return;
         }
-
         throw new BotWarnException("无此操作");
     }
 
@@ -146,14 +126,13 @@ public class TtsCommand implements Command {
     public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
         String option = args.nextString();
         if ("-synth".equals(option)) {
-            String targetText = args.nextFullString();
-            String base64 = ttsClient.synthesize(targetText);
+            String text = args.nextFullString();
+            String base64 = ttsClient.synthesize(text);
             String response = MsgUtils.builder().voice("base64://" + base64).build();
             bot.sendPrivateMsg(event.getUserId(), response, false);
-            log.info("☑ [Tts] 合成语音已回复: {}", targetText);
+            log.info("☑ [Tts] 合成语音已回复: {}", text);
             return;
         }
-
         throw new BotWarnException("无此操作");
     }
 
@@ -208,6 +187,6 @@ public class TtsCommand implements Command {
                 ◉ Tts 命令
                 功能: 文本转语音并发送到群中
                 格式: Tts -synth [文本]
-                注意: 需要发送语音替代文字回复时使用该命令""";
+                注意: 需发送语音替代文字回复时使用""";
     }
 }

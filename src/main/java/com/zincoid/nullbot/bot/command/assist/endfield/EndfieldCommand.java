@@ -74,7 +74,7 @@ public class EndfieldCommand implements Command {
             for (String version : ALLOWED_VERSIONS)
                 allFiles.addAll(fileService.search(keyword, endfieldPath + "/" + version));
         if (allFiles.isEmpty())
-            throw new BotInfoException(Emoji.WARN, "无匹配项");
+            throw new BotInfoException(Emoji.INFO, "无匹配项");
 
         if (!globalQuery && allFiles.size() == 1) {
             sendResource(bot, groupId, allFiles.getFirst());

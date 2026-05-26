@@ -42,7 +42,7 @@ public class ChatHistoryCommand implements Command {
 
         List<Message> history = qqAiClient.history(BotCtxUtil.getChatId());
         if (history.isEmpty())
-            throw new BotInfoException(Emoji.WARN, "暂无历史");
+            throw new BotInfoException(Emoji.INFO, "暂无历史");
 
         List<String> strings = history.stream().map(msg -> {
                     if (msg instanceof QQMessage qMsg)
