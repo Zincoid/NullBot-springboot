@@ -35,18 +35,18 @@ public class VideoGetCommand implements Command {
     private final BotInputManager botInputManager;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String secondary;
         String keyword;
 
-        if (!params.isEmpty() && "-c".equals(params.getString(0))) {
+        if (!args.isEmpty() && "-c".equals(args.getString(0))) {
             secondary = "collect";
-            keyword = params.getFullString(1);
+            keyword = args.getFullString(1);
         } else {
             secondary = "storage";
-            keyword = params.getFullString(0);
+            keyword = args.getFullString(0);
         }
 
         List<FilePO> files = fileService.search(

@@ -22,7 +22,7 @@ public class ImageFolderCommand implements Command {
     private final FileStorageProperties fileStorageProperties;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws IOException {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws IOException {
         String structure = StringUtil.getFolderTreeString(fileStorageProperties.getImagePath(), 0);
         bot.sendGroupMsg(event.getGroupId(), "[图片目录] \uD83D\uDCC1已获取\n" + structure, false);
         log.info("☑ [ImageFolder] 图片目录已输出");

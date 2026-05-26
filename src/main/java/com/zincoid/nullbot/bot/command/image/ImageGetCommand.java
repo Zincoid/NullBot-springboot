@@ -28,9 +28,9 @@ public class ImageGetCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String imagePath = fileStorageProperties.getImagePath() + "/collect";
-        List<FilePO> images = fileMapper.searchFile(params.nextFullString(), imagePath);
+        List<FilePO> images = fileMapper.searchFile(args.nextFullString(), imagePath);
         if (images.isEmpty())
             throw new NullBotException("未找到该图片");
         if (images.size() > 1)

@@ -41,8 +41,8 @@ public class WifeCommand implements Command {
     private final FileService fileService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        if (params.isEmpty()) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        if (args.isEmpty()) {
             GroupMemberInfoResp wife;
             Long userId = event.getUserId();
             LocalDateTime expireTime = memberExpireMap.get(userId);
@@ -77,7 +77,7 @@ public class WifeCommand implements Command {
             Long userId = event.getUserId();
             LocalDateTime expireTime = acgExpireMap.get(userId);
             if (expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
-                String category = params.nextString();
+                String category = args.nextString();
                 String acgPath = fileStorageProperties.getImagePath() + "/acg/" + category;
 
                 List<FilePO> wives = fileService.search("", acgPath);

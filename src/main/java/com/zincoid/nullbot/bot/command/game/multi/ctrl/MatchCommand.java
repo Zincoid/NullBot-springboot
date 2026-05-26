@@ -21,11 +21,11 @@ public class MatchCommand implements Command {
     private final Matcher matcher;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
-        String gameType = params.nextString();
+        String gameType = args.nextString();
         MatchResult result = matcher.joinMatch(userId, groupId, userName, gameType);
         if (result.getIsMatched() && !result.getIsSameGroup())
             bot.sendGroupMsg(result.getOpponentGroupId(), result.getInfo(), false);

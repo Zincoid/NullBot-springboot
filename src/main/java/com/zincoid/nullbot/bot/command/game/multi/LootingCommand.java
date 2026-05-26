@@ -21,9 +21,9 @@ public class LootingCommand implements Command {
     private final LootingMatchHandler lootingMatchHandler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long userId = event.getUserId();
-        String commandText = params.nextFullString("侦察");
+        String commandText = args.nextFullString("侦察");
         GameResult result = lootingMatchHandler.action(userId, commandText);
         if (result.getSuccess()) {
             if (!result.getIsAsync()) throw new NullBotException("该模式不发送同步消息");

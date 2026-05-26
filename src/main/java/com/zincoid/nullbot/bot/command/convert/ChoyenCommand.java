@@ -28,15 +28,15 @@ public class ChoyenCommand implements Command {
     private final HtmlRenderer htmlRenderer;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws Exception {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
         String tempFilePath = fileStorageProperties.getTempPath();
 
         Path htmlPath = resourceLoader
                 .getCached("static/html/5000choyen.html", tempFilePath + "/html");
         Map<String, String> variables = new HashMap<>();
-        variables.put("topText", params.nextString());
-        variables.put("bottomText", params.nextString());
+        variables.put("topText", args.nextString());
+        variables.put("bottomText", args.nextString());
 
         String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
         String base64 = htmlRenderer.renderElement(

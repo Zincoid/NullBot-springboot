@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 public class UserBanCommand implements Command {
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        long userId = params.nextLong();
-        int time = params.nextInt();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        long userId = args.nextLong();
+        int time = args.nextInt();
         bot.setGroupBan(event.getGroupId(), userId, time * 60);
         log.info("☑ [UserBan] 禁言已执行 - {} -> {} Min", userId, time);
     }

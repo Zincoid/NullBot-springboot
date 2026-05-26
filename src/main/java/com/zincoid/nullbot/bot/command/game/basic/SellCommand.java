@@ -24,20 +24,20 @@ public class SellCommand implements Command {
     private final UserService userService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
-        if ("-r".equals(params.nextString())) {
-            Rarity rarity = Rarity.valueOf(params.nextString());
+        if ("-r".equals(args.nextString())) {
+            Rarity rarity = Rarity.valueOf(args.nextString());
             if (!inventoryService.sellByRarity(userId, rarity))
                 throw new NullBotException("无该稀有度物品");
             UserPO user = userService.get(userId);
             bot.sendGroupMsg(groupId, "[出售] ✅已出售" + rarity.getDescription() + "色物品！\n" + "- 当前余额: " + user.getCash() + " ￥", false);
             log.info("☑ [Sell] 按稀有度出售成功 - Rarity: {}", rarity);
         } else {
-            int itemId = params.nextInt();
-            int amount = params.nextInt(1);
+            int itemId = args.nextInt();
+            int amount = args.nextInt(1);
             if (amount <= 0)
                 throw new NullBotException("数量非正");
             if (!inventoryService.sell(userId, itemId, amount))

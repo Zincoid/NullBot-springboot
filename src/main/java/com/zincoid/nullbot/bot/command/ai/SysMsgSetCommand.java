@@ -31,10 +31,10 @@ public class SysMsgSetCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String option = params.nextString();
+        String option = args.nextString();
 
         if ("-reset".equals(option)) {
             int userAccess = userService.getAccess(userId);
@@ -58,7 +58,7 @@ public class SysMsgSetCommand implements Command {
                         - 当前为非自定义提示词模式
                         - 该模式仅限权等级I及以上用户可修改
                         - 你的限权等级: %s""".formatted(userAccess));
-            String newMessage = params.nextFullString();
+            String newMessage = args.nextFullString();
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.setGroupMessage(groupId, newMessage);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅已设置", false);
@@ -70,9 +70,9 @@ public class SysMsgSetCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
         Long userId = event.getUserId();
-        String option = params.nextString();
+        String option = args.nextString();
 
         if ("-reset".equals(option)) {
             qqAiClient.clear(BotCtxUtil.getChatId());
@@ -82,11 +82,11 @@ public class SysMsgSetCommand implements Command {
             return;
         }
 
-        if (params.size() < 2)
+        if (args.size() < 2)
             throw new NullBotException("参数不足");
 
         if ("-set".equals(option)) {
-            String newMessage = params.nextFullString();
+            String newMessage = args.nextFullString();
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.setUserMessage(userId, newMessage);
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已设置", false);

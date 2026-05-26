@@ -24,7 +24,7 @@ public class VideoListCommand implements Command {
     private final FileMapper fileMapper;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String videoPath = fileStorageProperties.getVideoPath();
         List<FilePO> videos = fileMapper.searchFile("", videoPath);
         List<String> fileNames = videos.stream().map(FilePO::getFileName).toList();

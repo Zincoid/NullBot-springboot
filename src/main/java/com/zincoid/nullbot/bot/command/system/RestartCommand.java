@@ -20,9 +20,9 @@ public class RestartCommand implements Command {
     private final SystemService systemService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
-        String option = params.nextString();
+        String option = args.nextString();
         switch (option) {
             case "-app" -> {
                 bot.sendGroupMsg(groupId, """
@@ -38,8 +38,8 @@ public class RestartCommand implements Command {
                         - 模式: JAR FILE
                         - 将于3s后重启, 请稍候...""", false);
                 log.info("☑ [Restart] JAR 重启指令已下发");
-                if (params.size() > 1) {
-                    systemService.restartViaJar(params.nextFullString());
+                if (args.size() > 1) {
+                    systemService.restartViaJar(args.nextFullString());
                 } else {
                     systemService.restartViaJar();
                 }

@@ -20,7 +20,7 @@ public class LogCommand implements Command {
     private String logPath;  // 通过 yaml 配置时获取日志文件路径
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         // String logPath = getLogFilePath();
         bot.uploadGroupFile(
                 event.getGroupId(),

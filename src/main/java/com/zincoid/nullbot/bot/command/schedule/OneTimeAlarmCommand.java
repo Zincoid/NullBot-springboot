@@ -35,12 +35,12 @@ public class OneTimeAlarmCommand implements Command {
     private final BotTaskScheduler botTaskScheduler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
-        String option = params.nextString();
-        String timeStr = params.nextString();
-        String message = params.nextString();
-        Long userId = params.nextLong(event.getUserId());
+        String option = args.nextString();
+        String timeStr = args.nextString();
+        String message = args.nextString();
+        Long userId = args.nextLong(event.getUserId());
         LocalDateTime alarmTime;
         String alarmId = UUID.randomUUID().toString().substring(0, 8);
         try {

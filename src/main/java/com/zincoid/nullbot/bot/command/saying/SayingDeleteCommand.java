@@ -19,8 +19,8 @@ public class SayingDeleteCommand implements Command {
     private final SayingService sayingService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        int id = params.nextInt();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        int id = args.nextInt();
         boolean deleted = sayingService.deleteById(id);
         bot.sendGroupMsg(event.getGroupId(), "[删除语录] ⚠️No.%s %s".formatted(id, deleted ? "已删除" : "不存在"), false);
         log.info("☑ [SayingDelete] 执行语录删除 - No.{} -> {}", id, deleted ? "已删除" : "不存在");

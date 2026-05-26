@@ -36,7 +36,7 @@ public class DuelCommand implements Command {
     private final BotInputManager botInputManager;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         if (duelStorage.getDuel(groupId) != null)
             throw new NullBotException("已在游戏中");

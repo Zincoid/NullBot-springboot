@@ -21,7 +21,7 @@ public class DbUpdateCommand implements Command {
     private final UserService userService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
 
         // 自定义更新方式
         groupService.updateAllNames();

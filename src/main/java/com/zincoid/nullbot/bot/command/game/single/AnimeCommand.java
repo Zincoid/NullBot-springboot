@@ -29,7 +29,7 @@ public class AnimeCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String animePath = fileStorageProperties.getImagePath() + "/acg/二次元";
         List<FilePO> images = fileService.search("", animePath);
         if (images.isEmpty())

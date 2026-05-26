@@ -23,13 +23,13 @@ public class PRTSCommand implements Command {
     private final WebScreenCapturer webScreenCapturer;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        String option = params.getString(0);
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        String option = args.getString(0);
         String keyword;
         String base64;
 
         if (List.of("语音", "档案", "密录", "悖论").contains(option)) {
-            keyword = params.getFullString(1);
+            keyword = args.getFullString(1);
             base64 = switch (option) {
                 case "语音" -> webScreenCapturer.capture(
                         "https://prts.wiki/w/" + keyword, 1024, 5120,
@@ -58,7 +58,7 @@ public class PRTSCommand implements Command {
                 default -> throw new NullBotException("无此操作");
             };
         } else {
-            keyword = params.getFullString(0);
+            keyword = args.getFullString(0);
             base64 = webScreenCapturer.capture(
                     "https://prts.wiki/w/" + keyword, 1024, 5120,
                     List.of("#bodyContent"),

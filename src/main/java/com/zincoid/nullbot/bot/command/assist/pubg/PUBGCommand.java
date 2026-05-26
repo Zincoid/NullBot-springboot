@@ -28,10 +28,10 @@ public class PUBGCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        if (params.isEmpty())
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        if (args.isEmpty())
             throw new NullBotException("[PUBG] ❌未指定地图");
-        String map = switch (params.nextString()) {
+        String map = switch (args.nextString()) {
             case "艾伦格" -> "Erangel.png";
             case "米拉玛" -> "Miramar.png";
             case "维寒迪" -> "Vikendi.png";

@@ -29,7 +29,7 @@ public class RandomImageCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String imagePath = fileStorageProperties.getImagePath() + "/collect";
         List<FilePO> images = fileService.search("", imagePath);
         if (images.isEmpty())

@@ -29,12 +29,12 @@ public class VideoDeleteCommand implements Command {
     private final FileService fileService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String directory = fileStorageProperties.getVideoPath() + "/collect";
         ArrayMsg reply = event.getArrayMsg().getFirst();
 
-        if (!params.isEmpty()) {
-            deleteFile(bot, event, directory, params.nextFullString());
+        if (!args.isEmpty()) {
+            deleteFile(bot, event, directory, args.nextFullString());
             return;
         }
         if (reply.getType() == MsgTypeEnum.reply) {

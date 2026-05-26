@@ -43,16 +43,16 @@ public class EndfieldCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String endfieldPath = fileStorageProperties.getResourcePath() + "/endfield";
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String curVersion = versions.computeIfAbsent(groupId, k -> DEFAULT_VERSION);
-        String keyword = params.nextString("");
+        String keyword = args.nextString("");
         boolean continuousQuery = false;
 
         if ("-v".equals(keyword)) {
-            String newVersion = params.nextString();
+            String newVersion = args.nextString();
             if (!ALLOWED_VERSIONS.contains(newVersion))
                 throw new NullBotException("版本非法");
             versions.put(groupId, newVersion);
@@ -61,7 +61,7 @@ public class EndfieldCommand implements Command {
         }
         if ("-c".equals(keyword)) {
             continuousQuery = true;
-            keyword = params.nextString("");
+            keyword = args.nextString("");
         }
 
         List<FilePO> allFiles = new ArrayList<>();

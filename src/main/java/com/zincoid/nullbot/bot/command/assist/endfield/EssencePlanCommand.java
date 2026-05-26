@@ -22,8 +22,8 @@ public class EssencePlanCommand implements Command {
     private final WebScreenCapturer webScreenCapturer;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        String weapon = params.nextFullString();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        String weapon = args.nextFullString();
         String base64 = webScreenCapturer.capture(
                 "https://end.canmoe.com/", 1536, 5120,
                 List.of("//section[contains(@class,'panel')][.//h2[contains(text(),'方案推荐列表')]]"),

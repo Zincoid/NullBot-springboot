@@ -38,14 +38,14 @@ public class TtsCommand implements Command {
     private final TtsClient ttsClient;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
 
-        String option = params.nextString();
+        String option = args.nextString();
         if ("-clone".equals(option)) {
-            switch (params.nextString()) {
+            switch (args.nextString()) {
                 case "save" -> {
                     ArrayMsg reply = event.getArrayMsg().getFirst();
                     if (reply.getType() != MsgTypeEnum.reply)
@@ -64,8 +64,8 @@ public class TtsCommand implements Command {
                             throw new NullBotException("引用非音频文件");
 
                     String tempPath = fileStorageProperties.getTempPath();
-                    String templateName = params.nextString();
-                    String templateText = params.nextString();
+                    String templateName = args.nextString();
+                    String templateText = args.nextString();
 
                     for (Map.Entry<String, String> entry : voiceMap.entrySet()) {
                         String tempName = entry.getKey();
@@ -89,7 +89,7 @@ public class TtsCommand implements Command {
                 }
 
                 case "delete" -> {
-                    String templateName = params.nextString();
+                    String templateName = args.nextString();
                     if (!ttsTemplateService.deleteByName(templateName))
                         throw new NullBotException("该模板不存在");
                     bot.sendGroupMsg(event.getGroupId(), "[语音合成] ⚠️模板已删除", false);
@@ -97,8 +97,8 @@ public class TtsCommand implements Command {
                 }
 
                 case "use" -> {
-                    String templateName = params.nextString();
-                    String targetText = params.nextString();
+                    String templateName = args.nextString();
+                    String targetText = args.nextString();
                     TtsTemplatePO template = ttsTemplateService.getByName(templateName);
                     if (template == null)
                         throw new NullBotException("模板不存在");
@@ -131,7 +131,7 @@ public class TtsCommand implements Command {
         }
 
         if ("-synth".equals(option)) {
-            String targetText = params.nextFullString();
+            String targetText = args.nextFullString();
             String base64 = ttsClient.synthesize(targetText);
             String response = MsgUtils.builder().voice("base64://" + base64).build();
             bot.sendGroupMsg(event.getGroupId(), response, false);
@@ -143,10 +143,10 @@ public class TtsCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
-        String option = params.nextString();
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
+        String option = args.nextString();
         if ("-synth".equals(option)) {
-            String targetText = params.nextFullString();
+            String targetText = args.nextFullString();
             String base64 = ttsClient.synthesize(targetText);
             String response = MsgUtils.builder().voice("base64://" + base64).build();
             bot.sendPrivateMsg(event.getUserId(), response, false);

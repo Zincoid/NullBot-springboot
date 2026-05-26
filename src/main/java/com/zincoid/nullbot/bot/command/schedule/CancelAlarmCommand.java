@@ -19,10 +19,10 @@ public class CancelAlarmCommand implements Command {
     private final BotTaskScheduler botTaskScheduler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String alarmId = params.nextString();
+        String alarmId = args.nextString();
         String taskId = "Alarm-%s-%s".formatted(userId, alarmId);
         boolean cancelled = botTaskScheduler.cancelTask(taskId);
         bot.sendGroupMsg(groupId, "[取消闹钟] %s".formatted(cancelled ? "✅已取消" : "❌未取消"), false);

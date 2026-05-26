@@ -20,7 +20,7 @@ public class DisMatchCommand implements Command {
     private final Matcher matcher;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         MatchResult result = matcher.cancelMatch(event.getUserId());
         bot.sendGroupMsg(event.getGroupId(), result.getInfo(), false);
         log.info("☑ [DisMatch] 取消匹配结果 -> {}", result);

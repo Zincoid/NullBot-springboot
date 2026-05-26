@@ -34,9 +34,9 @@ public class GroupSetCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
-        String option = params.nextString();
+        String option = args.nextString();
         SettingPO setting = BotCtxUtil.getSetting();
 
         if ("-view".equals(option)) {
@@ -45,7 +45,7 @@ public class GroupSetCommand implements Command {
             return;
         }
         if ("-limit".equals(option)) {
-            String name = params.nextString();
+            String name = args.nextString();
             String msg;
             switch (name) {
                 case "scp" -> {
@@ -53,17 +53,17 @@ public class GroupSetCommand implements Command {
                     msg = "限速范围 -> %s".formatted(newLimitScope);
                 }
                 case "cap" -> {
-                    int capacity = params.nextInt();
+                    int capacity = args.nextInt();
                     setting.setLimitCapacity(capacity);
                     msg = "限速容量 -> %s".formatted(capacity);
                 }
                 case "ref" -> {
-                    int refill = params.nextInt();
+                    int refill = args.nextInt();
                     setting.setLimitRefill(refill);
                     msg = "补充数量 -> %s".formatted(refill);
                 }
                 case "itv" -> {
-                    int interval = params.nextInt();
+                    int interval = args.nextInt();
                     setting.setLimitInterval(interval);
                     msg = "补充间隔 -> %s".formatted(interval);
                 }
@@ -80,7 +80,7 @@ public class GroupSetCommand implements Command {
         }
 
         if ("-ai".equals(option)) {
-            String name = params.nextString();
+            String name = args.nextString();
             String msg;
 
             switch (name) {
@@ -94,7 +94,7 @@ public class GroupSetCommand implements Command {
                     msg = "对话策略 -> %s".formatted(strategy);
                 }
                 case "frq" -> {
-                    double freq = params.nextDouble();
+                    double freq = args.nextDouble();
                     setting.setReplyFrequency(freq);
                     msg = "发言频率 -> %s".formatted(freq);
                 }
@@ -135,7 +135,7 @@ public class GroupSetCommand implements Command {
         }
 
         if ("-monitor".equals(option)) {
-            String name = params.nextString();
+            String name = args.nextString();
             boolean enabled = switch (name) {
                 case "img" -> setting.switchImageCollect();
                 case "msg" -> setting.switchMessageCollect();
@@ -151,9 +151,9 @@ public class GroupSetCommand implements Command {
         }
 
         if ("-guess".equals(option)) {
-            double cropRatio = params.nextDouble();
-            double transparentRatio = params.nextDouble();
-            int padding = params.nextInt();
+            double cropRatio = args.nextDouble();
+            double transparentRatio = args.nextDouble();
+            int padding = args.nextInt();
             setting.setGuessCropRatio(cropRatio);
             setting.setGuessTransparentRatio(transparentRatio);
             setting.setGuessPadding(padding);

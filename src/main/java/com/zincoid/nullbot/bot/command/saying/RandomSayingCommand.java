@@ -21,12 +21,12 @@ public class RandomSayingCommand implements Command {
     private final SayingService sayingService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         SayingPO saying;
-        if (params.isEmpty()) {
+        if (args.isEmpty()) {
             saying = sayingService.getRand();
         } else {
-            saying = sayingService.getRandByUserId(params.nextLong());
+            saying = sayingService.getRandByUserId(args.nextLong());
         }
         if (saying == null)
             throw new NullBotException("暂无用户记录");

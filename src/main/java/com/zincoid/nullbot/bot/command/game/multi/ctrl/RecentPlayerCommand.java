@@ -24,7 +24,7 @@ public class RecentPlayerCommand implements Command {
     private final PlayerManager playerManager;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         List<Player> players = playerManager.getRecentPlayers(5);
         if (players == null || players.isEmpty())
             throw new NullBotException("暂无记录");

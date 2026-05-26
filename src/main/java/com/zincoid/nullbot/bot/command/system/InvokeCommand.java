@@ -22,10 +22,10 @@ public class InvokeCommand implements Command {
     private final SystemService systemService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        String beanName = params.nextString();
-        String methodName = params.nextString();
-        List<String> methodArgsStr = params.getParams();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        String beanName = args.nextString();
+        String methodName = args.nextString();
+        List<String> methodArgsStr = args.getParams();
         Object[] methodArgs = new Object[0];
         if (methodArgsStr.size() > 2)
             methodArgs = methodArgsStr.subList(2, methodArgsStr.size()).toArray();

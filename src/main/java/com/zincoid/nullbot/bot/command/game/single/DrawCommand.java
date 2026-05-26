@@ -25,19 +25,19 @@ public class DrawCommand implements Command {
     private final ItemService itemService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
 
-        if (params.isEmpty()) {
+        if (args.isEmpty()) {
             ItemPO item = itemService.drawAndKeepRandom(userId);
             if (item == null)
                 throw new NullBotException("抽数耗尽或仓库已满");
             bot.sendGroupMsg(groupId, "[抽奖] " + userName + "抽到了...\n" + item, false);
             log.info("☑ [Draw] 物品已抽取 - {} -> {}", userId, item.getName());
         } else {
-            int times = params.nextInt();
+            int times = args.nextInt();
             if (times <= 0) throw new NullBotException("次数非正");
             List<ItemPO> items = new ArrayList<>();
             boolean stop = false;

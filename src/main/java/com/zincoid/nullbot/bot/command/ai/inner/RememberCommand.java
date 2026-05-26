@@ -22,21 +22,21 @@ public class RememberCommand implements Command {
     private final SysMsgManager sysMsgManager;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        remember(bot, event.getGroupId(), params.nextFullString(), false);
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        remember(bot, event.getGroupId(), args.nextFullString(), false);
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
-        remember(bot, event.getUserId(), params.nextFullString(), true);
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
+        remember(bot, event.getUserId(), args.nextFullString(), true);
     }
 
     @Override
-    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs params) {
+    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs args) {
         if (event.getGroupId() != null) {
-            remember(bot, event.getGroupId(), params.nextFullString(), false);
+            remember(bot, event.getGroupId(), args.nextFullString(), false);
         } else {
-            remember(bot, event.getUserId(), params.nextFullString(), true);
+            remember(bot, event.getUserId(), args.nextFullString(), true);
         }
     }
 

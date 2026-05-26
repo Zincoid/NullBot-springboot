@@ -40,10 +40,10 @@ public class GuessCommand implements Command {
     private final UserService userService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws Exception {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
 
-        if ("-f".equals(params.getString(0))) {
+        if ("-f".equals(args.getString(0))) {
             if (guessStorage.getGuess(groupId) == null)
                 throw new NullBotException("未在游戏中");
             botInputManager.cancelWait(BniMode.GS, groupId);
@@ -55,7 +55,7 @@ public class GuessCommand implements Command {
             throw new NullBotException("已在游戏中");
 
         try {
-            GuessInfo guess = guessStorage.initGuess(groupId, params.nextString());
+            GuessInfo guess = guessStorage.initGuess(groupId, args.nextString());
             SettingPO setting = BotCtxUtil.getSetting();
 
             String start = MsgUtils.builder()

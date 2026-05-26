@@ -29,7 +29,7 @@ public class RandomAudioCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String audioPath = fileStorageProperties.getAudioPath();
         List<FilePO> audios = fileService.search("", audioPath);
         if (audios.isEmpty())

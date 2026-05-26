@@ -24,7 +24,7 @@ public class ImageListCommand implements Command {
     private final FileMapper fileMapper;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String imagePath = fileStorageProperties.getImagePath() + "/collect";
         List<FilePO> images = fileMapper.searchFile("", imagePath);
         List<String> fileNames = images.stream().map(FilePO::getFileName).toList();

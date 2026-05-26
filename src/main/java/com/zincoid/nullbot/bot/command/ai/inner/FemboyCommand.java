@@ -29,7 +29,7 @@ public class FemboyCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String femboyPath = fileStorageProperties.getImagePath() + "/femboy";
         List<FilePO> photos = fileService.search("", femboyPath);
         if (photos.isEmpty())

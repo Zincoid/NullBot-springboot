@@ -34,10 +34,10 @@ public class ConvertCommand implements Command {
     private final ImageConverter imageConverter;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws Exception {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
         ArrayMsg reply = event.getArrayMsg().getFirst();
-        String method = params.nextString();
+        String method = args.nextString();
         List<String> urls = new ArrayList<>();
 
         if (reply.getType() == MsgTypeEnum.reply) {
@@ -46,9 +46,9 @@ public class ConvertCommand implements Command {
             Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
         }
-        if (params.size() > 1) {
+        if (args.size() > 1) {
             // ID 收集
-            long qqNumber = params.nextLong();
+            long qqNumber = args.nextLong();
             urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         } else {
             // AT 收集

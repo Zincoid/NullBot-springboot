@@ -24,8 +24,8 @@ public class InventoryCommand implements Command {
     private final UserService userService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        int p = params.nextInt(1);
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        int p = args.nextInt(1);
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
         DataPage<InventoryVO> inventoryVOPage = inventoryService.getVOPage(userId, p, 10);

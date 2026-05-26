@@ -38,7 +38,7 @@ public class SymmetryCommand implements Command {
     private final HtmlRenderer htmlRenderer;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws Exception {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
         ArrayMsg reply = event.getArrayMsg().getFirst();
         List<String> urls = new ArrayList<>();
@@ -49,18 +49,18 @@ public class SymmetryCommand implements Command {
             Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
         }
-        if (!params.isEmpty()) {
+        if (!args.isEmpty()) {
             // ID 收集
-            if (List.of("左", "右", "上", "下").contains(params.getString(0))) {
-                if (params.size() > 1) {
-                    long qqNumber = params.getLong(1);
+            if (List.of("左", "右", "上", "下").contains(args.getString(0))) {
+                if (args.size() > 1) {
+                    long qqNumber = args.getLong(1);
                     urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
                 } else {
                     List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
                     for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
                 }
             } else {
-                long qqNumber = params.getLong(0);
+                long qqNumber = args.getLong(0);
                 urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
             }
         } else {
@@ -84,8 +84,8 @@ public class SymmetryCommand implements Command {
                 Path htmlPath = resourceLoader.getCached("static/html/symmetry.html", tempPath + "/html");
                 Map<String, String> variables = new HashMap<>();
                 variables.put("mode", "left");
-                if (!params.isEmpty()) {
-                    switch (params.getString(0)) {
+                if (!args.isEmpty()) {
+                    switch (args.getString(0)) {
                         case "左" -> variables.put("mode", "left");
                         case "右" -> variables.put("mode", "right");
                         case "上" -> variables.put("mode", "top");

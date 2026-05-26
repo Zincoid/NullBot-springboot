@@ -22,10 +22,10 @@ public class AccessSetCommand implements Command {
     private final UserService userService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        String option = params.nextString();
-        long targetId = params.nextLong();
-        int targetNewAccess = params.nextInt();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        String option = args.nextString();
+        long targetId = args.nextLong();
+        int targetNewAccess = args.nextInt();
         switch (option) {
             case "-group" -> {
                 if (!groupService.exist(targetId)) throw new NullBotException("[限权设置] ❌群聊未注册");

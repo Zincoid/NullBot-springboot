@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class TestCommand implements Command {
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 

@@ -21,10 +21,10 @@ public class TicTacToeCommand implements Command {
     private final TicTacToeMatchHandler ticTacToeMatchHandler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long userId = event.getUserId();
-        int x = params.nextInt();
-        int y = params.nextInt();
+        int x = args.nextInt();
+        int y = args.nextInt();
         GameResult result = ticTacToeMatchHandler.move(userId, x - 1, y - 1);
         if (result.getSuccess()) {
             if (result.getIsAsync()) throw new NullBotException("该模式不发送异步消息");

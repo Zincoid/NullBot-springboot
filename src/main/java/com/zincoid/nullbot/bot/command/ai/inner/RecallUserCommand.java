@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 public class RecallUserCommand implements Command {
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        int messageId = params.nextInt();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        int messageId = args.nextInt();
         bot.deleteMsg(messageId);
         log.info("☑ [RecallUser] 用户消息已撤回 -> MessageId: {}", messageId);
     }

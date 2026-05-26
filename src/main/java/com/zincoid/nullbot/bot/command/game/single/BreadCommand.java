@@ -33,11 +33,11 @@ public class BreadCommand implements Command {
     private final BreadService breadService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
-        switch (params.nextString()) {
+        switch (args.nextString()) {
             case "-buy", "b" -> buy(bot, userId, groupId, userName);
             case "-eat", "e" -> eat(bot, userId, userName, groupId);
             case "-rob", "r" -> rob(bot, event, groupId, userId, userName);

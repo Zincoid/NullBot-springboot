@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 public class SendPrivateMsgCommand implements Command {
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        long targetId = params.nextLong();
-        String message = params.nextFullString();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        long targetId = args.nextLong();
+        String message = args.nextFullString();
         bot.sendPrivateMsg(targetId, message, false);
         log.info("☑ [SendPrivateMsg] 私信已发送 - {} <- {}", targetId, message);
     }

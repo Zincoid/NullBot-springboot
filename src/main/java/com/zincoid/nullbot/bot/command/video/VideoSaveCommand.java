@@ -29,7 +29,7 @@ public class VideoSaveCommand implements Command {
     private final FileService fileService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
             throw new NullBotException("需引用视频");
@@ -47,8 +47,8 @@ public class VideoSaveCommand implements Command {
         String userName = event.getSender().getNickname();
 
         Map.Entry<String, String> entry = videoMap.entrySet().iterator().next();
-        String fileName = params.isEmpty() ? entry.getKey()
-                : params.nextFullString() + "." + entry.getKey().split("\\.")[1];
+        String fileName = args.isEmpty() ? entry.getKey()
+                : args.nextFullString() + "." + entry.getKey().split("\\.")[1];
         if (fileName.matches(".*[\\\\/:*?\"<>|].*"))
             throw new NullBotException("文件名非法");
         String filePath = fileStorageProperties.getVideoPath() + "/collect";

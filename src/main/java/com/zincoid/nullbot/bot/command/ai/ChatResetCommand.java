@@ -23,7 +23,7 @@ public class ChatResetCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String chatId = BotCtxUtil.getChatId();
         qqAiClient.clear(chatId);
         bot.sendGroupMsg(event.getGroupId(), """

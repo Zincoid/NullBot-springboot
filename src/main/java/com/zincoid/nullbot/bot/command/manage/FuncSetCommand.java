@@ -20,8 +20,8 @@ public class FuncSetCommand implements Command {
     private final FunctionManager functionManager;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        String option = params.nextString();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        String option = args.nextString();
         if ("-view".equals(option)) {
             String status = functionManager.getStatus();
             bot.sendGroupMsg(event.getGroupId(), "[全局设置] ℹ️已获取！\n" + status, false);
@@ -29,7 +29,7 @@ public class FuncSetCommand implements Command {
             return;
         }
         if ("-change".equals(option)) {
-            String func = params.nextString();
+            String func = args.nextString();
             boolean enabled = functionManager.switchEnabled(func);
             bot.sendGroupMsg(event.getGroupId(), """
                     [全局设置] \uD83D\uDD04已切换: %s""".formatted(enabled ? "ON" : "OFF"), false);

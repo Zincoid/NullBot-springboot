@@ -29,7 +29,7 @@ public class PucciCommand implements Command {
     private final HtmlRenderer htmlRenderer;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws Exception {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
         String tempFilePath = fileStorageProperties.getTempPath();
 
@@ -42,7 +42,7 @@ public class PucciCommand implements Command {
 
         variables.put("text1", "普奇！！回答我！");
         variables.put("text2", "为什么你要加速时间！！");
-        variables.put("text3", params.nextString());
+        variables.put("text3", args.nextString());
         images.put("background", bgPath.toAbsolutePath().toString());
 
         String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());

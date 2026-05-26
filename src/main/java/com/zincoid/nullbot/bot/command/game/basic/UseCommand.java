@@ -25,9 +25,9 @@ public class UseCommand implements Command {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         // 解析物品
-        int itemId = params.nextInt();
+        int itemId = args.nextInt();
         // 存在检查
         if (!itemService.exist(itemId))
             throw new NullBotException("该物品不存在");

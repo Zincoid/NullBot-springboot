@@ -24,7 +24,7 @@ public class RecallReactCommand implements Command {
     private final MsgWindowChatMemory msgWindowChatMemory;
 
     @Override
-    public void execute(Bot bot, GroupMsgDeleteNoticeEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMsgDeleteNoticeEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         Long operatorId = event.getOperatorId();

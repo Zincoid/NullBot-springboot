@@ -39,7 +39,7 @@ public class QuestionCommand implements Command {
     private final PermissionHandler permissionHandler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
@@ -61,7 +61,7 @@ public class QuestionCommand implements Command {
                                 1. timeout根据题目难度设定，简单题15-30秒，中等题45-60秒，困难题90-120秒，
                                 2. 公式相关内容不要使用Latex格式
                                 3. 禁止生成中国国内政治事件和政治人物相关问题，当主题涉及时仅回复REFUSED"""
-                                .formatted(params.nextFullString("二次元")))),
+                                .formatted(args.nextFullString("二次元")))),
                         thinking, 2500
                 ).getContent();
             } catch (Exception e) {

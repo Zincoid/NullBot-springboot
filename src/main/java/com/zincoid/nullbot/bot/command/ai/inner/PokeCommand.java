@@ -16,21 +16,21 @@ import org.springframework.stereotype.Component;
 public class PokeCommand implements Command {
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        poke(bot, event.getGroupId(), params.nextLong(), false);
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        poke(bot, event.getGroupId(), args.nextLong(), false);
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
-        poke(bot, event.getUserId(), params.nextLong(), true);
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
+        poke(bot, event.getUserId(), args.nextLong(), true);
     }
 
     @Override
-    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs params) {
+    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs args) {
         if (event.getGroupId() != null) {
-            poke(bot, event.getGroupId(), params.nextLong(), false);
+            poke(bot, event.getGroupId(), args.nextLong(), false);
         } else {
-            poke(bot, event.getUserId(), params.nextLong(), true);
+            poke(bot, event.getUserId(), args.nextLong(), true);
         }
     }
 

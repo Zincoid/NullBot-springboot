@@ -26,7 +26,7 @@ public class CheckInCommand implements Command {
     private final UserService userService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
         LocalDateTime expireTime = checkInExpireMap.get(userId);

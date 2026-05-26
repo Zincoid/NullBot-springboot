@@ -24,13 +24,13 @@ public class HelpCommand implements Command {
     private final ResourceLoader resourceLoader;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         bot.sendGroupMsg(event.getGroupId(), buildHelpMsg(), false);
         log.info("☑ [Help] 群聊帮助已获取");
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) throws Exception {
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) throws Exception {
         bot.sendPrivateMsg(event.getUserId(), """
                 [ ====== 可用指令 ====== ]
                 1. Help  帮助

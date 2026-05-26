@@ -22,8 +22,8 @@ public class ReplyCommand implements Command {
     private final TtsClient ttsClient;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        String message = params.nextFullString();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        String message = args.nextFullString();
         String content = BotCtxUtil.getSetting().isVoice() ?
                 MsgUtils.builder().voice("base64://" + ttsClient.synthesize(message)).build() : message;
         bot.sendGroupMsg(event.getGroupId(), content, false);
@@ -31,8 +31,8 @@ public class ReplyCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
-        String message = params.nextFullString();
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
+        String message = args.nextFullString();
         bot.sendPrivateMsg(event.getUserId(), message, false);
         log.info("☑ [Reply] 私聊已回复: {}", message);
     }

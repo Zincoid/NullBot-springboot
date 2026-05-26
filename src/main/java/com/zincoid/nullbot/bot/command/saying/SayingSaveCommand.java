@@ -24,7 +24,7 @@ public class SayingSaveCommand implements Command {
     private final SayingService sayingService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
             throw new NullBotException("需引用文本");

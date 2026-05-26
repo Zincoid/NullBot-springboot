@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class RawMsgCommand implements Command {
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply) throw new NullBotException("需引用消息");
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();

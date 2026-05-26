@@ -21,21 +21,21 @@ public class ForgetCommand implements Command {
     private final SysMsgManager sysMsgManager;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        forget(bot, event.getGroupId(), false, params.nextInt());
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        forget(bot, event.getGroupId(), false, args.nextInt());
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
-        forget(bot, event.getUserId(), true, params.nextInt());
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
+        forget(bot, event.getUserId(), true, args.nextInt());
     }
 
     @Override
-    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs params) {
+    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs args) {
         if (event.getGroupId() != null) {
-            forget(bot, event.getGroupId(), false, params.nextInt());
+            forget(bot, event.getGroupId(), false, args.nextInt());
         } else {
-            forget(bot, event.getUserId(), true, params.nextInt());
+            forget(bot, event.getUserId(), true, args.nextInt());
         }
     }
 

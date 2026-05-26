@@ -20,9 +20,9 @@ public class PlusExpCommand implements Command {
     private final UserService userService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        long userId = params.nextLong();
-        int exp = params.nextInt();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        long userId = args.nextLong();
+        int exp = args.nextInt();
         if (!userService.exist(userId))
             throw new NullBotException("[加经验] ❌用户不存在");
         int i = userService.plusExperience(userId, exp);

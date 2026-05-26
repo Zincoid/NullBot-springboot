@@ -21,8 +21,8 @@ public class ItemCommand implements Command {
     private final ItemService itemService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        int itemId = params.nextInt();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        int itemId = args.nextInt();
         if (!itemService.exist(itemId))
             throw new NullBotException("该物品不存在");
         ItemPO item = itemService.get(itemId);

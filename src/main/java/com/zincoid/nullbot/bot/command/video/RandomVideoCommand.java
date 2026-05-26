@@ -29,7 +29,7 @@ public class RandomVideoCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String videoPath = fileStorageProperties.getVideoPath() + "/collect";
         List<FilePO> videos = fileService.search("", videoPath);
         if (videos.isEmpty())

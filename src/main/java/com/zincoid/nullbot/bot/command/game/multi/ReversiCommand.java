@@ -21,9 +21,9 @@ public class ReversiCommand implements Command {
     private final ReversiMatchHandler reversiMatchHandler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long userId = event.getUserId();
-        String pos = params.nextString().toUpperCase();
+        String pos = args.nextString().toUpperCase();
         if (!pos.matches("^[A-H][1-8]$"))
             throw new NullBotException("坐标错误 范围: A1~H8");
         GameResult result = reversiMatchHandler.move(userId, pos);

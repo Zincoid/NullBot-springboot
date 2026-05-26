@@ -29,21 +29,21 @@ public class MemeCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        meme(bot, event.getGroupId(), false, params.nextString());
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        meme(bot, event.getGroupId(), false, args.nextString());
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
-        meme(bot, event.getUserId(), true, params.nextString());
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
+        meme(bot, event.getUserId(), true, args.nextString());
     }
 
     @Override
-    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs params) {
+    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs args) {
         if (event.getGroupId() != null) {
-            meme(bot, event.getGroupId(), false, params.nextString());
+            meme(bot, event.getGroupId(), false, args.nextString());
         } else {
-            meme(bot, event.getUserId(), true, params.nextString());
+            meme(bot, event.getUserId(), true, args.nextString());
         }
     }
 

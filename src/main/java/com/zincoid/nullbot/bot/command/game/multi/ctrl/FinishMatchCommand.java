@@ -20,7 +20,7 @@ public class FinishMatchCommand implements Command {
     private final Matcher matcher;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         if(!matcher.finishMatch(event.getUserId()))
             throw new NullBotException("未找到对局");
         log.info("☑ [FinishMatch] 对局已终止");

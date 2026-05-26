@@ -29,7 +29,7 @@ public class ImageSaveCommand implements Command {
     private final FileService fileService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
             throw new NullBotException("需引用图片");

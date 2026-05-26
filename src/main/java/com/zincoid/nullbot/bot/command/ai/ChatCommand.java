@@ -29,8 +29,8 @@ public class ChatCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        QQMessage message = QQMessage.user(params.nextFullString())
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        QQMessage message = QQMessage.user(args.nextFullString())
                 .with(event.getGroupId(), event.getUserId(), event.getSender().getNickname())
                 .id(event.getMessageId());
         String response = qqAiClient.chat(message);
@@ -51,8 +51,8 @@ public class ChatCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
-        QQMessage message = QQMessage.user(params.nextFullString())
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs args) {
+        QQMessage message = QQMessage.user(args.nextFullString())
                 .with(event.getUserId(), event.getPrivateSender().getNickname())
                 .id(event.getMessageId());
         String response = qqAiClient.chat(message);

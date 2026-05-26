@@ -25,8 +25,8 @@ public class RecallAICommand implements Command {
     private final MsgWindowChatMemory msgWindowChatMemory;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        int n = params.nextInt(1);
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        int n = args.nextInt(1);
         if (n <= 0) throw new NullBotException("消息数非正");
         String chatId = BotCtxUtil.getChatId();
         List<QQMessage> messages = msgWindowChatMemory.get(chatId).stream()

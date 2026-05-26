@@ -37,7 +37,7 @@ public class DriftBottleCommand implements Command {
     private final BotInputManager botInputManager;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
@@ -45,7 +45,7 @@ public class DriftBottleCommand implements Command {
         Map<String, String> imageMap = MsgParseUtil.extractImgMap(event.getRawMessage());
 
         if (!imageMap.isEmpty()) {
-            boolean autoThrow = !params.isEmpty() && "-auto".equals(params.nextString());
+            boolean autoThrow = !args.isEmpty() && "-auto".equals(args.nextString());
             if (imageMap.size() != 1 && !autoThrow)
                 throw new NullBotException("仅可投单张图片");
             for (Map.Entry<String, String> entry : imageMap.entrySet()) {
@@ -75,8 +75,8 @@ public class DriftBottleCommand implements Command {
             return;
         }
 
-        if (!params.isEmpty()) {
-            boolean autoThrow = "-auto".equals(params.nextString());
+        if (!args.isEmpty()) {
+            boolean autoThrow = "-auto".equals(args.nextString());
             boolean thrown = driftBottleService.throwBottle(
                     userId,
                     bot.getStrangerInfo(userId, true).getData().getNickname(),

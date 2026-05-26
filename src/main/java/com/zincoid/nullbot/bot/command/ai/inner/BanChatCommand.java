@@ -22,13 +22,13 @@ public class BanChatCommand implements Command {
     private final PermissionHandler permissionHandler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        banChat(bot, event.getGroupId(), event.getUserId(), params.nextInt());
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        banChat(bot, event.getGroupId(), event.getUserId(), args.nextInt());
     }
 
     @Override
-    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs params) {
-        banChat(bot, event.getGroupId(), event.getUserId(), params.nextInt());
+    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs args) {
+        banChat(bot, event.getGroupId(), event.getUserId(), args.nextInt());
     }
 
     private void banChat(Bot bot, Long groupId, Long userId, int banTime) {
