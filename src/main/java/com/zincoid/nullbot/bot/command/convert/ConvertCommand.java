@@ -7,6 +7,7 @@ import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,9 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.util.*;
 
+@Slf4j
 @CommandMapping({"Convert", "图像处理"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class ConvertCommand implements Command {
 
@@ -33,53 +34,35 @@ public class ConvertCommand implements Command {
     private final ImageConverter imageConverter;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) throws Exception {
         Long groupId = event.getGroupId();
-
-        if (params.isEmpty())
-            throw new NullBotException("[图像处理] ❌无方法参数");
-        String method = params.getFirst();
-        if (!List.of("RIP", "PRTS", "InvsPRTS").contains(method))  // 用于减少不必要的图像下载
-            throw new NullBotException("[图像处理] ❌方法不存在");
-
+        ArrayMsg reply = event.getArrayMsg().getFirst();
+        String method = params.nextString();
         List<String> urls = new ArrayList<>();
 
-        // 引用收集
-        ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() == MsgTypeEnum.reply) {
+            // 引用收集
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
             Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
-        }
-
-        //  ID参数收集 或 AT收集
-        if (params.size() > 1) {
-            long qqNumber;
-            try {
-                qqNumber = Long.parseLong(params.get(1));
-            } catch (NumberFormatException e) {
-                throw new NullBotException("[图像处理] ❌参数格式错误");
-            }
+        } else if (params.size() > 1) {
+            // ID 收集
+            long qqNumber = params.nextLong();
             urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
-        }else{
+        } else {
+            // AT 收集
             List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
             for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         }
 
         if (urls.isEmpty())
-            throw new NullBotException("[图像处理] ❌无引用图片或ID参数或At消息");
+            throw new NullBotException("[图像处理] ❌无引用图片或ID参数或AT消息");
 
-        // 开始处理
         String tempPath = fileStorageProperties.getTempPath();
         for (String url : urls) {
             String tempName = UUID.randomUUID().toString();
-            String downloadedName;
-            try {
-                FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName, "├─ ");
-                downloadedName = fileInfo.getFileName();
-            } catch (Exception e) {
-                throw new NullBotException("[图像处理] ❌下载时出错: " + e.getMessage());
-            }
+            FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName);
+            String downloadedName = fileInfo.getFileName();
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
@@ -87,18 +70,14 @@ public class ConvertCommand implements Command {
                     case "RIP" -> imageConverter.RIP(imagePath);
                     case "PRTS" -> imageConverter.PRTS(imagePath);
                     case "InvsPRTS" -> imageConverter.invsPRTS(imagePath);
-                    default -> throw new NullBotException("[图像处理] ❌方法不存在");
+                    default -> throw new NullBotException("方法不存在");
                 };
-            } catch (NullBotException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new NullBotException("[图像处理] ❌处理时出错: " + e.getMessage());
             } finally {
                 FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
             }
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);
-            log.info("├─[Convert] 处理完成 - {}", downloadedName);
+            log.info("☑ [Convert] 图像处理已完成");
         }
     }
 
