@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"0167a25a"})  // 加密 仅供AI嵌入调用
+@Slf4j
+@CommandMapping({"0167a25a"})  // 加密 仅供AI调用
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class RememberCommand implements Command {
 
     private final SysMsgManager sysMsgManager;

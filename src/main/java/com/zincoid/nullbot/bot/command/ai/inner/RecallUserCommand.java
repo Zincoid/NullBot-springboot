@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"b6713262"})  // 加密 仅供AI嵌入调用
+@Slf4j
+@CommandMapping({"b6713262"})  // 加密 仅供AI调用
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class RecallUserCommand implements Command {
 
     @Override

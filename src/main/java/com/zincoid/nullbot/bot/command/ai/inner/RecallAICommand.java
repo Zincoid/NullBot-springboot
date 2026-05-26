@@ -17,10 +17,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"db3fbe2b"})  // 加密 仅供AI嵌入调用
+@Slf4j
+@CommandMapping({"db3fbe2b"})  // 加密 仅供AI调用
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class RecallAICommand implements Command {
 
     private final MsgWindowChatMemory msgWindowChatMemory;

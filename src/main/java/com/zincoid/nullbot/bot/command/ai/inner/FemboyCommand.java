@@ -17,10 +17,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-@CommandMapping({"eb0f8545"})  // 加密 仅供AI嵌入调用
+@Slf4j
+@CommandMapping({"eb0f8545"})  // 加密 仅供AI调用
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class FemboyCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;

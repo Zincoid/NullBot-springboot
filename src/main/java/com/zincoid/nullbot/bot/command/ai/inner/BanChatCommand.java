@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"1e7bd161"})  // 加密 仅供AI嵌入调用
+@Slf4j
+@CommandMapping({"1e7bd161"})  // 加密 仅供AI调用
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class BanChatCommand implements Command {
 
     private final UserService userService;

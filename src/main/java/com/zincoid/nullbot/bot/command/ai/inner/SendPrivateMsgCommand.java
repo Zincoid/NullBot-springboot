@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"4ed1314d"})  // 加密 仅供AI嵌入调用
-@Component
 @Slf4j
+@CommandMapping({"4ed1314d"})  // 加密 仅供AI调用
+@Component
 public class SendPrivateMsgCommand implements Command {
 
     @Override

@@ -18,10 +18,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@CommandMapping({"65275d24"})  // 加密 仅供AI嵌入调用
+@Slf4j
+@CommandMapping({"65275d24"})  // 加密 仅供AI调用
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class MemeCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
