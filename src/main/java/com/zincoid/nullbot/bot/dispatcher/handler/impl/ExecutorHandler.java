@@ -6,6 +6,7 @@ import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotOmitException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
@@ -57,17 +58,22 @@ public class ExecutorHandler implements Handler {
             if (groupId != 0L) bot.sendGroupMsg(groupId, message, false);
             if (userId != 0L) bot.sendPrivateMsg(userId, message, false);
 
+        } catch (BotInfoException e) {
+            log.info("  [ExecutorHandler] 提示异常: {}", e.getMessage());
+            if (groupId != 0L) bot.sendGroupMsg(groupId, e.getMessage(), false);
+            if (userId != 0L) bot.sendPrivateMsg(userId, e.getMessage(), false);
+
         } catch (BotOmitException e) {
-            log.warn("  [ExecutorHandler] 忽略异常: {}", e.getMessage());
-            wsSender.broadcast("WARN", "忽略异常: " + e.getMessage());
+            log.info("  [ExecutorHandler] 忽略异常: {}", e.getMessage());
+            wsSender.broadcast("INFO", "忽略异常: " + e.getMessage());
             throw e;
 
         } catch (Exception e) {
-            log.error("  [ExecutorHandler] 运行出错: {}", e.getMessage());
+            log.error("  [ExecutorHandler] 未知异常: {}", e.getMessage());
             String message = "❌Error: %s".formatted(e.getMessage());
             if (groupId != 0L) bot.sendGroupMsg(groupId, message, false);
             if (userId != 0L) bot.sendPrivateMsg(userId, message, false);
-            wsSender.broadcast("ERROR", "运行出错: " + e.getMessage());
+            wsSender.broadcast("ERROR", "未知异常: " + e.getMessage());
             throw e;
         }
 
