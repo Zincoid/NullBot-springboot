@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.ai.inner;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -11,10 +11,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.command.ai.ChatCommand;
 import com.zincoid.nullbot.bot.command.ai.PokeReactCommand;
 import com.zincoid.nullbot.bot.dispatcher.handler.impl.PermissionHandler;
-import com.zincoid.nullbot.core.service.UserService;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Slf4j
 @CommandMapping({"1e7bd161"})  // 加密 仅供AI调用
@@ -22,36 +19,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BanChatCommand implements Command {
 
-    private final UserService userService;
     private final PermissionHandler permissionHandler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        banChat(bot, params, event.getGroupId());
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        banChat(bot, event.getGroupId(), event.getUserId(), params.nextInt());
     }
 
     @Override
-    public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
-        banChat(bot, params, event.getGroupId());
+    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs params) {
+        banChat(bot, event.getGroupId(), event.getUserId(), params.nextInt());
     }
 
-    private void banChat(Bot bot, List<String> params, Long groupId) {
-        if (params.size() < 2)
-            throw new NullBotException("参数不足");
-        long userId;
-        int banTime;
-        try {
-            userId = Long.parseLong(params.get(0));
-            banTime = Integer.parseInt(params.get(1));
-        } catch (NumberFormatException e) {
-            throw new NullBotException("参数错误");
-        }
-        if (!userService.exist(userId))
-            throw new NullBotException("用户不存在");
-
+    private void banChat(Bot bot, Long groupId, Long userId, int banTime) {
         permissionHandler.setUserBan(userId, ChatCommand.class, banTime);
         permissionHandler.setUserBan(userId, PokeReactCommand.class, banTime);
-
         if (banTime > 0) {
             bot.sendGroupMsg(groupId, """
                     [停用AI] ⛔️已封禁
