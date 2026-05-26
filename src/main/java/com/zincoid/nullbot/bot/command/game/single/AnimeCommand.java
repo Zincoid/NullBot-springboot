@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +18,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Slf4j
 @CommandMapping({"Anime", "anime", "二次元", "色图", "涩图"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class AnimeCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
@@ -28,17 +29,17 @@ public class AnimeCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         String animePath = fileStorageProperties.getImagePath() + "/acg/二次元";
         List<FilePO> images = fileService.search("", animePath);
         if (images.isEmpty())
-            throw new NullBotException("[二次元] ❌暂无图片");
+            throw new NullBotException("暂无图片");
         FilePO image = images.get(ThreadLocalRandom.current().nextInt(images.size()));
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(image.getId()))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("├─[Anime] 获取二次元图片 - {}", image.getFileName());
+        log.info("☑ [Anime] 图片已获取: {}", image.getFileName());
     }
 
     @Override
