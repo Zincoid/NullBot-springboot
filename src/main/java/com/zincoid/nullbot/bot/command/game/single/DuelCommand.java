@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @CommandMapping({"Duel", "斗蛐蛐"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class DuelCommand implements Command {
 
@@ -35,10 +36,10 @@ public class DuelCommand implements Command {
     private static final int SELECTION_TIME = 30;  // 抉择时间 (单位: Second)
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         if (duelStorage.getDuel(groupId) != null)
-            throw new NullBotException("[斗蛐蛐] ⚠️已在游戏中");
+            throw new NullBotException("已在游戏中");
 
         try {
             DuelInfo duel = duelStorage.initDuel(groupId);
@@ -78,8 +79,7 @@ public class DuelCommand implements Command {
             } else if ("R".equals(duel.getWinner())) {
                 winners = right;
                 losers = left;
-            } else
-                throw new NullBotException("[斗蛐蛐] ❌数据异常");
+            } else throw new NullBotException("数据异常");
 
             List<String> winnerNames = winners.stream()
                     .map(u -> bot.getStrangerInfo(u, true).getData().getNickname())
@@ -98,8 +98,6 @@ public class DuelCommand implements Command {
                     loserNames.isEmpty() ? "无" : String.join(", ", loserNames)), false
             );
 
-        } catch (Exception e) {
-            throw new NullBotException("[斗蛐蛐] ❌" + e.getMessage());
         } finally {
             duelStorage.removeDuel(groupId);
         }
