@@ -2,12 +2,11 @@ package com.zincoid.nullbot.bot.command.ai.inner;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
 import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowChatMemory;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
-import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
-import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,33 +25,20 @@ public class RecallAICommand implements Command {
     private final MsgWindowChatMemory msgWindowChatMemory;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        int n = 1;
-        if (!params.isEmpty()) {
-            try {
-                n = Integer.parseInt(params.getFirst());
-                if(n <= 0) throw new NullBotException("[撤回AI消息] ❌参数非正");
-            } catch (NumberFormatException e) {
-                throw new NullBotException("[撤回AI消息] ❌参数格式错误");
-            }
-        }
-
-        Long groupId = event.getGroupId();
-        Long userId = event.getUserId();
-        SettingPO setting = BotCtxUtil.getSetting();
-        String chatId = setting.getChatScope() + "_" + (setting.getChatScope() == ChatScope.PERSONAL ? userId : groupId);
-
-        List<QQMessage> messages = msgWindowChatMemory.get(chatId)
-                .stream().map(m -> (QQMessage) m).toList();
-        List<QQMessage> filtered = messages.stream()
-                .filter(msg -> msg != null && msg.getMessageId() != null && msg.getRole() == Role.ASSISTANT)
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        int n = params.nextIntOptional(1);
+        if (n <= 0) throw new NullBotException("消息数非正");
+        String chatId = BotCtxUtil.getChatId();
+        List<QQMessage> messages = msgWindowChatMemory.get(chatId).stream()
+                .map(m -> (QQMessage) m)
                 .toList();
-
+        List<QQMessage> filtered = messages.stream()
+                .filter(msg -> msg.getRole() == Role.ASSISTANT && msg.getMessageId() != null)
+                .toList();
         int startIndex = Math.max(0, filtered.size() - n);
         List<QQMessage> targets = filtered.subList(startIndex, filtered.size());
         for (QQMessage target : targets) bot.deleteMsg(target.getMessageId());
-
-        log.info("├─[RecallAI] 已撤回AI消息 -> {}条", n);
+        log.info("☑ [RecallAI] 撤回AI消息 -> amount: {}", n);
     }
 
     @Override
