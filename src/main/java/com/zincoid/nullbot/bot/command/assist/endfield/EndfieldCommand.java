@@ -132,7 +132,7 @@ public class EndfieldCommand implements Command {
                 限权: %d 级
                 格式:
                 1. Endfield [可选: -c(连查模式)] [可选: 关键字]
-                2. Endfield [-v] [可选: 版本]
+                2. Endfield [-v] [版本号]
                 别名: endfield/end/终末地查询/终末地""", getAccess()
         );
     }
