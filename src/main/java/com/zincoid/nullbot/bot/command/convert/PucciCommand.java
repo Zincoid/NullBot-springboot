@@ -10,7 +10,6 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.util.HtmlTemplateUtil;
 import org.springframework.stereotype.Component;
 
@@ -31,17 +30,20 @@ public class PucciCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
 
-        Path htmlPath = resourceLoader.getCached("static/html/pucci.html");
         Path bgPath = resourceLoader.getCached("static/image/pucci.png");
-        Map<String, String> variables = new HashMap<>();
-        Map<String, String> images = new HashMap<>();
-
-        variables.put("text1", "普奇！！回答我！");
-        variables.put("text2", "为什么你要加速时间！！");
-        variables.put("text3", args.nextString());
-        images.put("background", bgPath.toAbsolutePath().toString());
-
+        Path htmlPath = resourceLoader.getCached("static/html/pucci.html");
         String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+
+        Map<String, String> variables = Map.of(
+                "text1", "普奇！！回答我！",
+                "text2", "为什么你要加速时间！！",
+                "text3", args.nextString()
+        );
+
+        Map<String, String> images = Map.of(
+                "background", bgPath.toAbsolutePath().toString()
+        );
+
         html = HtmlTemplateUtil.replaceVariables(html, variables);
         html = HtmlTemplateUtil.replaceImages(html, images);
         String base64 = htmlRenderer.renderElement(html, "#wrap");

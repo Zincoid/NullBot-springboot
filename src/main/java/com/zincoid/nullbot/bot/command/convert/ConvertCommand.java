@@ -46,7 +46,7 @@ public class ConvertCommand implements Command {
             Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
         }
-        if (args.size() > 1) {
+        if (args.hasNext()) {
             // ID 收集
             long qqNumber = args.nextLong();
             urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
@@ -56,8 +56,7 @@ public class ConvertCommand implements Command {
             for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         }
 
-        if (urls.isEmpty())
-            throw new BotWarnException("无引用图片或ID参数或AT消息");
+        if (urls.isEmpty()) throw new BotWarnException("缺少图片引用或ID参数或AT用户");
 
         String tempPath = fileStorageProperties.getTempPath();
         for (String url : urls) {
@@ -67,14 +66,14 @@ public class ConvertCommand implements Command {
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
-                base64 = switch (method){
+                base64 = switch (method) {
                     case "RIP" -> imageConverter.RIP(imagePath);
                     case "PRTS" -> imageConverter.PRTS(imagePath);
                     case "InvsPRTS" -> imageConverter.invsPRTS(imagePath);
-                    default -> throw new BotWarnException("方法不存在");
+                    default -> throw new BotWarnException("无此操作");
                 };
             } finally {
-                FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
+                FileUtils.deleteQuietly(new File(imagePath));
             }
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);
@@ -90,7 +89,7 @@ public class ConvertCommand implements Command {
                 限权: %d 级
                 格式:
                 1. [引用] Convert [方式]
-                2. Convert [方式] [@任何人|QQ号]
+                2. Convert [方式] [@用户|QQ号]
                 方式: RIP/PRTS/InvsPRTS
                 别名: 图像处理""", getAccess()
         );

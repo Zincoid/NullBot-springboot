@@ -8,6 +8,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotErrorException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,7 @@ public class SymmetryCommand implements Command {
         Long groupId = event.getGroupId();
         ArrayMsg reply = event.getArrayMsg().getFirst();
         List<String> urls = new ArrayList<>();
+        String mode = "left";
 
         if (reply.getType() == MsgTypeEnum.reply) {
             // 引用收集
@@ -49,11 +51,19 @@ public class SymmetryCommand implements Command {
             Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
         }
-        if (!args.isEmpty()) {
+        if (args.hasNext()) {
             // ID 收集
-            if (List.of("左", "右", "上", "下").contains(args.getString(0))) {
-                if (args.size() > 1) {
-                    long qqNumber = args.getLong(1);
+            String modeStr = args.nextString();
+            if (List.of("左", "右", "上", "下").contains(modeStr)) {
+                mode = switch (modeStr) {
+                    case "左" -> "left";
+                    case "右" -> "right";
+                    case "上" -> "top";
+                    case "下" -> "bottom";
+                    default -> throw new BotErrorException("代码出错");
+                };
+                if (args.hasNext()) {
+                    long qqNumber = args.nextLong();
                     urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
                 } else {
                     List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
@@ -69,10 +79,8 @@ public class SymmetryCommand implements Command {
             for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
         }
 
-        if (urls.isEmpty())
-            throw new BotWarnException("无引用图片或ID参数或AT消息");
+        if (urls.isEmpty()) throw new BotWarnException("缺少引用图片或ID参数或AT用户");
 
-        // 开始处理
         String tempPath = fileStorageProperties.getTempPath();
         for (String url : urls) {
             String tempName = UUID.randomUUID().toString();
@@ -82,24 +90,14 @@ public class SymmetryCommand implements Command {
             String base64;
             try {
                 Path htmlPath = resourceLoader.getCached("static/html/symmetry.html");
-                Map<String, String> variables = new HashMap<>();
-                variables.put("mode", "left");
-                if (!args.isEmpty()) {
-                    switch (args.getString(0)) {
-                        case "左" -> variables.put("mode", "left");
-                        case "右" -> variables.put("mode", "right");
-                        case "上" -> variables.put("mode", "top");
-                        case "下" -> variables.put("mode", "bottom");
-                    }
-                }
-                Map<String, String> images = new HashMap<>();
-                images.put("image", imagePath);
                 String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+                Map<String, String> variables = Map.of("mode", mode);
+                Map<String, String> images = Map.of("image", imagePath);
                 html = HtmlTemplateUtil.replaceVariables(html, variables);
                 html = HtmlTemplateUtil.replaceImages(html, images);
                 base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
             } finally {
-                FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
+                FileUtils.deleteQuietly(new File(imagePath));
             }
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);

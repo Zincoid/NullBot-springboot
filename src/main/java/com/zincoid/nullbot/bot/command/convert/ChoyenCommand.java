@@ -30,11 +30,13 @@ public class ChoyenCommand implements Command {
         Long groupId = event.getGroupId();
 
         Path htmlPath = resourceLoader.getCached("static/html/5000choyen.html");
-        Map<String, String> variables = new HashMap<>();
-        variables.put("topText", args.nextString());
-        variables.put("bottomText", args.nextString());
-
         String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+
+        Map<String, String> variables = Map.of(
+                "topText", args.nextString(),
+                "bottomText", args.nextString()
+        );
+
         String base64 = htmlRenderer.renderElement(
                 HtmlTemplateUtil.replaceVariables(html, variables),
                 "#templateContainer"
