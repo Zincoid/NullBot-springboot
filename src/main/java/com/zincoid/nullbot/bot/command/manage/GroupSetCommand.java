@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.manage;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -67,7 +67,7 @@ public class GroupSetCommand implements Command {
                     setting.setLimitInterval(interval);
                     msg = "补充间隔 -> %s".formatted(interval);
                 }
-                default -> throw new NullBotException("无此Limit设置");
+                default -> throw new BotWarnException("无此Limit设置");
             }
 
             settingService.set(setting);
@@ -123,7 +123,7 @@ public class GroupSetCommand implements Command {
                     boolean enabled = setting.switchAutoReply();
                     msg = "自动发言 -> %s".formatted(enabled ? "ON" : "OFF");
                 }
-                default -> throw new NullBotException("无此AI设置");
+                default -> throw new BotWarnException("无此AI设置");
             }
 
             settingService.set(setting);
@@ -142,7 +142,7 @@ public class GroupSetCommand implements Command {
                 case "key" -> setting.switchKeywordDetect();
                 case "pok" -> setting.switchPokeDetect();
                 case "rcl" -> setting.switchRecallDetect();
-                default -> throw new NullBotException("无此Monitor设置");
+                default -> throw new BotWarnException("无此Monitor设置");
             };
             settingService.set(setting);
             bot.sendGroupMsg(event.getGroupId(), "[监听] ✅已切换: %s".formatted(enabled ? "ON" : "OFF"), false);
@@ -163,7 +163,7 @@ public class GroupSetCommand implements Command {
             return;
         }
 
-        throw new NullBotException("无此操作类型");
+        throw new BotWarnException("无此操作类型");
     }
 
     @Override

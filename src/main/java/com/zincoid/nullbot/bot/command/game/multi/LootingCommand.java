@@ -3,13 +3,13 @@ package com.zincoid.nullbot.bot.command.game.multi;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.game.handler.impl.LootingMatchHandler;
 import com.zincoid.nullbot.core.model.result.GameResult;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -26,7 +26,7 @@ public class LootingCommand implements Command {
         String commandText = args.nextFullString("侦察");
         GameResult result = lootingMatchHandler.action(userId, commandText);
         if (result.getSuccess()) {
-            if (!result.getIsAsync()) throw new NullBotException("该模式不发送同步消息");
+            if (!result.getIsAsync()) throw new BotWarnException("该模式不发送同步消息");
             if (!result.getSelfInfo().isEmpty())
                 bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
             if (!result.getOpponentInfo().isEmpty())

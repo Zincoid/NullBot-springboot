@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.ai.inner;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
 import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowChatMemory;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
@@ -27,7 +27,7 @@ public class RecallAICommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         int n = args.nextInt(1);
-        if (n <= 0) throw new NullBotException("消息数非正");
+        if (n <= 0) throw new BotWarnException("消息数非正");
         List<QQMessage> messages = msgWindowChatMemory.get(BotCtxUtil.getChatId()).stream().map(m -> (QQMessage) m).toList();
         List<QQMessage> filtered = messages.stream().filter(msg -> msg.getRole() == Role.ASSISTANT && msg.getMessageId() != null).toList();
         List<QQMessage> targets = filtered.subList(Math.max(0, filtered.size() - n), filtered.size());

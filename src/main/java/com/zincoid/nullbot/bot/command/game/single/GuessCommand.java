@@ -4,7 +4,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -45,14 +45,14 @@ public class GuessCommand implements Command {
 
         if ("-f".equals(args.getString(0))) {
             if (guessStorage.getGuess(groupId) == null)
-                throw new NullBotException("未在游戏中");
+                throw new BotWarnException("未在游戏中");
             botInputManager.cancelWait(BniMode.GS, groupId);
             log.info("☑ [Guess] 群聊 {} 放弃猜测", groupId);
             return;
         }
 
         if (guessStorage.getGuess(groupId) != null)
-            throw new NullBotException("已在游戏中");
+            throw new BotWarnException("已在游戏中");
 
         try {
             GuessInfo guess = guessStorage.initGuess(groupId, args.nextString());
@@ -126,7 +126,7 @@ public class GuessCommand implements Command {
             log.info("☑ [Guess] 群聊 {} 已超过最大尝试次数: {}", groupId, MAX_RETRIES);
 
         } catch (Exception e) {
-            throw new NullBotException("[猜角色] ❌" + e.getMessage());
+            throw new BotWarnException("[猜角色] ❌" + e.getMessage());
         } finally {
             guessStorage.removeGuess(groupId);
         }

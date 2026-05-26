@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.schedule;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -56,10 +56,10 @@ public class OneTimeAlarmCommand implements Command {
                     botTaskScheduler.setOneTimeGroupAtMsgAlarm(
                             alarmId, groupId, userId, message, alarmTime);
                 }
-                default -> throw new NullBotException("无此模式");
+                default -> throw new BotWarnException("无此模式");
             }
         } catch (DateTimeParseException e) {
-            throw new NullBotException("时间格式错误");
+            throw new BotWarnException("时间格式错误");
         }
         bot.sendGroupMsg(groupId, """
                     [一次性闹钟] ⏰已设置！

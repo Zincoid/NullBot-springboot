@@ -4,7 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -39,7 +39,7 @@ public class SysMsgSetCommand implements Command {
         if ("-reset".equals(option)) {
             int userAccess = userService.getAccess(userId);
             if (userAccess < 1)
-                throw new NullBotException("""
+                throw new BotWarnException("""
                         重置失败
                         - 重置需限权I及以上
                         - 你的限权等级: %s""".formatted(userAccess));
@@ -52,7 +52,7 @@ public class SysMsgSetCommand implements Command {
         if ("-set".equals(option)) {
             int userAccess = userService.getAccess(userId);
             if (userAccess < 1 && !BotCtxUtil.getSetting().isCustom())
-                throw new NullBotException("""
+                throw new BotWarnException("""
                         设置失败
                         - 当前为非自定模式
                         - 修改需限权I及以上
@@ -64,7 +64,7 @@ public class SysMsgSetCommand implements Command {
             log.info("☑ [SysMsgSet] 群聊提示词已设置 - {} -> {}", groupId, newMessage);
             return;
         }
-        throw new NullBotException("无此操作");
+        throw new BotWarnException("无此操作");
     }
 
     @Override
@@ -81,7 +81,7 @@ public class SysMsgSetCommand implements Command {
         }
 
         if (args.size() < 2)
-            throw new NullBotException("参数不足");
+            throw new BotWarnException("参数不足");
 
         if ("-set".equals(option)) {
             String newMessage = args.nextFullString();
@@ -92,7 +92,7 @@ public class SysMsgSetCommand implements Command {
             return;
         }
 
-        throw new NullBotException("无此操作");
+        throw new BotWarnException("无此操作");
     }
 
     @Override

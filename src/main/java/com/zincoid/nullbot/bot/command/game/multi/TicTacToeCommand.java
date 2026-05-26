@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.game.multi;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -27,7 +27,7 @@ public class TicTacToeCommand implements Command {
         int y = args.nextInt();
         GameResult result = ticTacToeMatchHandler.move(userId, x - 1, y - 1);
         if (result.getSuccess()) {
-            if (result.getIsAsync()) throw new NullBotException("该模式不发送异步消息");
+            if (result.getIsAsync()) throw new BotWarnException("该模式不发送异步消息");
             if (!result.getIsSameGroup())
                 bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
             bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);

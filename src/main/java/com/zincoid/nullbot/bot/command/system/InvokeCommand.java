@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.system;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -38,7 +38,7 @@ public class InvokeCommand implements Command {
             );
             log.info("☑ [Invoke] 调用结果 -> {}", result);
         } catch (Exception e) {
-            throw new NullBotException("方法调用失败: " + e.getMessage());
+            throw new BotWarnException("方法调用失败: " + e.getMessage());
         }
     }
 

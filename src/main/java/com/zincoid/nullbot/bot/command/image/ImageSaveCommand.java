@@ -6,7 +6,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -32,12 +32,12 @@ public class ImageSaveCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
-            throw new NullBotException("需引用图片");
+            throw new BotWarnException("需引用图片");
 
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
         if (imageMap.isEmpty())
-            throw new NullBotException("未包含图片");
+            throw new BotWarnException("未包含图片");
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();

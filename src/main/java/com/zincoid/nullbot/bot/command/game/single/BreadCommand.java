@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -10,7 +11,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.service.BreadService;
 import com.zincoid.nullbot.core.service.InventoryService;
 import com.zincoid.nullbot.core.service.UserService;
@@ -43,7 +43,7 @@ public class BreadCommand implements Command {
             case "-rob", "r" -> rob(bot, event, groupId, userId, userName);
             case "-gift", "g" -> gift(bot, event, groupId, userId, userName);
             case "-look", "l" -> look(bot, groupId, userId, userName);
-            default -> throw new NullBotException("操作不存在");
+            default -> throw new BotWarnException("操作不存在");
         }
     }
 
@@ -98,11 +98,11 @@ public class BreadCommand implements Command {
     private void rob(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
         List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(groupMessageEvent.getRawMessage());
         if (qqNumbers.isEmpty())
-            throw new NullBotException("未指定对象");
+            throw new BotWarnException("未指定对象");
         long targetId = qqNumbers.getFirst(); // 只抢第一个人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
         if (!userService.exist(targetId))
-            throw new NullBotException("对方未注册");
+            throw new BotWarnException("对方未注册");
         int i = breadService.transferBasic(targetId, userId);
         if (i > 0) {
             bot.sendGroupMsg(groupId, userName + " 抢了 " + targetName + " " + i + "个面包！", false);
@@ -116,11 +116,11 @@ public class BreadCommand implements Command {
     private void gift(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
         List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(groupMessageEvent.getRawMessage());
         if (qqNumbers.isEmpty())
-            throw new NullBotException("未指定对象");
+            throw new BotWarnException("未指定对象");
         long targetId = qqNumbers.getFirst(); // 只送第一个人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
         if (!userService.exist(targetId))
-            throw new NullBotException("对方未注册");
+            throw new BotWarnException("对方未注册");
         int i = breadService.transferBasic(userId, targetId);
         if (i > 0) {
             bot.sendGroupMsg(groupId, userName + " 送了 " + targetName + " " + i + "个面包！", false);

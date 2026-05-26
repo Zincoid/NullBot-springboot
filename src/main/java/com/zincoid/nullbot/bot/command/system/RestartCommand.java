@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.system;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -44,7 +44,7 @@ public class RestartCommand implements Command {
                     systemService.restartViaJar();
                 }
             }
-            default -> throw new NullBotException("无此方式");
+            default -> throw new BotWarnException("无此方式");
         }
     }
 

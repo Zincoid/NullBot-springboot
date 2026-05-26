@@ -6,7 +6,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -32,15 +32,15 @@ public class VideoSaveCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
-            throw new NullBotException("需引用视频");
+            throw new BotWarnException("需引用视频");
 
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         // 可优化为单个键值对?
         Map<String, String> videoMap = MsgParseUtil.extractVidMap(replyMsg.getRawMessage());
         if(videoMap.isEmpty())
-            throw new NullBotException("未包含视频");
+            throw new BotWarnException("未包含视频");
         if(videoMap.size() > 1)
-            throw new NullBotException("视频数过多");
+            throw new BotWarnException("视频数过多");
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
@@ -50,7 +50,7 @@ public class VideoSaveCommand implements Command {
         String fileName = args.isEmpty() ? entry.getKey()
                 : args.nextFullString() + "." + entry.getKey().split("\\.")[1];
         if (fileName.matches(".*[\\\\/:*?\"<>|].*"))
-            throw new NullBotException("文件名非法");
+            throw new BotWarnException("文件名非法");
         String filePath = fileStorageProperties.getVideoPath() + "/collect";
         String url = entry.getValue();
         FileInfo fileInfo = fileService.saveFile(url, filePath, fileName, userId, userName);

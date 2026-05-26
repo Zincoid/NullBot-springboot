@@ -3,12 +3,12 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.service.ItemService;
 import org.springframework.stereotype.Component;
 
@@ -33,12 +33,12 @@ public class DrawCommand implements Command {
         if (args.isEmpty()) {
             ItemPO item = itemService.drawAndKeepRandom(userId);
             if (item == null)
-                throw new NullBotException("抽数耗尽或仓库已满");
+                throw new BotWarnException("抽数耗尽或仓库已满");
             bot.sendGroupMsg(groupId, "[抽奖] " + userName + "抽到了...\n" + item, false);
             log.info("☑ [Draw] 物品已抽取 - {} -> {}", userId, item.getName());
         } else {
             int times = args.nextInt();
-            if (times <= 0) throw new NullBotException("次数非正");
+            if (times <= 0) throw new BotWarnException("次数非正");
             List<ItemPO> items = new ArrayList<>();
             boolean stop = false;
             while (times > 0 && !stop) {
@@ -51,7 +51,7 @@ public class DrawCommand implements Command {
                 }
             }
             if (items.isEmpty())
-                throw new NullBotException("抽数耗尽或仓库已满");
+                throw new BotWarnException("抽数耗尽或仓库已满");
             items.sort(Comparator.comparing(ItemPO::getRarity).reversed());
             StringBuilder sb = new StringBuilder("[抽奖] " + userName + "抽取了" + items.size() + "个物品...\n");
             for (ItemPO item : items)

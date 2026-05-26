@@ -8,7 +8,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -57,7 +57,7 @@ public class ConvertCommand implements Command {
         }
 
         if (urls.isEmpty())
-            throw new NullBotException("无引用图片或ID参数或AT消息");
+            throw new BotWarnException("无引用图片或ID参数或AT消息");
 
         String tempPath = fileStorageProperties.getTempPath();
         for (String url : urls) {
@@ -71,7 +71,7 @@ public class ConvertCommand implements Command {
                     case "RIP" -> imageConverter.RIP(imagePath);
                     case "PRTS" -> imageConverter.PRTS(imagePath);
                     case "InvsPRTS" -> imageConverter.invsPRTS(imagePath);
-                    default -> throw new NullBotException("方法不存在");
+                    default -> throw new BotWarnException("方法不存在");
                 };
             } finally {
                 FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));

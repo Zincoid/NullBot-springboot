@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.component.control;
 
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.annotation.FunctionControl;
@@ -43,7 +43,7 @@ public class FunctionManager {
     public boolean isEnabled(String function) {
         Boolean enabled = enableFlags.get(function);
         if (enabled == null)
-            throw new NullBotException("[全局设置] ❌功能不存在");
+            throw new BotWarnException("[全局设置] ❌功能不存在");
         return enabled;
     }
 

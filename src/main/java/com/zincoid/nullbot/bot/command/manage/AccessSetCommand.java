@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.manage;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -28,7 +28,7 @@ public class AccessSetCommand implements Command {
         int targetNewAccess = args.nextInt();
         switch (option) {
             case "-group" -> {
-                if (!groupService.exist(targetId)) throw new NullBotException("[限权设置] ❌群聊未注册");
+                if (!groupService.exist(targetId)) throw new BotWarnException("[限权设置] ❌群聊未注册");
                 int targetAccess = groupService.getAccess(targetId);
                 int selfAccess = userService.getAccess(event.getUserId());
                 if (selfAccess < 2) {
@@ -47,7 +47,7 @@ public class AccessSetCommand implements Command {
                 }
             }
             case "-user" -> {
-                if (!userService.exist(targetId)) throw new NullBotException("[限权设置] ❌用户未注册");
+                if (!userService.exist(targetId)) throw new BotWarnException("[限权设置] ❌用户未注册");
                 int targetAccess = userService.getAccess(targetId);
                 int selfAccess = userService.getAccess(event.getUserId());
                 if (targetAccess >= selfAccess) {
@@ -73,7 +73,7 @@ public class AccessSetCommand implements Command {
                     log.info("☑ [AccessSet] 已修改用户 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
                 }
             }
-            default -> throw new NullBotException("选项不存在");
+            default -> throw new BotWarnException("选项不存在");
         }
     }
 

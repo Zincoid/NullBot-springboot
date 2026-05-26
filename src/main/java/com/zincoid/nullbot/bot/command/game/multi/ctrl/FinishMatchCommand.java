@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.game.multi.ctrl;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -22,7 +22,7 @@ public class FinishMatchCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         if(!matcher.finishMatch(event.getUserId()))
-            throw new NullBotException("未找到对局");
+            throw new BotWarnException("未找到对局");
         log.info("☑ [FinishMatch] 对局已终止");
     }
 

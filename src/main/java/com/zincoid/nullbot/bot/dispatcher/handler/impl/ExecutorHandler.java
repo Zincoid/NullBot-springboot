@@ -6,7 +6,7 @@ import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.command.Command;
@@ -50,7 +50,7 @@ public class ExecutorHandler implements Handler {
                 command.execute(bot, _event, params);
             } else log.warn("  [ExecutorHandler] 不支持的事件类型");
 
-        } catch (NullBotException e) {
+        } catch (BotWarnException e) {
             log.warn("  [ExecutorHandler] 指令警告: {}", e.getMessage());
             String message = "⚠️Warn: %s".formatted(e.getMessage());
             if (groupId != 0L) bot.sendGroupMsg(groupId, message, false);

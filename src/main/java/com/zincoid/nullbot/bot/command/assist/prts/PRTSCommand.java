@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.WebScreenCapturer;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -55,7 +55,7 @@ public class PRTSCommand implements Command {
                         List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
                         List.of("//table[.//th//b[contains(.,'悖论模拟')]]//button[contains(@class,'mw-collapsible-toggle')]")
                 );
-                default -> throw new NullBotException("无此操作");
+                default -> throw new BotWarnException("无此操作");
             };
         } else {
             keyword = args.getFullString(0);

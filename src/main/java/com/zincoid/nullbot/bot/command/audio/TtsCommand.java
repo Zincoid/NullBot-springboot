@@ -8,7 +8,7 @@ import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -49,7 +49,7 @@ public class TtsCommand implements Command {
                 case "save" -> {
                     ArrayMsg reply = event.getArrayMsg().getFirst();
                     if (reply.getType() != MsgTypeEnum.reply)
-                        throw new NullBotException("需引用模板音频");
+                        throw new BotWarnException("需引用模板音频");
                     MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
                     // 暂不支持 AMR 格式音频
                     // Map<String, String> recordMap = MsgParseUtil.parseGroupRawMessageAsRecordMap(replyMsg.getRawMessage());
@@ -58,10 +58,10 @@ public class TtsCommand implements Command {
                     // voiceMap.putAll(recordMap);
                     voiceMap.putAll(fileMap);
                     if (voiceMap.isEmpty())
-                        throw new NullBotException("引用未包含音频");
+                        throw new BotWarnException("引用未包含音频");
                     for (Map.Entry<String, String> entry : voiceMap.entrySet())
                         if (!isAudioFile(entry.getKey()))
-                            throw new NullBotException("引用非音频文件");
+                            throw new BotWarnException("引用非音频文件");
 
                     String tempPath = fileStorageProperties.getTempPath();
                     String templateName = args.nextString();
@@ -79,7 +79,7 @@ public class TtsCommand implements Command {
                             FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
                         }
                         if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
-                            throw new NullBotException("存在重名冲突");
+                            throw new BotWarnException("存在重名冲突");
                         bot.sendGroupMsg(groupId, """
                                 [语音合成] \uD83D\uDCBE模板已保存！
                                 %s : %s -> %s"""
@@ -91,7 +91,7 @@ public class TtsCommand implements Command {
                 case "delete" -> {
                     String templateName = args.nextString();
                     if (!ttsTemplateService.deleteByName(templateName))
-                        throw new NullBotException("该模板不存在");
+                        throw new BotWarnException("该模板不存在");
                     bot.sendGroupMsg(event.getGroupId(), "[语音合成] ⚠️模板已删除", false);
                     log.info("☑ [Tts] 已删除模板 -> {}", templateName);
                 }
@@ -101,7 +101,7 @@ public class TtsCommand implements Command {
                     String targetText = args.nextString();
                     TtsTemplatePO template = ttsTemplateService.getByName(templateName);
                     if (template == null)
-                        throw new NullBotException("模板不存在");
+                        throw new BotWarnException("模板不存在");
                     String base64 = ttsClient.synthesize_clone(template.getPath(), template.getText(), targetText);
                     ttsTemplateService.increaseUsed(template.getId());
                     String response = MsgUtils.builder()
@@ -125,7 +125,7 @@ public class TtsCommand implements Command {
                     log.info("☑ [Tts] 已获取模板列表");
                 }
 
-                default -> throw new NullBotException("无此克隆选项");
+                default -> throw new BotWarnException("无此克隆选项");
             }
             return;
         }
@@ -139,7 +139,7 @@ public class TtsCommand implements Command {
             return;
         }
 
-        throw new NullBotException("无此操作");
+        throw new BotWarnException("无此操作");
     }
 
     @Override
@@ -154,7 +154,7 @@ public class TtsCommand implements Command {
             return;
         }
 
-        throw new NullBotException("无此操作");
+        throw new BotWarnException("无此操作");
     }
 
     public static boolean isAudioFile(String fileName) {

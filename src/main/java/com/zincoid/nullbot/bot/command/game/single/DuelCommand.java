@@ -4,7 +4,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,7 +39,7 @@ public class DuelCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         if (duelStorage.getDuel(groupId) != null)
-            throw new NullBotException("已在游戏中");
+            throw new BotWarnException("已在游戏中");
 
         try {
             DuelInfo duel = duelStorage.initDuel(groupId);
@@ -79,7 +79,7 @@ public class DuelCommand implements Command {
             } else if ("R".equals(duel.getWinner())) {
                 winners = right;
                 losers = left;
-            } else throw new NullBotException("数据异常");
+            } else throw new BotWarnException("数据异常");
 
             List<String> winnerNames = winners.stream()
                     .map(u -> bot.getStrangerInfo(u, true).getData().getNickname())

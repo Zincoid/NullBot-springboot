@@ -39,7 +39,7 @@ public class LogCommand implements Command {
     //     if (fileAppender != null) {
     //         return fileAppender.getFile();
     //     }
-    //     throw new NullBotException("未找到日志文件路径");
+    //     throw new BotWarnException("未找到日志文件路径");
     // }
 
     @Override

@@ -50,7 +50,7 @@ public class RecallReactCommand implements Command {
             return;
         }
 
-        // throw new NullBotException("该消息已清理");
+        // throw new BotWarnException("该消息已清理");
     }
 
     @Override

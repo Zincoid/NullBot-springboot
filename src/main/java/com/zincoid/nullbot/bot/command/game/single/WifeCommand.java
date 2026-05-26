@@ -12,7 +12,7 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.service.FileService;
 import com.zincoid.nullbot.core.util.Base64Util;
 import org.springframework.stereotype.Component;
@@ -82,7 +82,7 @@ public class WifeCommand implements Command {
 
                 List<FilePO> wives = fileService.search("", acgPath);
                 if (wives.isEmpty())
-                    throw new NullBotException("暂无角色");
+                    throw new BotWarnException("暂无角色");
                 FilePO wife = wives.get(ThreadLocalRandom.current().nextInt(wives.size()));
                 String wifeName = wife.getName().split("_")[0];
                 acgWifeMap.put(userId, wife);

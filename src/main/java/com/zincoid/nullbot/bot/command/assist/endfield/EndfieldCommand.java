@@ -4,7 +4,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -54,7 +54,7 @@ public class EndfieldCommand implements Command {
         if ("-v".equals(keyword)) {
             String newVersion = args.nextString();
             if (!ALLOWED_VERSIONS.contains(newVersion))
-                throw new NullBotException("版本非法");
+                throw new BotWarnException("版本非法");
             versions.put(groupId, newVersion);
             bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD79️资源版本 - " + curVersion, false);
             return;
@@ -72,7 +72,7 @@ public class EndfieldCommand implements Command {
             for (String version : ALLOWED_VERSIONS)
                 allFiles.addAll(fileService.search(keyword, endfieldPath + "/" + version));
         if (allFiles.isEmpty())
-            throw new NullBotException("无匹配项");
+            throw new BotWarnException("无匹配项");
 
         if (!globalQuery && allFiles.size() == 1) {
             sendResource(bot, groupId, allFiles.getFirst());
@@ -112,7 +112,7 @@ public class EndfieldCommand implements Command {
                 bot.sendGroupMsg(groupId, response, false);
                 log.info("☑ [Endfield] 已获取文本: {}", file.getFileName());
             } catch (IOException e) {
-                throw new NullBotException("[终末地] ❌读取出错");
+                throw new BotWarnException("[终末地] ❌读取出错");
             }
         } else {
             // 其他类型 暂时图片处理

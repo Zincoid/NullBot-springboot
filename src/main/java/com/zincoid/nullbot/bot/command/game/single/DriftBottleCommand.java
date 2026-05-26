@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,7 +47,7 @@ public class DriftBottleCommand implements Command {
         if (!imageMap.isEmpty()) {
             boolean autoThrow = !args.isEmpty() && "-auto".equals(args.nextString());
             if (imageMap.size() != 1 && !autoThrow)
-                throw new NullBotException("仅可投单张图片");
+                throw new BotWarnException("仅可投单张图片");
             for (Map.Entry<String, String> entry : imageMap.entrySet()) {
                 String url = entry.getValue();
                 String fileName = UUID.randomUUID().toString();
@@ -92,7 +92,7 @@ public class DriftBottleCommand implements Command {
 
         DriftBottlePO bottle = driftBottleService.pickUpRand();
         if (bottle == null)
-            throw new NullBotException("没有漂流瓶了！");
+            throw new BotWarnException("没有漂流瓶了！");
         bot.sendGroupMsg(groupId, bottle.toString(), false);
 
         List<Pair<Long, String>> inputs = botInputManager

@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.game.basic;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -30,14 +30,14 @@ public class UseCommand implements Command {
         int itemId = args.nextInt();
         // 存在检查
         if (!itemService.exist(itemId))
-            throw new NullBotException("该物品不存在");
+            throw new BotWarnException("该物品不存在");
         // 可用检查
         if (!itemService.isUsable(itemId))
-            throw new NullBotException("物品不可使用");
+            throw new BotWarnException("物品不可使用");
         // 库存检查
         Long userId = event.getUserId();
         if (!inventoryService.decrease(userId, itemId, 1))
-            throw new NullBotException("物品数量不足");
+            throw new BotWarnException("物品数量不足");
 
         // 替换参数
         String command = itemService.getCommand(itemId);

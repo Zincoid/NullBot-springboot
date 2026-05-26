@@ -48,6 +48,7 @@ public class MemeCommand implements Command {
     private void meme(Bot bot, Long resourceId, boolean isPrivate, String memeName) {
         String memePath = fileStorageProperties.getResourcePath() + "/ai/meme";
         List<FilePO> memes = fileService.search(memeName, memePath);
+
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(memes.getFirst().getId())).build();
         if (isPrivate) bot.sendPrivateMsg(resourceId, response, false);

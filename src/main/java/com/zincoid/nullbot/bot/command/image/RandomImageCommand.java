@@ -4,7 +4,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -33,7 +33,7 @@ public class RandomImageCommand implements Command {
         String imagePath = fileStorageProperties.getImagePath() + "/collect";
         List<FilePO> images = fileService.search("", imagePath);
         if (images.isEmpty())
-            throw new NullBotException("暂无图片");
+            throw new BotWarnException("暂无图片");
         FilePO image = images.get(ThreadLocalRandom.current().nextInt(images.size()));
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(image.getId()))

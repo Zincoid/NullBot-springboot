@@ -14,7 +14,7 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.bot.interaction.BotInputer;
 import com.zincoid.nullbot.core.model.bot.interaction.BotPageSelector;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +41,7 @@ public class ChatHistoryCommand implements Command {
 
         List<Message> history = qqAiClient.history(BotCtxUtil.getChatId());
         if (history.isEmpty())
-            throw new NullBotException("无对话历史");
+            throw new BotWarnException("无对话历史");
 
         List<String> strings = history.stream().map(msg -> {
                     if (msg instanceof QQMessage qMsg) {

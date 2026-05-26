@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.game.multi.ctrl;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -27,7 +27,7 @@ public class RecentPlayerCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         List<Player> players = playerManager.getRecentPlayers(5);
         if (players == null || players.isEmpty())
-            throw new NullBotException("暂无记录");
+            throw new BotWarnException("暂无记录");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         StringBuilder sb = new StringBuilder().append("[最近玩家] 当前状态-上次活跃");

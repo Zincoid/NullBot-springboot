@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.bot.command;
 
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.Data;
 
 import java.util.List;
@@ -114,11 +114,11 @@ public final class CommandArgs {
 
     // ── private helpers ────────────────────────────
 
-    private NullBotException missingArg() {
-        return new NullBotException("参数不足");
+    private BotWarnException missingArg() {
+        return new BotWarnException("参数不足");
     }
 
-    private NullBotException formatError() {
-        return new NullBotException("参数错误");
+    private BotWarnException formatError() {
+        return new BotWarnException("参数错误");
     }
 }

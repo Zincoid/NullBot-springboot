@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.model.OpenAiModel;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
 import com.zincoid.nullbot.bot.dispatcher.handler.impl.PermissionHandler;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class QuestionCommand implements Command {
         String userName = event.getSender().getNickname();
 
         if (inGameUsers.contains(userId))
-            throw new NullBotException("已在游戏中");
+            throw new BotWarnException("已在游戏中");
 
         try {
             inGameUsers.add(userId);
@@ -65,7 +65,7 @@ public class QuestionCommand implements Command {
                         thinking, 2500
                 ).getContent();
             } catch (Exception e) {
-                throw new NullBotException("""
+                throw new BotWarnException("""
                         生成请求出错
                         - 用户: [CQ:at,qq=%s]""".formatted(userId)
                 );
@@ -73,7 +73,7 @@ public class QuestionCommand implements Command {
 
             if (raw.contains("REFUSED")) {
                 permissionHandler.setUserBan(userId, this.getClass(), BLOCKING_TIME);
-                throw new NullBotException("""
+                throw new BotWarnException("""
                         生成问题敏感
                         - 用户: [CQ:at,qq=%s]
                         - 处罚: 封禁功能%s分钟""".formatted(userId, BLOCKING_TIME)
@@ -89,14 +89,14 @@ public class QuestionCommand implements Command {
                 timeout = json.get("timeout").asInt();
                 question = json.get("question").asText();
             } catch (Exception e) {
-                throw new NullBotException("""
+                throw new BotWarnException("""
                         生成格式异常
                         - 用户: [CQ:at,qq=%s]""".formatted(userId)
                 );
             }
 
             if (answer.isEmpty() || question.isEmpty() || !answer.matches("[A-Za-z]"))
-                throw new NullBotException("""
+                throw new BotWarnException("""
                         生成内容异常
                         - 用户: [CQ:at,qq=%s]""".formatted(userId)
                 );

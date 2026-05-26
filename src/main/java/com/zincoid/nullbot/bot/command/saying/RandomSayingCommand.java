@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.saying;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -29,7 +29,7 @@ public class RandomSayingCommand implements Command {
             saying = sayingService.getRandByUserId(args.nextLong());
         }
         if (saying == null)
-            throw new NullBotException("暂无用户记录");
+            throw new BotWarnException("暂无用户记录");
         bot.sendGroupMsg(event.getGroupId(), saying.toString(), false);
         log.info("☑ [RandomSaying] 语录已发送 -> No.{}", saying.getId());
     }

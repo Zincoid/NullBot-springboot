@@ -8,7 +8,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -70,7 +70,7 @@ public class SymmetryCommand implements Command {
         }
 
         if (urls.isEmpty())
-            throw new NullBotException("无引用图片或ID参数或At消息");
+            throw new BotWarnException("无引用图片或ID参数或At消息");
 
         // 开始处理
         String tempPath = fileStorageProperties.getTempPath();

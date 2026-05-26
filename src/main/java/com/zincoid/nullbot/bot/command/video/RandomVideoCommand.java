@@ -4,6 +4,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -11,7 +12,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.service.FileService;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +33,7 @@ public class RandomVideoCommand implements Command {
         String videoPath = fileStorageProperties.getVideoPath() + "/collect";
         List<FilePO> videos = fileService.search("", videoPath);
         if (videos.isEmpty())
-            throw new NullBotException("暂无视频");
+            throw new BotWarnException("暂无视频");
         FilePO video = videos.get(ThreadLocalRandom.current().nextInt(videos.size()));
         String response = MsgUtils.builder()
                 .video(ossUrlBuilder.from(video.getId()), "")

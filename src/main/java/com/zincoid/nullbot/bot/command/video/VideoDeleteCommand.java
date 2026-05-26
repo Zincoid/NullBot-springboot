@@ -6,7 +6,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -42,17 +42,17 @@ public class VideoDeleteCommand implements Command {
             Map<String, String> videoMap = MsgParseUtil
                     .extractVidMap(replyMsg.getRawMessage());
             if (videoMap.isEmpty())
-                throw new NullBotException("未引用视频");
+                throw new BotWarnException("未引用视频");
             for (Map.Entry<String, String> entry : videoMap.entrySet())
                 deleteFile(bot, event, directory, entry.getKey());
             return;
         }
-        throw new NullBotException("无文件名或引用");
+        throw new BotWarnException("无文件名或引用");
     }
 
     private void deleteFile(Bot bot, GroupMessageEvent event, String directory, String fileName) {
         if(!fileService.deleteFile(directory, fileName))
-            throw new NullBotException("文件服务删除失败");
+            throw new BotWarnException("文件服务删除失败");
         bot.sendGroupMsg(event.getGroupId(), "[删除视频] ⚠️已删除\n- " +
                 StringUtil.truncateFileName(fileName, 12), false);
         log.info("☑ [VideoDelete] 视频已删除: {}", fileName);

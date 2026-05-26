@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.system;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.NullBotException;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -24,7 +24,7 @@ public class PlusExpCommand implements Command {
         long userId = args.nextLong();
         int exp = args.nextInt();
         if (!userService.exist(userId))
-            throw new NullBotException("[加经验] ❌用户不存在");
+            throw new BotWarnException("[加经验] ❌用户不存在");
         int i = userService.plusExperience(userId, exp);
         String userName = event.getSender().getNickname();
         StringBuilder sb = new StringBuilder(userName + " 获得 " + exp + "Exp！");
