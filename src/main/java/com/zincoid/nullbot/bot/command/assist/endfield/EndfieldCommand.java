@@ -44,12 +44,12 @@ public class EndfieldCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        String endfieldPath = fileStorageProperties.getResourcePath() + "/endfield";
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String curVersion = versions.computeIfAbsent(groupId, k -> DEFAULT_VERSION);
-        boolean continuousQuery = false;  // 连续查询模式
-        boolean globalQuery;  // 全局查询模式
         String keyword = params.nextStringOptional("");
+        boolean continuousQuery = false;
 
         if ("-v".equals(keyword)) {
             String newVersion = params.nextString();
@@ -65,35 +65,25 @@ public class EndfieldCommand implements Command {
         }
 
         List<FilePO> allFiles = new ArrayList<>();
-        allFiles.addAll(fileService.search(keyword,
-                fileStorageProperties.getResourcePath() + "/endfield/public"));
-        allFiles.addAll(fileService.search(keyword,
-                fileStorageProperties.getResourcePath() + "/endfield/" + curVersion));
-
-        if (allFiles.isEmpty()) {
-            globalQuery = true;
-            for (String version : ALLOWED_VERSIONS) {
-                allFiles.addAll(fileService.search(keyword,
-                        fileStorageProperties.getResourcePath() + "/endfield/" + version));
-            }
-        } else {
-            globalQuery = false;
-        }
-
+        allFiles.addAll(fileService.search(keyword, endfieldPath + "/public"));
+        allFiles.addAll(fileService.search(keyword, endfieldPath + "/" + curVersion));
+        boolean globalQuery = allFiles.isEmpty();
+        if (globalQuery)
+            for (String version : ALLOWED_VERSIONS)
+                allFiles.addAll(fileService.search(keyword, endfieldPath + "/" + version));
         if (allFiles.isEmpty())
             throw new NullBotException("无匹配项");
-        if (!globalQuery && allFiles.size() == 1) {  // 非全局查询且单匹配项时直接发送
+
+        if (!globalQuery && allFiles.size() == 1) {
             sendResource(bot, groupId, allFiles.getFirst());
             return;
         }
 
         allFiles.sort(Comparator.comparing(FilePO::getFileName));
-
         String info = "\n[当前资源版本 - %s]%s".formatted(
                 globalQuery ? "ALL" : curVersion,
                 globalQuery ? "\n[版本 %s 无匹配资源]".formatted(curVersion) : ""
         );
-
         BotPageSelector<FilePO, String> pager = BotPageSelector.builder(
                 bot, groupId, "终末地", continuousQuery,
                 allFiles,
