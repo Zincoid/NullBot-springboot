@@ -5,6 +5,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,44 +30,32 @@ public class MemeCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        meme(bot, params, event.getGroupId(), false);
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        meme(bot, event.getGroupId(), false, params.nextString());
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        meme(bot, params, event.getUserId(), true);
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
+        meme(bot, event.getUserId(), true, params.nextString());
     }
 
     @Override
-    public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
+    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs params) {
         if (event.getGroupId() != null) {
-            meme(bot, params, event.getGroupId(), false);
+            meme(bot, event.getGroupId(), false, params.nextString());
         } else {
-            meme(bot, params, event.getUserId(), true);
+            meme(bot, event.getUserId(), true, params.nextString());
         }
     }
 
-    private void meme(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
-        if (params.isEmpty())
-            throw new NullBotException("[表情] ❌参数不足");
-
+    private void meme(Bot bot, Long targetId, boolean isPrivate, String memeName) {
         String memePath = fileStorageProperties.getResourcePath() + "/ai/meme";
-        String memeName = params.getFirst();
         List<FilePO> memes = fileService.search(memeName, memePath);
-
-        FilePO meme = memes.getFirst();
         String response = MsgUtils.builder()
-                .img(ossUrlBuilder.from(meme.getId()))
-                .build();
-
-        if (isPrivate) {
-            bot.sendPrivateMsg(targetId, response, false);
-        } else {
-            bot.sendGroupMsg(targetId, response, false);
-        }
-
-        log.info("├─[Meme] 已发送表情: {}", meme.getFileName());
+                .img(ossUrlBuilder.from(memes.getFirst().getId())).build();
+        if (isPrivate) bot.sendPrivateMsg(targetId, response, false);
+        else bot.sendGroupMsg(targetId, response, false);
+        log.info("☑ [Meme] 已发送表情: {}", memeName);
     }
 
     @Override
