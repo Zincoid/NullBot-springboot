@@ -15,9 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @CommandMapping({"Chat", "对话"})
 @Component
-@Slf4j
 public class ChatCommand implements Command {
 
     @Value("${nullbot.command.prefix}")
