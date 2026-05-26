@@ -17,6 +17,7 @@ public final class CommandArgs {
     // ── utility ──────────────────────────────────
 
     public int size() { return params.size(); }
+    public boolean isEmpty() { return params.isEmpty(); }
     public boolean hasNext() { return cursor < params.size(); }
     public String peek() { return getString(cursor); }
 
@@ -96,10 +97,10 @@ public final class CommandArgs {
     // ── private helpers ────────────────────────────
 
     private NullBotException missingArg() {
-        return new NullBotException("[系统] ❌参数不足");
+        return new NullBotException("参数不足");
     }
 
     private NullBotException formatError() {
-        return new NullBotException("[系统] ❌参数错误");
+        return new NullBotException("参数错误");
     }
 }
