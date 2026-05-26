@@ -189,10 +189,8 @@ public class SvgCanvas {
         Path svgFile = Files.createTempFile("canvas-", ".svg");
         exportSvg(svgFile);
 
-        // 工作目录 建议改成自定义 临时目录
-        var options = new ResvgJNI.RenderOptions("/tmp");
-        // 字体目录
-        options.LoadFontsDir(fontDir);
+        var options = new ResvgJNI.RenderOptions("/tmp");  // 工作目录
+        options.LoadFontsDir(fontDir);  // 字体目录
 
         var renderer = new ResvgJNI.Renderer(options);
         var inputFilePath = svgFile.toAbsolutePath().toString();
@@ -203,7 +201,7 @@ public class SvgCanvas {
             var data = renderer.RenderPng(svgData);
             Files.write(Path.of(outputFilePath), data);
         } catch (Exception e) {
-            log.error("Resvg JNI 出错: {}", e.getMessage());
+            throw new RuntimeException("ResvgJNI 渲染失败: " + e.getMessage(), e);
         } finally {
             Files.deleteIfExists(svgFile);
         }
