@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.game.basic;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +14,10 @@ import com.zincoid.nullbot.core.service.ItemService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"Use", "使用物品", "使用"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class UseCommand implements Command {
 
     private final InventoryService inventoryService;
@@ -26,27 +25,19 @@ public class UseCommand implements Command {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        // 参数检查
-        if (params.isEmpty())
-            throw new NullBotException("[使用] ❌参数不足");
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         // 解析物品
-        int itemId;
-        try {
-            itemId = Integer.parseInt(params.getFirst());
-        } catch (NumberFormatException e) {
-            throw new NullBotException("[使用] ❌参数格式错误");
-        }
+        int itemId = params.nextInt();
         // 存在检查
         if (!itemService.exist(itemId))
-            throw new NullBotException("[使用] ❌该物品不存在");
+            throw new NullBotException("该物品不存在");
         // 可用检查
         if (!itemService.isUsable(itemId))
-            throw new NullBotException("[使用] ❌该物品不可使用");
+            throw new NullBotException("物品不可使用");
         // 库存检查
         Long userId = event.getUserId();
         if (!inventoryService.decrease(userId, itemId, 1))
-            throw new NullBotException("[使用] ❌该物品数量不足");
+            throw new NullBotException("物品数量不足");
 
         // 替换参数
         String command = itemService.getCommand(itemId);
@@ -60,7 +51,7 @@ public class UseCommand implements Command {
         String itemName = itemService.get(itemId).getName();
         String userName = event.getSender().getNickname();
         bot.sendGroupMsg(event.getGroupId(), "[使用] ✅" + userName + " 已使用 " + itemName + "！", false);
-        log.info("├─[Use] 已使用");
+        log.info("☑ [Use] 物品已使用 - ItemId: {}", itemId);
     }
 
     @Override
