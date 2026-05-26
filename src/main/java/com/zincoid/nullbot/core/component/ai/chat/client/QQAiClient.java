@@ -113,8 +113,8 @@ public class QQAiClient implements AiClient<QQMessage> {
         boolean thinking = !message.isPrivate() && BotCtxUtil.getSetting().isThinking();
         boolean voice = !message.isPrivate() && BotCtxUtil.getSetting().isVoice();
         String prompt = message.isPrivate()
-                ? qqPrompter.user(message.getUserId(), false)
-                : qqPrompter.group(message.getGroupId(), false);
+                ? qqPrompter.user(message.getUserId(), true)
+                : qqPrompter.group(message.getGroupId(), true);
         QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
         List<QQMessage> messages = qqMsgExecutor.chain(_message, voice);
         for (QQMessage msg : messages) chatMemory.add(BotCtxUtil.getChatId(), msg);
