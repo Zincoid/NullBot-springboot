@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.assist.endfield;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,49 +24,44 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @CommandMapping({"Endfield", "endfield", "end", "终末地查询", "终末地"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class EndfieldCommand implements Command {
-
-    private final FileStorageProperties fileStorageProperties;
-    private final FileService fileService;
-    private final BotInputManager botInputManager;
-
-    private final Map<Long, String> versions = new ConcurrentHashMap<>();  // 群聊版本存储
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
     private static final Set<String> ALLOWED_VERSIONS = Set.of("1.0", "1.1", "1.2");  // 可用资源版本
     private static final String DEFAULT_VERSION = "1.2";  // 默认资源版本
+
+    private final Map<Long, String> versions = new ConcurrentHashMap<>();  // 群聊版本存储
+
+    private final FileStorageProperties fileStorageProperties;
+    private final FileService fileService;
+    private final BotInputManager botInputManager;
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String version = getGroupVersion(groupId);
         boolean continuousQuery = false;  // 连续查询模式
         boolean globalQuery;  // 全局查询模式
-        String keyword = params.isEmpty() ? "" : params.getFirst();
+        String keyword = params.nextStringOptional("");
 
+        if ("-v".equals(keyword)) {
+            String newVersion = params.nextString();
+            if (!ALLOWED_VERSIONS.contains(newVersion))
+                throw new NullBotException("版本非法");
+            setGroupVersion(groupId, newVersion);
+            bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD79️资源版本 - " + version, false);
+            return;
+        }
         if ("-c".equals(keyword)) {
             continuousQuery = true;
-            if (params.size() > 1) {
-                keyword = params.get(1);
-            } else {
-                keyword = "";
-            }
-        } else if ("-v".equals(keyword)) {
-            if (params.size() > 1) {
-                String newVersion = params.get(1);
-                if (!ALLOWED_VERSIONS.contains(newVersion))
-                    throw new NullBotException("[终末地] ❌版本非法");
-                setGroupVersion(groupId, newVersion);
-            }
-            bot.sendGroupMsg(groupId, "[终末地] \uD83D\uDD79当前️资源版本 - " + version, false);
-            return;
+            keyword = params.nextStringOptional("");
         }
 
         List<FilePO> allFiles = new ArrayList<>();
@@ -85,7 +81,7 @@ public class EndfieldCommand implements Command {
         }
 
         if (allFiles.isEmpty())
-            throw new NullBotException("[终末地] ❌无匹配项");
+            throw new NullBotException("无匹配项");
         if (!globalQuery && allFiles.size() == 1) {  // 非全局查询且单匹配项时直接发送
             sendResource(bot, groupId, allFiles.getFirst());
             return;
@@ -109,30 +105,32 @@ public class EndfieldCommand implements Command {
                 this::sendResource
         ).userId(userId).info(info).size(PAGE_SIZE).build();
 
-        pager.init();
-        while (pager.input(botInputManager, WAIT_TIMEOUT)) {
-            log.info("├─[Endfield] 已操作分页器");
-        }
         // BotInputer in = new BotInputer(userId).timeout(WAIT_TIMEOUT);
         // pager.start(in);
+        pager.init();
+        while (pager.input(botInputManager, WAIT_TIMEOUT)) {
+            log.info("☑ [Endfield] 已操作分页器");
+        }
     }
 
     private void sendResource(Bot bot, Long groupId, FilePO file) {
-        if (file.getFileName().endsWith(".txt")) {  // TXT文件类型 读取文本内容
+        if (file.getFileName().endsWith(".txt")) {
+            // TXT类型 读取文本内容
             try {
                 String response = Files.readString(
                         Paths.get(file.getPath()), StandardCharsets.UTF_8);
                 bot.sendGroupMsg(groupId, response, false);
-                log.info("├─[Endfield] 已获取文本 - {}", file.getFileName());
+                log.info("☑ [Endfield] 已获取文本 - {}", file.getFileName());
             } catch (IOException e) {
                 throw new NullBotException("[终末地] ❌读取出错");
             }
-        } else {  // 其他文件类型 暂时按图片处理
+        } else {
+            // 其他类型 暂时图片处理
             String response = MsgUtils.builder()
                     .img(ossUrlBuilder.from(file.getId()))
                     .build();
             bot.sendGroupMsg(groupId, response, false);
-            log.info("├─[Endfield] 已获取图片 - {}", file.getFileName());
+            log.info("☑ [Endfield] 已获取图片 - {}", file.getFileName());
         }
     }
 
