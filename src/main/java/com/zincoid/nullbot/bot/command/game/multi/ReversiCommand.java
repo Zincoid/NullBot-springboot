@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.game.multi;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,35 +12,28 @@ import com.zincoid.nullbot.core.component.game.handler.impl.ReversiMatchHandler;
 import com.zincoid.nullbot.core.model.result.GameResult;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"Reversi", "黑白棋"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class ReversiCommand implements Command {
 
     private final ReversiMatchHandler reversiMatchHandler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.size() != 1)
-            throw new NullBotException("[黑白棋] ❌参数数量错误 示例: 黑白棋 D3");
-        String pos = params.getFirst().toUpperCase();
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        Long userId = event.getUserId();
+        String pos = params.nextString().toUpperCase();
         if (!pos.matches("^[A-H][1-8]$"))
-            throw new NullBotException("[黑白棋] ❌坐标格式错误 范围: A1~H8");
-
-        GameResult result = reversiMatchHandler.move(event.getUserId(), pos);
-
+            throw new NullBotException("坐标错误 范围: A1~H8");
+        GameResult result = reversiMatchHandler.move(userId, pos);
         if (result.getSuccess()) {
-            if (result.getIsAsync()) throw new NullBotException("[黑白棋] ❌该模式不发送异步消息");
+            if (result.getIsAsync()) throw new NullBotException("该模式不发送异步消息");
             if (!result.getIsSameGroup())
                 bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
             bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-        } else
-            bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
-
-        log.info("├─[Reversi] 落子 - {}", pos);
+        } else bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
+        log.info("☑ [Reversi] 玩家 {} 落子 [{}]", userId, pos);
     }
 
     @Override

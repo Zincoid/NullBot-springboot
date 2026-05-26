@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.game.multi;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -11,33 +12,27 @@ import com.zincoid.nullbot.core.model.result.GameResult;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
-
+@Slf4j
 @CommandMapping({"Looting", "摸金"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class LootingCommand implements Command {
 
     private final LootingMatchHandler lootingMatchHandler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long userId = event.getUserId();
-        String commandText = params.isEmpty() ? "侦察" : String.join(" ", params);
+        String commandText = params.nextFullString("侦察");
         GameResult result = lootingMatchHandler.action(userId, commandText);
-
         if (result.getSuccess()) {
-            if (!result.getIsAsync()) throw new NullBotException("[摸金] ❌该模式不发送同步消息");
+            if (!result.getIsAsync()) throw new NullBotException("该模式不发送同步消息");
             if (!result.getSelfInfo().isEmpty())
                 bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
             if (!result.getOpponentInfo().isEmpty())
                 bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
-        } else
-            bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
-
-        log.info("├─[Looting] 玩家 {} 执行指令 [{}]", userId, commandText);
+        } else bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
+        log.info("☑ [Looting] 玩家 {} 执行指令 [{}]", userId, commandText);
     }
 
     @Override

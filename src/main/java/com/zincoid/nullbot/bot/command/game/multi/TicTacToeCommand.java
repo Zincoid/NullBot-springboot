@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.game.multi;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,39 +12,27 @@ import com.zincoid.nullbot.core.component.game.handler.impl.TicTacToeMatchHandle
 import com.zincoid.nullbot.core.model.result.GameResult;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"TicTacToe", "井字棋"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class TicTacToeCommand implements Command {
 
     private final TicTacToeMatchHandler ticTacToeMatchHandler;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.size() != 2)
-            throw new NullBotException("[井字棋] ❌参数数量错误 示例: 井字棋 1 1");
-        int x, y;
-        try {
-            x = Integer.parseInt(params.get(0));
-            y = Integer.parseInt(params.get(1));
-        } catch (NumberFormatException ex) {
-            throw new NullBotException("[井字棋] ❌参数必须为数字");
-        }
-
-        GameResult result = ticTacToeMatchHandler.move(event.getUserId(), x - 1, y - 1);
-
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        Long userId = event.getUserId();
+        int x = params.nextInt();
+        int y = params.nextInt();
+        GameResult result = ticTacToeMatchHandler.move(userId, x - 1, y - 1);
         if (result.getSuccess()) {
-            if (result.getIsAsync()) throw new NullBotException("[井字棋] ❌该模式不发送异步消息");
+            if (result.getIsAsync()) throw new NullBotException("该模式不发送异步消息");
             if (!result.getIsSameGroup())
                 bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
             bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-        } else
-            bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
-
-        log.info("├─[TicTacToe] 落子 - {} {}", x, y);
+        } else bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
+        log.info("☑ [TicTacToe] 玩家 {} 落子 [{}, {}]", userId, x, y);
     }
 
     @Override
