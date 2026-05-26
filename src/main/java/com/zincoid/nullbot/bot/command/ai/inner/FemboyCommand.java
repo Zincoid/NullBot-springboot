@@ -34,7 +34,7 @@ public class FemboyCommand implements Command {
         Long groupId = event.getGroupId();
         String femboyPath = fileStorageProperties.getImagePath() + "/femboy";
         List<FilePO> photos = fileService.search("", femboyPath);
-        if (photos.isEmpty()) throw new BotInfoException(Emoji.WARN ,"暂无图片");
+        if (photos.isEmpty()) throw new BotInfoException(Emoji.WARN, "暂无图片");
         FilePO photo = photos.get(ThreadLocalRandom.current().nextInt(photos.size()));
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(photo.getId()))
