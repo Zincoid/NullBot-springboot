@@ -14,7 +14,7 @@ import com.zincoid.nullbot.bot.dispatcher.handler.impl.PermissionHandler;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CommandMapping({"1e7bd161"})  // 加密 仅供AI调用
+@CommandMapping({"1e7bd161"})
 @Component
 @RequiredArgsConstructor
 public class BanChatCommand implements Command {
@@ -35,16 +35,11 @@ public class BanChatCommand implements Command {
         permissionHandler.setUserBan(userId, ChatCommand.class, banTime);
         permissionHandler.setUserBan(userId, PokeReactCommand.class, banTime);
         if (banTime > 0) {
-            bot.sendGroupMsg(groupId, """
-                    [停用AI] ⛔️已封禁
-                    - 用户: [CQ:at,qq=%s]
-                    - 时长: %s Min""".formatted(userId, banTime), false);
-            log.info("☑ [BanChat] 已封禁对话 - {} -> {} Min", userId, banTime);
+            bot.sendGroupMsg(groupId, "⛔️已封禁[CQ:at,qq=%s](%s Min)".formatted(userId, banTime), false);
+            log.info("☑ [BanChat] 对话已封禁 - {} -> {} Min", userId, banTime);
         } else {
-            bot.sendGroupMsg(groupId, """
-                    [停用AI] ✅已解封
-                    - 用户: [CQ:at,qq=%s]""".formatted(userId), false);
-            log.info("☑ [BanChat] 已解封对话 - {} -> Unblock", userId);
+            bot.sendGroupMsg(groupId, "✅已解封[CQ:at,qq=%s]".formatted(userId), false);
+            log.info("☑ [BanChat] 对话已解封 - {} -> Unblock", userId);
         }
     }
 

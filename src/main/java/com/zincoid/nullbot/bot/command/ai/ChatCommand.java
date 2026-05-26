@@ -39,10 +39,9 @@ public class ChatCommand implements Command {
             String text = msg.getData().get("text").asString().trim();
             if (!text.startsWith(commandPrefix) || text.startsWith(commandPrefix + "Chat") || text.startsWith(commandPrefix + "对话")) continue;
             bot.sendGroupMsg(event.getGroupId(), """
-                            [AI] ⚠️检测到指令前缀
-                            - 使用指令时请不要@Null
-                            - @Null仅触发AI对话
-                            - Null仅可执行部分指令""",
+                            ⚠️检测到指令前缀输入
+                            - 使用指令时不要@Null
+                            - @Null仅触发AI对话""",
                     false
             );
             break;

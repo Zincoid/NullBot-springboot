@@ -52,13 +52,13 @@ public class ExecutorHandler implements Handler {
 
         } catch (NullBotException e) {
             log.warn("  [ExecutorHandler] 指令警告: {}", e.getMessage());
-            String message = "Warn: %s".formatted(e.getMessage());
+            String message = "⚠️Warn: %s".formatted(e.getMessage());
             if (groupId != 0L) bot.sendGroupMsg(groupId, message, false);
             if (userId != 0L) bot.sendPrivateMsg(userId, message, false);
 
         } catch (Exception e) {
             log.error("  [ExecutorHandler] 运行出错: {}", e.getMessage());
-            String message = "Error: %s".formatted(e.getMessage());
+            String message = "❌Error: %s".formatted(e.getMessage());
             if (groupId != 0L) bot.sendGroupMsg(groupId, message, false);
             if (userId != 0L) bot.sendPrivateMsg(userId, message, false);
             wsSender.broadcast("ERROR", "运行出错: " + e.getMessage());

@@ -29,7 +29,6 @@ public class ChatHistoryCommand implements Command {
     private static final int WAIT_TIMEOUT = 60;  // 等待超时时间 (单位: Second)
 
     private final QQAiClient qqAiClient;
-    // private final BotInputManager botInputManager;
 
     public ChatHistoryCommand(@Lazy QQAiClient qqAiClient) {
         this.qqAiClient = qqAiClient;
@@ -65,13 +64,7 @@ public class ChatHistoryCommand implements Command {
                 bot, groupId, "聊天历史", true,
                 history, strings, this::sendInfo
         ).userId(userId).size(PAGE_SIZE).current(Integer.MAX_VALUE).build();
-
-        pager.start(new BotInputer(userId).timeout(WAIT_TIMEOUT));
-
-        // pager.init();
-        // while (pager.input(botInputManager, WAIT_TIMEOUT)) {
-        //     log.info("☑ [ChatHistory] 已操作分页器");
-        // }
+        pager.start(new BotInputer(userId).timeout(WAIT_TIMEOUT));  // 方案2
     }
 
     private void sendInfo(Bot bot, Long groupId, Message message) {

@@ -26,15 +26,14 @@ public class PokeReactCommand implements Command {
 
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, CommandArgs args) {
-        if (!Objects.equals(event.getTargetId(), event.getSelfId())) return;  // 仅检测戳 Bot 自身
+        if (!Objects.equals(event.getTargetId(), event.getSelfId())) return;  // 仅检测戳自身
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-        String response;
-        QQMessage message;
-        if (groupId != null) message = QQMessage.user("揉了你一下").with(groupId, userId, userName);
-        else message = QQMessage.user("揉了你一下").with(userId, userName);
-        response = qqAiClient.chat(message);
-        log.info("☑ [PokeReact] {}戳戳已回复: {}", groupId != null ? "群聊" : "私聊", response);
+        QQMessage message = (groupId != null)
+                ? QQMessage.user("揉了你一下").with(groupId, userId, userName)
+                : QQMessage.user("揉了你一下").with(userId, userName);
+        String response = qqAiClient.chat(message);
+        log.info("☑ [PokeReact] 戳戳已回复: {}", response);
     }
 }

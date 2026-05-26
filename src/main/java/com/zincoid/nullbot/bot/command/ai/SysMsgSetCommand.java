@@ -41,31 +41,29 @@ public class SysMsgSetCommand implements Command {
             if (userAccess < 1)
                 throw new NullBotException("""
                         重置失败
-                        - 仅限权等级I及以上用户可重置提示词
+                        - 重置需限权I及以上
                         - 你的限权等级: %s""".formatted(userAccess));
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.resetGroup(groupId);
-            bot.sendGroupMsg(groupId, "[提示词设置] ✅已重置", false);
+            bot.sendGroupMsg(groupId, "✅提示词已重置", false);
             log.info("☑ [SysMsgSet] 群聊提示词已重置 -> {}", groupId);
             return;
         }
-
         if ("-set".equals(option)) {
             int userAccess = userService.getAccess(userId);
             if (userAccess < 1 && !BotCtxUtil.getSetting().isCustom())
                 throw new NullBotException("""
                         设置失败
-                        - 当前为非自定义提示词模式
-                        - 该模式仅限权等级I及以上用户可修改
+                        - 当前为非自定模式
+                        - 修改需限权I及以上
                         - 你的限权等级: %s""".formatted(userAccess));
             String newMessage = args.nextFullString();
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.setGroupMessage(groupId, newMessage);
-            bot.sendGroupMsg(groupId, "[提示词设置] ✅已设置", false);
+            bot.sendGroupMsg(groupId, "✅提示词已设置", false);
             log.info("☑ [SysMsgSet] 群聊提示词已设置 - {} -> {}", groupId, newMessage);
             return;
         }
-
         throw new NullBotException("无此操作");
     }
 
