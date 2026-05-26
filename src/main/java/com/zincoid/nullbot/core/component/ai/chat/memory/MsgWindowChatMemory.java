@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.core.component.ai.chat.memory;
 
+import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +39,10 @@ public class MsgWindowChatMemory implements ChatMemory {
         lock.lock();
         try {
             List<Message> messages = chatRepository.get(chatId);
-            if (messages.size() > windowSize)
-                messages.removeFirst();
+            if (messages.size() > windowSize) {
+                do messages.removeFirst();
+                while (!messages.isEmpty() && messages.getFirst().getRole() == Role.TOOL);
+            }
             messages.add(message);
             chatRepository.update(chatId, messages);
         } finally {
