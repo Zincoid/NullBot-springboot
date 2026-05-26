@@ -44,9 +44,9 @@ public class EndfieldCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        String endfieldPath = fileStorageProperties.getResourcePath() + "/endfield";
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
+        String endfieldPath = fileStorageProperties.getResourcePath() + "/endfield";
         String curVersion = versions.computeIfAbsent(groupId, k -> DEFAULT_VERSION);
         String keyword = args.nextString("");
         boolean continuousQuery = false;
