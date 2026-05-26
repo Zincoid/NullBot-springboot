@@ -1,9 +1,11 @@
 package com.zincoid.nullbot.bot.command;
 
 import com.zincoid.nullbot.bot.exception.NullBotException;
+import lombok.Data;
 
 import java.util.List;
 
+@Data
 public final class CommandArgs {
 
     private final List<String> params;
