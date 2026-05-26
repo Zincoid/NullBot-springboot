@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.assist.pubg;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -16,9 +17,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @CommandMapping({"PUBG", "pubg", "资源地图"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class PUBGCommand implements Command {
 
@@ -27,10 +28,10 @@ public class PUBGCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         if (params.isEmpty())
             throw new NullBotException("[PUBG] ❌未指定地图");
-        String map = switch (params.getFirst()) {
+        String map = switch (params.nextString()) {
             case "艾伦格" -> "Erangel.png";
             case "米拉玛" -> "Miramar.png";
             case "维寒迪" -> "Vikendi.png";
@@ -40,11 +41,11 @@ public class PUBGCommand implements Command {
             default -> null;
         };
         if (map == null)
-            throw new NullBotException("[PUBG] ❌不支持此地图");
+            throw new NullBotException("暂不支持");
         String helpPath = fileStorageProperties.getResourcePath() + "/pubg";
         List<FilePO> helps = fileService.search(map, helpPath);
         if (helps.isEmpty())
-            throw new NullBotException("[PUBG] ❌资源缺失");
+            throw new NullBotException("资源缺失");
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(helps.getFirst().getId()))
                 .build();
