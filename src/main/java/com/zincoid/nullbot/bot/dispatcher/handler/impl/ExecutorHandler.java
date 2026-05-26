@@ -5,6 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class ExecutorHandler implements Handler {
         log.info("└─[ExecutorHandler] 执行开始");
 
         String commandClassName = command.getClass().getSimpleName();   // 指令类名
+        CommandArgs a = new CommandArgs(event.getCommandParameters());  // 包装参数
         Long groupId = 0L;                                              // 群组ID - 0 代表私聊
         Long userId = 0L;                                               // 用户ID - 0 代表群聊
 

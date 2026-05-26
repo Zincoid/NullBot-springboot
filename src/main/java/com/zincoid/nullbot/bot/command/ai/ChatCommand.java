@@ -5,7 +5,6 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
-import com.zincoid.nullbot.bot.exception.NullBotException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -32,23 +31,15 @@ public class ChatCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        Integer messageId = event.getMessageId();
-        Long groupId = event.getGroupId();
-        Long userId = event.getUserId();
-        String userName = event.getSender().getNickname();
-        String content = String.join(" ", params);
-        String response;
-        try {
-            QQMessage message = QQMessage.user(content).with(groupId, userId, userName).id(messageId);
-            response = qqAiClient.chat(message);
-        } catch (Exception e) {
-            throw new NullBotException("[AI] ❌出错: " + e.getMessage());
-        }
+        QQMessage message = QQMessage.user(String.join(" ", params))
+                .with(event.getGroupId(), event.getUserId(), event.getSender().getNickname())
+                .id(event.getMessageId());
+        String response = qqAiClient.chat(message);
         for (ArrayMsg msg : event.getArrayMsg()) {
             if (msg.getType() != MsgTypeEnum.text) continue;
             String text = msg.getData().get("text").asString().trim();
             if (!text.startsWith(commandPrefix) || text.startsWith(commandPrefix + "Chat") || text.startsWith(commandPrefix + "对话")) continue;
-            bot.sendGroupMsg(groupId, """
+            bot.sendGroupMsg(event.getGroupId(), """
                             [AI] ⚠️检测到指令前缀
                             - 使用指令时请不要@Null
                             - @Null仅触发AI对话
@@ -62,17 +53,10 @@ public class ChatCommand implements Command {
 
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        Integer messageId = event.getMessageId();
-        Long userId = event.getUserId();
-        String userName = event.getPrivateSender().getNickname();
-        String content = String.join(" ", params);
-        String response;
-        try {
-            QQMessage message = QQMessage.user(content).with(userId, userName).id(messageId);
-            response = qqAiClient.chat(message);
-        } catch (Exception e) {
-            throw new NullBotException("[AI] ❌出错: " + e.getMessage());
-        }
+        QQMessage message = QQMessage.user(String.join(" ", params))
+                .with(event.getUserId(), event.getPrivateSender().getNickname())
+                .id(event.getMessageId());
+        String response = qqAiClient.chat(message);
         log.info("├─[Chat] 私聊已回复: {}", response);
     }
 

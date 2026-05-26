@@ -37,17 +37,17 @@ public class BanChatCommand implements Command {
 
     private void banChat(Bot bot, List<String> params, Long groupId) {
         if (params.size() < 2)
-            throw new NullBotException("[停用AI] ❌参数不足");
+            throw new NullBotException("参数不足");
         long userId;
         int banTime;
         try {
             userId = Long.parseLong(params.get(0));
             banTime = Integer.parseInt(params.get(1));
         } catch (NumberFormatException e) {
-            throw new NullBotException("[停用AI] ❌参数格式错误");
+            throw new NullBotException("参数错误");
         }
         if (!userService.exist(userId))
-            throw new NullBotException("[停用AI] ❌用户不存在");
+            throw new NullBotException("用户不存在");
 
         permissionHandler.setUserBan(userId, ChatCommand.class, banTime);
         permissionHandler.setUserBan(userId, PokeReactCommand.class, banTime);
