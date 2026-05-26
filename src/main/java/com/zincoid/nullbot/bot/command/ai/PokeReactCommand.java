@@ -30,7 +30,7 @@ public class PokeReactCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-        QQMessage message = (groupId != null)
+        QQMessage message = groupId != null
                 ? QQMessage.user("揉了你一下").with(groupId, userId, userName)
                 : QQMessage.user("揉了你一下").with(userId, userName);
         String response = qqAiClient.chat(message);

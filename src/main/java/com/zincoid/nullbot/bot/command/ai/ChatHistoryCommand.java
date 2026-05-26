@@ -60,12 +60,13 @@ public class ChatHistoryCommand implements Command {
                 bot, groupId, "聊天历史", true,
                 history, strings, this::sendInfo
         ).userId(userId).size(PAGE_SIZE).current(Integer.MAX_VALUE).build();
+
         pager.start(new BotInputer(userId).timeout(WAIT_TIMEOUT));  // 新方案
     }
 
     private void sendInfo(Bot bot, Long groupId, Message message) {
         bot.sendGroupMsg(groupId, message.toMap().toString(), true);
-        log.info("☑ [ChatHistory] 已获取记录 - {}", message.toMap());
+        log.info("☑ [ChatHistory] 记录已获取: {}", message.toMap());
     }
 
     @Override

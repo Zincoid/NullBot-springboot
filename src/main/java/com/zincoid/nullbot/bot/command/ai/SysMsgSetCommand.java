@@ -34,32 +34,27 @@ public class SysMsgSetCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String option = args.nextString();
 
-        if ("-reset".equals(option)) {
-            int userAccess = userService.getAccess(userId);
-            if (userAccess < 1)
-                throw new BotWarnException("""
-                        重置失败
-                        - 重置需限权I及以上
+        int userAccess = userService.getAccess(userId);
+        if (userAccess < 1 && !BotCtxUtil.getSetting().isCustom())
+            throw new BotWarnException("""
+                        操作失败
+                        - 当前为非自定模式
+                        - 操作需限权I及以上
                         - 你的限权等级: %s""".formatted(userAccess));
-            qqAiClient.clear(BotCtxUtil.getChatId());
+
+        String option = args.nextString();
+        if ("-reset".equals(option)) {
             sysMsgManager.resetGroup(groupId);
+            qqAiClient.clear(BotCtxUtil.getChatId());
             bot.sendGroupMsg(groupId, "✅提示词已重置", false);
             log.info("☑ [SysMsgSet] 群聊提示词已重置 -> {}", groupId);
             return;
         }
         if ("-set".equals(option)) {
-            int userAccess = userService.getAccess(userId);
-            if (userAccess < 1 && !BotCtxUtil.getSetting().isCustom())
-                throw new BotWarnException("""
-                        设置失败
-                        - 当前为非自定模式
-                        - 修改需限权I及以上
-                        - 你的限权等级: %s""".formatted(userAccess));
             String newMessage = args.nextFullString();
-            qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.setGroupMessage(groupId, newMessage);
+            qqAiClient.clear(BotCtxUtil.getChatId());
             bot.sendGroupMsg(groupId, "✅提示词已设置", false);
             log.info("☑ [SysMsgSet] 群聊提示词已设置 - {} -> {}", groupId, newMessage);
             return;
@@ -73,25 +68,20 @@ public class SysMsgSetCommand implements Command {
         String option = args.nextString();
 
         if ("-reset".equals(option)) {
-            qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.resetUser(userId);
+            qqAiClient.clear(BotCtxUtil.getChatId());
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已重置", false);
             log.info("☑ [SysMsgSet] 私聊提示词已重置 -> {}", userId);
             return;
         }
-
-        if (args.size() < 2)
-            throw new BotWarnException("参数不足");
-
         if ("-set".equals(option)) {
             String newMessage = args.nextFullString();
-            qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.setUserMessage(userId, newMessage);
+            qqAiClient.clear(BotCtxUtil.getChatId());
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已设置", false);
             log.info("☑ [SysMsgSet] 私聊提示词已设置 - {} -> {}", userId, newMessage);
             return;
         }
-
         throw new BotWarnException("无此操作");
     }
 
@@ -99,18 +89,15 @@ public class SysMsgSetCommand implements Command {
     public String getHelp() {
         return String.format("""
                 ◉ SysMsgSet 命令
-                功能: 设置AI系统提示词并清空历史 (部分操作需二次限权验证)
+                功能: 设置AI系统提示词并清空历史
                 限权: %d 级
                 格式:
                 1. SysMsgSet [-reset]
-                2. SysMsgSet [-default|-custom] [提示词]
+                2. SysMsgSet [-set] [提示词]
                 别名: 提示词设置
                 注意:
-                - 模式切换 使用 GroupSet 群设置指令
-                - Reset操作 仅限权I及以上可重置全部提示词
-                - Default模式 仅限权I及以上可修改提示词
-                - Custom模式 仅限权0及以上可修改提示词
-                - Custom模式 默认禁用指令模式""", getAccess()
+                - 非Custom模式 操作需限权I及以上
+                - Custom模式 操作需限权0及以上""", getAccess()
         );
     }
 }
