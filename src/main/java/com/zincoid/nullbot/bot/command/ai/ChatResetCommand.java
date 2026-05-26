@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.ai;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -10,11 +11,9 @@ import com.zincoid.nullbot.bot.command.Command;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"ChatReset", "重置聊天"})
 @Component
-@Slf4j
 public class ChatResetCommand implements Command {
 
     private final QQAiClient qqAiClient;
@@ -24,13 +23,13 @@ public class ChatResetCommand implements Command {
     }
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         String chatId = BotCtxUtil.getChatId();
         qqAiClient.clear(chatId);
         bot.sendGroupMsg(event.getGroupId(), """
                     [重置聊天] ♻️记忆存储已重置
                     - ChatID: %s""".formatted(chatId), false);
-        log.info("├─[ChatReset] 历史已重置 - ChatID: {}", chatId);
+        log.info("☑ [ChatReset] 历史已重置 - ChatId: {}", chatId);
     }
 
     @Override
