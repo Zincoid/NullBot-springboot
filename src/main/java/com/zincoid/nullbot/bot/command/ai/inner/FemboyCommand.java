@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.ai.inner;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -28,17 +29,17 @@ public class FemboyCommand implements Command {
     private final OssUrlBuilder ossUrlBuilder;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         String femboyPath = fileStorageProperties.getImagePath() + "/femboy";
         List<FilePO> photos = fileService.search("", femboyPath);
         if (photos.isEmpty())
-            throw new NullBotException("[男娘] ❌暂无图片");
+            throw new NullBotException("暂无图片");
         FilePO photo = photos.get(ThreadLocalRandom.current().nextInt(photos.size()));
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(photo.getId()))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
-        log.info("├─[Femboy] 获取男娘图片 - {}", photo.getFileName());
+        log.info("☑ [Femboy] 获取男娘图片 - {}", photo.getFileName());
     }
 
     @Override
