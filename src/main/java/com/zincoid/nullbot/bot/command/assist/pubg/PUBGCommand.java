@@ -4,6 +4,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotErrorException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,7 @@ public class PUBGCommand implements Command {
         };
         String helpPath = fileStorageProperties.getResourcePath() + "/pubg";
         List<FilePO> helps = fileService.search(map, helpPath);
-        if (helps.isEmpty()) throw new BotWarnException("资源缺失");
+        if (helps.isEmpty()) throw new BotErrorException("资源缺失");
         String response = MsgUtils.builder()
                 .img(ossUrlBuilder.from(helps.getFirst().getId()))
                 .build();
