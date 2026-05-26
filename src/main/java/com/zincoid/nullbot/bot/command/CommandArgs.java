@@ -29,7 +29,7 @@ public final class CommandArgs {
         return v;
     }
 
-    public String nextRestString() {
+    public String nextFullString() {
         if (cursor >= params.size()) throw missingArg();
         return String.join(" ", params.subList(cursor, params.size()));
     }
@@ -82,7 +82,7 @@ public final class CommandArgs {
         return params.get(index);
     }
 
-    public String getRestString(int index) {
+    public String getFullString(int index) {
         if (index >= params.size()) throw missingArg();
         return String.join(" ", params.subList(index, params.size()));
     }
