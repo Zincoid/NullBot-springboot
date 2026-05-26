@@ -16,7 +16,7 @@ public class SendPrivateMsgCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         long targetId = params.nextLong();
-        String message = params.nextRestString();
+        String message = params.nextFullString();
         bot.sendPrivateMsg(targetId, message, false);
         log.info("☑ [SendPrivateMsg] 私信已发送 - {} <- {}", targetId, message);
     }

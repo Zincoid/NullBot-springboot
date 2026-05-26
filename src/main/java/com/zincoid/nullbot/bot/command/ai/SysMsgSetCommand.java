@@ -58,7 +58,7 @@ public class SysMsgSetCommand implements Command {
                         - 当前为非自定义提示词模式
                         - 该模式仅限权等级I及以上用户可修改
                         - 你的限权等级: %s""".formatted(userAccess));
-            String newMessage = params.nextRestString();
+            String newMessage = params.nextFullString();
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.setGroupMessage(groupId, newMessage);
             bot.sendGroupMsg(groupId, "[提示词设置] ✅已设置", false);
@@ -86,7 +86,7 @@ public class SysMsgSetCommand implements Command {
             throw new NullBotException("参数不足");
 
         if ("-set".equals(option)) {
-            String newMessage = params.nextRestString();
+            String newMessage = params.nextFullString();
             qqAiClient.clear(BotCtxUtil.getChatId());
             sysMsgManager.setUserMessage(userId, newMessage);
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已设置", false);

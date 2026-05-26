@@ -23,20 +23,20 @@ public class RememberCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
-        remember(bot, event.getGroupId(), params.nextRestString(), false);
+        remember(bot, event.getGroupId(), params.nextFullString(), false);
     }
 
     @Override
     public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
-        remember(bot, event.getUserId(), params.nextRestString(), true);
+        remember(bot, event.getUserId(), params.nextFullString(), true);
     }
 
     @Override
     public void execute(Bot bot, PokeNoticeEvent event, CommandArgs params) {
         if (event.getGroupId() != null) {
-            remember(bot, event.getGroupId(), params.nextRestString(), false);
+            remember(bot, event.getGroupId(), params.nextFullString(), false);
         } else {
-            remember(bot, event.getUserId(), params.nextRestString(), true);
+            remember(bot, event.getUserId(), params.nextFullString(), true);
         }
     }
 
