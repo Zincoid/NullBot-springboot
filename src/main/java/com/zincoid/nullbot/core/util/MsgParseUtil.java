@@ -4,6 +4,7 @@ import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.zincoid.nullbot.bot.exception.NullBotException;
 import tools.jackson.databind.JsonNode;
 
 import java.util.*;
@@ -70,7 +71,7 @@ public final class MsgParseUtil {
 
     public static String formatSaying(Bot bot, String rawMsg) {
         if(Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(rawMsg)))
-            throw new IllegalArgumentException("禁止套娃");
+            throw new NullBotException("禁止套娃");
 
         Pattern atPattern = Pattern.compile("\\[CQ:at,qq=(\\d+)]");
         Matcher matcher = atPattern.matcher(rawMsg);
@@ -95,7 +96,7 @@ public final class MsgParseUtil {
         finalResult = finalResult.replaceAll("\\[CQ:(?!at\\b).*?]", "");
 
         if(finalResult.trim().isEmpty())
-            throw new IllegalArgumentException("禁止空文本");
+            throw new NullBotException("禁止空文本");
         return finalResult;
     }
 
