@@ -27,7 +27,7 @@ import java.util.List;
 public class ChatHistoryCommand implements Command {
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
-    private static final int WAIT_TIMEOUT = 60;  // 等待超时时间 (单位: Second)
+    private static final int WAIT_TIMEOUT_SECONDS = 60;  // 等待超时时间
 
     private final QQAiClient qqAiClient;
 
@@ -61,7 +61,7 @@ public class ChatHistoryCommand implements Command {
                 history, strings, this::sendInfo
         ).userId(userId).size(PAGE_SIZE).current(Integer.MAX_VALUE).build();
 
-        pager.start(new BotInputer(userId).timeout(WAIT_TIMEOUT));  // 新方案
+        pager.start(new BotInputer(userId).timeout(WAIT_TIMEOUT_SECONDS));  // 新方案
     }
 
     private void sendInfo(Bot bot, Long groupId, Message message) {
