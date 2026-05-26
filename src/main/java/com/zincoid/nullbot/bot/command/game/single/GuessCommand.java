@@ -25,9 +25,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 
+@Slf4j
 @CommandMapping({"Guess", "猜角色", "猜"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class GuessCommand implements Command {
 

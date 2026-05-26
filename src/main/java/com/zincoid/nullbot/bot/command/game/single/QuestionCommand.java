@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.model.OpenAiModel;
 import lombok.RequiredArgsConstructor;
@@ -21,30 +22,30 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @CommandMapping({"Question", "问答"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class QuestionCommand implements Command {
+
+    private static final int BLOCKING_TIME = 1;  // 封禁时间 (单位: Min)
+    private boolean thinking = true;  // 思考模式
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Set<Long> inGameUsers = new ConcurrentHashSet<>();
 
     private final OpenAiModel openAiModel;
     private final BotInputManager botInputManager;
     private final PermissionHandler permissionHandler;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    private final Set<Long> inGameUsers = new ConcurrentHashSet<>();
-
-    private boolean thinking = true;  // 思考模式
-    private static final int BLOCKING_TIME = 1;  // 封禁时间 (单位: Min)
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
 
         if (inGameUsers.contains(userId))
-            throw new NullBotException("[问答] ⚠️已在游戏中");
+            throw new NullBotException("已在游戏中");
 
         try {
             inGameUsers.add(userId);
@@ -60,12 +61,12 @@ public class QuestionCommand implements Command {
                                 1. timeout根据题目难度设定，简单题15-30秒，中等题45-60秒，困难题90-120秒，
                                 2. 公式相关内容不要使用Latex格式
                                 3. 禁止生成中国国内政治事件和政治人物相关问题，当主题涉及时仅回复REFUSED"""
-                                .formatted(params.isEmpty() ? "二次元" : String.join(" ", params)))),
+                                .formatted(params.nextFullString("二次元")))),
                         thinking, 2500
                 ).getContent();
             } catch (Exception e) {
                 throw new NullBotException("""
-                        [问答] ❌生成请求出错
+                        生成请求出错
                         - 用户: [CQ:at,qq=%s]""".formatted(userId)
                 );
             }
@@ -73,7 +74,7 @@ public class QuestionCommand implements Command {
             if (raw.contains("REFUSED")) {
                 permissionHandler.setUserBan(userId, this.getClass(), BLOCKING_TIME);
                 throw new NullBotException("""
-                        [问答] 🚫生成问题敏感
+                        生成问题敏感
                         - 用户: [CQ:at,qq=%s]
                         - 处罚: 封禁功能%s分钟""".formatted(userId, BLOCKING_TIME)
                 );
@@ -89,14 +90,14 @@ public class QuestionCommand implements Command {
                 question = json.get("question").asText();
             } catch (Exception e) {
                 throw new NullBotException("""
-                        [问答] ❌生成格式异常
+                        生成格式异常
                         - 用户: [CQ:at,qq=%s]""".formatted(userId)
                 );
             }
 
             if (answer.isEmpty() || question.isEmpty() || !answer.matches("[A-Za-z]"))
                 throw new NullBotException("""
-                        [问答] ❌生成内容异常
+                        生成内容异常
                         - 用户: [CQ:at,qq=%s]""".formatted(userId)
                 );
 

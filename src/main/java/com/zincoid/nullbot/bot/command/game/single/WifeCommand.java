@@ -5,6 +5,7 @@ import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.GroupMemberInfoResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -25,10 +26,10 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Slf4j
 @CommandMapping({"Wife", "今日老婆"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class WifeCommand implements Command {
 
     private final Map<Long, Long> memberWifeMap = new ConcurrentHashMap<>();
@@ -40,7 +41,7 @@ public class WifeCommand implements Command {
     private final FileService fileService;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         if (params.isEmpty()) {
             GroupMemberInfoResp wife;
             Long userId = event.getUserId();
@@ -60,7 +61,7 @@ public class WifeCommand implements Command {
                         .img(avatarUrl)
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
-                log.info("├─[Wife] 今日群友老婆: {} -> {}", userId, wifeId);
+                log.info("☑ [Wife] 今日群友老婆 - {} -> {}", userId, wifeId);
             } else {
                 Long wifeId = memberWifeMap.get(userId);
                 String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
@@ -70,18 +71,18 @@ public class WifeCommand implements Command {
                         .img(avatarUrl)
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
-                log.info("├─[Wife] 今日已选过群友老婆: {} -> {}", userId, wifeId);
+                log.info("☑ [Wife] 今日已选过群友老婆 - {} -> {}", userId, wifeId);
             }
         } else {
             Long userId = event.getUserId();
             LocalDateTime expireTime = acgExpireMap.get(userId);
             if (expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
-                String category = params.getFirst();
+                String category = params.nextString();
                 String acgPath = fileStorageProperties.getImagePath() + "/acg/" + category;
 
                 List<FilePO> wives = fileService.search("", acgPath);
                 if (wives.isEmpty())
-                    throw new NullBotException("[今日老婆] ❌暂无角色");
+                    throw new NullBotException("暂无角色");
                 FilePO wife = wives.get(ThreadLocalRandom.current().nextInt(wives.size()));
                 String wifeName = wife.getName().split("_")[0];
                 acgWifeMap.put(userId, wife);
@@ -91,7 +92,7 @@ public class WifeCommand implements Command {
                         .img("base64://" + Base64Util.from(wife.getPath()))
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
-                log.info("├─[Wife] 今日二次元老婆: {} -> {}", userId, wifeName);
+                log.info("☑ [Wife] 今日二次元老婆 - {} -> {}", userId, wifeName);
             } else {
                 FilePO wife = acgWifeMap.get(userId);
                 String wifeName = wife.getName().split("_")[0];
@@ -100,7 +101,7 @@ public class WifeCommand implements Command {
                         .img("base64://" + Base64Util.from(wife.getPath()))
                         .build();
                 bot.sendGroupMsg(event.getGroupId(), response, false);
-                log.info("├─[Wife] 今日已选过二次元老婆: {} -> {}", userId, wifeName);
+                log.info("☑ [Wife] 今日已选过二次元老婆 - {} -> {}", userId, wifeName);
             }
         }
     }
