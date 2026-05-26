@@ -12,10 +12,10 @@ import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.service.ItemService;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @CommandMapping({"Item", "item", "物品", "查询物品"})
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class ItemCommand implements Command {
 
     private final ItemService itemService;
