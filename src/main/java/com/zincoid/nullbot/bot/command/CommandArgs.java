@@ -52,6 +52,11 @@ public final class CommandArgs {
         catch (NumberFormatException e) { throw formatError(); }
     }
 
+    public String nextStringOptional(String defaultVal) {
+        if (!hasNext()) return defaultVal;
+        return params.get(cursor++);
+    }
+
     public int nextIntOptional(int defaultVal) {
         if (!hasNext()) return defaultVal;
         try { return Integer.parseInt(params.get(cursor++)); }
