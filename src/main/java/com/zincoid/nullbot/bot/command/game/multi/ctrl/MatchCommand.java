@@ -2,6 +2,7 @@ package com.zincoid.nullbot.bot.command.game.multi.ctrl;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,34 +12,25 @@ import com.zincoid.nullbot.core.component.game.Matcher;
 import com.zincoid.nullbot.core.model.result.MatchResult;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @CommandMapping({"Match", "匹配"})
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class MatchCommand implements Command {
 
     private final Matcher matcher;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        if (params.isEmpty())
-            throw new NullBotException("[匹配] ❌未指定游戏");
-
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
-        String gameType = params.getFirst();
-
+        String gameType = params.nextString();
         MatchResult result = matcher.joinMatch(userId, groupId, userName, gameType);
-        if (result == null)
-            throw new NullBotException("[匹配] ❌未知错误");
-
         if (result.getIsMatched() && !result.getIsSameGroup())
             bot.sendGroupMsg(result.getOpponentGroupId(), result.getInfo(), false);
         bot.sendGroupMsg(groupId, result.getInfo(), false);
-        log.info("├─[Match] 匹配结果 - {}", result.getInfo());
+        log.info("☑ [Match] 匹配结果 -> {}", result.getInfo());
     }
 
     @Override
