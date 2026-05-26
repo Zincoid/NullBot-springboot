@@ -4,6 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.NullBotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +12,6 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.SysMsgManager;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Slf4j
 @CommandMapping({"0167a25a"})  // 加密 仅供AI调用
@@ -23,47 +22,44 @@ public class RememberCommand implements Command {
     private final SysMsgManager sysMsgManager;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, List<String> params) {
-        addMemory(bot, params, event.getGroupId(), false);
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs params) {
+        remember(bot, event.getGroupId(), params.nextRestString(), false);
     }
 
     @Override
-    public void execute(Bot bot, PrivateMessageEvent event, List<String> params) {
-        addMemory(bot, params, event.getUserId(), true);
+    public void execute(Bot bot, PrivateMessageEvent event, CommandArgs params) {
+        remember(bot, event.getUserId(), params.nextRestString(), true);
     }
 
     @Override
-    public void execute(Bot bot, PokeNoticeEvent event, List<String> params) {
-        if (event.getGroupId() != null)
-            addMemory(bot, params, event.getGroupId(), false);
-        else
-            addMemory(bot, params, event.getUserId(), true);
+    public void execute(Bot bot, PokeNoticeEvent event, CommandArgs params) {
+        if (event.getGroupId() != null) {
+            remember(bot, event.getGroupId(), params.nextRestString(), false);
+        } else {
+            remember(bot, event.getUserId(), params.nextRestString(), true);
+        }
     }
 
-    private void addMemory(Bot bot, List<String> params, Long targetId, boolean isPrivate) {
-        if (params.isEmpty())
-            throw new NullBotException("[记忆] ❌参数不足");
+    private void remember(Bot bot, Long targetId, String content, boolean isPrivate) {
         if (isPrivate) {
-            if (!sysMsgManager.addLongTermUserMemory(targetId, params.getFirst()))
-                throw new NullBotException("[记忆] ❌容量已满");
+            if (!sysMsgManager.addLongTermUserMemory(targetId, content))
+                throw new NullBotException("记忆容量已满");
             bot.sendPrivateMsg(targetId, """
                     [记忆] \uD83D\uDCA1长时记忆已添加
-                    - 内容: %s""".formatted(params.getFirst()), false);
-            log.info("├─[Remember] 用户长时记忆已添加 - {} : {}", targetId, params.getFirst());
+                    - 内容: %s""".formatted(content), false);
+            log.info("☑ [Remember] 用户长时记忆已添加 - {} : {}", targetId, content);
         } else {
-            if (!sysMsgManager.addLongTermGroupMemory(targetId, params.getFirst()))
-                throw new NullBotException("[记忆] ❌容量已满");
+            if (!sysMsgManager.addLongTermGroupMemory(targetId, content))
+                throw new NullBotException("记忆容量已满");
             bot.sendGroupMsg(targetId, """
                     [记忆] \uD83D\uDCA1长时记忆已添加
-                    - 内容: %s""".formatted(params.getFirst()), false);
-            log.info("├─[Remember] 群聊长时记忆已添加 - {} : {}", targetId, params.getFirst());
+                    - 内容: %s""".formatted(content), false);
+            log.info("☑ [Remember] 群聊长时记忆已添加 - {} : {}", targetId, content);
         }
     }
 
     @Override
     public Integer getAccess() { return 2; }
-
-    // 加密命令 无用户帮助
 
     @Override
     public String getHelpForAI() {
