@@ -46,9 +46,9 @@ public class PokeCommand implements Command {
             throw new NullBotMsgException("[对称] ❌参数格式错误");
         }
         if (isPrivate) {
-            bot.sendGroupPoke(targetId, pokeId);
-        } else {
             bot.sendFriendPoke(targetId, pokeId);
+        } else {
+            bot.sendGroupPoke(targetId, pokeId);
         }
         log.info("├─[Poke] 已戳戳: {}", pokeId);
     }
