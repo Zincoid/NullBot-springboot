@@ -110,7 +110,7 @@ public class EndfieldCommand implements Command {
                 String response = Files.readString(
                         Paths.get(file.getPath()), StandardCharsets.UTF_8);
                 bot.sendGroupMsg(groupId, response, false);
-                log.info("☑ [Endfield] 已获取文本 - {}", file.getFileName());
+                log.info("☑ [Endfield] 已获取文本: {}", file.getFileName());
             } catch (IOException e) {
                 throw new NullBotException("[终末地] ❌读取出错");
             }
@@ -120,7 +120,7 @@ public class EndfieldCommand implements Command {
                     .img(ossUrlBuilder.from(file.getId()))
                     .build();
             bot.sendGroupMsg(groupId, response, false);
-            log.info("☑ [Endfield] 已获取图片 - {}", file.getFileName());
+            log.info("☑ [Endfield] 已获取图片: {}", file.getFileName());
         }
     }
 
