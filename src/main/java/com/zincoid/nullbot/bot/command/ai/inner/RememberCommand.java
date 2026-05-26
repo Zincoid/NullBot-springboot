@@ -40,12 +40,12 @@ public class RememberCommand implements Command {
 
     private void remember(Bot bot, Long targetId, String content, boolean isPrivate) {
         if (isPrivate) {
-            if (!sysMsgManager.addLongTermUserMemory(targetId, content))
+            if (!sysMsgManager.addUserMemory(targetId, content))
                 throw new NullBotException("记忆容量已满");
             bot.sendPrivateMsg(targetId, "\uD83D\uDCA1记忆已添加: %s".formatted(content), false);
             log.info("☑ [Remember] 用户记忆已添加 - {} -> {}", targetId, content);
         } else {
-            if (!sysMsgManager.addLongTermGroupMemory(targetId, content))
+            if (!sysMsgManager.addGroupMemory(targetId, content))
                 throw new NullBotException("记忆容量已满");
             bot.sendGroupMsg(targetId, "\uD83D\uDCA1记忆已添加: %s".formatted(content), false);
             log.info("☑ [Remember] 群聊记忆已添加 - {} -> {}", targetId, content);

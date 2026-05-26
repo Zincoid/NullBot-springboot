@@ -13,49 +13,49 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Data
 public class SysMsgManager {
 
-    private final AiChatProperties aiChatProperties;
+    private static final int MEMORY_CAPACITY = 10;  // 记忆容量
 
     private final Map<Long, String> groupMessages = new ConcurrentHashMap<>();  // 群聊提示词
-    private final Map<Long, List<String>> longTermGroupMemories = new ConcurrentHashMap<>();  // 群聊长时记忆
     private final Map<Long, String> userMessages = new ConcurrentHashMap<>();  // 私聊提示词
-    private final Map<Long, List<String>> longTermUserMemories = new ConcurrentHashMap<>();  // 私聊长时记忆
+    private final Map<Long, List<String>> groupMemories = new ConcurrentHashMap<>();  // 群聊记忆
+    private final Map<Long, List<String>> userMemories = new ConcurrentHashMap<>();  // 私聊记忆
 
-    private static final int LONG_TERM_MEMORY_CAPACITY = 10;  // 长时记忆容量
+    private final AiChatProperties aiChatProperties;
 
     // =================== 提示词功能相关 ===================
 
     public String getGroupMessage(Long groupId) { return groupMessages.computeIfAbsent(groupId, k -> aiChatProperties.getDefaultSysMsg()); }
-    public void setGroupMessage(Long groupId, String message) { groupMessages.put(groupId, message); }
     public String getUserMessage(Long userId) { return userMessages.computeIfAbsent(userId, k -> aiChatProperties.getDefaultSysMsg()); }
+    public void setGroupMessage(Long groupId, String message) { groupMessages.put(groupId, message); }
     public void setUserMessage(Long userId, String message) { userMessages.put(userId, message); }
 
-    // =================== 长时记忆功能相关 ===================
+    // ==================== 记忆功能相关 ====================
 
-    public List<String> getLongTermGroupMemory(Long groupId) { return longTermGroupMemories.computeIfAbsent(groupId, k -> new CopyOnWriteArrayList<>()); }
-    public synchronized boolean addLongTermGroupMemory(Long groupId, String memory) {
-        List<String> groupMemory = getLongTermGroupMemory(groupId);
-        if (groupMemory.size() >= LONG_TERM_MEMORY_CAPACITY) return false;
+    public List<String> getGroupMemory(Long groupId) { return groupMemories.computeIfAbsent(groupId, k -> new CopyOnWriteArrayList<>()); }
+    public List<String> getUserMemory(Long userId) { return userMemories.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>()); }
+    public synchronized boolean addGroupMemory(Long groupId, String memory) {
+        List<String> groupMemory = getGroupMemory(groupId);
+        if (groupMemory.size() >= MEMORY_CAPACITY) return false;
         return groupMemory.add(memory);
     }
-    public String removeLongTermGroupMemory(Long groupId, int i) { return getLongTermGroupMemory(groupId).remove(i); }
-    public void clearLongTermGroupMemory(Long groupId) { longTermGroupMemories.remove(groupId); }
-    public List<String> getLongTermUserMemory(Long userId) { return longTermUserMemories.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>()); }
-    public synchronized boolean addLongTermUserMemory(Long userId, String memory) {
-        List<String> userMemory = getLongTermUserMemory(userId);
-        if (userMemory.size() >= LONG_TERM_MEMORY_CAPACITY) return false;
+    public synchronized boolean addUserMemory(Long userId, String memory) {
+        List<String> userMemory = getUserMemory(userId);
+        if (userMemory.size() >= MEMORY_CAPACITY) return false;
         return userMemory.add(memory);
     }
-    public String removeLongTermUserMemory(Long userId, int i) { return getLongTermUserMemory(userId).remove(i); }
-    public void clearLongTermUserMemory(Long userId) { longTermUserMemories.remove(userId); }
+    public String removeGroupMemory(Long groupId, int i) { return getGroupMemory(groupId).remove(i); }
+    public String removeUserMemory(Long userId, int i) { return getUserMemory(userId).remove(i); }
+    public void clearGroupMemory(Long groupId) { groupMemories.remove(groupId); }
+    public void clearUserMemory(Long userId) { userMemories.remove(userId); }
 
     // =================== 重置功能相关 ===================
 
     public void resetGroup(Long groupId) {
         groupMessages.remove(groupId);
-        longTermGroupMemories.remove(groupId);
+        groupMemories.remove(groupId);
     }
     public void resetUser(Long userId) {
         userMessages.remove(userId);
-        longTermUserMemories.remove(userId);
+        userMemories.remove(userId);
     }
 }

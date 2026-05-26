@@ -28,15 +28,9 @@ public class RecallAICommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         int n = args.nextInt(1);
         if (n <= 0) throw new NullBotException("消息数非正");
-        String chatId = BotCtxUtil.getChatId();
-        List<QQMessage> messages = msgWindowChatMemory.get(chatId).stream()
-                .map(m -> (QQMessage) m)
-                .toList();
-        List<QQMessage> filtered = messages.stream()
-                .filter(msg -> msg.getRole() == Role.ASSISTANT && msg.getMessageId() != null)
-                .toList();
-        int startIndex = Math.max(0, filtered.size() - n);
-        List<QQMessage> targets = filtered.subList(startIndex, filtered.size());
+        List<QQMessage> messages = msgWindowChatMemory.get(BotCtxUtil.getChatId()).stream().map(m -> (QQMessage) m).toList();
+        List<QQMessage> filtered = messages.stream().filter(msg -> msg.getRole() == Role.ASSISTANT && msg.getMessageId() != null).toList();
+        List<QQMessage> targets = filtered.subList(Math.max(0, filtered.size() - n), filtered.size());
         for (QQMessage target : targets) bot.deleteMsg(target.getMessageId());
         log.info("☑ [RecallAI] AI消息已撤回 - Amount: {}", n);
     }

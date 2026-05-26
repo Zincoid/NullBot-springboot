@@ -75,7 +75,7 @@ public class QQPrompter {
         sb.append(sysMsgManager.getUserMessage(userId));
         sb.append(BASE_PM_PROMPT);
         sb.append(MEMORY_PROMPT.formatted(
-                formatMemories(sysMsgManager.getLongTermUserMemory(userId))));
+                formatMemories(sysMsgManager.getUserMemory(userId))));
         if (cmd) sb.append(CMD_PROMPT.formatted(
                 commandRegistry.getCommandHelpsForAI(QQCmdAllows.getPm())));
         return sb.toString();
@@ -86,7 +86,7 @@ public class QQPrompter {
         sb.append(sysMsgManager.getGroupMessage(groupId));
         sb.append(BASE_GC_PROMPT);
         sb.append(MEMORY_PROMPT.formatted(
-                sysMsgManager.getLongTermGroupMemory(groupId)));
+                sysMsgManager.getGroupMemory(groupId)));
         if (cmd) sb.append(CMD_PROMPT.formatted(
                 commandRegistry.getCommandHelpsForAI(QQCmdAllows.getGc())));
         return sb.toString();

@@ -39,11 +39,11 @@ public class ForgetCommand implements Command {
 
     private void forget(Bot bot, Long resourceId, boolean isPrivate, int i) {
         if (isPrivate) {
-            String removed = sysMsgManager.removeLongTermUserMemory(resourceId, i);
+            String removed = sysMsgManager.removeUserMemory(resourceId, i);
             bot.sendPrivateMsg(resourceId, "\uD83D\uDCA1记忆已移除: %s".formatted(removed), false);
             log.info("☑ [Forget] 用户记忆已移除 - {} -> {}", resourceId, removed);
         } else {
-            String removed = sysMsgManager.removeLongTermGroupMemory(resourceId, i);
+            String removed = sysMsgManager.removeGroupMemory(resourceId, i);
             bot.sendGroupMsg(resourceId, "\uD83D\uDCA1记忆已移除: %s".formatted(removed), false);
             log.info("☑ [Forget] 群聊记忆已移除 - {} -> {}", resourceId, removed);
         }
