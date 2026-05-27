@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@CommandMapping({"OneTimeAlarm", "一次性闹钟"})
+@CommandMapping({"OneTimeAlarm", "单次闹钟"})
 @Component
 @RequiredArgsConstructor
 public class OneTimeAlarmCommand implements Command {
@@ -62,12 +62,12 @@ public class OneTimeAlarmCommand implements Command {
             throw new BotWarnException("时间格式错误");
         }
         bot.sendGroupMsg(groupId, """
-                    [一次性闹钟] ⏰已设置！
+                    ⏰单次闹钟已设置
                     - AlarmID: %s
                     - Time: %s""".formatted(alarmId, alarmTime.format(formatter)),
                 false
         );
-        log.info("☑ [OneTimeAlarm] 已设置 - AlarmID: {}", alarmId);
+        log.info("☑ [OneTimeAlarm] 闹钟已设置 - AlarmID: {}", alarmId);
     }
 
     private LocalDateTime parseDateTime(String str, List<DateTimeFormatter> formatters) {
@@ -85,7 +85,7 @@ public class OneTimeAlarmCommand implements Command {
     public String getHelp() {
         return String.format("""
                 ◉ OneTimeAlarm 命令
-                功能: 设置一次性群内提醒闹钟
+                功能: 设置单次群内提醒闹钟
                 限权: %d 级
                 格式: OneTimeAlarm [模式] [时间] [文本] [可选: QQ号]
                 模式:
@@ -94,7 +94,7 @@ public class OneTimeAlarmCommand implements Command {
                   时间示例: 26-02-07T09:00
                 - [-d] 延迟模式
                   时间格式: 分钟数
-                别名: 一次性闹钟""", getAccess()
+                别名: 单次闹钟""", getAccess()
         );
     }
 
@@ -102,7 +102,7 @@ public class OneTimeAlarmCommand implements Command {
     public String getHelpForAI() {
         return """
                 ◉ OneTimeAlarm 命令
-                功能: 设置一次性群内提醒闹钟
+                功能: 设置单次群内提醒闹钟
                 格式: OneTimeAlarm [模式] [时间] [文本] [目标QQ号]
                 模式:
                 - [-t] 时间模式

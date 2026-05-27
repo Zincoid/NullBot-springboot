@@ -3,6 +3,8 @@ package com.zincoid.nullbot.bot.command.schedule;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -24,9 +26,9 @@ public class CancelAlarmCommand implements Command {
         Long userId = event.getUserId();
         String alarmId = args.nextString();
         String taskId = "Alarm-%s-%s".formatted(userId, alarmId);
-        boolean cancelled = botTaskScheduler.cancelTask(taskId);
-        bot.sendGroupMsg(groupId, "[取消闹钟] %s".formatted(cancelled ? "✅已取消" : "❌未取消"), false);
-        log.info("☑ [CancelAlarm] 闹钟取消{} - AlarmID: {}", cancelled ? "成功" : "失败", alarmId);
+        if (!botTaskScheduler.cancelTask(taskId)) throw new BotInfoException(Emoji.INFO, "闹钟不存在");
+        bot.sendGroupMsg(groupId, "✅闹钟已取消", false);
+        log.info("☑ [CancelAlarm] 闹钟已取消 - AlarmID: {}", alarmId);
     }
 
     @Override
