@@ -32,27 +32,23 @@ public class ImageSaveCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
-            throw new BotWarnException("需引用图片");
-
+            throw new BotWarnException("缺少图片引用");
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
         if (imageMap.isEmpty())
-            throw new BotWarnException("未包含图片");
+            throw new BotWarnException("引用未包含图");
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
 
-        for (Map.Entry<String, String> entry : imageMap.entrySet()) {
-            String originName = entry.getKey();
-            String url = entry.getValue();
-            // QQ给的扩展名是错的 让下载方法判断文件类型
-            String fileName = originName.substring(0, originName.lastIndexOf("."));
+        imageMap.forEach((name, url) -> {
+            String key = name.substring(0, name.lastIndexOf("."));  // QQ图片扩展名错误
             String filePath = fileStorageProperties.getImagePath() + "/collect";
-            FileInfo fileInfo = fileService.saveFile(url, filePath, fileName, userId, userName);
-            bot.sendGroupMsg(groupId, "\uD83D\uDCBD 已保存！", false);
+            FileInfo fileInfo = fileService.saveFile(url, filePath, key, userId, userName);
+            bot.sendGroupMsg(groupId, "\uD83D\uDCBD图片已保存", false);
             log.info("☑ [ImageSave] 图片已保存: {}", fileInfo.getFileName());
-        }
+        });
     }
 
     @Override

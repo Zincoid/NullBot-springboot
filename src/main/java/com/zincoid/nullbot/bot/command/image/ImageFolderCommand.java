@@ -24,7 +24,7 @@ public class ImageFolderCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws IOException {
         String structure = StringUtil.getFolderTreeString(fileStorageProperties.getImagePath(), 0);
-        bot.sendGroupMsg(event.getGroupId(), "[图片目录] \uD83D\uDCC1已获取\n" + structure, false);
+        bot.sendGroupMsg(event.getGroupId(), "[图片目录结构] \uD83D\uDCC1已获取\n" + structure, false);
         log.info("☑ [ImageFolder] 图片目录已输出");
     }
 

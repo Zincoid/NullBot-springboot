@@ -35,9 +35,7 @@ public class RandomImageCommand implements Command {
         List<FilePO> images = fileService.search("", imagePath);
         if (images.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无图片");
         FilePO image = images.get(ThreadLocalRandom.current().nextInt(images.size()));
-        String response = MsgUtils.builder()
-                .img(ossUrlBuilder.from(image.getId()))
-                .build();
+        String response = MsgUtils.builder().img(ossUrlBuilder.from(image.getId())).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [RandomImage] 图片已发送: {}", image.getFileName());
     }

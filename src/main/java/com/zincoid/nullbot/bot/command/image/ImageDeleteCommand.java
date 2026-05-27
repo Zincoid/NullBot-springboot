@@ -6,7 +6,10 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotErrorException;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -15,7 +18,6 @@ import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.FileService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
-import com.zincoid.nullbot.core.util.StringUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -34,34 +36,31 @@ public class ImageDeleteCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String directory = fileStorageProperties.getImagePath() + "/collect";
         ArrayMsg reply = event.getArrayMsg().getFirst();
-        if (!args.isEmpty()) {
+        if (args.hasNext()) {
             deleteFile(bot, event, directory, args.nextFullString());
             return;
         }
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-            Map<String, String> imageMap = MsgParseUtil
-                    .extractImgMap(replyMsg.getRawMessage());
+            Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
             if (imageMap.isEmpty())
-                throw new BotWarnException("未引用图片");
-            for (Map.Entry<String, String> entry : imageMap.entrySet()) {
-                String originName = entry.getKey();  // QQ 图片信息后缀全是 JPG
-                String name = originName.substring(0, originName.lastIndexOf("."));
-                List<FilePO> realFiles = fileService.search(name, directory);
+                throw new BotWarnException("引用未包含图片");
+            imageMap.forEach((name, url) -> {
+                String key = name.substring(0, name.lastIndexOf("."));  // QQ图片扩展名错误
+                List<FilePO> realFiles = fileService.search(key, directory);
                 if (realFiles.size() != 1)
-                    throw new BotWarnException("数据异常");
+                    throw new BotErrorException("数据异常");
                 deleteFile(bot, event, directory, realFiles.getFirst().getFileName());
-            }
+            });
             return;
         }
-        throw new BotWarnException("无文件名或引用");
+        throw new BotWarnException("缺少引用或图名");
     }
 
     private void deleteFile(Bot bot, GroupMessageEvent event, String directory, String fileName) {
         if (!fileService.deleteFile(directory, fileName))
-            throw new BotWarnException("文件服务删除失败");
-        bot.sendGroupMsg(event.getGroupId(), "[删除图片] ⚠️已删除\n- " +
-                StringUtil.truncateFileName(fileName, 12), false);
+            throw new BotInfoException(Emoji.WARN, "图片删除失败");
+        bot.sendGroupMsg(event.getGroupId(), "⚠️图片已删除", false);
         log.info("☑ [ImageDelete] 图片已删除: {}", fileName);
     }
 

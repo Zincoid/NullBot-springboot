@@ -3,6 +3,8 @@ package com.zincoid.nullbot.bot.command.image;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -28,15 +30,10 @@ public class ImageListCommand implements Command {
         String imagePath = fileStorageProperties.getImagePath() + "/collect";
         List<FilePO> images = fileMapper.searchFile("", imagePath);
         List<String> fileNames = images.stream().map(FilePO::getFileName).toList();
-        if (images.size() > 50) {
-            log.info("☑ [ImageList] 图片列表数据过多");
-            bot.sendGroupMsg(event.getGroupId(), """
-                    [图片列表] ✅过多暂不展示
-                    - 共 %s 张图片""".formatted(images.size()), false);
-            return;
-        }
-        bot.sendGroupMsg(event.getGroupId(), "[图片列表] ✅已获取\n"
-                + String.join("\n", fileNames), false);
+        if (images.size() > 50) throw new BotInfoException(Emoji.INFO, "过多暂不展示: 共%s张".formatted(images.size()));
+        bot.sendGroupMsg(event.getGroupId(), """
+                [图片列表] ✅已获取
+                %s""".formatted(String.join("\n", fileNames)), false);
         log.info("☑ [ImageList] 已获取图片列表");
     }
 

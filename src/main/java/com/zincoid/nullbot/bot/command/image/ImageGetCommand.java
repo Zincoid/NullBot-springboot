@@ -4,7 +4,8 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -31,14 +32,10 @@ public class ImageGetCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String imagePath = fileStorageProperties.getImagePath() + "/collect";
         List<FilePO> images = fileMapper.searchFile(args.nextFullString(), imagePath);
-        if (images.isEmpty())
-            throw new BotWarnException("未找到该图片");
-        if (images.size() > 1)
-            throw new BotWarnException("找到多个图片");
+        if (images.isEmpty()) throw new BotInfoException(Emoji.INFO, "图片未找到");
+        if (images.size() > 1) throw new BotInfoException(Emoji.INFO, "找到多个图片");
         FilePO image = images.getFirst();
-        String response = MsgUtils.builder()
-                .img(ossUrlBuilder.from(image.getId()))
-                .build();
+        String response = MsgUtils.builder().img(ossUrlBuilder.from(image.getId())).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [ImageGet] 图片已获取: {}", image.getFileName());
     }
