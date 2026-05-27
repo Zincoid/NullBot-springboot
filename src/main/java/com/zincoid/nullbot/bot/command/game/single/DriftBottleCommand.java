@@ -101,7 +101,7 @@ public class DriftBottleCommand implements Command {
         if (!inputs.isEmpty()) {
             bottle.plusRethrowTimes();
             thrownBack = driftBottleService.throwBottle(bottle);
-            bot.sendGroupMsg(groupId, thrownBack ? "✉️ 已投回！" : "❌投回出错", true);
+            bot.sendGroupMsg(groupId, thrownBack ? "✉️已投回" : "❌未投回", true);
             log.info("☑ [DriftBottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());
         } else {
             log.info("☑ [DriftBottle] 捡漂流瓶并销毁 - {} -> #{}", userId, bottle.getId());
