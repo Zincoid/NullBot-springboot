@@ -3,7 +3,9 @@ package com.zincoid.nullbot.bot.command.manage;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -28,52 +30,52 @@ public class AccessSetCommand implements Command {
         int targetNewAccess = args.nextInt();
         switch (option) {
             case "-group" -> {
-                if (!groupService.exist(targetId)) throw new BotWarnException("[限权设置] ❌群聊未注册");
+                if (!groupService.exist(targetId)) throw new BotInfoException(Emoji.WARN, "群聊未注册");
                 int targetAccess = groupService.getAccess(targetId);
                 int selfAccess = userService.getAccess(event.getUserId());
                 if (selfAccess < 2) {
                     bot.sendGroupMsg(event.getGroupId(), """
-                            [限权设置] \uD83D\uDEAB修改失败
-                            - 仅限权等级II用户可修改群限权
+                            🚫限权操作被阻止
+                            - 修改群限权需限权II
                             - 你的限权等级: %s""".formatted(selfAccess), false);
-                    log.info("☑ [AccessSet] 修改失败 - 仅限权等级2用户可修改群限权 用户限权为{}", selfAccess);
+                    log.info("☑ [AccessSet] 群限权操作被阻止");
                 } else {
                     groupService.setAccess(targetId, targetNewAccess);
                     bot.sendGroupMsg(event.getGroupId(), """
-                            [限权设置] ✅群限权已修改
-                            - 变动群聊: %s
-                            - 变动详情: %s -> %s""".formatted(targetId, targetAccess, targetNewAccess), false);
-                    log.info("☑ [AccessSet] 已修改群聊 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
+                            ✅群限权已修改
+                            - 群聊: %s
+                            - 变动: %s -> %s""".formatted(targetId, targetAccess, targetNewAccess), false);
+                    log.info("☑ [AccessSet] 群限权已修改 - {} -> {}", targetId, targetNewAccess);
                 }
             }
             case "-user" -> {
-                if (!userService.exist(targetId)) throw new BotWarnException("[限权设置] ❌用户未注册");
+                if (!userService.exist(targetId)) throw new BotInfoException(Emoji.WARN, "用户未注册");
                 int targetAccess = userService.getAccess(targetId);
                 int selfAccess = userService.getAccess(event.getUserId());
                 if (targetAccess >= selfAccess) {
                     bot.sendGroupMsg(event.getGroupId(), """
-                            [限权设置] \uD83D\uDEAB修改失败
-                            - 目标限权高于或等于你的限权
+                            🚫限权操作被阻止
+                            - 限权未超过目标
                             - 目标限权等级: %s
                             - 你的限权等级: %s""".formatted(targetAccess, selfAccess), false);
-                    log.info("☑ [AccessSet] 修改失败 - 目标限权等级{} 高于或等于 自身限权等级{}", targetAccess, selfAccess);
-                } else if(targetNewAccess >= selfAccess) {
+                    log.info("☑ [AccessSet] 用户限权操作被阻止");
+                } else if (targetNewAccess >= selfAccess) {
                     bot.sendGroupMsg(event.getGroupId(), """
-                            [限权设置] \uD83D\uDEAB修改失败
-                            - 新的限权高于或等于你的限权
+                            🚫限权操作被阻止
+                            - 限权未超过新限权
                             - 新的限权等级: %s
                             - 你的限权等级: %s""".formatted(targetNewAccess, selfAccess), false);
-                    log.info("☑ [AccessSet] 修改失败 - 新限权等级{} 高于或等于 自身限权等级{}", targetNewAccess, selfAccess);
+                    log.info("☑ [AccessSet] 用户限权操作被阻止");
                 } else {
                     userService.setAccess(targetId, targetNewAccess);
                     bot.sendGroupMsg(event.getGroupId(), """
-                            [限权设置] ✅用户限权已修改
-                            - 变动用户: %s
-                            - 变动详情: %s -> %s""".formatted(targetId, targetAccess, targetNewAccess), false);
-                    log.info("☑ [AccessSet] 已修改用户 {} 限权 - {} -> {}", targetId, targetAccess, targetNewAccess);
+                            ✅用户限权已修改
+                            - 用户: %s
+                            - 变动: %s -> %s""".formatted(targetId, targetAccess, targetNewAccess), false);
+                    log.info("☑ [AccessSet] 用户限权已修改 - {} -> {}", targetId, targetNewAccess);
                 }
             }
-            default -> throw new BotWarnException("选项不存在");
+            default -> throw new BotWarnException("无此操作");
         }
     }
 

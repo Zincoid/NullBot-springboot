@@ -36,12 +36,14 @@ public class SysMsgSetCommand implements Command {
         Long userId = event.getUserId();
 
         int userAccess = userService.getAccess(userId);
-        if (userAccess < 1 && !BotCtxUtil.getSetting().isCustom())
-            throw new BotWarnException("""
-                        操作失败
+        if (userAccess < 1 && !BotCtxUtil.getSetting().isCustom()) {
+            bot.sendGroupMsg(groupId, """
+                        🚫提示词操作被阻止
                         - 当前为非自定模式
                         - 操作需限权I及以上
-                        - 你的限权等级: %s""".formatted(userAccess));
+                        - 你的限权等级: %s""".formatted(userAccess), false);
+            return;
+        }
 
         String option = args.nextString();
         if ("-reset".equals(option)) {
