@@ -34,19 +34,14 @@ public class RecallReactCommand implements Command {
 
         List<QQMessage> messages = msgWindowChatMemory.get(ChatScope.MONITOR + "_" + groupId)
                 .stream().map(m -> (QQMessage) m).toList();
-
         for (QQMessage message : messages) {
             if (!Objects.equals(message.getMessageId(), messageId)) continue;
-            if (userId.equals(operatorId)) {
-                bot.sendGroupMsg(groupId, """
-                        %s(%s)撤回了消息:
-                        %s""".formatted(userName, userId, message.getContent()), false);
-            } else {
-                bot.sendGroupMsg(groupId, """
-                        %s(%s)撤回了%s(%s)的消息:
-                        %s""".formatted(operatorName, operatorId, userName, userId, message.getContent()), false);
-            }
-            log.info("☑ [RecallReact] 撤回消息已重发: {}", message.getContent());
+            String content = message.getContent();
+            String response = userId.equals(operatorId)
+                    ? "%s(%s)撤回消息: %s".formatted(userName, userId, content)
+                    : "%s(%s)撤回%s(%s)消息: %s".formatted(operatorName, operatorId, userName, userId, content);
+            bot.sendGroupMsg(groupId, response, false);
+            log.info("☑ [RecallReact] 撤回消息已重发: {}", content);
             return;
         }
 
@@ -54,5 +49,5 @@ public class RecallReactCommand implements Command {
     }
 
     @Override
-    public Integer getAccess() { return -1; }  // 仅校验群限权
+    public Integer getAccess() { return -1; }  // 仅用于群限权校验
 }
