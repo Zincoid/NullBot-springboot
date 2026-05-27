@@ -20,7 +20,8 @@ public class WebScreenCapturer {
         this.maxRetries = props.getMaxRetries();
     }
 
-    /** 多元素截取 支持忽略和点击 */
+    // ============================= 截图方法 =============================
+
     public String capture(String url, int width, int height,
                           List<String> targets, List<String> hides, List<String> clicks) {
         WebDriver driver = chrome.create(width + "," + height);
@@ -40,7 +41,6 @@ public class WebScreenCapturer {
         }
     }
 
-    /** 完整页截取 */
     public String capture(String url, int width, int height) {
         WebDriver driver = chrome.create(width + "," + height);
         try {
