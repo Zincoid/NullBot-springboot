@@ -858,5 +858,6 @@
   - 优化 所有指令；
 - 优化 临时文件夹不再分层；
 - 优化 ResvgJNI 渲染方案；
+- 优化 WebDriver 渲染方案；
 - 优化 ResourceLoader 组件；
 - 优化 部分其他代码。
