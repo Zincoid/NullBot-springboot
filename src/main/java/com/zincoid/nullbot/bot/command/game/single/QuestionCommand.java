@@ -6,9 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.model.OpenAiModel;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -28,7 +30,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class QuestionCommand implements Command {
 
-    private static final int BLOCKING_TIME = 1;  // 封禁时间 (单位: Min)
+    private static final int BLOCK_TIME_MINUTES = 1;  // 封禁时间
+
     private boolean thinking = true;  // 思考模式
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -45,11 +48,11 @@ public class QuestionCommand implements Command {
         String userName = event.getSender().getNickname();
 
         if (inGameUsers.contains(userId))
-            throw new BotWarnException("已在游戏中");
+            throw new BotInfoException(Emoji.INFO, "已在游戏中");
 
         try {
             inGameUsers.add(userId);
-            bot.sendGroupMsg(groupId, "⏳问题生成中, 请稍候...", false);
+            bot.sendGroupMsg(groupId, "⏳问题生成中...", false);
 
             String raw;
             try {
@@ -65,19 +68,12 @@ public class QuestionCommand implements Command {
                         thinking, 2500
                 ).getContent();
             } catch (Exception e) {
-                throw new BotWarnException("""
-                        生成请求出错
-                        - 用户: [CQ:at,qq=%s]""".formatted(userId)
-                );
+                throw new BotWarnException("生成请求出错");
             }
 
             if (raw.contains("REFUSED")) {
-                permissionHandler.setUserBan(userId, this.getClass(), BLOCKING_TIME);
-                throw new BotWarnException("""
-                        生成问题敏感
-                        - 用户: [CQ:at,qq=%s]
-                        - 处罚: 封禁功能%s分钟""".formatted(userId, BLOCKING_TIME)
-                );
+                permissionHandler.setUserBan(userId, this.getClass(), BLOCK_TIME_MINUTES);
+                throw new BotInfoException(Emoji.WARN, "生成问题敏感(封禁%sMin)".formatted(BLOCK_TIME_MINUTES));
             }
 
             String answer;
@@ -89,17 +85,11 @@ public class QuestionCommand implements Command {
                 timeout = json.get("timeout").asInt();
                 question = json.get("question").asText();
             } catch (Exception e) {
-                throw new BotWarnException("""
-                        生成格式异常
-                        - 用户: [CQ:at,qq=%s]""".formatted(userId)
-                );
+                throw new BotWarnException("生成格式异常");
             }
 
             if (answer.isEmpty() || question.isEmpty() || !answer.matches("[A-Za-z]"))
-                throw new BotWarnException("""
-                        生成内容异常
-                        - 用户: [CQ:at,qq=%s]""".formatted(userId)
-                );
+                throw new BotWarnException("生成内容异常");
 
             String req = """
                     请[CQ:at,qq=%s]回答问题！
