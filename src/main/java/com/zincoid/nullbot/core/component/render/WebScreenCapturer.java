@@ -1,7 +1,5 @@
 package com.zincoid.nullbot.core.component.render;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.properties.ChromeProperties;
 import com.zincoid.nullbot.core.util.Base64Util;
@@ -15,45 +13,25 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 import java.awt.image.BufferedImage;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 
 @Slf4j
 @Component
 public class WebScreenCapturer {
 
-    private static final int POOL_SIZE = 1;
-
     private final ChromeDriverFactory driverFactory;
     private final int maxRetries;
-    private BlockingQueue<WebDriver> drivers;
 
     public WebScreenCapturer(ChromeDriverFactory driverFactory, ChromeProperties chromeProperties) {
         this.driverFactory = driverFactory;
         this.maxRetries = chromeProperties.getMaxRetries();
     }
 
-    @PostConstruct
-    void init() {
-        drivers = new LinkedBlockingQueue<>(POOL_SIZE);
-        for (int i = 0; i < POOL_SIZE; i++)
-            drivers.offer(driverFactory.createDriver("1920,1080"));
-        log.info("▽ [WebScreenCapturer] Chrome 驱动已就绪 (PoolSize: {})", POOL_SIZE);
-    }
-
-    @PreDestroy
-    void destroy() {
-        drivers.forEach(WebDriver::quit);
-        log.info("▽ [WebScreenCapturer] Chrome 驱动已关闭");
-    }
-
-    /** 截取多个元素，支持忽略和点击元素 */
     public String capture(String url, int width, int height,
                           List<String> targetSelectors,
                           List<String> ignoreSelectors,
                           List<String> clickSelectors) {
-        WebDriver driver = take();
+        WebDriver driver = driverFactory.createDriver(width + "," + height);
         try {
             return withRetry(driver, () -> {
                 navigate(driver, url, width, height);
@@ -70,32 +48,7 @@ public class WebScreenCapturer {
                 return ashot.takeScreenshot(driver, targets).getImage();
             });
         } finally {
-            drivers.offer(driver);
-        }
-    }
-
-    /** 截取完整页面 */
-    public String captureFull(String url, int width, int height) {
-        WebDriver driver = take();
-        try {
-            return withRetry(driver, () -> {
-                navigate(driver, url, width, height);
-
-                AShot ashot = new AShot();
-                ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-                return ashot.takeScreenshot(driver).getImage();
-            });
-        } finally {
-            drivers.offer(driver);
-        }
-    }
-
-    private WebDriver take() {
-        try {
-            return drivers.take();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("等待 WebDriver 被中断", e);
+            driver.quit();
         }
     }
 
@@ -129,26 +82,20 @@ public class WebScreenCapturer {
         for (String sel : selectors) {
             try {
                 js.executeScript("document.querySelectorAll('" + sel + "').forEach(el => el.remove());");
-            } catch (Exception e) {
-                log.info("▽ [WebScreenCapturer] 隐藏元素未找到: {}", sel);
-            }
+            } catch (Exception ignored) {}
         }
     }
 
     private void clickElement(WebDriver driver, String selector) {
         try {
             driver.findElement(by(selector)).click();
-        } catch (NoSuchElementException e) {
-            log.info("▽ [WebScreenCapturer] 交互元素未找到: {}", selector);
-        } catch (ElementNotInteractableException e) {
-            log.info("▽ [WebScreenCapturer] 该元素不可交互: {} 尝试 JavaScript 点击...", selector);
+        } catch (NoSuchElementException | ElementNotInteractableException e) {
             try {
                 JavascriptExecutor js = (JavascriptExecutor) driver;
                 WebElement el = driver.findElement(by(selector));
                 js.executeScript("arguments[0].click();", el);
-                log.info("▽ [WebScreenCapturer] JavaScript 成功点击: {}", selector);
             } catch (Exception ex) {
-                log.info("▽ [WebScreenCapturer] JavaScript 点击失败: {}", ex.getMessage());
+                log.info("▽ [WebScreenCapturer] 点击失败: {}", selector);
             }
         }
     }
