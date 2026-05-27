@@ -29,8 +29,8 @@ public class ImageConverter {
 
     /** RIP ：灰度化 + R.I.P. 文字 */
     public String RIP(String imagePath) throws Exception {
-        resourceLoader.getCached(RIP_FONT);
-        String svg = Files.readString(resourceLoader.getCached(RIP_SVG))
+        resourceLoader.getCache(RIP_FONT);
+        String svg = Files.readString(resourceLoader.getCache(RIP_SVG))
                 .replace("{{IMAGE}}", imageDataUri(imagePath, true));
         return render(svg);
     }
@@ -47,8 +47,8 @@ public class ImageConverter {
 
     private String overlay(String imagePath, String overlayResource) throws Exception {
         String overlayUri = "data:image/png;base64,"
-                + Base64Util.from(resourceLoader.getCached(overlayResource));
-        String svg = Files.readString(resourceLoader.getCached(OVERLAY_SVG))
+                + Base64Util.from(resourceLoader.getCache(overlayResource));
+        String svg = Files.readString(resourceLoader.getCache(OVERLAY_SVG))
                 .replace("{{IMAGE}}", imageDataUri(imagePath, false))
                 .replace("{{OVERLAY}}", overlayUri);
         return render(svg);

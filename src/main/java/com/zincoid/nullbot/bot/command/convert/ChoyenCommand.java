@@ -29,7 +29,7 @@ public class ChoyenCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
 
-        Path htmlPath = resourceLoader.getCached("static/html/5000choyen.html");
+        Path htmlPath = resourceLoader.getCache("static/html/5000choyen.html");
         String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
 
         Map<String, String> variables = Map.of(

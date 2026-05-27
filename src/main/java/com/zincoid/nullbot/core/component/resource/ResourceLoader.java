@@ -3,10 +3,10 @@ package com.zincoid.nullbot.core.component.resource;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import org.springframework.stereotype.Component;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,80 +14,51 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class ResourceLoader {
 
-    private final Map<String, Path> CACHE = new ConcurrentHashMap<>();
+    private final Map<String, Path> cache = new ConcurrentHashMap<>();
 
     private final FileStorageProperties fileStorageProperties;
 
-    // =================== 应用方法 ===================
-
-    public Path getCached(String resourcePath) {
-        return getCached(resourcePath, fileStorageProperties.getTempPath());
+    public Path getCache(String resourcePath) {
+        return getCache(resourcePath, fileStorageProperties.getTempPath());
     }
 
-    public Path getCached(String resourcePath, String tempPath) {
-        // 尝试获取缓存
-        Path cachedPath = getCachedOrigin(resourcePath, tempPath);
-        // 检查文件存在
-        if (cachedPath != null && Files.exists(cachedPath)) return cachedPath;
-        // 重载更新缓存
-        synchronized (CACHE) {
-            // 再次检查 (双重检查锁定)
-            Path currentPath = CACHE.get(resourcePath);
-            if (currentPath != null && Files.exists(currentPath)) return currentPath;
+    public Path getCache(String resourcePath, String tempPath) {
+        Path existing = cache.get(resourcePath);
+        if (existing != null && Files.exists(existing)) return existing;
+
+        return cache.compute(resourcePath, (key, prev) -> {
+            if (prev != null && Files.exists(prev)) return prev;
             try {
-                Path newPath = loadFromResources(resourcePath, tempPath);
-                CACHE.put(resourcePath, newPath);
-                return newPath;
+                Path path = loadResource(key, tempPath);
+                path.toFile().deleteOnExit();
+                return path;
             } catch (IOException e) {
-                // 重载失败 清除缓存
-                CACHE.remove(resourcePath);
-                throw new RuntimeException("重载失败", e);
-            }
-        }
-    }
-
-    public void clearCache() {
-        CACHE.clear();
-    }
-
-    public void removeFromCache(String resourcePath) {
-        CACHE.remove(resourcePath);
-    }
-
-    // =================== 工具方法 ===================
-
-    public Path getCachedOrigin(String resourcePath, String tempPath) {
-        // 使用缓存
-        return CACHE.computeIfAbsent(resourcePath, key -> {
-            try {
-                return loadFromResources(key, tempPath);
-            } catch (IOException e) {
-                throw new RuntimeException("加载出错", e);
+                throw new UncheckedIOException("资源加载失败: " + key, e);
             }
         });
     }
 
-    public Path loadFromResources(String resourcePath, String tempPath) throws IOException {
-        Path tempDir = Paths.get(tempPath);
-        // 确保目录存在
-        if (!Files.exists(tempDir))
-            Files.createDirectories(tempDir);
-        // 获取资源流
-        InputStream resourceStream = this.getClass()
-                .getClassLoader().getResourceAsStream(resourcePath);
-        if (resourceStream == null)
-            throw new FileNotFoundException("资源缺失: " + resourcePath);
-        // 创建临时文件
-        String tempName = Paths.get(resourcePath).getFileName().toString();
-        Path tempFile = Files.createTempFile(
-                tempDir, "resource-", "-" + tempName);
-        // 资源复制
-        try (OutputStream out = Files.newOutputStream(tempFile)) {
-            resourceStream.transferTo(out);
+    public void clearCache() {
+        cache.clear();
+    }
+
+    public void removeCache(String resourcePath) {
+        cache.remove(resourcePath);
+    }
+
+    private Path loadResource(String resourcePath, String tempPath) throws IOException {
+        Path tempDir = Path.of(tempPath);
+        if (!Files.exists(tempDir)) Files.createDirectories(tempDir);
+
+        String fileName = Path.of(resourcePath).getFileName().toString();
+        Path tempFile = Files.createTempFile(tempDir, "resource-", "-" + fileName);
+
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
+            if (in == null) throw new FileNotFoundException("资源缺失: " + resourcePath);
+            try (OutputStream out = Files.newOutputStream(tempFile)) {
+                in.transferTo(out);
+            }
         }
-        resourceStream.close();
-        // JVM退出时删除
-        tempFile.toFile().deleteOnExit();
         return tempFile;
     }
 }

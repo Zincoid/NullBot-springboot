@@ -77,7 +77,7 @@ public class QQAntiInjector {
         return MsgUtils.builder()
                 .text("[AI] ⚠️对话被拒绝")
                 .img("base64://" + Base64Util.from(resourceLoader
-                        .getCached("static/image/Filtered.jpg")))
+                        .getCache("static/image/Filtered.jpg")))
                 .build();
     }
 }

@@ -41,7 +41,7 @@ public class HelpCommand implements Command {
 
     private String buildHelpMsg() {
         String helpPath = resourceLoader
-                .getCached("static/help/help.jpg").toAbsolutePath().toString();
+                .getCache("static/help/help.jpg").toAbsolutePath().toString();
         return MsgUtils.builder().img("base64://" + Base64Util.from(helpPath)).build();
     }
 

@@ -89,7 +89,7 @@ public class SymmetryCommand implements Command {
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
-                Path htmlPath = resourceLoader.getCached("static/html/symmetry.html");
+                Path htmlPath = resourceLoader.getCache("static/html/symmetry.html");
                 String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
                 Map<String, String> variables = Map.of("mode", mode);
                 Map<String, String> images = Map.of("image", imagePath);

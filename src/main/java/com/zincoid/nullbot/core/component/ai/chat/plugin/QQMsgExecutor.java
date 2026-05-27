@@ -106,7 +106,7 @@ public class QQMsgExecutor {
         return MsgUtils.builder()
                 .text("[AI] ⚠️回复被过滤")
                 .img("base64://" + Base64Util.from(resourceLoader
-                        .getCached("static/image/Filtered.jpg")))
+                        .getCache("static/image/Filtered.jpg")))
                 .build();
     }
 

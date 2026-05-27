@@ -14,7 +14,6 @@ import com.zincoid.nullbot.core.util.HtmlTemplateUtil;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -30,8 +29,8 @@ public class PucciCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
 
-        Path bgPath = resourceLoader.getCached("static/image/pucci.png");
-        Path htmlPath = resourceLoader.getCached("static/html/pucci.html");
+        Path bgPath = resourceLoader.getCache("static/image/pucci.png");
+        Path htmlPath = resourceLoader.getCache("static/html/pucci.html");
         String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
 
         Map<String, String> variables = Map.of(
