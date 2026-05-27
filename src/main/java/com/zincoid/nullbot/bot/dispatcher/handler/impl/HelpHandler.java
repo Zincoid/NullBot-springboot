@@ -26,14 +26,13 @@ public class HelpHandler implements Handler {
                 log.info("├─[HelpHandler] 已输出群消息帮助");
                 bot.sendGroupMsg(groupMessageEvent.getGroupId(), command.getHelp(), false);
             } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
-                log.info("├─[HelpHandler] 暂无私信帮助功能");
-                bot.sendPrivateMsg(privateMessageEvent.getUserId(), "[帮助] ⚠️暂无私信帮助功能", false);
+                log.info("├─[HelpHandler] 私信暂无帮助功能");
+                bot.sendPrivateMsg(privateMessageEvent.getUserId(), "⚠️私信暂无帮助功能", false);
             } else {
                 log.info("├─[HelpHandler] 默认无帮助的事件");
             }
             return;
         }
-
         log.info("├─[HelpHandler] 非帮助命令");
         chain.doHandle(bot, event, command);
     }

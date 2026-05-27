@@ -26,8 +26,7 @@ public class RateLimitHandler implements Handler {
     private final CommandRateLimiter commandRateLimiter;
 
     @Override
-    public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception
-    {
+    public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         if (!enabled) {
             log.info("├─[RateLimitHandler] 未启用速率限制");
             chain.doHandle(bot, event, command);

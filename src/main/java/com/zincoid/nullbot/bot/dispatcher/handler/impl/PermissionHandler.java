@@ -99,7 +99,7 @@ public class PermissionHandler implements Handler {
         if (inMaintenance && userAccess < 2) {
             log.info("├─[PermissionHandler] 系统已锁定");
             bot.sendGroupMsg(groupId, """
-                        [访问] 🔐系统已锁定
+                        [访问] 🔒系统已锁定
                         - 操作需限权等级II""", false);
             return;
         }
