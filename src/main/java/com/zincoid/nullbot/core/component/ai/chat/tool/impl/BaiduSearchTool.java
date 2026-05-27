@@ -4,6 +4,7 @@ import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.CookieManager;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -31,6 +32,11 @@ public class BaiduSearchTool implements Tool {
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE
     );
 
+    private static final Pattern ANY_H3_LINK = Pattern.compile(
+            "<h3[^>]*>\\s*<a[^>]*href=\"([^\"]+)\"[^>]*>(.*?)</a>",
+            Pattern.DOTALL | Pattern.CASE_INSENSITIVE
+    );
+
     private static final Pattern TAG_PATTERN = Pattern.compile("<[^>]+>");
 
     private final ToolDef toolDef;
@@ -43,6 +49,7 @@ public class BaiduSearchTool implements Tool {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .followRedirects(HttpClient.Redirect.ALWAYS)
+                .cookieHandler(new CookieManager())
                 .build();
     }
 
@@ -85,13 +92,26 @@ public class BaiduSearchTool implements Tool {
         }
     }
 
+    private static final String UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+    private void initSession() throws Exception {
+        HttpRequest homeReq = HttpRequest.newBuilder()
+                .uri(URI.create("https://www.baidu.com/"))
+                .header("User-Agent", UA)
+                .GET()
+                .build();
+        httpClient.send(homeReq, HttpResponse.BodyHandlers.discarding());
+    }
+
     private String fetchSearchResults(String query) throws Exception {
+        initSession();
+
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
         String url = "https://www.baidu.com/s?wd=" + encodedQuery;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                .header("User-Agent", UA)
                 .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                 .header("Accept-Language", "zh-CN,zh;q=0.9")
                 .GET()
@@ -106,9 +126,15 @@ public class BaiduSearchTool implements Tool {
 
     private List<SearchResult> parseResults(String html) {
         List<SearchResult> results = new ArrayList<>();
-        Matcher matcher = TITLE_PATTERN.matcher(html);
-        int count = 0;
 
+        Matcher matcher = TITLE_PATTERN.matcher(html);
+        if (!matcher.find()) {
+            matcher = ANY_H3_LINK.matcher(html);
+        }
+        // Reset to start scanning from the beginning
+        matcher.reset();
+
+        int count = 0;
         while (matcher.find() && count < 10) {
             String url = matcher.group(1);
             String title = TAG_PATTERN.matcher(matcher.group(2)).replaceAll("").trim();
