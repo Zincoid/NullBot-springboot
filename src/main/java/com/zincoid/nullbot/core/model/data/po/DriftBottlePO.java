@@ -44,7 +44,7 @@ public class DriftBottlePO {
             
             """
                 .formatted(
-                        DriftBottleCommand.getKeepTime(),
+                        DriftBottleCommand.getKeepTimeoutSeconds(),
                         id,
                         rethrowTimes == 0 ? "首次被捡到" : "已被投回 " + rethrowTimes + " 次",
                         formattedTime

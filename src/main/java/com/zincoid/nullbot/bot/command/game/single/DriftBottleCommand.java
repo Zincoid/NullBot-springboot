@@ -32,7 +32,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DriftBottleCommand implements Command {
 
-    private static final int KEEP_TIME = 30;  // 漂流瓶保留时间
+    private static final int KEEP_TIMEOUT_SECONDS = 30;  // 漂流瓶保留时间
 
     private final FileStorageProperties fileStorageProperties;
     private final FileService fileService;
@@ -95,7 +95,7 @@ public class DriftBottleCommand implements Command {
         bot.sendGroupMsg(groupId, bottle.toString(), false);
 
         List<Pair<Long, String>> inputs = botInputManager
-                .request(BniMode.PS, userId, "扔回去", KEEP_TIME, true);
+                .request(BniMode.PS, userId, "扔回去", KEEP_TIMEOUT_SECONDS, true);
 
         boolean thrownBack = false;
         if (!inputs.isEmpty()) {
@@ -115,7 +115,7 @@ public class DriftBottleCommand implements Command {
         }
     }
 
-    public static int getKeepTime() { return KEEP_TIME; }
+    public static int getKeepTimeoutSeconds() { return KEEP_TIMEOUT_SECONDS; }
 
     @Override
     public String getHelp() {
