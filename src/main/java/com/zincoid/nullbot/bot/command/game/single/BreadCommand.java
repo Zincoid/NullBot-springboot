@@ -104,12 +104,9 @@ public class BreadCommand implements Command {
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
         if (!userService.exist(targetId)) throw new BotInfoException(Emoji.WARN, "对方未注册");
         int i = breadService.transferBasic(targetId, userId);
-        if (i > 0) {
-            bot.sendGroupMsg(groupId, "\uD83C\uDF5E%s抢%s%s面包".formatted(userName, targetName, i), false);
-            log.info("☑ [Bread::Rob] 已抢面包 - {} -> {}", targetId, i);
-            return;
-        }
-        throw new BotInfoException(Emoji.INFO, "对方面包不足");
+        if (i == 0) throw new BotInfoException(Emoji.INFO, "对方面包不足");
+        bot.sendGroupMsg(groupId, "\uD83C\uDF5E%s抢%s%s面包".formatted(userName, targetName, i), false);
+        log.info("☑ [Bread::Rob] 已抢面包 - {} -> {}", targetId, i);
     }
 
     private void gift(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
@@ -119,12 +116,9 @@ public class BreadCommand implements Command {
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
         if (!userService.exist(targetId)) throw new BotInfoException(Emoji.WARN, "对方未注册");
         int i = breadService.transferBasic(userId, targetId);
-        if (i > 0) {
-            bot.sendGroupMsg(groupId, "\uD83C\uDF5E%s送%s%s面包".formatted(userName, targetName, i), false);
-            log.info("☑ [Bread::Gift] 已送面包 - {} -> {}个", targetId, i);
-            return;
-        }
-        throw new BotInfoException(Emoji.INFO, "面包不足");
+        if (i == 0) throw new BotInfoException(Emoji.INFO, "面包不足");
+        bot.sendGroupMsg(groupId, "\uD83C\uDF5E%s送%s%s面包".formatted(userName, targetName, i), false);
+        log.info("☑ [Bread::Gift] 已送面包 - {} -> {}个", targetId, i);
     }
 
     private void look(Bot bot, Long groupId, Long userId, String userName) {
