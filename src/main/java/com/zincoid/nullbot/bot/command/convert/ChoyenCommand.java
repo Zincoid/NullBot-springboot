@@ -17,13 +17,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ChoyenCommand implements Command {
 
-    private final HtmlRenderer renderer;
+    private final HtmlRenderer htmlRenderer;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
 
-        String base64 = renderer.load("static/html/5000choyen.html")
+        String base64 = htmlRenderer.load("static/html/5000choyen.html")
                 .set("topText", args.nextString())
                 .set("bottomText", args.nextString())
                 .render("#templateContainer");

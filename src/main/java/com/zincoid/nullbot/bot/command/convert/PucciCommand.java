@@ -17,13 +17,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PucciCommand implements Command {
 
-    private final HtmlRenderer renderer;
+    private final HtmlRenderer htmlRenderer;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
 
-        String base64 = renderer.load("static/html/pucci.html")
+        String base64 = htmlRenderer.load("static/html/pucci.html")
                 .set("text1", "普奇！！回答我！")
                 .set("text2", "为什么你要加速时间！！")
                 .set("text3", args.nextString())

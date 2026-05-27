@@ -32,7 +32,7 @@ import java.util.*;
 public class SymmetryCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
-    private final HtmlRenderer renderer;
+    private final HtmlRenderer htmlRenderer;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
@@ -85,7 +85,7 @@ public class SymmetryCommand implements Command {
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
-                base64 = renderer.load("static/html/symmetry.html")
+                base64 = htmlRenderer.load("static/html/symmetry.html")
                         .set("mode", mode)
                         .image("image", imagePath)
                         .render("#mirrorContainer");
