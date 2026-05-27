@@ -23,7 +23,7 @@ public class TestCommand implements Command {
         bot.sendGroupMsg(groupId, "暂无测试", false);
 
         bot.sendGroupMsg(groupId, """
-                [测试] ✅测试结束
+                ✅测试结束
                 - GroupID: %s
                 - UserID: %s""".formatted(groupId, userId), false);
     }

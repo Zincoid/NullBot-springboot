@@ -21,11 +21,9 @@ public class LockCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         boolean locked = permissionHandler.switchInMaintenance();
-        bot.sendGroupMsg(event.getGroupId(),
-                "[锁定] " + (locked ? "\uD83D\uDD12系统已锁定" : "\uD83D\uDD13系统已解锁"),
-                false
-        );
-        log.info("☑ [Lock] 系统已{}", locked ? "锁定" : "解锁");
+        String response = locked ? "\uD83D\uDD12系统已锁定" : "\uD83D\uDD13系统已解锁";
+        bot.sendGroupMsg(event.getGroupId(), response, false);
+        log.info("☑ [Lock] 系统锁定状态已变更 - Locked: {}", locked);
     }
 
     @Override

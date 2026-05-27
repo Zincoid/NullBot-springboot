@@ -14,7 +14,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CommandMapping({"RawMsg", "原始消息"})
+@CommandMapping({"RawMsg", "原消息"})
 @Component
 @RequiredArgsConstructor
 public class RawMsgCommand implements Command {
@@ -24,8 +24,8 @@ public class RawMsgCommand implements Command {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply) throw new BotWarnException("需引用消息");
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-        log.info("☑ [RawMsg] 原始消息已输出\n{}", replyMsg.getRawMessage());
-        bot.sendGroupMsg(event.getGroupId(), "[原始消息] ✅已输出至控制台", false);
+        log.info("☑ [RawMsg] 原消息已输出:\n{}", replyMsg.getRawMessage());
+        bot.sendGroupMsg(event.getGroupId(), "✅原消息已输出至控制台", false);
     }
 
     @Override
@@ -35,10 +35,10 @@ public class RawMsgCommand implements Command {
     public String getHelp() {
         return String.format("""
                 ◉ RawMsg 命令
-                功能: 输出引用原始消息至控制台
+                功能: 输出原消息至控制台
                 限权: %d 级
-                格式: RawMsg
-                别名: 原始消息""", getAccess()
+                格式: [引用] RawMsg
+                别名: 原消息""", getAccess()
         );
     }
 }

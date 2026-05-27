@@ -11,8 +11,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.service.SystemService;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Slf4j
 @CommandMapping({"Invoke", "调用"})
 @Component
@@ -25,18 +23,17 @@ public class InvokeCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String beanName = args.nextString();
         String methodName = args.nextString();
-        List<String> methodArgsStr = args.getParams();
-        Object[] methodArgs = new Object[0];
-        if (methodArgsStr.size() > 2)
-            methodArgs = methodArgsStr.subList(2, methodArgsStr.size()).toArray();
+        Object[] methodArgs = args.hasNext()
+                ? args.getParams().subList(2, args.size()).toArray()
+                : new Object[0];
         try {
             String result = systemService.invoke(beanName, methodName, methodArgs);
             bot.sendGroupMsg(event.getGroupId(), """
-                    [Spring] ✅方法调用成功
-                    The method returned:
-                    %s""".formatted(result), false
+                    ✅方法已反射调用
+                    - Method: %s.%s(..)
+                    - Return: %s""".formatted(beanName, methodName, result), false
             );
-            log.info("☑ [Invoke] 调用结果 -> {}", result);
+            log.info("☑ [Invoke] 方法已反射调用 - {}.{}(..) -> {}", beanName, methodName, result);
         } catch (Exception e) {
             throw new BotWarnException("方法调用失败: " + e.getMessage());
         }

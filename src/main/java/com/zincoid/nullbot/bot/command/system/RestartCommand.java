@@ -26,25 +26,25 @@ public class RestartCommand implements Command {
         switch (option) {
             case "-app" -> {
                 bot.sendGroupMsg(groupId, """
-                        [重启] ⚠️指令已下发
-                        - 模式: APPLICATION
-                        - 将于3s后重启, 请稍候...""", false);
-                log.info("☑ [Restart] APP 重启指令已下发");
+                        ⚠️重启指令已下发
+                        - 模式: APP
+                        - 将于3s后重启...""", false);
+                log.info("☑ [Restart] 重启指令已下发 - Mode: APPLICATION");
                 systemService.restart();
             }
             case "-jar" -> {
                 bot.sendGroupMsg(groupId, """
-                        [重启] ⚠️指令已下发
-                        - 模式: JAR FILE
-                        - 将于3s后重启, 请稍候...""", false);
-                log.info("☑ [Restart] JAR 重启指令已下发");
+                        ⚠️重启指令已下发
+                        - 模式: JAR
+                        - 将于3s后重启...""", false);
+                log.info("☑ [Restart] 重启指令已下发 - Mode: JAR FILE");
                 if (args.size() > 1) {
                     systemService.restartViaJar(args.nextFullString());
                 } else {
                     systemService.restartViaJar();
                 }
             }
-            default -> throw new BotWarnException("无此方式");
+            default -> throw new BotWarnException("无此模式");
         }
     }
 

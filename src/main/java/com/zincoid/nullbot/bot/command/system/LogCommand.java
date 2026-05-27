@@ -17,28 +17,29 @@ import org.springframework.stereotype.Component;
 public class LogCommand implements Command {
 
     @Value("${logging.file.name}")
-    private String logPath;  // 通过 yaml 配置时获取日志文件路径
+    private String logPath;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        // String logPath = getLogFilePath();
         bot.uploadGroupFile(
                 event.getGroupId(),
-                logPath,
-                logPath.substring(logPath.lastIndexOf("/") + 1)
+                getLogFilePath(),
+                getLogFilePath().substring(logPath.lastIndexOf("/") + 1)
         );
-        log.info("☑ [Log] 日志已发送");
+        log.info("☑ [Log] 日志已发送: {}", getLogFilePath());
     }
 
-    // public static String getLogFilePath() {  // 通过 xml 配置时获取日志文件路径
+    // 获取日志路径 (YML 配置)
+    public String getLogFilePath() {
+        return logPath;
+    }
+
+    // 获取日志路径 (XML 配置)
+    // public static String getLogFilePath() {
     //     LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-    //     // 获取名为 "FILE" 的 appender
-    //     RollingFileAppender<ch.qos.logback.classic.spi.ILoggingEvent> fileAppender =
-    //             (RollingFileAppender<ILoggingEvent>)
-    //                     loggerContext.getLogger("ROOT").getAppender("FILE");
-    //     if (fileAppender != null) {
-    //         return fileAppender.getFile();
-    //     }
+    //     RollingFileAppender<ILoggingEvent> fileAppender =  // 获取名为 "FILE" 的 appender
+    //             (RollingFileAppender<ILoggingEvent>) loggerContext.getLogger("ROOT").getAppender("FILE");
+    //     if (fileAppender != null) return fileAppender.getFile();
     //     throw new BotWarnException("未找到日志文件路径");
     // }
 

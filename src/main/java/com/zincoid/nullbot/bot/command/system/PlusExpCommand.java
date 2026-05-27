@@ -3,7 +3,8 @@ package com.zincoid.nullbot.bot.command.system;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -23,17 +24,13 @@ public class PlusExpCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         long userId = args.nextLong();
         int exp = args.nextInt();
-        if (!userService.exist(userId))
-            throw new BotWarnException("[加经验] ❌用户不存在");
+        if (!userService.exist(userId)) throw new BotInfoException(Emoji.INFO, "用户不存在");
         int i = userService.plusExperience(userId, exp);
         String userName = event.getSender().getNickname();
-        StringBuilder sb = new StringBuilder(userName + " 获得 " + exp + "Exp！");
-        while (i > 0) {
-            sb.append("\n- LEVEL UP！");
-            i--;
-        }
+        StringBuilder sb = new StringBuilder("✅%s获得%sExp...".formatted(userName, exp));
+        while (i-- > 0) sb.append("\n- LEVEL UP！");
         bot.sendGroupMsg(event.getGroupId(), sb.toString(), false);
-        log.info("☑ [PlusExp] 经验已给予 - {} -> {} Exp", userId, exp);
+        log.info("☑ [PlusExp] 经验已给予 - {} -> {}Exp", userId, exp);
     }
 
     @Override
