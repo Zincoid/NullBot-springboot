@@ -6,6 +6,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotErrorException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,29 +33,29 @@ public class VideoSaveCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
-            throw new BotWarnException("需引用视频");
+            throw new BotWarnException("缺少视频引用");
 
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         // 可优化为单个键值对?
         Map<String, String> videoMap = MsgParseUtil.extractVidMap(replyMsg.getRawMessage());
-        if(videoMap.isEmpty())
-            throw new BotWarnException("未包含视频");
-        if(videoMap.size() > 1)
-            throw new BotWarnException("视频数过多");
+        if (videoMap.isEmpty())
+            throw new BotWarnException("引用未包含视频");
+        if (videoMap.size() > 1)
+            throw new BotErrorException("引用视频过多");
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
 
         Map.Entry<String, String> entry = videoMap.entrySet().iterator().next();
-        String fileName = args.isEmpty() ? entry.getKey()
+        String fileName = !args.hasNext() ? entry.getKey()
                 : args.nextFullString() + "." + entry.getKey().split("\\.")[1];
         if (fileName.matches(".*[\\\\/:*?\"<>|].*"))
             throw new BotWarnException("文件名非法");
         String filePath = fileStorageProperties.getVideoPath() + "/collect";
         String url = entry.getValue();
         FileInfo fileInfo = fileService.saveFile(url, filePath, fileName, userId, userName);
-        bot.sendGroupMsg(groupId, "\uD83C\uDFA5 已保存！", false);
+        bot.sendGroupMsg(groupId, "\uD83C\uDFA5视频已保存", false);
         log.info("☑ [VideoSave] 视频已保存: {}", fileInfo.getFileName());
     }
 

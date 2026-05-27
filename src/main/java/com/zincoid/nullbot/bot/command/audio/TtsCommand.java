@@ -8,6 +8,7 @@ import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotErrorException;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.enums.Emoji;
@@ -58,7 +59,7 @@ public class TtsCommand implements Command {
                     if (fileMap.isEmpty())
                         throw new BotWarnException("引用未包含音频");
                     if (fileMap.size() > 1)
-                        throw new BotWarnException("引用音频数过多");
+                        throw new BotErrorException("引用音频过多");
                     Map.Entry<String, String> audio = fileMap.entrySet().iterator().next();
                     if (!isAudioFile(audio.getKey()))
                         throw new BotWarnException("引用文件非音频");
