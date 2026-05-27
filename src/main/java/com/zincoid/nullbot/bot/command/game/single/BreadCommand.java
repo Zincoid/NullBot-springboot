@@ -3,7 +3,9 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -43,7 +45,7 @@ public class BreadCommand implements Command {
             case "-rob", "r" -> rob(bot, event, groupId, userId, userName);
             case "-gift", "g" -> gift(bot, event, groupId, userId, userName);
             case "-look", "l" -> look(bot, groupId, userId, userName);
-            default -> throw new BotWarnException("操作不存在");
+            default -> throw new BotWarnException("无此操作");
         }
     }
 
@@ -52,20 +54,19 @@ public class BreadCommand implements Command {
         if (random.nextInt(100) >= 10) {  // 10% 概率获得特殊面包
             int i = breadService.buyBasic(userId, cost);
             if (i > 0) {
-                bot.sendGroupMsg(groupId, userName + " 花费￥" + cost + "...\n- 买到" + i + "个面包！", false);
-                log.info("☑ [Bread::Buy] 已购买普通面包 - {} -> {}个", userId, i);
+                bot.sendGroupMsg(groupId, "\uD83C\uDF5E%s花费%s￥买到%s面包".formatted(userName, cost, i), false);
+                log.info("☑ [Bread::Buy] 已购买普通面包 - {} -> {}", userId, i);
                 return;
             }
         } else {
             ItemPO bread = breadService.buySpecial(userId, cost);
             if (bread != null) {
-                bot.sendGroupMsg(groupId, userName + " 花费￥" + cost + "...\n- 买到1个特殊面包！\n" + bread, false);
+                bot.sendGroupMsg(groupId, "\uD83C\uDF5E%s花费%s￥买到1特殊面包\n%s".formatted(userName, cost, bread), false);
                 log.info("☑ [Bread::Buy] 已购买特殊面包 - {} -> {}", userId, bread.getName());
                 return;
             }
         }
-        bot.sendGroupMsg(groupId, userName + " 库容或现金不足！", false);
-        log.info("☑ [Bread::Buy] 库容或现金不足");
+        throw new BotInfoException(Emoji.INFO, "库容或现金不足");
     }
 
     private void eat(Bot bot, Long userId, String userName, Long groupId) {
@@ -75,60 +76,55 @@ public class BreadCommand implements Command {
             int i = res[0];
             if (i > 0) {
                 int j = res[1];
-                StringBuilder sb = new StringBuilder(userName + " 吃掉" + i + "个面包！\n- 获得 " + i * exp + "Exp！");
+                StringBuilder sb = new StringBuilder();
+                sb.append("\uD83C\uDF5E%s吃掉%s面包".formatted(userName, i));
+                sb.append("\n- 获得 %sExp".formatted(exp * i));
                 while (j > 0) {
                     sb.append("\n- LEVEL UP！");
                     j--;
                 }
                 bot.sendGroupMsg(groupId, sb.toString(), false);
-                log.info("☑ [Bread::Eat] 已吃面包 - {} -> {}个", userId, i);
+                log.info("☑ [Bread::Eat] 已吃面包 - {} -> {}", userId, i);
                 return;
             }
         } else {
             if (breadService.eatRotten(userId)) {
-                bot.sendGroupMsg(groupId, userName + " 吃到1个烂面包！\n- Exp清空了！", false);
-                log.info("☑ [Bread::Eat] 吃到烂面包 - UserId: {}", userId);
+                bot.sendGroupMsg(groupId, "\uD83C\uDF5E%s吃到烂面包\n- Exp清空了".formatted(userName), false);
+                log.info("☑ [Bread::Eat] 已吃烂面包 - UserId: {}", userId);
                 return;
             }
         }
-        bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
-        log.info("☑ [Bread::Buy] 普通面包不足");
+        throw new BotInfoException(Emoji.INFO, "面包不足");
     }
 
     private void rob(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
-        List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(groupMessageEvent.getRawMessage());
-        if (qqNumbers.isEmpty())
-            throw new BotWarnException("未指定对象");
-        long targetId = qqNumbers.getFirst(); // 只抢第一个人
+        List<Long> atUserIds = MsgParseUtil.extractAtNumbers(groupMessageEvent.getRawMessage());
+        if (atUserIds.isEmpty()) throw new BotWarnException("未指定对象");
+        long targetId = atUserIds.getFirst(); // 抢第一人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
-        if (!userService.exist(targetId))
-            throw new BotWarnException("对方未注册");
+        if (!userService.exist(targetId)) throw new BotInfoException(Emoji.WARN, "对方未注册");
         int i = breadService.transferBasic(targetId, userId);
         if (i > 0) {
-            bot.sendGroupMsg(groupId, userName + " 抢了 " + targetName + " " + i + "个面包！", false);
-            log.info("☑ [Bread::Rob] 已抢面包 - {} -> {}个", targetId, i);
-        } else {
-            bot.sendGroupMsg(groupId, targetName + " 面包没了！", false);
-            log.info("☑ [Bread::Rob] 对方无面包 - UserId: {}", targetId);
+            bot.sendGroupMsg(groupId, "\uD83C\uDF5E%s抢%s%s面包".formatted(userName, targetName, i), false);
+            log.info("☑ [Bread::Rob] 已抢面包 - {} -> {}", targetId, i);
+            return;
         }
+        throw new BotInfoException(Emoji.INFO, "对方面包不足");
     }
 
     private void gift(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
         List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(groupMessageEvent.getRawMessage());
-        if (qqNumbers.isEmpty())
-            throw new BotWarnException("未指定对象");
-        long targetId = qqNumbers.getFirst(); // 只送第一个人
+        if (qqNumbers.isEmpty()) throw new BotWarnException("未指定对象");
+        long targetId = qqNumbers.getFirst(); // 送第一人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
-        if (!userService.exist(targetId))
-            throw new BotWarnException("对方未注册");
+        if (!userService.exist(targetId)) throw new BotInfoException(Emoji.WARN, "对方未注册");
         int i = breadService.transferBasic(userId, targetId);
         if (i > 0) {
-            bot.sendGroupMsg(groupId, userName + " 送了 " + targetName + " " + i + "个面包！", false);
+            bot.sendGroupMsg(groupId, "\uD83C\uDF5E%s送%s%s面包".formatted(userName, targetName, i), false);
             log.info("☑ [Bread::Gift] 已送面包 - {} -> {}个", targetId, i);
-        } else {
-            bot.sendGroupMsg(groupId, userName + " 面包没了！", false);
-            log.info("☑ [Bread::Gift] 自身无面包 - UserId: {}", userId);
+            return;
         }
+        throw new BotInfoException(Emoji.INFO, "面包不足");
     }
 
     private void look(Bot bot, Long groupId, Long userId, String userName) {
