@@ -33,7 +33,7 @@ public class ImageGetCommand implements Command {
         String imagePath = fileStorageProperties.getImagePath() + "/collect";
         List<FilePO> images = fileMapper.searchFile(args.nextFullString(), imagePath);
         if (images.isEmpty()) throw new BotInfoException(Emoji.INFO, "图片未找到");
-        if (images.size() > 1) throw new BotInfoException(Emoji.INFO, "找到多个图片");
+        if (images.size() > 1) throw new BotInfoException(Emoji.INFO, "匹配项过多");
         FilePO image = images.getFirst();
         String response = MsgUtils.builder().img(ossUrlBuilder.from(image.getId())).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);

@@ -41,7 +41,7 @@ public class VideoGetCommand implements Command {
         String secondary;
         String keyword;
 
-        if (!args.isEmpty() && "-c".equals(args.getString(0))) {
+        if (args.hasNext() && "-c".equals(args.getString(0))) {
             secondary = "collect";
             keyword = args.getFullString(1);
         } else {
