@@ -1,27 +1,17 @@
 package com.zincoid.nullbot.core.component.render;
 
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
-import com.zincoid.nullbot.core.util.Base64Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
-import ru.yandex.qatools.ashot.AShot;
-import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
-import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,12 +28,12 @@ public class HtmlRenderer {
         ENGINE.setTemplateResolver(resolver);
     }
 
-    private final ResourceLoader resources;
-    private final ChromeDriverFactory driverFactory;
+    private final Chrome chrome;
+    private final ResourceLoader resourceLoader;
 
     public Template load(String resourcePath) {
         try {
-            return new Template(Files.readString(resources.getCache(resourcePath)));
+            return new Template(Files.readString(resourceLoader.getCache(resourcePath)));
         } catch (Exception e) {
             throw new RuntimeException("模板加载失败: " + resourcePath, e);
         }
@@ -66,41 +56,24 @@ public class HtmlRenderer {
         }
 
         public Template resource(String key, String resourcePath) {
-            Path p = resources.getCache(resourcePath);
+            Path p = resourceLoader.getCache(resourcePath);
             return image(key, p.toAbsolutePath().toString());
         }
 
-        public String render() throws Exception { return capture(null); }
-
-        public String render(String cssSelector) throws Exception { return capture(cssSelector); }
-
-        private String capture(String cssSelector) throws Exception {
+        /** 渲染 HTML 模板 → 元素截图 */
+        public String render(String cssSelector) throws Exception {
             Context context = new Context();
             context.setVariables(ctx);
             String resolved = ENGINE.process(html, context);
 
-            WebDriver driver = driverFactory.createDriver("3840,2160");
+            WebDriver driver = chrome.create("3840,2160");
             try {
                 Path tmp = Files.createTempFile("render-", ".html");
                 try {
                     Files.writeString(tmp, resolved);
                     driver.get("file://" + tmp.toAbsolutePath());
-                    new WebDriverWait(driver, Duration.ofSeconds(10))
-                            .until(d -> ((JavascriptExecutor) d)
-                                    .executeScript("return document.readyState").equals("complete"));
-
-                    AShot ashot = new AShot();
-                    ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-
-                    BufferedImage img;
-                    if (cssSelector != null) {
-                        WebElement el = driver.findElement(By.cssSelector(cssSelector));
-                        ashot.coordsProvider(new WebDriverCoordsProvider());
-                        img = ashot.takeScreenshot(driver, el).getImage();
-                    } else {
-                        img = ashot.takeScreenshot(driver).getImage();
-                    }
-                    return Base64Util.from(img);
+                    chrome.ready(driver);
+                    return chrome.capture(driver, cssSelector);
                 } finally {
                     Files.deleteIfExists(tmp);
                 }
