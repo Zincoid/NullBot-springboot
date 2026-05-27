@@ -3,7 +3,10 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.bot.exception.BotOmitException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -42,57 +45,53 @@ public class DriftBottleCommand implements Command {
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
         String message = event.getMessage();
+        boolean autoThrow = "-auto".equals(args.getString(0, ""));
         Map<String, String> imageMap = MsgParseUtil.extractImgMap(event.getRawMessage());
 
         if (!imageMap.isEmpty()) {
-            boolean autoThrow = !args.isEmpty() && "-auto".equals(args.nextString());
-            if (imageMap.size() != 1 && !autoThrow)
-                throw new BotWarnException("仅可投单张图片");
-            for (Map.Entry<String, String> entry : imageMap.entrySet()) {
-                String url = entry.getValue();
-                String fileName = UUID.randomUUID().toString();
-                String directory = fileStorageProperties.getImagePath() + "/bottle";
-                FileInfo fileInfo = null;
-                boolean thrown = false;
-                try {
-                    fileInfo = fileService.saveFile(url, directory, fileName, userId, userName);
-                    thrown = driftBottleService.throwBottle(
-                            userId,
-                            bot.getStrangerInfo(userId, true).getData().getNickname(),
-                            directory + "/" + fileInfo.getFileName(),
-                            true
-                    );
-                    if (!autoThrow) {
-                        bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️ 已投出！" : "❌出错", false);
-                        log.info("☑ [DriftBottle] 扔漂流瓶(图片) - {} -> {}", userId, thrown ? "已投出" : "出错");
-                    }
-                } finally {
-                    if (fileInfo != null && !thrown) {
-                        fileService.deleteFile(directory, fileInfo.getFileName());
-                    }
-                }
+            if (imageMap.size() != 1) {
+                if (autoThrow) throw new BotOmitException("图片过多");
+                throw new BotWarnException("图片过多");
+            }
+            String imageUrl = imageMap.entrySet().iterator().next().getValue();
+            String imageName = UUID.randomUUID().toString();
+            String bottlePath = fileStorageProperties.getImagePath() + "/bottle";
+            FileInfo fileInfo = null;
+            boolean thrown = false;
+            try {
+                fileInfo = fileService.saveFile(imageUrl, bottlePath, imageName, userId, userName);
+                thrown = driftBottleService.throwBottle(
+                        userId,
+                        bot.getStrangerInfo(userId, true).getData().getNickname(),
+                        bottlePath + "/" + fileInfo.getFileName(),
+                        true
+                );
+                if (!autoThrow)
+                    bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️已投出" : "❌未投出", false);
+                log.info("☑ [DriftBottle] 扔漂流瓶(图片) - {} -> {}", userId, thrown);
+            } finally {
+                if (fileInfo != null && !thrown)
+                    fileService.deleteFile(bottlePath, fileInfo.getFileName());
             }
             return;
         }
 
-        if (!args.isEmpty()) {
-            boolean autoThrow = "-auto".equals(args.nextString());
+        if (args.hasNext()) {
             boolean thrown = driftBottleService.throwBottle(
                     userId,
                     bot.getStrangerInfo(userId, true).getData().getNickname(),
-                    autoThrow ? message.trim() : message.substring(message.indexOf(" ")).trim(),
+                    autoThrow ? message.trim() : args.nextFullString(),
                     false
             );
-            if (!autoThrow) {
-                bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️ 已投出！" : "❌出错", false);
-                log.info("☑ [DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown ? "已投出" : "出错");
-            }
+            if (!autoThrow)
+                bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️已投出" : "❌未投出", false);
+            log.info("☑ [DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown);
             return;
         }
 
         DriftBottlePO bottle = driftBottleService.pickUpRand();
         if (bottle == null)
-            throw new BotWarnException("没有漂流瓶了！");
+            throw new BotInfoException(Emoji.INFO, "没有漂流瓶了");
         bot.sendGroupMsg(groupId, bottle.toString(), false);
 
         List<Pair<Long, String>> inputs = botInputManager
