@@ -29,7 +29,8 @@ public class EssencePlanCommand implements Command {
                 List.of("//section[contains(@class,'panel')][.//h2[contains(text(),'方案推荐列表')]]"),
                 List.of(".ghost-button"),
                 List.of(
-                        "#app > div > div > div.notice-footer > div.about-actions > button",
+                        "//*[@id=\"app\"]/div[2]/div/div[2]/div[2]/button",
+                        "//*[@id=\"app\"]/div[3]/div/div[2]/div/button",
                         String.format("//span[@class='weapon-title-text' and text()='%s']", weapon),
                         "//button[contains(.,'收起其他方案')]"
                 )
