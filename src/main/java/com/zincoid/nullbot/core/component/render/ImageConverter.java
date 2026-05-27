@@ -1,68 +1,78 @@
 package com.zincoid.nullbot.core.component.render;
 
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
-import com.zincoid.nullbot.core.model.renderer.svg.SvgCanvas;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.util.Base64Util;
 import lombok.RequiredArgsConstructor;
+import me.aloic.ResvgJNI;
 import org.springframework.stereotype.Component;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.function.Consumer;
+import java.util.Base64;
 
 @Component
 @RequiredArgsConstructor
 public class ImageConverter {
 
-    private static final int CANVAS_WIDTH = 640;
-    private static final int CANVAS_HEIGHT = 640;
-    private static final String PRTS_OVERLAY = "static/image/PRTS.png";
-    private static final String INVS_PRTS_OVERLAY = "static/image/InvsPRTS.png";
-    private static final String RIP_FONT_RESOURCE = "static/font/Bernard MT Condensed.ttf";
-    private static final String RIP_FONT_NAME = "Bernard MT Condensed";
+    private static final String RIP_SVG = "static/svg/rip.svg";
+    private static final String OVERLAY_SVG = "static/svg/overlay.svg";
+    private static final String PRTS_PNG = "static/image/PRTS.png";
+    private static final String INVS_PRTS_PNG = "static/image/InvsPRTS.png";
+    private static final String RIP_FONT = "static/font/Bernard MT Condensed.ttf";
 
     private final ResourceLoader resourceLoader;
     private final FileStorageProperties fileStorageProperties;
 
+    /** RIP ：灰度化 + R.I.P. 文字 */
     public String RIP(String imagePath) throws Exception {
-        // 确保字体文件已提取到临时目录，供 ResvgJNI LoadFontsDir 加载
-        resourceLoader.getCached(RIP_FONT_RESOURCE);
-        return renderCanvas("RIP_", canvas -> {
-            canvas.image(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, 1, Path.of(imagePath), true);
-            canvas.text(175, 550, "R.I.P.")
-                    .font(RIP_FONT_NAME)
-                    .size(150)
-                    .color("#000000")
-                    .stroke("#FFFFFF", 6);
-        });
+        resourceLoader.getCached(RIP_FONT);
+        String svg = Files.readString(resourceLoader.getCached(RIP_SVG))
+                .replace("{{IMAGE}}", imageDataUri(imagePath, true));
+        return render(svg);
     }
 
+    /** PRTS ：封锁效果 */
     public String PRTS(String imagePath) throws Exception {
-        return overlayImage(imagePath, PRTS_OVERLAY, "PRTS_");
+        return overlay(imagePath, PRTS_PNG);
     }
 
+    /** PRTS ：封锁反色效果 */
     public String invsPRTS(String imagePath) throws Exception {
-        return overlayImage(imagePath, INVS_PRTS_OVERLAY, "InvsPRTS_");
+        return overlay(imagePath, INVS_PRTS_PNG);
     }
 
-    private String overlayImage(String imagePath, String overlayResource, String tempPrefix) throws Exception {
-        Path overlay = resourceLoader.getCached(overlayResource);
-        return renderCanvas(tempPrefix, canvas -> {
-            canvas.image(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, 1, Path.of(imagePath), false);
-            canvas.image(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, 1, overlay, false);
-        });
+    private String overlay(String imagePath, String overlayResource) throws Exception {
+        String overlayUri = "data:image/png;base64,"
+                + Base64Util.from(resourceLoader.getCached(overlayResource));
+        String svg = Files.readString(resourceLoader.getCached(OVERLAY_SVG))
+                .replace("{{IMAGE}}", imageDataUri(imagePath, false))
+                .replace("{{OVERLAY}}", overlayUri);
+        return render(svg);
     }
 
-    private String renderCanvas(String tempPrefix, Consumer<SvgCanvas> drawer) throws Exception {
-        Path tempPngPath = Files.createTempFile(tempPrefix, ".png");
-        try {
-            SvgCanvas canvas = SvgCanvas.create(CANVAS_WIDTH, CANVAS_HEIGHT);
-            drawer.accept(canvas);
-            canvas.render(tempPngPath, fileStorageProperties.getTempPath());
-            return Base64Util.from(tempPngPath);
-        } finally {
-            Files.deleteIfExists(tempPngPath);
+    private String render(String svg) {
+        String dir = fileStorageProperties.getTempPath();
+        var opts = new ResvgJNI.RenderOptions(dir);
+        opts.LoadFontsDir(dir);
+        return Base64.getEncoder().encodeToString(new ResvgJNI.Renderer(opts).RenderPng(svg));
+    }
+
+    /** 图片 → data URI，可选灰度转换 */
+    private String imageDataUri(String path, boolean grayscale) throws Exception {
+        BufferedImage img = ImageIO.read(Path.of(path).toFile());
+        if (img == null) throw new IllegalArgumentException("无法读取图像: " + path);
+        if (grayscale) {
+            BufferedImage gray = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+            Graphics2D g = gray.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g.drawImage(img, 0, 0, null);
+            g.dispose();
+            img = gray;
         }
+        return "data:image/png;base64," + Base64Util.from(img);
     }
 }
