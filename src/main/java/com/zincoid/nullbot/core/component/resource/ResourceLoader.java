@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ResourceLoader {
 
     private final Map<String, Path> cache = new ConcurrentHashMap<>();
-
     private final FileStorageProperties fileStorageProperties;
 
     public Path getCache(String resourcePath) {
@@ -25,7 +24,6 @@ public class ResourceLoader {
     public Path getCache(String resourcePath, String tempPath) {
         Path existing = cache.get(resourcePath);
         if (existing != null && Files.exists(existing)) return existing;
-
         return cache.compute(resourcePath, (key, prev) -> {
             if (prev != null && Files.exists(prev)) return prev;
             try {
@@ -49,10 +47,8 @@ public class ResourceLoader {
     private Path loadResource(String resourcePath, String tempPath) throws IOException {
         Path tempDir = Path.of(tempPath);
         if (!Files.exists(tempDir)) Files.createDirectories(tempDir);
-
         String fileName = Path.of(resourcePath).getFileName().toString();
         Path tempFile = Files.createTempFile(tempDir, "resource-", "-" + fileName);
-
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
             if (in == null) throw new FileNotFoundException("资源缺失: " + resourcePath);
             try (OutputStream out = Files.newOutputStream(tempFile)) {
