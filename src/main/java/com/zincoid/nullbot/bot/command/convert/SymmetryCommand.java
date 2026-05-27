@@ -42,11 +42,13 @@ public class SymmetryCommand implements Command {
         String mode = "left";
 
         if (reply.getType() == MsgTypeEnum.reply) {
+            // 引用收集
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
             Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
         }
         if (args.hasNext()) {
+            // ID 收集
             String modeStr = args.nextString();
             if (List.of("左", "右", "上", "下").contains(modeStr)) {
                 mode = switch (modeStr) {
@@ -68,6 +70,7 @@ public class SymmetryCommand implements Command {
                 urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
             }
         } else {
+            // AT 收集
             List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
             for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
         }
