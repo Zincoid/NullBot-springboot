@@ -3,7 +3,9 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -30,13 +32,7 @@ public class DrawCommand implements Command {
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
 
-        if (args.isEmpty()) {
-            ItemPO item = itemService.drawAndKeepRandom(userId);
-            if (item == null)
-                throw new BotWarnException("抽数耗尽或仓库已满");
-            bot.sendGroupMsg(groupId, "[抽奖] " + userName + "抽到了...\n" + item, false);
-            log.info("☑ [Draw] 物品已抽取 - {} -> {}", userId, item.getName());
-        } else {
+        if (args.hasNext()) {
             int times = args.nextInt();
             if (times <= 0) throw new BotWarnException("次数非正");
             List<ItemPO> items = new ArrayList<>();
@@ -50,15 +46,20 @@ public class DrawCommand implements Command {
                     stop = true;
                 }
             }
-            if (items.isEmpty())
-                throw new BotWarnException("抽数耗尽或仓库已满");
+            if (items.isEmpty()) throw new BotInfoException(Emoji.INFO, "抽数耗尽或仓库已满");
             items.sort(Comparator.comparing(ItemPO::getRarity).reversed());
-            StringBuilder sb = new StringBuilder("[抽奖] " + userName + "抽取了" + items.size() + "个物品...\n");
+            StringBuilder sb = new StringBuilder("\uD83C\uDF81%s抽取%s物品...".formatted(userName, items.size()));
             for (ItemPO item : items)
-                sb.append("[").append(item.getRarity().getDescription()).append(":").append(item.getName()).append("]");
+                sb.append("\n").append("- ").append(item.getRarity().getDescription()).append(":").append(item.getName());
             bot.sendGroupMsg(groupId, sb.toString(), false);
-            log.info("☑ [Draw] 物品已抽取 - {} -> {}次", userId, items.size());
+            log.info("☑ [Draw] 物品已抽取 - {} -> {}", userId, items.size());
+            return;
         }
+
+        ItemPO item = itemService.drawAndKeepRandom(userId);
+        if (item == null) throw new BotInfoException(Emoji.INFO, "抽数耗尽或仓库已满");
+        bot.sendGroupMsg(groupId, "\uD83C\uDF81%s抽到了...\n%s".formatted(userName, item), false);
+        log.info("☑ [Draw] 物品已抽取 - {} -> {}", userId, item.getName());
     }
 
     @Override
