@@ -3,7 +3,8 @@ package com.zincoid.nullbot.bot.command.game.multi.ctrl;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -26,18 +27,15 @@ public class RecentPlayerCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         List<Player> players = playerManager.getRecentPlayers(5);
-        if (players == null || players.isEmpty())
-            throw new BotWarnException("暂无记录");
-
+        if (players.isEmpty())
+            throw new BotInfoException(Emoji.INFO, "暂无记录");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         StringBuilder sb = new StringBuilder().append("[最近玩家] 当前状态-上次活跃");
-        for (Player player : players) {
-            sb.append("\n")
-              .append(player.getUserName()).append("(").append(player.getUserId()).append(") :\n")
+        for (Player player : players)
+            sb.append("\n").append(player.getUserName()).append("(").append(player.getUserId()).append(") :\n")
               .append(player.getStatus()).append(" ~ ").append(player.getLastActionTime().format(formatter));
-        }
         bot.sendGroupMsg(event.getGroupId(), sb.toString(), false);
-        log.info("☑ [RecentPlayer] 已获取");
+        log.info("☑ [RecentPlayer] 最近玩家已获取 - Players: {}", players.size());
     }
 
     @Override

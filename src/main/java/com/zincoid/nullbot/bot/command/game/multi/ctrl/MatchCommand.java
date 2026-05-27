@@ -29,7 +29,7 @@ public class MatchCommand implements Command {
         if (result.getIsMatched() && !result.getIsSameGroup())
             bot.sendGroupMsg(result.getOpponentGroupId(), result.getInfo(), false);
         bot.sendGroupMsg(groupId, result.getInfo(), false);
-        log.info("☑ [Match] 匹配结果 -> {}", result.getInfo());
+        log.info("☑ [Match] 匹配 -> {}", result.getInfo());
     }
 
     @Override
