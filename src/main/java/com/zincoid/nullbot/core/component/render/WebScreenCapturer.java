@@ -1,260 +1,155 @@
 package com.zincoid.nullbot.core.component.render;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.properties.ChromeProperties;
 import com.zincoid.nullbot.core.util.Base64Util;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 import ru.yandex.qatools.ashot.AShot;
-import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
 import java.awt.image.BufferedImage;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Supplier;
 
-@Component
 @Slf4j
+@Component
 public class WebScreenCapturer {
 
-    private final Boolean driverAuto;  // 自动获取驱动
-    private final String driverPath;  // 手动指定驱动路径
-    private final int maxRetries;  // 最大重试次数
-    private final long loadTimeout;  // 页面加载超时 (Sec)
+    private static final int POOL_SIZE = 2;
 
-    public WebScreenCapturer(ChromeProperties props) {
-        driverAuto = props.getDriverAuto();
-        driverPath = props.getDriverPath();
-        maxRetries = props.getMaxRetries();
-        loadTimeout = props.getLoadTimeout();
+    private final ChromeDriverFactory driverFactory;
+    private final int maxRetries;
+    private BlockingQueue<WebDriver> drivers;
+
+    public WebScreenCapturer(ChromeDriverFactory driverFactory, ChromeProperties chromeProperties) {
+        this.driverFactory = driverFactory;
+        this.maxRetries = chromeProperties.getMaxRetries();
     }
 
-    // =================== 主要方法 ===================
+    @PostConstruct
+    void init() {
+        drivers = new LinkedBlockingQueue<>(POOL_SIZE);
+        for (int i = 0; i < POOL_SIZE; i++)
+            drivers.offer(driverFactory.createDriver("1920,1080"));
+        log.info("▽ [WebScreenCapturer] Chrome 驱动已就绪 (PoolSize: {})", POOL_SIZE);
+    }
 
-    // 截取多个元素 可忽略元素 可附加点击
+    @PreDestroy
+    void destroy() {
+        drivers.forEach(WebDriver::quit);
+        log.info("▽ [WebScreenCapturer] Chrome 驱动已关闭");
+    }
+
+    /** 截取多个元素，支持忽略和点击元素 */
     public String capture(String url, int width, int height,
-                          List<String> targetCssSelectors,
-                          List<String> ignoredCssSelectors,
-                          List<String> clickCssSelectors
-    ) {
-        int retryCount = 0;
-
-        while (retryCount < maxRetries) {
-            WebDriver driver = setupDriver();
-            try {
-                driver.get(url);
-                // 设置窗口尺寸
-                driver.manage().window().setSize(new Dimension(width, height));
-                // 等待页面加载
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-                wait.until(webDriver -> ((JavascriptExecutor) webDriver)
-                        .executeScript("return document.readyState")
-                        .equals("complete")
-                );
-                Thread.sleep(200);  // 某些网页加载慢再延迟一会
-                // 定位元素位置
-                List<WebElement> targets = targetCssSelectors.stream()
-                        .map(selector -> driver.findElement(getBy(selector)))
-                        .toList();
-                // 点击附加元素
-                for(String clickCssSelector : clickCssSelectors) clickElement(driver, clickCssSelector);
-                // 隐藏忽略元素
-                hideElements(driver, ignoredCssSelectors);
-                // 进行元素截图
-                AShot ashot = new AShot();
-                ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-                ashot.coordsProvider(new WebDriverCoordsProvider());
-                Screenshot screenshot = ashot.takeScreenshot(driver, targets);
-                BufferedImage eleImage = screenshot.getImage();
-                // 保存本地文件
-                // File outputFile = new File(outputPath);
-                // ImageIO.write(eleImage, "png", outputFile);
-                // BASE64 转换
-                return Base64Util.from(eleImage);
-
-            } catch (TimeoutException e) {
-                retryCount++;
-                log.info("▽ [WebScreenCapturer] 页面访问超时: {} Times", retryCount);
-            } catch (NoSuchElementException e) {
-                throw new RuntimeException("未找到页元素");
-            } catch (Exception e) {
-                throw new RuntimeException("未知截图错误", e);
-            } finally {
-                driver.quit();
-            }
-        }
-
-        throw new RuntimeException("网页访问失败");
-    }
-
-    // =================== 次级方法 ===================
-
-    // 截取完整页面
-    public String captureFull(String url, int width, int height) {
-        int retryCount = 0;
-
-        while (retryCount < maxRetries) {
-            WebDriver driver = setupDriver();
-            try {
-                driver.get(url);
-                // 设置窗口尺寸
-                driver.manage().window().setSize(new Dimension(width, height));
-                // 等待页面加载
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-                wait.until(webDriver -> ((JavascriptExecutor) webDriver)
-                        .executeScript("return document.readyState")
-                        .equals("complete")
-                );
-                Thread.sleep(200);  // 某些网页加载慢再延迟一会
-                // 进行全页截图
-                AShot ashot = new AShot();
-                ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-                Screenshot screenshot = ashot.takeScreenshot(driver);
-                BufferedImage fullImage = screenshot.getImage();
-                // 保存本地文件
-                // File outputFile = new File(outputPath);
-                // ImageIO.write(fullImage, "png", outputFile);
-                // BASE64 转换
-                return Base64Util.from(fullImage);
-
-            } catch (TimeoutException e) {
-                retryCount++;
-                log.info("▽ [WebScreenCapturer] 页面访问超时: {} Times", retryCount);
-            } catch (Exception e) {
-                throw new RuntimeException("未知截图错误", e);
-            } finally {
-                driver.quit();
-            }
-        }
-
-        throw new RuntimeException("网页访问失败");
-    }
-
-    // 截取特定元素
-    public String captureElement(String url, String cssSelector, int width, int height) {
-        int retryCount = 0;
-
-        while (retryCount < maxRetries) {
-            WebDriver driver = setupDriver();
-            try {
-                driver.get(url);
-                // 设置窗口尺寸
-                driver.manage().window().setSize(new Dimension(width, height));
-                // 等待页面加载
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-                wait.until(webDriver -> ((JavascriptExecutor) webDriver)
-                        .executeScript("return document.readyState")
-                        .equals("complete")
-                );
-                Thread.sleep(200);  // 某些网页加载慢再延迟一会
-                // 定位元素位置
-                WebElement element = driver.findElement(getBy(cssSelector));
-                // 进行元素截图
-                AShot ashot = new AShot();
-                ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-                ashot.coordsProvider(new WebDriverCoordsProvider());
-                Screenshot screenshot = ashot.takeScreenshot(driver, element);
-                BufferedImage eleImage = screenshot.getImage();
-                // 保存本地文件
-                // File outputFile = new File(outputPath);
-                // ImageIO.write(eleImage, "png", outputFile);
-                // BASE64 转换
-                return Base64Util.from(eleImage);
-
-            } catch (TimeoutException e) {
-                retryCount++;
-                log.info("▽ [WebScreenCapturer] 页面访问超时: {} Times", retryCount);
-            } catch (NoSuchElementException e) {
-                throw new RuntimeException("未找到页元素");
-            } catch (Exception e) {
-                throw new RuntimeException("未知截图错误", e);
-            } finally {
-                driver.quit();
-            }
-        }
-
-        throw new RuntimeException("网页访问失败");
-    }
-
-    // =================== 工具方法 ===================
-
-    private By getBy(String selector) {
-        if (selector.startsWith("//") || selector.startsWith(".//") || selector.startsWith("("))
-            return By.xpath(selector);
-        else
-            return By.cssSelector(selector);
-    }
-
-    private void hideElements(WebDriver driver, List<String> cssSelectors) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        for (String selector : cssSelectors) {
-            try {
-                // 隐藏所有匹配的元素
-                js.executeScript(
-                        "document.querySelectorAll('" + selector + "').forEach(function(el) {" +
-                                "   el.parentNode.removeChild(el);" +
-                                "});"
-                );
-            } catch (Exception e) {
-                log.info("▽ [WebScreenCapturer] 隐藏元素未找到: {}", selector);
-            }
-        }
-    }
-
-    private void clickElement(WebDriver driver, String cssSelector) {
+                          List<String> targetSelectors,
+                          List<String> ignoreSelectors,
+                          List<String> clickSelectors) {
+        WebDriver driver = take();
         try {
-            WebElement element = driver.findElement(getBy(cssSelector));
-            // 尝试常规点击
-            element.click();
+            return withRetry(driver, () -> {
+                navigate(driver, url, width, height);
+
+                List<WebElement> targets = targetSelectors.stream()
+                        .map(s -> driver.findElement(by(s)))
+                        .toList();
+                for (String sel : clickSelectors) clickElement(driver, sel);
+                hideElements(driver, ignoreSelectors);
+
+                AShot ashot = new AShot();
+                ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
+                ashot.coordsProvider(new WebDriverCoordsProvider());
+                return ashot.takeScreenshot(driver, targets).getImage();
+            });
+        } finally {
+            drivers.offer(driver);
+        }
+    }
+
+    /** 截取完整页面 */
+    public String captureFull(String url, int width, int height) {
+        WebDriver driver = take();
+        try {
+            return withRetry(driver, () -> {
+                navigate(driver, url, width, height);
+
+                AShot ashot = new AShot();
+                ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
+                return ashot.takeScreenshot(driver).getImage();
+            });
+        } finally {
+            drivers.offer(driver);
+        }
+    }
+
+    private WebDriver take() {
+        try {
+            return drivers.take();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("等待 WebDriver 被中断", e);
+        }
+    }
+
+    private void navigate(WebDriver driver, String url, int width, int height) {
+        driver.get(url);
+        driver.manage().window().setSize(new Dimension(width, height));
+        new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(d -> ((JavascriptExecutor) d)
+                        .executeScript("return document.readyState")
+                        .equals("complete"));
+    }
+
+    private String withRetry(WebDriver driver, Supplier<BufferedImage> action) {
+        for (int retry = 0; retry < maxRetries; retry++) {
+            try {
+                return Base64Util.from(action.get());
+            } catch (TimeoutException e) {
+                log.info("▽ [WebScreenCapturer] 页面访问超时: {} Times", retry + 1);
+            }
+        }
+        throw new RuntimeException("网页访问失败");
+    }
+
+    private By by(String selector) {
+        return (selector.startsWith("//") || selector.startsWith(".//") || selector.startsWith("("))
+                ? By.xpath(selector) : By.cssSelector(selector);
+    }
+
+    private void hideElements(WebDriver driver, List<String> selectors) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        for (String sel : selectors) {
+            try {
+                js.executeScript("document.querySelectorAll('" + sel + "').forEach(el => el.remove());");
+            } catch (Exception e) {
+                log.info("▽ [WebScreenCapturer] 隐藏元素未找到: {}", sel);
+            }
+        }
+    }
+
+    private void clickElement(WebDriver driver, String selector) {
+        try {
+            driver.findElement(by(selector)).click();
         } catch (NoSuchElementException e) {
-            log.info("▽ [WebScreenCapturer] 交互元素未找到: {}", cssSelector);
+            log.info("▽ [WebScreenCapturer] 交互元素未找到: {}", selector);
         } catch (ElementNotInteractableException e) {
-            log.info("▽ [WebScreenCapturer] 该元素不可交互: {} 尝试 JavaScript 方法...", cssSelector);
-            // 使用 JavaScript 点击
+            log.info("▽ [WebScreenCapturer] 该元素不可交互: {} 尝试 JavaScript 点击...", selector);
             try {
                 JavascriptExecutor js = (JavascriptExecutor) driver;
-                WebElement element = driver.findElement(getBy(cssSelector));
-                // 先确保元素可见
-                js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
-                Thread.sleep(200);
-                // 使用JavaScript点击
-                js.executeScript("arguments[0].click();", element);
-                log.info("▽ [WebScreenCapturer] JavaScript 成功点击: {}", cssSelector);
+                WebElement el = driver.findElement(by(selector));
+                js.executeScript("arguments[0].click();", el);
+                log.info("▽ [WebScreenCapturer] JavaScript 成功点击: {}", selector);
             } catch (Exception ex) {
                 log.info("▽ [WebScreenCapturer] JavaScript 点击失败: {}", ex.getMessage());
             }
         }
-    }
-
-    // =================== 驱动加载 ===================
-
-    public WebDriver setupDriver() {
-        if (driverAuto) {
-            // 自动下载 ChromeDriver
-            WebDriverManager.chromedriver().setup();
-        } else {
-            // 手动设置 ChromeDriver
-            System.setProperty("webdriver.chrome.driver", driverPath);
-        }
-
-        ChromeOptions options = new ChromeOptions();
-        options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
-        options.addArguments("--headless");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--window-size=1920,1080");
-        options.addArguments("--hide-scrollbars");
-        options.addArguments("--lang=zh-CN");
-        options.addArguments("--accept-lang=zh-CN,zh");
-
-        WebDriver driver = new ChromeDriver(options);
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(loadTimeout));
-
-        return driver;
     }
 }
