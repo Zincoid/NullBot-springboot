@@ -26,14 +26,17 @@ public class ReversiCommand implements Command {
         String pos = args.nextString().toUpperCase();
         if (!pos.matches("^[A-H][1-8]$"))
             throw new BotWarnException("坐标错误 范围: A1~H8");
-        GameResult result = reversiMatchHandler.move(userId, pos);
-        if (result.getSuccess()) {
-            if (result.getIsAsync()) throw new BotWarnException("该模式不发送异步消息");
-            if (!result.getIsSameGroup())
-                bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
-            bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-        } else bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
         log.info("☑ [Reversi] 玩家 {} 落子 [{}]", userId, pos);
+
+        GameResult result = reversiMatchHandler.move(userId, pos);
+        if (!result.getSuccess()) {
+            bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
+            return;
+        }
+        if (result.getIsAsync()) throw new BotWarnException("游戏不支持异步消息");
+        if (!result.getIsSameGroup())
+            bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
+        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
     }
 
     @Override

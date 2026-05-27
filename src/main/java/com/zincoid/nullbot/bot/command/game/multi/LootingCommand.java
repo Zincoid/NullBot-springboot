@@ -3,9 +3,7 @@ package com.zincoid.nullbot.bot.command.game.multi;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
-import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -29,7 +27,10 @@ public class LootingCommand implements Command {
         log.info("☑ [Looting] 玩家 {} 执行指令 [{}]", userId, commandText);
 
         GameResult result = lootingMatchHandler.action(userId, commandText);
-        if (!result.getSuccess()) throw new BotInfoException(Emoji.WARN, result.getSelfInfo());
+        if (!result.getSuccess()) {
+            bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
+            return;
+        }
         if (!result.getIsAsync()) throw new BotWarnException("游戏不支持同步消息");
         if (!result.getSelfInfo().isEmpty())
             bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);

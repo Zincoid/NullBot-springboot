@@ -70,23 +70,21 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
      */
     public GameResult move(Long userId, String pos) {
         Match match = matchManager.getMatchBySelfId(userId);
-        if (match == null) return getErrorResult("[黑白棋] ❌对局不存在");
+        if (match == null) return getErrorResult("❌对局不存在");
 
         ReversiGameState state = games.get(match.getMatchId());
-        if (state == null) return getErrorResult("[黑白棋] ❌游戏状态不存在");
-        if (state.isFinished()) return getErrorResult("[黑白棋] ❌对局已结束");
-
-        // matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
+        if (state == null) return getErrorResult("❌状态不存在");
+        if (state.isFinished()) return getErrorResult("❌对局已结束");
 
         char myColor = userId.equals(state.getBlackPlayerId()) ? 'B' :
                 userId.equals(state.getWhitePlayerId()) ? 'W' : 0;
 
-        if (state.getCurrentTurn() != myColor) return getErrorResult("[黑白棋] ⏳还没轮到你下棋");
+        if (state.getCurrentTurn() != myColor) return getErrorResult("⏳没轮到你");
 
         int col = pos.charAt(0) - 'A';
         int row = pos.charAt(1) - '1';
 
-        if (!gameLogic.place(state, row, col)) return getErrorResult("[黑白棋] ❌非法落子");
+        if (!gameLogic.place(state, row, col)) return getErrorResult("❌非法落子");
 
         StringBuilder info = new StringBuilder();
         info.append(render(state));
@@ -139,7 +137,7 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
         }
 
         sb.append("当前回合：")
-                .append(s.getCurrentTurn() == 'B' ? ("⚫ 黑棋\n" + s.getBlackPlayerId()) : ("⚪ 白棋\n" + s.getWhitePlayerId()));
+                .append(s.getCurrentTurn() == 'B' ? ("⚫黑棋\n" + s.getBlackPlayerId()) : ("⚪白棋\n" + s.getWhitePlayerId()));
 
         return sb.toString();
     }
@@ -153,12 +151,12 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
 
         if (b > w) {
             s.setWinnerId(s.getBlackPlayerId());
-            return "🎉 黑棋胜利！(" + b + " : " + w + ")\n" + s.getBlackPlayerId() + " 获得50抽数和200Exp！";
+            return "🎉黑棋胜利！(" + b + " : " + w + ")\n" + s.getBlackPlayerId() + " 获得50抽数和200Exp";
         }
         if (w > b) {
             s.setWinnerId(s.getWhitePlayerId());
-            return "🎉 白棋胜利！(" + w + " : " + b + ")\n" + s.getWhitePlayerId() + " 获得50抽数和200Exp！";
+            return "🎉白棋胜利(" + w + " : " + b + ")\n" + s.getWhitePlayerId() + " 获得50抽数和200Exp";
         }
-        return "🤝 平局！(" + b + " : " + w + ")\n双方分别获得25抽数和100Exp！";
+        return "🤝平局(" + b + " : " + w + ")\n双方分别获得25抽数和100Exp";
     }
 }
