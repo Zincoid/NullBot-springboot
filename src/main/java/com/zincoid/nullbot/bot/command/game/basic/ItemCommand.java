@@ -3,7 +3,8 @@ package com.zincoid.nullbot.bot.command.game.basic;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -23,8 +24,7 @@ public class ItemCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         int itemId = args.nextInt();
-        if (!itemService.exist(itemId))
-            throw new BotWarnException("该物品不存在");
+        if (!itemService.exist(itemId)) throw new BotInfoException(Emoji.INFO, "物品不存在");
         ItemPO item = itemService.get(itemId);
         bot.sendGroupMsg(event.getGroupId(), item.toString(), false);
         log.info("☑ [Item] 物品详情已获取 - ItemId: {}", itemId);

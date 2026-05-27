@@ -25,24 +25,24 @@ public class InventoryCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        int p = args.nextInt(1);
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
-        DataPage<InventoryVO> inventoryVOPage = inventoryService.getVOPage(userId, p, 10);
+
+        DataPage<InventoryVO> inventoryVOPage = inventoryService.getVOPage(userId, args.nextInt(1), 10);
         UserPO user = userService.get(userId);
         int totalAmount = inventoryService.getTotalAmount(userId);
         StringBuilder sb = new StringBuilder()
                 .append("[库存] ").append(userName).append("(").append(userId).append(")\n")
                 .append("现金: ￥").append(user.getCash()).append("  容量: ").append(totalAmount).append("/").append(user.getCapacity()).append("\n")
                 .append("[ID -- 名称 -- 品质/单价 - 数量]\n");
-        if(inventoryVOPage.getTotal() > 0){
-            for(InventoryVO inventoryVO : inventoryVOPage.getData()) {
+        if (inventoryVOPage.getTotal() > 0) {
+            for (InventoryVO inventoryVO : inventoryVOPage.getData())
                 sb.append(inventoryVO.toString()).append("\n");
-            }
-        }else{
+        } else {
             sb.append("无物品...").append("\n");
         }
         sb.append("[第").append(inventoryVOPage.getCurrent()).append("页").append(" / 共").append(inventoryVOPage.getPages()).append("页 (每页").append(inventoryVOPage.getSize()).append("条)]");
+
         bot.sendGroupMsg(event.getGroupId(), sb.toString(), false);
         log.info("☑ [Inventory] 库存已获取 - UserId: {}", userId);
     }

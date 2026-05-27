@@ -3,7 +3,8 @@ package com.zincoid.nullbot.bot.command.game.basic;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -26,32 +27,24 @@ public class UseCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        // 解析物品
-        int itemId = args.nextInt();
-        // 存在检查
-        if (!itemService.exist(itemId))
-            throw new BotWarnException("该物品不存在");
-        // 可用检查
-        if (!itemService.isUsable(itemId))
-            throw new BotWarnException("物品不可使用");
-        // 库存检查
         Long userId = event.getUserId();
-        if (!inventoryService.decrease(userId, itemId, 1))
-            throw new BotWarnException("物品数量不足");
-
-        // 替换参数
-        String command = itemService.getCommand(itemId);
-        if ("UserBan".equals(command.split(" ")[0]))
-            command = command.replace("userId", userId.toString());
-
-        // 执行命令
-        eventPublisher.publishEvent(InnerCommandEvent.of(command, false));
-
-        // 发送通知
-        String itemName = itemService.get(itemId).getName();
         String userName = event.getSender().getNickname();
-        bot.sendGroupMsg(event.getGroupId(), "[使用] ✅" + userName + " 已使用 " + itemName + "！", false);
-        log.info("☑ [Use] 物品已使用 - ItemId: {}", itemId);
+        int itemId = args.nextInt();
+
+        if (!itemService.exist(itemId))
+            throw new BotInfoException(Emoji.INFO, "物品不存在");
+        if (!itemService.isUsable(itemId))
+            throw new BotInfoException(Emoji.INFO, "物品不可用");
+        if (!inventoryService.decrease(userId, itemId, 1))
+            throw new BotInfoException(Emoji.INFO, "物品数不足");
+
+        String originalCmd = itemService.getCommand(itemId);
+        String executeCmd = originalCmd.replace("userId", userId.toString());
+        eventPublisher.publishEvent(InnerCommandEvent.of(executeCmd, false));
+
+        String itemName = itemService.get(itemId).getName();
+        bot.sendGroupMsg(event.getGroupId(), "✅%s已使用%s".formatted(userName, itemName), false);
+        log.info("☑ [Use] 物品已使用 - {} -> {}", userId, itemId);
     }
 
     @Override

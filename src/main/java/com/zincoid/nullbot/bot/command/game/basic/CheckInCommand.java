@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CheckInCommand implements Command {
 
     private final Map<Long, LocalDateTime> checkInExpireMap = new ConcurrentHashMap<>();
+
     private final UserService userService;
 
     @Override
