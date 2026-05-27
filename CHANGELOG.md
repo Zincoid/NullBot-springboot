@@ -860,5 +860,6 @@
 - 优化 ResvgJNI 渲染方案；
 - 优化 WebDriver 渲染方案；
 - 优化 ResourceLoader 组件；
+- 使用 Thymeleaf 模板引擎；
 - 弃用 HtmlTemplateUtil 和 模板构建工具；
 - 优化 部分其他代码。
