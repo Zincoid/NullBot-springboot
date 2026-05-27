@@ -40,10 +40,11 @@ public class GroupSetCommand implements Command {
         SettingPO setting = BotCtxUtil.getSetting();
 
         if ("-view".equals(option)) {
-            bot.sendGroupMsg(groupId, "[群设置] ℹ️已获取！\n" + setting, false);
+            bot.sendGroupMsg(groupId, setting.toString(), false);
             log.info("☑ [GroupSet] 群设置已获取 - GroupId: {}", groupId);
             return;
         }
+
         if ("-limit".equals(option)) {
             String name = args.nextString();
             String msg;
@@ -72,10 +73,8 @@ public class GroupSetCommand implements Command {
 
             settingService.set(setting);
             commandRateLimiter.reset(groupId);
-            bot.sendGroupMsg(groupId, """
-                    [限速] ✅设置已更新
-                    %s""".formatted(msg), false);
-            log.info("☑ [GroupSet] 已更改群 {} 限速设置 - {}", groupId, msg);
+            bot.sendGroupMsg(groupId, "✅限速已更新: %s".formatted(msg), false);
+            log.info("☑ [GroupSet] 限速设置已更新 - GroupId: {}, {}", groupId, msg);
             return;
         }
 
@@ -127,10 +126,8 @@ public class GroupSetCommand implements Command {
             }
 
             settingService.set(setting);
-            bot.sendGroupMsg(groupId, """
-                    [AI] ✅设置已更新
-                    %s""".formatted(msg), false);
-            log.info("☑ [GroupSet] 已更改群 {} AI设置 - {}", groupId, msg);
+            bot.sendGroupMsg(groupId, "✅AI已更新: %s".formatted(msg), false);
+            log.info("☑ [GroupSet] AI设置已更新 - GroupId: {}, {}", groupId, msg);
             return;
         }
 
@@ -145,8 +142,8 @@ public class GroupSetCommand implements Command {
                 default -> throw new BotWarnException("无此Monitor设置");
             };
             settingService.set(setting);
-            bot.sendGroupMsg(event.getGroupId(), "[监听] ✅已切换: %s".formatted(enabled ? "ON" : "OFF"), false);
-            log.info("☑ [GroupSet] 已更改群 {} 监听设置 - {} -> {}", groupId, name, enabled ? "ON" : "OFF");
+            bot.sendGroupMsg(event.getGroupId(), "✅监听已切换: %s".formatted(enabled ? "ON" : "OFF"), false);
+            log.info("☑ [GroupSet] 监听设置已切换 - GroupId: {}, {} -> {}", groupId, name, enabled);
             return;
         }
 
@@ -158,12 +155,12 @@ public class GroupSetCommand implements Command {
             setting.setGuessTransparentRatio(transparentRatio);
             setting.setGuessPadding(padding);
             settingService.set(setting);
-            bot.sendGroupMsg(groupId, "[猜角色] ✅参数已更新", false);
-            log.info("☑ [GroupSet] 已更改群 {} Guess参数 -> {} {} {}", groupId, cropRatio, transparentRatio, padding);
+            bot.sendGroupMsg(groupId, "✅猜图参数已更新", false);
+            log.info("☑ [GroupSet] 猜图参数已更新 - GroupId: {}, Params: {} {} {}", groupId, cropRatio, transparentRatio, padding);
             return;
         }
 
-        throw new BotWarnException("无此操作类型");
+        throw new BotWarnException("无此操作");
     }
 
     @Override
@@ -193,12 +190,12 @@ public class GroupSetCommand implements Command {
                    模式选项:
                    scp - 会话范围
                    stg - 对话策略
-                   ati - 防注模式
                    tkn - 思考模式
                    voi - 语音模式
+                   ati - 注入保护
                    ica - 内令鉴权
-                   cus - 自定模式
-                   aur - 自动发言
+                   cus - 允许自定
+                   aur - 自主发言
                    其他:
                    frq [0~1] - 发言频率
                 
@@ -214,7 +211,7 @@ public class GroupSetCommand implements Command {
                    设置 Guess 游戏难度
                 
                 注意:
-                - 切换AI语音/指令/自定模式时会清空历史
+                - 切换AI语音/策略/自定时会清空历史
                 
                 别名: 群设置""", getAccess()
         );
