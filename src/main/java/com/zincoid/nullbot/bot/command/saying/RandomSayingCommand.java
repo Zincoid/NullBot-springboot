@@ -3,7 +3,8 @@ package com.zincoid.nullbot.bot.command.saying;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -22,14 +23,10 @@ public class RandomSayingCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        SayingPO saying;
-        if (args.isEmpty()) {
-            saying = sayingService.getRand();
-        } else {
-            saying = sayingService.getRandByUserId(args.nextLong());
-        }
-        if (saying == null)
-            throw new BotWarnException("暂无用户记录");
+        SayingPO saying = args.hasNext()
+                ? sayingService.getRandByUserId(args.nextLong())
+                : sayingService.getRand();
+        if (saying == null) throw new BotInfoException(Emoji.INFO, "暂无用户记录");
         bot.sendGroupMsg(event.getGroupId(), saying.toString(), false);
         log.info("☑ [RandomSaying] 语录已发送 -> No.{}", saying.getId());
     }

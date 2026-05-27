@@ -6,6 +6,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotErrorException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,15 +27,14 @@ public class SayingSaveCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
-        if (reply.getType() != MsgTypeEnum.reply)
-            throw new BotWarnException("需引用文本");
+        if (reply.getType() != MsgTypeEnum.reply) throw new BotWarnException("需引用文本");
         MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
         long userId = Long.parseLong(replyMsg.getSender().getUserId());
         String userName = replyMsg.getSender().getNickname();
         String text = MsgParseUtil.formatSaying(bot, replyMsg.getRawMessage());
-        int inserted = sayingService.add(userId, userName, text);
-        bot.sendGroupMsg(event.getGroupId(), inserted == 1 ? "\uD83D\uDCBE 已记录！" : "出错", false);
-        log.info("☑ [SayingSave] 语录保存 - {} -> {}", text, inserted == 1 ? "已记录" : "出错");
+        if (!sayingService.add(userId, userName, text)) throw new BotErrorException("语录保存出错");
+        bot.sendGroupMsg(event.getGroupId(), "\uD83D\uDCBE语录已保存", false);
+        log.info("☑ [SayingSave] 语录已保存 - {}: {}", userName, text);
     }
 
     @Override

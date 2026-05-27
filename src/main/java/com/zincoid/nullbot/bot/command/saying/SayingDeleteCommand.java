@@ -3,6 +3,8 @@ package com.zincoid.nullbot.bot.command.saying;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -21,9 +23,9 @@ public class SayingDeleteCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         int id = args.nextInt();
-        boolean deleted = sayingService.deleteById(id);
-        bot.sendGroupMsg(event.getGroupId(), "[删除语录] ⚠️No.%s %s".formatted(id, deleted ? "已删除" : "不存在"), false);
-        log.info("☑ [SayingDelete] 执行语录删除 - No.{} -> {}", id, deleted ? "已删除" : "不存在");
+        if (!sayingService.deleteById(id)) throw new BotInfoException(Emoji.INFO, "语录不存在");
+        bot.sendGroupMsg(event.getGroupId(), "⚠️语录No.%s已删除".formatted(id), false);
+        log.info("☑ [SayingDelete] 语录已删除 -> No.{}", id);
     }
 
     @Override
