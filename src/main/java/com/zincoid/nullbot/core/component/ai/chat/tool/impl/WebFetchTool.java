@@ -16,7 +16,7 @@ public class WebFetchTool implements Tool {
 
     private record Args(String url) {}
 
-    private static final int MAX_BODY_LENGTH = 4096;
+    private static final int MAX_BODY_LENGTH = 8192;
 
     private static final Pattern[] STRIP_PATTERNS = {
             Pattern.compile("<script[^>]*>.*?</script>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
