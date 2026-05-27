@@ -10,6 +10,8 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.BaiduSearchTool;
+import com.zincoid.nullbot.core.component.ai.chat.tool.impl.BingSearchTool;
+import com.zincoid.nullbot.core.component.ai.chat.tool.impl.YahooSearchTool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.WebFetchTool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupCmdTool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupInfoTool;
@@ -47,6 +49,8 @@ public class AiConfiguration {
         toolRegistry.register(new QQGroupInfoTool());
         toolRegistry.register(new QQUserInfoTool());
         toolRegistry.register(new BaiduSearchTool());
+        toolRegistry.register(new BingSearchTool());
+        toolRegistry.register(new YahooSearchTool());
         toolRegistry.register(new WebFetchTool());
 
         QQAiClient qqAiClient = new QQAiClient(
