@@ -10,22 +10,19 @@ import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotErrorException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.render.HtmlRenderer;
-import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.util.DownloadUtil;
-import com.zincoid.nullbot.core.util.HtmlUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.*;
 
 @Slf4j
@@ -35,7 +32,6 @@ import java.util.*;
 public class SymmetryCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
-    private final ResourceLoader resourceLoader;
     private final HtmlRenderer htmlRenderer;
 
     @Override
@@ -89,13 +85,10 @@ public class SymmetryCommand implements Command {
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
-                Path htmlPath = resourceLoader.getCache("static/html/symmetry.html");
-                String html = HtmlUtil.loadTemplate(htmlPath.toString());
-                Map<String, String> variables = Map.of("mode", mode);
-                Map<String, String> images = Map.of("image", imagePath);
-                html = HtmlUtil.replaceVariables(html, variables);
-                html = HtmlUtil.replaceImages(html, images);
-                base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
+                base64 = htmlRenderer.load("static/html/symmetry.html")
+                        .set("mode", mode)
+                        .imageFile("image", imagePath)
+                        .renderElement("#mirrorContainer");
             } finally {
                 FileUtils.deleteQuietly(new File(imagePath));
             }
