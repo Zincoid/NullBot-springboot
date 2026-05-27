@@ -22,12 +22,12 @@ public class BaiduSearchTool implements Tool {
     private record Args(String query) {}
 
     private static final Pattern TITLE_PATTERN = Pattern.compile(
-            "<(?:h3|div|span)[^>]*class=\"[^\"]*(?:t|c-tit(?:le)?|c-title)[^\"]*\"[^>]*>\\s*<a[^>]*href=\"(https?://[^\"]+)\"[^>]*>(?:<em>)?(.*?)(?:</em>)?</a>",
+            "<h3[^>]*class=\"[^\"]*(?:t|c-tit)[^\"]*\"[^>]*>\\s*<a[^>]*href=\"([^\"]+)\"[^>]*>(?:<em>)?(.*?)(?:</em>)?</a>",
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE
     );
 
     private static final Pattern SNIPPET_PATTERN = Pattern.compile(
-            "<(?:div|span)[^>]*class=\"[^\"]*(?:c-abstract|c-span-last|content-right_[^\"]*|c-gap-top-small)[^\"]*\"[^>]*>(.*?)</(?:div|span)>",
+            "<(?:div|span)[^>]*class=\"[^\"]*(?:c-abstract|c-span-last|content-right_[^\"]*)[^\"]*\"[^>]*>(.*?)</(?:div|span)>",
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE
     );
 
@@ -87,7 +87,7 @@ public class BaiduSearchTool implements Tool {
 
     private String fetchSearchResults(String query) throws Exception {
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-        String url = "https://m.baidu.com/s?word=" + encodedQuery;
+        String url = "https://www.baidu.com/s?wd=" + encodedQuery;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))

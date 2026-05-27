@@ -862,4 +862,6 @@
 - 优化 ResourceLoader 组件；
 - 使用 Thymeleaf 模板引擎来替换 Html 模板变量；
 - 弃用 HtmlTemplateUtil 和 模板创建工具；
+- 新增 BaiduSearchTool - 用于 AI 百度搜索；
+- 新增 WebFetchTool - 用于 AI 获取网页内容；
 - 优化 部分其他代码。
