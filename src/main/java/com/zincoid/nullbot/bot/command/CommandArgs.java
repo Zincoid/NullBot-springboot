@@ -112,6 +112,34 @@ public final class CommandArgs {
         catch (NumberFormatException e) { throw formatError(); }
     }
 
+    public String getString(int index, String defaultVal) {
+        if (index >= params.size()) return defaultVal;
+        return params.get(index);
+    }
+
+    public String getFullString(int index, String defaultVal) {
+        if (index >= params.size()) return defaultVal;
+        return String.join(" ", params.subList(index, params.size()));
+    }
+
+    public int getInt(int index, int defaultVal) {
+        if (index >= params.size()) return defaultVal;
+        try { return Integer.parseInt(params.get(index)); }
+        catch (NumberFormatException e) { throw formatError(); }
+    }
+
+    public long getLong(int index, long defaultVal) {
+        if (index >= params.size()) return defaultVal;
+        try { return Long.parseLong(params.get(index)); }
+        catch (NumberFormatException e) { throw formatError(); }
+    }
+
+    public double getDouble(int index, double defaultVal) {
+        if (index >= params.size()) return defaultVal;
+        try { return Double.parseDouble(params.get(index)); }
+        catch (NumberFormatException e) { throw formatError(); }
+    }
+
     // ── private helpers ────────────────────────────
 
     private BotWarnException missingArg() {
