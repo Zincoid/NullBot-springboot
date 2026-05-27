@@ -1,158 +1,136 @@
 package com.zincoid.nullbot.core.component.render;
 
+import com.zincoid.nullbot.core.component.resource.ResourceLoader;
+import com.zincoid.nullbot.core.util.Base64Util;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.properties.ChromeProperties;
-import com.zincoid.nullbot.core.util.Base64Util;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.templateresolver.StringTemplateResolver;
 import ru.yandex.qatools.ashot.AShot;
-import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
-@Component
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class HtmlRenderer {
 
-    private final ChromeProperties chromeProperties;
-    private boolean initialized;
-    private WebDriver driver;
+    private static final int DRIVER_POOL_SIZE = 2;
+    private static final TemplateEngine ENGINE;
 
-    public HtmlRenderer(ChromeProperties chromeProperties) {
-        this.chromeProperties = chromeProperties;
-        initialized = false;
+    static {
+        StringTemplateResolver resolver = new StringTemplateResolver();
+        ENGINE = new TemplateEngine();
+        ENGINE.setTemplateResolver(resolver);
     }
 
+    private final ResourceLoader resources;
+    private final ChromeDriverFactory driverFactory;
+
+    private BlockingQueue<WebDriver> drivers;
+
     @PostConstruct
-    public void init() {
-        initialize();
+    void init() {
+        drivers = new LinkedBlockingQueue<>(DRIVER_POOL_SIZE);
+        for (int i = 0; i < DRIVER_POOL_SIZE; i++)
+            drivers.offer(driverFactory.createDriver("3840,2160"));
+        log.info("▽ [HtmlRenderer] Chrome 驱动已就绪 (PoolSize: {})", DRIVER_POOL_SIZE);
     }
 
     @PreDestroy
-    public void destroy() {
-        close();
+    void destroy() {
+        drivers.forEach(WebDriver::quit);
+        log.info("▽ [HtmlRenderer] Chrome 驱动已关闭");
     }
 
-    // =================== 驱动加载 ===================
-
-    public void initialize() {
-        if (initialized) {
-            log.info("▽ [HtmlRenderer] Chrome 驱动已初始化过");
-            return;
-        }
-
-        if (chromeProperties.getDriverAuto()) {
-            // 自动下载 ChromeDriver
-            WebDriverManager.chromedriver().setup();
-        } else {
-            // 手动设置 ChromeDriver
-            System.setProperty("webdriver.chrome.driver", chromeProperties.getDriverPath());
-        }
-
-        ChromeOptions options = new ChromeOptions();
-        options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
-        options.addArguments("--headless");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--window-size=3840,2160");
-        options.addArguments("--hide-scrollbars");
-
-        WebDriver driver = new ChromeDriver(options);
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(chromeProperties.getLoadTimeout()));
-
-        this.driver = driver;
-        initialized = true;
-        log.info("▽ [HtmlRenderer] Chrome 驱动已初始化");
+    /** 文件路径 → file:// URL */
+    public String toUrl(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists()) throw new RuntimeException("图片文件不存在: " + filePath);
+        return "file://" + file.getAbsolutePath().replace("\\", "/");
     }
 
-    public void close() {
-        if (initialized) {
-            driver.quit();
-            initialized = false;
-            log.info("▽ [HtmlRenderer] Chrome 驱动已关闭");
-        } else
-            log.info("▽ [HtmlRenderer] Chrome 驱动未初始化");
+    /** 资源路径 → file:// URL (从缓存加载) */
+    public String resource(String resourcePath) {
+        Path path = resources.getCache(resourcePath);
+        return toUrl(path.toAbsolutePath().toString());
     }
 
-    public void validate() {
-        if (!initialized)
-            throw new RuntimeException("Chrome 驱动未初始化");
+    /** 渲染资源模板 → 全页截图 */
+    public String render(String resourcePath, Map<String, Object> context) throws Exception {
+        String html = Files.readString(resources.getCache(resourcePath));
+        return capture(apply(html, context), null);
     }
 
-    // =================== 渲染方法 ===================
+    /** 渲染资源模板 → 元素截图 */
+    public String render(String resourcePath, Map<String, Object> context, String cssSelector) throws Exception {
+        String html = Files.readString(resources.getCache(resourcePath));
+        return capture(apply(html, context), cssSelector);
+    }
 
-    // HTML 字符串渲染
-    public String renderFromHtml(String html) throws Exception {
-        validate();
-        File tempFile = null;
+    private String apply(String template, Map<String, Object> context) {
+        Context ctx = new Context();
+        ctx.setVariables(context);
+        return ENGINE.process(template, ctx);
+    }
+
+    private String capture(String html, String cssSelector) throws Exception {
+        WebDriver driver = take();
         try {
-            // 保存临时文件
-            tempFile = File.createTempFile("render-", ".html");
-            try (FileWriter writer = new FileWriter(tempFile)) {
-                writer.write(html);
-            }
-            // 加载页面文件
-            driver.get("file://" + tempFile.getAbsolutePath());
-            // 确保内容加载
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            wait.until(webDriver -> ((JavascriptExecutor) webDriver)
-                    .executeScript("return document.readyState")
-                    .equals("complete")
-            );
-            // 进行全页截图
-            AShot ashot = new AShot();
-            ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-            Screenshot screenshot = ashot.takeScreenshot(driver);
-            BufferedImage fullImage = screenshot.getImage();
+            Path tempFile = Files.createTempFile("render-", ".html");
+            try {
+                Files.writeString(tempFile, html);
+                driver.get("file://" + tempFile.toAbsolutePath());
 
-            return Base64Util.from(fullImage);
+                new WebDriverWait(driver, Duration.ofSeconds(10))
+                        .until(d -> ((JavascriptExecutor) d)
+                                .executeScript("return document.readyState")
+                                .equals("complete"));
+
+                AShot ashot = new AShot();
+                ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
+
+                BufferedImage image;
+                if (cssSelector != null) {
+                    WebElement element = driver.findElement(By.cssSelector(cssSelector));
+                    ashot.coordsProvider(new WebDriverCoordsProvider());
+                    image = ashot.takeScreenshot(driver, element).getImage();
+                } else {
+                    image = ashot.takeScreenshot(driver).getImage();
+                }
+                return Base64Util.from(image);
+            } finally {
+                Files.deleteIfExists(tempFile);
+            }
         } finally {
-            // 清理临时文件
-            if (tempFile != null && tempFile.exists()) tempFile.delete();
+            drivers.offer(driver);
         }
     }
 
-    // HTML 页元素渲染
-    public String renderElement(String html, String cssSelector) throws Exception {
-        validate();
-        File tempFile = null;
+    private WebDriver take() {
         try {
-            // 保存临时文件
-            tempFile = File.createTempFile("render-", ".html");
-            try (FileWriter writer = new FileWriter(tempFile)) {
-                writer.write(html);
-            }
-            // 加载页面文件
-            driver.get("file://" + tempFile.getAbsolutePath());
-            // 确保内容加载
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            wait.until(webDriver -> ((JavascriptExecutor) webDriver)
-                    .executeScript("return document.readyState")
-                    .equals("complete")
-            );
-            // 查找目标元素
-            WebElement element = driver.findElement(By.cssSelector(cssSelector));
-            // 进行元素截图
-            AShot ashot = new AShot();
-            ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-            ashot.coordsProvider(new WebDriverCoordsProvider());
-            Screenshot screenshot = ashot.takeScreenshot(driver, element);
-            BufferedImage eleImage = screenshot.getImage();
-
-            return Base64Util.from(eleImage);
-        } finally {
-            // 清理临时文件
-            if (tempFile != null && tempFile.exists()) tempFile.delete();
+            return drivers.take();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("等待 WebDriver 被中断", e);
         }
     }
 }

@@ -10,12 +10,12 @@ import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotErrorException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
-import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
+import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.util.DownloadUtil;
@@ -32,7 +32,7 @@ import java.util.*;
 public class SymmetryCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
-    private final HtmlRenderer htmlRenderer;
+    private final HtmlRenderer renderer;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
@@ -42,13 +42,11 @@ public class SymmetryCommand implements Command {
         String mode = "left";
 
         if (reply.getType() == MsgTypeEnum.reply) {
-            // 引用收集
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
             Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
             urls.addAll(imageMap.values());
         }
         if (args.hasNext()) {
-            // ID 收集
             String modeStr = args.nextString();
             if (List.of("左", "右", "上", "下").contains(modeStr)) {
                 mode = switch (modeStr) {
@@ -70,7 +68,6 @@ public class SymmetryCommand implements Command {
                 urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
             }
         } else {
-            // AT 收集
             List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
             for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
         }
@@ -85,10 +82,11 @@ public class SymmetryCommand implements Command {
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
-                base64 = htmlRenderer.load("static/html/symmetry.html")
-                        .set("mode", mode)
-                        .imageFile("image", imagePath)
-                        .renderElement("#mirrorContainer");
+                base64 = renderer.render(
+                        "static/html/symmetry.html",
+                        Map.of("mode", mode, "image", renderer.toUrl(imagePath)),
+                        "#mirrorContainer"
+                );
             } finally {
                 FileUtils.deleteQuietly(new File(imagePath));
             }

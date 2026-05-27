@@ -11,24 +11,30 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Slf4j
 @CommandMapping({"Pucci", "普奇"})
 @Component
 @RequiredArgsConstructor
 public class PucciCommand implements Command {
 
-    private final HtmlRenderer htmlRenderer;
+    private final HtmlRenderer renderer;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
 
-        String base64 = htmlRenderer.load("static/html/pucci.html")
-                .set("text1", "普奇！！回答我！")
-                .set("text2", "为什么你要加速时间！！")
-                .set("text3", args.nextString())
-                .image("background", "static/image/pucci.png")
-                .renderElement("#wrap");
+        String base64 = renderer.render(
+                "static/html/pucci.html",
+                Map.of(
+                        "text1", "普奇！！回答我！",
+                        "text2", "为什么你要加速时间！！",
+                        "text3", args.nextString(),
+                        "background", renderer.resource("static/image/pucci.png")
+                ),
+                "#wrap"
+        );
 
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);
