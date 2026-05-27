@@ -858,8 +858,8 @@
   - 优化 所有指令；
 - 优化 临时文件夹不再分层；
 - 优化 ResvgJNI 渲染方案；
-- 优化 WebDriver 渲染方案；
+- 优化 WebDriver 渲染方案和两个相关组件；
 - 优化 ResourceLoader 组件；
-- 使用 Thymeleaf 模板引擎；
-- 弃用 HtmlTemplateUtil 和 模板构建工具；
+- 使用 Thymeleaf 模板引擎来替换 Html 模板变量；
+- 弃用 HtmlTemplateUtil 和 模板创建工具；
 - 优化 部分其他代码。
