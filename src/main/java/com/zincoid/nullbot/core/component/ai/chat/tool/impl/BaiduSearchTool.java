@@ -23,17 +23,12 @@ public class BaiduSearchTool implements Tool {
     private record Args(String query) {}
 
     private static final Pattern TITLE_PATTERN = Pattern.compile(
-            "<h3[^>]*class=\"[^\"]*(?:t|c-tit)[^\"]*\"[^>]*>\\s*<a[^>]*href=\"([^\"]+)\"[^>]*>(?:<em>)?(.*?)(?:</em>)?</a>",
+            "<(?:h3|span|div)[^>]*class=\"[^\"]*(?:t|c-tit(?:le)?|c-title)[^\"]*\"[^>]*>\\s*<a[^>]*href=\"([^\"]+)\"[^>]*>(?:<em>)?(.*?)(?:</em>)?</a>",
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE
     );
 
     private static final Pattern SNIPPET_PATTERN = Pattern.compile(
-            "<(?:div|span)[^>]*class=\"[^\"]*(?:c-abstract|c-span-last|content-right_[^\"]*)[^\"]*\"[^>]*>(.*?)</(?:div|span)>",
-            Pattern.DOTALL | Pattern.CASE_INSENSITIVE
-    );
-
-    private static final Pattern ANY_H3_LINK = Pattern.compile(
-            "<h3[^>]*>\\s*<a[^>]*href=\"([^\"]+)\"[^>]*>(.*?)</a>",
+            "<(?:div|span)[^>]*class=\"[^\"]*(?:c-abstract|c-span-last|content-right_[^\"]*|c-gap-top-small|c-line)[^\"]*\"[^>]*>(.*?)</(?:div|span)>",
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE
     );
 
@@ -94,20 +89,9 @@ public class BaiduSearchTool implements Tool {
 
     private static final String UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
-    private void initSession() throws Exception {
-        HttpRequest homeReq = HttpRequest.newBuilder()
-                .uri(URI.create("https://www.baidu.com/"))
-                .header("User-Agent", UA)
-                .GET()
-                .build();
-        httpClient.send(homeReq, HttpResponse.BodyHandlers.discarding());
-    }
-
     private String fetchSearchResults(String query) throws Exception {
-        initSession();
-
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-        String url = "https://www.baidu.com/s?wd=" + encodedQuery;
+        String url = "https://m.baidu.com/s?word=" + encodedQuery;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -121,20 +105,17 @@ public class BaiduSearchTool implements Tool {
         if (response.statusCode() != 200) {
             throw new RuntimeException("HTTP " + response.statusCode());
         }
-        return response.body();
+        String html = response.body();
+        log.info("◉ [BaiduSearchTool] 响应长度: {} 字符, 头部: {}", html.length(),
+                html.substring(0, Math.min(300, html.length())).replace("\n", "\\n"));
+        return html;
     }
 
     private List<SearchResult> parseResults(String html) {
         List<SearchResult> results = new ArrayList<>();
-
         Matcher matcher = TITLE_PATTERN.matcher(html);
-        if (!matcher.find()) {
-            matcher = ANY_H3_LINK.matcher(html);
-        }
-        // Reset to start scanning from the beginning
-        matcher.reset();
-
         int count = 0;
+
         while (matcher.find() && count < 10) {
             String url = matcher.group(1);
             String title = TAG_PATTERN.matcher(matcher.group(2)).replaceAll("").trim();
