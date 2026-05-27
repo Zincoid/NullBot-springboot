@@ -27,18 +27,21 @@ public class CheckInCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
+        Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
         LocalDateTime expireTime = checkInExpireMap.get(userId);
-        if (expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
-            userService.increaseDrawTimes(userId, 25);
-            checkInExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
-            bot.sendGroupMsg(event.getGroupId(), "✨" + userName + " 签到成功！获得: \n- 抽奖次数 x 25", false);
-            log.info("☑ [CheckIn] 用户签到成功 - UserId: {}", userId);
-        } else {
-            bot.sendGroupMsg(event.getGroupId(), userName + " 今日已签过到！", false);
+        if (expireTime != null && expireTime.isAfter(LocalDateTime.now())) {
+            bot.sendGroupMsg(groupId, "今天签过啦！", false);
             log.info("☑ [CheckIn] 今日已签过到 - UserId: {}", userId);
+            return;
         }
+        userService.increaseDrawTimes(userId, 25);
+        checkInExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
+        bot.sendGroupMsg(groupId, """
+                ✨%s 签到成功！获得:
+                - 抽奖次数 x 25""".formatted(userName), false);
+        log.info("☑ [CheckIn] 用户签到成功 - UserId: {}", userId);
     }
 
     @Override

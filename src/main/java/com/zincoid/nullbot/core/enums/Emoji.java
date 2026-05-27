@@ -1,5 +1,8 @@
 package com.zincoid.nullbot.core.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum Emoji {
 
     NONE(""),
@@ -8,6 +11,9 @@ public enum Emoji {
     ERROR("❌"),
     SUCCESS("✅");
 
+    private final String emoji;
+
     Emoji(String emoji) {
+        this.emoji = emoji;
     }
 }

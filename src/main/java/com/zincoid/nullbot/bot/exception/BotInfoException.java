@@ -25,6 +25,6 @@ public class BotInfoException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return emoji + super.getMessage();
+        return emoji.getEmoji() + super.getMessage();
     }
 }
