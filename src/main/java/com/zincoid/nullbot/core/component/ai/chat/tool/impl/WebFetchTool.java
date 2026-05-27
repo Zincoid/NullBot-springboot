@@ -32,7 +32,7 @@ public class WebFetchTool implements Tool {
     private final HttpClient httpClient;
 
     public WebFetchTool() {
-        this.toolDef = ToolDef.builder("web_fetch", "获取任意网页的文本内容，用于阅读文章、查看详情等。适合在百度搜索后进一步了解具体信息")
+        this.toolDef = ToolDef.builder("web_fetch", "获取任意网页的文本内容，用于阅读文章、查看详情等。适合在搜索后进一步了解具体信息")
                 .addString("url", "网页URL链接", true)
                 .build();
         this.httpClient = HttpClient.newBuilder()
