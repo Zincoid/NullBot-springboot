@@ -132,7 +132,7 @@ class NullBotApplicationTests {
 
     @Test
     void renderTest() throws Exception {
-        // Path fontPath = ResourceUtil.getCached("static/font/Bernard MT Condensed.ttf", "/root/Nullbot/file/temp/font");
+        // Path fontPath = ResourceUtil.getCache("static/font/Bernard MT Condensed.ttf", "/root/Nullbot/file/temp/font");
         // // 创建 SVG 画布
         // SvgCanvas canvas = SvgCanvas.create(640, 640);
         //
