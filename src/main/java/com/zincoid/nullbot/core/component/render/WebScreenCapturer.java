@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 @Component
 public class WebScreenCapturer {
 
-    private static final int POOL_SIZE = 2;
+    private static final int POOL_SIZE = 1;
 
     private final ChromeDriverFactory driverFactory;
     private final int maxRetries;

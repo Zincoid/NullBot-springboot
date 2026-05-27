@@ -41,7 +41,7 @@ public class HtmlRenderer {
         ENGINE.setTemplateResolver(resolver);
     }
 
-    private static final int DRIVER_POOL_SIZE = 2;
+    private static final int DRIVER_POOL_SIZE = 1;
 
     private final ResourceLoader resources;
     private final ChromeDriverFactory driverFactory;
