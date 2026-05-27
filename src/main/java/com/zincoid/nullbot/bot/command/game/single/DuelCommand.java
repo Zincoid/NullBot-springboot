@@ -4,7 +4,9 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.bot.exception.BotErrorException;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,7 +31,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DuelCommand implements Command {
 
-    private static final int SELECTION_TIME = 30;  // 抉择时间 (单位: Second)
+    private static final int SELECT_TIMEOUT_SECONDS = 30;  // 抉择时间
 
     private final FileStorageProperties fileStorageProperties;
     private final DuelStorage duelStorage;
@@ -39,7 +41,7 @@ public class DuelCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         if (duelStorage.getDuel(groupId) != null)
-            throw new BotWarnException("已在游戏中");
+            throw new BotInfoException(Emoji.INFO, "已在游戏中");
 
         try {
             DuelInfo duel = duelStorage.initDuel(groupId);
@@ -53,11 +55,11 @@ public class DuelCommand implements Command {
             for (Map.Entry<Integer, Integer> enemy : duel.getRight().entrySet())
                 builder.img("base64://" + Base64Util.from(getIconPath(enemy.getKey())))
                         .text("*" + enemy.getValue() + " ");
-            builder.text("\n\n注: 发送L或R进行选择(%s秒内)".formatted(SELECTION_TIME));
+            builder.text("\n\n注: 发送L或R进行选择(%s秒内)".formatted(SELECT_TIMEOUT_SECONDS));
             bot.sendGroupMsg(groupId, builder.build(), false);
 
             List<Pair<Long, String>> inputs = botInputManager
-                    .request(BniMode.GM, groupId, "[LlRr]", SELECTION_TIME);
+                    .request(BniMode.GM, groupId, "[LlRr]", SELECT_TIMEOUT_SECONDS);
 
             Map<Long, Pair<Long, String>> lastInputMap = new LinkedHashMap<>();
             for (Pair<Long, String> input : inputs) lastInputMap.put(input.getKey(), input);
@@ -79,7 +81,7 @@ public class DuelCommand implements Command {
             } else if ("R".equals(duel.getWinner())) {
                 winners = right;
                 losers = left;
-            } else throw new BotWarnException("数据异常");
+            } else throw new BotErrorException("数据异常");
 
             List<String> winnerNames = winners.stream()
                     .map(u -> bot.getStrangerInfo(u, true).getData().getNickname())
