@@ -9,81 +9,56 @@ import org.springframework.stereotype.Component;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Consumer;
 
 @Component
 @RequiredArgsConstructor
 public class ImageConverter {
 
+    private static final int CANVAS_WIDTH = 640;
+    private static final int CANVAS_HEIGHT = 640;
+    private static final String PRTS_OVERLAY = "static/image/PRTS.png";
+    private static final String INVS_PRTS_OVERLAY = "static/image/InvsPRTS.png";
+    private static final String RIP_FONT_RESOURCE = "static/font/Bernard MT Condensed.ttf";
+    private static final String RIP_FONT_NAME = "Bernard MT Condensed";
+
     private final ResourceLoader resourceLoader;
     private final FileStorageProperties fileStorageProperties;
 
     public String RIP(String imagePath) throws Exception {
-        resourceLoader.getCached("static/font/Bernard MT Condensed.ttf");
-        Path tempPngPath = Files.createTempFile("RIP_", ".png");
-        try {
-            // 创建 画布
-            SvgCanvas canvas = SvgCanvas.create(640, 640);
-            // 添加 图片
-            canvas.image(
-                    0, 0, 640, 640, 1,
-                    Path.of(imagePath), true
-            );
-            // 添加 RIP
+        // 确保字体文件已提取到临时目录，供 ResvgJNI LoadFontsDir 加载
+        resourceLoader.getCached(RIP_FONT_RESOURCE);
+        return renderCanvas("RIP_", canvas -> {
+            canvas.image(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, 1, Path.of(imagePath), true);
             canvas.text(175, 550, "R.I.P.")
-                    .font("Bernard MT Condensed")
+                    .font(RIP_FONT_NAME)
                     .size(150)
                     .color("#000000")
-                    // .bold()
                     .stroke("#FFFFFF", 6);
-            // 渲染并转换为 Base64
-            canvas.render(tempPngPath, fileStorageProperties.getTempPath());
-            return Base64Util.from(tempPngPath);
-        } finally {
-            Files.deleteIfExists(tempPngPath);
-        }
+        });
     }
 
     public String PRTS(String imagePath) throws Exception {
-        Path prts = resourceLoader.getCached("static/image/PRTS.png");
-        Path tempPngPath = Files.createTempFile("PRTS_", ".png");
-        try {
-            // 创建 画布
-            SvgCanvas canvas = SvgCanvas.create(640, 640);
-            // 添加 图片
-            canvas.image(
-                    0, 0, 640, 640, 1,
-                    Path.of(imagePath), false
-            );
-            // 添加 PRTS
-            canvas.image(
-                    0, 0, 640, 640, 1,
-                    prts, false
-            );
-            // 渲染并转换为 Base64
-            canvas.render(tempPngPath, fileStorageProperties.getTempPath());
-            return Base64Util.from(tempPngPath);
-        } finally {
-            Files.deleteIfExists(tempPngPath);
-        }
+        return overlayImage(imagePath, PRTS_OVERLAY, "PRTS_");
     }
 
     public String invsPRTS(String imagePath) throws Exception {
-        Path prts = resourceLoader.getCached("static/image/InvsPRTS.png");
-        Path tempPngPath = Files.createTempFile("InvsPRTS_", ".png");
+        return overlayImage(imagePath, INVS_PRTS_OVERLAY, "InvsPRTS_");
+    }
+
+    private String overlayImage(String imagePath, String overlayResource, String tempPrefix) throws Exception {
+        Path overlay = resourceLoader.getCached(overlayResource);
+        return renderCanvas(tempPrefix, canvas -> {
+            canvas.image(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, 1, Path.of(imagePath), false);
+            canvas.image(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, 1, overlay, false);
+        });
+    }
+
+    private String renderCanvas(String tempPrefix, Consumer<SvgCanvas> drawer) throws Exception {
+        Path tempPngPath = Files.createTempFile(tempPrefix, ".png");
         try {
-            // 创建 画布
-            SvgCanvas canvas = SvgCanvas.create(640, 640);
-            // 添加 图片
-            canvas.image(
-                    0, 0, 640, 640, 1,
-                    Path.of(imagePath), false
-            );
-            // 添加 PRTS
-            canvas.image(
-                    0, 0, 640, 640, 1,
-                    prts, false
-            );
-            // 渲染并转换为 Base64
+            SvgCanvas canvas = SvgCanvas.create(CANVAS_WIDTH, CANVAS_HEIGHT);
+            drawer.accept(canvas);
             canvas.render(tempPngPath, fileStorageProperties.getTempPath());
             return Base64Util.from(tempPngPath);
         } finally {
