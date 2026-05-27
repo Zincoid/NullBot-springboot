@@ -20,20 +20,23 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class HtmlRenderer {
 
-    private static final TemplateEngine ENGINE;
+    private static final TemplateEngine TEMPLATE_ENGINE;
 
     static {
         StringTemplateResolver resolver = new StringTemplateResolver();
-        ENGINE = new TemplateEngine();
-        ENGINE.setTemplateResolver(resolver);
+        TEMPLATE_ENGINE = new TemplateEngine();
+        TEMPLATE_ENGINE.setTemplateResolver(resolver);
     }
 
     private final Chrome chrome;
     private final ResourceLoader resourceLoader;
 
+    // =========================== 载入方法 ===========================
+
     public Template load(String resourcePath) {
         try {
-            return new Template(Files.readString(resourceLoader.getCache(resourcePath)));
+            return new Template(Files.readString(
+                    resourceLoader.getCache(resourcePath)));
         } catch (Exception e) {
             throw new RuntimeException("模板加载失败: " + resourcePath, e);
         }
@@ -46,39 +49,42 @@ public class HtmlRenderer {
 
         private Template(String html) { this.html = html; }
 
-        public Template set(String key, String value) { ctx.put(key, value); return this; }
+        // ============================ 构建方法 ===========================
 
-        public Template image(String key, String filePath) {
-            File f = new File(filePath);
-            if (!f.exists()) throw new RuntimeException("图片文件不存在: " + filePath);
-            ctx.put(key, "file://" + f.getAbsolutePath().replace("\\", "/"));
+        public Template string(String key, String value) {
+            ctx.put(key, value);
             return this;
         }
-
-        public Template resource(String key, String resourcePath) {
-            Path p = resourceLoader.getCache(resourcePath);
-            return image(key, p.toAbsolutePath().toString());
+        public Template file(String key, String path) {
+            File f = new File(path);
+            if (!f.exists()) throw new RuntimeException("文件不存在: " + path);
+            ctx.put(key, "file://" +
+                    f.getAbsolutePath().replace("\\", "/"));
+            return this;
+        }
+        public Template resource(String key, String path) {
+            Path p = resourceLoader.getCache(path);
+            return file(key, p.toAbsolutePath().toString());
         }
 
-        /** 渲染 HTML 模板 → 元素截图 */
+        // ============================= 渲染方法 ===========================
+
         public String render(String cssSelector) throws Exception {
             Context context = new Context();
             context.setVariables(ctx);
-            String resolved = ENGINE.process(html, context);
-
-            WebDriver driver = chrome.create("3840,2160");
+            String resolved = TEMPLATE_ENGINE.process(html, context);
+            WebDriver driver = null;
+            Path tmp = null;
             try {
-                Path tmp = Files.createTempFile("render-", ".html");
-                try {
-                    Files.writeString(tmp, resolved);
-                    driver.get("file://" + tmp.toAbsolutePath());
-                    chrome.ready(driver);
-                    return chrome.capture(driver, cssSelector);
-                } finally {
-                    Files.deleteIfExists(tmp);
-                }
+                driver = chrome.create("3840,2160");
+                tmp = Files.createTempFile("render-", ".html");
+                Files.writeString(tmp, resolved);
+                driver.get("file://" + tmp.toAbsolutePath());
+                chrome.ready(driver);
+                return chrome.capture(driver, cssSelector);
             } finally {
-                driver.quit();
+                if (tmp != null) Files.deleteIfExists(tmp);
+                if (driver != null) driver.quit();
             }
         }
     }
