@@ -6,6 +6,9 @@ import com.zincoid.nullbot.core.util.Base64Util;
 import lombok.RequiredArgsConstructor;
 import me.aloic.ResvgJNI;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.templateresolver.StringTemplateResolver;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -24,6 +27,14 @@ public class ImageConverter {
     private static final String INVS_PRTS_PNG = "static/image/InvsPRTS.png";
     private static final String RIP_FONT = "static/font/Bernard MT Condensed.ttf";
 
+    private static final TemplateEngine TEMPLATE_ENGINE;
+
+    static {
+        StringTemplateResolver resolver = new StringTemplateResolver();
+        TEMPLATE_ENGINE = new TemplateEngine();
+        TEMPLATE_ENGINE.setTemplateResolver(resolver);
+    }
+
     private final ResourceLoader resourceLoader;
     private final FileStorageProperties fileStorageProperties;
 
@@ -32,9 +43,10 @@ public class ImageConverter {
     /** RIP ：灰度化 + R.I.P. 文字 */
     public String RIP(String imagePath) throws Exception {
         resourceLoader.getCache(RIP_FONT);
-        String svg = Files.readString(resourceLoader.getCache(RIP_SVG))
-                .replace("{{IMAGE}}", imageDataUri(imagePath, true));
-        return render(svg);
+        String svg = Files.readString(resourceLoader.getCache(RIP_SVG));
+        Context ctx = new Context();
+        ctx.setVariable("image", imageDataUri(imagePath, true));
+        return render(TEMPLATE_ENGINE.process(svg, ctx));
     }
 
     /** PRTS ：封锁效果 */
@@ -49,12 +61,12 @@ public class ImageConverter {
 
     /** Overlay ：叠加效果 */
     private String overlay(String imagePath, String overlayResource) throws Exception {
-        String overlayUri = "data:image/png;base64,"
-                + Base64Util.from(resourceLoader.getCache(overlayResource));
-        String svg = Files.readString(resourceLoader.getCache(OVERLAY_SVG))
-                .replace("{{IMAGE}}", imageDataUri(imagePath, false))
-                .replace("{{OVERLAY}}", overlayUri);
-        return render(svg);
+        String svg = Files.readString(resourceLoader.getCache(OVERLAY_SVG));
+        Context ctx = new Context();
+        ctx.setVariable("image", imageDataUri(imagePath, false));
+        ctx.setVariable("overlay", "data:image/png;base64,"
+                + Base64Util.from(resourceLoader.getCache(overlayResource)));
+        return render(TEMPLATE_ENGINE.process(svg, ctx));
     }
 
     // =========================== 工具方法 ===========================
