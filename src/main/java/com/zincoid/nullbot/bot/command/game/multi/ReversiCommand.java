@@ -24,8 +24,7 @@ public class ReversiCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long userId = event.getUserId();
         String pos = args.nextString().toUpperCase();
-        if (!pos.matches("^[A-H][1-8]$"))
-            throw new BotWarnException("坐标错误 范围: A1~H8");
+        if (!pos.matches("^[A-H][1-8]$")) throw new BotWarnException("坐标错误 范围: A1~H8");
         log.info("☑ [Reversi] 玩家 {} 落子 [{}]", userId, pos);
 
         GameResult result = reversiMatchHandler.move(userId, pos);
