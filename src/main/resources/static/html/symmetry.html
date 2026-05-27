@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <title>symmetry</title>
     <style>
+        body { margin: 0; background: white; }
         #mirrorContainer {
-            margin: 0;
-            padding: 0;
             width: fit-content;
             height: fit-content;
         }
-
         canvas {
             display: block;
             margin: 0;
@@ -19,44 +18,35 @@
 </head>
 <body>
 <div id="mirrorContainer">
-    <img id="sourceImage" src="${image}" alt="原始图片" style="display:none;">
+    <img id="sourceImage" th:src="${image}" style="display:none;">
     <canvas id="resultCanvas"></canvas>
 </div>
 
-<script>
+<script th:inline="javascript">
     const sourceImage = document.getElementById('sourceImage');
     const resultCanvas = document.getElementById('resultCanvas');
     const ctx = resultCanvas.getContext('2d');
-    const mode = "${mode}" || "left";
+    const mode = /*[[${mode}]]*/ "left";
 
-    // 禁用图像平滑，减少白线
     ctx.imageSmoothingEnabled = false;
-    ctx.mozImageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.msImageSmoothingEnabled = false;
 
     sourceImage.onload = function() {
         const originalWidth = sourceImage.naturalWidth;
         const originalHeight = sourceImage.naturalHeight;
 
-        // 使用整数坐标，避免浮点数问题
         const intWidth = Math.floor(originalWidth);
         const intHeight = Math.floor(originalHeight);
 
         if (mode === "left" || mode === "right") {
-            // 计算分割点（确保是整数）
             const halfWidth = Math.floor(intWidth / 2);
 
-            // 设置Canvas尺寸
             resultCanvas.width = intWidth;
             resultCanvas.height = intHeight;
 
-            // 清除Canvas（避免残留）
             ctx.clearRect(0, 0, intWidth, intHeight);
 
             if (mode === "left") {
-                // 左对称：绘制左边部分，并向右重叠1像素
-                const sourceWidth = halfWidth + 1; // 多取1像素，避免接缝
+                const sourceWidth = halfWidth + 1;
 
                 ctx.drawImage(
                     sourceImage,
@@ -64,7 +54,6 @@
                     0, 0, sourceWidth, intHeight
                 );
 
-                // 绘制镜像部分，向左重叠1像素
                 ctx.save();
                 ctx.translate(intWidth, 0);
                 ctx.scale(-1, 1);
@@ -75,18 +64,15 @@
                 );
                 ctx.restore();
             } else {
-                // 右对称：绘制右边部分
-                const sourceX = halfWidth - 1; // 向左多取1像素
-                const sourceWidth = halfWidth + 1; // 多取1像素
+                const sourceX = halfWidth - 1;
+                const sourceWidth = halfWidth + 1;
 
-                // 绘制源部分
                 ctx.drawImage(
                     sourceImage,
                     sourceX, 0, sourceWidth, intHeight,
                     intWidth - halfWidth - 1, 0, sourceWidth, intHeight
                 );
 
-                // 绘制镜像部分
                 ctx.save();
                 ctx.scale(-1, 1);
                 ctx.translate(-intWidth, 0);
@@ -99,19 +85,15 @@
             }
         }
         else if (mode === "top" || mode === "bottom") {
-            // 计算分割点（确保是整数）
             const halfHeight = Math.floor(intHeight / 2);
 
-            // 设置Canvas尺寸
             resultCanvas.width = intWidth;
             resultCanvas.height = intHeight;
 
-            // 清除Canvas
             ctx.clearRect(0, 0, intWidth, intHeight);
 
             if (mode === "top") {
-                // 上对称：绘制上边部分，并向下重叠1像素
-                const sourceHeight = halfHeight + 1; // 多取1像素
+                const sourceHeight = halfHeight + 1;
 
                 ctx.drawImage(
                     sourceImage,
@@ -119,7 +101,6 @@
                     0, 0, intWidth, sourceHeight
                 );
 
-                // 绘制镜像部分
                 ctx.save();
                 ctx.translate(0, intHeight);
                 ctx.scale(1, -1);
@@ -130,18 +111,15 @@
                 );
                 ctx.restore();
             } else {
-                // 下对称：绘制下边部分
-                const sourceY = halfHeight - 1; // 向上多取1像素
-                const sourceHeight = halfHeight + 1; // 多取1像素
+                const sourceY = halfHeight - 1;
+                const sourceHeight = halfHeight + 1;
 
-                // 绘制源部分
                 ctx.drawImage(
                     sourceImage,
                     0, sourceY, intWidth, sourceHeight,
                     0, intHeight - halfHeight - 1, intWidth, sourceHeight
                 );
 
-                // 绘制镜像部分
                 ctx.save();
                 ctx.scale(1, -1);
                 ctx.translate(0, -intHeight);
@@ -155,15 +133,8 @@
         }
     };
 
-    sourceImage.onerror = function() {
-        console.error('图片加载失败');
-    };
-
     if (sourceImage.complete) {
         sourceImage.onload();
-    } else {
-        resultCanvas.width = 800;
-        resultCanvas.height = 400;
     }
 </script>
 </body>

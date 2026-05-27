@@ -1,45 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <link rel="preload stylesheet" as="style" href="https://fonts.loli.net/css?family=Noto+Sans+SC:900">
-    <link rel="preload stylesheet" as="style" href="https://fonts.loli.net/css?family=Noto+Serif+SC:900">
-    <style type="text/css">
+    <title>5000choyen</title>
+    <style>
+        body { margin: 0; background: white; }
         #templateContainer {
-            padding-top: 25px;
-            padding-left: 25px;
+            padding: 25px 0 0 25px;
             width: fit-content;
             height: fit-content;
         }
-
-        #canvas {
-            display: block;
-            margin: 0;
-            padding: 0;
-        }
+        #canvas { display: block; }
     </style>
 </head>
 <body>
-<!-- 主容器 -->
 <div id="templateContainer">
     <canvas id="canvas"></canvas>
 </div>
 
-<script type="text/javascript">
-    /* globals Drawer */
+<script th:inline="javascript">
     let drawer = null;
 
     window.onload = function() {
         drawer = new Drawer(document.getElementById("canvas"));
         drawer.lang = "cn";
 
-        // 设置文本内容
-        drawer.topText.value = "${topText}";
-        drawer.bottomText.value = "${bottomText}";
+        drawer.topText.value = /*[[${topText}]]*/ "";
+        drawer.bottomText.value = /*[[${bottomText}]]*/ "";
         drawer.bottomText.useImg = false;
         drawer.useTransparent = true;
 
-        // 等待字体加载完成
         document.fonts.ready.then(function() {
             drawer.refresh();
         });
@@ -58,14 +48,12 @@
         this.ctx.font = this.font;
         this.ctx.setTransform(1, 0, -0.45, 1, 0, 0);
 
-        // 黑色
         {
             this.ctx.strokeStyle = "#000";
             this.ctx.lineWidth = 22;
             this.ctx.strokeText(this.value, this.x + 4, this.y + 4);
         }
 
-        // 银色
         {
             const grad = this.ctx.createLinearGradient(0, 24, 0, 122);
             grad.addColorStop(0.0, 'rgb(0,15,36)');
@@ -83,14 +71,12 @@
             this.ctx.strokeText(this.value, this.x + 4, this.y + 4);
         }
 
-        // 黑色
         {
             this.ctx.strokeStyle = "#000000";
             this.ctx.lineWidth = 16;
             this.ctx.strokeText(this.value, this.x, this.y);
         }
 
-        // 金色
         {
             const grad = this.ctx.createLinearGradient(0, 20, 0, 100);
             grad.addColorStop(0, 'rgb(253,241,0)');
@@ -104,17 +90,14 @@
             this.ctx.strokeText(this.value, this.x, this.y);
         }
 
-        // 黑
         this.ctx.lineWidth = 6;
         this.ctx.strokeStyle = '#000';
         this.ctx.strokeText(this.value, this.x + 2, this.y - 3);
 
-        // 白
         this.ctx.lineWidth = 6;
         this.ctx.strokeStyle = '#FFFFFF';
         this.ctx.strokeText(this.value, this.x, this.y - 3);
 
-        // 赤
         {
             const grad = this.ctx.createLinearGradient(0, 20, 0, 100);
             grad.addColorStop(0, 'rgb(255, 100, 0)');
@@ -126,7 +109,6 @@
             this.ctx.strokeText(this.value, this.x, this.y - 3);
         }
 
-        // 赤
         {
             const grad = this.ctx.createLinearGradient(0, 20, 0, 100);
             grad.addColorStop(0, 'rgb(230, 0, 0)');
@@ -143,7 +125,7 @@
     function BottomText(ctx) {
         this.value = "";
         this.font = "";
-        this.x = 0.0; // 初始值，将在Drawer.refresh()中动态计算
+        this.x = 0.0;
         this.y = 230.0;
         this.w = 0.0;
         this.ctx = ctx;
@@ -151,19 +133,17 @@
     }
 
     BottomText.prototype.draw = function() {
-        if (this.useImg) return; // 不使用图片模式
+        if (this.useImg) return;
 
         this.ctx.font = this.font;
         this.ctx.setTransform(1, 0, -0.45, 1, 0, 0);
 
-        // 黑色
         {
             this.ctx.strokeStyle = "#000";
             this.ctx.lineWidth = 22;
             this.ctx.strokeText(this.value, this.x + 5, this.y + 2);
         }
 
-        // 銀
         {
             const grad = this.ctx.createLinearGradient(0, this.y - 80, 0, this.y + 18);
             grad.addColorStop(0, 'rgb(0,15,36)');
@@ -179,21 +159,18 @@
             this.ctx.strokeText(this.value, this.x + 5, this.y + 2);
         }
 
-        // 黑色
         {
             this.ctx.strokeStyle = "#10193A";
             this.ctx.lineWidth = 17;
             this.ctx.strokeText(this.value, this.x, this.y);
         }
 
-        // 白
         {
             this.ctx.strokeStyle = "#DDD";
             this.ctx.lineWidth = 8;
             this.ctx.strokeText(this.value, this.x, this.y);
         }
 
-        // 紺
         {
             const grad = this.ctx.createLinearGradient(0, this.y - 80, 0, this.y);
             grad.addColorStop(0, 'rgb(16,25,58)');
@@ -206,7 +183,6 @@
             this.ctx.strokeText(this.value, this.x, this.y);
         }
 
-        // 銀
         {
             const grad = this.ctx.createLinearGradient(0, this.y - 80, 0, this.y);
             grad.addColorStop(0, 'rgb(245,246,248)');
@@ -228,10 +204,7 @@
         this.ctx = canvas.getContext('2d');
         this.ctx.lineJoin = 'round';
         this.ctx.lineCap = 'round';
-
-        // 初始设置，将在refresh时调整
         this.canvas.height = 290;
-
         this.topText = new TopText(this.ctx);
         this.bottomText = new BottomText(this.ctx);
         this.useTransparent = true;
@@ -247,38 +220,29 @@
             this.bottomText.font = "100px 'Noto Serif SC'";
         }
 
-        // 先设置字体以测量文本宽度
         this.ctx.font = this.topText.font;
         this.topText.w = this.ctx.measureText(this.topText.value).width + 75;
 
         this.ctx.font = this.bottomText.font;
         this.bottomText.w = this.ctx.measureText(this.bottomText.value).width;
 
-        // 动态计算银色文本的缩进：红色文本长度的一半
-        // 红色文本的x坐标是70，所以我们计算70 + (红色文本宽度)/2
         this.bottomText.x = this.topText.x + this.topText.w / 2;
 
-        // 计算所需宽度：取两个文本的最大宽度
         const topTextRight = this.topText.x + this.topText.w;
         const bottomTextRight = this.bottomText.x + this.bottomText.w;
         const requiredWidth = Math.max(topTextRight, bottomTextRight);
 
-        // 更新canvas宽度
-        this.canvas.width = Math.max(requiredWidth, 500); // 最小宽度500px
+        this.canvas.width = Math.max(requiredWidth, 500);
 
-        // 重新获取上下文（改变宽度会重置上下文）
         this.ctx = this.canvas.getContext('2d');
         this.ctx.lineJoin = 'round';
         this.ctx.lineCap = 'round';
 
-        // 重新设置文本对象的上下文
         this.topText.ctx = this.ctx;
         this.bottomText.ctx = this.ctx;
 
-        // 清除画布并绘制
         this.clear();
 
-        // 重新设置字体
         if (this.lang === "ja") {
             this.topText.font = "100px notobk";
             this.bottomText.font = "100px notoserifbk";
@@ -294,7 +258,7 @@
     Drawer.prototype.clear = function() {
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
         if (!this.useTransparent) {
-            this.ctx.fillStyle = `white`;
+            this.ctx.fillStyle = 'white';
             this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         } else {
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
