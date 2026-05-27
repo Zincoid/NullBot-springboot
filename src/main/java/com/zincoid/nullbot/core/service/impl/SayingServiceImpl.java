@@ -22,17 +22,13 @@ public class SayingServiceImpl implements SayingService {
     // =================== BOT功能相关 ===================
 
     @Override
-    public int add(Long userId, String userName, String text) {
-        try {
-            SayingPO saying = new SayingPO();
-            saying.setUserId(userId);
-            saying.setUserName(userName);
-            saying.setText(text);
-            saying.setTime(LocalDateTime.now());
-            return sayingMapper.insert(saying);
-        } catch (Exception e) {
-            return 0;
-        }
+    public boolean add(Long userId, String userName, String text) {
+        SayingPO saying = new SayingPO();
+        saying.setUserId(userId);
+        saying.setUserName(userName);
+        saying.setText(text);
+        saying.setTime(LocalDateTime.now());
+        return sayingMapper.insert(saying) == 1;
     }
 
     @Override

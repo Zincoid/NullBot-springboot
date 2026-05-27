@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SayingService {
 
-    int add(Long userId, String userName, String text);
+    boolean add(Long userId, String userName, String text);
 
     boolean deleteById(Integer id);
 
