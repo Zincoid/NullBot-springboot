@@ -21,11 +21,9 @@ public class PlayerManager {
     }
 
     public List<Player> getRecentPlayers(int count) {
-        if (count <= 0) {
-            return Collections.emptyList();
-        }
+        if (count <= 0) return Collections.emptyList();
         return playerMap.values().stream()
-                .filter(player -> player.getLastActionTime() != null)  // 可能冗余
+                .filter(player -> player.getLastActionTime() != null)
                 .sorted(Comparator.comparing(Player::getLastActionTime).reversed())
                 .limit(Math.min(count, playerMap.size()))
                 .collect(Collectors.toList());

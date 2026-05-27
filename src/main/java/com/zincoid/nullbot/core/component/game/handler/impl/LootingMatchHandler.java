@@ -80,16 +80,14 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
     public GameResult action(Long userId, String command)
     {
         Match match = matchManager.getMatchBySelfId(userId);
-        if (match == null) return getErrorResult("[摸金] ❌你当前没有进行中的对局");
+        if (match == null) return getErrorResult("对局不存在");
         LootingGameState state = games.get(match.getMatchId());
-        if (state == null) return getErrorResult("[摸金] ❌游戏状态不存在");
-        if (state.isFinished()) return GameResult.error("[摸金] ❌对局已结束");
+        if (state == null) return getErrorResult("状态不存在");
+        if (state.isFinished()) return GameResult.error("对局已结束");
 
         LootingPlayer p = state.getPlayers().get(userId);
-        if (!p.isAlive()) return getSuccessResult(userId, match, true, "💀 你已死亡，无法继续行动", "");
-        if (p.isEvacuated()) return getSuccessResult(userId, match, true, "🚪 你已撤离，无法继续行动", "");
-
-        // matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
+        if (!p.isAlive()) return getSuccessResult(userId, match, true, "💀你已死亡 无法继续行动", "");
+        if (p.isEvacuated()) return getSuccessResult(userId, match, true, "🚪你已撤离 无法继续行动", "");
 
         StringBuilder selfOutput = new StringBuilder();
         StringBuilder opponentOutput = new StringBuilder();
@@ -104,7 +102,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
             opponentOutput.append(attackPlayerOutput.get(1));
         }
         else if (command.equals("撤离")) selfOutput.append(gameLogic.evac(state, p));
-        else return getErrorResult("❓ 未知指令");
+        else return getErrorResult("指令不存在");
 
         selfOutput.append("\n");
 
@@ -124,9 +122,9 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
         // 游戏结束（撤离 / 迷失 / 死亡）
         if (state.isFinished()) {
             if (state.getTick() > 25) {
-                return getFinishResult(userId, match, true, "⏹ 时间已耗尽！", "⏹ 时间已耗尽！");
+                return getFinishResult(userId, match, true, "⏹时间已耗尽！", "⏹时间已耗尽！");
             }
-            return getFinishResult(userId, match, true, selfInfo + "\n⏹ 所有玩家均撤离或死亡！", "⏹ 所有玩家均撤离或死亡！");
+            return getFinishResult(userId, match, true, selfInfo + "\n⏹所有玩家均撤离或死亡", "⏹所有玩家均撤离或死亡");
         }
         return getSuccessResult(userId, match, true, selfInfo, opponentInfo);
     }

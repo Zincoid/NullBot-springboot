@@ -3,7 +3,9 @@ package com.zincoid.nullbot.bot.command.game.multi;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -24,38 +26,39 @@ public class LootingCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long userId = event.getUserId();
         String commandText = args.nextFullString("侦察");
-        GameResult result = lootingMatchHandler.action(userId, commandText);
-        if (result.getSuccess()) {
-            if (!result.getIsAsync()) throw new BotWarnException("该模式不发送同步消息");
-            if (!result.getSelfInfo().isEmpty())
-                bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-            if (!result.getOpponentInfo().isEmpty())
-                bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
-        } else bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
         log.info("☑ [Looting] 玩家 {} 执行指令 [{}]", userId, commandText);
+
+        GameResult result = lootingMatchHandler.action(userId, commandText);
+        if (!result.getSuccess()) throw new BotInfoException(Emoji.WARN, result.getSelfInfo());
+        if (!result.getIsAsync()) throw new BotWarnException("游戏不支持同步消息");
+        if (!result.getSelfInfo().isEmpty())
+            bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
+        if (!result.getOpponentInfo().isEmpty())
+            bot.sendGroupMsg(result.getOpponentGroupId(), result.getOpponentInfo(), false);
     }
 
     @Override
     public String getHelp() {
         return String.format("""
                 ◉ Looting 命令
-                功能: 双人 PVPVE 非回合制摸金对抗
+                功能: 双人 PvPvE 非回合制摸金对抗
                 奖励: 所有带出物品 & 200Exp
                 限权: %s 级
+                格式: Looting [可选: 指令]
                 别名: 摸金
                 
-                基础指令:
-                - Looting 侦察
-                - Looting 移动 [地点]
-                - Looting 搜刮
-                - Looting 攻击AI
-                - Looting 攻击玩家
-                - Looting 撤离
+                指令:
+                - 侦察
+                - 移动 [地点]
+                - 搜刮
+                - 攻击AI
+                - 攻击玩家
+                - 撤离
                 
                 说明:
-                - 任意玩家行动(侦察除外)都会推进游戏刻
-                - AI 会在 Tick 中移动 / 攻击
-                - 25 Tick后未撤离则迷失并掉落全部物品""", getAccess()
+                - 任意玩家行动(除侦察)会推进游戏刻
+                - AI 会在刻中移动或攻击
+                - 25 刻后未撤离则迷失并掉落全部物品""", getAccess()
         );
     }
 }
