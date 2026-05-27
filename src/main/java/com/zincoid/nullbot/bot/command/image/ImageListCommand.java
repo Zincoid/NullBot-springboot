@@ -34,7 +34,7 @@ public class ImageListCommand implements Command {
         bot.sendGroupMsg(event.getGroupId(), """
                 [图片列表] ✅已获取
                 %s""".formatted(String.join("\n", fileNames)), false);
-        log.info("☑ [ImageList] 已获取图片列表");
+        log.info("☑ [ImageList] 图片列表已获取");
     }
 
     @Override

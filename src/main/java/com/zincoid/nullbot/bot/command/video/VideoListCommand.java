@@ -3,6 +3,8 @@ package com.zincoid.nullbot.bot.command.video;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -28,15 +30,10 @@ public class VideoListCommand implements Command {
         String videoPath = fileStorageProperties.getVideoPath();
         List<FilePO> videos = fileMapper.searchFile("", videoPath);
         List<String> fileNames = videos.stream().map(FilePO::getFileName).toList();
-        if (videos.size() > 50) {
-            log.info("☑ [VideoList] 视频列表数据过多");
-            bot.sendGroupMsg(event.getGroupId(), """
-                    [视频列表] ✅过多暂不展示
-                    - 共 %s 个视频""".formatted(videos.size()), false);
-            return;
-        }
-        bot.sendGroupMsg(event.getGroupId(), "[视频列表] ✅已获取\n"
-                + String.join("\n", fileNames), false);
+        if (videos.size() > 50) throw new BotInfoException(Emoji.INFO, "过多暂不展示: 共%s个".formatted(videos.size()));
+        bot.sendGroupMsg(event.getGroupId(), """
+                [视频列表] ✅已获取
+                %s""".formatted(String.join("\n", fileNames)), false);
         log.info("☑ [VideoList] 视频列表已获取");
     }
 

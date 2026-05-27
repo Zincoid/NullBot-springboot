@@ -4,7 +4,8 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -46,14 +47,14 @@ public class VideoGetCommand implements Command {
             keyword = args.getFullString(1);
         } else {
             secondary = "storage";
-            keyword = args.getFullString(0);
+            keyword = args.getFullString(0, "");
         }
 
         List<FilePO> files = fileService.search(
                 keyword, fileStorageProperties.getVideoPath() + "/" + secondary);
 
         if (files.isEmpty())
-            throw new BotWarnException("无匹配项");
+            throw new BotInfoException(Emoji.INFO, "无匹配项");
         if (files.size() == 1) {
             sendVideo(bot, groupId, files.getFirst());
             return;
