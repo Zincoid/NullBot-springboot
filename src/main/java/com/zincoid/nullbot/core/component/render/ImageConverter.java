@@ -27,6 +27,8 @@ public class ImageConverter {
     private final ResourceLoader resourceLoader;
     private final FileStorageProperties fileStorageProperties;
 
+    // =========================== 图像方法 ===========================
+
     /** RIP ：灰度化 + R.I.P. 文字 */
     public String RIP(String imagePath) throws Exception {
         resourceLoader.getCache(RIP_FONT);
@@ -45,6 +47,7 @@ public class ImageConverter {
         return overlay(imagePath, INVS_PRTS_PNG);
     }
 
+    /** Overlay ：叠加效果 */
     private String overlay(String imagePath, String overlayResource) throws Exception {
         String overlayUri = "data:image/png;base64,"
                 + Base64Util.from(resourceLoader.getCache(overlayResource));
@@ -54,6 +57,9 @@ public class ImageConverter {
         return render(svg);
     }
 
+    // =========================== 工具方法 ===========================
+
+    /** SVG → PNG */
     private String render(String svg) {
         String dir = fileStorageProperties.getTempPath();
         var opts = new ResvgJNI.RenderOptions(dir);
