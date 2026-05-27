@@ -86,8 +86,8 @@ public class SymmetryCommand implements Command {
             String base64;
             try {
                 base64 = htmlRenderer.load("static/html/symmetry.html")
-                        .set("mode", mode)
-                        .image("image", imagePath)
+                        .string("mode", mode)
+                        .file("image", imagePath)
                         .render("#mirrorContainer");
             } finally {
                 FileUtils.deleteQuietly(new File(imagePath));

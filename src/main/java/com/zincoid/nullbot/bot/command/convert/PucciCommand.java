@@ -24,9 +24,9 @@ public class PucciCommand implements Command {
         Long groupId = event.getGroupId();
 
         String base64 = htmlRenderer.load("static/html/pucci.html")
-                .set("text1", "普奇！！回答我！")
-                .set("text2", "为什么你要加速时间！！")
-                .set("text3", args.nextString())
+                .string("text1", "普奇！！回答我！")
+                .string("text2", "为什么你要加速时间！！")
+                .string("text3", args.nextString())
                 .resource("background", "static/image/pucci.png")
                 .render("#wrap");
 

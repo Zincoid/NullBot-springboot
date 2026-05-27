@@ -24,8 +24,8 @@ public class ChoyenCommand implements Command {
         Long groupId = event.getGroupId();
 
         String base64 = htmlRenderer.load("static/html/5000choyen.html")
-                .set("topText", args.nextString())
-                .set("bottomText", args.nextString())
+                .string("topText", args.nextString())
+                .string("bottomText", args.nextString())
                 .render("#templateContainer");
 
         String response = MsgUtils.builder().img("base64://" + base64).build();
