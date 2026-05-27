@@ -6,13 +6,14 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.GroupMemberInfoResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.service.FileService;
 import com.zincoid.nullbot.core.util.Base64Util;
 import org.springframework.stereotype.Component;
@@ -54,10 +55,13 @@ public class WifeCommand implements Command {
         LocalDateTime expireTime = memberExpireMap.get(userId);
         if (expireTime != null && expireTime.isAfter(LocalDateTime.now())) {
             Long wifeId = memberWifeMap.get(userId);
+            String wifeName = bot.getStrangerInfo(wifeId, true).getData().getNickname();
             String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
             String response = MsgUtils.builder()
-                    .text("今天已经选过了哦\uD83D\uDCA6...\n你的群友老婆是\n" + bot.getStrangerInfo(
-                            wifeId, true).getData().getNickname() + "(" + wifeId + ")")
+                    .text("""
+                            今天已经选过了哦\uD83D\uDCA6...
+                            你的群友老婆是
+                            %s(%s)""".formatted(wifeName, wifeId))
                     .img(avatarUrl)
                     .build();
             bot.sendGroupMsg(event.getGroupId(), response, false);
@@ -71,13 +75,16 @@ public class WifeCommand implements Command {
             wife = members.get(randomIndex);
         } while (Objects.equals(wife.getUserId(), event.getUserId()));
         Long wifeId = wife.getUserId();
-        memberWifeMap.put(userId, wifeId);
-        memberExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
+        String wifeName = wife.getNickname();
         String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
         String response = MsgUtils.builder()
-                .text("你的今日群友老婆是✨\n" + wife.getNickname() + "(" + wifeId + ")")
+                .text("""
+                        你的今日群友老婆是✨
+                        %s(%s)""".formatted(wifeName, wifeId))
                 .img(avatarUrl)
                 .build();
+        memberWifeMap.put(userId, wifeId);
+        memberExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [Wife] 今日群友老婆 - {} -> {}", userId, wifeId);
     }
@@ -85,33 +92,37 @@ public class WifeCommand implements Command {
     private void animeWife(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long userId = event.getUserId();
         LocalDateTime expireTime = acgExpireMap.get(userId);
-        if (expireTime == null || expireTime.isBefore(LocalDateTime.now())) {
-            String category = args.nextString();
-            String acgPath = fileStorageProperties.getImagePath() + "/acg/" + category;
-
-            List<FilePO> wives = fileService.search("", acgPath);
-            if (wives.isEmpty())
-                throw new BotWarnException("暂无角色");
-            FilePO wife = wives.get(ThreadLocalRandom.current().nextInt(wives.size()));
-            String wifeName = wife.getName().split("_")[0];
-            acgWifeMap.put(userId, wife);
-            acgExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
-            String response = MsgUtils.builder()
-                    .text("你的今日二次元老婆✨是\n" + category + " - " + wifeName)
-                    .img("base64://" + Base64Util.from(wife.getPath()))
-                    .build();
-            bot.sendGroupMsg(event.getGroupId(), response, false);
-            log.info("☑ [Wife] 今日二次元老婆 - {} -> {}", userId, wifeName);
-        } else {
+        if (expireTime != null && expireTime.isAfter(LocalDateTime.now())) {
             FilePO wife = acgWifeMap.get(userId);
             String wifeName = wife.getName().split("_")[0];
             String response = MsgUtils.builder()
-                    .text("今天已经选过了哦\uD83D\uDCA6...\n你的二次元老婆是\n" + wifeName)
+                    .text("""
+                            今天已经选过了哦\uD83D\uDCA6...
+                            你的二次元老婆是
+                            %s""".formatted(wifeName))
                     .img("base64://" + Base64Util.from(wife.getPath()))
                     .build();
             bot.sendGroupMsg(event.getGroupId(), response, false);
             log.info("☑ [Wife] 今日已选过二次元老婆 - {} -> {}", userId, wifeName);
+            return;
         }
+        String category = args.nextString();
+        String acgPath = fileStorageProperties.getImagePath() + "/acg/" + category;
+        List<FilePO> wives = fileService.search("", acgPath);
+        if (wives.isEmpty())
+            throw new BotInfoException(Emoji.INFO, "暂无角色");
+        FilePO wife = wives.get(ThreadLocalRandom.current().nextInt(wives.size()));
+        String wifeName = wife.getName().split("_")[0];
+        String response = MsgUtils.builder()
+                .text("""
+                        你的今日二次元老婆是✨
+                        %s - %s""".formatted(category, wifeName))
+                .img("base64://" + Base64Util.from(wife.getPath()))
+                .build();
+        acgWifeMap.put(userId, wife);
+        acgExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));
+        bot.sendGroupMsg(event.getGroupId(), response, false);
+        log.info("☑ [Wife] 今日二次元老婆 - {} -> {}", userId, wifeName);
     }
 
     @Override
