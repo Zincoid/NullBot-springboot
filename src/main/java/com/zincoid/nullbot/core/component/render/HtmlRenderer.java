@@ -24,6 +24,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -33,18 +34,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 @RequiredArgsConstructor
 public class HtmlRenderer {
 
-    private static final int DRIVER_POOL_SIZE = 2;
     private static final TemplateEngine ENGINE;
-
     static {
         StringTemplateResolver resolver = new StringTemplateResolver();
         ENGINE = new TemplateEngine();
         ENGINE.setTemplateResolver(resolver);
     }
 
+    private static final int DRIVER_POOL_SIZE = 2;
+
     private final ResourceLoader resources;
     private final ChromeDriverFactory driverFactory;
-
     private BlockingQueue<WebDriver> drivers;
 
     @PostConstruct
@@ -61,76 +61,79 @@ public class HtmlRenderer {
         log.info("▽ [HtmlRenderer] Chrome 驱动已关闭");
     }
 
-    /** 文件路径 → file:// URL */
-    public String toUrl(String filePath) {
-        File file = new File(filePath);
-        if (!file.exists()) throw new RuntimeException("图片文件不存在: " + filePath);
-        return "file://" + file.getAbsolutePath().replace("\\", "/");
-    }
-
-    /** 资源路径 → file:// URL (从缓存加载) */
-    public String resource(String resourcePath) {
-        Path path = resources.getCache(resourcePath);
-        return toUrl(path.toAbsolutePath().toString());
-    }
-
-    /** 渲染资源模板 → 全页截图 */
-    public String render(String resourcePath, Map<String, Object> context) throws Exception {
-        String html = Files.readString(resources.getCache(resourcePath));
-        return capture(apply(html, context), null);
-    }
-
-    /** 渲染资源模板 → 元素截图 */
-    public String render(String resourcePath, Map<String, Object> context, String cssSelector) throws Exception {
-        String html = Files.readString(resources.getCache(resourcePath));
-        return capture(apply(html, context), cssSelector);
-    }
-
-    private String apply(String template, Map<String, Object> context) {
-        Context ctx = new Context();
-        ctx.setVariables(context);
-        return ENGINE.process(template, ctx);
-    }
-
-    private String capture(String html, String cssSelector) throws Exception {
-        WebDriver driver = take();
+    public Template load(String resourcePath) {
         try {
-            Path tempFile = Files.createTempFile("render-", ".html");
-            try {
-                Files.writeString(tempFile, html);
-                driver.get("file://" + tempFile.toAbsolutePath());
-
-                new WebDriverWait(driver, Duration.ofSeconds(10))
-                        .until(d -> ((JavascriptExecutor) d)
-                                .executeScript("return document.readyState")
-                                .equals("complete"));
-
-                AShot ashot = new AShot();
-                ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-
-                BufferedImage image;
-                if (cssSelector != null) {
-                    WebElement element = driver.findElement(By.cssSelector(cssSelector));
-                    ashot.coordsProvider(new WebDriverCoordsProvider());
-                    image = ashot.takeScreenshot(driver, element).getImage();
-                } else {
-                    image = ashot.takeScreenshot(driver).getImage();
-                }
-                return Base64Util.from(image);
-            } finally {
-                Files.deleteIfExists(tempFile);
-            }
-        } finally {
-            drivers.offer(driver);
+            return new Template(Files.readString(resources.getCache(resourcePath)));
+        } catch (Exception e) {
+            throw new RuntimeException("模板加载失败: " + resourcePath, e);
         }
     }
 
     private WebDriver take() {
-        try {
-            return drivers.take();
-        } catch (InterruptedException e) {
+        try { return drivers.take(); }
+        catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("等待 WebDriver 被中断", e);
+        }
+    }
+
+    public class Template {
+
+        private final String html;
+        private final Map<String, Object> ctx = new HashMap<>();
+
+        private Template(String html) { this.html = html; }
+
+        // ==================================== 链式构建方法 ====================================
+
+        public Template set(String key, String value) { ctx.put(key, value); return this; }
+        public Template image(String key, String filePath) {
+            File f = new File(filePath);
+            if (!f.exists()) throw new RuntimeException("图片文件不存在: " + filePath);
+            ctx.put(key, "file://" + f.getAbsolutePath().replace("\\", "/"));
+            return this;
+        }
+        public Template resource(String key, String resourcePath) {
+            Path p = resources.getCache(resourcePath);
+            return image(key, p.toAbsolutePath().toString());
+        }
+        public String render() throws Exception { return capture(null); }
+        public String render(String cssSelector) throws Exception { return capture(cssSelector); }
+
+        // =================================== 渲染工具方法 ====================================
+
+        private String capture(String cssSelector) throws Exception {
+            Context context = new Context();
+            context.setVariables(ctx);
+            String resolved = ENGINE.process(html, context);
+            WebDriver driver = take();
+            try {
+                Path tmp = Files.createTempFile("render-", ".html");
+                try {
+                    Files.writeString(tmp, resolved);
+                    driver.get("file://" + tmp.toAbsolutePath());
+                    new WebDriverWait(driver, Duration.ofSeconds(10))
+                            .until(d -> ((JavascriptExecutor) d)
+                                    .executeScript("return document.readyState").equals("complete"));
+
+                    AShot ashot = new AShot();
+                    ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
+
+                    BufferedImage img;
+                    if (cssSelector != null) {
+                        WebElement el = driver.findElement(By.cssSelector(cssSelector));
+                        ashot.coordsProvider(new WebDriverCoordsProvider());
+                        img = ashot.takeScreenshot(driver, el).getImage();
+                    } else {
+                        img = ashot.takeScreenshot(driver).getImage();
+                    }
+                    return Base64Util.from(img);
+                } finally {
+                    Files.deleteIfExists(tmp);
+                }
+            } finally {
+                drivers.offer(driver);
+            }
         }
     }
 }

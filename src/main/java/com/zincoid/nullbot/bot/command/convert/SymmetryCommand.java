@@ -82,11 +82,10 @@ public class SymmetryCommand implements Command {
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
-                base64 = renderer.render(
-                        "static/html/symmetry.html",
-                        Map.of("mode", mode, "image", renderer.toUrl(imagePath)),
-                        "#mirrorContainer"
-                );
+                base64 = renderer.load("static/html/symmetry.html")
+                        .set("mode", mode)
+                        .image("image", imagePath)
+                        .render("#mirrorContainer");
             } finally {
                 FileUtils.deleteQuietly(new File(imagePath));
             }

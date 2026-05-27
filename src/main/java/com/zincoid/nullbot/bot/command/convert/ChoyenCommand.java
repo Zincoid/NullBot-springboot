@@ -11,8 +11,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 @Slf4j
 @CommandMapping({"Choyen", "5000兆"})
 @Component
@@ -25,11 +23,10 @@ public class ChoyenCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
 
-        String base64 = renderer.render(
-                "static/html/5000choyen.html",
-                Map.of("topText", args.nextString(), "bottomText", args.nextString()),
-                "#templateContainer"
-        );
+        String base64 = renderer.load("static/html/5000choyen.html")
+                .set("topText", args.nextString())
+                .set("bottomText", args.nextString())
+                .render("#templateContainer");
 
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);
