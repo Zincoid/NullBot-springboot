@@ -8,7 +8,9 @@ import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -80,7 +82,7 @@ public class TtsCommand implements Command {
                 case "delete" -> {
                     String templateName = args.nextString();
                     if (!ttsTemplateService.deleteByName(templateName))
-                        throw new BotWarnException("该模板不存在");
+                        throw new BotInfoException(Emoji.INFO, "模板不存在");
                     bot.sendGroupMsg(event.getGroupId(), "⚠️模板已删除", false);
                     log.info("☑ [Tts] 模板已删除 -> {}", templateName);
                 }
@@ -88,7 +90,8 @@ public class TtsCommand implements Command {
                     String templateName = args.nextString();
                     String text = args.nextString();
                     TtsTemplatePO template = ttsTemplateService.getByName(templateName);
-                    if (template == null) throw new BotWarnException("该模板不存在");
+                    if (template == null)
+                        throw new BotInfoException(Emoji.INFO, "模板不存在");
                     ttsTemplateService.increaseUsed(template.getId());
                     String base64 = ttsClient.synthesize_clone(template.getPath(), template.getText(), text);
                     String response = MsgUtils.builder().voice("base64://" + base64).build();

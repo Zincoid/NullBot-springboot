@@ -78,11 +78,8 @@ public class BreadCommand implements Command {
                 int j = res[1];
                 StringBuilder sb = new StringBuilder();
                 sb.append("\uD83C\uDF5E%s吃掉%s面包".formatted(userName, i));
-                sb.append("\n- 获得 %sExp".formatted(exp * i));
-                while (j > 0) {
-                    sb.append("\n- LEVEL UP！");
-                    j--;
-                }
+                sb.append("\n- 获得%sExp...".formatted(exp * i));
+                while (j-- > 0) sb.append("\n- LEVEL UP！");
                 bot.sendGroupMsg(groupId, sb.toString(), false);
                 log.info("☑ [Bread::Eat] 已吃面包 - {} -> {}", userId, i);
                 return;
