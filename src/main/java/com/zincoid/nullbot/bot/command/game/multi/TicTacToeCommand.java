@@ -25,14 +25,17 @@ public class TicTacToeCommand implements Command {
         Long userId = event.getUserId();
         int x = args.nextInt();
         int y = args.nextInt();
-        GameResult result = ticTacToeMatchHandler.move(userId, x - 1, y - 1);
-        if (result.getSuccess()) {
-            if (result.getIsAsync()) throw new BotWarnException("该模式不发送异步消息");
-            if (!result.getIsSameGroup())
-                bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
-            bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
-        } else bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
         log.info("☑ [TicTacToe] 玩家 {} 落子 [{}, {}]", userId, x, y);
+        GameResult result = ticTacToeMatchHandler.move(userId, x - 1, y - 1);
+
+        if (!result.getSuccess()) {
+            bot.sendGroupMsg(event.getGroupId(), result.getSelfInfo(), false);
+            return;
+        }
+        if (result.getIsAsync()) throw new BotWarnException("游戏不支持异步消息");
+        if (!result.getIsSameGroup())
+            bot.sendGroupMsg(result.getOpponentGroupId(), result.getSelfInfo(), false);
+        bot.sendGroupMsg(result.getSelfGroupId(), result.getSelfInfo(), false);
     }
 
     @Override

@@ -111,7 +111,7 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
     @Override
     protected String render(ReversiGameState s) {
         StringBuilder sb = new StringBuilder();
-        sb.append("【黑白棋】\n");
+        sb.append("[黑白棋]\n");
 
         // 列头
         sb.append("⬛");

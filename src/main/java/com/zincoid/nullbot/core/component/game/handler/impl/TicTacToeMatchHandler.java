@@ -70,18 +70,16 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
      */
     public GameResult move(Long userId, int r, int c) {
         Match match = matchManager.getMatchBySelfId(userId);
-        if (match == null) return getErrorResult("[井字棋] ❌对局不存在");
+        if (match == null) return getErrorResult("❌对局不存在");
         TicTacToeGameState state = games.get(match.getMatchId());
-        if (state == null) return getErrorResult("[井字棋] ❌游戏状态不存在");
-
-        // matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
+        if (state == null) return getErrorResult("❌状态不存在");
 
         char my = userId.equals(state.getPlayerX()) ? 'X' :
                         userId.equals(state.getPlayerO()) ? 'O' : 0;
 
-        if (my == 0) return getErrorResult("[井字棋] ❌你不是该对局玩家");
-        if (state.getCurrentTurn() != my) return getErrorResult("[井字棋] ⏳还没轮到你");
-        if (!gameLogic.place(state, r, c)) return getErrorResult("[井字棋] ❌非法落子");
+        if (my == 0) return getErrorResult("❌非对局玩家");
+        if (state.getCurrentTurn() != my) return getErrorResult("⏳没轮到你");
+        if (!gameLogic.place(state, r, c)) return getErrorResult("❌非法落子");
 
         StringBuilder info = new StringBuilder();
         info.append(render(state));
@@ -90,13 +88,13 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
         if (winner != null) {
             state.setFinished(true);
             state.setWinnerId(winner == 'X' ? state.getPlayerX() : state.getPlayerO());
-            info.append("\n\n🎉 ")
+            info.append("\n\n🎉")
                     .append(winner == 'X' ? "X" : "O")
-                    .append(" 获胜！获得30抽数和100Exp！");
+                    .append("获胜 获得30抽数和100Exp");
             return getFinishResult(userId, match, false, info.toString(), null);
         } else if (gameLogic.isDraw(state)) {
             state.setFinished(true);
-            info.append("\n\n🤝 平局！\n 双方均可获得15抽数和50Exp！");
+            info.append("\n\n🤝平局 双方均可获得15抽数和50Exp");
             return getFinishResult(userId, match, false, info.toString(), null);
         }
         return getSuccessResult(userId, match, false, info.toString(), null);
