@@ -4,7 +4,8 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -32,12 +33,9 @@ public class RandomVideoCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String videoPath = fileStorageProperties.getVideoPath() + "/collect";
         List<FilePO> videos = fileService.search("", videoPath);
-        if (videos.isEmpty())
-            throw new BotWarnException("暂无视频");
+        if (videos.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无视频");
         FilePO video = videos.get(ThreadLocalRandom.current().nextInt(videos.size()));
-        String response = MsgUtils.builder()
-                .video(ossUrlBuilder.from(video.getId()), "")
-                .build();
+        String response = MsgUtils.builder().video(ossUrlBuilder.from(video.getId()), "").build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [RandomVideo] 视频已发送: {}", video.getFileName());
     }

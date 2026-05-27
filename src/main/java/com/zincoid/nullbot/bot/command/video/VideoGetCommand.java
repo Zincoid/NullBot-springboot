@@ -26,8 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VideoGetCommand implements Command {
 
+    private static final int WAIT_TIMEOUT_SECONDS = 30;  // 等待超时时间
     private static final int PAGE_SIZE = 5;  // 查询单页大小
-    private static final int WAIT_TIMEOUT = 30;  // 等待超时时间 (单位: Second)
 
     private final OssUrlBuilder ossUrlBuilder;
     private final FileStorageProperties fileStorageProperties;
@@ -69,7 +69,7 @@ public class VideoGetCommand implements Command {
         ).size(PAGE_SIZE).userId(userId).build();
 
         pager.init();
-        while (pager.input(botInputManager, WAIT_TIMEOUT)) {
+        while (pager.input(botInputManager, WAIT_TIMEOUT_SECONDS)) {
             log.info("☑ [VideoGet] 已操作分页器");
         }
     }

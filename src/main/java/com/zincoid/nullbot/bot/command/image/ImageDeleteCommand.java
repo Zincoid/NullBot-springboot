@@ -43,8 +43,7 @@ public class ImageDeleteCommand implements Command {
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
             Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
-            if (imageMap.isEmpty())
-                throw new BotWarnException("引用未包含图片");
+            if (imageMap.isEmpty()) throw new BotWarnException("引用未包含图片");
             imageMap.forEach((name, url) -> {
                 String key = name.substring(0, name.lastIndexOf("."));  // QQ图片扩展名错误
                 List<FilePO> realFiles = fileService.search(key, directory);
@@ -54,7 +53,7 @@ public class ImageDeleteCommand implements Command {
             });
             return;
         }
-        throw new BotWarnException("缺少引用或图名");
+        throw new BotWarnException("缺少引用或文件名");
     }
 
     private void deleteFile(Bot bot, GroupMessageEvent event, String directory, String fileName) {

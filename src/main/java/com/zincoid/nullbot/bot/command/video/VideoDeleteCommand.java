@@ -6,7 +6,9 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -14,7 +16,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.service.FileService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
-import com.zincoid.nullbot.core.util.StringUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -32,29 +33,24 @@ public class VideoDeleteCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String directory = fileStorageProperties.getVideoPath() + "/collect";
         ArrayMsg reply = event.getArrayMsg().getFirst();
-
-        if (!args.isEmpty()) {
+        if (args.hasNext()) {
             deleteFile(bot, event, directory, args.nextFullString());
             return;
         }
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-            Map<String, String> videoMap = MsgParseUtil
-                    .extractVidMap(replyMsg.getRawMessage());
-            if (videoMap.isEmpty())
-                throw new BotWarnException("未引用视频");
-            for (Map.Entry<String, String> entry : videoMap.entrySet())
-                deleteFile(bot, event, directory, entry.getKey());
+            Map<String, String> videoMap = MsgParseUtil.extractVidMap(replyMsg.getRawMessage());
+            if (videoMap.isEmpty()) throw new BotWarnException("引用未包含视频");
+            videoMap.forEach((name, url) -> deleteFile(bot, event, directory, name));
             return;
         }
-        throw new BotWarnException("无文件名或引用");
+        throw new BotWarnException("缺少引用或文件名");
     }
 
     private void deleteFile(Bot bot, GroupMessageEvent event, String directory, String fileName) {
         if(!fileService.deleteFile(directory, fileName))
-            throw new BotWarnException("文件服务删除失败");
-        bot.sendGroupMsg(event.getGroupId(), "[删除视频] ⚠️已删除\n- " +
-                StringUtil.truncateFileName(fileName, 12), false);
+            throw new BotInfoException(Emoji.WARN, "视频删除失败");
+        bot.sendGroupMsg(event.getGroupId(), "⚠️视频已删除", false);
         log.info("☑ [VideoDelete] 视频已删除: {}", fileName);
     }
 
