@@ -82,7 +82,7 @@ public class LootingGameLogic extends GameLogic {
         StringBuilder sb = new StringBuilder();
         for (AiEnemy ai : s.getEnemies()) {
             if (ai.alive() && ai.getLocation().equals(p.getLocation())) {
-                sb.append("⚠️ 发现AI敌人: ")
+                sb.append("⚠️发现AI敌人: ")
                         .append(ai.getName())
                         // .append(" HP ").append(ai.getHp())
                         .append("\n");
@@ -90,7 +90,7 @@ public class LootingGameLogic extends GameLogic {
         }
         for (LootingPlayer other : s.getPlayers().values()) {
             if (other != p && other.isAlive() && !other.isEvacuated() && other.getLocation().equals(p.getLocation())) {
-                sb.append("⚠️ 发现玩家: ")
+                sb.append("⚠️发现玩家: ")
                         .append(other.getUserId())
                         // .append("HP ").append(other.getHp())
                         .append("\n");
@@ -115,10 +115,10 @@ public class LootingGameLogic extends GameLogic {
     public String move(LootingGameState s, LootingPlayer p, String target) {
         MapNode cur = s.getMap().node(p.getLocation());
         if (!cur.getNeighbors().contains(target)) {
-            return "\n❌ 无法移动到该位置";
+            return "\n❌无法移动至此";
         }
         p.setLocation(target);
-        return "\n▶️ 你移动到了 " + target + "\n" +
+        return "\n▶️你移动到了 " + target + "\n" +
                 s.getMap().node(target).printWithoutItems();
     }
 
@@ -132,10 +132,10 @@ public class LootingGameLogic extends GameLogic {
     public String loot(LootingGameState s, LootingPlayer p) {
         MapNode node = s.getMap().node(p.getLocation());
         if (node.getItems().isEmpty()) {
-            return "\n📦 这里没有可以搜刮的物品";
+            return "\n📦无可搜刮物品";
         }
 
-        StringBuilder sb = new StringBuilder("\n📦 你搜刮到了: ");
+        StringBuilder sb = new StringBuilder("\n📦你搜刮到了: ");
         for (ItemPO i : node.getItems()) {
             p.getBackpack().add(i);
             sb.append("\n- ").append(i.getName())
@@ -152,21 +152,21 @@ public class LootingGameLogic extends GameLogic {
                 ai.setHp(Math.max(ai.getHp() - dmg, 0));
 
                 StringBuilder sb = new StringBuilder();
-                sb.append("\n⚔️ 你对").append(ai.getName())
+                sb.append("\n⚔️你对").append(ai.getName())
                         .append("造成").append(dmg).append("伤害\n")
                         .append("对方剩余HP：").append(ai.getHp());
 
                 if (!ai.alive()) {
-                    sb.append("\n💀 已击败").append(ai.getName()).append(",获得他的战利品:");
+                    sb.append("\n💀已击败").append(ai.getName()).append(" 获得他的战利品:");
                     for (ItemPO i : ai.getBackpack()) {
                         p.getBackpack().add(i);
-                        sb.append("\n🎁 ").append(i.getName()).append(" (").append(i.getRarity().getDescription()).append(")");
+                        sb.append("\n🎁").append(i.getName()).append(" (").append(i.getRarity().getDescription()).append(")");
                     }
                 }
                 return sb.toString();
             }
         }
-        return "\n❌ 当前位置没有 AI 敌人";
+        return "\n❌未找到AI敌人";
     }
 
     public List<String> attackPlayer(LootingGameState s, LootingPlayer p) {
@@ -176,22 +176,22 @@ public class LootingGameLogic extends GameLogic {
                 other.setHp(Math.max(other.getHp() - dmg, 0));
 
                 StringBuilder sb = new StringBuilder();
-                sb.append("\n⚔️ 你对玩家").append(other.getUserId())
+                sb.append("\n⚔️你对玩家").append(other.getUserId())
                         .append("造成").append(dmg).append("伤害\n")
                         .append("对方剩余HP: ").append(other.getHp());
 
                 if (other.getHp() <= 0) {
                     other.setAlive(false);
-                    sb.append("\n💀 已击败").append(other.getUserId()).append(",获得他的战利品:");
+                    sb.append("\n💀已击败").append(other.getUserId()).append(" 获得他的战利品:");
                     for (ItemPO i : other.getBackpack()) {
                         p.getBackpack().add(i);
-                        sb.append("\n🎁 ").append(i.getName()).append(" (").append(i.getRarity().getDescription()).append(")");
+                        sb.append("\n🎁").append(i.getName()).append(" (").append(i.getRarity().getDescription()).append(")");
                     }
                 }
-                return List.of(sb.toString(), "⚔️ 玩家攻击了" + other.getUserId() +",造成" + dmg + "伤害！剩余HP: " + other.getHp());
+                return List.of(sb.toString(), "⚔️玩家攻击了" + other.getUserId() +" 造成" + dmg + "伤害 对方剩余HP: " + other.getHp());
             }
         }
-        return List.of("\n❌ 当前位置没有可攻击的玩家", "");
+        return List.of("\n❌未找到玩家", "");
     }
 
     private List<String> aiAction(LootingGameState s, Long selfId) {
@@ -205,22 +205,22 @@ public class LootingGameLogic extends GameLogic {
                         if(Objects.equals(p.getUserId(), selfId)){
                             int dmg = ai.getAtk();
                             p.setHp(p.getHp() - dmg);
-                            sb1.append("\n⚔️ ").append(ai.getName()).append("对你造成").append(dmg).append("伤害\n");
+                            sb1.append("\n⚔️").append(ai.getName()).append("对你造成").append(dmg).append("伤害\n");
                             if (p.getHp() <= 0) {
                                 p.setAlive(false);
                                 ai.getBackpack().addAll(p.getBackpack());
                                 p.getBackpack().clear();
-                                sb1.append("\n 💀 你死了");
+                                sb1.append("\n💀你死了");
                             }
                         }else{
                             int dmg = ai.getAtk();
                             p.setHp(p.getHp() - dmg);
-                            sb2.append("⚔️ ").append(ai.getName()).append("攻击了").append(p.getUserId()).append(",造成").append(dmg).append("伤害！").append("剩余HP: ").append(p.getHp());
+                            sb2.append("⚔️").append(ai.getName()).append("攻击了").append(p.getUserId()).append(",造成").append(dmg).append("伤害 ").append("你的剩余HP: ").append(p.getHp());
                             if (p.getHp() <= 0) {
                                 p.setAlive(false);
                                 ai.getBackpack().addAll(p.getBackpack());
                                 p.getBackpack().clear();
-                                sb2.append("\n 💀 你死了");
+                                sb2.append("\n💀你死了");
                             }
                         }
                     }
@@ -240,14 +240,13 @@ public class LootingGameLogic extends GameLogic {
     public String evac(LootingGameState s, LootingPlayer p) {
         MapNode node = s.getMap().node(p.getLocation());
         if (!node.isEvac()) {
-            return "\n❌ 这里不是撤离点";
+            return "\n❌非撤离点";
         }
         p.setEvacuated(true);
 
-        StringBuilder sb = new StringBuilder("\n🚪 已成功撤离！\n🎒 带出物品: ");
-        for (ItemPO i : p.getBackpack()) {
-            sb.append("\n").append(i.getName()).append(" (").append(i.getRarity().getDescription()).append(")");
-        }
+        StringBuilder sb = new StringBuilder("\n🚪已成功撤离\n🎒带出物品: ");
+        for (ItemPO i : p.getBackpack())
+            sb.append("\n").append(i.getName()).append("(").append(i.getRarity().getDescription()).append(")");
         return sb.toString();
     }
 }

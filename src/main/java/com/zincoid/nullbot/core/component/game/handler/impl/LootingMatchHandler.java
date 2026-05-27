@@ -80,10 +80,10 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
     public GameResult action(Long userId, String command)
     {
         Match match = matchManager.getMatchBySelfId(userId);
-        if (match == null) return getErrorResult("对局不存在");
+        if (match == null) return getErrorResult("❌对局不存在");
         LootingGameState state = games.get(match.getMatchId());
-        if (state == null) return getErrorResult("状态不存在");
-        if (state.isFinished()) return GameResult.error("对局已结束");
+        if (state == null) return getErrorResult("❌状态不存在");
+        if (state.isFinished()) return GameResult.error("❌对局已结束");
 
         LootingPlayer p = state.getPlayers().get(userId);
         if (!p.isAlive()) return getSuccessResult(userId, match, true, "💀你已死亡 无法继续行动", "");
