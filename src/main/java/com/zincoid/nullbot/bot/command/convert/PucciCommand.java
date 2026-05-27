@@ -4,13 +4,13 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.util.HtmlUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
-import com.zincoid.nullbot.core.util.HtmlTemplateUtil;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
@@ -31,7 +31,7 @@ public class PucciCommand implements Command {
 
         Path bgPath = resourceLoader.getCache("static/image/pucci.png");
         Path htmlPath = resourceLoader.getCache("static/html/pucci.html");
-        String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+        String html = HtmlUtil.loadTemplate(htmlPath.toString());
 
         Map<String, String> variables = Map.of(
                 "text1", "普奇！！回答我！",
@@ -43,8 +43,8 @@ public class PucciCommand implements Command {
                 "background", bgPath.toAbsolutePath().toString()
         );
 
-        html = HtmlTemplateUtil.replaceVariables(html, variables);
-        html = HtmlTemplateUtil.replaceImages(html, images);
+        html = HtmlUtil.replaceVariables(html, variables);
+        html = HtmlUtil.replaceImages(html, images);
         String base64 = htmlRenderer.renderElement(html, "#wrap");
 
         String response = MsgUtils.builder().img("base64://" + base64).build();

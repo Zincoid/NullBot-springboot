@@ -276,17 +276,17 @@ class NullBotApplicationTests {
         // variables.put("mode", "right");
         // Map<String, String> images = new HashMap<>();
         // images.put("image", imagePath);
-        // String html = HtmlTemplateUtil.loadTemplate(htmlPath);
-        // html = HtmlTemplateUtil.replaceVariables(html, variables);
-        // html = HtmlTemplateUtil.replaceImages(html, images);
+        // String html = HtmlUtil.loadTemplate(htmlPath);
+        // html = HtmlUtil.replaceVariables(html, variables);
+        // html = HtmlUtil.replaceImages(html, images);
         // String base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
 
         // String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\5000choyen.html";
         // Map<String, String> variables = new HashMap<>();
         // variables.put("topText", "我去");
         // variables.put("bottomText", "不早说");
-        // String html = HtmlTemplateUtil.loadTemplate(htmlPath);
-        // html = HtmlTemplateUtil.replaceVariables(html, variables);
+        // String html = HtmlUtil.loadTemplate(htmlPath);
+        // html = HtmlUtil.replaceVariables(html, variables);
         // String base64 = htmlRenderer.renderElement(html, "#templateContainer");
 
         // String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\test\\file\\meme_template.html";
@@ -297,9 +297,9 @@ class NullBotApplicationTests {
         // Map<String, String> images = new HashMap<>();
         // images.put("background", backgroundPath);
         // images.put("image", imagePath);
-        // String html = HtmlTemplateUtil.loadTemplate(htmlPath);
-        // html = HtmlTemplateUtil.replaceVariables(html, variables);
-        // html = HtmlTemplateUtil.replaceImages(html, images);
+        // String html = HtmlUtil.loadTemplate(htmlPath);
+        // html = HtmlUtil.replaceVariables(html, variables);
+        // html = HtmlUtil.replaceImages(html, images);
         // String base64 = htmlRenderer.renderElement(html, "#wrap");
 
         String htmlPath = "C:\\Users\\Zincoid\\IdeaProjects\\NullBot-springboot\\src\\main\\resources\\static\\html\\pucci.html";
@@ -310,9 +310,9 @@ class NullBotApplicationTests {
         variables.put("text3", "我想玩《GTA6》");
         Map<String, String> images = new HashMap<>();
         images.put("background", backgroundPath);
-        String html = HtmlTemplateUtil.loadTemplate(htmlPath);
-        html = HtmlTemplateUtil.replaceVariables(html, variables);
-        html = HtmlTemplateUtil.replaceImages(html, images);
+        String html = HtmlUtil.loadTemplate(htmlPath);
+        html = HtmlUtil.replaceVariables(html, variables);
+        html = HtmlUtil.replaceImages(html, images);
         String base64 = htmlRenderer.renderElement(html, "#wrap");
 
         // Base64 解码

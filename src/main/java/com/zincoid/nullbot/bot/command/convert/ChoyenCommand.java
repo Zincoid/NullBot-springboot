@@ -4,13 +4,13 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.util.HtmlUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.render.HtmlRenderer;
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
-import com.zincoid.nullbot.core.util.HtmlTemplateUtil;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
@@ -30,7 +30,7 @@ public class ChoyenCommand implements Command {
         Long groupId = event.getGroupId();
 
         Path htmlPath = resourceLoader.getCache("static/html/5000choyen.html");
-        String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+        String html = HtmlUtil.loadTemplate(htmlPath.toString());
 
         Map<String, String> variables = Map.of(
                 "topText", args.nextString(),
@@ -38,7 +38,7 @@ public class ChoyenCommand implements Command {
         );
 
         String base64 = htmlRenderer.renderElement(
-                HtmlTemplateUtil.replaceVariables(html, variables),
+                HtmlUtil.replaceVariables(html, variables),
                 "#templateContainer"
         );
 

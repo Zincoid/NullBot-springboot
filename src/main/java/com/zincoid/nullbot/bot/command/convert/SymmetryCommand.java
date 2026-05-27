@@ -20,7 +20,7 @@ import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.util.DownloadUtil;
-import com.zincoid.nullbot.core.util.HtmlTemplateUtil;
+import com.zincoid.nullbot.core.util.HtmlUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
@@ -90,11 +90,11 @@ public class SymmetryCommand implements Command {
             String base64;
             try {
                 Path htmlPath = resourceLoader.getCache("static/html/symmetry.html");
-                String html = HtmlTemplateUtil.loadTemplate(htmlPath.toString());
+                String html = HtmlUtil.loadTemplate(htmlPath.toString());
                 Map<String, String> variables = Map.of("mode", mode);
                 Map<String, String> images = Map.of("image", imagePath);
-                html = HtmlTemplateUtil.replaceVariables(html, variables);
-                html = HtmlTemplateUtil.replaceImages(html, images);
+                html = HtmlUtil.replaceVariables(html, variables);
+                html = HtmlUtil.replaceImages(html, images);
                 base64 = htmlRenderer.renderElement(html, "#mirrorContainer");
             } finally {
                 FileUtils.deleteQuietly(new File(imagePath));
