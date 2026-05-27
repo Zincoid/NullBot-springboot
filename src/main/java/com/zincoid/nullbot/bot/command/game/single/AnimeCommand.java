@@ -35,9 +35,7 @@ public class AnimeCommand implements Command {
         List<FilePO> images = fileService.search("", animePath);
         if (images.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无图片");
         FilePO image = images.get(ThreadLocalRandom.current().nextInt(images.size()));
-        String response = MsgUtils.builder()
-                .img(ossUrlBuilder.from(image.getId()))
-                .build();
+        String response = MsgUtils.builder().img(ossUrlBuilder.from(image.getId())).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [Anime] 图片已获取: {}", image.getFileName());
     }

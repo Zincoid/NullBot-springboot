@@ -36,9 +36,7 @@ public class FemboyCommand implements Command {
         List<FilePO> photos = fileService.search("", femboyPath);
         if (photos.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无图片");
         FilePO photo = photos.get(ThreadLocalRandom.current().nextInt(photos.size()));
-        String response = MsgUtils.builder()
-                .img(ossUrlBuilder.from(photo.getId()))
-                .build();
+        String response = MsgUtils.builder().img(ossUrlBuilder.from(photo.getId())).build();
         bot.sendGroupMsg(groupId, response, false);
         log.info("☑ [Femboy] 图片已获取: {}", photo.getFileName());
     }
