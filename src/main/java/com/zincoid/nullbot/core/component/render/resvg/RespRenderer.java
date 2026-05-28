@@ -6,10 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 @Component
 @RequiredArgsConstructor
 public class RespRenderer {
@@ -22,11 +18,9 @@ public class RespRenderer {
         resourceLoader.getCache("static/font/MonomaniacOne-Regular.ttf");
     }
 
-    public String cmdUses(long uses) throws IOException {
-        Path svgPath = resourceLoader.getCache("static/svg/uses.svg");
-        String svg = Files.readString(svgPath);
+    public String cmdUses(long uses) {
         Context ctx = new Context();
         ctx.setVariable("uses", uses);
-        return resvg.render(svg, ctx);
+        return resvg.render("uses", ctx);
     }
 }
