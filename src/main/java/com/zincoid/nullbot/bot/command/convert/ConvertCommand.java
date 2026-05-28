@@ -18,7 +18,7 @@ import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.util.DownloadUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
-import com.zincoid.nullbot.core.component.render.ImageConverter;
+import com.zincoid.nullbot.core.component.render.resvg.ImageConverter;
 import org.springframework.stereotype.Component;
 
 import java.io.File;

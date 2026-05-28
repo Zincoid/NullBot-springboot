@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.render;
+package com.zincoid.nullbot.core.component.render.resvg;
 
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;

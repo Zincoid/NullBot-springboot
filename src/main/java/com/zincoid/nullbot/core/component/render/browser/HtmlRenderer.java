@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.render;
+package com.zincoid.nullbot.core.component.render.browser;
 
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
 import lombok.RequiredArgsConstructor;

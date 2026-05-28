@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.render;
+package com.zincoid.nullbot.core.component.render.browser;
 
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.properties.ChromeProperties;
