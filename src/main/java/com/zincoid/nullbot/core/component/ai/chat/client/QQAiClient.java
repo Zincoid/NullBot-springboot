@@ -40,14 +40,12 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     public QQAiClient withMaxTokens(int maxTokens) {
         this.maxTokens = maxTokens;
-        log.info("▽ [QQAiClient] 词元限制已配置 - MaxTokens: {}", maxTokens);
         return this;
     }
 
     public QQAiClient withToolCall(ToolRegistry toolRegistry, int maxToolCalls) {
         this.maxToolCalls = maxToolCalls;
         this.toolRegistry = toolRegistry;
-        log.info("▽ [QQAiClient] 工具调用已配置 - MaxToolCalls: {}", maxToolCalls);
         return this;
     }
 
@@ -158,7 +156,7 @@ public class QQAiClient implements AiClient<QQMessage> {
             }
         }
         if (finalResp == null) {
-            log.warn("◎ [ToolCall] 最终调用: 达到最大迭代次数{} ", maxToolCalls);
+            log.warn("◎ [ToolCall] 达到最大迭代次数: {} ", maxToolCalls);
             finalResp = model.invoke(chatMemory.get(chatId), false, maxTokens);
         }
         QQMessage _message = QQMessage.send(message, finalResp.getContent());
