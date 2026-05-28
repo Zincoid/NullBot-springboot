@@ -44,7 +44,7 @@ public class BaiduSearchTool implements Tool {
     private final HttpClient httpClient;
 
     public BaiduSearchTool() {
-        this.toolDef = ToolDef.builder("baidu_search", "百度搜索，获取最新网页信息。用于查询实时信息、新闻、百科知识等")
+        this.toolDef = ToolDef.builder("baidu_search", "百度搜索，获取最新网页信息。用于查询实时信息、新闻、百科知识等。此工具易被安全检查导致搜索不到结果，此时需使用其他搜索工具。")
                 .addString("query", "搜索关键词", true)
                 .build();
         this.httpClient = HttpClient.newBuilder()
