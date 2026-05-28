@@ -14,7 +14,7 @@ public class QQCmdAllows {
                 "Reply",
                 /* ========== 普通命令 ========== */
                 "aud", "vid", "img", "say",
-                "ChatReset", "UserBan",
+                "UserBan",
                 "Help", "ImageFolder", "PUBG",
                 "Anime", "OneTimeAlarm",
                 /* ========== 合成命令 ========== */

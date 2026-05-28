@@ -21,16 +21,23 @@ public class BaiduSearchTool implements Tool {
 
     private record Args(String query) {}
 
-    private static final Pattern TITLE_PATTERN = Pattern.compile(
-            "<h3[^>]*class=\"[^\"]*(?:t|c-tit)[^\"]*\"[^>]*>\\s*<a[^>]*href=\"([^\"]+)\"[^>]*>(?:<em>)?(.*?)(?:</em>)?</a>",
+    // 匹配标题所在整个h3块（class包含c-title）
+    private static final Pattern TITLE_BLOCK_PATTERN = Pattern.compile(
+            "<h3[^>]*class=\"[^\"]*\\bc-title\\b[^\"]*\"[^>]*>\\s*<a[^>]*href=\"([^\"]+)\"[^>]*>(.*?)</a>",
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE
     );
 
-    private static final Pattern SNIPPET_PATTERN = Pattern.compile(
-            "<(?:div|span)[^>]*class=\"[^\"]*(?:c-abstract|c-span-last|content-right_[^\"]*)[^\"]*\"[^>]*>(.*?)</(?:div|span)>",
-            Pattern.DOTALL | Pattern.CASE_INSENSITIVE
-    );
+    // 尝试匹配多种摘要容器（按优先级排列）
+    private static final Pattern[] SNIPPET_PATTERNS = {
+            Pattern.compile("<div[^>]*class=\"[^\"]*\\bc-font-normal\\b[^\"]*\\bc-color-text\\b[^\"]*\"[^>]*>\\s*<div[^>]*class=\"[^\"]*\\btext_\\w+\\b[^\"]*\"[^>]*>(.*?)</div>\\s*</div>", Pattern.DOTALL),
+            Pattern.compile("<div[^>]*class=\"[^\"]*\\bc-abstract\\b[^\"]*\"[^>]*>(.*?)</div>", Pattern.DOTALL),
+            Pattern.compile("<div[^>]*class=\"[^\"]*\\bc-span-last\\b[^\"]*\"[^>]*>(.*?)</div>", Pattern.DOTALL),
+            Pattern.compile("<div[^>]*class=\"[^\"]*\\bcontent-right_\\w+\\b[^\"]*\"[^>]*>(.*?)</div>", Pattern.DOTALL),
+            // 兜底：任何包含"摘要"特征但不含广告标记的div
+            Pattern.compile("<div[^>]*class=\"[^\"]*(?:abstract|summary|desc|content)[^\"]*\"[^>]*>(.*?)</div>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE)
+    };
 
+    // 去除HTML标签
     private static final Pattern TAG_PATTERN = Pattern.compile("<[^>]+>");
 
     private final ToolDef toolDef;
@@ -106,29 +113,74 @@ public class BaiduSearchTool implements Tool {
 
     private List<SearchResult> parseResults(String html) {
         List<SearchResult> results = new ArrayList<>();
-        Matcher matcher = TITLE_PATTERN.matcher(html);
+        Matcher titleMatcher = TITLE_BLOCK_PATTERN.matcher(html);
         int count = 0;
 
-        while (matcher.find() && count < 10) {
-            String url = matcher.group(1);
-            String title = TAG_PATTERN.matcher(matcher.group(2)).replaceAll("").trim();
+        // 记录每个标题的结束位置，用于后续匹配摘要
+        List<MatchPosition> titlePositions = new ArrayList<>();
+        while (titleMatcher.find() && count < 10) {
+            String url = titleMatcher.group(1);
+            // 过滤掉百度内部广告、推荐链接（可根据url特征过滤）
+            if (isInvalidUrl(url)) {
+                continue;
+            }
+            String rawTitle = titleMatcher.group(2);
+            String title = stripHtmlTags(rawTitle).trim();
             if (title.isEmpty()) continue;
 
-            String snippet = "";
-            int searchStart = matcher.end();
-            Matcher snippetMatcher = SNIPPET_PATTERN.matcher(html);
-            if (snippetMatcher.find(searchStart) && snippetMatcher.start() - searchStart < 800) {
-                snippet = TAG_PATTERN.matcher(snippetMatcher.group(1)).replaceAll("").trim();
-                snippet = snippet.replace("&nbsp;", " ").replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">");
-            }
-
-            results.add(new SearchResult(title, url, snippet));
+            int titleEnd = titleMatcher.end();
+            titlePositions.add(new MatchPosition(titleEnd, title, url));
             count++;
+        }
+
+        // 为每条结果寻找最近的摘要（在标题之后800字符内出现）
+        for (MatchPosition pos : titlePositions) {
+            String snippet = findSnippetAfterPosition(html, pos.endPos);
+            results.add(new SearchResult(pos.title, pos.url, snippet));
         }
 
         return results;
     }
 
-    private record SearchResult(String title, String url, String snippet) {
+    private String findSnippetAfterPosition(String html, int startPos) {
+        String subHtml = html.substring(startPos, Math.min(startPos + 2000, html.length()));
+        for (Pattern pattern : SNIPPET_PATTERNS) {
+            Matcher matcher = pattern.matcher(subHtml);
+            if (matcher.find()) {
+                String rawSnippet = matcher.group(1);
+                String cleaned = stripHtmlTags(rawSnippet);
+                cleaned = decodeHtmlEntities(cleaned);
+                if (cleaned.length() > 300) {
+                    cleaned = cleaned.substring(0, 300) + "...";
+                }
+                return cleaned;
+            }
+        }
+        return "";
     }
+
+    private boolean isInvalidUrl(String url) {
+        // 过滤百度自身广告、推荐、其他内部引导页面
+        return url.contains("posid=") || url.contains("baidu.com/link?url=") && url.length() < 30
+                || url.startsWith("javascript:") || url.contains("baidu.com/s?");
+    }
+
+    private String stripHtmlTags(String html) {
+        if (html == null) return "";
+        String noTags = TAG_PATTERN.matcher(html).replaceAll("");
+        // 合并多余空白
+        return noTags.replaceAll("\\s+", " ").trim();
+    }
+
+    private String decodeHtmlEntities(String text) {
+        return text.replace("&nbsp;", " ")
+                .replace("&amp;", "&")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&quot;", "\"")
+                .replace("&#39;", "'");
+    }
+
+    private record MatchPosition(int endPos, String title, String url) {}
+    private record SearchResult(String title, String url, String snippet) {}
 }
