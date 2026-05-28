@@ -38,11 +38,14 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
+
+    private final AtomicBoolean isScanning = new AtomicBoolean(false);
 
     private final AdminMapper adminMapper;
     private final FileMapper fileMapper;
@@ -505,11 +508,12 @@ public class FileServiceImpl implements FileService {
 
     // =================== 本地系统文件与数据库同步工具 ===================
 
-    private record SyncFileInfo(long size, long lastModified, boolean isDirectory) {
-    }
+    private record SyncFileInfo(long size, long lastModified, boolean isDirectory) {}
 
     // 主同步方法 (用户调用)
     public void scanAndSyncFiles() {
+        if (!isScanning.compareAndSet(false, true))
+            throw new CommonException("已有文件同步任务进行中");
         try {
             // 1. 获取存储目录
             String baseDir = getNormalizedBaseDir();
@@ -539,6 +543,8 @@ public class FileServiceImpl implements FileService {
         } catch (Exception e) {
             log.info("◎ [FileService] 文件同步失败 - {}", e.getMessage());
             throw new RuntimeException(e);
+        } finally {
+            isScanning.set(false);
         }
     }
 

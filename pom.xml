@@ -71,6 +71,11 @@
             <artifactId>ognl</artifactId>
             <version>3.3.4</version>
         </dependency>
+        <!--<dependency>  &lt;!&ndash; JTE &ndash;&gt;-->
+        <!--    <groupId>gg.jte</groupId>-->
+        <!--    <artifactId>jte-spring-boot-starter-4</artifactId>-->
+        <!--    <version>3.2.4</version>-->
+        <!--</dependency>-->
         <dependency>  <!-- Validation -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>

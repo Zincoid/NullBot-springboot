@@ -5,11 +5,20 @@ package com.zincoid.nullbot;
 // import jdash.common.LevelSearchFilter;
 // import jdash.common.LevelSearchMode;
 // import jdash.common.entity.GDLevel;
+import com.zincoid.nullbot.core.component.render.resvg.RespRenderer;
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Base64;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class NullBotApplicationTests {
+
+    @Resource
+    private RespRenderer respRenderer;
 
     @Test
     void GDTest() {
@@ -41,5 +50,15 @@ class NullBotApplicationTests {
         //     System.out.println(levels.get(scanner.nextInt() - 1));
         //     scanner.nextLine();
         // }
+    }
+
+    @Test
+    void ThymeleafTest() throws IOException {
+        String file = "Y:\\Projects\\IntelliJ IDEA\\Develop\\NullBot-springboot\\src\\test\\file\\uses.png";
+        String base64 = respRenderer.cmdUses(100000);
+        byte[] imageBytes = Base64.getDecoder().decode(base64);
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(imageBytes);
+        }
     }
 }

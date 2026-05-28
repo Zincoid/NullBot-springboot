@@ -34,7 +34,7 @@ public class ConvertCommand implements Command {
     private final ImageConverter imageConverter;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         ArrayMsg reply = event.getArrayMsg().getFirst();
         String method = args.nextString();

@@ -12,8 +12,6 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
 @Slf4j
 @CommandMapping({"Test", "test", "测试"})
 @Component
@@ -24,7 +22,7 @@ public class TestCommand implements Command {
     private final RespRenderer respRenderer;
 
     @Override
-    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws IOException {
+    public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
@@ -38,6 +36,7 @@ public class TestCommand implements Command {
                 ✅测试结束
                 - GroupID: %s
                 - UserID: %s""".formatted(groupId, userId), false);
+        log.info("☑ [Test] 用户已使用 {} 次指令", uses);
     }
 
     @Override

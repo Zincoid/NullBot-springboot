@@ -7,7 +7,7 @@ import me.aloic.ResvgJNI;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.templateresolver.StringTemplateResolver;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -23,7 +23,9 @@ public class Resvg {
     private static final TemplateEngine TEMPLATE_ENGINE;
 
     static {
-        StringTemplateResolver resolver = new StringTemplateResolver();
+        ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
+        resolver.setPrefix("static/svg/");
+        resolver.setSuffix(".svg");
         TEMPLATE_ENGINE = new TemplateEngine();
         TEMPLATE_ENGINE.setTemplateResolver(resolver);
     }
@@ -44,9 +46,13 @@ public class Resvg {
     }
 
     /** IMG → Data URI */
-    public static String toImgUri(String path, boolean grayscale) throws IOException {
-        BufferedImage img = ImageIO.read(Path.of(path).toFile());
-        if (img == null) throw new IllegalArgumentException("无法读取图像: " + path);
+    public static String toImgUri(String path, boolean grayscale) {
+        BufferedImage img;
+        try {
+            img = ImageIO.read(Path.of(path).toFile());
+        } catch (IOException e) {
+            throw new RuntimeException("无法读取图像", e);
+        }
         if (grayscale) {
             BufferedImage gray = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
             Graphics2D g = gray.createGraphics();
