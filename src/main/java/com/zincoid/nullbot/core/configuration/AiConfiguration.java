@@ -43,6 +43,7 @@ public class AiConfiguration {
             QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
     ) {
         ToolRegistry toolRegistry = new ToolRegistry();
+
         toolRegistry.register(qqGroupCmdTool);
         toolRegistry.register(qqPrivateCmdTool);
         toolRegistry.register(new QQGroupInfoTool());
@@ -57,9 +58,10 @@ public class AiConfiguration {
                 prompter, executor
         )
                 .withMaxTokens(properties.getMaxTokens())
-                .withToolCall(toolRegistry, 5);
+                .withToolCall(toolRegistry, properties.getMaxToolCalls());
 
-        log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}", model.getClass().getSimpleName());
+        log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}, MaxTokens: {}, MaxToolCalls: {}",
+                model.getClass().getSimpleName(), properties.getMaxTokens(), properties.getMaxToolCalls());
         return qqAiClient;
     }
 }
