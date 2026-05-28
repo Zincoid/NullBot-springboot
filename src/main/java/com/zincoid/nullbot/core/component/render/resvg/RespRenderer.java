@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.core.component.render.resvg;
 
 import com.zincoid.nullbot.core.component.resource.ResourceLoader;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
@@ -15,6 +16,11 @@ public class RespRenderer {
 
     private final Resvg resvg;
     private final ResourceLoader resourceLoader;
+
+    @PostConstruct
+    public void init() {
+        resourceLoader.getCache("static/font/MonomaniacOne-Regular.ttf");
+    }
 
     public String cmdUses(long uses) throws IOException {
         Path svgPath = resourceLoader.getCache("static/svg/uses.svg");

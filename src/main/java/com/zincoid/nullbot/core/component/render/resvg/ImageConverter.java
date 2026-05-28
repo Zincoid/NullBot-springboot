@@ -17,7 +17,7 @@ public class ImageConverter {
     private static final String OVERLAY_SVG = "static/svg/overlay.svg";
     private static final String PRTS_PNG = "static/image/PRTS.png";
     private static final String INVS_PRTS_PNG = "static/image/InvsPRTS.png";
-    private static final String RIP_FONT = "static/font/Bernard MT Condensed.ttf";
+    private static final String RIP_FONT = "static/font/Bernard-MT-Condensed.ttf";
 
     private final Resvg resvg;
     private final ResourceLoader resourceLoader;

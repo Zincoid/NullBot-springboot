@@ -46,6 +46,7 @@ public class WebInterceptor implements HandlerInterceptor {
 
                 // 禁用部分文件功能
                 "/file/init",
+                "/file/sync",
                 "/file/upload",
                 "/file/createDir",
                 "/file/rename",

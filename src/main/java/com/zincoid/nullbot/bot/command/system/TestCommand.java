@@ -38,6 +38,7 @@ public class TestCommand implements Command {
                 ✅测试结束
                 - GroupID: %s
                 - UserID: %s""".formatted(groupId, userId), false);
+        log.info("☑ [Test] 用户已使用 {} 次指令", uses);
     }
 
     @Override
