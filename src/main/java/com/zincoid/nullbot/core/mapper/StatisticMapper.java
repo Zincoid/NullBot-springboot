@@ -32,4 +32,7 @@ public interface StatisticMapper extends BaseMapper<StatisticPO> {
             "ORDER BY total_visits DESC " +
             "LIMIT #{limit}")
     List<Map<String, Object>> selectTopCommands(@Param("limit") int limit);
+
+    @Select("SELECT SUM(visits) FROM statistic WHERE user_id = #{userId}")
+    Long selectUses(Long userId);
 }

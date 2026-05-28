@@ -12,6 +12,7 @@ import org.thymeleaf.templateresolver.StringTemplateResolver;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Base64;
 
@@ -43,7 +44,7 @@ public class Resvg {
     }
 
     /** IMG → Data URI */
-    public static String toImgUri(String path, boolean grayscale) throws Exception {
+    public static String toImgUri(String path, boolean grayscale) throws IOException {
         BufferedImage img = ImageIO.read(Path.of(path).toFile());
         if (img == null) throw new IllegalArgumentException("无法读取图像: " + path);
         if (grayscale) {

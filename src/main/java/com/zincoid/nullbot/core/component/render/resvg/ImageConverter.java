@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 
+import java.io.IOException;
 import java.nio.file.Files;
 
 @Component
@@ -22,7 +23,7 @@ public class ImageConverter {
     private final ResourceLoader resourceLoader;
 
     /** RIP ：灰度化 + R.I.P. 文字 */
-    public String RIP(String imagePath) throws Exception {
+    public String RIP(String imagePath) throws IOException {
         resourceLoader.getCache(RIP_FONT);
         String svg = Files.readString(resourceLoader.getCache(RIP_SVG));
         Context ctx = new Context();
@@ -31,17 +32,17 @@ public class ImageConverter {
     }
 
     /** PRTS ：封锁效果 */
-    public String PRTS(String imagePath) throws Exception {
+    public String PRTS(String imagePath) throws IOException {
         return overlay(imagePath, PRTS_PNG);
     }
 
     /** PRTS ：封锁反色效果 */
-    public String invsPRTS(String imagePath) throws Exception {
+    public String invsPRTS(String imagePath) throws IOException {
         return overlay(imagePath, INVS_PRTS_PNG);
     }
 
     /** Overlay ：叠加效果 */
-    private String overlay(String imagePath, String overlayResource) throws Exception {
+    private String overlay(String imagePath, String overlayResource) throws IOException {
         String svg = Files.readString(resourceLoader.getCache(OVERLAY_SVG));
         Context ctx = new Context();
         ctx.setVariable("image", Resvg.toImgUri(imagePath, false));

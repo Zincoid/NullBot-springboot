@@ -154,4 +154,9 @@ public class StatisticServiceImpl implements StatisticService {
 
         return vo;
     }
+
+    @Override
+    public Long getUses(Long userId) {
+        return statisticMapper.selectUses(userId);
+    }
 }

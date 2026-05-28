@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Component
 @RequiredArgsConstructor
@@ -14,12 +16,11 @@ public class RespRenderer {
     private final Resvg resvg;
     private final ResourceLoader resourceLoader;
 
-    String cmdUses(long times) {
-        // resourceLoader.getCache();
-        // String svg = Files.readString(resourceLoader.getCache());
-        // Context ctx = new Context();
-        // ctx.setVariable();
-        // return resvg.render(svg, ctx);
-        return resvg.render("<svg></svg>");
+    public String cmdUses(long uses) throws IOException {
+        Path svgPath = resourceLoader.getCache("static/svg/uses.svg");
+        String svg = Files.readString(svgPath);
+        Context ctx = new Context();
+        ctx.setVariable("uses", uses);
+        return resvg.render(svg, ctx);
     }
 }
