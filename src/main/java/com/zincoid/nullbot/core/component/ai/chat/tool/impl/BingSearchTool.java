@@ -21,12 +21,28 @@ public class BingSearchTool implements Tool {
 
     private record Args(String query) {}
 
-    private static final Pattern RESULT_PATTERN = Pattern.compile(
-            "<li[^>]*class=\"[^\"]*b_algo[^\"]*\"[^>]*>.*?<a[^>]*href=\"(https?://[^\"]+)\"[^>]*>(.*?)</a>.*?<p[^>]*>(.*?)</p>",
+    // 匹配每个结果区块（b_algo）
+    private static final Pattern RESULT_BLOCK_PATTERN = Pattern.compile(
+            "<li[^>]*class=\"[^\"]*\\bb_algo\\b[^\"]*\"[^>]*>(.*?)</li>",
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE
     );
 
+    // 匹配标题（在h2下的a）
+    private static final Pattern TITLE_PATTERN = Pattern.compile(
+            "<h2[^>]*>\\s*<a[^>]*href=\"([^\"]+)\"[^>]*>(.*?)</a>\\s*</h2>",
+            Pattern.DOTALL | Pattern.CASE_INSENSITIVE
+    );
+
+    // 匹配摘要（b_caption下的p或直接文本）
+    private static final Pattern SNIPPET_PATTERN = Pattern.compile(
+            "<div[^>]*class=\"[^\"]*\\bb_caption\\b[^\"]*\"[^>]*>\\s*(?:<p[^>]*>(.*?)</p>|(.*?))\\s*</div>",
+            Pattern.DOTALL | Pattern.CASE_INSENSITIVE
+    );
+
+    // 清理HTML标签
     private static final Pattern TAG_PATTERN = Pattern.compile("<[^>]+>");
+    // 清理摘要前的日期/时间前缀（如 "2 天之前 · "）
+    private static final Pattern DATE_PREFIX_PATTERN = Pattern.compile("^\\d+\\s+[天周月年]前\\s*[·•]?\\s*");
 
     private final ToolDef toolDef;
     private final HttpClient httpClient;
@@ -82,7 +98,8 @@ public class BingSearchTool implements Tool {
 
     private String fetchSearchResults(String query) throws Exception {
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-        String url = "https://www.bing.com/search?q=" + encodedQuery;
+        // 添加 &count=10 限制结果数量，提升响应速度
+        String url = "https://www.bing.com/search?q=" + encodedQuery + "&count=10";
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -101,22 +118,85 @@ public class BingSearchTool implements Tool {
 
     private List<SearchResult> parseResults(String html) {
         List<SearchResult> results = new ArrayList<>();
-        Matcher matcher = RESULT_PATTERN.matcher(html);
-        int count = 0;
+        Matcher blockMatcher = RESULT_BLOCK_PATTERN.matcher(html);
 
-        while (matcher.find() && count < 10) {
-            String url = matcher.group(1);
-            String title = TAG_PATTERN.matcher(matcher.group(2)).replaceAll("").trim();
-            if (title.isEmpty()) continue;
+        while (blockMatcher.find()) {
+            String block = blockMatcher.group(1);
+            if (isAdBlock(block)) {
+                continue; // 跳过广告推广块
+            }
 
-            String snippet = TAG_PATTERN.matcher(matcher.group(3) != null ? matcher.group(3) : "").replaceAll("").trim();
-            snippet = snippet.replace("&nbsp;", " ").replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">");
+            // 提取标题和链接
+            Matcher titleMatcher = TITLE_PATTERN.matcher(block);
+            if (!titleMatcher.find()) {
+                continue;
+            }
+            String url = titleMatcher.group(1);
+            if (isInvalidUrl(url)) {
+                continue;
+            }
+            String rawTitle = titleMatcher.group(2);
+            String title = stripHtmlTags(rawTitle).trim();
+            if (title.isEmpty()) {
+                continue;
+            }
 
+            // 提取摘要
+            String snippet = extractSnippet(block);
             results.add(new SearchResult(title, url, snippet));
-            count++;
-        }
 
+            if (results.size() >= 10) break;
+        }
         return results;
+    }
+
+    private String extractSnippet(String block) {
+        Matcher snippetMatcher = SNIPPET_PATTERN.matcher(block);
+        if (!snippetMatcher.find()) {
+            return "";
+        }
+        // group(1) 是 <p> 内容，group(2) 是直接文本
+        String rawSnippet = snippetMatcher.group(1) != null ? snippetMatcher.group(1) : snippetMatcher.group(2);
+        if (rawSnippet == null) return "";
+
+        String cleaned = stripHtmlTags(rawSnippet);
+        cleaned = decodeHtmlEntities(cleaned);
+        // 移除日期前缀
+        cleaned = DATE_PREFIX_PATTERN.matcher(cleaned).replaceFirst("");
+        // 合并多余空白并限制长度
+        cleaned = cleaned.replaceAll("\\s+", " ").trim();
+        if (cleaned.length() > 300) {
+            cleaned = cleaned.substring(0, 300) + "...";
+        }
+        return cleaned;
+    }
+
+    private boolean isAdBlock(String block) {
+        // 广告块通常包含 "b_ad" 或 "advertisement" 等标志
+        return block.contains("b_ad") || block.contains("advertisement") || block.contains("data-ad");
+    }
+
+    private boolean isInvalidUrl(String url) {
+        // 过滤Bing自身链接、空链接、JavaScript等
+        return url == null || url.isBlank() ||
+                url.startsWith("javascript:") ||
+                url.contains("bing.com/aclick") ||
+                url.contains("bing.com/videos") && !url.contains("?q=");  // 视频聚合页不算
+    }
+
+    private String stripHtmlTags(String html) {
+        if (html == null) return "";
+        return TAG_PATTERN.matcher(html).replaceAll("");
+    }
+
+    private String decodeHtmlEntities(String text) {
+        return text.replace("&nbsp;", " ")
+                .replace("&amp;", "&")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&quot;", "\"")
+                .replace("&#39;", "'")
+                .replace("&apos;", "'");
     }
 
     private record SearchResult(String title, String url, String snippet) {}
