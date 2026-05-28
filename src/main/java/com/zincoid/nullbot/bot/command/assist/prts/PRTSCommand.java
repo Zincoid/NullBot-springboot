@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.render.browser.WebScreenCapturer;
+import com.zincoid.nullbot.core.component.render.browser.WebCapturer;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PRTSCommand implements Command {
 
-    private final WebScreenCapturer webScreenCapturer;
+    private final WebCapturer webCapturer;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
@@ -40,7 +40,7 @@ public class PRTSCommand implements Command {
     }
 
     private String captureAny(String keyword) {
-        return webScreenCapturer.capture(
+        return webCapturer.capture(
                 "https://prts.wiki/w/" + keyword, 1024, 5120,
                 List.of("#bodyContent"),
                 List.of(
@@ -60,25 +60,25 @@ public class PRTSCommand implements Command {
 
     private String captureOpt(String option, String keyword) {
         return switch (option) {
-            case "语音" -> webScreenCapturer.capture(
+            case "语音" -> webCapturer.capture(
                     "https://prts.wiki/w/" + keyword, 1024, 5120,
                     List.of("#voice-table-root"),
                     List.of(".backToTop", "#rightToc", ".z-1.float-right.select-none"),
                     List.of("a[class*='z-1 float-right select-none']")
             );
-            case "档案" -> webScreenCapturer.capture(
+            case "档案" -> webCapturer.capture(
                     "https://prts.wiki/w/" + keyword, 1024, 5120,
                     List.of("//table[.//th//b[contains(text(),'人员档案')]]"),
                     List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
                     List.of("//table[.//th//b[contains(.,'人员档案')]]//button[contains(@class,'mw-collapsible-toggle')]")
             );
-            case "密录" -> webScreenCapturer.capture(
+            case "密录" -> webCapturer.capture(
                     "https://prts.wiki/w/" + keyword, 1024, 5120,
                     List.of("//table[.//th//b[contains(text(),'干员密录')]]"),
                     List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),
                     List.of("//table[.//th//b[contains(.,'干员密录')]]//button[contains(@class,'mw-collapsible-toggle')]")
             );
-            case "悖论" -> webScreenCapturer.capture(
+            case "悖论" -> webCapturer.capture(
                     "https://prts.wiki/w/" + keyword, 1024, 5120,
                     List.of("//table[.//th//b[contains(text(),'悖论模拟')]]"),
                     List.of(".backToTop", "#rightToc", ".mw-collapsible-toggle"),

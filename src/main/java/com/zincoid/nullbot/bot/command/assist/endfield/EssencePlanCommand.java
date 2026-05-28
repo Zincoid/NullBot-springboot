@@ -4,11 +4,11 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.component.render.browser.WebCapturer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.render.browser.WebScreenCapturer;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,12 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EssencePlanCommand implements Command {
 
-    private final WebScreenCapturer webScreenCapturer;
+    private final WebCapturer webCapturer;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String weapon = args.nextFullString();
-        String base64 = webScreenCapturer.capture(
+        String base64 = webCapturer.capture(
                 "https://end.canmoe.com/", 1536, 5120,
                 List.of("//section[contains(@class,'panel')][.//h2[contains(text(),'方案推荐列表')]]"),
                 List.of(".ghost-button"),

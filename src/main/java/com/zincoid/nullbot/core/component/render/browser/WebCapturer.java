@@ -10,12 +10,12 @@ import java.util.function.Supplier;
 
 @Slf4j
 @Component
-public class WebScreenCapturer {
+public class WebCapturer {
 
     private final Chrome chrome;
     private final int maxRetries;
 
-    public WebScreenCapturer(Chrome chrome, ChromeProperties props) {
+    public WebCapturer(Chrome chrome, ChromeProperties props) {
         this.chrome = chrome;
         this.maxRetries = props.getMaxRetries();
     }
@@ -62,7 +62,7 @@ public class WebScreenCapturer {
             try {
                 return action.get();
             } catch (TimeoutException e) {
-                log.info("▽ [WebScreenCapturer] 页面访问超时: {} Times", i + 1);
+                log.info("▽ [WebCapturer] 页面访问超时: {} Times", i + 1);
             }
         }
         throw new RuntimeException("网页访问失败");
