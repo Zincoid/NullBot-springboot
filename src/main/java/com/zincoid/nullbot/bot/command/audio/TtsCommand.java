@@ -21,7 +21,7 @@ import com.zincoid.nullbot.core.component.ai.voice.TtsClient;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.model.data.po.TtsTemplatePO;
-import com.zincoid.nullbot.core.service.TtsTemplateService;
+import com.zincoid.nullbot.core.service.tts.TtsTemplateService;
 import com.zincoid.nullbot.core.util.DownloadUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;

@@ -15,7 +15,7 @@ import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.bot.dispatcher.CommandProcessor;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import com.zincoid.nullbot.core.model.information.FileInfo;
-import com.zincoid.nullbot.core.service.FileService;
+import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.beans.factory.annotation.Value;

@@ -13,9 +13,9 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
-import com.zincoid.nullbot.core.service.BreadService;
-import com.zincoid.nullbot.core.service.InventoryService;
-import com.zincoid.nullbot.core.service.UserService;
+import com.zincoid.nullbot.core.service.game.BreadService;
+import com.zincoid.nullbot.core.service.basic.InventoryService;
+import com.zincoid.nullbot.core.service.basic.UserService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 

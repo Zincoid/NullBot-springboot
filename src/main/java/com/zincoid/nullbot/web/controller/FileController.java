@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.model.data.DataPage;
 import com.zincoid.nullbot.core.model.result.WebResult;
-import com.zincoid.nullbot.core.service.FileService;
+import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.util.WebCtxUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

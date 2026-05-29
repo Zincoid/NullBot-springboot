@@ -3,7 +3,7 @@ package com.zincoid.nullbot.web.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.model.result.WebResult;
-import com.zincoid.nullbot.core.service.SystemService;
+import com.zincoid.nullbot.core.service.system.SystemService;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j

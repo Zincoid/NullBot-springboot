@@ -10,8 +10,8 @@ import com.zincoid.nullbot.core.model.game.basic.Match;
 import com.zincoid.nullbot.core.model.game.basic.state.impl.LootingGameState;
 import com.zincoid.nullbot.core.model.game.looting.LootingPlayer;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
-import com.zincoid.nullbot.core.service.InventoryService;
-import com.zincoid.nullbot.core.service.UserService;
+import com.zincoid.nullbot.core.service.basic.InventoryService;
+import com.zincoid.nullbot.core.service.basic.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.security.JwtTool;
 import com.zincoid.nullbot.core.model.authentication.StompPrincipal;
 import com.zincoid.nullbot.core.model.data.po.AdminPO;
-import com.zincoid.nullbot.core.service.AdminService;
+import com.zincoid.nullbot.core.service.system.AdminService;
 import com.zincoid.nullbot.core.util.WebCtxUtil;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.Message;

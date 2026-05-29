@@ -17,7 +17,7 @@ import com.zincoid.nullbot.core.component.storage.GuessStorage;
 import com.zincoid.nullbot.core.model.information.GuessInfo;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.core.service.UserService;
+import com.zincoid.nullbot.core.service.basic.UserService;
 import com.zincoid.nullbot.core.util.Base64Util;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import org.springframework.stereotype.Component;

@@ -3,7 +3,7 @@ package com.zincoid.nullbot.web.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.service.OssService;
+import com.zincoid.nullbot.core.service.file.OssService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

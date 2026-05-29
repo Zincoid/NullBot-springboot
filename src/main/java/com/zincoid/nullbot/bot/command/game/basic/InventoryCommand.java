@@ -10,8 +10,8 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.DataPage;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
-import com.zincoid.nullbot.core.service.InventoryService;
-import com.zincoid.nullbot.core.service.UserService;
+import com.zincoid.nullbot.core.service.basic.InventoryService;
+import com.zincoid.nullbot.core.service.basic.UserService;
 import org.springframework.stereotype.Component;
 
 @Slf4j

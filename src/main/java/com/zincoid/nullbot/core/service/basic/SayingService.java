@@ -1,0 +1,23 @@
+package com.zincoid.nullbot.core.service.basic;
+
+import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.data.po.SayingPO;
+
+import java.util.List;
+
+public interface SayingService {
+
+    boolean add(Long userId, String userName, String text);
+
+    boolean deleteById(Integer id);
+
+    SayingPO getRand();
+
+    SayingPO getRandByUserId(Long userId);
+
+    List<SayingPO> getList();
+
+    DataPage<SayingPO> getPage(Integer current, Integer size);
+
+    void adds(List<SayingPO> sayings);
+}

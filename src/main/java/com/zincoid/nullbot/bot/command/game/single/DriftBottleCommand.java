@@ -17,8 +17,8 @@ import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.model.data.po.DriftBottlePO;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.core.service.DriftBottleService;
-import com.zincoid.nullbot.core.service.FileService;
+import com.zincoid.nullbot.core.service.game.DriftBottleService;
+import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 

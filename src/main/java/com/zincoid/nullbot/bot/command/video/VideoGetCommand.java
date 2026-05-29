@@ -15,7 +15,7 @@ import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.bot.interaction.BotPageSelector;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.core.service.FileService;
+import com.zincoid.nullbot.core.service.file.FileService;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;

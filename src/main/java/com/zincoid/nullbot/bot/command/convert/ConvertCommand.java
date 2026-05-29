@@ -9,7 +9,7 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
-import com.zincoid.nullbot.core.service.RenderingService;
+import com.zincoid.nullbot.core.service.render.RenderingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;

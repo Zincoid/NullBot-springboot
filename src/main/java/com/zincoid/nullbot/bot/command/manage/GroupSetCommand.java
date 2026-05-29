@@ -13,7 +13,7 @@ import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatStrategy;
 import com.zincoid.nullbot.core.enums.LimitScope;
-import com.zincoid.nullbot.core.service.SettingService;
+import com.zincoid.nullbot.core.service.basic.SettingService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;

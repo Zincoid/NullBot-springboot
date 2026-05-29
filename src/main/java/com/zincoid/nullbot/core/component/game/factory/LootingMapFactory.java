@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.game.looting.LootingMap;
 import com.zincoid.nullbot.core.model.game.looting.MapNode;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
-import com.zincoid.nullbot.core.service.ItemService;
+import com.zincoid.nullbot.core.service.basic.ItemService;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

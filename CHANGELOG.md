@@ -870,4 +870,5 @@
 
 - 重命名 RespRenderer 为 SvgRenderer 并重构其模板系统；
 - 移除旧的 ImgConverter 组件并引入新的 RenderingService 接口；
-- 将图像转换逻辑迁移到 RenderingService。
+- 将图像转换逻辑迁移到 RenderingService；
+- 重构服务层包结构并更新所有相关导入。

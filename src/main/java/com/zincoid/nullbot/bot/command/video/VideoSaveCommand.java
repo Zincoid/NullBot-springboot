@@ -14,7 +14,7 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
-import com.zincoid.nullbot.core.service.FileService;
+import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 

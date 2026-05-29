@@ -10,8 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.bot.event.InnerCommandEvent;
-import com.zincoid.nullbot.core.service.InventoryService;
-import com.zincoid.nullbot.core.service.ItemService;
+import com.zincoid.nullbot.core.service.basic.InventoryService;
+import com.zincoid.nullbot.core.service.basic.ItemService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 

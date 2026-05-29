@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.model.data.DataPage;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
-import com.zincoid.nullbot.core.service.UserService;
+import com.zincoid.nullbot.core.service.basic.UserService;
 import com.zincoid.nullbot.core.util.CsvUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

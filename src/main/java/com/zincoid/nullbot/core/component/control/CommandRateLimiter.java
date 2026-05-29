@@ -8,7 +8,7 @@ import io.github.bucket4j.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
-import com.zincoid.nullbot.core.service.SettingService;
+import com.zincoid.nullbot.core.service.basic.SettingService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import org.springframework.stereotype.Component;
 

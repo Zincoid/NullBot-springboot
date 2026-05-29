@@ -4,7 +4,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.core.service.RenderingService;
+import com.zincoid.nullbot.core.service.render.RenderingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;

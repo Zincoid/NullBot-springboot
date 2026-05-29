@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.po.SayingPO;
-import com.zincoid.nullbot.core.service.SayingService;
+import com.zincoid.nullbot.core.service.basic.SayingService;
 import org.springframework.stereotype.Component;
 
 @Slf4j

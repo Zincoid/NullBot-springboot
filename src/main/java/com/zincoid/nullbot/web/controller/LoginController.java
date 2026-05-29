@@ -10,7 +10,7 @@ import com.zincoid.nullbot.core.model.data.dto.RegistDTO;
 import com.zincoid.nullbot.core.model.data.po.AdminPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.model.data.dto.LoginDTO;
-import com.zincoid.nullbot.core.service.AdminService;
+import com.zincoid.nullbot.core.service.system.AdminService;
 import com.zincoid.nullbot.core.util.WebCtxUtil;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

@@ -12,8 +12,8 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
-import com.zincoid.nullbot.core.service.GroupService;
-import com.zincoid.nullbot.core.service.UserService;
+import com.zincoid.nullbot.core.service.basic.GroupService;
+import com.zincoid.nullbot.core.service.basic.UserService;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 

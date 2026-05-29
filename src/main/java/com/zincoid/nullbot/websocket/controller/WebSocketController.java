@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.model.authentication.StompPrincipal;
 import com.zincoid.nullbot.core.model.result.WebResult;
-import com.zincoid.nullbot.core.service.SystemService;
+import com.zincoid.nullbot.core.service.system.SystemService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.annotation.SendToUser;

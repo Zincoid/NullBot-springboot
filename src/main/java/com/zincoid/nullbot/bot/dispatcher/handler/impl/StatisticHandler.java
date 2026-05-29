@@ -11,7 +11,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
-import com.zincoid.nullbot.core.service.StatisticService;
+import com.zincoid.nullbot.core.service.system.StatisticService;
 import com.zincoid.nullbot.core.component.tool.WsSender;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
