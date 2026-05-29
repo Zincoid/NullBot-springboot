@@ -868,7 +868,8 @@
 
 ### 2026.5.29 - v2.1.4
 
-- 重命名 RespRenderer 为 SvgRenderer 并重构其模板系统；
-- 移除旧的 ImgConverter 组件并引入新的 RenderingService 接口；
-- 将图像转换逻辑迁移到 RenderingService；
-- 重构服务层包结构并更新所有相关导入。
+- 重构 RespRenderer -> SvgRenderer 并改进其模板系统；
+- 移除 ImgConverter 组件并引入 RenderingService 和 CapturingService 接口；
+- 迁移 图像转换逻辑至 RenderingService；
+- 迁移 网页截图功能至 CapturingService；
+- 重构 服务层包结构并更新所有相关导入。

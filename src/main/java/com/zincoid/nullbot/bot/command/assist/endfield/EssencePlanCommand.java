@@ -4,14 +4,12 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.core.component.render.browser.WebCapturer;
+import com.zincoid.nullbot.core.service.render.CapturingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Slf4j
 @CommandMapping({"EssencePlan", "基质规划", "基质"})
@@ -19,22 +17,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EssencePlanCommand implements Command {
 
-    private final WebCapturer webCapturer;
+    private final CapturingService capturingService;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String weapon = args.nextFullString();
-        String base64 = webCapturer.capture(
-                "https://end.canmoe.com/", 1536, 5120,
-                List.of("//section[contains(@class,'panel')][.//h2[contains(text(),'方案推荐列表')]]"),
-                List.of(".ghost-button"),
-                List.of(
-                        "//*[@id=\"app\"]/div[2]/div/div[2]/div[2]/button",
-                        "//*[@id=\"app\"]/div[3]/div/div[2]/div/button",
-                        String.format("//span[@class='weapon-title-text' and text()='%s']", weapon),
-                        "//button[contains(.,'收起其他方案')]"
-                )
-        );
+        String base64 = capturingService.essence(weapon);
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [EssencePlan] 基质已查询 - Weapon: {}", weapon);
