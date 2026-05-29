@@ -65,8 +65,8 @@ public class GuessCommand implements Command {
                     .img("base64://" + crop(guess.getPath(),
                             setting.getGuessCropRatio(),
                             setting.getGuessPadding(),
-                            setting.getGuessTransparentRatio(),
-                            MAX_CROP_ATTEMPTS))
+                            setting.getGuessTransparentRatio()
+                    ))
                     .text("注: 请发送\"#内容\"")
                     .build();
             bot.sendGroupMsg(groupId, start, false);
@@ -133,7 +133,7 @@ public class GuessCommand implements Command {
     }
 
     private static String crop(String imagePath, double cropRatio, int padding,
-                               double transparentRatio, int maxAttempts) throws Exception {
+                               double transparentRatio) throws Exception {
         BufferedImage img = ImageIO.read(new File(imagePath));
         // 计算裁剪尺寸 确保在padding内部
         int w = Math.max(1, (int) (img.getWidth() * cropRatio));
@@ -152,7 +152,7 @@ public class GuessCommand implements Command {
             return Base64Util.from(img.getSubimage(x, y, w, h));
         }
         int attempts = 0;
-        while (attempts < maxAttempts) {
+        while (attempts < MAX_CROP_ATTEMPTS) {
             // 随机选择裁剪起点
             int x = xMin + (xMax > xMin ? (int) (Math.random() * (xMax - xMin)) : 0);
             int y = yMin + (yMax > yMin ? (int) (Math.random() * (yMax - yMin)) : 0);
@@ -169,7 +169,7 @@ public class GuessCommand implements Command {
             attempts++;
         }
         throw new BotWarnException("经过%s次尝试后仍未找到透明像素比例小于%s的切图".formatted(
-                maxAttempts, transparentRatio
+                GuessCommand.MAX_CROP_ATTEMPTS, transparentRatio
         ));
     }
 

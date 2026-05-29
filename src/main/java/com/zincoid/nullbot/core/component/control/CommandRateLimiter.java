@@ -8,15 +8,12 @@ import io.github.bucket4j.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
-import com.zincoid.nullbot.core.service.basic.SettingService;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class CommandRateLimiter {
-
-    private final SettingService settingService;
 
     @Getter  // 调试用
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();

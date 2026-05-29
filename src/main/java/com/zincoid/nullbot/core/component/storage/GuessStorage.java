@@ -40,7 +40,7 @@ public class GuessStorage {
     public GuessInfo getGuess(Long groupId) {
         return guesses.getOrDefault(groupId, null);
     }
-    public GuessInfo removeGuess(Long groupId) { return guesses.remove(groupId); }
+    public void removeGuess(Long groupId) { guesses.remove(groupId); }
 
     public void increaseTimes(Long groupId) {
         guesses.get(groupId).setTimes(guesses.get(groupId).getTimes() + 1);

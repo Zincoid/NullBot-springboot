@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.data.DataPage;
-import com.zincoid.nullbot.core.mapper.InventoryMapper;
 import com.zincoid.nullbot.core.mapper.ItemMapper;
-import com.zincoid.nullbot.core.mapper.UserMapper;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.enums.Category;
 import com.zincoid.nullbot.core.enums.Rarity;
@@ -26,9 +24,7 @@ public class ItemServiceImpl implements ItemService {
     private final InventoryService inventoryService;
     private final UserService userService;
 
-    private final UserMapper userMapper;
     private final ItemMapper itemMapper;
-    private final InventoryMapper inventoryMapper;
 
     // =================== BOT功能相关 ===================
 

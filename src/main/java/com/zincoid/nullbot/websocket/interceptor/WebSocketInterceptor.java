@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.websocket.interceptor;
 
 import cn.hutool.jwt.JWT;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.security.JwtTool;
 import com.zincoid.nullbot.core.model.authentication.StompPrincipal;
@@ -18,6 +19,8 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -38,10 +41,10 @@ public class WebSocketInterceptor implements ChannelInterceptor {
     }
 
     @Override
-    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+    public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-            String ip = (String) accessor.getSessionAttributes().get("clientIp");
+            String ip = (String) Objects.requireNonNull(accessor.getSessionAttributes()).get("clientIp");
             log.info("◎ [WebSocketInterceptor] 来自 {} 的连接请求", ip);
             try {
                 String authHeader = accessor.getFirstNativeHeader("token");
@@ -81,7 +84,7 @@ public class WebSocketInterceptor implements ChannelInterceptor {
         errorAccessor.setSessionId(sessionId);
         errorAccessor.setMessage(errorMessage);  // 设置错误描述
         errorAccessor.setLeaveMutable(true);
-        Message<byte[]> errorMessageObj = MessageBuilder.createMessage(new byte[0], errorAccessor.getMessageHeaders());
+        Message<byte @NonNull []> errorMessageObj = MessageBuilder.createMessage(new byte[0], errorAccessor.getMessageHeaders());
         clientOutboundChannel.send(errorMessageObj);
         log.error("└─[WebSocketInterceptor] 已向客户端 {} 发送错误帧 - {}", sessionId, errorMessage);
     }

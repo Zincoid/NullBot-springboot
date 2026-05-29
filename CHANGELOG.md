@@ -490,7 +490,7 @@
 - 优化 BotTaskScheduler 及相关定时指令 - 优化任务命名相关逻辑；
 - 新增 BotOperator 组件 - 可用于主动需求 Bot 对象的操作；
 - 优化 OneTimeAlarm 一次性闹钟指令 - 支持更多时间格式 优化输出；
-- 优化 所有 getHelpForAI 方法 - 移除不必要的限权信息和部分指令帮助；
+- 优化 所有 getHelpForAI 方法 - 移除限权信息和部分指令帮助；
 - 优化 项目结构。
 
 ### 2026.2.13
@@ -872,4 +872,5 @@
 - 移除 ImgConverter 组件并引入 RenderingService 和 CapturingService 接口；
 - 迁移 图像转换逻辑至 RenderingService；
 - 迁移 网页截图功能至 CapturingService；
-- 重构 服务层包结构并更新所有相关导入。
+- 重构 服务层包结构并更新所有相关导入；
+- 优化 部分代码。
