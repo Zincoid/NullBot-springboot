@@ -10,12 +10,12 @@ import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotErrorException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.service.RenderingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.render.browser.HtmlRenderer;
 import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.util.DownloadUtil;
@@ -32,7 +32,7 @@ import java.util.*;
 public class SymmetryCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
-    private final HtmlRenderer htmlRenderer;
+    private final RenderingService renderingService;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
@@ -85,10 +85,7 @@ public class SymmetryCommand implements Command {
             String imagePath = tempPath + "/" + downloadedName;
             String base64;
             try {
-                base64 = htmlRenderer.load("static/html/symmetry.html")
-                        .string("mode", mode)
-                        .file("image", imagePath)
-                        .render("#mirrorContainer");
+                base64 = renderingService.symmetry(imagePath, mode);
             } finally {
                 FileUtils.deleteQuietly(new File(imagePath));
             }

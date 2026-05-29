@@ -4,11 +4,11 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.service.RenderingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.render.browser.HtmlRenderer;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -17,19 +17,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PucciCommand implements Command {
 
-    private final HtmlRenderer htmlRenderer;
+    private final RenderingService renderingService;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
-
-        String base64 = htmlRenderer.load("static/html/pucci.html")
-                .string("text1", "普奇！！回答我！")
-                .string("text2", "为什么你要加速时间！！")
-                .string("text3", args.nextString())
-                .resource("background", "static/image/pucci.png")
-                .render("#wrap");
-
+        String base64 = renderingService.pucci(args.nextFullString());
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);
         log.info("☑ [Pucci] 图像处理已完成");

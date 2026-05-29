@@ -4,7 +4,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.core.component.render.resvg.RespRenderer;
+import com.zincoid.nullbot.core.service.RenderingService;
 import com.zincoid.nullbot.core.service.StatisticService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class TestCommand implements Command {
 
     private final StatisticService statisticService;
-    private final RespRenderer respRenderer;
+    private final RenderingService renderingService;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
@@ -28,7 +28,7 @@ public class TestCommand implements Command {
 
         Long uses = statisticService.getUses(userId);
         String response = MsgUtils.builder()
-                .img("base64://" + respRenderer.cmdUses(uses))
+                .img("base64://" + renderingService.uses(uses))
                 .build();
         bot.sendGroupMsg(groupId, response, false);
 

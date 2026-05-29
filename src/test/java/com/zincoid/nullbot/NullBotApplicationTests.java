@@ -5,7 +5,7 @@ package com.zincoid.nullbot;
 // import jdash.common.LevelSearchFilter;
 // import jdash.common.LevelSearchMode;
 // import jdash.common.entity.GDLevel;
-import com.zincoid.nullbot.core.component.render.resvg.RespRenderer;
+import com.zincoid.nullbot.core.component.render.resvg.SvgRenderer;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +18,7 @@ import java.util.Base64;
 class NullBotApplicationTests {
 
     @Resource
-    private RespRenderer respRenderer;
+    private SvgRenderer svgRenderer;
 
     @Test
     void GDTest() {
@@ -55,7 +55,7 @@ class NullBotApplicationTests {
     @Test
     void ThymeleafTest() throws IOException {
         String file = "Y:\\Projects\\IntelliJ IDEA\\Develop\\NullBot-springboot\\src\\test\\file\\uses.png";
-        String base64 = respRenderer.cmdUses(1234);
+        String base64 = svgRenderer.load("uses").number("uses", 123456).render();
         byte[] imageBytes = Base64.getDecoder().decode(base64);
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(imageBytes);

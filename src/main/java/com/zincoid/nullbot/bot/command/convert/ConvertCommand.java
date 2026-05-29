@@ -9,6 +9,7 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.service.RenderingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -18,7 +19,6 @@ import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.util.DownloadUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
-import com.zincoid.nullbot.core.component.render.resvg.ImgConverter;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -31,7 +31,7 @@ import java.util.*;
 public class ConvertCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
-    private final ImgConverter imgConverter;
+    private final RenderingService renderingService;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
@@ -67,9 +67,9 @@ public class ConvertCommand implements Command {
             String base64;
             try {
                 base64 = switch (method) {
-                    case "RIP" -> imgConverter.RIP(imagePath);
-                    case "PRTS" -> imgConverter.PRTS(imagePath);
-                    case "InvsPRTS" -> imgConverter.invsPRTS(imagePath);
+                    case "RIP" -> renderingService.rip(imagePath);
+                    case "PRTS" -> renderingService.prts(imagePath, false);
+                    case "InvsPRTS" -> renderingService.prts(imagePath, true);
                     default -> throw new BotWarnException("无此操作");
                 };
             } finally {

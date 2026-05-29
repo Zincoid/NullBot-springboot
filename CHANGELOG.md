@@ -865,3 +865,9 @@
 - 新增 SearchTool - 用于 AI 搜索；
 - 新增 WebFetchTool - 用于 AI 获取网页内容；
 - 优化 部分其他代码。
+
+### 2026.5.29 - v2.1.4
+
+- 重命名 RespRenderer 为 SvgRenderer 并重构其模板系统；
+- 移除旧的 ImgConverter 组件并引入新的 RenderingService 接口；
+- 将图像转换逻辑迁移到 RenderingService。

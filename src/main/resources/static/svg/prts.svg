@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:th="http://www.thymeleaf.org" width="640" height="640"
      viewBox="0 0 640 640">
     <image x="0" y="0" width="640" height="640" opacity="1" th:href="${image}"/>
-    <image x="0" y="0" width="640" height="640" opacity="1" th:href="${overlay}"/>
+    <image x="0" y="0" width="640" height="640" opacity="1" th:href="${prts}"/>
 </svg>

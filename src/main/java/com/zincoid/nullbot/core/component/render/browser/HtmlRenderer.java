@@ -31,9 +31,7 @@ public class HtmlRenderer {
     private final Chrome chrome;
     private final ResourceLoader resourceLoader;
 
-    // =========================== 载入方法 ===========================
-
-    public Template load(String resourcePath) {
+    public Template load(String resourcePath) {  // 载入模板
         try {
             return new Template(Files.readString(
                     resourceLoader.getCache(resourcePath)));
@@ -49,42 +47,49 @@ public class HtmlRenderer {
 
         private Template(String html) { this.html = html; }
 
-        // ============================ 构建方法 ===========================
+        // ================= 构建方法 =================
 
         public Template string(String key, String value) {
             ctx.put(key, value);
             return this;
         }
-        public Template file(String key, String path) {
+        public Template number(String key, Object value) {
+            ctx.put(key, value);
+            return this;
+        }
+        public Template image(String key, String path) {
             File f = new File(path);
             if (!f.exists()) throw new RuntimeException("文件不存在: " + path);
-            ctx.put(key, "file://" +
-                    f.getAbsolutePath().replace("\\", "/"));
+            ctx.put(key, "file://" + f.getAbsolutePath().replace("\\", "/"));
             return this;
         }
         public Template resource(String key, String path) {
             Path p = resourceLoader.getCache(path);
-            return file(key, p.toAbsolutePath().toString());
+            return image(key, p.toAbsolutePath().toString());
         }
 
-        // ============================= 渲染方法 ===========================
+        // ================= 渲染方法 =================
 
-        public String render(String cssSelector) throws Exception {
-            Context context = new Context();
-            context.setVariables(ctx);
-            String resolved = TEMPLATE_ENGINE.process(html, context);
-            WebDriver driver = null;
-            Path tmp = null;
+        public String render(String cssSelector) {
             try {
-                driver = chrome.create("3840,2160");
-                tmp = Files.createTempFile("render-", ".html");
-                Files.writeString(tmp, resolved);
-                driver.get("file://" + tmp.toAbsolutePath());
-                chrome.ready(driver);
-                return chrome.capture(driver, cssSelector);
-            } finally {
-                if (tmp != null) Files.deleteIfExists(tmp);
-                if (driver != null) driver.quit();
+                Context context = new Context();
+                context.setVariables(ctx);
+                String resolved = TEMPLATE_ENGINE.process(html, context);
+                WebDriver driver = null;
+                Path tmp = null;
+                try {
+                    driver = chrome.create("3840,2160");
+                    tmp = Files.createTempFile("render-", ".html");
+                    Files.writeString(tmp, resolved);
+                    driver.get("file://" + tmp.toAbsolutePath());
+                    chrome.ready(driver);
+                    return chrome.capture(driver, cssSelector);
+                } finally {
+                    if (tmp != null) Files.deleteIfExists(tmp);
+                    if (driver != null) driver.quit();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("HtmlRenderer: 渲染时出错", e);
             }
         }
     }

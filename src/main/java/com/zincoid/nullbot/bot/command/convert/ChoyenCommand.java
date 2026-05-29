@@ -4,11 +4,11 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.service.RenderingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.render.browser.HtmlRenderer;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -17,17 +17,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ChoyenCommand implements Command {
 
-    private final HtmlRenderer htmlRenderer;
+    private final RenderingService renderingService;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) throws Exception {
         Long groupId = event.getGroupId();
-
-        String base64 = htmlRenderer.load("static/html/5000choyen.html")
-                .string("topText", args.nextString())
-                .string("bottomText", args.nextString())
-                .render("#templateContainer");
-
+        String base64 = renderingService.choyen(args.nextString(), args.nextString());
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);
         log.info("☑ [Choyen] 图像处理已完成");
