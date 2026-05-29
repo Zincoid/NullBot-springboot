@@ -55,7 +55,7 @@ class NullBotApplicationTests {
     @Test
     void ThymeleafTest() throws IOException {
         String file = "Y:\\Projects\\IntelliJ IDEA\\Develop\\NullBot-springboot\\src\\test\\file\\uses.png";
-        String base64 = respRenderer.cmdUses(100000);
+        String base64 = respRenderer.cmdUses(1234);
         byte[] imageBytes = Base64.getDecoder().decode(base64);
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(imageBytes);

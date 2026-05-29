@@ -1,16 +1,23 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>5000choyen</title>
     <style>
-        body { margin: 0; background: white; }
+        body {
+            margin: 0;
+            background: white;
+        }
+
         #templateContainer {
             padding: 25px 0 0 25px;
             width: fit-content;
             height: fit-content;
         }
-        #canvas { display: block; }
+
+        #canvas {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -21,7 +28,7 @@
 <script th:inline="javascript">
     let drawer = null;
 
-    window.onload = function() {
+    window.onload = function () {
         drawer = new Drawer(document.getElementById("canvas"));
         drawer.lang = "cn";
 
@@ -30,7 +37,7 @@
         drawer.bottomText.useImg = false;
         drawer.useTransparent = true;
 
-        document.fonts.ready.then(function() {
+        document.fonts.ready.then(function () {
             drawer.refresh();
         });
     };
@@ -44,7 +51,7 @@
         this.ctx = ctx;
     }
 
-    TopText.prototype.draw = function() {
+    TopText.prototype.draw = function () {
         this.ctx.font = this.font;
         this.ctx.setTransform(1, 0, -0.45, 1, 0, 0);
 
@@ -132,7 +139,7 @@
         this.useImg = false;
     }
 
-    BottomText.prototype.draw = function() {
+    BottomText.prototype.draw = function () {
         if (this.useImg) return;
 
         this.ctx.font = this.font;
@@ -211,7 +218,7 @@
         this.lang = "";
     }
 
-    Drawer.prototype.refresh = function() {
+    Drawer.prototype.refresh = function () {
         if (this.lang === "ja") {
             this.topText.font = "100px notobk";
             this.bottomText.font = "100px notoserifbk";
@@ -255,7 +262,7 @@
         this.bottomText.draw();
     }
 
-    Drawer.prototype.clear = function() {
+    Drawer.prototype.clear = function () {
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
         if (!this.useTransparent) {
             this.ctx.fillStyle = 'white';

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>symmetry</title>
@@ -18,7 +18,7 @@
 </head>
 <body>
 <div id="mirrorContainer">
-    <img id="sourceImage" th:src="${image}" style="display:none;">
+    <img id="sourceImage" th:src="${image}" style="display:none;" alt="">
     <canvas id="resultCanvas"></canvas>
 </div>
 

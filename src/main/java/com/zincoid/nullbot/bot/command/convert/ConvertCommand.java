@@ -18,7 +18,7 @@ import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.util.DownloadUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
-import com.zincoid.nullbot.core.component.render.resvg.ImageConverter;
+import com.zincoid.nullbot.core.component.render.resvg.ImgConverter;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -31,7 +31,7 @@ import java.util.*;
 public class ConvertCommand implements Command {
 
     private final FileStorageProperties fileStorageProperties;
-    private final ImageConverter imageConverter;
+    private final ImgConverter imgConverter;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
@@ -67,9 +67,9 @@ public class ConvertCommand implements Command {
             String base64;
             try {
                 base64 = switch (method) {
-                    case "RIP" -> imageConverter.RIP(imagePath);
-                    case "PRTS" -> imageConverter.PRTS(imagePath);
-                    case "InvsPRTS" -> imageConverter.invsPRTS(imagePath);
+                    case "RIP" -> imgConverter.RIP(imagePath);
+                    case "PRTS" -> imgConverter.PRTS(imagePath);
+                    case "InvsPRTS" -> imgConverter.invsPRTS(imagePath);
                     default -> throw new BotWarnException("无此操作");
                 };
             } finally {

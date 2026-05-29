@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>pucci</title>
@@ -8,6 +8,7 @@
             margin: 0;
             background: white;
         }
+
         #wrap {
             position: relative;
             width: 618px;
@@ -19,10 +20,16 @@
     </style>
 </head>
 <body>
-    <div id="wrap" th:styleappend="|background-image: url('${background}')|">
-        <div style="position:absolute;left:227px;top:70px;width:86px;height:93px;font-family:Arial;font-size:20px;color:#000;text-align:left;-webkit-text-stroke:1px #000;text-stroke:1px #000" th:text="${text1}">text1</div>
-        <div style="position:absolute;left:179px;top:223px;width:85px;height:97px;font-family:Arial;font-size:20px;color:#000;text-align:left;-webkit-text-stroke:1px #000;text-stroke:1px #000" th:text="${text2}">text2</div>
-        <div style="position:absolute;left:60px;top:453px;width:293px;height:143px;font-family:Arial;font-size:40px;color:#000;text-align:center;-webkit-text-stroke:1px #000;text-stroke:1px #000" th:text="${text3}">text3</div>
+<div id="wrap" th:styleappend="|background-image: url('${background}')|">
+    <div style="position:absolute;left:227px;top:70px;width:86px;height:93px;font-family:Arial;font-size:20px;color:#000;text-align:left;-webkit-text-stroke:1px #000;text-stroke:1px #000"
+         th:text="${text1}">text1
     </div>
+    <div style="position:absolute;left:179px;top:223px;width:85px;height:97px;font-family:Arial;font-size:20px;color:#000;text-align:left;-webkit-text-stroke:1px #000;text-stroke:1px #000"
+         th:text="${text2}">text2
+    </div>
+    <div style="position:absolute;left:60px;top:453px;width:293px;height:143px;font-family:Arial;font-size:40px;color:#000;text-align:center;-webkit-text-stroke:1px #000;text-stroke:1px #000"
+         th:text="${text3}">text3
+    </div>
+</div>
 </body>
 </html>

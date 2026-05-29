@@ -9,7 +9,7 @@ import org.thymeleaf.context.Context;
 
 @Component
 @RequiredArgsConstructor
-public class ImageConverter {
+public class ImgConverter {
 
     private static final String PRTS_PNG = "static/image/PRTS.png";
     private static final String INVS_PRTS_PNG = "static/image/InvsPRTS.png";

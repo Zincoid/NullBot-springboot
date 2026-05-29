@@ -1,20 +1,25 @@
-<svg width="234" height="223" viewBox="0 0 234 223" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="234" height="223" viewBox="0 0 234 223" fill="none" xmlns="http://www.w3.org/2000/svg"
+     xmlns:th="http://www.thymeleaf.org">
     <g id="Frame 1">
         <rect width="234" height="223" rx="20" fill="white"/>
         <g id="Rectangle" filter="url(#filter0_d_3_2)">
             <rect x="10" y="10" width="213" height="203" rx="10" fill="#FF2D55"/>
         </g>
         <g id="Uses" filter="url(#filter1_d_3_2)">
-            <text fill="white" style="white-space: pre" xml:space="preserve" font-family="Monomaniac One" font-size="64" letter-spacing="0em" text-decoration="underline"><tspan x="57.5938" y="110.404">Uses</tspan></text>
+            <text fill="white" style="white-space: pre" xml:space="preserve" font-family="Monomaniac One" font-size="62"
+                  letter-spacing="0em" text-decoration="underline"><tspan x="57.5938" y="110.404">Uses</tspan></text>
         </g>
         <g id="Times" filter="url(#filter2_d_3_2)">
-            <text fill="white" style="white-space: pre" xml:space="preserve" font-family="Monomaniac One" font-size="40" letter-spacing="0em" text-anchor="middle" x="116.5" y="156.44"><tspan th:text="${uses}">00000000</tspan></text>
+            <text fill="white" style="white-space: pre" xml:space="preserve" font-family="Monomaniac One" font-size="43"
+                  letter-spacing="0em" text-anchor="middle" x="116.5" y="156.44"><tspan th:text="${uses}">0000</tspan></text>
         </g>
     </g>
     <defs>
-        <filter id="filter0_d_3_2" x="6" y="10" width="221" height="211" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <filter id="filter0_d_3_2" x="6" y="10" width="221" height="211" filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB">
             <feFlood flood-opacity="0" result="BackgroundImageFix"/>
-            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                           result="hardAlpha"/>
             <feOffset dy="4"/>
             <feGaussianBlur stdDeviation="2"/>
             <feComposite in2="hardAlpha" operator="out"/>
@@ -22,9 +27,11 @@
             <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3_2"/>
             <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3_2" result="shape"/>
         </filter>
-        <filter id="filter1_d_3_2" x="53.5938" y="66.736" width="126.789" height="62.464" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <filter id="filter1_d_3_2" x="53.5938" y="66.736" width="126.789" height="62.464" filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB">
             <feFlood flood-opacity="0" result="BackgroundImageFix"/>
-            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                           result="hardAlpha"/>
             <feOffset dy="4"/>
             <feGaussianBlur stdDeviation="2"/>
             <feComposite in2="hardAlpha" operator="out"/>
@@ -32,9 +39,11 @@
             <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3_2"/>
             <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3_2" result="shape"/>
         </filter>
-        <filter id="filter2_d_3_2" x="26.89" y="127.96" width="179.217" height="37.04" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <filter id="filter2_d_3_2" x="26.89" y="127.96" width="179.217" height="37.04" filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB">
             <feFlood flood-opacity="0" result="BackgroundImageFix"/>
-            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                           result="hardAlpha"/>
             <feOffset dy="4"/>
             <feGaussianBlur stdDeviation="2.5"/>
             <feComposite in2="hardAlpha" operator="out"/>
