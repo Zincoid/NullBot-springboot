@@ -3,7 +3,6 @@ package com.zincoid.nullbot.bot.command.system;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -29,13 +28,17 @@ public class InvokeCommand implements Command {
         try {
             String result = systemService.invoke(beanName, methodName, methodArgs);
             bot.sendGroupMsg(event.getGroupId(), """
-                    ✅方法已反射调用
+                    ✅方法调用成功
                     - Method: %s.%s(..)
                     - Return: %s""".formatted(beanName, methodName, result), false
             );
             log.info("☑ [Invoke] 方法已反射调用 - {}.{}(..) -> {}", beanName, methodName, result);
         } catch (Exception e) {
-            throw new BotWarnException("方法调用失败: " + e.getMessage());
+            bot.sendGroupMsg(event.getGroupId(), """
+                    ⚠️方法调用失败
+                    - Method: %s.%s(..)
+                    - Detail: %s""".formatted(beanName, methodName, e.getMessage()), false
+            );
         }
     }
 
