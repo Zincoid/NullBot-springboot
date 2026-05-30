@@ -10,5 +10,5 @@ public interface StatisticService {
 
     StatisticVO getStatistic();
 
-    Long getUses(Long userId);
+    Long getUsage(Long userId);
 }

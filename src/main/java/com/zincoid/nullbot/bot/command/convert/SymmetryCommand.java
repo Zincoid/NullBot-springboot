@@ -13,16 +13,13 @@ import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.service.render.RenderingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.util.DownloadUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.util.*;
 
 @Slf4j
@@ -31,7 +28,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SymmetryCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
     private final RenderingService renderingService;
 
     @Override
@@ -77,18 +73,9 @@ public class SymmetryCommand implements Command {
 
         if (urls.isEmpty()) throw new BotWarnException("缺少引用图片或ID参数或AT用户");
 
-        String tempPath = fileStorageProperties.getTempPath();
         for (String url : urls) {
-            String tempName = UUID.randomUUID().toString();
-            FileInfo fileInfo = DownloadUtil.downloadFile(url, tempPath, tempName);
-            String downloadedName = fileInfo.getFileName();
-            String imagePath = tempPath + "/" + downloadedName;
-            String base64;
-            try {
-                base64 = renderingService.symmetry(imagePath, mode);
-            } finally {
-                FileUtils.deleteQuietly(new File(imagePath));
-            }
+            FileInfo fileInfo = DownloadUtil.save(url);
+            String base64 = renderingService.symmetry(fileInfo.getPath(), mode);
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);
             log.info("☑ [Symmetry] 图像处理已完成");

@@ -96,7 +96,7 @@ public class MonitorListener {
             String filePath = fileStorageProperties.getImagePath() + "/monitor/" + groupId;
             try {
                 FileInfo fileInfo = fileService.saveFile(url, filePath, fileName, userId, userName);
-                log.info("└─[Saved] {}", fileInfo.getFileName());
+                log.info("└─[Saved] {}", fileInfo.getName());
             } catch (Exception e) {
                 log.info("└─[Error] {}", e.getMessage());
                 throw e;

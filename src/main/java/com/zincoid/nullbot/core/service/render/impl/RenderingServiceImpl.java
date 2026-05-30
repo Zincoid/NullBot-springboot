@@ -39,9 +39,11 @@ public class RenderingServiceImpl implements RenderingService {
     }
 
     @Override
-    public String uses(long uses) {
-        return svgRenderer.load("uses")
-                .number("uses", uses)
+    public String usage(String avatarPath, long times) {
+        String timesStr = String.format("%06d", times);
+        return svgRenderer.load("usage")
+                .string("times", timesStr)
+                .image("avatar", avatarPath, false)
                 .render();
     }
 

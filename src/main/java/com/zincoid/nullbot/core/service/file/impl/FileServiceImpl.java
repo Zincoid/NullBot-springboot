@@ -65,11 +65,11 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public FileInfo saveFile(String url, String directory, String fileName, Long ownerId, String ownerName) {
-        FileInfo fileInfo = DownloadUtil.downloadFile(url, directory, fileName);
-        boolean recorded = addOrUpdateRecord(directory, fileInfo.getFileName(),
-                fileInfo.getFileSize(), fileInfo.getLastModified(), ownerId, ownerName);
+        FileInfo fileInfo = DownloadUtil.save(url, directory, fileName);
+        boolean recorded = addOrUpdateRecord(directory, fileInfo.getName(),
+                fileInfo.getSize(), fileInfo.getLastModified(), ownerId, ownerName);
         if (!recorded) {
-            FileUtils.deleteQuietly(new File(directory + "/" + fileInfo.getFileName()));
+            FileUtils.deleteQuietly(new File(fileInfo.getPath()));
             throw new CommonException("数据库记录失败，已清理本地文件");
         }
         return fileInfo;

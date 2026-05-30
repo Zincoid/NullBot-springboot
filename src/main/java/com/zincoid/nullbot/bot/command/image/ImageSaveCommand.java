@@ -47,7 +47,7 @@ public class ImageSaveCommand implements Command {
             String filePath = fileStorageProperties.getImagePath() + "/collect";
             FileInfo fileInfo = fileService.saveFile(url, filePath, key, userId, userName);
             bot.sendGroupMsg(groupId, "\uD83D\uDCBD图片已保存", false);
-            log.info("☑ [ImageSave] 图片已保存: {}", fileInfo.getFileName());
+            log.info("☑ [ImageSave] 图片已保存: {}", fileInfo.getName());
         });
     }
 

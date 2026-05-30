@@ -8,7 +8,13 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 public class FileInfo {
-    private String fileName;
-    private Long fileSize;
+
+    private String directory;
+    private String name;
+    private Long size;
     LocalDateTime lastModified;
+
+    public String getPath() {
+        return directory + "/" + name;
+    }
 }

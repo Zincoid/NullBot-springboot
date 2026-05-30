@@ -1,0 +1,44 @@
+<svg width="234" height="223" viewBox="0 0 234 223" fill="none" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:th="http://www.thymeleaf.org">
+    <defs>
+        <filter id="blurFilter" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+        </filter>
+        <linearGradient id="fadeGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="black" stop-opacity="1"/>
+            <stop offset="50%" stop-color="black" stop-opacity="1"/>
+            <stop offset="100%" stop-color="white" stop-opacity="1"/>
+        </linearGradient>
+        <mask id="gradientMask">
+            <rect width="234" height="223" fill="url(#fadeGrad)"/>
+        </mask>
+        <pattern id="pattern0_3_2" patternContentUnits="objectBoundingBox" width="1" height="1">
+            <use xlink:href="#image0_3_2" transform="matrix(0.0015625 0 0 0.00163957 0 -0.0246637)"/>
+        </pattern>
+        <clipPath id="clip0_3_2">
+            <rect width="234" height="223" rx="20" fill="white"/>
+        </clipPath>
+        <image id="image0_3_2" width="640" height="640" preserveAspectRatio="none" th:href="${avatar}"/>
+    </defs>
+
+    <g id="Main">
+        <g clip-path="url(#clip0_3_2)">
+            <rect width="234" height="223" rx="20" fill="white"/>
+            <g id="Avatar_Clear">
+                <rect width="234" height="223" fill="url(#pattern0_3_2)"/>
+            </g>
+            <g id="Avatar_Blurred" filter="url(#blurFilter)" mask="url(#gradientMask)">
+                <rect width="234" height="223" fill="url(#pattern0_3_2)"/>
+            </g>
+            <text id="Usage" fill="white" style="white-space: pre" xml:space="preserve" font-family="Monomaniac One"
+                  font-size="34" letter-spacing="0em">
+                <tspan x="18.4033" y="202.324">Usage</tspan>
+            </text>
+            <text id="Times" fill="#FF383C" style="white-space: pre" xml:space="preserve" font-family="Monomaniac One"
+                  font-size="32" letter-spacing="0em">
+                <tspan x="111.25" y="201.952">000000</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

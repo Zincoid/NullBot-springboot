@@ -56,7 +56,7 @@ public class VideoSaveCommand implements Command {
         String url = entry.getValue();
         FileInfo fileInfo = fileService.saveFile(url, filePath, fileName, userId, userName);
         bot.sendGroupMsg(groupId, "\uD83C\uDFA5视频已保存", false);
-        log.info("☑ [VideoSave] 视频已保存: {}", fileInfo.getFileName());
+        log.info("☑ [VideoSave] 视频已保存: {}", fileInfo.getName());
     }
 
     @Override
