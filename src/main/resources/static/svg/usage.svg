@@ -37,7 +37,7 @@
             </text>
             <text id="Times" fill="#FF383C" style="white-space: pre" xml:space="preserve" font-family="Monomaniac One"
                   font-size="32" letter-spacing="0em">
-                <tspan x="111.25" y="201.952">000000</tspan>
+                <tspan x="111.25" y="201.952" th:text="${times}">000000</tspan>
             </text>
         </g>
     </g>

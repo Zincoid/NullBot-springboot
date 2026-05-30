@@ -866,7 +866,7 @@
 - 新增 WebFetchTool - 用于 AI 获取网页内容；
 - 优化 部分其他代码。
 
-### 2026.5.29 - v2.1.4
+### 2026.5.29
 
 - 重构 RespRenderer -> SvgRenderer 并改进其模板系统；
 - 移除 ImgConverter 组件并引入 RenderingService 和 CapturingService 接口；
@@ -875,7 +875,7 @@
 - 重构 服务层包结构并更新所有相关导入；
 - 优化 部分代码。
 
-### 2026.5.30 - v2.1.5
+### 2026.5.30 - v2.1.4
 
 - 增强 DownloadUtil - 新增下载临时文件和清理方法并优化使用；
 - 渲染资源改动。
