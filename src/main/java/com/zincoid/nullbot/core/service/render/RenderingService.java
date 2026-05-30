@@ -6,7 +6,7 @@ public interface RenderingService {
 
     String prts(String imagePath, boolean invert);
 
-    String uses(long uses);
+    String usage(String avatarPath, long times);
 
     String choyen(String topText, String bottomText);
 

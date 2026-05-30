@@ -14,11 +14,9 @@ import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.ai.voice.TtsClient;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.model.data.po.TtsTemplatePO;
 import com.zincoid.nullbot.core.service.tts.TtsTemplateService;
@@ -26,7 +24,6 @@ import com.zincoid.nullbot.core.util.DownloadUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -37,7 +34,6 @@ import java.util.*;
 @Deprecated
 public class TtsCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
     private final TtsTemplateService ttsTemplateService;
     private final TtsClient ttsClient;
 
@@ -64,17 +60,10 @@ public class TtsCommand implements Command {
                     if (!isAudioFile(audio.getKey()))
                         throw new BotWarnException("引用文件非音频");
 
-                    String tempPath = fileStorageProperties.getTempPath();
                     String templateName = args.nextString();
                     String templateText = args.nextString();
-                    FileInfo fileInfo = DownloadUtil.downloadFile(audio.getValue(), tempPath, audio.getKey());
-                    String downloadedName = fileInfo.getFileName();
-                    String uploadedPath;
-                    try {
-                        uploadedPath = ttsClient.upload(tempPath + "/" + downloadedName);
-                    } finally {
-                        FileUtils.deleteQuietly(new File(tempPath + "/" + downloadedName));
-                    }
+                    FileInfo fileInfo = DownloadUtil.save(audio.getValue());
+                    String uploadedPath = ttsClient.upload(fileInfo.getPath());
                     if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
                         throw new BotWarnException("存在重名模板");
                     bot.sendGroupMsg(groupId, "\uD83D\uDCBE模板已保存: %s".formatted(uploadedPath), false);

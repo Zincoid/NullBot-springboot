@@ -1,11 +1,14 @@
 package com.zincoid.nullbot.bot.command.system;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.service.render.RenderingService;
 import com.zincoid.nullbot.core.service.system.StatisticService;
+import com.zincoid.nullbot.core.util.DownloadUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -26,21 +29,19 @@ public class TestCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
-        Long uses = statisticService.getUses(userId);
+        Long times = statisticService.getUsage(userId);
+        String url = ShiroUtils.getUserAvatar(userId, 5);
+        FileInfo fileInfo = DownloadUtil.save(url);
         String response = MsgUtils.builder()
-                .img("base64://" + renderingService.uses(uses))
+                .img("base64://" + renderingService.usage(fileInfo.getPath(), times))
                 .build();
         bot.sendGroupMsg(groupId, response, false);
 
-        bot.sendGroupMsg(groupId, """
-                ✅测试结束
-                - GroupID: %s
-                - UserID: %s""".formatted(groupId, userId), false);
-        log.info("☑ [Test] 用户已使用 {} 次指令", uses);
+        log.info("☑ [Test] 用户已使用 {} 次指令", times);
     }
 
     @Override
-    public Integer getAccess() { return 2; }
+    public Integer getAccess() { return 0; }
 
     @Override
     public String getHelp() {

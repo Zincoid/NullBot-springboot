@@ -9,6 +9,7 @@ import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotOmitException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.util.DownloadUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.command.Command;
@@ -75,6 +76,9 @@ public class ExecutorHandler implements Handler {
             if (userId != 0L) bot.sendPrivateMsg(userId, message, false);
             wsSender.broadcast("ERROR", "严重异常: " + e.getMessage());
             throw e;
+        } finally {
+            int tempCount = DownloadUtil.cleanup();
+            log.info("  [ExecutorHandler] 临时文件已清理: {}", tempCount);
         }
 
         log.info("┌─[ExecutorHandler] 执行结束");

@@ -63,7 +63,7 @@ public class DriftBottleCommand implements Command {
                 thrown = driftBottleService.throwBottle(
                         userId,
                         bot.getStrangerInfo(userId, true).getData().getNickname(),
-                        bottlePath + "/" + fileInfo.getFileName(),
+                        fileInfo.getPath(),
                         true
                 );
                 if (!autoThrow)
@@ -71,7 +71,7 @@ public class DriftBottleCommand implements Command {
                 log.info("☑ [DriftBottle] 扔漂流瓶(图片) - {} -> {}", userId, thrown);
             } finally {
                 if (fileInfo != null && !thrown)
-                    fileService.deleteFile(bottlePath, fileInfo.getFileName());
+                    fileService.deleteFile(bottlePath, fileInfo.getName());
             }
             return;
         }

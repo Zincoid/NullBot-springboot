@@ -8,91 +8,111 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 
 @Slf4j
 public final class DownloadUtil {
 
+    private static final ThreadLocal<Set<Path>> THREAD_TEMP_FILES = ThreadLocal.withInitial(HashSet::new);
+
+    private static final Pattern EXT_PATTERN = Pattern.compile("^\\.[a-zA-Z0-9\\-]{1,9}$");
+    private static final int BUF_SIZE = 8192;
+    private static final int DRAIN_BUF_SIZE = 2048;
+    private static final long MAX_FILE_SIZE = 500L * 1024 * 1024;
+
     private DownloadUtil() {}
-    
-    public static FileInfo downloadFile(String fileUrl, String savePath, String fileName) {
+
+    /** 清除临时文件 (需在线程结束前调用) */
+    public static int cleanup() {
+        Set<Path> files = THREAD_TEMP_FILES.get();
+        int count = 0;
+        for (Path path : files) {
+            try {
+                if (Files.deleteIfExists(path)) count++;
+            } catch (IOException e) {
+                log.warn("▽ [DownloadUtil] Failed to delete temp file: {}, {}", path, e.getMessage());
+            }
+        }
+        files.clear();
+        THREAD_TEMP_FILES.remove();
+        return count;
+    }
+
+    /** 下载临时文件 */
+    public static FileInfo save(String url) {
+        String tempDir = System.getProperty("java.io.tmpdir");
+        FileInfo fileInfo = save(url, tempDir, UUID.randomUUID().toString());
+        Path filePath = Paths.get(fileInfo.getPath());
+        filePath.toFile().deleteOnExit();
+        THREAD_TEMP_FILES.get().add(filePath);
+        return fileInfo;
+    }
+
+    /** 下载永久文件 */
+    public static FileInfo save(String url, String directory, String name) {
         HttpURLConnection connection = null;
-
+        boolean streamConsumed = false;
         try {
-            URL url = new URL(fileUrl);
-            connection = (HttpURLConnection) url.openConnection();
-
+            connection = (HttpURLConnection) URI.create(url).toURL().openConnection();
             setCommonHeaders(connection);
-            connection.setConnectTimeout(10000);
-            connection.setReadTimeout(30000);
-            connection.setInstanceFollowRedirects(true);
-
             int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
                 drainStream(connection.getErrorStream());
                 throw new RuntimeException("Failed: HTTP error code " + responseCode);
             }
-
             String contentType = connection.getContentType();
             long contentLength = connection.getContentLengthLong();
-
-            final long MAX_FILE_SIZE = 500L * 1024 * 1024;
             if (contentLength > MAX_FILE_SIZE) {
-                log.warn("▽ [DownloadUtil] File too large: {} > {}", formatFileSize(contentLength), formatFileSize(MAX_FILE_SIZE));
+                log.warn("▽ [DownloadUtil] File too large: {} > {}",
+                        formatFileSize(contentLength), formatFileSize(MAX_FILE_SIZE));
                 throw new RuntimeException("Failed: File too large");
             }
-
-            log.info("▽ [DownloadUtil] Downloading from url...");
-            log.info("▽ [DownloadUtil] Content-Type: {}", contentType);
-            if (contentLength > 0) {
-                log.info("▽ [DownloadUtil] File Size: {}", formatFileSize(contentLength));
-            }
-
-            String finalFileName = determineFileName(fileName, contentType, fileUrl);
-            Path saveFilePath = Paths.get(savePath, finalFileName);
-            Files.createDirectories(Paths.get(savePath));
-
+            log.info("▽ [DownloadUtil] Downloading... Content-Type: {}, Size: {}",
+                    contentType, contentLength > 0 ? formatFileSize(contentLength) : "unknown");
+            String fileName = determineFileName(name, contentType, url);
+            Path filePath = Paths.get(directory, fileName);
+            Files.createDirectories(Paths.get(directory));
             try (InputStream inputStream = connection.getInputStream();
-                 OutputStream outputStream = Files.newOutputStream(saveFilePath)) {
-
-                byte[] buffer = new byte[8192];
+                 OutputStream outputStream = Files.newOutputStream(filePath)) {
+                byte[] buffer = new byte[BUF_SIZE];
                 int bytesRead;
                 long totalBytesRead = 0;
-
+                long nextLogThreshold = 10 * 1024 * 1024;
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
                     if (Thread.currentThread().isInterrupted()) {
                         log.warn("▽ [DownloadUtil] Download interrupted by thread");
-                        Files.deleteIfExists(saveFilePath);
                         throw new RuntimeException("Failed: Download interrupted");
                     }
-
                     outputStream.write(buffer, 0, bytesRead);
                     totalBytesRead += bytesRead;
-
-                    if (contentLength > 0 && totalBytesRead % (10 * 1024 * 1024) == 0) {
-                        log.info("▽ [DownloadUtil] Download progress: {}/{}", formatFileSize(totalBytesRead), formatFileSize(contentLength));
+                    if (contentLength > 0 && totalBytesRead >= nextLogThreshold) {
+                        log.info("▽ [DownloadUtil] Download progress: {}/{}",
+                                formatFileSize(totalBytesRead), formatFileSize(contentLength));
+                        nextLogThreshold += 10 * 1024 * 1024;
                     }
                 }
-
-                long downloadedSize = Files.size(saveFilePath);
-                log.info("▽ [DownloadUtil] Download completed: {} ({})", finalFileName, formatFileSize(downloadedSize));
-
-                LocalDateTime lastModified = Files
-                        .getLastModifiedTime(saveFilePath)
-                        .toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime();
-
-                return new FileInfo(finalFileName, downloadedSize, lastModified);
+                streamConsumed = true;
+                long downloadedSize = Files.size(filePath);
+                log.info("▽ [DownloadUtil] Download completed: {} ({})",
+                        fileName, formatFileSize(downloadedSize));
+                return new FileInfo(directory, fileName, downloadedSize,
+                        Files.getLastModifiedTime(filePath)
+                                .toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDateTime());
+            } catch (IOException e) {
+                Files.deleteIfExists(filePath);
+                throw e;
             }
-
         } catch (IOException e) {
             log.error("▽ [DownloadUtil] Download failed: {}", e.getMessage(), e);
             throw new RuntimeException("Failed: " + e.getMessage());
@@ -100,7 +120,10 @@ public final class DownloadUtil {
             log.error("▽ [DownloadUtil] Unexpected error: {}", e.getMessage(), e);
             throw new RuntimeException("Failed: Unexpected error");
         } finally {
-            closeConnection(connection);
+            if (connection != null) {
+                if (!streamConsumed) drainStream(connection.getErrorStream());
+                connection.disconnect();
+            }
         }
     }
 
@@ -111,39 +134,21 @@ public final class DownloadUtil {
     private static void setCommonHeaders(HttpURLConnection connection) {
         connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
         connection.setRequestProperty("Accept", "*/*");
+        connection.setConnectTimeout(10000);
+        connection.setReadTimeout(30000);
+        connection.setInstanceFollowRedirects(true);
     }
 
     private static void drainStream(InputStream stream) {
         if (stream == null) return;
         try (InputStream s = stream) {
-            byte[] buffer = new byte[2048];
-            while (s.read(buffer) > 0) {
-                // drain
-            }
-        } catch (IOException ignored) {
-        }
-    }
-
-    private static void closeConnection(HttpURLConnection connection) {
-        if (connection == null) return;
-        try {
-            try {
-                drainStream(connection.getInputStream());
-            } catch (Exception ignored) {
-            }
-        } finally {
-            try {
-                connection.disconnect();
-            } catch (Exception e) {
-                log.warn("▽ [DownloadUtil] Failed to disconnect connection: {}", e.getMessage());
-            }
-        }
+            byte[] buffer = new byte[DRAIN_BUF_SIZE];
+            while (s.read(buffer) > 0) {}  // drain
+        } catch (IOException ignored) {}
     }
 
     private static String determineFileName(String fileName, String contentType, String fileUrl) {
-        if (hasExtension(fileName)) {
-            return fileName;
-        }
+        if (hasExtension(fileName)) return fileName;
         String extension = getFileExtension(contentType, fileUrl, fileName);
         return fileName + extension;
     }
@@ -155,7 +160,6 @@ public final class DownloadUtil {
 
     private static String getFileExtension(String contentType, String fileUrl, String fileName) {
         String ext;
-
         if (fileName != null && !fileName.isEmpty()) {
             ext = extractExtensionFromFileName(fileName);
             if (!ext.isEmpty()) {
@@ -163,7 +167,6 @@ public final class DownloadUtil {
                 return ext;
             }
         }
-
         if (contentType != null && !contentType.isEmpty()) {
             ext = getExtensionFromContentType(contentType);
             if (!ext.isEmpty()) {
@@ -171,7 +174,6 @@ public final class DownloadUtil {
                 return ext;
             }
         }
-
         if (fileUrl != null && !fileUrl.isEmpty()) {
             ext = extractExtensionFromUrl(fileUrl);
             if (!ext.isEmpty()) {
@@ -179,7 +181,6 @@ public final class DownloadUtil {
                 return ext;
             }
         }
-
         log.info("▽ [DownloadUtil] Using default extension: .dat");
         return ".dat";
     }
@@ -187,18 +188,15 @@ public final class DownloadUtil {
     private static String extractExtensionFromFileName(String fileName) {
         String simpleName = new File(fileName).getName();
         int lastDotIndex = simpleName.lastIndexOf('.');
-
         if (lastDotIndex > 0 && lastDotIndex < simpleName.length() - 1) {
             String extension = simpleName.substring(lastDotIndex).toLowerCase();
             if (isValidExtension(extension)) return extension;
         }
-
         return "";
     }
 
     private static String getExtensionFromContentType(String contentType) {
         String lower = contentType.toLowerCase();
-
         if (lower.startsWith("image/")) {
             if (lower.contains("jpeg") || lower.contains("jpg")) return ".jpg";
             if (lower.contains("png")) return ".png";
@@ -209,7 +207,6 @@ public final class DownloadUtil {
             if (lower.contains("tiff")) return ".tiff";
             return ".jpg";
         }
-
         if (lower.startsWith("video/")) {
             if (lower.contains("mp4")) return ".mp4";
             if (lower.contains("mpeg")) return ".mpeg";
@@ -221,7 +218,6 @@ public final class DownloadUtil {
             if (lower.contains("mkv")) return ".mkv";
             return ".mp4";
         }
-
         if (lower.startsWith("audio/")) {
             if (lower.contains("mp3") || lower.contains("mpeg")) return ".mp3";
             if (lower.contains("ogg")) return ".ogg";
@@ -232,7 +228,6 @@ public final class DownloadUtil {
             if (lower.contains("m4a")) return ".m4a";
             return ".mp3";
         }
-
         if (lower.contains("application/")) {
             if (lower.contains("pdf")) return ".pdf";
             if (lower.contains("zip")) return ".zip";
@@ -245,7 +240,6 @@ public final class DownloadUtil {
             if (lower.contains("powerpoint")) return ".ppt";
             if (lower.contains("octet-stream")) return ".bin";
         }
-
         if (lower.startsWith("text/")) {
             if (lower.contains("plain")) return ".txt";
             if (lower.contains("html")) return ".html";
@@ -255,9 +249,7 @@ public final class DownloadUtil {
             if (lower.contains("csv")) return ".csv";
             return ".txt";
         }
-
         if (lower.contains("json")) return ".json";
-
         return "";
     }
 
@@ -265,7 +257,6 @@ public final class DownloadUtil {
         String urlNoQuery = fileUrl.split("[?#]")[0];
         int lastDot = urlNoQuery.lastIndexOf('.');
         int lastSlash = urlNoQuery.lastIndexOf('/');
-
         if (lastDot > lastSlash && lastDot < urlNoQuery.length() - 1) {
             String ext = urlNoQuery.substring(lastDot).toLowerCase();
             if (isValidExtension(ext)) return ext;
@@ -275,16 +266,14 @@ public final class DownloadUtil {
 
     private static boolean isValidExtension(String ext) {
         return ext != null && ext.length() >= 2 && ext.length() <= 10
-                && Pattern.matches("^\\.[a-zA-Z0-9\\-]{1,9}$", ext);
+                && EXT_PATTERN.matcher(ext).matches();
     }
 
     private static String formatFileSize(long size) {
         if (size <= 0) return "0 B";
-
         final String[] units = {"B", "KB", "MB", "GB", "TB"};
         int idx = (int) (Math.log10(size) / Math.log10(1024));
         idx = Math.min(idx, units.length - 1);
-
         return String.format("%.2f %s", size / Math.pow(1024, idx), units[idx]);
     }
 }

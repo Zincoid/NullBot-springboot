@@ -1,0 +1,50 @@
+<svg width="234" height="223" viewBox="0 0 234 223" fill="none" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:th="http://www.thymeleaf.org">
+    <g id="Main">
+        <rect width="234" height="223" rx="20" fill="white"/>
+        <g id="Rectangle" filter="url(#filter0_df_3_2)">
+            <rect x="10" y="10" width="213" height="203" rx="10" fill="url(#pattern0_3_2)"
+                  shape-rendering="crispEdges"/>
+        </g>
+        <g id="Usage" filter="url(#filter1_d_3_2)">
+            <text fill="white" style="white-space: pre" xml:space="preserve" font-family="Monomaniac One" font-size="38"
+                  letter-spacing="0em"><tspan x="46.3037" y="98.068">Usage</tspan></text>
+        </g>
+        <rect id="Times_bg" x="47" y="112" width="141" height="45" rx="10" fill="white"/>
+        <rect id="Times_bg_inner" x="52" y="117" width="131" height="35" rx="5" fill="#F2F2F7"/>
+        <text id="Times" fill="#FF383C" style="white-space: pre" xml:space="preserve" font-family="Monomaniac One"
+              font-size="32" letter-spacing="0em"><tspan x="65.75" y="145.952" th:text="${times}">000000</tspan></text>
+    </g>
+    <defs>
+        <filter id="filter0_df_3_2" x="6" y="6" width="221" height="215" filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                           result="hardAlpha"/>
+            <feOffset dy="4"/>
+            <feGaussianBlur stdDeviation="2"/>
+            <feComposite in2="hardAlpha" operator="out"/>
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3_2"/>
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3_2" result="shape"/>
+            <feGaussianBlur stdDeviation="2" result="effect2_foregroundBlur_3_2"/>
+        </filter>
+        <pattern id="pattern0_3_2" patternContentUnits="objectBoundingBox" width="1" height="1">
+            <use xlink:href="#image0_3_2" transform="matrix(0.0015625 0 0 0.00163947 0 -0.0246305)"/>
+        </pattern>
+        <filter id="filter1_d_3_2" x="43.8237" y="72.312" width="92.3009" height="39.768" filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                           result="hardAlpha"/>
+            <feOffset dy="4"/>
+            <feGaussianBlur stdDeviation="2"/>
+            <feComposite in2="hardAlpha" operator="out"/>
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3_2"/>
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3_2" result="shape"/>
+        </filter>
+        <image id="image0_3_2" width="640" height="640"
+               preserveAspectRatio="none" th:href="${avatar}"/>
+    </defs>
+</svg>
