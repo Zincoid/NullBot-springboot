@@ -157,7 +157,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         }
         if (finalResp == null) {
             log.warn("◎ [ToolCall] 达到最大迭代次数: {} ", maxToolCalls);
-            chatMemory.add(chatId, BaseMessage.system("请根据已有信息给出最终回答，不要再调用工具。"));
+            chatMemory.add(chatId, BaseMessage.user("达到最大工具调用轮数，请根据已有信息给出最终回答，不要再调用工具。"));
             finalResp = model.invoke(chatMemory.get(chatId), false, maxTokens);
         }
         QQMessage _message = QQMessage.send(message, finalResp.getContent());

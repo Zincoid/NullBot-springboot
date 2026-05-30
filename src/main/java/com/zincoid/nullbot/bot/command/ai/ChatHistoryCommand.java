@@ -50,8 +50,12 @@ public class ChatHistoryCommand implements Command {
                                 ? qMsg.getUserName() + ": " + qMsg.getContent()
                                 : "Null: " + msg.getContent();
                     if (msg instanceof BaseMessage bMsg)
-                        return bMsg.getRole() == Role.ASSISTANT ?
-                                "Null: [ToolCalls]" : "Tool: [Results]";
+                        return switch (bMsg.getRole()) {
+                            case USER -> "User: [Extra]";
+                            case ASSISTANT -> "Null: [ToolCalls]";
+                            case SYSTEM -> "System: [Extra]";
+                            case TOOL -> "Tool: [Results]";
+                        };
                     return "未知类型消息";
                 }
         ).toList();

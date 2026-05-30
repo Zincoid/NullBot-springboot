@@ -879,4 +879,5 @@
 
 - 增强 DownloadUtil - 新增下载临时文件和清理方法并优化使用；
 - 修复 QQAiClient TOOLS 策略达到最大迭代次数后导致错误响应的问题；
+- 优化 BingSearchTool - 修改URL；
 - 渲染资源改动。
