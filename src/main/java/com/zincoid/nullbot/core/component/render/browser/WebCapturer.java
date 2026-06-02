@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.component.render.browser;
 
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.properties.ChromeProperties;
+import com.zincoid.nullbot.core.properties.render.ChromeProperties;
 import org.openqa.selenium.*;
 import org.springframework.stereotype.Component;
 

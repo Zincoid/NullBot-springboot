@@ -33,7 +33,7 @@ public class BreadServiceImpl implements BreadService {
     private final UserService userService;
     private final InventoryService inventoryService;
 
-    private final Random random =  new Random();
+    private final Random random = new Random();
 
     // =================== 面包游戏相关 ===================
 
@@ -69,16 +69,16 @@ public class BreadServiceImpl implements BreadService {
     @Transactional
     public int buyBasic(Long userId, int cost) {  // 花费 cost 现金购买随机数量普通面包
         UserPO user = userMapper.selectById(userId);
-        if(user.getCash() >= cost){
+        if (user.getCash() >= cost) {
             ItemPO bread = getBasicBread();
             int i = random.nextInt(10) + 1;
-            if(inventoryService.increase(userId, bread.getId(), i)){
+            if (inventoryService.increase(userId, bread.getId(), i)) {
                 user.setCash(user.getCash() - cost);
                 userMapper.updateById(user);
                 return i;
-            }else
+            } else
                 return 0;
-        }else
+        } else
             return 0;
     }
 
@@ -91,9 +91,9 @@ public class BreadServiceImpl implements BreadService {
                         .eq(InventoryPO::getOwnerId, userId)
                         .eq(InventoryPO::getItemId, bread.getId())
                 );
-        if(userBread == null) return new int[]{0, 0};
+        if (userBread == null) return new int[]{0, 0};
         int i = Math.min(random.nextInt(10) + 1, userBread.getAmount());
-        if(inventoryService.decrease(userId, bread.getId(), i)){
+        if (inventoryService.decrease(userId, bread.getId(), i)) {
             int j = userService.plusExperience(userId, i * exp);
             return new int[]{i, j};  // 返回: 实际吃掉个数 和 升级级数
         } else
@@ -105,11 +105,11 @@ public class BreadServiceImpl implements BreadService {
     public boolean eatRotten(Long userId) {
         ItemPO bread = getBasicBread();
         UserPO user = userMapper.selectById(userId);
-        if(inventoryService.decrease(userId, bread.getId(), 1)){
+        if (inventoryService.decrease(userId, bread.getId(), 1)) {
             user.setExperience(0);
             userMapper.updateById(user);
             return true;
-        }else
+        } else
             return false;
     }
 
@@ -117,7 +117,7 @@ public class BreadServiceImpl implements BreadService {
     @Transactional
     public ItemPO buySpecial(Long userId, int cost) {  // 花费 cost 现金购买一个特殊面包
         UserPO user = userMapper.selectById(userId);
-        if(user.getCash() >= cost){
+        if (user.getCash() >= cost) {
 
             Rarity rarity = DrawUtil.drawRarityByProbability();
             List<ItemPO> itemList = itemMapper
@@ -127,13 +127,13 @@ public class BreadServiceImpl implements BreadService {
                             .eq(ItemPO::getRarity, rarity)
                     );
             ItemPO item = DrawUtil.drawItemByLogPrice(itemList);
-            if(inventoryService.increase(userId, item.getId(), 1)){
+            if (inventoryService.increase(userId, item.getId(), 1)) {
                 user.setCash(user.getCash() - cost);
                 userMapper.updateById(user);
                 return item;
             } else
                 return null;
-        }else
+        } else
             return null;
     }
 
@@ -146,9 +146,9 @@ public class BreadServiceImpl implements BreadService {
                         .eq(InventoryPO::getOwnerId, fromId)
                         .eq(InventoryPO::getItemId, bread.getId())
                 );
-        if(userBread == null) return 0;
+        if (userBread == null) return 0;
         int i = Math.min(random.nextInt(10) + 1, userBread.getAmount());
-        if(inventoryService.decrease(fromId, bread.getId(), i)){
+        if (inventoryService.decrease(fromId, bread.getId(), i)) {
             inventoryService.increase(toId, bread.getId(), i);
             return i;
         } else

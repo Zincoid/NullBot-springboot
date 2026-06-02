@@ -99,7 +99,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public DataPage<ItemPO> getPage(Integer current, Integer size) {
-        Page<ItemPO> page = new Page<>(current, size);
+        Page<ItemPO> page = Page.of(current, size);
         Page<ItemPO> itemPage;
         itemPage = itemMapper.selectPage(page, new LambdaQueryWrapper<ItemPO>().orderByAsc(ItemPO::getId));
         return new DataPage<>(itemPage.getRecords(), itemPage.getCurrent(), itemPage.getPages(), itemPage.getTotal(), itemPage.getSize());
@@ -111,7 +111,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void adds(List<ItemPO> items) { itemMapper.insert(items); }
+    public void adds(List<ItemPO> items) {
+        itemMapper.insert(items);
+    }
 
     @Override
     public boolean update(ItemPO item) {

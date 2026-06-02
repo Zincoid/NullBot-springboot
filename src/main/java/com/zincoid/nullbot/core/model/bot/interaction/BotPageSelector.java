@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.core.function.BotConsumer;
+import com.zincoid.nullbot.core.function.BotGroupEntityConsumer;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -26,7 +26,7 @@ public class BotPageSelector<K, V> {
 
     private final List<K> keys;
     private final List<V> values;
-    private final BotConsumer<Bot, Long, K> action;
+    private final BotGroupEntityConsumer<K> action;
 
     private final int total;
     private final int size;
@@ -61,7 +61,7 @@ public class BotPageSelector<K, V> {
         private final boolean continuous;
         private final List<K> keys;
         private final List<V> values;
-        private final BotConsumer<Bot, Long, K> action;
+        private final BotGroupEntityConsumer<K> action;
 
         private Long userId;
         private String info = "";
@@ -94,7 +94,7 @@ public class BotPageSelector<K, V> {
             Bot bot, Long groupId,
             String title, boolean continuous,
             List<K> keys, List<V> values,
-            BotConsumer<Bot, Long, K> action
+            BotGroupEntityConsumer<K> action
     ) {
         return new Builder<>(bot, groupId, title, continuous, keys, values, action);
     }

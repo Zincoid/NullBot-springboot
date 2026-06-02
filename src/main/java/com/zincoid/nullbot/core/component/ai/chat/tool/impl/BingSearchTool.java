@@ -29,7 +29,7 @@ public class BingSearchTool implements Tool {
 
     public BingSearchTool() {
         this.toolDef = ToolDef.builder("bing_search", "Bing搜索，用于查询实时信息、新闻、百科等。" +
-                        "此工具尽量使用单个词语搜索，多词容易查不到正确内容，如果使用多词请直接拼接不要用空格分隔。")
+                        "此工具尽量使用简短的单个词语搜索，多词易查不到相关内容，如果查不到可缩短关键词再试。")
                 .addString("query", "搜索关键词", true)
                 .build();
         this.httpClient = HttpClient.newBuilder()

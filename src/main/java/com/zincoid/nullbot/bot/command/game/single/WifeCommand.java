@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.util.Base64Util;
@@ -38,7 +38,7 @@ public class WifeCommand implements Command {
     private final Map<Long, FilePO> acgWifeMap = new ConcurrentHashMap<>();
     private final Map<Long, LocalDateTime> acgExpireMap = new ConcurrentHashMap<>();
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileService fileService;
 
     @Override
@@ -107,7 +107,7 @@ public class WifeCommand implements Command {
             return;
         }
         String category = args.nextString();
-        String acgPath = fileStorageProperties.getImagePath() + "/acg/" + category;
+        String acgPath = storageProperties.getImagePath() + "/acg/" + category;
         List<FilePO> wives = fileService.search("", acgPath);
         if (wives.isEmpty())
             throw new BotInfoException(Emoji.INFO, "暂无角色");

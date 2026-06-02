@@ -13,7 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.model.data.po.DriftBottlePO;
 import com.zincoid.nullbot.core.enums.BniMode;
@@ -34,7 +34,7 @@ public class DriftBottleCommand implements Command {
 
     private static final int KEEP_TIMEOUT_SECONDS = 30;  // 漂流瓶保留时间
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileService fileService;
     private final DriftBottleService driftBottleService;
     private final BotInputManager botInputManager;
@@ -55,7 +55,7 @@ public class DriftBottleCommand implements Command {
             }
             String imageUrl = imageMap.entrySet().iterator().next().getValue();
             String imageName = UUID.randomUUID().toString();
-            String bottlePath = fileStorageProperties.getImagePath() + "/bottle";
+            String bottlePath = storageProperties.getImagePath() + "/bottle";
             FileInfo fileInfo = null;
             boolean thrown = false;
             try {

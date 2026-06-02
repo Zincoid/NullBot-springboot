@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.web.configuration;
 
-import com.zincoid.nullbot.core.properties.JwtProperties;
+import com.zincoid.nullbot.core.properties.security.JwtProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

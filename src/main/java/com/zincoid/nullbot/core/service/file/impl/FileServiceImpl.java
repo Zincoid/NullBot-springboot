@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.model.data.DataPage;
 import com.zincoid.nullbot.core.model.information.FileInfo;
@@ -48,7 +48,7 @@ public class FileServiceImpl implements FileService {
 
     private final AdminMapper adminMapper;
     private final FileMapper fileMapper;
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
 
     @Value("${file.init}")
     private boolean init;
@@ -127,7 +127,7 @@ public class FileServiceImpl implements FileService {
     @Override
     @Transactional
     public boolean initRoot() {
-        Path rootPath = Path.of(fileStorageProperties.getFileDirectory());
+        Path rootPath = Path.of(storageProperties.getFileDirectory());
         String rootParentPath = rootPath.getParent().toString();
         String rootFileName = rootPath.getFileName().toString();
 
@@ -175,7 +175,7 @@ public class FileServiceImpl implements FileService {
                 .orderByDesc(FilePO::getIsDir)
                 .orderByAsc(FilePO::getId);
         if (hidden) wrapper.eq(FilePO::getVisible, true);
-        Page<FilePO> page = new Page<>(current, size);
+        Page<FilePO> page = Page.of(current, size);
         Page<FilePO> filePage = fileMapper.selectPage(page, wrapper);
         return new DataPage<>(filePage.getRecords(), filePage.getCurrent(), filePage.getPages(), filePage.getTotal(), filePage.getSize());
     }
@@ -491,7 +491,7 @@ public class FileServiceImpl implements FileService {
     }
 
     private String getNormalizedBaseDir() {
-        return normalizePath(fileStorageProperties.getFileDirectory());
+        return normalizePath(storageProperties.getFileDirectory());
     }
 
     private String resolveFullDir(String curDir) {
@@ -519,15 +519,11 @@ public class FileServiceImpl implements FileService {
             // 1. 获取存储目录
             String baseDir = getNormalizedBaseDir();
             Path basePath = Path.of(baseDir);
-            if (!Files.exists(basePath) || !Files.isDirectory(basePath)) {
-                log.info("◎ [FileService] 存储目录不存在: {}", baseDir);
-                return;
-            }
-
+            if (!Files.exists(basePath) || !Files.isDirectory(basePath))
+                throw new IllegalArgumentException("存储目录不存在");
             // 2. 扫描文件系统
             Map<String, SyncFileInfo> fileSystemMap = new HashMap<>();
             scanDirectory(basePath, fileSystemMap);
-
             // 3. 获取数据记录
             List<FilePO> dbFiles = fileMapper.selectList(null);
             Map<String, FilePO> dbMap = new HashMap<>();
@@ -536,10 +532,8 @@ public class FileServiceImpl implements FileService {
                 file.setDirectory(normalizePath(file.getDirectory()));
                 dbMap.put(normalizedPath, file);
             }
-
             // 4. 开始同步处理
             syncFiles(fileSystemMap, dbMap);
-
             log.info("◎ [FileService] 文件同步完成 - 共处理文件: {}", fileSystemMap.size());
         } catch (Exception e) {
             log.info("◎ [FileService] 文件同步失败 - {}", e.getMessage());
@@ -574,14 +568,12 @@ public class FileServiceImpl implements FileService {
             String path = entry.getKey();
             SyncFileInfo info = entry.getValue();
             Path filePath = Path.of(path);
-
             if (dbMap.containsKey(path)) {
-                // 检查文件是否被修改 (性能损耗大)
+                // 更新文件信息
                 FilePO dbFile = dbMap.get(path);
                 if (dbFile.getFileSize() != info.size() ||
                         dbFile.getLastModified() == null ||
                         dbFile.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() != info.lastModified()) {
-                    // 更新文件信息
                     dbFile.setFileSize(info.size());
                     dbFile.setLastModified(Instant.ofEpochMilli(info.lastModified()).atZone(ZoneId.systemDefault()).toLocalDateTime());
                     fileMapper.updateById(dbFile);
@@ -597,18 +589,17 @@ public class FileServiceImpl implements FileService {
                 fileMapper.insert(newFile);
             }
         }
-        // 处理已删除的文件
-        Path rootPath = Path.of(fileStorageProperties.getFileDirectory());
+        // 处理非法文件
+        Path rootPath = Path.of(storageProperties.getFileDirectory());
         String rootParentPath = rootPath.getParent().toString();
         String rootFileName = rootPath.getFileName().toString();
-
         for (Map.Entry<String, FilePO> entry : dbMap.entrySet()) {
-            if (entry.getValue().getDirectory().equals(rootParentPath) && entry.getValue().getFileName().equals(rootFileName)) {
-                continue;  // 跳过根文件
-            }
+            // 跳过根文件
+            if (entry.getValue().getDirectory().equals(rootParentPath) && entry.getValue().getFileName().equals(rootFileName))
+                continue;
             String path = entry.getKey();
+            // 清除空文件
             if (!fileSystemMap.containsKey(path)) {
-                // 数据库中有但文件系统中已删除
                 fileMapper.delete(new LambdaQueryWrapper<FilePO>().apply("CONCAT(directory, '/', file_name) = {0}", path));
             }
         }

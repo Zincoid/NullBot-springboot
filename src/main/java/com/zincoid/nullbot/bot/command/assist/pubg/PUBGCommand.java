@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.component.resource.builder.ResourceUrlBuilder;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.file.FileService;
 import org.springframework.stereotype.Component;
@@ -24,9 +24,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PUBGCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileService fileService;
-    private final OssUrlBuilder ossUrlBuilder;
+    private final ResourceUrlBuilder resourceUrlBuilder;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
@@ -39,11 +39,11 @@ public class PUBGCommand implements Command {
             case "泰戈" -> "Tiger.png";
             default -> throw new BotWarnException("暂不支持");
         };
-        String helpPath = fileStorageProperties.getResourcePath() + "/pubg";
+        String helpPath = storageProperties.getResourcePath() + "/pubg";
         List<FilePO> helps = fileService.search(map, helpPath);
         if (helps.isEmpty()) throw new BotErrorException("资源缺失");
         String response = MsgUtils.builder()
-                .img(ossUrlBuilder.from(helps.getFirst().getId()))
+                .img(resourceUrlBuilder.from(helps.getFirst().getId()))
                 .build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [PUBG] 地图已获取: {}", map);

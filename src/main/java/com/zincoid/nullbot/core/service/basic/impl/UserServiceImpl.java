@@ -41,11 +41,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public boolean decreaseDrawTimes(Long userId) {
         UserPO user = userMapper.selectById(userId);
-        if(user.getDrawTimes() > 0){
+        if (user.getDrawTimes() > 0) {
             user.setDrawTimes(user.getDrawTimes() - 1);
             userMapper.updateById(user);
             return true;
-        }else
+        } else
             return false;
     }
 
@@ -118,16 +118,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public DataPage<UserPO> getPage(Integer current, Integer size) {
-        Page<UserPO> page = new Page<>(current, size);
+        Page<UserPO> page = Page.of(current, size);
         Page<UserPO> userPage = userMapper.selectPage(page, new LambdaQueryWrapper<UserPO>().orderByAsc(UserPO::getId));
         return new DataPage<>(userPage.getRecords(), userPage.getCurrent(), userPage.getPages(), userPage.getTotal(), userPage.getSize());
     }
 
     @Override
-    public void adds(List<UserPO> users) { userMapper.insert(users); }
+    public void adds(List<UserPO> users) {
+        userMapper.insert(users);
+    }
 
     @Override
-    public boolean delete(Long id) { return userMapper.deleteById(id) == 1; }
+    public boolean delete(Long id) {
+        return userMapper.deleteById(id) == 1;
+    }
 
     @Override
     public boolean update(UserPO user) {

@@ -45,20 +45,26 @@ public class SayingServiceImpl implements SayingService {
     }
 
     @Override
-    public SayingPO getRandByUserId(Long userId) { return sayingMapper.getRandById(userId); }
+    public SayingPO getRandByUserId(Long userId) {
+        return sayingMapper.getRandById(userId);
+    }
 
     // =================== WEB功能相关 ===================
 
     @Override
-    public List<SayingPO> getList() { return sayingMapper.selectList(null); }
+    public List<SayingPO> getList() {
+        return sayingMapper.selectList(null);
+    }
 
     @Override
     public DataPage<SayingPO> getPage(Integer current, Integer size) {
-        Page<SayingPO> page = new Page<>(current, size);
+        Page<SayingPO> page = Page.of(current, size);
         Page<SayingPO> sayingPage = sayingMapper.selectPage(page, new LambdaQueryWrapper<SayingPO>().orderByDesc(SayingPO::getTime));
         return new DataPage<>(sayingPage.getRecords(), sayingPage.getCurrent(), sayingPage.getPages(), sayingPage.getTotal(), sayingPage.getSize());
     }
 
     @Override
-    public void adds(List<SayingPO> sayings) { sayingMapper.insert(sayings); }
+    public void adds(List<SayingPO> sayings) {
+        sayingMapper.insert(sayings);
+    }
 }

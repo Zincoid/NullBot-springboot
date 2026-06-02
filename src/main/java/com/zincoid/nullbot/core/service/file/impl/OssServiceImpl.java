@@ -5,7 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BoundedInputStream;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.mapper.FileMapper;
 import com.zincoid.nullbot.core.service.file.OssService;
@@ -29,12 +29,12 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class OssServiceImpl implements OssService {
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileMapper fileMapper;
 
     @Override
     public ResponseEntity<?> getResourceByPath(HttpServletRequest request, String path) {
-        String baseDir = fileStorageProperties.getFileDirectory();
+        String baseDir = storageProperties.getFileDirectory();
         String fullPath = baseDir + path;
         int index = fullPath.lastIndexOf("/");
         String directory = fullPath.substring(0, index);
@@ -74,7 +74,7 @@ public class OssServiceImpl implements OssService {
     public ResponseEntity<?> getResource(HttpServletRequest request, @NonNull FilePO file) {
         try {
             // 1. 构建安全路径
-            Path rootPath = Paths.get(fileStorageProperties.getFileDirectory()).toAbsolutePath().normalize();
+            Path rootPath = Paths.get(storageProperties.getFileDirectory()).toAbsolutePath().normalize();
             Path filePath = rootPath.resolve(Paths.get(file.getDirectory(), file.getFileName())).normalize();
             if (!filePath.startsWith(rootPath)) {
                 log.warn("[OssService] 安全检查未通过 - id={}, path={}", file.getId(), filePath);

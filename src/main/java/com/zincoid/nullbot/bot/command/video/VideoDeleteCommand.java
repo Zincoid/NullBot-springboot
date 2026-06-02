@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
@@ -26,12 +26,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class VideoDeleteCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileService fileService;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        String directory = fileStorageProperties.getVideoPath() + "/collect";
+        String directory = storageProperties.getVideoPath() + "/collect";
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (args.hasNext()) {
             deleteFile(bot, event, directory, args.nextFullString());

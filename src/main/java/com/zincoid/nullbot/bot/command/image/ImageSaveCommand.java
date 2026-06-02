@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ImageSaveCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileService fileService;
 
     @Override
@@ -44,7 +44,7 @@ public class ImageSaveCommand implements Command {
 
         imageMap.forEach((name, url) -> {
             String key = name.substring(0, name.lastIndexOf("."));  // QQ图片扩展名错误
-            String filePath = fileStorageProperties.getImagePath() + "/collect";
+            String filePath = storageProperties.getImagePath() + "/collect";
             FileInfo fileInfo = fileService.saveFile(url, filePath, key, userId, userName);
             bot.sendGroupMsg(groupId, "\uD83D\uDCBD图片已保存", false);
             log.info("☑ [ImageSave] 图片已保存: {}", fileInfo.getName());

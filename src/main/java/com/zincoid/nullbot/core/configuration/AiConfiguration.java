@@ -16,7 +16,7 @@ import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupCmdTool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupInfoTool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQPrivateCmdTool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQUserInfoTool;
-import com.zincoid.nullbot.core.properties.AiChatProperties;
+import com.zincoid.nullbot.core.properties.ai.AiChatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

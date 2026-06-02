@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.component.ai.voice;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.properties.TtsProperties;
+import com.zincoid.nullbot.core.properties.ai.TtsProperties;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;

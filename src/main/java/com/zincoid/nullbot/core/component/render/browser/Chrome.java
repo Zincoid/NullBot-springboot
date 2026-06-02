@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.component.render.browser;
 
-import com.zincoid.nullbot.core.properties.ChromeProperties;
+import com.zincoid.nullbot.core.properties.render.ChromeProperties;
 import com.zincoid.nullbot.core.util.Base64Util;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;

@@ -14,7 +14,7 @@ import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
 import com.zincoid.nullbot.core.component.storage.DuelStorage;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.information.DuelInfo;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.util.Base64Util;
@@ -33,7 +33,7 @@ public class DuelCommand implements Command {
 
     private static final int SELECT_TIMEOUT_SECONDS = 30;  // 抉择时间
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final DuelStorage duelStorage;
     private final BotInputManager botInputManager;
 
@@ -106,7 +106,7 @@ public class DuelCommand implements Command {
     }
 
     private String getIconPath(int id) {
-        return fileStorageProperties.getResourcePath() + "/duel/icon/" + id + ".png";
+        return storageProperties.getResourcePath() + "/duel/icon/" + id + ".png";
     }
 
     @Override

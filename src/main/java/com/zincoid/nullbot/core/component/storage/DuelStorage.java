@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.component.storage;
 
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.information.DuelInfo;
 import com.zincoid.nullbot.core.util.DuelUtil;
 import org.springframework.stereotype.Component;
@@ -14,9 +14,9 @@ public class DuelStorage {
     private final Map<Long, DuelInfo> duels;
     private final String dataPath;
 
-    public DuelStorage(FileStorageProperties fileStorageProperties) {
+    public DuelStorage(StorageProperties storageProperties) {
         duels = new ConcurrentHashMap<>();
-        dataPath = fileStorageProperties.getResourcePath() + "/duel/data.csv";
+        dataPath = storageProperties.getResourcePath() + "/duel/data.csv";
     }
 
     public DuelInfo initDuel(Long groupId) {

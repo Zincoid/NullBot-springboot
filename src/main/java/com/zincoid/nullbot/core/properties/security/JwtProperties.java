@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.properties;
+package com.zincoid.nullbot.core.properties.security;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,7 +9,7 @@ import java.time.Duration;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "jwt")
+@ConfigurationProperties(prefix = "web.jwt")
 public class JwtProperties {
     private Resource location;
     private String password;

@@ -881,3 +881,11 @@
 - 修复 QQAiClient TOOLS 策略达到最大迭代次数后导致错误响应的问题；
 - 优化 BingSearchTool - 修改URL；
 - 渲染资源改动。
+
+### 2026.6.3 - v2.1.5
+
+- 提取 ResourceUrlBuilder 接口 - 提供多种实现和配置选项；
+- 重构 BotConsumer 函数式接口为 BotGroupEntityConsumer；
+- 优化 项目结构；
+- 调整 配置文件；
+- 优化 部分其他代码。

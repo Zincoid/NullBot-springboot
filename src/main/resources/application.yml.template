@@ -12,8 +12,6 @@ spring:
     # url: jdbc:mysql://172.17.0.1:3306/nullbot  # 宿主数据库
     username:
     password:
-  api:
-    base-url: http://localhost:8080/api  # 后端 Url (OSS使用)
 
 server:
   port: 8080
@@ -29,12 +27,6 @@ server:
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
-
-jwt:  # jks 密钥配置
-  location: classpath:secret/JwtSignKey.jks
-  alias:
-  password:
-  tokenTTL: 24h
 
 logging:  # 可移入 logback.xml 配置
   file:
@@ -74,8 +66,18 @@ nullbot:
     prefix: /  # 指令前缀
     limit: true  # 指令限速
 
+web:
+  jwt: # jks 密钥配置
+    location: classpath:secret/JwtSignKey.jks
+    alias:
+    password:
+    tokenTTL: 24h
+
 file:
   init: true  # 启动时是否文件同步
+  resource:
+#    oss-base-url: http://xxxxx.xxx/api  # OSS基础链接
+#    mode: oss  # 资源模式: path(默认)/base64/oss
   storage:
     # 文件管理根目录
     file-directory: /root/Nullbot/file

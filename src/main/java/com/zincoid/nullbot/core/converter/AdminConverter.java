@@ -13,10 +13,10 @@ public interface AdminConverter {
     AdminConverter INSTANCE = Mappers.getMapper(AdminConverter.class);
 
     @Mapping(target = "password", ignore = true)
-    public AdminPO toPO(AdminUpdateDTO dto);
+    AdminPO toPO(AdminUpdateDTO dto);
 
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "email", ignore = true)
     @Mapping(source = "name", target = "username")
-    public AdminPO toPO(UserPO user);
+    AdminPO toPO(UserPO user);
 }

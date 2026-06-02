@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.component.render.resvg;
 
-import com.zincoid.nullbot.core.component.resource.ResourceLoader;
+import com.zincoid.nullbot.core.component.resource.loader.ResourceLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;

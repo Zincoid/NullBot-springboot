@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.component.control;
 
-import com.zincoid.nullbot.core.properties.AiChatProperties;
+import com.zincoid.nullbot.core.properties.ai.AiChatProperties;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 

@@ -11,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
-import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.component.resource.builder.ResourceUrlBuilder;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.bot.interaction.BotPageSelector;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.file.FileService;
@@ -30,8 +30,8 @@ public class VideoGetCommand implements Command {
     private static final int WAIT_TIMEOUT_SECONDS = 30;  // 等待超时时间
     private static final int PAGE_SIZE = 5;  // 查询单页大小
 
-    private final OssUrlBuilder ossUrlBuilder;
-    private final FileStorageProperties fileStorageProperties;
+    private final ResourceUrlBuilder resourceUrlBuilder;
+    private final StorageProperties storageProperties;
     private final FileService fileService;
     private final BotInputManager botInputManager;
 
@@ -51,7 +51,7 @@ public class VideoGetCommand implements Command {
         }
 
         List<FilePO> files = fileService.search(
-                keyword, fileStorageProperties.getVideoPath() + "/" + secondary);
+                keyword, storageProperties.getVideoPath() + "/" + secondary);
 
         if (files.isEmpty())
             throw new BotInfoException(Emoji.INFO, "无匹配项");
@@ -77,7 +77,7 @@ public class VideoGetCommand implements Command {
 
     private void sendVideo(Bot bot, Long groupId, FilePO video) {
         String response = MsgUtils.builder()
-                .video(ossUrlBuilder.from(video.getId()), "")
+                .video(resourceUrlBuilder.from(video.getId()), "")
                 .build();
         bot.sendGroupMsg(groupId, response, false);
         log.info("☑ [VideoGet] 视频已获取: {}", video.getFileName());

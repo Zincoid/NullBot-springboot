@@ -32,7 +32,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public DataPage<InventoryVO> getVOPage(Long userId, Integer current, Integer size) {
-        Page<InventoryPO> page = new Page<>(current, size);
+        Page<InventoryPO> page = Page.of(current, size);
         Page<InventoryPO> inventoryPOPage = inventoryMapper.selectPage(
                 page, new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId)
         );
@@ -168,14 +168,22 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public List<InventoryPO> getList() { return inventoryMapper.selectList(null); }
+    public List<InventoryPO> getList() {
+        return inventoryMapper.selectList(null);
+    }
 
     @Override
-    public void adds(List<InventoryPO> inventories) { inventoryMapper.insert(inventories); }
+    public void adds(List<InventoryPO> inventories) {
+        inventoryMapper.insert(inventories);
+    }
 
     @Override
-    public boolean deleteById(Integer id) { return inventoryMapper.deleteById(id) == 1; }
+    public boolean deleteById(Integer id) {
+        return inventoryMapper.deleteById(id) == 1;
+    }
 
     @Override
-    public boolean update(InventoryPO inventory) { return inventoryMapper.updateById(inventory) == 1; }
+    public boolean update(InventoryPO inventory) {
+        return inventoryMapper.updateById(inventory) == 1;
+    }
 }

@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.component.resource;
+package com.zincoid.nullbot.core.component.resource.holder;
 
 import lombok.NonNull;
 import org.springframework.context.ApplicationContext;

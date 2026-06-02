@@ -5,7 +5,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
 import com.zincoid.nullbot.core.component.ai.voice.TtsClient;
-import com.zincoid.nullbot.core.component.resource.ResourceLoader;
+import com.zincoid.nullbot.core.component.resource.loader.ResourceLoader;
 import com.zincoid.nullbot.core.model.bot.event.InnerCommandEvent;
 import com.zincoid.nullbot.core.util.Base64Util;
 import com.zincoid.nullbot.core.util.BotCtxUtil;

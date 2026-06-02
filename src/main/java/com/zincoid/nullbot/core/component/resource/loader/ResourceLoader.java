@@ -1,7 +1,7 @@
-package com.zincoid.nullbot.core.component.resource;
+package com.zincoid.nullbot.core.component.resource.loader;
 
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -15,10 +15,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ResourceLoader {
 
     private final Map<String, Path> cache = new ConcurrentHashMap<>();
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
 
     public Path getCache(String resourcePath) {
-        return getCache(resourcePath, fileStorageProperties.getTempPath());
+        return getCache(resourcePath, storageProperties.getTempPath());
     }
 
     public Path getCache(String resourcePath, String tempPath) {

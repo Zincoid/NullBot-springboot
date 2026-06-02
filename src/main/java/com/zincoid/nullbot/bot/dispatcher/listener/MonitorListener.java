@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.FunctionControl;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.bot.dispatcher.CommandProcessor;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import com.zincoid.nullbot.core.model.information.FileInfo;
@@ -34,7 +34,7 @@ public class MonitorListener {
     private final BotInputManager botInputManager;
     private final CommandProcessor commandProcessor;
     private final MsgWindowChatMemory msgWindowChatMemory;
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileService fileService;
 
     @Value("${nullbot.command.prefix}")
@@ -93,7 +93,7 @@ public class MonitorListener {
             String originName = msg.getData().get("file").asString();
             String url = msg.getData().get("url").asString();
             String fileName = originName.substring(0, originName.lastIndexOf("."));
-            String filePath = fileStorageProperties.getImagePath() + "/monitor/" + groupId;
+            String filePath = storageProperties.getImagePath() + "/monitor/" + groupId;
             try {
                 FileInfo fileInfo = fileService.saveFile(url, filePath, fileName, userId, userName);
                 log.info("└─[Saved] {}", fileInfo.getName());

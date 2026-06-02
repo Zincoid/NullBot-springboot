@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.component.storage;
 
 import lombok.Data;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.information.GuessInfo;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.file.FileService;
@@ -20,9 +20,9 @@ public class GuessStorage {
     private final String dataPath;
     private final FileService fileService;
 
-    public GuessStorage(FileStorageProperties fileStorageProperties, FileService fileService) {
+    public GuessStorage(StorageProperties storageProperties, FileService fileService) {
         guesses = new ConcurrentHashMap<>();
-        dataPath = fileStorageProperties.getImagePath() + "/acg";
+        dataPath = storageProperties.getImagePath() + "/acg";
         this.fileService = fileService;
     }
 

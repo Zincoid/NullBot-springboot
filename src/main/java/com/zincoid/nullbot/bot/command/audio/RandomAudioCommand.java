@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.component.resource.builder.ResourceUrlBuilder;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.file.FileService;
 import org.springframework.stereotype.Component;
@@ -25,17 +25,17 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 public class RandomAudioCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileService fileService;
-    private final OssUrlBuilder ossUrlBuilder;
+    private final ResourceUrlBuilder resourceUrlBuilder;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        String audioPath = fileStorageProperties.getAudioPath();
+        String audioPath = storageProperties.getAudioPath();
         List<FilePO> audios = fileService.search("", audioPath);
         if (audios.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无音频");
         FilePO audio = audios.get(ThreadLocalRandom.current().nextInt(audios.size()));
-        String response = MsgUtils.builder().voice(ossUrlBuilder.from(audio.getId())).build();
+        String response = MsgUtils.builder().voice(resourceUrlBuilder.from(audio.getId())).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [RandomAudio] 音频已发送: {}", audio.getFileName());
     }

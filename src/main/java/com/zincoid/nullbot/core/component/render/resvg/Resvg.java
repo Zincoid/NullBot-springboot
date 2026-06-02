@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.component.render.resvg;
 
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.util.Base64Util;
 import lombok.RequiredArgsConstructor;
 import me.aloic.ResvgJNI;
@@ -30,7 +30,7 @@ public class Resvg {
         TEMPLATE_ENGINE.setTemplateResolver(resolver);
     }
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
 
     /** SVG + CTX → PNG */
     public String render(String svg, Context ctx) {
@@ -39,7 +39,7 @@ public class Resvg {
 
     /** SVG → PNG */
     public String render(String svg) {
-        String dir = fileStorageProperties.getTempPath();
+        String dir = storageProperties.getTempPath();
         var opts = new ResvgJNI.RenderOptions(dir);
         opts.LoadFontsDir(dir);
         return Base64.getEncoder().encodeToString(new ResvgJNI.Renderer(opts).RenderPng(svg));

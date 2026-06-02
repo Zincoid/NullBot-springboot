@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.component.resource.builder.ResourceUrlBuilder;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.mapper.FileMapper;
 import org.springframework.stereotype.Component;
@@ -24,18 +24,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImageGetCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileMapper fileMapper;
-    private final OssUrlBuilder ossUrlBuilder;
+    private final ResourceUrlBuilder resourceUrlBuilder;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        String imagePath = fileStorageProperties.getImagePath() + "/collect";
+        String imagePath = storageProperties.getImagePath() + "/collect";
         List<FilePO> images = fileMapper.searchFile(args.nextFullString(), imagePath);
         if (images.isEmpty()) throw new BotInfoException(Emoji.INFO, "图片未找到");
         if (images.size() > 1) throw new BotInfoException(Emoji.INFO, "匹配项过多");
         FilePO image = images.getFirst();
-        String response = MsgUtils.builder().img(ossUrlBuilder.from(image.getId())).build();
+        String response = MsgUtils.builder().img(resourceUrlBuilder.from(image.getId())).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [ImageGet] 图片已获取: {}", image.getFileName());
     }

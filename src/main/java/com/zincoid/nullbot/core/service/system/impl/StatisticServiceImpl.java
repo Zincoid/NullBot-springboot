@@ -43,7 +43,7 @@ public class StatisticServiceImpl implements StatisticService {
         List<StatisticDatePO> statisticDates = statisticDateMapper.selectList(new LambdaQueryWrapper<StatisticDatePO>().eq(StatisticDatePO::getDate, LocalDate.now()));
         if (statisticDates == null || statisticDates.isEmpty())
             statisticDateMapper.insert(new StatisticDatePO(null, LocalDate.now(), 1L));
-        else{
+        else {
             StatisticDatePO statisticDate = statisticDates.getFirst();
             statisticDate.setVisits(statisticDate.getVisits() + 1);
             statisticDateMapper.updateById(statisticDate);
@@ -56,7 +56,7 @@ public class StatisticServiceImpl implements StatisticService {
         List<StatisticPO> statistics = statisticMapper.selectList(new LambdaQueryWrapper<StatisticPO>().eq(StatisticPO::getGroupId, groupId).eq(StatisticPO::getUserId, userId).eq(StatisticPO::getCommand, command));
         if (statistics == null || statistics.isEmpty())
             statisticMapper.insert(new StatisticPO(null, groupId, userId, userName, command, 1L));
-        else{
+        else {
             StatisticPO statistic = statistics.getFirst();
             statistic.setUserName(userName);
             statistic.setVisits(statistic.getVisits() + 1);

@@ -86,16 +86,20 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public DataPage<GroupPO> getPage(Integer current, Integer size) {
-        Page<GroupPO> page = new Page<>(current, size);
+        Page<GroupPO> page = Page.of(current, size);
         Page<GroupPO> groupPage = groupMapper.selectPage(page, new LambdaQueryWrapper<GroupPO>().orderByAsc(GroupPO::getId));
         return new DataPage<>(groupPage.getRecords(), groupPage.getCurrent(), groupPage.getPages(), groupPage.getTotal(), groupPage.getSize());
     }
 
     @Override
-    public void adds(List<GroupPO> groups) { groupMapper.insert(groups); }
+    public void adds(List<GroupPO> groups) {
+        groupMapper.insert(groups);
+    }
 
     @Override
-    public boolean deleteById(Long id) { return groupMapper.deleteById(id) == 1; }
+    public boolean deleteById(Long id) {
+        return groupMapper.deleteById(id) == 1;
+    }
 
     @Override
     public boolean update(GroupPO group) {

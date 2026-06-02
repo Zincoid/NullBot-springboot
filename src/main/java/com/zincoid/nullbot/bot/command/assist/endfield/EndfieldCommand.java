@@ -12,8 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
-import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.component.resource.builder.ResourceUrlBuilder;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.bot.interaction.BotPageSelector;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.file.FileService;
@@ -39,16 +39,16 @@ public class EndfieldCommand implements Command {
 
     private final Map<Long, String> versions = new ConcurrentHashMap<>();  // 群聊版本存储
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileService fileService;
     private final BotInputManager botInputManager;
-    private final OssUrlBuilder ossUrlBuilder;
+    private final ResourceUrlBuilder resourceUrlBuilder;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String endfieldPath = fileStorageProperties.getResourcePath() + "/endfield";
+        String endfieldPath = storageProperties.getResourcePath() + "/endfield";
         String curVersion = versions.computeIfAbsent(groupId, k -> DEFAULT_VERSION);
         String keyword = args.nextString("");
 
@@ -117,7 +117,7 @@ public class EndfieldCommand implements Command {
         } else {
             // 其他类型 暂时图片处理
             String response = MsgUtils.builder()
-                    .img(ossUrlBuilder.from(file.getId()))
+                    .img(resourceUrlBuilder.from(file.getId()))
                     .build();
             bot.sendGroupMsg(groupId, response, false);
             log.info("☑ [Endfield] 图片已获取: {}", file.getFileName());

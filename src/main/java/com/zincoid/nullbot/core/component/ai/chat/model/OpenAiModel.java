@@ -7,9 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolCall;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
-import com.zincoid.nullbot.core.properties.OpenAiProperties;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
+import com.zincoid.nullbot.core.properties.ai.OpenAiProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

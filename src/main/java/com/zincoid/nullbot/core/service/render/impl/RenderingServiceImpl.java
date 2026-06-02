@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.service.render.impl;
 
 import com.zincoid.nullbot.core.component.render.browser.HtmlRenderer;
 import com.zincoid.nullbot.core.component.render.resvg.SvgRenderer;
-import com.zincoid.nullbot.core.component.resource.ResourceLoader;
+import com.zincoid.nullbot.core.component.resource.loader.ResourceLoader;
 import com.zincoid.nullbot.core.service.render.RenderingService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

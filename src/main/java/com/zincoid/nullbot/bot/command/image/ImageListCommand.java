@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.mapper.FileMapper;
 import org.springframework.stereotype.Component;
@@ -22,12 +22,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImageListCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileMapper fileMapper;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        String imagePath = fileStorageProperties.getImagePath() + "/collect";
+        String imagePath = storageProperties.getImagePath() + "/collect";
         List<FilePO> images = fileMapper.searchFile("", imagePath);
         List<String> fileNames = images.stream().map(FilePO::getFileName).toList();
         if (images.size() > 50) throw new BotInfoException(Emoji.INFO, "过多暂不展示: 共%s张".formatted(images.size()));

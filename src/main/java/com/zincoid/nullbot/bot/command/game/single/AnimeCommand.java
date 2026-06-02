@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.tool.OssUrlBuilder;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.component.resource.builder.ResourceUrlBuilder;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.file.FileService;
 import org.springframework.stereotype.Component;
@@ -25,17 +25,17 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 public class AnimeCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileService fileService;
-    private final OssUrlBuilder ossUrlBuilder;
+    private final ResourceUrlBuilder resourceUrlBuilder;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        String animePath = fileStorageProperties.getImagePath() + "/acg/二次元";
+        String animePath = storageProperties.getImagePath() + "/acg/二次元";
         List<FilePO> images = fileService.search("", animePath);
         if (images.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无图片");
         FilePO image = images.get(ThreadLocalRandom.current().nextInt(images.size()));
-        String response = MsgUtils.builder().img(ossUrlBuilder.from(image.getId())).build();
+        String response = MsgUtils.builder().img(resourceUrlBuilder.from(image.getId())).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);
         log.info("☑ [Anime] 图片已获取: {}", image.getFileName());
     }

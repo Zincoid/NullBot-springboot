@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.properties.FileStorageProperties;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
@@ -26,7 +26,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class VideoSaveCommand implements Command {
 
-    private final FileStorageProperties fileStorageProperties;
+    private final StorageProperties storageProperties;
     private final FileService fileService;
 
     @Override
@@ -52,7 +52,7 @@ public class VideoSaveCommand implements Command {
                 : args.nextFullString() + "." + entry.getKey().split("\\.")[1];
         if (fileName.matches(".*[\\\\/:*?\"<>|].*"))
             throw new BotWarnException("文件名非法");
-        String filePath = fileStorageProperties.getVideoPath() + "/collect";
+        String filePath = storageProperties.getVideoPath() + "/collect";
         String url = entry.getValue();
         FileInfo fileInfo = fileService.saveFile(url, filePath, fileName, userId, userName);
         bot.sendGroupMsg(groupId, "\uD83C\uDFA5视频已保存", false);

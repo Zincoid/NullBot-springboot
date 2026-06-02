@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.component.render.browser;
 
-import com.zincoid.nullbot.core.component.resource.ResourceLoader;
+import com.zincoid.nullbot.core.component.resource.loader.ResourceLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
