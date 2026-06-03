@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -32,32 +31,9 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public DataPage<InventoryVO> getVOPage(Long userId, Integer current, Integer size) {
-        Page<InventoryPO> page = Page.of(current, size);
-        Page<InventoryPO> inventoryPOPage = inventoryMapper.selectPage(
-                page, new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId)
-        );
-        List<InventoryVO> inventoryVOS = inventoryPOPage.getRecords().stream()
-                .map(inventoryPO -> {
-                    ItemPO item = itemMapper.selectById(inventoryPO.getItemId());
-                    return new InventoryVO(
-                            inventoryPO.getId(),
-                            inventoryPO.getOwnerId(),
-                            inventoryPO.getItemId(),
-                            item.getName(),
-                            item.getCategory(),
-                            item.getRarity(),
-                            item.getPrice(),
-                            inventoryPO.getAmount()
-                    );
-                })
-                .sorted(Comparator
-                        .comparing(InventoryVO::getRarity, Comparator.reverseOrder())
-                        .thenComparing(InventoryVO::getPrice, Comparator.reverseOrder())
-                        .thenComparing(InventoryVO::getId)
-                )
-                .toList();
-        return new DataPage<>(inventoryVOS, inventoryPOPage.getCurrent(),
-                inventoryPOPage.getPages(), inventoryPOPage.getTotal(), inventoryPOPage.getSize());
+        Page<InventoryVO> page = Page.of(current, size);
+        Page<InventoryVO> inventoryVOPage = inventoryMapper.selectVOPage(page, userId);
+        return DataPage.of(inventoryVOPage);
     }
 
     @Override
@@ -142,29 +118,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public List<InventoryVO> getVOList(Long userId) {
-        List<InventoryPO> inventoryPOS = inventoryMapper.selectList(
-                new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId)
-        );
-        return inventoryPOS.stream()
-                .map(inventoryPO -> {
-                    ItemPO item = itemMapper.selectById(inventoryPO.getItemId());
-                    return new InventoryVO(
-                            inventoryPO.getId(),
-                            inventoryPO.getOwnerId(),
-                            inventoryPO.getItemId(),
-                            item.getName(),
-                            item.getCategory(),
-                            item.getRarity(),
-                            item.getPrice(),
-                            inventoryPO.getAmount()
-                    );
-                })
-                .sorted(Comparator
-                        .comparing(InventoryVO::getRarity, Comparator.reverseOrder())
-                        .thenComparing(InventoryVO::getPrice, Comparator.reverseOrder())
-                        .thenComparing(InventoryVO::getId)
-                )
-                .toList();
+        return inventoryMapper.selectVOList(userId);
     }
 
     @Override

@@ -19,7 +19,7 @@ public class OssResourceUrlBuilder implements ResourceUrlBuilder {
 
     @PostConstruct
     public void init() {
-        log.info("▽ [OssResourceUrlBuilder] 已初始化");
+        log.info("▽ [OssResourceUrlBuilder] 资源链接构建器已初始化 - Mode: oss");
     }
 
     @Override

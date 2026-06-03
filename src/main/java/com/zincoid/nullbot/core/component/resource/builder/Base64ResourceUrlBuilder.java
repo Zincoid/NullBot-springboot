@@ -19,7 +19,7 @@ public class Base64ResourceUrlBuilder implements ResourceUrlBuilder {
 
     @PostConstruct
     public void init() {
-        log.info("▽ [Base64ResourceUrlBuilder] 已初始化");
+        log.info("▽ [Base64ResourceUrlBuilder] 资源链接构建器已初始化 - Mode: base64");
     }
 
     @Override

@@ -18,7 +18,7 @@ public class PathResourceUrlBuilder implements ResourceUrlBuilder {
 
     @PostConstruct
     public void init() {
-        log.info("▽ [PathResourceUrlBuilder] 已初始化");
+        log.info("▽ [PathResourceUrlBuilder] 资源链接构建器已初始化 - Mode: path");
     }
 
     @Override

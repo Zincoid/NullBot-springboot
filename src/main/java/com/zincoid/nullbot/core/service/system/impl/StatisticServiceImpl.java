@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.service.system.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.core.BotContainer;
+import com.zincoid.nullbot.core.component.tool.BotOperator;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.data.po.StatisticDatePO;
 import com.zincoid.nullbot.core.model.data.po.StatisticPO;
@@ -12,7 +12,6 @@ import com.zincoid.nullbot.core.mapper.StatisticDateMapper;
 import com.zincoid.nullbot.core.mapper.StatisticMapper;
 import com.zincoid.nullbot.core.mapper.UserMapper;
 import com.zincoid.nullbot.core.service.system.StatisticService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatisticServiceImpl implements StatisticService {
 
-    @Value("${nullbot.bot-id}")
-    private Long botId;
-    private final BotContainer botContainer;
+    private final BotOperator botOperator;
 
     private final StatisticMapper statisticMapper;
     private final StatisticDateMapper statisticDateMapper;
@@ -72,7 +69,7 @@ public class StatisticServiceImpl implements StatisticService {
 
         // 获取当前日期和10天前的日期
         LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusDays(29); // 包括今天，共30天
+        LocalDate startDate = endDate.minusDays(29);  // 包括今天共30天
 
         // 查询最近10天的数据
         List<StatisticDatePO> recentData = statisticDateMapper.selectList(
@@ -115,7 +112,7 @@ public class StatisticServiceImpl implements StatisticService {
         }
 
         // 查询访问次数最多的user
-        Bot bot = botContainer.robots.get(botId);
+        Bot bot = botOperator.getBot();
         List<Map<String, Object>> topUsers = statisticMapper.selectTopUsers(20);
         List<String> userAxis = new ArrayList<>();
         List<Long> userData = new ArrayList<>();
@@ -142,18 +139,8 @@ public class StatisticServiceImpl implements StatisticService {
         }
 
         // 封装为 VO
-        StatisticVO vo = new StatisticVO();
-        vo.setTotalVisits(totalVisit);
-        vo.setVisitsXAxis(xAxis);
-        vo.setVisitsData(data);
-        vo.setTopGroupsAxis(groupAxis);
-        vo.setTopGroupsData(groupData);
-        vo.setTopUsersAxis(userAxis);
-        vo.setTopUsersData(userData);
-        vo.setTopCommandsAxis(commandAxis);
-        vo.setTopCommandsData(commandData);
-
-        return vo;
+        return StatisticVO.of(totalVisit, xAxis, data,
+                groupAxis, groupData, userAxis, userData, commandAxis, commandData);
     }
 
     @Override
