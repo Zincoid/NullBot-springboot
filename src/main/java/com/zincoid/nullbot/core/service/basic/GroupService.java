@@ -1,7 +1,8 @@
 package com.zincoid.nullbot.core.service.basic;
 
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.GroupPO;
+import com.zincoid.nullbot.core.model.data.query.GroupQuery;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface GroupService {
 
     List<GroupPO> getList();
 
-    DataPage<GroupPO> getPage(Integer current, Integer size);
+    PageResult<GroupPO> getPage(GroupQuery query);
 
     void adds(List<GroupPO> groups);
 

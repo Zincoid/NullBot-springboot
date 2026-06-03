@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.service.file.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zincoid.nullbot.core.model.data.query.FileQuery;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.web.exception.CommonException;
 import com.zincoid.nullbot.core.mapper.AdminMapper;
@@ -187,16 +187,12 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public DataPage<FilePO> getPage(String curDir, Integer current, Integer size, boolean hidden) {
-        String fullDir = resolveFullDir(curDir);
+    public PageResult<FilePO> getPage(FileQuery query) {
+        String fullDir = resolveFullDir(query.getCurDir());
         LambdaQueryWrapper<FilePO> wrapper = new LambdaQueryWrapper<FilePO>()
-                .eq(FilePO::getDirectory, fullDir)
-                .orderByDesc(FilePO::getIsDir)
-                .orderByAsc(FilePO::getId);
-        if (hidden) wrapper.eq(FilePO::getVisible, true);
-        Page<FilePO> page = Page.of(current, size);
-        Page<FilePO> filePage = fileMapper.selectPage(page, wrapper);
-        return DataPage.of(filePage);
+                .eq(FilePO::getDirectory, fullDir);
+        if (query.getHidden()) wrapper.eq(FilePO::getVisible, true);
+        return PageResult.of(fileMapper.selectPage(query.toPage(), wrapper));
     }
 
     @Override

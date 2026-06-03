@@ -1,10 +1,11 @@
 package com.zincoid.nullbot.core.service.file;
 
+import com.zincoid.nullbot.core.model.data.query.FileQuery;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public interface FileService {
 
     void syncLocalToDatabase();
 
-    DataPage<FilePO> getPage(String curDir, Integer current, Integer size, boolean hidden);
+    PageResult<FilePO> getPage(FileQuery query);
 
     List<FilePO> search(String key, String curDir, boolean hidden);
 

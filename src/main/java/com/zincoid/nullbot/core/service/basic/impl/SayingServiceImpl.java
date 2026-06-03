@@ -1,9 +1,9 @@
 package com.zincoid.nullbot.core.service.basic.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zincoid.nullbot.core.model.data.query.SayingQuery;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.mapper.SayingMapper;
 import com.zincoid.nullbot.core.model.data.po.SayingPO;
 import com.zincoid.nullbot.core.service.basic.SayingService;
@@ -59,11 +59,8 @@ public class SayingServiceImpl implements SayingService {
         return sayingMapper.selectList(null);
     }
 
-    @Override
-    public DataPage<SayingPO> getPage(Integer current, Integer size) {
-        Page<SayingPO> page = Page.of(current, size);
-        Page<SayingPO> sayingPage = sayingMapper.selectPage(page, new LambdaQueryWrapper<SayingPO>().orderByDesc(SayingPO::getTime));
-        return DataPage.of(sayingPage);
+    public PageResult<SayingPO> getPage(SayingQuery query) {
+        return PageResult.of(sayingMapper.selectPage(query.toPage(), null));
     }
 
     @Override

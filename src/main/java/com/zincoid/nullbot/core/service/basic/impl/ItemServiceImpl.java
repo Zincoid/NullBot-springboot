@@ -1,9 +1,9 @@
 package com.zincoid.nullbot.core.service.basic.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zincoid.nullbot.core.model.data.query.ItemQuery;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.mapper.ItemMapper;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.enums.Category;
@@ -98,11 +98,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public DataPage<ItemPO> getPage(Integer current, Integer size) {
-        Page<ItemPO> page = Page.of(current, size);
-        Page<ItemPO> itemPage;
-        itemPage = itemMapper.selectPage(page, new LambdaQueryWrapper<ItemPO>().orderByAsc(ItemPO::getId));
-        return DataPage.of(itemPage);
+    public PageResult<ItemPO> getPage(ItemQuery query) {
+        return PageResult.of(itemMapper.selectPage(query.toPage(), null));
     }
 
     @Override

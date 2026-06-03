@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.service.basic.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
 import com.zincoid.nullbot.core.enums.Rarity;
@@ -30,10 +30,10 @@ public class InventoryServiceImpl implements InventoryService {
     // =================== BOT功能相关 ===================
 
     @Override
-    public DataPage<InventoryVO> getVOPage(Long userId, Integer current, Integer size) {
+    public PageResult<InventoryVO> getVOPage(Long userId, Integer current, Integer size) {
         Page<InventoryVO> page = Page.of(current, size);
         Page<InventoryVO> inventoryVOPage = inventoryMapper.selectVOPage(page, userId);
-        return DataPage.of(inventoryVOPage);
+        return PageResult.of(inventoryVOPage);
     }
 
     @Override

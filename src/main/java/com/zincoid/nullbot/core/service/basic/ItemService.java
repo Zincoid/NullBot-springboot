@@ -1,7 +1,8 @@
 package com.zincoid.nullbot.core.service.basic;
 
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
+import com.zincoid.nullbot.core.model.data.query.ItemQuery;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface ItemService {
 
     List<ItemPO> getList();
 
-    DataPage<ItemPO> getPage(Integer current, Integer size);
+    PageResult<ItemPO> getPage(ItemQuery query);
 
     boolean add(ItemPO item);
 

@@ -1,7 +1,8 @@
 package com.zincoid.nullbot.core.service.basic;
 
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
+import com.zincoid.nullbot.core.model.data.query.UserQuery;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public interface UserService {
 
     List<UserPO> getList();
 
-    DataPage<UserPO> getPage(Integer current, Integer size);
+    PageResult<UserPO> getPage(UserQuery query);
 
     void adds(List<UserPO> users);
 

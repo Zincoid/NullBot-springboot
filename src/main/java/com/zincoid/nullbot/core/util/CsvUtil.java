@@ -51,7 +51,7 @@ public final class CsvUtil {
     public static <T> List<T> importCsv(MultipartFile file, Class<T> clazz,
                                         boolean hasHeader,
                                         Map<String, String> columnMapping) throws IOException {
-        log.info("[CsvUtil-{}] Importing: {}, {} bytes",
+        log.info("▽ [CsvUtil-{}] Importing: {}, {} bytes",
                 clazz.getSimpleName(), file.getOriginalFilename(), file.getSize());
 
         try (InputStream inputStream = file.getInputStream();
@@ -78,7 +78,7 @@ public final class CsvUtil {
                     errors.add(new ImportError(rowNum, e.getMessage(), record.toString()));
                 } catch (Exception e) {
                     errors.add(new ImportError(rowNum, "System error: " + e.getMessage(), record.toString()));
-                    log.warn("[CsvUtil-{}] Row {} system error", clazz.getSimpleName(), rowNum, e);
+                    log.warn("▽ [CsvUtil-{}] Row {} system error", clazz.getSimpleName(), rowNum, e);
                 }
             }
 
@@ -116,7 +116,7 @@ public final class CsvUtil {
                     T entity = recordToEntity(record, clazz, fieldMapping, rowNum);
                     result.add(entity);
                 } catch (ImportException e) {
-                    log.warn("[CsvUtil-{}] Row {} failed: {}", clazz.getSimpleName(), rowNum, e.getMessage());
+                    log.warn("▽ [CsvUtil-{}] Row {} failed: {}", clazz.getSimpleName(), rowNum, e.getMessage());
                 }
             }
 
@@ -264,7 +264,7 @@ public final class CsvUtil {
                     field.setAccessible(true);
                     mapping.put(i, new FieldMapping(field, fieldName));
                 } catch (NoSuchFieldException e) {
-                    log.debug("[CsvUtil-{}] Column '{}' has no matching field '{}'",
+                    log.debug("▽ [CsvUtil-{}] Column '{}' has no matching field '{}'",
                             clazz.getSimpleName(), csvCol, fieldName);
                 }
             }
@@ -467,14 +467,14 @@ public final class CsvUtil {
 
     private static void logImportResult(Class<?> clazz, int success, List<ImportError> errors, long total) {
         if (errors.isEmpty()) {
-            log.info("[CsvUtil-{}] All {} rows imported", clazz.getSimpleName(), total);
+            log.info("▽ [CsvUtil-{}] All {} rows imported", clazz.getSimpleName(), total);
         } else {
-            log.warn("[CsvUtil-{}] {} total, {} success, {} failed",
+            log.warn("▽ [CsvUtil-{}] {} total, {} success, {} failed",
                     clazz.getSimpleName(), total, success, errors.size());
             errors.stream().limit(10).forEach(e ->
-                    log.warn("[CsvUtil-{}] Row {}: {}", clazz.getSimpleName(), e.rowNum(), e.message()));
+                    log.warn("▽ [CsvUtil-{}] Row {}: {}", clazz.getSimpleName(), e.rowNum(), e.message()));
             if (errors.size() > 10) {
-                log.warn("[CsvUtil-{}] ... {} more errors", clazz.getSimpleName(), errors.size() - 10);
+                log.warn("▽ [CsvUtil-{}] ... {} more errors", clazz.getSimpleName(), errors.size() - 10);
             }
         }
     }

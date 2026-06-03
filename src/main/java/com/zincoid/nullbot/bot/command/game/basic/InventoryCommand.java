@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
 import com.zincoid.nullbot.core.service.basic.InventoryService;
@@ -28,7 +28,7 @@ public class InventoryCommand implements Command {
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
 
-        DataPage<InventoryVO> inventoryVOPage = inventoryService.getVOPage(userId, args.nextInt(1), 10);
+        PageResult<InventoryVO> inventoryVOPage = inventoryService.getVOPage(userId, args.nextInt(1), 10);
         UserPO user = userService.get(userId);
         int totalAmount = inventoryService.getTotalAmount(userId);
         StringBuilder sb = new StringBuilder()

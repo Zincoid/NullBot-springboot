@@ -1,16 +1,14 @@
 package com.zincoid.nullbot.core.service.basic.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.core.BotContainer;
+import com.zincoid.nullbot.core.component.tool.BotOperator;
+import com.zincoid.nullbot.core.model.data.query.UserQuery;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.mapper.UserMapper;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.service.basic.UserService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    // 数据库更新用
-    @Value("${nullbot.bot-id}")
-    private Long botId;
-    private final BotContainer botContainer;
-
+    private final BotOperator botOperator;
     private final UserMapper userMapper;
 
     // =================== BOT功能相关 ===================
@@ -102,7 +96,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateAllNames() {
         userMapper.selectList(null).forEach(user -> {
-            Bot bot = botContainer.robots.get(botId);
+            Bot bot = botOperator.getBot();
             user.setName(bot.getStrangerInfo(user.getId(), true).getData().getNickname());
             userMapper.updateById(user);
         });
@@ -117,10 +111,8 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public DataPage<UserPO> getPage(Integer current, Integer size) {
-        Page<UserPO> page = Page.of(current, size);
-        Page<UserPO> userPage = userMapper.selectPage(page, new LambdaQueryWrapper<UserPO>().orderByAsc(UserPO::getId));
-        return new DataPage<>(userPage.getRecords(), userPage.getCurrent(), userPage.getPages(), userPage.getTotal(), userPage.getSize());
+    public PageResult<UserPO> getPage(UserQuery query) {
+        return PageResult.of(userMapper.selectPage(query.toPage(), null));
     }
 
     @Override

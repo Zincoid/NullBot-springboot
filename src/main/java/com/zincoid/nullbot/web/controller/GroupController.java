@@ -1,9 +1,10 @@
 package com.zincoid.nullbot.web.controller;
 
+import com.zincoid.nullbot.core.model.data.query.GroupQuery;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.GroupPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.service.basic.GroupService;
@@ -28,12 +29,9 @@ public class GroupController {
         return WebResult.success("查询成功").withData("groups", groupService.getList());
     }
 
-    @GetMapping("/page/{currentPage}/{pageSize}")
-    public WebResult getGroupByPage(
-            @PathVariable Integer currentPage,
-            @PathVariable Integer pageSize
-    ) {
-        DataPage<GroupPO> groupPage = groupService.getPage(currentPage, pageSize);
+    @GetMapping("/page")
+    public WebResult getGroupByPage(GroupQuery query) {
+        PageResult<GroupPO> groupPage = groupService.getPage(query);
         return WebResult.success("查询成功").withData("groupPage", groupPage);
     }
 

@@ -1,9 +1,10 @@
 package com.zincoid.nullbot.web.controller;
 
+import com.zincoid.nullbot.core.model.data.query.UserQuery;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.service.basic.UserService;
@@ -24,16 +25,13 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/list")
-    public WebResult getUserList() {
+    public WebResult getList() {
         return WebResult.success("查询成功").withData("users", userService.getList());
     }
 
-    @GetMapping("/page/{currentPage}/{pageSize}")
-    public WebResult getUserByPage(
-            @PathVariable Integer currentPage,
-            @PathVariable Integer pageSize
-    ) {
-        DataPage<UserPO> userPage = userService.getPage(currentPage, pageSize);
+    @GetMapping("/page")
+    public WebResult getPage(UserQuery query) {
+        PageResult<UserPO> userPage = userService.getPage(query);
         return WebResult.success("查询成功").withData("userPage", userPage);
     }
 

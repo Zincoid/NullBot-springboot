@@ -1,11 +1,12 @@
 package com.zincoid.nullbot.web.controller;
 
+import com.zincoid.nullbot.core.model.data.query.FileQuery;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.util.WebCtxUtil;
@@ -39,19 +40,10 @@ public class FileController {
         return WebResult.success("本地与数据库 已同步");
     }
 
-    @GetMapping("/page/{currentPage}/{pageSize}")
-    public WebResult getFileByPage(
-            @PathVariable Integer currentPage,
-            @PathVariable Integer pageSize,
-            @RequestParam(defaultValue = "/") String curDir
-    ) {
-        Integer userType = WebCtxUtil.getType();
-        DataPage<FilePO> filePage = fileService.getPage(
-                curDir,
-                currentPage,
-                pageSize,
-                userType == 0
-        );
+    @GetMapping("/page")
+    public WebResult getFileByPage(FileQuery query) {
+        query.setHidden(WebCtxUtil.getType() == 0);
+        PageResult<FilePO> filePage = fileService.getPage(query);
         return WebResult.success("查询成功").withData("filePage", filePage);
     }
 

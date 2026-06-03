@@ -1,9 +1,10 @@
 package com.zincoid.nullbot.web.controller;
 
+import com.zincoid.nullbot.core.model.data.query.SayingQuery;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.model.data.po.SayingPO;
 import com.zincoid.nullbot.core.service.basic.SayingService;
@@ -29,12 +30,9 @@ public class SayingController {
         return WebResult.success("查询成功").withData("sayings", sayings);
     }
 
-    @GetMapping("/page/{currentPage}/{pageSize}")
-    public WebResult getSayingByPage(
-            @PathVariable Integer currentPage,
-            @PathVariable Integer pageSize
-    ) {
-        DataPage<SayingPO> sayingPage = sayingService.getPage(currentPage, pageSize);
+    @GetMapping("/page")
+    public WebResult getSayingByPage(SayingQuery query) {
+        PageResult<SayingPO> sayingPage = sayingService.getPage(query);
         return WebResult.success("查询成功").withData("sayingPage", sayingPage);
     }
 

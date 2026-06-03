@@ -1,16 +1,14 @@
 package com.zincoid.nullbot.core.service.basic.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.core.BotContainer;
+import com.zincoid.nullbot.core.component.tool.BotOperator;
+import com.zincoid.nullbot.core.model.data.query.GroupQuery;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.GroupPO;
 import com.zincoid.nullbot.core.mapper.GroupMapper;
 import com.zincoid.nullbot.core.service.basic.GroupService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GroupServiceImpl implements GroupService {
 
-    // 数据库更新用
-    @Value("${nullbot.bot-id}")
-    private Long botId;
-    private final BotContainer botContainer;
-
+    private final BotOperator botOperator;
     private final GroupMapper groupMapper;
 
     // =================== 注册功能相关 ===================
@@ -71,7 +65,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public void updateAllNames() {
         groupMapper.selectList(null).forEach(group -> {
-            Bot bot = botContainer.robots.get(botId);
+            Bot bot = botOperator.getBot();
             group.setName(bot.getGroupInfo(group.getId(), true).getData().getGroupName());
             groupMapper.updateById(group);
         });
@@ -85,10 +79,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public DataPage<GroupPO> getPage(Integer current, Integer size) {
-        Page<GroupPO> page = Page.of(current, size);
-        Page<GroupPO> groupPage = groupMapper.selectPage(page, new LambdaQueryWrapper<GroupPO>().orderByAsc(GroupPO::getId));
-        return DataPage.of(groupPage);
+    public PageResult<GroupPO> getPage(GroupQuery query) {
+        return PageResult.of(groupMapper.selectPage(query.toPage(), null));
     }
 
     @Override

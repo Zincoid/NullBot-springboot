@@ -1,9 +1,10 @@
 package com.zincoid.nullbot.web.controller;
 
+import com.zincoid.nullbot.core.model.data.query.ItemQuery;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.model.data.DataPage;
+import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.service.basic.ItemService;
@@ -28,12 +29,9 @@ public class ItemController {
         return WebResult.success("查询成功").withData("items", itemService.getList());
     }
 
-    @GetMapping("/page/{currentPage}/{pageSize}")
-    public WebResult getItemByPage(
-            @PathVariable Integer currentPage,
-            @PathVariable Integer pageSize
-    ) {
-        DataPage<ItemPO> itemPage = itemService.getPage(currentPage, pageSize);
+    @GetMapping("/page")
+    public WebResult getItemByPage(ItemQuery query) {
+        PageResult<ItemPO> itemPage = itemService.getPage(query);
         return WebResult.success("查询成功").withData("itemPage", itemPage);
     }
 
