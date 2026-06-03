@@ -40,11 +40,10 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     @Transactional
     public void increaseOnDate() {
-        List<StatisticDatePO> statisticDates = statisticDateMapper.selectList(new LambdaQueryWrapper<StatisticDatePO>().eq(StatisticDatePO::getDate, LocalDate.now()));
-        if (statisticDates == null || statisticDates.isEmpty())
+        StatisticDatePO statisticDate = statisticDateMapper.selectOne(new LambdaQueryWrapper<StatisticDatePO>().eq(StatisticDatePO::getDate, LocalDate.now()));
+        if (statisticDate == null)
             statisticDateMapper.insert(new StatisticDatePO(null, LocalDate.now(), 1L));
         else {
-            StatisticDatePO statisticDate = statisticDates.getFirst();
             statisticDate.setVisits(statisticDate.getVisits() + 1);
             statisticDateMapper.updateById(statisticDate);
         }
@@ -53,11 +52,13 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     @Transactional
     public void increase(Long groupId, Long userId, String userName, String command) {
-        List<StatisticPO> statistics = statisticMapper.selectList(new LambdaQueryWrapper<StatisticPO>().eq(StatisticPO::getGroupId, groupId).eq(StatisticPO::getUserId, userId).eq(StatisticPO::getCommand, command));
-        if (statistics == null || statistics.isEmpty())
+        StatisticPO statistic = statisticMapper.selectOne(new LambdaQueryWrapper<StatisticPO>()
+                .eq(StatisticPO::getGroupId, groupId)
+                .eq(StatisticPO::getUserId, userId)
+                .eq(StatisticPO::getCommand, command));
+        if (statistic == null)
             statisticMapper.insert(new StatisticPO(null, groupId, userId, userName, command, 1L));
         else {
-            StatisticPO statistic = statistics.getFirst();
             statistic.setUserName(userName);
             statistic.setVisits(statistic.getVisits() + 1);
             statisticMapper.updateById(statistic);

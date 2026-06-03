@@ -77,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public boolean exist(Integer id) {
-        return !itemMapper.selectList(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, id)).isEmpty();
+        return itemMapper.exists(new LambdaQueryWrapper<ItemPO>().eq(ItemPO::getId, id));
     }
 
     @Override
