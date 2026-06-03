@@ -196,7 +196,7 @@ public class FileServiceImpl implements FileService {
         if (hidden) wrapper.eq(FilePO::getVisible, true);
         Page<FilePO> page = Page.of(current, size);
         Page<FilePO> filePage = fileMapper.selectPage(page, wrapper);
-        return new DataPage<>(filePage.getRecords(), filePage.getCurrent(), filePage.getPages(), filePage.getTotal(), filePage.getSize());
+        return DataPage.of(filePage);
     }
 
     @Override

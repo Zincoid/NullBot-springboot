@@ -63,7 +63,7 @@ public class SayingServiceImpl implements SayingService {
     public DataPage<SayingPO> getPage(Integer current, Integer size) {
         Page<SayingPO> page = Page.of(current, size);
         Page<SayingPO> sayingPage = sayingMapper.selectPage(page, new LambdaQueryWrapper<SayingPO>().orderByDesc(SayingPO::getTime));
-        return new DataPage<>(sayingPage.getRecords(), sayingPage.getCurrent(), sayingPage.getPages(), sayingPage.getTotal(), sayingPage.getSize());
+        return DataPage.of(sayingPage);
     }
 
     @Override

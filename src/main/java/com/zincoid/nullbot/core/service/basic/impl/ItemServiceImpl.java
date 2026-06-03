@@ -102,7 +102,7 @@ public class ItemServiceImpl implements ItemService {
         Page<ItemPO> page = Page.of(current, size);
         Page<ItemPO> itemPage;
         itemPage = itemMapper.selectPage(page, new LambdaQueryWrapper<ItemPO>().orderByAsc(ItemPO::getId));
-        return new DataPage<>(itemPage.getRecords(), itemPage.getCurrent(), itemPage.getPages(), itemPage.getTotal(), itemPage.getSize());
+        return DataPage.of(itemPage);
     }
 
     @Override

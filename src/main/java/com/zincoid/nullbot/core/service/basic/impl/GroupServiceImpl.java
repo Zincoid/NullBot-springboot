@@ -88,7 +88,7 @@ public class GroupServiceImpl implements GroupService {
     public DataPage<GroupPO> getPage(Integer current, Integer size) {
         Page<GroupPO> page = Page.of(current, size);
         Page<GroupPO> groupPage = groupMapper.selectPage(page, new LambdaQueryWrapper<GroupPO>().orderByAsc(GroupPO::getId));
-        return new DataPage<>(groupPage.getRecords(), groupPage.getCurrent(), groupPage.getPages(), groupPage.getTotal(), groupPage.getSize());
+        return DataPage.of(groupPage);
     }
 
     @Override

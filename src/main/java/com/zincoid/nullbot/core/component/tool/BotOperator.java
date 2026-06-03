@@ -15,15 +15,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BotOperator {
 
+    private static final int DEFAULT_MAX_RETRIES = 10;
+    private static final int DEFAULT_RETRY_INTERVAL = 1000;
+
     @Value("${nullbot.bot-id}")
     private Long botId;
     @Value("${nullbot.log-id}")
     private Long logId;
 
     private final BotContainer botContainer;
-
-    private static final int DEFAULT_MAX_RETRIES = 10;
-    private static final int DEFAULT_RETRY_INTERVAL = 1000;
 
     // =================== 获取方法 ===================
 
@@ -42,6 +42,10 @@ public class BotOperator {
         }
         if (bot == null) throw new RuntimeException("BotOperator 错误: Bot 获取重试超出最大次数");
         return bot;
+    }
+
+    public Bot getBot() {
+        return getBot(DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
     }
 
     // =================== 默认方法 ===================
