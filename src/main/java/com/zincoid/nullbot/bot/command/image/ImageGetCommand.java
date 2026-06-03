@@ -6,6 +6,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.enums.Emoji;
+import com.zincoid.nullbot.core.service.file.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -13,7 +14,6 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.resource.builder.ResourceUrlBuilder;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.core.mapper.FileMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,13 +25,13 @@ import java.util.List;
 public class ImageGetCommand implements Command {
 
     private final StorageProperties storageProperties;
-    private final FileMapper fileMapper;
+    private final FileService fileService;
     private final ResourceUrlBuilder resourceUrlBuilder;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String imagePath = storageProperties.getImagePath() + "/collect";
-        List<FilePO> images = fileMapper.searchFile(args.nextFullString(), imagePath);
+        List<FilePO> images = fileService.search(args.nextFullString(), imagePath);
         if (images.isEmpty()) throw new BotInfoException(Emoji.INFO, "图片未找到");
         if (images.size() > 1) throw new BotInfoException(Emoji.INFO, "匹配项过多");
         FilePO image = images.getFirst();

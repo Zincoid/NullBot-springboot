@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.core.service.file.impl;
 
+import com.zincoid.nullbot.core.service.file.FileService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BoundedInputStream;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.core.mapper.FileMapper;
 import com.zincoid.nullbot.core.service.file.OssService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 public class OssServiceImpl implements OssService {
 
     private final StorageProperties storageProperties;
-    private final FileMapper fileMapper;
+    private final FileService fileService;
 
     @Override
     public ResponseEntity<?> getResourceByPath(HttpServletRequest request, String path) {
@@ -39,7 +39,7 @@ public class OssServiceImpl implements OssService {
         int index = fullPath.lastIndexOf("/");
         String directory = fullPath.substring(0, index);
         String filename = fullPath.substring(index + 1);
-        List<FilePO> files = fileMapper.searchFile(filename, directory);
+        List<FilePO> files = fileService.search(filename, directory);
         if (files.isEmpty()) {
             log.warn("[OssService] 文件未找到 - path={}", path);
             return ResponseEntity.notFound().build();
@@ -57,7 +57,7 @@ public class OssServiceImpl implements OssService {
 
     @Override
     public ResponseEntity<?> getResourceById(HttpServletRequest request, Integer id) {
-        FilePO file = fileMapper.selectById(id);
+        FilePO file = fileService.getById(id);
         if (file == null) {
             log.warn("[OssService] 文件记录未找到 - id={}", id);
             return ResponseEntity.notFound().build();

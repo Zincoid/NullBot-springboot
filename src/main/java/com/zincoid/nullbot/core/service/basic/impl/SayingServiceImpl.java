@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -40,13 +40,16 @@ public class SayingServiceImpl implements SayingService {
     public SayingPO getRand() {
         long count = sayingMapper.selectCount(null);
         if (count == 0) return null;
-        long randomOffset = new Random().nextLong(0, count);
+        long randomOffset = ThreadLocalRandom.current().nextLong(0, count);
         return sayingMapper.getOneByOffset(randomOffset);
     }
 
     @Override
     public SayingPO getRandByUserId(Long userId) {
-        return sayingMapper.getRandById(userId);
+        long count = sayingMapper.selectCount(new LambdaQueryWrapper<SayingPO>().eq(SayingPO::getUserId, userId));
+        if (count == 0) return null;
+        long randomOffset = ThreadLocalRandom.current().nextLong(0, count);
+        return sayingMapper.getOneByOffsetAndUserId(userId, randomOffset);
     }
 
     // =================== WEB功能相关 ===================

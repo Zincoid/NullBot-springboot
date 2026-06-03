@@ -20,15 +20,13 @@ import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @CommandMapping({"Bread", "面包", "\uD83C\uDF5E"})
 @Component
 @RequiredArgsConstructor
 public class BreadCommand implements Command {
-
-    private final Random random = new Random();
 
     private final UserService userService;
     private final InventoryService inventoryService;
@@ -51,7 +49,7 @@ public class BreadCommand implements Command {
 
     private void buy(Bot bot, Long userId, Long groupId, String userName) {
         int cost = 500;  // 需支付的现金
-        if (random.nextInt(100) >= 10) {  // 10% 概率获得特殊面包
+        if (ThreadLocalRandom.current().nextInt(100) >= 10) {  // 10% 概率获得特殊面包
             int i = breadService.buyBasic(userId, cost);
             if (i > 0) {
                 bot.sendGroupMsg(groupId, "\uD83C\uDF5E%s花费%s￥买到%s面包".formatted(userName, cost, i), false);
@@ -71,7 +69,7 @@ public class BreadCommand implements Command {
 
     private void eat(Bot bot, Long userId, String userName, Long groupId) {
         int exp = 5;  // 单个面包经验值
-        if (random.nextInt(100) >= 10) {  // 10% 概率吃到过期面包
+        if (ThreadLocalRandom.current().nextInt(100) >= 10) {  // 10% 概率吃到过期面包
             int[] res = breadService.eatBasic(userId, exp);
             int i = res[0];
             if (i > 0) {

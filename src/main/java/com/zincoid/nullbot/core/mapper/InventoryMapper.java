@@ -9,5 +9,5 @@ import com.zincoid.nullbot.core.model.data.po.InventoryPO;
 public interface InventoryMapper extends BaseMapper<InventoryPO> {
 
     @Select("SELECT COALESCE(SUM(amount), 0) FROM inventory WHERE owner_id = #{userId}")
-    Integer sumAmountByUserId(Long userId);
+    Integer getTotalAmountByUserId(Long userId);
 }

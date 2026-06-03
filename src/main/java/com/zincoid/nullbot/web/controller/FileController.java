@@ -45,7 +45,6 @@ public class FileController {
             @PathVariable Integer pageSize,
             @RequestParam(defaultValue = "/") String curDir
     ) {
-        // Integer userType = jwtTool.getLoginType(WebUtil.getToken());  // 弃用
         Integer userType = WebCtxUtil.getType();
         DataPage<FilePO> filePage = fileService.getPage(
                 curDir,
@@ -58,7 +57,6 @@ public class FileController {
 
     @GetMapping("/searchFile")
     public WebResult searchFile(String key, String curDir) {
-        // Integer userType = jwtTool.getLoginType(WebUtil.getToken());  // 弃用
         Integer userType = WebCtxUtil.getType();
         List<FilePO> fileList = fileService.search(
                 key,
@@ -73,7 +71,6 @@ public class FileController {
             MultipartFile uploadFile,
             @RequestParam(defaultValue = "/") String curDir
     ) throws IOException {
-        // Long userId = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
         Long userId = WebCtxUtil.getId();
         fileService.upload(userId, uploadFile, curDir);
         return WebResult.success("上传成功");
@@ -92,7 +89,6 @@ public class FileController {
     public WebResult createDir(@RequestBody Map<String, String> map) throws IOException {
         String curDir = map.get("curDir");
         String dirName = map.get("dirName");
-        // Long userId = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
         Long userId = WebCtxUtil.getId();
         fileService.createDir(userId, curDir, dirName);
         return WebResult.success("创建成功");

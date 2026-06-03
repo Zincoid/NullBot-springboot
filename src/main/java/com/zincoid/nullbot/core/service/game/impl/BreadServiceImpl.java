@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +32,6 @@ public class BreadServiceImpl implements BreadService {
 
     private final UserService userService;
     private final InventoryService inventoryService;
-
-    private final Random random = new Random();
 
     // =================== 面包游戏相关 ===================
 
@@ -71,7 +69,7 @@ public class BreadServiceImpl implements BreadService {
         UserPO user = userMapper.selectById(userId);
         if (user.getCash() >= cost) {
             ItemPO bread = getBasicBread();
-            int i = random.nextInt(10) + 1;
+            int i = ThreadLocalRandom.current().nextInt(10) + 1;
             if (inventoryService.increase(userId, bread.getId(), i)) {
                 user.setCash(user.getCash() - cost);
                 userMapper.updateById(user);
@@ -92,7 +90,7 @@ public class BreadServiceImpl implements BreadService {
                         .eq(InventoryPO::getItemId, bread.getId())
                 );
         if (userBread == null) return new int[]{0, 0};
-        int i = Math.min(random.nextInt(10) + 1, userBread.getAmount());
+        int i = Math.min(ThreadLocalRandom.current().nextInt(10) + 1, userBread.getAmount());
         if (inventoryService.decrease(userId, bread.getId(), i)) {
             int j = userService.plusExperience(userId, i * exp);
             return new int[]{i, j};  // 返回: 实际吃掉个数 和 升级级数
@@ -147,7 +145,7 @@ public class BreadServiceImpl implements BreadService {
                         .eq(InventoryPO::getItemId, bread.getId())
                 );
         if (userBread == null) return 0;
-        int i = Math.min(random.nextInt(10) + 1, userBread.getAmount());
+        int i = Math.min(ThreadLocalRandom.current().nextInt(10) + 1, userBread.getAmount());
         if (inventoryService.decrease(fromId, bread.getId(), i)) {
             inventoryService.increase(toId, bread.getId(), i);
             return i;

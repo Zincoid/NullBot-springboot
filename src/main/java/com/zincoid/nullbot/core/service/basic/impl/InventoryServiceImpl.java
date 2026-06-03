@@ -62,24 +62,24 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public int getTotalAmount(Long userId) {
-        return inventoryMapper.sumAmountByUserId(userId);
+        return inventoryMapper.getTotalAmountByUserId(userId);
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean increase(Long userId, Integer itemId, int i) {
         ItemPO item = itemMapper.selectById(itemId);
-        if(item == null) return false;
+        if (item == null) return false;
         UserPO user = userMapper.selectById(userId);
-        if(inventoryMapper.sumAmountByUserId(userId) >= user.getCapacity()) return false;
+        if (getTotalAmount(userId) >= user.getCapacity()) return false;
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
-        if(inventories == null || inventories.isEmpty()){
+        if (inventories == null || inventories.isEmpty()) {
             return inventoryMapper.insert(new InventoryPO(null, userId, item.getId(), i)) == 1;
-        }else if(inventories.size() == 1){
+        } else if (inventories.size() == 1) {
             InventoryPO inventory = inventories.getFirst();
             inventory.setAmount(inventory.getAmount() + i);
             return inventoryMapper.updateById(inventory) == 1;
-        }else
+        } else
             return false;
     }
 
@@ -87,9 +87,9 @@ public class InventoryServiceImpl implements InventoryService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean decrease(Long userId, Integer itemId, int i) {
         List<InventoryPO> inventories = inventoryMapper.selectList(new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId));
-        if(inventories == null || inventories.size() != 1) return false;
+        if (inventories == null || inventories.size() != 1) return false;
         InventoryPO inventory = inventories.getFirst();
-        if(inventory.getAmount() < i) return false;
+        if (inventory.getAmount() < i) return false;
         inventory.setAmount(inventory.getAmount() - i);
         if (inventory.getAmount() > 0)
             return inventoryMapper.updateById(inventory) == 1;
@@ -101,12 +101,12 @@ public class InventoryServiceImpl implements InventoryService {
     @Transactional
     public boolean sell(Long userId, Integer itemId, int i) {
         ItemPO item = itemMapper.selectById(itemId);
-        if(item == null) return false;
-        if(decrease(userId, itemId, i)){
+        if (item == null) return false;
+        if (decrease(userId, itemId, i)) {
             UserPO user = userMapper.selectById(userId);
             user.setCash(user.getCash() + item.getPrice() * i);
             return userMapper.updateById(user) == 1;
-        }else
+        } else
             return false;
     }
 
@@ -114,13 +114,13 @@ public class InventoryServiceImpl implements InventoryService {
     @Transactional
     public boolean buy(Long userId, Integer itemId, int i) {
         ItemPO item = itemMapper.selectById(itemId);
-        if(item == null) return false;
+        if (item == null) return false;
         UserPO user = userMapper.selectById(userId);
         int totalPrice = item.getPrice() * i;
         if (user.getCash() >= totalPrice) {
             user.setCash(user.getCash() - totalPrice);
             return userMapper.updateById(user) == 1 && increase(userId, itemId, i);
-        }else
+        } else
             return false;
     }
 
@@ -131,8 +131,8 @@ public class InventoryServiceImpl implements InventoryService {
         List<InventoryVO> inventoryVOSByRarity = InventoryVOS.stream()
                 .filter(inventoryVO -> inventoryVO.getRarity() == rarity)
                 .toList();
-        if(inventoryVOSByRarity.isEmpty()) return false;
-        for(InventoryVO inventoryVO : inventoryVOSByRarity){
+        if (inventoryVOSByRarity.isEmpty()) return false;
+        for (InventoryVO inventoryVO : inventoryVOSByRarity) {
             sell(userId, inventoryVO.getItemId(), inventoryVO.getAmount());
         }
         return true;

@@ -12,6 +12,10 @@ import java.util.List;
 
 public interface FileService {
 
+    FilePO getById(Integer id);
+
+    List<FilePO> search(String key, String fullDir);
+
     FileInfo saveFile(String url, String directory, String fileName, Long ownerId, String ownerName);
 
     boolean deleteFile(String directory, String fileName);
@@ -23,8 +27,6 @@ public interface FileService {
     DataPage<FilePO> getPage(String curDir, Integer current, Integer size, boolean hidden);
 
     List<FilePO> search(String key, String curDir, boolean hidden);
-
-    List<FilePO> search(String key, String fullDir);
 
     void upload(Long owner, MultipartFile uploadFile, String curDir) throws IOException;
 

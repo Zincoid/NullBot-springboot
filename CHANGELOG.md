@@ -888,4 +888,5 @@
 - 重构 BotConsumer 函数式接口为 BotGroupEntityConsumer；
 - 优化 项目结构；
 - 调整 配置文件；
+- 优化 Mapper 层方法和部分服务代码；
 - 优化 部分其他代码。

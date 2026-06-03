@@ -60,7 +60,7 @@ public class DriftBottleCommand implements Command {
             boolean thrown = false;
             try {
                 fileInfo = fileService.saveFile(imageUrl, bottlePath, imageName, userId, userName);
-                thrown = driftBottleService.throwBottle(
+                thrown = driftBottleService.add(
                         userId,
                         bot.getStrangerInfo(userId, true).getData().getNickname(),
                         fileInfo.getPath(),
@@ -77,7 +77,7 @@ public class DriftBottleCommand implements Command {
         }
 
         if (args.hasNext()) {
-            boolean thrown = driftBottleService.throwBottle(
+            boolean thrown = driftBottleService.add(
                     userId,
                     bot.getStrangerInfo(userId, true).getData().getNickname(),
                     autoThrow ? message.trim() : args.nextFullString(),
@@ -89,7 +89,7 @@ public class DriftBottleCommand implements Command {
             return;
         }
 
-        DriftBottlePO bottle = driftBottleService.pickUpRand();
+        DriftBottlePO bottle = driftBottleService.pick();
         if (bottle == null)
             throw new BotInfoException(Emoji.INFO, "没有漂流瓶了");
         bot.sendGroupMsg(groupId, bottle.toString(), false);
@@ -100,7 +100,7 @@ public class DriftBottleCommand implements Command {
         boolean thrownBack = false;
         if (!inputs.isEmpty()) {
             bottle.plusRethrowTimes();
-            thrownBack = driftBottleService.throwBottle(bottle);
+            thrownBack = driftBottleService.add(bottle);
             bot.sendGroupMsg(groupId, thrownBack ? "✉️已投回" : "❌未投回", true);
             log.info("☑ [DriftBottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());
         } else {

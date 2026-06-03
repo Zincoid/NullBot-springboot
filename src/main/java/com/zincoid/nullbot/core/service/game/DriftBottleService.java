@@ -4,9 +4,9 @@ import com.zincoid.nullbot.core.model.data.po.DriftBottlePO;
 
 public interface DriftBottleService {
 
-    boolean throwBottle(DriftBottlePO bottle);
+    boolean add(DriftBottlePO bottle);
 
-    boolean throwBottle(Long userId, String userName, String content, boolean isImage);
+    boolean add(Long userId, String userName, String content, boolean isImage);
 
-    DriftBottlePO pickUpRand();
+    DriftBottlePO pick();
 }

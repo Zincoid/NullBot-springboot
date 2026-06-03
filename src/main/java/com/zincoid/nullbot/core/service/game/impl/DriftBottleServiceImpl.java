@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +17,7 @@ public class DriftBottleServiceImpl implements DriftBottleService {
     private final DriftBottleMapper driftBottleMapper;
 
     @Override
-    public boolean throwBottle(DriftBottlePO bottle) {
+    public boolean add(DriftBottlePO bottle) {
         try {
             return driftBottleMapper.insert(bottle) == 1;
         } catch (Exception e) {
@@ -26,7 +26,7 @@ public class DriftBottleServiceImpl implements DriftBottleService {
     }
 
     @Override
-    public boolean throwBottle(Long userId, String userName, String content, boolean isImage) {
+    public boolean add(Long userId, String userName, String content, boolean isImage) {
         try {
             DriftBottlePO bottle = new DriftBottlePO();
             bottle.setUserId(userId);
@@ -42,10 +42,10 @@ public class DriftBottleServiceImpl implements DriftBottleService {
 
     @Override
     @Transactional
-    public DriftBottlePO pickUpRand() {
+    public DriftBottlePO pick() {
         long count = driftBottleMapper.selectCount(null);
         if (count == 0) return null;
-        long randomOffset = new Random().nextLong(0, count);
+        long randomOffset = ThreadLocalRandom.current().nextLong(0, count);
         DriftBottlePO bottle = driftBottleMapper.getOneByOffset(randomOffset);
         if (bottle != null) driftBottleMapper.deleteById(bottle.getId());
         return bottle;

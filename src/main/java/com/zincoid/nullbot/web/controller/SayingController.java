@@ -38,16 +38,6 @@ public class SayingController {
         return WebResult.success("查询成功").withData("sayingPage", sayingPage);
     }
 
-    @GetMapping("/random")
-    public WebResult random() {
-        SayingPO saying = sayingService.getRand();
-        if (saying != null) {
-            return WebResult.success("获取成功").withData("saying", saying.toString());
-        } else {
-            return WebResult.fail("获取失败");
-        }
-    }
-
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id) {
         if (sayingService.deleteById(id)) {

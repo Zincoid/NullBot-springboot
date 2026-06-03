@@ -5,13 +5,13 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.enums.Emoji;
+import com.zincoid.nullbot.core.service.file.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.core.mapper.FileMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,12 +23,12 @@ import java.util.List;
 public class VideoListCommand implements Command {
 
     private final StorageProperties storageProperties;
-    private final FileMapper fileMapper;
+    private final FileService fileService;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String videoPath = storageProperties.getVideoPath();
-        List<FilePO> videos = fileMapper.searchFile("", videoPath);
+        List<FilePO> videos = fileService.search("", videoPath);
         List<String> fileNames = videos.stream().map(FilePO::getFileName).toList();
         if (videos.size() > 50) throw new BotInfoException(Emoji.INFO, "过多暂不展示: 共%s个".formatted(videos.size()));
         bot.sendGroupMsg(event.getGroupId(), """

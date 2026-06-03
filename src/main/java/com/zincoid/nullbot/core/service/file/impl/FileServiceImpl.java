@@ -61,7 +61,26 @@ public class FileServiceImpl implements FileService {
         scanAndSyncFiles();
     }
 
+    // =================== OSS功能相关 ===================
+
+    @Override
+    public FilePO getById(Integer id) {
+        return fileMapper.selectById(id);
+    }
+
     // =================== BOT功能相关 ===================
+
+    @Override
+    public List<FilePO> search(String key, String fullDir) {
+        if (key.contains("/") || key.contains("\\"))
+            throw new CommonException("关键字不允许出现斜杠");
+        LambdaQueryWrapper<FilePO> wrapper = new LambdaQueryWrapper<FilePO>()
+                .like(FilePO::getFileName, key)
+                .and(w -> w.eq(FilePO::getDirectory, fullDir)
+                        .or()
+                        .likeRight(FilePO::getDirectory, fullDir + "/"));
+        return fileMapper.selectList(wrapper);
+    }
 
     @Override
     public FileInfo saveFile(String url, String directory, String fileName, Long ownerId, String ownerName) {
@@ -182,19 +201,16 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<FilePO> search(String key, String curDir, boolean hidden) {
-        if (key.contains("/") || key.contains("\\")) {
+        if (key.contains("/") || key.contains("\\"))
             throw new CommonException("关键字不允许出现斜杠");
-        }
         String fullDir = resolveFullDir(curDir);
-        return hidden ? fileMapper.searchFileVisible(key, fullDir) : fileMapper.searchFile(key, fullDir);
-    }
-
-    @Override
-    public List<FilePO> search(String key, String fullDir) {
-        if (key.contains("/") || key.contains("\\")) {
-            throw new CommonException("关键字不允许出现斜杠");
-        }
-        return fileMapper.searchFile(key, fullDir);
+        LambdaQueryWrapper<FilePO> wrapper = new LambdaQueryWrapper<FilePO>()
+                .like(FilePO::getFileName, key)
+                .and(w -> w.eq(FilePO::getDirectory, fullDir)
+                        .or()
+                        .likeRight(FilePO::getDirectory, fullDir + "/"));
+        if (hidden) wrapper.eq(FilePO::getVisible, true);
+        return fileMapper.selectList(wrapper);
     }
 
     @Override
@@ -482,7 +498,7 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-    // =================== 路径 & 时间工具 ===================
+    // ================ 路径 & 时间工具 ================
 
     private String normalizePath(String path) {
         if (path == null) return null;
@@ -507,7 +523,7 @@ public class FileServiceImpl implements FileService {
                 .toLocalDateTime();
     }
 
-    // =================== 本地系统文件与数据库同步工具 ===================
+    // ============ 本地系统文件与数据库同步工具 ============
 
     private record SyncFileInfo(long size, long lastModified, boolean isDirectory) {}
 
