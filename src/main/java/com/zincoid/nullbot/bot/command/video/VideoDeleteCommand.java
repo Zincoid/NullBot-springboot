@@ -48,7 +48,7 @@ public class VideoDeleteCommand implements Command {
     }
 
     private void deleteFile(Bot bot, GroupMessageEvent event, String directory, String fileName) {
-        if(!fileService.deleteFile(directory, fileName))
+        if(!fileService.delete(directory, fileName))
             throw new BotInfoException(Emoji.WARN, "视频删除失败");
         bot.sendGroupMsg(event.getGroupId(), "⚠️视频已删除", false);
         log.info("☑ [VideoDelete] 视频已删除: {}", fileName);

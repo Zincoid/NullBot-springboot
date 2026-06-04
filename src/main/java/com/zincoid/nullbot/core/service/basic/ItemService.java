@@ -1,20 +1,13 @@
 package com.zincoid.nullbot.core.service.basic;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.model.data.query.ItemQuery;
 
-import java.util.List;
+public interface ItemService extends IService<ItemPO> {
 
-public interface ItemService {
-
-    ItemPO get(Integer id);
-
-    ItemPO getRandom();
-
-    ItemPO getRandomHighValue();
-
-    ItemPO drawAndKeepRandom(Long userId);
+    PageResult<ItemPO> getPage(ItemQuery query);
 
     boolean exist(Integer id);
 
@@ -22,15 +15,9 @@ public interface ItemService {
 
     String getCommand(Integer id);
 
-    List<ItemPO> getList();
+    ItemPO getRandom();
 
-    PageResult<ItemPO> getPage(ItemQuery query);
+    ItemPO getRandomHighValue();
 
-    boolean add(ItemPO item);
-
-    void adds(List<ItemPO> items);
-
-    boolean update(ItemPO item);
-
-    boolean deleteById(Integer id);
+    ItemPO drawAndKeepRandom(Long userId);
 }

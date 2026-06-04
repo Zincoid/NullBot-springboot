@@ -57,7 +57,7 @@ public class ImageDeleteCommand implements Command {
     }
 
     private void deleteFile(Bot bot, GroupMessageEvent event, String directory, String fileName) {
-        if (!fileService.deleteFile(directory, fileName))
+        if (!fileService.delete(directory, fileName))
             throw new BotInfoException(Emoji.WARN, "图片删除失败");
         bot.sendGroupMsg(event.getGroupId(), "⚠️图片已删除", false);
         log.info("☑ [ImageDelete] 图片已删除: {}", fileName);

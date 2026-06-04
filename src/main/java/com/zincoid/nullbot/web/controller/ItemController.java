@@ -25,19 +25,19 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/list")
-    public WebResult getItemList() {
-        return WebResult.success("查询成功").withData("items", itemService.getList());
+    public WebResult getList() {
+        return WebResult.success("查询成功").withData("items", itemService.list());
     }
 
     @GetMapping("/page")
-    public WebResult getItemByPage(ItemQuery query) {
+    public WebResult getPage(ItemQuery query) {
         PageResult<ItemPO> itemPage = itemService.getPage(query);
         return WebResult.success("查询成功").withData("itemPage", itemPage);
     }
 
     @PostMapping("/add")
     public WebResult add(@RequestBody ItemPO item) {
-        if (itemService.add(item)) {
+        if (itemService.save(item)) {
             return WebResult.success("新增成功");
         } else {
             return WebResult.fail("新增失败");
@@ -46,7 +46,7 @@ public class ItemController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id) {
-        if (itemService.deleteById(id)) {
+        if (itemService.removeById(id)) {
             return WebResult.success("删除成功");
         } else {
             return WebResult.fail("删除失败");
@@ -55,7 +55,7 @@ public class ItemController {
 
     @PutMapping("/update")
     public WebResult update(@RequestBody ItemPO item) {
-        if (itemService.update(item)) {
+        if (itemService.updateById(item)) {
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新失败");
@@ -64,13 +64,13 @@ public class ItemController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException {
-        List<ItemPO> items = itemService.getList();
+        List<ItemPO> items = itemService.list();
         CsvUtil.exportCsv(response, "Items_" + LocalDateTime.now(), items, ItemPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<ItemPO> items = CsvUtil.importCsv(csvFile, ItemPO.class);
-        itemService.adds(items);
+        itemService.saveBatch(items);
     }
 }

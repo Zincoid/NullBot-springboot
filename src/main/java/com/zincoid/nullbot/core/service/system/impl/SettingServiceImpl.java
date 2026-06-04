@@ -1,9 +1,9 @@
-package com.zincoid.nullbot.core.service.basic.impl;
+package com.zincoid.nullbot.core.service.system.impl;
 
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.component.control.SettingManager;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
-import com.zincoid.nullbot.core.service.basic.SettingService;
+import com.zincoid.nullbot.core.service.system.SettingService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,8 +14,6 @@ public class SettingServiceImpl implements SettingService {
 
     private final SettingManager settingManager;
 
-    // =================== 全局功能相关 ===================
-
     @Override
     public SettingPO get(Long groupId) {
         return settingManager.getSetting(groupId);
@@ -25,8 +23,6 @@ public class SettingServiceImpl implements SettingService {
     public boolean set(SettingPO setting) {
         return settingManager.setSetting(setting);
     }
-
-    // =================== WEB功能相关 ===================
 
     @Override
     public List<SettingPO> getAll() {

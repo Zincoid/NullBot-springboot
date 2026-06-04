@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.core.service.file;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.zincoid.nullbot.core.model.data.query.FileQuery;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,19 +12,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-public interface FileService {
-
-    FilePO getById(Integer id);
+public interface FileService extends IService<FilePO> {
 
     List<FilePO> search(String key, String fullDir);
 
-    FileInfo saveFile(String url, String directory, String fileName, Long ownerId, String ownerName);
+    FileInfo upload(String url, String directory, String fileName, Long ownerId, String ownerName);
 
-    boolean deleteFile(String directory, String fileName);
+    boolean delete(String directory, String fileName);
 
     boolean initRoot();
 
-    void syncLocalToDatabase();
+    void syncFiles();
 
     PageResult<FilePO> getPage(FileQuery query);
 
@@ -31,11 +30,11 @@ public interface FileService {
 
     void upload(Long owner, MultipartFile uploadFile, String curDir) throws IOException;
 
+    void delete(Integer id);
+
     void download(Integer id, HttpServletRequest request, HttpServletResponse response);
 
     void createDir(Long ownerId, String curDir, String dirName) throws IOException;
-
-    void deleteById(Integer id);
 
     void rename(Integer id, String newFileName);
 

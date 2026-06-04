@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.service.game.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.zincoid.nullbot.core.service.basic.ItemService;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.data.po.InventoryPO;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
@@ -8,9 +8,6 @@ import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
 import com.zincoid.nullbot.core.enums.Category;
 import com.zincoid.nullbot.core.enums.Rarity;
-import com.zincoid.nullbot.core.mapper.InventoryMapper;
-import com.zincoid.nullbot.core.mapper.ItemMapper;
-import com.zincoid.nullbot.core.mapper.UserMapper;
 import com.zincoid.nullbot.core.service.game.BreadService;
 import com.zincoid.nullbot.core.service.basic.InventoryService;
 import com.zincoid.nullbot.core.service.basic.UserService;
@@ -18,7 +15,6 @@ import com.zincoid.nullbot.core.util.DrawUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -26,10 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 public class BreadServiceImpl implements BreadService {
 
-    private final UserMapper userMapper;
-    private final InventoryMapper inventoryMapper;
-    private final ItemMapper itemMapper;
-
+    private final ItemService itemService;
     private final UserService userService;
     private final InventoryService inventoryService;
 
@@ -37,42 +30,21 @@ public class BreadServiceImpl implements BreadService {
 
     @Override
     public List<InventoryVO> getVOList(Long userId) {
-        List<InventoryPO> inventoryPOS = inventoryMapper.selectList(
-                new LambdaQueryWrapper<InventoryPO>().eq(InventoryPO::getOwnerId, userId)
-        );
-        return inventoryPOS.stream()
-                .map(inventoryPO -> {
-                    ItemPO item = itemMapper.selectById(inventoryPO.getItemId());
-                    return new InventoryVO(
-                            inventoryPO.getId(),
-                            inventoryPO.getOwnerId(),
-                            inventoryPO.getItemId(),
-                            item.getName(),
-                            item.getCategory(),
-                            item.getRarity(),
-                            item.getPrice(),
-                            inventoryPO.getAmount()
-                    );
-                })
-                .filter(inventoryVO -> inventoryVO.getCategory() == Category.BREAD)
-                .sorted(Comparator
-                        .comparing(InventoryVO::getRarity, Comparator.reverseOrder())
-                        .thenComparing(InventoryVO::getPrice, Comparator.reverseOrder())
-                        .thenComparing(InventoryVO::getId)
-                )
+        return inventoryService.getVOList(userId).stream()
+                .filter(vo -> vo.getCategory() == Category.BREAD)
                 .toList();
     }
 
     @Override
     @Transactional
     public int buyBasic(Long userId, int cost) {  // 花费 cost 现金购买随机数量普通面包
-        UserPO user = userMapper.selectById(userId);
+        UserPO user = userService.getById(userId);
         if (user.getCash() >= cost) {
             ItemPO bread = getBasicBread();
             int i = ThreadLocalRandom.current().nextInt(10) + 1;
             if (inventoryService.increase(userId, bread.getId(), i)) {
                 user.setCash(user.getCash() - cost);
-                userMapper.updateById(user);
+                userService.updateById(user);
                 return i;
             } else
                 return 0;
@@ -84,11 +56,10 @@ public class BreadServiceImpl implements BreadService {
     @Transactional
     public int[] eatBasic(Long userId, int exp) {  // 吃随机 i 个普通面包并获得 i * exp 经验
         ItemPO bread = getBasicBread();
-        InventoryPO userBread = inventoryMapper
-                .selectOne(new LambdaQueryWrapper<InventoryPO>()
-                        .eq(InventoryPO::getOwnerId, userId)
-                        .eq(InventoryPO::getItemId, bread.getId())
-                );
+        InventoryPO userBread = inventoryService.lambdaQuery()
+                .eq(InventoryPO::getOwnerId, userId)
+                .eq(InventoryPO::getItemId, bread.getId())
+                .one();
         if (userBread == null) return new int[]{0, 0};
         int i = Math.min(ThreadLocalRandom.current().nextInt(10) + 1, userBread.getAmount());
         if (inventoryService.decrease(userId, bread.getId(), i)) {
@@ -102,10 +73,10 @@ public class BreadServiceImpl implements BreadService {
     @Transactional
     public boolean eatRotten(Long userId) {
         ItemPO bread = getBasicBread();
-        UserPO user = userMapper.selectById(userId);
+        UserPO user = userService.getById(userId);
         if (inventoryService.decrease(userId, bread.getId(), 1)) {
             user.setExperience(0);
-            userMapper.updateById(user);
+            userService.updateById(user);
             return true;
         } else
             return false;
@@ -114,20 +85,18 @@ public class BreadServiceImpl implements BreadService {
     @Override
     @Transactional
     public ItemPO buySpecial(Long userId, int cost) {  // 花费 cost 现金购买一个特殊面包
-        UserPO user = userMapper.selectById(userId);
+        UserPO user = userService.getById(userId);
         if (user.getCash() >= cost) {
-
             Rarity rarity = DrawUtil.drawRarityByProbability();
-            List<ItemPO> itemList = itemMapper
-                    .selectList(new LambdaQueryWrapper<ItemPO>()
-                            .eq(ItemPO::getCategory, Category.BREAD)
-                            .eq(ItemPO::getAvailable, true)
-                            .eq(ItemPO::getRarity, rarity)
-                    );
+            List<ItemPO> itemList = itemService.lambdaQuery()
+                    .eq(ItemPO::getCategory, Category.BREAD)
+                    .eq(ItemPO::getAvailable, true)
+                    .eq(ItemPO::getRarity, rarity)
+                    .list();
             ItemPO item = DrawUtil.drawItemByLogPrice(itemList);
             if (inventoryService.increase(userId, item.getId(), 1)) {
                 user.setCash(user.getCash() - cost);
-                userMapper.updateById(user);
+                userService.updateById(user);
                 return item;
             } else
                 return null;
@@ -139,11 +108,10 @@ public class BreadServiceImpl implements BreadService {
     @Transactional
     public int transferBasic(Long fromId, Long toId) {
         ItemPO bread = getBasicBread();
-        InventoryPO userBread = inventoryMapper
-                .selectOne(new LambdaQueryWrapper<InventoryPO>()
-                        .eq(InventoryPO::getOwnerId, fromId)
-                        .eq(InventoryPO::getItemId, bread.getId())
-                );
+        InventoryPO userBread = inventoryService.lambdaQuery()
+                .eq(InventoryPO::getOwnerId, fromId)
+                .eq(InventoryPO::getItemId, bread.getId())
+                .one();
         if (userBread == null) return 0;
         int i = Math.min(ThreadLocalRandom.current().nextInt(10) + 1, userBread.getAmount());
         if (inventoryService.decrease(fromId, bread.getId(), i)) {
@@ -154,10 +122,9 @@ public class BreadServiceImpl implements BreadService {
     }
 
     private ItemPO getBasicBread() {
-        return itemMapper
-                .selectOne(new LambdaQueryWrapper<ItemPO>()
-                        .eq(ItemPO::getCategory, Category.BREAD)
-                        .eq(ItemPO::getAvailable, false)
-                );
+        return itemService.lambdaQuery()
+                .eq(ItemPO::getCategory, Category.BREAD)
+                .eq(ItemPO::getAvailable, false)
+                .one();
     }
 }

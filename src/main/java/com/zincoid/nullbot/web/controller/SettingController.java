@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.control.CommandRateLimiter;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
-import com.zincoid.nullbot.core.service.basic.SettingService;
+import com.zincoid.nullbot.core.service.system.SettingService;
 import com.zincoid.nullbot.core.util.CsvUtil;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;

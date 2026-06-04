@@ -899,3 +899,7 @@
   - 更名 DataPage -> PageResult；
   - 新增 PageQuery 通用分页请求类；
   - 使用 PageQuery 子类重构分页查询。
+- 优化 全部服务类：
+  - 使用 MyBatisPlus 的 IService 简化大部分服务；
+  - 非本服务不再注入其他 Mapper 而使用 Service；
+  - 重构部分方法。

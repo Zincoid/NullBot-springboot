@@ -20,6 +20,17 @@ public class UserPO {
     private Integer capacity;
     private Integer drawTimes;
 
+    public UserPO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+        this.access = 0;
+        this.level = 1;
+        this.experience = 0;
+        this.cash = 0;
+        this.capacity = 100;
+        this.drawTimes = 50;
+    }
+
     public int plusExperience(int exp) {
         int upgrade = 0;
         experience += exp;

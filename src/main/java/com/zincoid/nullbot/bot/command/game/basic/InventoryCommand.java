@@ -29,7 +29,7 @@ public class InventoryCommand implements Command {
         String userName = event.getSender().getNickname();
 
         PageResult<InventoryVO> inventoryVOPage = inventoryService.getVOPage(userId, args.nextInt(1), 10);
-        UserPO user = userService.get(userId);
+        UserPO user = userService.getById(userId);
         int totalAmount = inventoryService.getTotalAmount(userId);
         StringBuilder sb = new StringBuilder()
                 .append("[库存] ").append(userName).append("(").append(userId).append(")\n")

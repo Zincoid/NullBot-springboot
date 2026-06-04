@@ -30,7 +30,6 @@ public class AccessSetCommand implements Command {
         int targetNewAccess = args.nextInt();
         switch (option) {
             case "-group" -> {
-                if (!groupService.exist(targetId)) throw new BotInfoException(Emoji.WARN, "群聊未注册");
                 int targetAccess = groupService.getAccess(targetId);
                 int selfAccess = userService.getAccess(event.getUserId());
                 if (selfAccess < 2) {

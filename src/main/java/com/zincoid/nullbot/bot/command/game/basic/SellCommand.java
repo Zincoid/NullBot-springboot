@@ -34,7 +34,7 @@ public class SellCommand implements Command {
             Rarity rarity = Rarity.valueOf(args.getString(1));
             if (!inventoryService.sellByRarity(userId, rarity))
                 throw new BotInfoException(Emoji.INFO, "该稀有度物品不足");
-            UserPO user = userService.get(userId);
+            UserPO user = userService.getById(userId);
             bot.sendGroupMsg(groupId, "✅已出售%s色物品: 余额%s￥".formatted(rarity.getDescription(), user.getCash()), false);
             log.info("☑ [Sell] 出售成功 - Rarity: {}", rarity);
             return;
@@ -46,7 +46,7 @@ public class SellCommand implements Command {
             throw new BotWarnException("数量非正");
         if (!inventoryService.sell(userId, itemId, amount))
             throw new BotInfoException(Emoji.INFO, "数量不足");
-        UserPO user = userService.get(userId);
+        UserPO user = userService.getById(userId);
         bot.sendGroupMsg(groupId, "✅已出售%s个物品: 余额%s￥".formatted(amount, user.getCash()), false);
         log.info("☑ [Sell] 出售成功 - {} -> {}", itemId, amount);
     }

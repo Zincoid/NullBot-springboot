@@ -13,4 +13,10 @@ public class GroupPO {
     private Long id;
     private String name;
     private Integer access;
+
+    public GroupPO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+        this.access = 2;
+    }
 }

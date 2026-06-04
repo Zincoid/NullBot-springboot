@@ -3,6 +3,7 @@ package com.zincoid.nullbot.core.service.system.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.component.tool.BotOperator;
+import com.zincoid.nullbot.core.service.basic.UserService;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.data.po.StatisticDatePO;
 import com.zincoid.nullbot.core.model.data.po.StatisticPO;
@@ -10,7 +11,6 @@ import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.vo.StatisticVO;
 import com.zincoid.nullbot.core.mapper.StatisticDateMapper;
 import com.zincoid.nullbot.core.mapper.StatisticMapper;
-import com.zincoid.nullbot.core.mapper.UserMapper;
 import com.zincoid.nullbot.core.service.system.StatisticService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +27,10 @@ import java.util.stream.Collectors;
 public class StatisticServiceImpl implements StatisticService {
 
     private final BotOperator botOperator;
+    private final UserService userService;
 
     private final StatisticMapper statisticMapper;
     private final StatisticDateMapper statisticDateMapper;
-    private final UserMapper userMapper;
-
-    // =================== WEB功能相关 ===================
 
     @Override
     @Transactional
@@ -119,7 +117,7 @@ public class StatisticServiceImpl implements StatisticService {
         for (Map<String, Object> map : topUsers) {
             long userId = Long.parseLong(map.get("user_id").toString());
             String userName;
-            UserPO user = userMapper.selectById(userId);
+            UserPO user = userService.getById(userId);
             if (user != null) {
                 userName = user.getName();
             } else {

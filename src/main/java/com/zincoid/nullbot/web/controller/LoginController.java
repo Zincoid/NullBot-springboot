@@ -62,10 +62,9 @@ public class LoginController {
 
     @DeleteMapping("/delete")
     public WebResult delete() {
-        // Long id = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
         Long id = WebCtxUtil.getId();
         log.info("└─[LoginController] 管理员注销 - ID: {}", id);
-        if (adminService.deleteById(id)) {
+        if (adminService.removeById(id)) {
             return WebResult.success("管理员注销成功");
         } else {
             return WebResult.fail("管理员注销失败");
@@ -74,7 +73,6 @@ public class LoginController {
 
     @PostMapping("/update")
     public WebResult update(@RequestBody @Validated AdminUpdateDTO adminUpdateDTO) {
-        // Long id = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
         Long id = WebCtxUtil.getId();
         adminUpdateDTO.setId(id);
         log.info("└─[LoginController] 管理员更新 - ID: {}", id);
@@ -87,7 +85,6 @@ public class LoginController {
 
     @PostMapping("/changePwd")
     public WebResult changePwd(@RequestBody @Validated PwdChangeDTO pwdChangeDTO) {
-        // Long id = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
         Long id = WebCtxUtil.getId();
         log.info("└─[LoginController] 管理员密码更改 - ID: {}", id);
         if (adminService.changePwd(id, pwdChangeDTO)) {
@@ -99,7 +96,6 @@ public class LoginController {
 
     @GetMapping("/info")
     public WebResult info() {
-        // Integer type = jwtTool.getLoginType(WebUtil.getToken());  // 弃用
         Integer type = WebCtxUtil.getType();
         if (type == 0) {
             AdminPO admin = new AdminPO(
@@ -112,10 +108,9 @@ public class LoginController {
                     .withData("info", admin)
                     .withData("userType", 0);
         } else if (type == 1) {
-            // Long id = jwtTool.getLoginId(WebUtil.getToken());  // 弃用
             Long id = WebCtxUtil.getId();
             log.info("└─[LoginController] 获取管理员信息 - ID: {}", id);
-            AdminPO admin = adminService.info(id);
+            AdminPO admin = adminService.getById(id);
             if (admin != null) {
                 admin.setPassword(null);  // 安全
                 return WebResult

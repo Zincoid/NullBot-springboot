@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.service.basic;
+package com.zincoid.nullbot.core.service.system;
 
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 

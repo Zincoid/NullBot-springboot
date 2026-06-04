@@ -42,7 +42,7 @@ public class UseCommand implements Command {
         String executeCmd = originalCmd.replace("userId", userId.toString());
         eventPublisher.publishEvent(InnerCommandEvent.of(executeCmd, false));
 
-        String itemName = itemService.get(itemId).getName();
+        String itemName = itemService.getById(itemId).getName();
         bot.sendGroupMsg(event.getGroupId(), "✅%s已使用%s".formatted(userName, itemName), false);
         log.info("☑ [Use] 物品已使用 - {} -> {}", userId, itemId);
     }

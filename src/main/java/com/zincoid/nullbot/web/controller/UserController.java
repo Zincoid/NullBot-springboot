@@ -26,7 +26,7 @@ public class UserController {
 
     @GetMapping("/list")
     public WebResult getList() {
-        return WebResult.success("查询成功").withData("users", userService.getList());
+        return WebResult.success("查询成功").withData("users", userService.list());
     }
 
     @GetMapping("/page")
@@ -37,7 +37,7 @@ public class UserController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Long id) {
-        if (userService.delete(id)) {
+        if (userService.removeById(id)) {
             return WebResult.success("删除成功");
         } else {
             return WebResult.fail("删除失败");
@@ -46,7 +46,7 @@ public class UserController {
 
     @PutMapping("/update")
     public WebResult update(@RequestBody UserPO user) {
-        if (userService.update(user)) {
+        if (userService.updateById(user)) {
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新出错");
@@ -55,13 +55,13 @@ public class UserController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException {
-        List<UserPO> users = userService.getList();
+        List<UserPO> users = userService.list();
         CsvUtil.exportCsv(response, "Users_" + LocalDateTime.now(), users, UserPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<UserPO> users = CsvUtil.importCsv(csvFile, UserPO.class);
-        userService.adds(users);
+        userService.saveBatch(users);
     }
 }

@@ -40,7 +40,7 @@ public class InventoryController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id) {
-        if (inventoryService.deleteById(id)) {
+        if (inventoryService.removeById(id)) {
             return WebResult.success("删除成功");
         } else {
             return WebResult.fail("删除失败");
@@ -49,7 +49,7 @@ public class InventoryController {
 
     @PutMapping("/update")
     public WebResult update(@RequestBody InventoryPO inventory) {
-        if (inventoryService.update(inventory)) {
+        if (inventoryService.updateById(inventory)) {
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新失败");
@@ -58,13 +58,13 @@ public class InventoryController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException {
-        List<InventoryPO> inventories = inventoryService.getList();
+        List<InventoryPO> inventories = inventoryService.list();
         CsvUtil.exportCsv(response, "Inventories_" + LocalDateTime.now(), inventories, InventoryPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<InventoryPO> inventories = CsvUtil.importCsv(csvFile, InventoryPO.class);
-        inventoryService.adds(inventories);
+        inventoryService.saveBatch(inventories);
     }
 }

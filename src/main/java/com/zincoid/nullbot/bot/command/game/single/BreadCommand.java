@@ -118,7 +118,7 @@ public class BreadCommand implements Command {
 
     private void look(Bot bot, Long groupId, Long userId, String userName) {
         List<InventoryVO> inventoryVOS = breadService.getVOList(userId);
-        UserPO user = userService.get(userId);
+        UserPO user = userService.getById(userId);
         int totalAmount = inventoryService.getTotalAmount(userId);
         StringBuilder sb = new StringBuilder()
                 .append("[面包] ").append(userName).append("(").append(userId).append(")\n")

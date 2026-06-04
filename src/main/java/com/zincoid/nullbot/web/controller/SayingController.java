@@ -25,20 +25,20 @@ public class SayingController {
     private final SayingService sayingService;
 
     @GetMapping("/list")
-    public WebResult getSayingList() {
-        List<SayingPO> sayings = sayingService.getList();
+    public WebResult getList() {
+        List<SayingPO> sayings = sayingService.list();
         return WebResult.success("查询成功").withData("sayings", sayings);
     }
 
     @GetMapping("/page")
-    public WebResult getSayingByPage(SayingQuery query) {
+    public WebResult getPage(SayingQuery query) {
         PageResult<SayingPO> sayingPage = sayingService.getPage(query);
         return WebResult.success("查询成功").withData("sayingPage", sayingPage);
     }
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Integer id) {
-        if (sayingService.deleteById(id)) {
+        if (sayingService.removeById(id)) {
             return WebResult.success("删除成功");
         } else {
             return WebResult.fail("删除失败");
@@ -47,13 +47,13 @@ public class SayingController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException {
-        List<SayingPO> sayings = sayingService.getList();
+        List<SayingPO> sayings = sayingService.list();
         CsvUtil.exportCsv(response, "Sayings_" + LocalDateTime.now(), sayings, SayingPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<SayingPO> sayings = CsvUtil.importCsv(csvFile, SayingPO.class);
-        sayingService.adds(sayings);
+        sayingService.saveBatch(sayings);
     }
 }

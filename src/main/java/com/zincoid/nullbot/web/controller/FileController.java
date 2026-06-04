@@ -26,7 +26,7 @@ public class FileController {
     private final FileService fileService;
 
     @GetMapping("/init")
-    public WebResult initRootFile() {
+    public WebResult initRoot() {
         if (fileService.initRoot()) {
             return WebResult.success("初始化完成");
         } else {
@@ -35,13 +35,13 @@ public class FileController {
     }
 
     @GetMapping("/sync")
-    public WebResult syncFilesToDatabase() {
-        fileService.syncLocalToDatabase();
+    public WebResult syncFiles() {
+        fileService.syncFiles();
         return WebResult.success("本地与数据库 已同步");
     }
 
     @GetMapping("/page")
-    public WebResult getFileByPage(FileQuery query) {
+    public WebResult getPage(FileQuery query) {
         query.setHidden(WebCtxUtil.getType() == 0);
         PageResult<FilePO> filePage = fileService.getPage(query);
         return WebResult.success("查询成功").withData("filePage", filePage);
@@ -88,7 +88,7 @@ public class FileController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult deleteFile(@PathVariable Integer id) {
-        fileService.deleteById(id);
+        fileService.delete(id);
         return WebResult.success("删除成功");
     }
 

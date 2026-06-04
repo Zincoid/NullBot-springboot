@@ -32,7 +32,7 @@ public class SayingSaveCommand implements Command {
         long userId = Long.parseLong(replyMsg.getSender().getUserId());
         String userName = replyMsg.getSender().getNickname();
         String text = MsgParseUtil.formatSaying(bot, replyMsg.getRawMessage());
-        if (!sayingService.add(userId, userName, text)) throw new BotErrorException("语录保存出错");
+        if (!sayingService.addSaying(userId, userName, text)) throw new BotErrorException("语录保存出错");
         bot.sendGroupMsg(event.getGroupId(), "\uD83D\uDCBE语录已保存", false);
         log.info("☑ [SayingSave] 语录已保存 - {}: {}", userName, text);
     }

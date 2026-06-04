@@ -23,7 +23,7 @@ public class SayingDeleteCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         int id = args.nextInt();
-        if (!sayingService.deleteById(id)) throw new BotInfoException(Emoji.INFO, "语录不存在");
+        if (!sayingService.removeById(id)) throw new BotInfoException(Emoji.INFO, "语录不存在");
         bot.sendGroupMsg(event.getGroupId(), "⚠️语录No.%s已删除".formatted(id), false);
         log.info("☑ [SayingDelete] 语录已删除 -> No.{}", id);
     }

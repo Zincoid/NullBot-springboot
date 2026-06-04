@@ -25,7 +25,7 @@ public class ItemCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         int itemId = args.nextInt();
         if (!itemService.exist(itemId)) throw new BotInfoException(Emoji.INFO, "物品不存在");
-        ItemPO item = itemService.get(itemId);
+        ItemPO item = itemService.getById(itemId);
         bot.sendGroupMsg(event.getGroupId(), item.toString(), false);
         log.info("☑ [Item] 物品详情已获取 - ItemId: {}", itemId);
     }

@@ -64,7 +64,7 @@ public class TtsCommand implements Command {
                     String templateText = args.nextString();
                     FileInfo fileInfo = DownloadUtil.save(audio.getValue());
                     String uploadedPath = ttsClient.upload(fileInfo.getPath());
-                    if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
+                    if (!ttsTemplateService.addTemplate(templateName, uploadedPath, templateText, userId, userName))
                         throw new BotWarnException("存在重名模板");
                     bot.sendGroupMsg(groupId, "\uD83D\uDCBE模板已保存: %s".formatted(uploadedPath), false);
                     log.info("☑ [语音合成] 模板已保存 - {}: {} -> {}", templateName, templateText, uploadedPath);
@@ -89,7 +89,7 @@ public class TtsCommand implements Command {
                     log.info("☑ [Tts] 克隆语音已回复: {}", text);
                 }
                 case "list" -> {
-                    List<TtsTemplatePO> templates = ttsTemplateService.getList();
+                    List<TtsTemplatePO> templates = ttsTemplateService.list();
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd");
                     StringBuilder sb = new StringBuilder("[名称 | 作者 - 创建日期 | 用量]");
                     for (TtsTemplatePO template : templates)

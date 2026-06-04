@@ -21,7 +21,7 @@ public class MeCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        UserPO user = userService.get(event.getUserId());
+        UserPO user = userService.getById(event.getUserId());
         bot.sendGroupMsg(event.getGroupId(), user.toString(), false);
         log.info("☑ [Me] 个人信息已获取 - UserId: {}", user.getId());
     }

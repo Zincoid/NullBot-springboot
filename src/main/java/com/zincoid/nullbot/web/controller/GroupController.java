@@ -25,19 +25,19 @@ public class GroupController {
     private final GroupService groupService;
 
     @GetMapping("/list")
-    public WebResult getGroupList() {
-        return WebResult.success("查询成功").withData("groups", groupService.getList());
+    public WebResult getList() {
+        return WebResult.success("查询成功").withData("groups", groupService.list());
     }
 
     @GetMapping("/page")
-    public WebResult getGroupByPage(GroupQuery query) {
+    public WebResult getPage(GroupQuery query) {
         PageResult<GroupPO> groupPage = groupService.getPage(query);
         return WebResult.success("查询成功").withData("groupPage", groupPage);
     }
 
     @DeleteMapping("/delete/{id}")
     public WebResult delete(@PathVariable Long id) {
-        if (groupService.deleteById(id)) {
+        if (groupService.removeById(id)) {
             return WebResult.success("删除成功");
         } else {
             return WebResult.fail("删除失败");
@@ -46,7 +46,7 @@ public class GroupController {
 
     @PutMapping("/update")
     public WebResult update(@RequestBody GroupPO group) {
-        if (groupService.update(group)) {
+        if (groupService.updateById(group)) {
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新出错");
@@ -55,13 +55,13 @@ public class GroupController {
 
     @GetMapping("/exportCsv")
     public void exportCsv(HttpServletResponse response) throws IOException {
-        List<GroupPO> groups = groupService.getList();
+        List<GroupPO> groups = groupService.list();
         CsvUtil.exportCsv(response, "Groups_" + LocalDateTime.now(), groups, GroupPO.class);
     }
 
     @PostMapping("/importCsv")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
         List<GroupPO> groups = CsvUtil.importCsv(csvFile, GroupPO.class);
-        groupService.adds(groups);
+        groupService.saveBatch(groups);
     }
 }

@@ -1,24 +1,13 @@
 package com.zincoid.nullbot.core.service.basic;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.query.UserQuery;
 
-import java.util.List;
+public interface UserService extends IService<UserPO> {
 
-public interface UserService {
-
-    void increaseDrawTimes(Long userId, int i);
-
-    boolean decreaseDrawTimes(Long userId);
-
-    int plusExperience(Long userId, int exp);
-
-    UserPO get(Long id);
-
-    void add(Long id, String name);
-
-    void updateName(Long id, String newName);
+    PageResult<UserPO> getPage(UserQuery query);
 
     boolean exist(Long id);
 
@@ -28,13 +17,9 @@ public interface UserService {
 
     void updateAllNames();
 
-    List<UserPO> getList();
+    void increaseDrawTimes(Long userId, int i);
 
-    PageResult<UserPO> getPage(UserQuery query);
+    boolean decreaseDrawTimes(Long userId);
 
-    void adds(List<UserPO> users);
-
-    boolean delete(Long id);
-
-    boolean update(UserPO user);
+    int plusExperience(Long userId, int exp);
 }
