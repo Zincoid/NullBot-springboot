@@ -238,7 +238,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         String filePath = file.getDirectory() + "/" + file.getFileName();
         FileUtils.deleteQuietly(new File(filePath));
         if (file.getIsDir() == 1)
-            lambdaUpdate().likeRight(FilePO::getDirectory, filePath).remove();
+            lambdaUpdate()
+                    .eq(FilePO::getDirectory, filePath)
+                    .or()
+                    .likeRight(FilePO::getDirectory, filePath + "/")
+                    .remove();
         removeById(id);
     }
 
@@ -424,8 +428,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         if (file == null)
             throw new IllegalArgumentException("数据库文件不存在");
         if (file.getIsDir() == 1) {
+            String subDirPath = file.getDirectory() + "/" + file.getFileName();
             List<FilePO> subFiles = lambdaQuery()
-                    .likeRight(FilePO::getDirectory, file.getDirectory() + "/" + file.getFileName())
+                    .eq(FilePO::getDirectory, subDirPath)
+                    .or()
+                    .likeRight(FilePO::getDirectory, subDirPath + "/")
                     .list();
             for (FilePO subFile : subFiles) {
                 subFile.setVisible(visible);
@@ -441,7 +448,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     private void updateSubFilesPath(String oldDirPath, String newDirPath) {
         // 查询原目录路径开头文件
         List<FilePO> subFiles = lambdaQuery()
-                .likeRight(FilePO::getDirectory, oldDirPath)
+                .eq(FilePO::getDirectory, oldDirPath)
+                .or()
+                .likeRight(FilePO::getDirectory, oldDirPath + "/")
                 .list();
         for (FilePO subFile : subFiles) {
             // 替换目录路径部分
