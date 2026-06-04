@@ -18,10 +18,10 @@ public class StatisticController {
     private final StatisticService statisticService;
 
     @GetMapping
-    public WebResult Statistic() {
+    public WebResult<StatisticVO> Statistic() {
         StatisticVO statisticVO = statisticService.getStatistic();
         if (statisticVO != null) {
-            return WebResult.success("获取成功").withData("statistic", statisticVO);
+            return WebResult.success("获取成功", statisticVO);
         } else {
             return WebResult.fail("获取失败");
         }

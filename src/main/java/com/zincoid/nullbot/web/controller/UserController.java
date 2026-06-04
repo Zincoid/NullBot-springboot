@@ -25,18 +25,18 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/list")
-    public WebResult getList() {
-        return WebResult.success("查询成功").withData("users", userService.list());
+    public WebResult<List<UserPO>> getList() {
+        return WebResult.success("查询成功", userService.list());
     }
 
     @GetMapping("/page")
-    public WebResult getPage(UserQuery query) {
+    public WebResult<PageResult<UserPO>> getPage(UserQuery query) {
         PageResult<UserPO> userPage = userService.getPage(query);
-        return WebResult.success("查询成功").withData("userPage", userPage);
+        return WebResult.success("查询成功", userPage);
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult delete(@PathVariable Long id) {
+    public WebResult<Void> delete(@PathVariable Long id) {
         if (userService.removeById(id)) {
             return WebResult.success("删除成功");
         } else {
@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public WebResult update(@RequestBody UserPO user) {
+    public WebResult<Void> update(@RequestBody UserPO user) {
         if (userService.updateById(user)) {
             return WebResult.success("更新成功");
         } else {

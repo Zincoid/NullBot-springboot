@@ -15,13 +15,13 @@ public class SystemController {
     private final SystemService systemService;
 
     @GetMapping("/invoke")
-    public WebResult invoke(@RequestParam(defaultValue = "") String command) throws Exception {
+    public WebResult<String> invoke(@RequestParam(defaultValue = "") String command) throws Exception {
         String result = systemService.invoke(command);
-        return WebResult.success("调用成功").withData("result", result);
+        return WebResult.success("调用成功", result);
     }
 
     @GetMapping("/exception")
-    public WebResult exception() throws Exception {
+    public WebResult<Void> exception() throws Exception {
         throw new Exception("测试异常");
     }
 }

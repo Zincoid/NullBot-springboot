@@ -42,7 +42,7 @@ public class BreadServiceImpl implements BreadService {
         if (user.getCash() >= cost) {
             ItemPO bread = getBasicBread();
             int i = ThreadLocalRandom.current().nextInt(10) + 1;
-            if (inventoryService.increase(userId, bread.getId(), i)) {
+            if (inventoryService.add(userId, bread.getId(), i)) {
                 user.setCash(user.getCash() - cost);
                 userService.updateById(user);
                 return i;
@@ -62,7 +62,7 @@ public class BreadServiceImpl implements BreadService {
                 .one();
         if (userBread == null) return new int[]{0, 0};
         int i = Math.min(ThreadLocalRandom.current().nextInt(10) + 1, userBread.getAmount());
-        if (inventoryService.decrease(userId, bread.getId(), i)) {
+        if (inventoryService.remove(userId, bread.getId(), i)) {
             int j = userService.plusExperience(userId, i * exp);
             return new int[]{i, j};  // 返回: 实际吃掉个数 和 升级级数
         } else
@@ -74,7 +74,7 @@ public class BreadServiceImpl implements BreadService {
     public boolean eatRotten(Long userId) {
         ItemPO bread = getBasicBread();
         UserPO user = userService.getById(userId);
-        if (inventoryService.decrease(userId, bread.getId(), 1)) {
+        if (inventoryService.remove(userId, bread.getId(), 1)) {
             user.setExperience(0);
             userService.updateById(user);
             return true;
@@ -94,7 +94,7 @@ public class BreadServiceImpl implements BreadService {
                     .eq(ItemPO::getRarity, rarity)
                     .list();
             ItemPO item = DrawUtil.drawItemByLogPrice(itemList);
-            if (inventoryService.increase(userId, item.getId(), 1)) {
+            if (inventoryService.add(userId, item.getId(), 1)) {
                 user.setCash(user.getCash() - cost);
                 userService.updateById(user);
                 return item;
@@ -114,8 +114,8 @@ public class BreadServiceImpl implements BreadService {
                 .one();
         if (userBread == null) return 0;
         int i = Math.min(ThreadLocalRandom.current().nextInt(10) + 1, userBread.getAmount());
-        if (inventoryService.decrease(fromId, bread.getId(), i)) {
-            inventoryService.increase(toId, bread.getId(), i);
+        if (inventoryService.remove(fromId, bread.getId(), i)) {
+            inventoryService.add(toId, bread.getId(), i);
             return i;
         } else
             return 0;

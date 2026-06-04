@@ -15,6 +15,9 @@ import com.zincoid.nullbot.core.util.WebCtxUtil;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @Validated  // 表单校验 仅方法普通参数  @RequestBody 参数需额外在字段上添加 @Validated 注解
 @RequestMapping("/nullbot")
@@ -27,7 +30,7 @@ public class LoginController {
     private final AdminService adminService;
 
     @PostMapping("/regist")
-    public WebResult regist(@RequestBody @Validated RegistDTO registDTO) {
+    public WebResult<Void> regist(@RequestBody @Validated RegistDTO registDTO) {
         log.info("└─[LoginController] 管理员注册 - {}", registDTO);
         if (adminService.regist(registDTO)) {
             return WebResult.success("管理员注册成功");
@@ -37,31 +40,31 @@ public class LoginController {
     }
 
     @PostMapping("/guest")
-    public WebResult guest() {
+    public WebResult<String> guest() {
         log.info("└─[LoginController] 访客登录");
         String token = jwtTool.createJwt(
                 null, 0,
                 jwtProperties.getTokenTTL()
         );
-        return WebResult.success("访客登录成功").withData("token", token);
+        return WebResult.success("访客登录成功", token);
     }
 
     @PostMapping("/login")
-    public WebResult login(@RequestBody @Validated LoginDTO loginDTO) {
+    public WebResult<String> login(@RequestBody @Validated LoginDTO loginDTO) {
         log.info("└─[LoginController] 管理员登录 - {}", loginDTO);
         if (adminService.login(loginDTO)) {
             String token = jwtTool.createJwt(
                     loginDTO.getId(), 1,
                     jwtProperties.getTokenTTL()
             );
-            return WebResult.success("管理员登录成功").withData("token", token);
+            return WebResult.success("管理员登录成功", token);
         } else {
             return WebResult.fail("用户名或密码错误");
         }
     }
 
     @DeleteMapping("/delete")
-    public WebResult delete() {
+    public WebResult<Void> delete() {
         Long id = WebCtxUtil.getId();
         log.info("└─[LoginController] 管理员注销 - ID: {}", id);
         if (adminService.removeById(id)) {
@@ -72,7 +75,7 @@ public class LoginController {
     }
 
     @PostMapping("/update")
-    public WebResult update(@RequestBody @Validated AdminUpdateDTO adminUpdateDTO) {
+    public WebResult<Void> update(@RequestBody @Validated AdminUpdateDTO adminUpdateDTO) {
         Long id = WebCtxUtil.getId();
         adminUpdateDTO.setId(id);
         log.info("└─[LoginController] 管理员更新 - ID: {}", id);
@@ -84,7 +87,7 @@ public class LoginController {
     }
 
     @PostMapping("/changePwd")
-    public WebResult changePwd(@RequestBody @Validated PwdChangeDTO pwdChangeDTO) {
+    public WebResult<Void> changePwd(@RequestBody @Validated PwdChangeDTO pwdChangeDTO) {
         Long id = WebCtxUtil.getId();
         log.info("└─[LoginController] 管理员密码更改 - ID: {}", id);
         if (adminService.changePwd(id, pwdChangeDTO)) {
@@ -95,7 +98,7 @@ public class LoginController {
     }
 
     @GetMapping("/info")
-    public WebResult info() {
+    public WebResult<Map<String, Object>> info() {
         Integer type = WebCtxUtil.getType();
         if (type == 0) {
             AdminPO admin = new AdminPO(
@@ -103,20 +106,20 @@ public class LoginController {
                     null, null
             );
             log.info("└─[LoginController] 获取访客信息");
-            return WebResult
-                    .success("获取访客信息成功")
-                    .withData("info", admin)
-                    .withData("userType", 0);
+            Map<String, Object> data = new HashMap<>();
+            data.put("info", admin);
+            data.put("userType", 0);
+            return WebResult.success("获取访客信息成功", data);
         } else if (type == 1) {
             Long id = WebCtxUtil.getId();
             log.info("└─[LoginController] 获取管理员信息 - ID: {}", id);
             AdminPO admin = adminService.getById(id);
             if (admin != null) {
                 admin.setPassword(null);  // 安全
-                return WebResult
-                        .success("获取管理员信息成功")
-                        .withData("info", admin)
-                        .withData("userType", 1);
+                Map<String, Object> data = new HashMap<>();
+                data.put("info", admin);
+                data.put("userType", 1);
+                return WebResult.success("获取管理员信息成功", data);
             } else {
                 return WebResult.fail("获取管理员信息失败");
             }

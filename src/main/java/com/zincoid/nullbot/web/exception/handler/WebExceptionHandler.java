@@ -31,20 +31,20 @@ public class WebExceptionHandler {
 
     // 拦截所有其他异常
     @ExceptionHandler
-    public WebResult handleException(Exception e) {
+    public WebResult<Void> handleException(Exception e) {
         log.error("▽ [WebExceptionHandler] 未知异常: ", e);
         return WebResult.fail("服务器运行出错: " + e.getMessage());
     }
 
     // 自定义服务器异常
     @ExceptionHandler(CommonException.class)
-    public WebResult handleCommonException(CommonException e) {
+    public WebResult<Void> handleCommonException(CommonException e) {
         return WebResult.fail(e.getMessage());
     }
 
     // 实体参数校验异常
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public WebResult handleValidation(MethodArgumentNotValidException e) {
+    public WebResult<Void> handleValidation(MethodArgumentNotValidException e) {
         return WebResult.fail(e.getBindingResult().getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining("; ")));
@@ -52,7 +52,7 @@ public class WebExceptionHandler {
 
     // 简单参数校验异常
     @ExceptionHandler(ConstraintViolationException.class)
-    public WebResult handleConstraintViolation(ConstraintViolationException e) {
+    public WebResult<Void> handleConstraintViolation(ConstraintViolationException e) {
         return WebResult.fail(e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining("; ")));

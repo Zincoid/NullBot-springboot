@@ -25,18 +25,18 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/list")
-    public WebResult getList() {
-        return WebResult.success("查询成功").withData("items", itemService.list());
+    public WebResult<List<ItemPO>> getList() {
+        return WebResult.success("查询成功", itemService.list());
     }
 
     @GetMapping("/page")
-    public WebResult getPage(ItemQuery query) {
+    public WebResult<PageResult<ItemPO>> getPage(ItemQuery query) {
         PageResult<ItemPO> itemPage = itemService.getPage(query);
-        return WebResult.success("查询成功").withData("itemPage", itemPage);
+        return WebResult.success("查询成功", itemPage);
     }
 
     @PostMapping("/add")
-    public WebResult add(@RequestBody ItemPO item) {
+    public WebResult<Void> add(@RequestBody ItemPO item) {
         if (itemService.save(item)) {
             return WebResult.success("新增成功");
         } else {
@@ -45,7 +45,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult delete(@PathVariable Integer id) {
+    public WebResult<Void> delete(@PathVariable Integer id) {
         if (itemService.removeById(id)) {
             return WebResult.success("删除成功");
         } else {
@@ -54,7 +54,7 @@ public class ItemController {
     }
 
     @PutMapping("/update")
-    public WebResult update(@RequestBody ItemPO item) {
+    public WebResult<Void> update(@RequestBody ItemPO item) {
         if (itemService.updateById(item)) {
             return WebResult.success("更新成功");
         } else {

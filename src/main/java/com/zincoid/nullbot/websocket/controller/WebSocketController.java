@@ -23,13 +23,13 @@ public class WebSocketController {
 
     @MessageMapping("/invoke")
     @SendToUser("/queue/invoke")
-    public WebResult invoke(String command) {
+    public WebResult<String> invoke(String command) {
         log.info("◉ [WebSocketController] 指令调用 - {}", command);
         try {
             String result = systemService.invoke(command);
-            return WebResult.success("调用成功").withData("result", result);
+            return WebResult.success("调用成功", result);
         } catch (Exception e) {
-            return WebResult.fail("调用失败").withData("result", e.toString());
+            return WebResult.fail("调用失败", e.toString());
         }
     }
 

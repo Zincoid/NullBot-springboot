@@ -26,7 +26,7 @@ public class FileController {
     private final FileService fileService;
 
     @GetMapping("/init")
-    public WebResult initRoot() {
+    public WebResult<Void> initRoot() {
         if (fileService.initRoot()) {
             return WebResult.success("初始化完成");
         } else {
@@ -35,31 +35,31 @@ public class FileController {
     }
 
     @GetMapping("/sync")
-    public WebResult syncFiles() {
+    public WebResult<Void> syncFiles() {
         fileService.syncFiles();
         return WebResult.success("本地与数据库 已同步");
     }
 
     @GetMapping("/page")
-    public WebResult getPage(FileQuery query) {
+    public WebResult<PageResult<FilePO>> getPage(FileQuery query) {
         query.setHidden(WebCtxUtil.getType() == 0);
         PageResult<FilePO> filePage = fileService.getPage(query);
-        return WebResult.success("查询成功").withData("filePage", filePage);
+        return WebResult.success("查询成功", filePage);
     }
 
     @GetMapping("/searchFile")
-    public WebResult searchFile(String key, String curDir) {
+    public WebResult<List<FilePO>> searchFile(String key, String curDir) {
         Integer userType = WebCtxUtil.getType();
         List<FilePO> fileList = fileService.search(
                 key,
                 curDir,
                 userType == 0
         );
-        return WebResult.success("查询成功").withData("fileList", fileList);
+        return WebResult.success("查询成功", fileList);
     }
 
     @PostMapping("/upload")
-    public WebResult upload(
+    public WebResult<Void> upload(
             MultipartFile uploadFile,
             @RequestParam(defaultValue = "/") String curDir
     ) throws IOException {
@@ -78,7 +78,7 @@ public class FileController {
     }
 
     @PostMapping("/createDir")
-    public WebResult createDir(@RequestBody Map<String, String> map) throws IOException {
+    public WebResult<Void> createDir(@RequestBody Map<String, String> map) throws IOException {
         String curDir = map.get("curDir");
         String dirName = map.get("dirName");
         Long userId = WebCtxUtil.getId();
@@ -87,13 +87,13 @@ public class FileController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult deleteFile(@PathVariable Integer id) {
+    public WebResult<Void> deleteFile(@PathVariable Integer id) {
         fileService.delete(id);
         return WebResult.success("删除成功");
     }
 
     @GetMapping("/rename/{id}")
-    public WebResult renameFile(
+    public WebResult<Void> renameFile(
             @PathVariable Integer id,
             @RequestParam(defaultValue = "") String newFileName
     ) {
@@ -102,7 +102,7 @@ public class FileController {
     }
 
     @GetMapping("/move/{id}")
-    public WebResult moveFile(
+    public WebResult<Void> moveFile(
             @PathVariable Integer id,
             @RequestParam String newDir
     ) {
@@ -111,7 +111,7 @@ public class FileController {
     }
 
     @GetMapping("/setVisible/{id}")
-    public WebResult setVisible(
+    public WebResult<Void> setVisible(
             @PathVariable Integer id,
             @RequestParam Boolean visible
     ) {

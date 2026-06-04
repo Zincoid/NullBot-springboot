@@ -18,6 +18,4 @@ public interface ItemService extends IService<ItemPO> {
     ItemPO getRandom();
 
     ItemPO getRandomHighValue();
-
-    ItemPO drawAndKeepRandom(Long userId);
 }

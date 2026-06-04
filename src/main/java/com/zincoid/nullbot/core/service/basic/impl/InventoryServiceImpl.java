@@ -45,7 +45,7 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public boolean increase(Long userId, Integer itemId, int i) {
+    public boolean add(Long userId, Integer itemId, int i) {
         ItemPO item = itemService.getById(itemId);
         if (item == null) return false;
         UserPO user = userService.getById(userId);
@@ -63,7 +63,7 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public boolean decrease(Long userId, Integer itemId, int i) {
+    public boolean remove(Long userId, Integer itemId, int i) {
         List<InventoryPO> inventories = lambdaQuery().eq(InventoryPO::getOwnerId, userId).eq(InventoryPO::getItemId, itemId).list();
         if (inventories == null || inventories.size() != 1) return false;
         InventoryPO inventory = inventories.getFirst();
@@ -80,12 +80,26 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
     public boolean sell(Long userId, Integer itemId, int i) {
         ItemPO item = itemService.getById(itemId);
         if (item == null) return false;
-        if (decrease(userId, itemId, i)) {
+        if (remove(userId, itemId, i)) {
             UserPO user = userService.getById(userId);
             user.setCash(user.getCash() + item.getPrice() * i);
             return userService.updateById(user);
         } else
             return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean sell(Long userId, Rarity rarity) {
+        List<InventoryVO> InventoryVOS = getVOList(userId);
+        List<InventoryVO> inventoryVOSByRarity = InventoryVOS.stream()
+                .filter(inventoryVO -> inventoryVO.getRarity() == rarity)
+                .toList();
+        if (inventoryVOSByRarity.isEmpty()) return false;
+        for (InventoryVO inventoryVO : inventoryVOSByRarity) {
+            sell(userId, inventoryVO.getItemId(), inventoryVO.getAmount());
+        }
+        return true;
     }
 
     @Override
@@ -97,22 +111,19 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
         int totalPrice = item.getPrice() * i;
         if (user.getCash() >= totalPrice) {
             user.setCash(user.getCash() - totalPrice);
-            return userService.updateById(user) && increase(userId, itemId, i);
+            return userService.updateById(user) && add(userId, itemId, i);
         } else
             return false;
     }
 
     @Override
     @Transactional
-    public boolean sellByRarity(Long userId, Rarity rarity) {
-        List<InventoryVO> InventoryVOS = getVOList(userId);
-        List<InventoryVO> inventoryVOSByRarity = InventoryVOS.stream()
-                .filter(inventoryVO -> inventoryVO.getRarity() == rarity)
-                .toList();
-        if (inventoryVOSByRarity.isEmpty()) return false;
-        for (InventoryVO inventoryVO : inventoryVOSByRarity) {
-            sell(userId, inventoryVO.getItemId(), inventoryVO.getAmount());
+    public ItemPO draw(Long userId) {
+        if (userService.decreaseDrawTimes(userId)) {
+            ItemPO item = itemService.getRandom();
+            if (item != null && add(userId, item.getId(), 1))
+                return item;
         }
-        return true;
+        return null;
     }
 }

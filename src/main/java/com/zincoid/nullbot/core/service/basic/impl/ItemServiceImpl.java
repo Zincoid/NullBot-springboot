@@ -9,20 +9,14 @@ import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.enums.Category;
 import com.zincoid.nullbot.core.enums.Rarity;
 import com.zincoid.nullbot.core.util.DrawUtil;
-import com.zincoid.nullbot.core.service.basic.InventoryService;
 import com.zincoid.nullbot.core.service.basic.ItemService;
-import com.zincoid.nullbot.core.service.basic.UserService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl extends ServiceImpl<ItemMapper, ItemPO> implements ItemService {
-
-    private final InventoryService inventoryService;
-    private final UserService userService;
 
     @Override
     public PageResult<ItemPO> getPage(ItemQuery query) {
@@ -66,22 +60,4 @@ public class ItemServiceImpl extends ServiceImpl<ItemMapper, ItemPO> implements 
         return DrawUtil.drawItemByLogPrice(itemList);
     }
 
-    @Override
-    @Transactional
-    public ItemPO drawAndKeepRandom(Long userId) {
-        if (userService.decreaseDrawTimes(userId)) {
-            Rarity rarity = DrawUtil.drawRarityByProbability();
-            List<ItemPO> itemList = lambdaQuery()
-                    .ne(ItemPO::getCategory, Category.BREAD)
-                    .eq(ItemPO::getAvailable, true)
-                    .eq(ItemPO::getRarity, rarity)
-                    .list();
-            ItemPO item = DrawUtil.drawItemByLogPrice(itemList);
-            if(inventoryService.increase(userId, item.getId(), 1))
-                return item;
-            else
-                return null;
-        }else
-            return null;
-    }
 }

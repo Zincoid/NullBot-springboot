@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
-import com.zincoid.nullbot.core.service.basic.ItemService;
+import com.zincoid.nullbot.core.service.basic.InventoryService;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DrawCommand implements Command {
 
-    private final ItemService itemService;
+    private final InventoryService inventoryService;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
@@ -38,7 +38,7 @@ public class DrawCommand implements Command {
             List<ItemPO> items = new ArrayList<>();
             boolean stop = false;
             while (times > 0 && !stop) {
-                ItemPO item = itemService.drawAndKeepRandom(userId);
+                ItemPO item = inventoryService.draw(userId);
                 if (item != null) {
                     items.add(item);
                     times--;
@@ -56,7 +56,7 @@ public class DrawCommand implements Command {
             return;
         }
 
-        ItemPO item = itemService.drawAndKeepRandom(userId);
+        ItemPO item = inventoryService.draw(userId);
         if (item == null) throw new BotInfoException(Emoji.INFO, "抽数耗尽或仓库已满");
         bot.sendGroupMsg(groupId, "\uD83C\uDF81%s抽到了...\n%s".formatted(userName, item), false);
         log.info("☑ [Draw] 物品已抽取 - {} -> {}", userId, item.getName());

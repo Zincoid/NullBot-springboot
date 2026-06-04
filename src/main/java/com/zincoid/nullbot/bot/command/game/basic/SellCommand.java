@@ -32,7 +32,7 @@ public class SellCommand implements Command {
 
         if ("-r".equals(args.getString(0))) {
             Rarity rarity = Rarity.valueOf(args.getString(1));
-            if (!inventoryService.sellByRarity(userId, rarity))
+            if (!inventoryService.sell(userId, rarity))
                 throw new BotInfoException(Emoji.INFO, "该稀有度物品不足");
             UserPO user = userService.getById(userId);
             bot.sendGroupMsg(groupId, "✅已出售%s色物品: 余额%s￥".formatted(rarity.getDescription(), user.getCash()), false);

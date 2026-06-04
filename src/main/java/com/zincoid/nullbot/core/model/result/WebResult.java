@@ -2,68 +2,69 @@ package com.zincoid.nullbot.core.model.result;
 
 import lombok.Data;
 
-import java.util.HashMap;
-
 @Data
-public class WebResult {
+public class WebResult<T> {
+
+    // 状态常量
+    public static final int SUCCESS_CODE = 1;
+    public static final int FAIL_CODE = 0;
+    // 消息常量
+    public static final String SUCCESS_MSG = "success";
+    public static final String FAIL_MSG = "fail";
 
     private Integer code;
     private String message;
-    private HashMap<String, Object> data = new HashMap<>();
+    private T data;
 
     private WebResult() {}
 
-    public static WebResult build() {
-        return new WebResult();
+    private static <T> WebResult<T> create(int code, String message, T data) {
+        WebResult<T> result = new WebResult<>();
+        result.setCode(code);
+        result.setMessage(message);
+        result.setData(data);
+        return result;
     }
 
-    public static WebResult build(Integer code, String message) {
-        WebResult webResult = new WebResult();
-        webResult.setCode(code);
-        webResult.setMessage(message);
-        return webResult;
+    // =========== build 方法 ===========
+
+    public static <T> WebResult<T> build(Integer code) {
+        return create(code, null, null);
+    }
+    public static <T> WebResult<T> build(Integer code, String message) {
+        return create(code, message, null);
+    }
+    public static <T> WebResult<T> build(Integer code, String message, T data) {
+        return create(code, message, data);
     }
 
-    public static WebResult success() {
-        WebResult webResult = new WebResult();
-        webResult.setCode(1);
-        webResult.setMessage("success");
-        return webResult;
+    // ========== success 方法 ==========
+
+    public static <T> WebResult<T> success() {
+        return create(SUCCESS_CODE, SUCCESS_MSG, null);
+    }
+    public static <T> WebResult<T> success(String message) {
+        return create(SUCCESS_CODE, message, null);
+    }
+    public static <T> WebResult<T> success(T data) {
+        return create(SUCCESS_CODE, SUCCESS_MSG, data);
+    }
+    public static <T> WebResult<T> success(String message, T data) {
+        return create(SUCCESS_CODE, message, data);
     }
 
-    public static WebResult success(String message) {
-        WebResult webResult = new WebResult();
-        webResult.setCode(1);
-        webResult.setMessage(message);
-        return webResult;
-    }
+    // ============ fail 方法 ============
 
-    public static WebResult fail() {
-        WebResult webResult = new WebResult();
-        webResult.setCode(0);
-        webResult.setMessage("fail");
-        return webResult;
+    public static <T> WebResult<T> fail() {
+        return create(FAIL_CODE, FAIL_MSG, null);
     }
-
-    public static WebResult fail(String message) {
-        WebResult webResult = new WebResult();
-        webResult.setCode(0);
-        webResult.setMessage(message);
-        return webResult;
+    public static <T> WebResult<T> fail(String message) {
+        return create(FAIL_CODE, message, null);
     }
-
-    public WebResult withCode(Integer code) {
-        this.setCode(code);
-        return this;
+    public static <T> WebResult<T> fail(T data) {
+        return create(FAIL_CODE, FAIL_MSG, data);
     }
-
-    public WebResult withMsg(String message) {
-        this.setMessage(message);
-        return this;
-    }
-
-    public WebResult withData(String key, Object value) {
-        this.getData().put(key, value);
-        return this;
+    public static <T> WebResult<T> fail(String message, T data) {
+        return create(FAIL_CODE, message, data);
     }
 }

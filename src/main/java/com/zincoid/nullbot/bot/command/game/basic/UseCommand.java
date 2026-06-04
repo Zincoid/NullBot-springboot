@@ -35,7 +35,7 @@ public class UseCommand implements Command {
             throw new BotInfoException(Emoji.INFO, "物品不存在");
         if (!itemService.isUsable(itemId))
             throw new BotInfoException(Emoji.INFO, "物品不可用");
-        if (!inventoryService.decrease(userId, itemId, 1))
+        if (!inventoryService.remove(userId, itemId, 1))
             throw new BotInfoException(Emoji.INFO, "物品数不足");
 
         String originalCmd = itemService.getCommand(itemId);

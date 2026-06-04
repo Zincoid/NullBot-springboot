@@ -25,18 +25,18 @@ public class GroupController {
     private final GroupService groupService;
 
     @GetMapping("/list")
-    public WebResult getList() {
-        return WebResult.success("查询成功").withData("groups", groupService.list());
+    public WebResult<List<GroupPO>> getList() {
+        return WebResult.success("查询成功", groupService.list());
     }
 
     @GetMapping("/page")
-    public WebResult getPage(GroupQuery query) {
+    public WebResult<PageResult<GroupPO>> getPage(GroupQuery query) {
         PageResult<GroupPO> groupPage = groupService.getPage(query);
-        return WebResult.success("查询成功").withData("groupPage", groupPage);
+        return WebResult.success("查询成功", groupPage);
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult delete(@PathVariable Long id) {
+    public WebResult<Void> delete(@PathVariable Long id) {
         if (groupService.removeById(id)) {
             return WebResult.success("删除成功");
         } else {
@@ -45,7 +45,7 @@ public class GroupController {
     }
 
     @PutMapping("/update")
-    public WebResult update(@RequestBody GroupPO group) {
+    public WebResult<Void> update(@RequestBody GroupPO group) {
         if (groupService.updateById(group)) {
             return WebResult.success("更新成功");
         } else {

@@ -24,14 +24,14 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     @GetMapping("/list")
-    public WebResult getInventoryList(Long userId) {
+    public WebResult<List<InventoryVO>> getInventoryList(Long userId) {
         List<InventoryVO> inventories = inventoryService.getVOList(userId);
-        return WebResult.success("查询成功").withData("inventories", inventories);
+        return WebResult.success("查询成功", inventories);
     }
 
     @PostMapping("/add")
-    public WebResult add(Long userId, Integer itemId) {
-        if (inventoryService.increase(userId, itemId, 1)) {
+    public WebResult<Void> add(Long userId, Integer itemId) {
+        if (inventoryService.add(userId, itemId, 1)) {
             return WebResult.success("增加成功");
         } else {
             return WebResult.fail("增加失败");
@@ -39,7 +39,7 @@ public class InventoryController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult delete(@PathVariable Integer id) {
+    public WebResult<Void> delete(@PathVariable Integer id) {
         if (inventoryService.removeById(id)) {
             return WebResult.success("删除成功");
         } else {
@@ -48,7 +48,7 @@ public class InventoryController {
     }
 
     @PutMapping("/update")
-    public WebResult update(@RequestBody InventoryPO inventory) {
+    public WebResult<Void> update(@RequestBody InventoryPO inventory) {
         if (inventoryService.updateById(inventory)) {
             return WebResult.success("更新成功");
         } else {

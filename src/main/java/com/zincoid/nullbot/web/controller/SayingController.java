@@ -25,19 +25,19 @@ public class SayingController {
     private final SayingService sayingService;
 
     @GetMapping("/list")
-    public WebResult getList() {
+    public WebResult<List<SayingPO>> getList() {
         List<SayingPO> sayings = sayingService.list();
-        return WebResult.success("查询成功").withData("sayings", sayings);
+        return WebResult.success("查询成功", sayings);
     }
 
     @GetMapping("/page")
-    public WebResult getPage(SayingQuery query) {
+    public WebResult<PageResult<SayingPO>> getPage(SayingQuery query) {
         PageResult<SayingPO> sayingPage = sayingService.getPage(query);
-        return WebResult.success("查询成功").withData("sayingPage", sayingPage);
+        return WebResult.success("查询成功", sayingPage);
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult delete(@PathVariable Integer id) {
+    public WebResult<Void> delete(@PathVariable Integer id) {
         if (sayingService.removeById(id)) {
             return WebResult.success("删除成功");
         } else {

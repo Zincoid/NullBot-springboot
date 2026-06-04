@@ -33,17 +33,17 @@ public class SettingController {
     }
 
     @GetMapping("/{id}")
-    public WebResult getSetting(@PathVariable Long id) {
+    public WebResult<SettingPO> get(@PathVariable Long id) {
         SettingPO setting = settingService.get(id);
         if (setting != null) {
-            return WebResult.success("获取成功").withData("setting", setting);
+            return WebResult.success("获取成功", setting);
         } else {
             return WebResult.fail("获取失败");
         }
     }
 
     @PutMapping("/set")
-    public WebResult setSetting(@RequestBody SettingPO setting) {
+    public WebResult<Void> set(@RequestBody SettingPO setting) {
         Long groupId = setting.getGroupId();
         ChatScope oldScope = settingService.get(groupId).getChatScope();
         if (settingService.set(setting)) {
