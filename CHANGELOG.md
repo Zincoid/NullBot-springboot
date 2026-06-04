@@ -904,4 +904,5 @@
   - 非本服务不再注入其他 Mapper 而使用 Service；
   - 重构部分方法；
 - 重构 WebResult 并优化相关使用；
+- 优化 FileService 并修复逻辑错误；
 - 修复 文本错误。

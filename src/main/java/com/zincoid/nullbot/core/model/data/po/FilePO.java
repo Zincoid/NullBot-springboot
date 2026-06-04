@@ -25,6 +25,18 @@ public class FilePO {
     private String ownerName;
     private LocalDateTime lastModified;
 
+    public FilePO(String fileName, Long fileSize, String directory, Integer isDir,
+                  Boolean visible, Long ownerId, String ownerName, LocalDateTime lastModified) {
+        this.fileName = fileName;
+        this.fileSize = fileSize;
+        this.directory = directory;
+        this.isDir = isDir;
+        this.visible = visible;
+        this.ownerId = ownerId;
+        this.ownerName = ownerName;
+        this.lastModified = lastModified;
+    }
+
     public String getPath() {
         return directory + "/" + fileName;
     }
