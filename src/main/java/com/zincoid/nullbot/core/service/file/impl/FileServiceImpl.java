@@ -69,7 +69,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     @Transactional
     public boolean init() {
         Path root = Path.of(getNormalizedBaseDir());
-        String rootDir = root.getParent().toString();
+        Path rootParent = root.getParent();
+        if (rootParent == null)
+            throw new CommonException("根目录不能为系统根");
+        String rootDir = getNormalizedPath(rootParent.toString());
         String rootName = root.getFileName().toString();
         if (lambdaQuery().eq(FilePO::getDirectory, rootDir)
                 .eq(FilePO::getFileName, rootName).one() != null)
@@ -126,7 +129,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                 uid, userService.getById(uid).getName());
         if (!recorded) {
             FileUtils.deleteQuietly(new File(fileInfo.getPath()));
-            throw new CommonException("数据库记录失败且本地文件已清理");
+            throw new RuntimeException("数据更新失败");
         }
         return fileInfo;
     }
@@ -142,13 +145,19 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         try {
             file.transferTo(new File(filePath));
         } catch (IOException e) {
-            log.error("◎ [FileService] 上传文件失败：{}", e.getMessage());
-            throw new CommonException("文件保存失败");
+            log.error("◎ [FileService] 文件保存失败：{}", e.getMessage());
+            throw new RuntimeException("文件保存失败", e);
         }
-        save(new FilePO(file.getOriginalFilename(), file.getSize(),
-                directory, 0, dir.getVisible(), uid,
-                adminService.getById(uid).getUsername(),
-                getLastModifiedTime(Path.of(filePath))));
+        try {
+            save(new FilePO(file.getOriginalFilename(), file.getSize(),
+                    directory, 0, dir.getVisible(), uid,
+                    adminService.getById(uid).getUsername(),
+                    getLastModifiedTime(Path.of(filePath))));
+        } catch (Exception e) {
+            log.error("◎ [FileService] 数据更新失败：{}", e.getMessage());
+            FileUtils.deleteQuietly(new File(filePath));
+            throw new RuntimeException("数据更新失败", e);
+        }
     }
 
     @Override
@@ -166,7 +175,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     public void delete(Integer id) {
         FilePO file = checkFileExists(id);
         String filePath = file.getDirectory() + "/" + file.getFileName();
-        FileUtils.deleteQuietly(new File(filePath));
         if (file.getIsDir() == 1)
             lambdaUpdate()
                     .eq(FilePO::getDirectory, filePath)
@@ -174,6 +182,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                     .likeRight(FilePO::getDirectory, filePath + "/")
                     .remove();
         removeById(id);
+        FileUtils.deleteQuietly(new File(filePath));
     }
 
     @Override
@@ -192,7 +201,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                     "attachment; filename=\"" + URLEncoder.encode(filename, StandardCharsets.UTF_8) + "\"");
             FileCopyUtils.copy(fileInputStream, os);
         } catch (IOException e) {
-            throw new RuntimeException("从磁盘下载文件时出错", e);
+            throw new RuntimeException("文件下载失败", e);
         }
     }
 
@@ -206,12 +215,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         try {
             Files.createDirectory(dirPath);
         } catch (IOException e) {
-            log.error("◎ [FileService] 创建目录失败：{}", e.getMessage());
-            throw new CommonException("创建目录失败");
+            log.error("◎ [FileService] 目录创建失败：{}", e.getMessage());
+            throw new RuntimeException("目录创建失败", e);
         }
-        save(new FilePO(name, 0L, directory, 1, dir.getVisible(), uid,
-                adminService.getById(uid).getUsername(),
-                getLastModifiedTime(dirPath)));
+        try {
+            save(new FilePO(name, 0L, directory, 1, dir.getVisible(), uid,
+                    adminService.getById(uid).getUsername(),
+                    getLastModifiedTime(dirPath)));
+        } catch (Exception e) {
+            log.error("◎ [FileService] 数据更新失败：{}", e.getMessage());
+            FileUtils.deleteQuietly(dirPath.toFile());
+            throw new RuntimeException("数据更新失败", e);
+        }
     }
 
     @Override
@@ -231,7 +246,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         String oldFilePath = file.getDirectory() + "/" + file.getFileName();
         String newFilePath = file.getDirectory() + "/" + filename;
         if (!new File(oldFilePath).renameTo(new File(newFilePath)))
-            throw new RuntimeException("磁盘文件重命名失败");
+            throw new RuntimeException("磁盘文件更名失败");
         if (file.getIsDir() == 1)
             updateSubFilesPath(oldFilePath, newFilePath);
         file.setFileName(filename);
@@ -249,6 +264,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         checkNameConflict(directory, file.getFileName(), null);
 
         String sourcePath = file.getDirectory() + "/" + file.getFileName();
+        if (file.getIsDir() == 1 && directory.startsWith(sourcePath + "/"))
+            throw new CommonException("无法将目录移入自身子目录");
         String targetPath = directory + "/" + file.getFileName();
         if (!new File(sourcePath).renameTo(new File(targetPath)))
             throw new RuntimeException("磁盘文件移动失败");
@@ -322,7 +339,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     // ================ 路径时间工具 ================
 
     private String getNormalizedPath(String path) {
-        if (path == null) return null;
+        if (path == null) throw new NullPointerException("空路径");
         return path.replace('\\', '/');
     }
 
@@ -331,7 +348,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     }
 
     private String getResolvedDirectory(String directory) {
-        if (directory == null) return null;
+        if (directory == null) throw new NullPointerException("空路径");
         if (!directory.startsWith("/")) directory = "/" + directory;
         String base = getNormalizedBaseDir();
         String normalized = getNormalizedPath(directory);
@@ -480,8 +497,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
             }
         }
         // 处理非法文件
-        Path rootPath = Path.of(storageProperties.getFileDirectory());
-        String rootParentPath = rootPath.getParent().toString();
+        Path rootPath = Path.of(getNormalizedBaseDir());
+        String rootParentPath = getNormalizedPath(rootPath.getParent().toString());
         String rootFileName = rootPath.getFileName().toString();
         for (Map.Entry<String, FilePO> entry : dbMap.entrySet()) {
             // 跳过根文件
