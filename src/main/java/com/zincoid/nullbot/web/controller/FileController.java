@@ -47,12 +47,13 @@ public class FileController {
     }
 
     @GetMapping("/search")
-    public WebResult<List<FilePO>> search(String keyword, String directory) {
+    public WebResult<List<FilePO>> search(
+            String keyword,
+            String directory
+    ) {
         Integer userType = WebCtxUtil.getType();
         List<FilePO> fileList = fileService.search(
-                keyword, directory,
-                userType == 0
-        );
+                keyword, directory, userType == 0);
         return WebResult.success("查询成功", fileList);
     }
 
