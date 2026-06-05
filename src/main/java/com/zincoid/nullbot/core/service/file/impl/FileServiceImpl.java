@@ -239,12 +239,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
 
         String oldFilePath = file.getDirectory() + "/" + file.getFileName();
         String newFilePath = file.getDirectory() + "/" + filename;
-        if (!new File(oldFilePath).renameTo(new File(newFilePath)))
-            throw new RuntimeException("磁盘文件更名失败");
         if (file.getIsDir() == 1)
             updateSubFilesPath(oldFilePath, newFilePath);
         file.setFileName(filename);
         updateById(file);
+        if (!new File(oldFilePath).renameTo(new File(newFilePath)))
+            throw new RuntimeException("磁盘文件更名失败");
     }
 
     @Override
@@ -261,12 +261,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         if (file.getIsDir() == 1 && directory.startsWith(sourcePath + "/"))
             throw new CommonException("无法将目录移入自身子目录");
         String targetPath = directory + "/" + file.getFileName();
-        if (!new File(sourcePath).renameTo(new File(targetPath)))
-            throw new RuntimeException("磁盘文件移动失败");
         if (file.getIsDir() == 1)
             updateSubFilesPath(sourcePath, targetPath);
         file.setDirectory(directory);
         updateById(file);
+        if (!new File(sourcePath).renameTo(new File(targetPath)))
+            throw new RuntimeException("磁盘文件移动失败");
     }
 
     @Override
@@ -333,7 +333,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     // ================ 路径时间工具 ================
 
     private String getNormalizedPath(String path) {
-        if (path == null) throw new NullPointerException("空路径");
+        if (path == null) throw new IllegalArgumentException("空路径");
         return path.replace('\\', '/');
     }
 
@@ -342,7 +342,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     }
 
     private String getResolvedDirectory(String directory) {
-        if (directory == null) throw new NullPointerException("空路径");
+        if (directory == null) throw new IllegalArgumentException("空路径");
         if (!directory.startsWith("/")) directory = "/" + directory;
         String base = getNormalizedBaseDir();
         String normalized = getNormalizedPath(directory);
