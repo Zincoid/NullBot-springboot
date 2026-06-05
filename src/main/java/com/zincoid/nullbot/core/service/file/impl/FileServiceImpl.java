@@ -145,7 +145,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         try {
             file.transferTo(new File(filePath));
         } catch (IOException e) {
-            log.error("◎ [FileService] 文件保存失败：{}", e.getMessage());
             throw new RuntimeException("文件保存失败", e);
         }
         try {
@@ -154,20 +153,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                     adminService.getById(uid).getUsername(),
                     getLastModifiedTime(Path.of(filePath))));
         } catch (Exception e) {
-            log.error("◎ [FileService] 数据更新失败：{}", e.getMessage());
             FileUtils.deleteQuietly(new File(filePath));
             throw new RuntimeException("数据更新失败", e);
         }
     }
 
     @Override
-    public boolean delete(String directory, String filename) {
+    @Transactional
+    public void delete(String directory, String filename) {
         directory = getResolvedDirectory(directory);
-        FileUtils.deleteQuietly(new File(directory + "/" + filename));
-        return lambdaUpdate()
-                .eq(FilePO::getDirectory, directory)
-                .eq(FilePO::getFileName, filename)
-                .remove();
+        FilePO file = checkFileExists(directory, filename);
+        delete(file.getId());
     }
 
     @Override
@@ -215,7 +211,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         try {
             Files.createDirectory(dirPath);
         } catch (IOException e) {
-            log.error("◎ [FileService] 目录创建失败：{}", e.getMessage());
             throw new RuntimeException("目录创建失败", e);
         }
         try {
@@ -223,7 +218,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                     adminService.getById(uid).getUsername(),
                     getLastModifiedTime(dirPath)));
         } catch (Exception e) {
-            log.error("◎ [FileService] 数据更新失败：{}", e.getMessage());
             FileUtils.deleteQuietly(dirPath.toFile());
             throw new RuntimeException("数据更新失败", e);
         }
@@ -364,7 +358,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                     .atZone(ZoneId.systemDefault())
                     .toLocalDateTime();
         } catch (IOException e) {
-            log.error("◎ [FileService] 获取修改时间失败", e);
             throw new RuntimeException("获取修改时间失败");
         }
     }
@@ -376,6 +369,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         if (file == null)
             throw new CommonException("数据库文件不存在");
         if (!Files.exists(Path.of(file.getDirectory(), file.getFileName())))
+            throw new RuntimeException("磁盘文件不存在");
+        return file;
+    }
+
+    private FilePO checkFileExists(String fullDir, String filename) {
+        FilePO file = lambdaQuery()
+                .eq(FilePO::getDirectory, fullDir)
+                .eq(FilePO::getFileName, filename)
+                .one();
+        if (file == null)
+            throw new CommonException("数据库文件不存在");
+        if (!Files.exists(Path.of(fullDir, filename)))
             throw new RuntimeException("磁盘文件不存在");
         return file;
     }

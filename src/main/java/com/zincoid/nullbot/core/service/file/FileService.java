@@ -29,7 +29,7 @@ public interface FileService extends IService<FilePO> {
 
     void upload(MultipartFile file, String directory, Long uid);
 
-    boolean delete(String directory, String filename);
+    void delete(String directory, String filename);
 
     void delete(Integer id);
 
