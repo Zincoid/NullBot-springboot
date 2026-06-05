@@ -5,11 +5,11 @@ import com.zincoid.nullbot.core.model.data.po.TtsTemplatePO;
 
 public interface TtsTemplateService extends IService<TtsTemplatePO> {
 
-    boolean addTemplate(String name, String path, String text, Long userId, String userName);
+    boolean add(String name, String path, String text, Long userId, String userName);
 
-    boolean deleteByName(String name);
+    boolean delete(String name);
 
-    TtsTemplatePO getByName(String name);
+    TtsTemplatePO get(String name);
 
     void increaseUsed(Integer id);
 }

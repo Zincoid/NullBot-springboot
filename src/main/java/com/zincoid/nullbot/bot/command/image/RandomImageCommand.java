@@ -32,7 +32,7 @@ public class RandomImageCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String imagePath = storageProperties.getImagePath() + "/collect";
-        List<FilePO> images = fileService.search("", imagePath);
+        List<FilePO> images = fileService.list(imagePath);
         if (images.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无图片");
         FilePO image = images.get(ThreadLocalRandom.current().nextInt(images.size()));
         String response = MsgUtils.builder().img(resourceUrlBuilder.from(image.getId())).build();

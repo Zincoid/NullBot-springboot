@@ -33,7 +33,7 @@ public class FemboyCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         String femboyPath = storageProperties.getImagePath() + "/femboy";
-        List<FilePO> photos = fileService.search("", femboyPath);
+        List<FilePO> photos = fileService.list(femboyPath);
         if (photos.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无图片");
         FilePO photo = photos.get(ThreadLocalRandom.current().nextInt(photos.size()));
         String response = MsgUtils.builder().img(resourceUrlBuilder.from(photo.getId())).build();

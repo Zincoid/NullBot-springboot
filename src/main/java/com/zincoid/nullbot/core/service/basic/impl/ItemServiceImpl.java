@@ -19,7 +19,7 @@ import java.util.List;
 public class ItemServiceImpl extends ServiceImpl<ItemMapper, ItemPO> implements ItemService {
 
     @Override
-    public PageResult<ItemPO> getPage(ItemQuery query) {
+    public PageResult<ItemPO> page(ItemQuery query) {
         return PageResult.of(page(query.toPage(), null));
     }
 

@@ -31,7 +31,7 @@ public class GroupController {
 
     @GetMapping("/page")
     public WebResult<PageResult<GroupPO>> getPage(GroupQuery query) {
-        PageResult<GroupPO> groupPage = groupService.getPage(query);
+        PageResult<GroupPO> groupPage = groupService.page(query);
         return WebResult.success("查询成功", groupPage);
     }
 

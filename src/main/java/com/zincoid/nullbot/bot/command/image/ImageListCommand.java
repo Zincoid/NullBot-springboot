@@ -28,7 +28,7 @@ public class ImageListCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String imagePath = storageProperties.getImagePath() + "/collect";
-        List<FilePO> images = fileService.search("", imagePath);
+        List<FilePO> images = fileService.list(imagePath);
         List<String> fileNames = images.stream().map(FilePO::getFileName).toList();
         if (images.size() > 50) throw new BotInfoException(Emoji.INFO, "过多暂不展示: 共%s张".formatted(images.size()));
         bot.sendGroupMsg(event.getGroupId(), """

@@ -95,7 +95,7 @@ public class MonitorListener {
             String fileName = originName.substring(0, originName.lastIndexOf("."));
             String filePath = storageProperties.getImagePath() + "/monitor/" + groupId;
             try {
-                FileInfo fileInfo = fileService.upload(url, filePath, fileName, userId, userName);
+                FileInfo fileInfo = fileService.upload(url, filePath, fileName, userId);
                 log.info("└─[Saved] {}", fileInfo.getName());
             } catch (Exception e) {
                 log.info("└─[Error] {}", e.getMessage());

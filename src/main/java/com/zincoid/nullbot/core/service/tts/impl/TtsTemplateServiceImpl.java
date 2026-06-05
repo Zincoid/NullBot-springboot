@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TtsTemplateServiceImpl extends ServiceImpl<TtsTemplateMapper, TtsTemplatePO> implements TtsTemplateService {
 
     @Override
-    public boolean addTemplate(String name, String path, String text, Long userId, String userName) {
+    public boolean add(String name, String path, String text, Long userId, String userName) {
         TtsTemplatePO ttsTemplate = new TtsTemplatePO();
         ttsTemplate.setName(name);
         ttsTemplate.setPath(path);
@@ -30,12 +30,12 @@ public class TtsTemplateServiceImpl extends ServiceImpl<TtsTemplateMapper, TtsTe
     }
 
     @Override
-    public boolean deleteByName(String name) {
+    public boolean delete(String name) {
         return lambdaUpdate().eq(TtsTemplatePO::getName, name).remove();
     }
 
     @Override
-    public TtsTemplatePO getByName(String name) {
+    public TtsTemplatePO get(String name) {
         return lambdaQuery().eq(TtsTemplatePO::getName, name).one();
     }
 

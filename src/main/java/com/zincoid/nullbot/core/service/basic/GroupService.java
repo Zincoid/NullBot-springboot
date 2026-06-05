@@ -7,7 +7,7 @@ import com.zincoid.nullbot.core.model.data.query.GroupQuery;
 
 public interface GroupService extends IService<GroupPO> {
 
-    PageResult<GroupPO> getPage(GroupQuery query);
+    PageResult<GroupPO> page(GroupQuery query);
 
     boolean exist(Long id);
 

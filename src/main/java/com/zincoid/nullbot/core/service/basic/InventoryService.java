@@ -11,11 +11,9 @@ import java.util.List;
 
 public interface InventoryService extends IService<InventoryPO> {
 
-    List<InventoryVO> getVOList(Long userId);
+    List<InventoryVO> listVO(Long userId);
 
-    PageResult<InventoryVO> getVOPage(Long userId, Integer current, Integer size);
-
-    int getTotalAmount(Long userId);
+    PageResult<InventoryVO> pageVO(Long userId, Integer current, Integer size);
 
     boolean add(Long userId, Integer itemId, int i);
 
@@ -28,4 +26,6 @@ public interface InventoryService extends IService<InventoryPO> {
     boolean buy(Long userId, Integer itemId, int i);
 
     ItemPO draw(Long userId);
+
+    int getTotalAmount(Long userId);
 }

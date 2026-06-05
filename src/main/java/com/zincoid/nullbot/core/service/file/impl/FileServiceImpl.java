@@ -2,6 +2,7 @@ package com.zincoid.nullbot.core.service.file.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zincoid.nullbot.core.model.data.query.FileQuery;
+import com.zincoid.nullbot.core.service.basic.UserService;
 import com.zincoid.nullbot.core.service.system.AdminService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,58 +48,33 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     private final AtomicBoolean isScanning = new AtomicBoolean(false);
     private final StorageProperties storageProperties;
     private final AdminService adminService;
+    private final UserService userService;
 
     @Value("${file.init}")
     private boolean init;
 
+    // ================== 预载方法 ==================
+
     // @PostConstruct  // 阻塞启动
     @EventListener(ApplicationReadyEvent.class)
-    public void init() {
+    public void load() {
         if (!init) return;
         log.info("◎ [FileService] 初始化文件同步中...");
         scanAndSyncFiles();
     }
 
-    // ================= BOT 功能相关 =================
-
-    @Override
-    public List<FilePO> search(String key, String fullDir) {
-        return searchByFullDir(key, fullDir, false);
-    }
-
-    @Override
-    public FileInfo upload(String url, String directory, String fileName, Long ownerId, String ownerName) {
-        FileInfo fileInfo = DownloadUtil.save(url, directory, fileName);
-        boolean recorded = addOrUpdateRecord(directory, fileInfo.getName(),
-                fileInfo.getSize(), fileInfo.getLastModified(), ownerId, ownerName);
-        if (!recorded) {
-            FileUtils.deleteQuietly(new File(fileInfo.getPath()));
-            throw new CommonException("数据库记录失败，已清理本地文件");
-        }
-        return fileInfo;
-    }
-
-    @Override
-    public boolean delete(String directory, String fileName) {
-        FileUtils.deleteQuietly(new File(directory + "/" + fileName));
-        return lambdaUpdate()
-                .eq(FilePO::getDirectory, directory)
-                .eq(FilePO::getFileName, fileName)
-                .remove();
-    }
-
-    // ================= WEB 功能相关 =================
+    // ================== 应用方法 ==================
 
     @Override
     @Transactional
-    public boolean initRoot() {
-        Path rootPath = Path.of(storageProperties.getFileDirectory());
-        String rootParentPath = rootPath.getParent().toString();
-        String rootFileName = rootPath.getFileName().toString();
-        if (lambdaQuery().eq(FilePO::getDirectory, rootParentPath)
-                .eq(FilePO::getFileName, rootFileName).one() != null)
+    public boolean init() {
+        Path root = Path.of(getNormalizedBaseDir());
+        String rootDir = root.getParent().toString();
+        String rootName = root.getFileName().toString();
+        if (lambdaQuery().eq(FilePO::getDirectory, rootDir)
+                .eq(FilePO::getFileName, rootName).one() != null)
             return false;
-        FilePO newRoot = new FilePO(rootFileName, 0L, rootParentPath, 1,
+        FilePO newRoot = new FilePO(rootName, 0L, rootDir, 1,
                 true, 0L, "root", LocalDateTime.now());
         FilePO existRoot = lambdaQuery()
                 .eq(FilePO::getOwnerId, 0L)
@@ -113,39 +89,76 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
 
     @Override
     @Transactional
-    public void syncFiles() {
+    public void sync() {
         scanAndSyncFiles();
     }
 
     @Override
-    public PageResult<FilePO> getPage(FileQuery query) {
-        String fullDir = getResolvedFullDir(query.getCurDir());
+    public PageResult<FilePO> page(FileQuery query) {
+        String directory = getResolvedDirectory(query.getDirectory());
         return PageResult.of(page(query.toPage(),
-                lambdaQuery().eq(FilePO::getDirectory, fullDir)
+                lambdaQuery().eq(FilePO::getDirectory, directory)
                         .eq(query.getHidden(), FilePO::getVisible, true)
                         .getWrapper()));
     }
 
     @Override
-    public List<FilePO> search(String key, String curDir, boolean hidden) {
-        return searchByFullDir(key, getResolvedFullDir(curDir), hidden);
+    public List<FilePO> list(String directory) {
+        return searchByFullDir(null, getResolvedDirectory(directory), false);
+    }
+
+    @Override
+    public List<FilePO> search(String keyword, String directory) {
+        return searchByFullDir(keyword, getResolvedDirectory(directory), false);
+    }
+
+    @Override
+    public List<FilePO> search(String keyword, String directory, boolean hidden) {
+        return searchByFullDir(keyword, getResolvedDirectory(directory), hidden);
+    }
+
+    @Override
+    public FileInfo upload(String url, String directory, String filename, Long uid) {
+        directory = getResolvedDirectory(directory);
+        FileInfo fileInfo = DownloadUtil.save(url, directory, filename);
+        boolean recorded = addOrUpdateRecord(directory, fileInfo.getName(),
+                fileInfo.getSize(), fileInfo.getLastModified(),
+                uid, userService.getById(uid).getName());
+        if (!recorded) {
+            FileUtils.deleteQuietly(new File(fileInfo.getPath()));
+            throw new CommonException("数据库记录失败且本地文件已清理");
+        }
+        return fileInfo;
     }
 
     @Override
     @Transactional
-    public void upload(Long ownerId, MultipartFile uploadFile, String curDir) throws IOException {
-        String fileName = uploadFile.getOriginalFilename();
-        String fullDir = getResolvedFullDir(curDir);
-        FilePO dir = checkDirectoryExists(fullDir);
-        checkNameConflict(fullDir, fileName, null);
-
-        String filePath = fullDir + "/" + fileName;
-        uploadFile.transferTo(new File(filePath));
-
-        save(new FilePO(uploadFile.getOriginalFilename(), uploadFile.getSize(),
-                fullDir, 0, dir.getVisible(), ownerId,
-                adminService.getById(ownerId).getUsername(),
+    public void upload(MultipartFile file, String directory, Long uid) {
+        directory = getResolvedDirectory(directory);
+        String filename = file.getOriginalFilename();
+        FilePO dir = checkDirectoryExists(directory);
+        checkNameConflict(directory, filename, null);
+        String filePath = directory + "/" + filename;
+        try {
+            file.transferTo(new File(filePath));
+        } catch (IOException e) {
+            log.error("◎ [FileService] 上传文件失败：{}", e.getMessage());
+            throw new CommonException("文件保存失败");
+        }
+        save(new FilePO(file.getOriginalFilename(), file.getSize(),
+                directory, 0, dir.getVisible(), uid,
+                adminService.getById(uid).getUsername(),
                 getLastModifiedTime(Path.of(filePath))));
+    }
+
+    @Override
+    public boolean delete(String directory, String filename) {
+        directory = getResolvedDirectory(directory);
+        FileUtils.deleteQuietly(new File(directory + "/" + filename));
+        return lambdaUpdate()
+                .eq(FilePO::getDirectory, directory)
+                .eq(FilePO::getFileName, filename)
+                .remove();
     }
 
     @Override
@@ -165,18 +178,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
 
     @Override
     @Transactional
-    public void download(Integer id, HttpServletRequest request, HttpServletResponse response) {
+    public void download(Integer id, HttpServletRequest req, HttpServletResponse res) {
         FilePO file = checkFileExists(id);
-        String fileName = file.getFileName();
-        Path filePath = Path.of(file.getDirectory(), fileName);
-        String mimeType = request.getSession().getServletContext().getMimeType(fileName);
+        String filename = file.getFileName();
+        Path filePath = Path.of(file.getDirectory(), filename);
+        String mimeType = req.getSession().getServletContext().getMimeType(filename);
         if (mimeType == null || mimeType.isEmpty())
             mimeType = "application/octet-stream";
         try (InputStream fileInputStream = Files.newInputStream(filePath);
-             ServletOutputStream os = response.getOutputStream()) {
-            response.setContentType(mimeType);
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename=\"" + URLEncoder.encode(fileName, StandardCharsets.UTF_8) + "\"");
+             ServletOutputStream os = res.getOutputStream()) {
+            res.setContentType(mimeType);
+            res.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + URLEncoder.encode(filename, StandardCharsets.UTF_8) + "\"");
             FileCopyUtils.copy(fileInputStream, os);
         } catch (IOException e) {
             throw new RuntimeException("从磁盘下载文件时出错", e);
@@ -185,64 +198,69 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
 
     @Override
     @Transactional
-    public void createDir(Long ownerId, String curDir, String dirName) throws IOException {
-        String fullDir = getResolvedFullDir(curDir);
-        FilePO dir = checkDirectoryExists(fullDir);
-        checkNameConflict(fullDir, dirName, null);
-        Path dirPath = Path.of(fullDir, dirName);
-        Files.createDirectory(dirPath);
-        save(new FilePO(dirName, 0L, fullDir, 1, dir.getVisible(), ownerId,
-                adminService.getById(ownerId).getUsername(),
+    public void mkdir(String directory, String name, Long uid) {
+        directory = getResolvedDirectory(directory);
+        FilePO dir = checkDirectoryExists(directory);
+        checkNameConflict(directory, name, null);
+        Path dirPath = Path.of(directory, name);
+        try {
+            Files.createDirectory(dirPath);
+        } catch (IOException e) {
+            log.error("◎ [FileService] 创建目录失败：{}", e.getMessage());
+            throw new CommonException("创建目录失败");
+        }
+        save(new FilePO(name, 0L, directory, 1, dir.getVisible(), uid,
+                adminService.getById(uid).getUsername(),
                 getLastModifiedTime(dirPath)));
     }
 
     @Override
     @Transactional
-    public void rename(Integer id, String newFileName) {
+    public void rename(Integer id, String filename) {
         FilePO file = checkFileExists(id);
-        if (newFileName == null || newFileName.trim().isEmpty())
+        if (filename == null || filename.trim().isEmpty())
             throw new CommonException("新文件名不能为空");
-        if (newFileName.contains("/") || newFileName.contains("\\") ||
-                newFileName.contains(":") || newFileName.contains("*") ||
-                newFileName.contains("?") || newFileName.contains("\"") ||
-                newFileName.contains("<") || newFileName.contains(">") ||
-                newFileName.contains("|"))
+        if (filename.contains("/") || filename.contains("\\") ||
+                filename.contains(":") || filename.contains("*") ||
+                filename.contains("?") || filename.contains("\"") ||
+                filename.contains("<") || filename.contains(">") ||
+                filename.contains("|"))
             throw new CommonException("新文件名包含非法字符");
-        checkNameConflict(file.getDirectory(), newFileName, id);
+        checkNameConflict(file.getDirectory(), filename, id);
 
         String oldFilePath = file.getDirectory() + "/" + file.getFileName();
-        String newFilePath = file.getDirectory() + "/" + newFileName;
+        String newFilePath = file.getDirectory() + "/" + filename;
         if (!new File(oldFilePath).renameTo(new File(newFilePath)))
             throw new RuntimeException("磁盘文件重命名失败");
         if (file.getIsDir() == 1)
             updateSubFilesPath(oldFilePath, newFilePath);
-        file.setFileName(newFileName);
+        file.setFileName(filename);
         updateById(file);
     }
 
     @Override
     @Transactional
-    public void move(Integer id, String newDir) {
-        FilePO sourceFile = checkFileExists(id);
-        String targetFullDir = getResolvedFullDir(newDir);
-        if (sourceFile.getDirectory().equals(targetFullDir))
+    public void move(Integer id, String directory) {
+        directory = getResolvedDirectory(directory);
+        FilePO file = checkFileExists(id);
+        if (file.getDirectory().equals(directory))
             throw new CommonException("数据库路径未修改");
-        checkDirectoryExists(targetFullDir);
-        checkNameConflict(targetFullDir, sourceFile.getFileName(), null);
+        checkDirectoryExists(directory);
+        checkNameConflict(directory, file.getFileName(), null);
 
-        String sourcePath = sourceFile.getDirectory() + "/" + sourceFile.getFileName();
-        String targetPath = targetFullDir + "/" + sourceFile.getFileName();
+        String sourcePath = file.getDirectory() + "/" + file.getFileName();
+        String targetPath = directory + "/" + file.getFileName();
         if (!new File(sourcePath).renameTo(new File(targetPath)))
             throw new RuntimeException("磁盘文件移动失败");
-        if (sourceFile.getIsDir() == 1)
+        if (file.getIsDir() == 1)
             updateSubFilesPath(sourcePath, targetPath);
-        sourceFile.setDirectory(targetFullDir);
-        updateById(sourceFile);
+        file.setDirectory(directory);
+        updateById(file);
     }
 
     @Override
     @Transactional
-    public void setVisible(Integer id, boolean visible) {
+    public void visualize(Integer id, boolean flag) {
         FilePO file = checkFileExists(id);
         if (file.getIsDir() == 1) {
             String subDirPath = file.getDirectory() + "/" + file.getFileName();
@@ -250,22 +268,22 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                     .eq(FilePO::getDirectory, subDirPath)
                     .or()
                     .likeRight(FilePO::getDirectory, subDirPath + "/")
-                    .set(FilePO::getVisible, visible)
+                    .set(FilePO::getVisible, flag)
                     .update();
         }
-        file.setVisible(visible);
+        file.setVisible(flag);
         updateById(file);
     }
 
     // ================= 记录增改工具 =================
 
     private boolean addOrUpdateRecord(
-            String directory, String fileName, Long fileSize,
+            String directory, String filename, Long fileSize,
             LocalDateTime lastModified, Long ownerId, String ownerName
     ) {
         if (lambdaUpdate()
                 .eq(FilePO::getDirectory, directory)
-                .eq(FilePO::getFileName, fileName)
+                .eq(FilePO::getFileName, filename)
                 .set(FilePO::getFileSize, fileSize)
                 .set(FilePO::getLastModified, lastModified)
                 .set(FilePO::getOwnerId, ownerId)
@@ -279,7 +297,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                 .eq(FilePO::getIsDir, 1)
                 .one();
         if (dir == null) return false;
-        return save(new FilePO(fileName, fileSize, directory, 0,
+        return save(new FilePO(filename, fileSize, directory, 0,
                 dir.getVisible(), ownerId, ownerName, lastModified));
     }
 
@@ -312,17 +330,26 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         return getNormalizedPath(storageProperties.getFileDirectory());
     }
 
-    private String getResolvedFullDir(String curDir) {
+    private String getResolvedDirectory(String directory) {
+        if (directory == null) return null;
+        if (!directory.startsWith("/")) directory = "/" + directory;
         String base = getNormalizedBaseDir();
-        if (curDir.equals("/")) return base;
-        return base + curDir;
+        String normalized = getNormalizedPath(directory);
+        if (normalized.startsWith(base)) return normalized;
+        if (normalized.equals("/")) return base;
+        return base + normalized;
     }
 
-    private static LocalDateTime getLastModifiedTime(Path path) throws IOException {
-        return Files.getLastModifiedTime(path)
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
+    private static LocalDateTime getLastModifiedTime(Path path) {
+        try {
+            return Files.getLastModifiedTime(path)
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
+        } catch (IOException e) {
+            log.error("◎ [FileService] 获取修改时间失败", e);
+            throw new RuntimeException("获取修改时间失败");
+        }
     }
 
     // ================ 通用校验工具 ================
@@ -350,25 +377,25 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         return dir;
     }
 
-    private void checkNameConflict(String directory, String fileName, Integer excludeId) {
+    private void checkNameConflict(String fullDir, String filename, Integer excludeId) {
         long count = lambdaQuery()
-                .eq(FilePO::getDirectory, directory)
-                .eq(FilePO::getFileName, fileName)
+                .eq(FilePO::getDirectory, fullDir)
+                .eq(FilePO::getFileName, filename)
                 .ne(excludeId != null, FilePO::getId, excludeId)
                 .count();
         if (count > 0)
             throw new CommonException("数据库存在同名冲突");
-        if (Files.exists(Path.of(directory, fileName)))
+        if (Files.exists(Path.of(fullDir, filename)))
             throw new RuntimeException("磁盘存在同名冲突");
     }
 
     // ================ 通用搜索工具 ================
 
-    private List<FilePO> searchByFullDir(String key, String fullDir, boolean hidden) {
-        if (key.contains("/") || key.contains("\\"))
+    private List<FilePO> searchByFullDir(String keyword, String fullDir, boolean hidden) {
+        if (keyword != null && (keyword.contains("/") || keyword.contains("\\")))
             throw new CommonException("关键字不允许出现斜杠");
         return lambdaQuery()
-                .like(FilePO::getFileName, key)
+                .like(keyword != null, FilePO::getFileName, keyword)
                 .and(w -> w.eq(FilePO::getDirectory, fullDir)
                         .or()
                         .likeRight(FilePO::getDirectory, fullDir + "/"))

@@ -32,7 +32,7 @@ public class RandomVideoCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String videoPath = storageProperties.getVideoPath() + "/collect";
-        List<FilePO> videos = fileService.search("", videoPath);
+        List<FilePO> videos = fileService.list(videoPath);
         if (videos.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无视频");
         FilePO video = videos.get(ThreadLocalRandom.current().nextInt(videos.size()));
         String response = MsgUtils.builder().video(resourceUrlBuilder.from(video.getId()), "").build();

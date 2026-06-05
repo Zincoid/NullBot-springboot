@@ -16,12 +16,12 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 public class SayingServiceImpl extends ServiceImpl<SayingMapper, SayingPO> implements SayingService {
 
-    public PageResult<SayingPO> getPage(SayingQuery query) {
+    public PageResult<SayingPO> page(SayingQuery query) {
         return PageResult.of(page(query.toPage(), null));
     }
 
     @Override
-    public boolean addSaying(Long userId, String userName, String text) {
+    public boolean add(Long userId, String userName, String text) {
         SayingPO saying = new SayingPO();
         saying.setUserId(userId);
         saying.setUserName(userName);

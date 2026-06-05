@@ -45,8 +45,6 @@ public class VideoSaveCommand implements Command {
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String userName = event.getSender().getNickname();
-
         Map.Entry<String, String> entry = videoMap.entrySet().iterator().next();
         String fileName = !args.hasNext() ? entry.getKey()
                 : args.nextFullString() + "." + entry.getKey().split("\\.")[1];
@@ -54,7 +52,7 @@ public class VideoSaveCommand implements Command {
             throw new BotWarnException("文件名非法");
         String filePath = storageProperties.getVideoPath() + "/collect";
         String url = entry.getValue();
-        FileInfo fileInfo = fileService.upload(url, filePath, fileName, userId, userName);
+        FileInfo fileInfo = fileService.upload(url, filePath, fileName, userId);
         bot.sendGroupMsg(groupId, "\uD83C\uDFA5视频已保存", false);
         log.info("☑ [VideoSave] 视频已保存: {}", fileInfo.getName());
     }

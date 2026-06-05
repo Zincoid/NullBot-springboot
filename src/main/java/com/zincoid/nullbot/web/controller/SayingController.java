@@ -32,7 +32,7 @@ public class SayingController {
 
     @GetMapping("/page")
     public WebResult<PageResult<SayingPO>> getPage(SayingQuery query) {
-        PageResult<SayingPO> sayingPage = sayingService.getPage(query);
+        PageResult<SayingPO> sayingPage = sayingService.page(query);
         return WebResult.success("查询成功", sayingPage);
     }
 

@@ -43,7 +43,6 @@ public class DriftBottleCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String userName = event.getSender().getNickname();
         String message = event.getMessage();
         boolean autoThrow = "-auto".equals(args.getString(0, ""));
         Map<String, String> imageMap = MsgParseUtil.extractImgMap(event.getRawMessage());
@@ -59,7 +58,7 @@ public class DriftBottleCommand implements Command {
             FileInfo fileInfo = null;
             boolean thrown = false;
             try {
-                fileInfo = fileService.upload(imageUrl, bottlePath, imageName, userId, userName);
+                fileInfo = fileService.upload(imageUrl, bottlePath, imageName, userId);
                 thrown = driftBottleService.add(
                         userId,
                         bot.getStrangerInfo(userId, true).getData().getNickname(),

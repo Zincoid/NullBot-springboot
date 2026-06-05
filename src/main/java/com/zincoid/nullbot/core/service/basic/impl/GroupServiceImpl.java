@@ -19,7 +19,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupPO> implemen
     private final BotOperator botOperator;
 
     @Override
-    public PageResult<GroupPO> getPage(GroupQuery query) {
+    public PageResult<GroupPO> page(GroupQuery query) {
         return PageResult.of(page(query.toPage(), null));
     }
 

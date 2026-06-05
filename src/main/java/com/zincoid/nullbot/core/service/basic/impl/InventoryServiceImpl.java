@@ -27,20 +27,15 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
     private final ItemService itemService;
 
     @Override
-    public List<InventoryVO> getVOList(Long userId) {
+    public List<InventoryVO> listVO(Long userId) {
         return baseMapper.selectVOList(userId);
     }
 
     @Override
-    public PageResult<InventoryVO> getVOPage(Long userId, Integer current, Integer size) {
+    public PageResult<InventoryVO> pageVO(Long userId, Integer current, Integer size) {
         Page<InventoryVO> page = Page.of(current, size);
         Page<InventoryVO> inventoryVOPage = baseMapper.selectVOPage(page, userId);
         return PageResult.of(inventoryVOPage);
-    }
-
-    @Override
-    public int getTotalAmount(Long userId) {
-        return baseMapper.getTotalAmountByUserId(userId);
     }
 
     @Override
@@ -91,7 +86,7 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
     @Override
     @Transactional
     public boolean sell(Long userId, Rarity rarity) {
-        List<InventoryVO> InventoryVOS = getVOList(userId);
+        List<InventoryVO> InventoryVOS = listVO(userId);
         List<InventoryVO> inventoryVOSByRarity = InventoryVOS.stream()
                 .filter(inventoryVO -> inventoryVO.getRarity() == rarity)
                 .toList();
@@ -125,5 +120,10 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
                 return item;
         }
         return null;
+    }
+
+    @Override
+    public int getTotalAmount(Long userId) {
+        return baseMapper.getTotalAmountByUserId(userId);
     }
 }

@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class FileQuery extends PageQuery {
 
-    private String curDir = "/";
+    private String directory = "/";
     private Boolean hidden = true;
 
     @Override

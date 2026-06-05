@@ -7,7 +7,7 @@ import com.zincoid.nullbot.core.model.data.query.UserQuery;
 
 public interface UserService extends IService<UserPO> {
 
-    PageResult<UserPO> getPage(UserQuery query);
+    PageResult<UserPO> page(UserQuery query);
 
     boolean exist(Long id);
 

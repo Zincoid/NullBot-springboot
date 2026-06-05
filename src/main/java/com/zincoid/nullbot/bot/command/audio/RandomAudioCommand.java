@@ -32,7 +32,7 @@ public class RandomAudioCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String audioPath = storageProperties.getAudioPath();
-        List<FilePO> audios = fileService.search("", audioPath);
+        List<FilePO> audios = fileService.list(audioPath);
         if (audios.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无音频");
         FilePO audio = audios.get(ThreadLocalRandom.current().nextInt(audios.size()));
         String response = MsgUtils.builder().voice(resourceUrlBuilder.from(audio.getId())).build();

@@ -64,14 +64,14 @@ public class TtsCommand implements Command {
                     String templateText = args.nextString();
                     FileInfo fileInfo = DownloadUtil.save(audio.getValue());
                     String uploadedPath = ttsClient.upload(fileInfo.getPath());
-                    if (!ttsTemplateService.addTemplate(templateName, uploadedPath, templateText, userId, userName))
+                    if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
                         throw new BotWarnException("存在重名模板");
                     bot.sendGroupMsg(groupId, "\uD83D\uDCBE模板已保存: %s".formatted(uploadedPath), false);
                     log.info("☑ [语音合成] 模板已保存 - {}: {} -> {}", templateName, templateText, uploadedPath);
                 }
                 case "delete" -> {
                     String templateName = args.nextString();
-                    if (!ttsTemplateService.deleteByName(templateName))
+                    if (!ttsTemplateService.delete(templateName))
                         throw new BotInfoException(Emoji.INFO, "模板不存在");
                     bot.sendGroupMsg(event.getGroupId(), "⚠️模板已删除", false);
                     log.info("☑ [Tts] 模板已删除 -> {}", templateName);
@@ -79,7 +79,7 @@ public class TtsCommand implements Command {
                 case "use" -> {
                     String templateName = args.nextString();
                     String text = args.nextString();
-                    TtsTemplatePO template = ttsTemplateService.getByName(templateName);
+                    TtsTemplatePO template = ttsTemplateService.get(templateName);
                     if (template == null)
                         throw new BotInfoException(Emoji.INFO, "模板不存在");
                     ttsTemplateService.increaseUsed(template.getId());

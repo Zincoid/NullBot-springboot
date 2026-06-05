@@ -27,7 +27,7 @@ public class GuessStorage {
     }
 
     public GuessInfo initGuess(Long groupId, String category) {
-        List<FilePO> characters = fileService.search("", dataPath + "/" + category);
+        List<FilePO> characters = fileService.list(dataPath + "/" + category);
         if (characters.isEmpty())
             throw new IllegalArgumentException("暂无可用图片");
         FilePO character = characters.get(ThreadLocalRandom.current().nextInt(characters.size()));

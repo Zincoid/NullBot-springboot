@@ -108,7 +108,7 @@ public class WifeCommand implements Command {
         }
         String category = args.nextString();
         String acgPath = storageProperties.getImagePath() + "/acg/" + category;
-        List<FilePO> wives = fileService.search("", acgPath);
+        List<FilePO> wives = fileService.list(acgPath);
         if (wives.isEmpty())
             throw new BotInfoException(Emoji.INFO, "暂无角色");
         FilePO wife = wives.get(ThreadLocalRandom.current().nextInt(wives.size()));

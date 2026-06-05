@@ -31,7 +31,7 @@ public class UserController {
 
     @GetMapping("/page")
     public WebResult<PageResult<UserPO>> getPage(UserQuery query) {
-        PageResult<UserPO> userPage = userService.getPage(query);
+        PageResult<UserPO> userPage = userService.page(query);
         return WebResult.success("查询成功", userPage);
     }
 

@@ -28,7 +28,7 @@ public class InventoryCommand implements Command {
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
 
-        PageResult<InventoryVO> inventoryVOPage = inventoryService.getVOPage(userId, args.nextInt(1), 10);
+        PageResult<InventoryVO> inventoryVOPage = inventoryService.pageVO(userId, args.nextInt(1), 10);
         UserPO user = userService.getById(userId);
         int totalAmount = inventoryService.getTotalAmount(userId);
         StringBuilder sb = new StringBuilder()

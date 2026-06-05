@@ -9,36 +9,37 @@ import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface FileService extends IService<FilePO> {
 
-    List<FilePO> search(String key, String fullDir);
+    boolean init();
 
-    FileInfo upload(String url, String directory, String fileName, Long ownerId, String ownerName);
+    void sync();
 
-    boolean delete(String directory, String fileName);
+    PageResult<FilePO> page(FileQuery query);
 
-    boolean initRoot();
+    List<FilePO> list(String directory);
 
-    void syncFiles();
+    List<FilePO> search(String keyword, String directory);
 
-    PageResult<FilePO> getPage(FileQuery query);
+    List<FilePO> search(String keyword, String directory, boolean hidden);
 
-    List<FilePO> search(String key, String curDir, boolean hidden);
+    FileInfo upload(String url, String directory, String filename, Long uid);
 
-    void upload(Long owner, MultipartFile uploadFile, String curDir) throws IOException;
+    void upload(MultipartFile file, String directory, Long uid);
+
+    boolean delete(String directory, String filename);
 
     void delete(Integer id);
 
-    void download(Integer id, HttpServletRequest request, HttpServletResponse response);
+    void download(Integer id, HttpServletRequest req, HttpServletResponse res);
 
-    void createDir(Long ownerId, String curDir, String dirName) throws IOException;
+    void mkdir(String directory, String name, Long uid);
 
-    void rename(Integer id, String newFileName);
+    void rename(Integer id, String filename);
 
-    void move(Integer id, String newDir);
+    void move(Integer id, String directory);
 
-    void setVisible(Integer id, boolean visible);
+    void visualize(Integer id, boolean flag);
 }

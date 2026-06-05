@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BreadService {
 
-    List<InventoryVO> getVOList(Long userId);
+    List<InventoryVO> listVO(Long userId);
 
     int buyBasic(Long userId, int cost);
 

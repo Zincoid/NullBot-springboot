@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequestMapping("/nullbot/file")
@@ -26,8 +25,8 @@ public class FileController {
     private final FileService fileService;
 
     @GetMapping("/init")
-    public WebResult<Void> initRoot() {
-        if (fileService.initRoot()) {
+    public WebResult<Void> init() {
+        if (fileService.init()) {
             return WebResult.success("初始化完成");
         } else {
             return WebResult.fail("已初始化过");
@@ -35,24 +34,23 @@ public class FileController {
     }
 
     @GetMapping("/sync")
-    public WebResult<Void> syncFiles() {
-        fileService.syncFiles();
+    public WebResult<Void> sync() {
+        fileService.sync();
         return WebResult.success("本地与数据库 已同步");
     }
 
     @GetMapping("/page")
-    public WebResult<PageResult<FilePO>> getPage(FileQuery query) {
+    public WebResult<PageResult<FilePO>> page(FileQuery query) {
         query.setHidden(WebCtxUtil.getType() == 0);
-        PageResult<FilePO> filePage = fileService.getPage(query);
+        PageResult<FilePO> filePage = fileService.page(query);
         return WebResult.success("查询成功", filePage);
     }
 
-    @GetMapping("/searchFile")
-    public WebResult<List<FilePO>> searchFile(String key, String curDir) {
+    @GetMapping("/search")
+    public WebResult<List<FilePO>> search(String keyword, String directory) {
         Integer userType = WebCtxUtil.getType();
         List<FilePO> fileList = fileService.search(
-                key,
-                curDir,
+                keyword, directory,
                 userType == 0
         );
         return WebResult.success("查询成功", fileList);
@@ -60,11 +58,11 @@ public class FileController {
 
     @PostMapping("/upload")
     public WebResult<Void> upload(
-            MultipartFile uploadFile,
-            @RequestParam(defaultValue = "/") String curDir
+            MultipartFile file,
+            @RequestParam(defaultValue = "/") String directory
     ) throws IOException {
         Long userId = WebCtxUtil.getId();
-        fileService.upload(userId, uploadFile, curDir);
+        fileService.upload(file, directory, userId);
         return WebResult.success("上传成功");
     }
 
@@ -77,45 +75,46 @@ public class FileController {
         fileService.download(id, request, response);
     }
 
-    @PostMapping("/createDir")
-    public WebResult<Void> createDir(@RequestBody Map<String, String> map) throws IOException {
-        String curDir = map.get("curDir");
-        String dirName = map.get("dirName");
+    @GetMapping("/mkdir")
+    public WebResult<Void> mkdir(
+            String directory,
+            String name
+    ) {
         Long userId = WebCtxUtil.getId();
-        fileService.createDir(userId, curDir, dirName);
+        fileService.mkdir(directory, name, userId);
         return WebResult.success("创建成功");
     }
 
     @DeleteMapping("/delete/{id}")
-    public WebResult<Void> deleteFile(@PathVariable Integer id) {
+    public WebResult<Void> delete(@PathVariable Integer id) {
         fileService.delete(id);
         return WebResult.success("删除成功");
     }
 
     @GetMapping("/rename/{id}")
-    public WebResult<Void> renameFile(
+    public WebResult<Void> rename(
             @PathVariable Integer id,
-            @RequestParam(defaultValue = "") String newFileName
+            @RequestParam String filename
     ) {
-        fileService.rename(id, newFileName);
+        fileService.rename(id, filename);
         return WebResult.success("重命名成功");
     }
 
     @GetMapping("/move/{id}")
-    public WebResult<Void> moveFile(
+    public WebResult<Void> move(
             @PathVariable Integer id,
-            @RequestParam String newDir
+            @RequestParam String directory
     ) {
-        fileService.move(id, newDir);
+        fileService.move(id, directory);
         return WebResult.success("移动成功");
     }
 
-    @GetMapping("/setVisible/{id}")
-    public WebResult<Void> setVisible(
+    @GetMapping("/visualize/{id}")
+    public WebResult<Void> visualize(
             @PathVariable Integer id,
-            @RequestParam Boolean visible
+            @RequestParam Boolean flag
     ) {
-        fileService.setVisible(id, visible);
+        fileService.visualize(id, flag);
         return WebResult.success("设置成功");
     }
 }

@@ -19,7 +19,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
     private final BotOperator botOperator;
 
     @Override
-    public PageResult<UserPO> getPage(UserQuery query) {
+    public PageResult<UserPO> page(UserQuery query) {
         return PageResult.of(page(query.toPage(), null));
     }
 

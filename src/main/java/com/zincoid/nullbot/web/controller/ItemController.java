@@ -31,7 +31,7 @@ public class ItemController {
 
     @GetMapping("/page")
     public WebResult<PageResult<ItemPO>> getPage(ItemQuery query) {
-        PageResult<ItemPO> itemPage = itemService.getPage(query);
+        PageResult<ItemPO> itemPage = itemService.page(query);
         return WebResult.success("查询成功", itemPage);
     }
 

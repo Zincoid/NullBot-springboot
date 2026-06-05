@@ -32,7 +32,7 @@ public class AnimeCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String animePath = storageProperties.getImagePath() + "/acg/二次元";
-        List<FilePO> images = fileService.search("", animePath);
+        List<FilePO> images = fileService.list(animePath);
         if (images.isEmpty()) throw new BotInfoException(Emoji.INFO, "暂无图片");
         FilePO image = images.get(ThreadLocalRandom.current().nextInt(images.size()));
         String response = MsgUtils.builder().img(resourceUrlBuilder.from(image.getId())).build();

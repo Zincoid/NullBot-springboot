@@ -40,12 +40,10 @@ public class ImageSaveCommand implements Command {
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String userName = event.getSender().getNickname();
-
         imageMap.forEach((name, url) -> {
             String key = name.substring(0, name.lastIndexOf("."));  // QQ图片扩展名错误
             String filePath = storageProperties.getImagePath() + "/collect";
-            FileInfo fileInfo = fileService.upload(url, filePath, key, userId, userName);
+            FileInfo fileInfo = fileService.upload(url, filePath, key, userId);
             bot.sendGroupMsg(groupId, "\uD83D\uDCBD图片已保存", false);
             log.info("☑ [ImageSave] 图片已保存: {}", fileInfo.getName());
         });

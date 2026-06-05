@@ -25,7 +25,7 @@ public class InventoryController {
 
     @GetMapping("/list")
     public WebResult<List<InventoryVO>> getInventoryList(Long userId) {
-        List<InventoryVO> inventories = inventoryService.getVOList(userId);
+        List<InventoryVO> inventories = inventoryService.listVO(userId);
         return WebResult.success("查询成功", inventories);
     }
 

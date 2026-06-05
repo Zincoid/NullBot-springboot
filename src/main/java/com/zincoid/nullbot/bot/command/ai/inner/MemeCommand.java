@@ -71,7 +71,7 @@ public class MemeCommand implements Command {
                         示例: 65275d24 女孩_干嘛.jpg
                         注意: 你可以发送表情包图片以表达自己的情绪，要经常发表情
                         (重要！) 你只能用提供给你的完整表情文件名，不要用下划线把不同文件名的主体人物和表达内容情绪的文本拼接起来使用，这种文件不存在""",
-                fileService.search("", storageProperties.getResourcePath() + "/ai/meme").stream()
+                fileService.list(storageProperties.getResourcePath() + "/ai/meme").stream()
                         .map(FilePO::getFileName)
                         .toList()
         );

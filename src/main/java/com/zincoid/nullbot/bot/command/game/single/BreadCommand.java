@@ -117,7 +117,7 @@ public class BreadCommand implements Command {
     }
 
     private void look(Bot bot, Long groupId, Long userId, String userName) {
-        List<InventoryVO> inventoryVOS = breadService.getVOList(userId);
+        List<InventoryVO> inventoryVOS = breadService.listVO(userId);
         UserPO user = userService.getById(userId);
         int totalAmount = inventoryService.getTotalAmount(userId);
         StringBuilder sb = new StringBuilder()

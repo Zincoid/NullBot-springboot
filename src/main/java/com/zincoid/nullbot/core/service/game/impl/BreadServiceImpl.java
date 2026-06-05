@@ -29,8 +29,8 @@ public class BreadServiceImpl implements BreadService {
     // =================== 面包游戏相关 ===================
 
     @Override
-    public List<InventoryVO> getVOList(Long userId) {
-        return inventoryService.getVOList(userId).stream()
+    public List<InventoryVO> listVO(Long userId) {
+        return inventoryService.listVO(userId).stream()
                 .filter(vo -> vo.getCategory() == Category.BREAD)
                 .toList();
     }

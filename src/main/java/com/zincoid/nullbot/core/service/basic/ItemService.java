@@ -7,7 +7,7 @@ import com.zincoid.nullbot.core.model.data.query.ItemQuery;
 
 public interface ItemService extends IService<ItemPO> {
 
-    PageResult<ItemPO> getPage(ItemQuery query);
+    PageResult<ItemPO> page(ItemQuery query);
 
     boolean exist(Integer id);
 
