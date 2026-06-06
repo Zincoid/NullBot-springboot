@@ -1,6 +1,8 @@
 package com.zincoid.nullbot.core.model.bot.interaction;
 
 import com.mikuac.shiro.core.Bot;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Slf4j
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BotPageSelector<K, V> {
 
     private static final int DEFAULT_INPUT_TIMEOUT = 30;
@@ -34,22 +37,13 @@ public class BotPageSelector<K, V> {
 
     private int current;
 
-    private BotPageSelector(Builder<K, V> builder) {
-        if (builder.keys.size() != builder.values.size())
-            throw new IllegalArgumentException("键值大小不匹配");
-        this.bot = builder.bot;
-        this.groupId = builder.groupId;
-        this.userId = builder.userId;
-        this.title = builder.title;
-        this.info = builder.info;
-        this.continuous = builder.continuous;
-        this.keys = builder.keys;
-        this.values = builder.values;
-        this.action = builder.action;
-        this.total = builder.keys.size();
-        this.size = builder.size;
-        this.pages = (total + builder.size - 1) / builder.size;
-        this.current = Math.max(1, Math.min(builder.current, pages));
+    public static <K, V> Builder<K, V> builder(
+            Bot bot, Long groupId,
+            String title, boolean continuous,
+            List<K> keys, List<V> values,
+            BotGroupEntityConsumer<K> action
+    ) {
+        return new Builder<>(bot, groupId, title, continuous, keys, values, action);
     }
 
     @RequiredArgsConstructor
@@ -86,17 +80,17 @@ public class BotPageSelector<K, V> {
         }
 
         public BotPageSelector<K, V> build() {
-            return new BotPageSelector<>(this);
+            if (keys.size() != values.size())
+                throw new IllegalArgumentException("键值大小不匹配");
+            int total = keys.size();
+            int pages = (total + size - 1) / size;
+            int current = Math.max(1, Math.min(this.current, pages));
+            return new BotPageSelector<>(
+                    bot, groupId, userId, title, info, continuous,
+                    keys, values, action,
+                    total, size, pages, current
+            );
         }
-    }
-
-    public static <K, V> Builder<K, V> builder(
-            Bot bot, Long groupId,
-            String title, boolean continuous,
-            List<K> keys, List<V> values,
-            BotGroupEntityConsumer<K> action
-    ) {
-        return new Builder<>(bot, groupId, title, continuous, keys, values, action);
     }
 
     // =================== BotInputer 控制方案 ====================

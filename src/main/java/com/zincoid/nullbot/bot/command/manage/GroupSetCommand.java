@@ -116,7 +116,7 @@ public class GroupSetCommand implements Command {
                 case "cus" -> {
                     qqAiClient.clear(BotCtxUtil.getChatId());
                     boolean enabled = setting.switchCustom();
-                    msg = "自定模式 -> %s".formatted(enabled ? "ON" : "OFF");
+                    msg = "允许自定 -> %s".formatted(enabled ? "ON" : "OFF");
                 }
                 case "aur" -> {
                     boolean enabled = setting.switchAutoReply();

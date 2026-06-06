@@ -4,7 +4,9 @@ import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
+import org.springframework.stereotype.Component;
 
+@Component
 public class QQUserInfoTool implements Tool {
 
     private record Args(long id) {}

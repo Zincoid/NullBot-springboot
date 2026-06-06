@@ -14,40 +14,77 @@ import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolCall;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
-import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PACKAGE)  // CGLIB REQUIRED
 public class QQAiClient implements AiClient<QQMessage> {
 
     private final ChatMemory chatMemory;
     private final Model model;
+    private final int maxTokens;
 
     private final QQAntiInjector qqAntiInjector;
     private final QQPrompter qqPrompter;
     private final QQMsgExecutor qqMsgExecutor;
 
-    private ToolRegistry toolRegistry;
-    private int maxToolCalls = 0;
+    private final ToolRegistry toolRegistry;
+    private final int maxToolCalls;
 
-    private int maxTokens = 512;
+    public static Builder builder(
+            ChatMemory chatMemory, Model model,
+            QQAntiInjector qqAntiInjector, QQPrompter qqPrompter, QQMsgExecutor qqMsgExecutor
+    ) {
+        return new Builder(chatMemory, model, qqAntiInjector, qqPrompter, qqMsgExecutor);
+    }
+
+    public static class Builder {
+
+        private final ChatMemory chatMemory;
+        private final Model model;
+        private int maxTokens = 512;
+        private final QQAntiInjector qqAntiInjector;
+        private final QQPrompter qqPrompter;
+        private final QQMsgExecutor qqMsgExecutor;
+        private ToolRegistry toolRegistry;
+        private int maxToolCalls = 0;
+
+        private Builder(
+                ChatMemory chatMemory, Model model,
+                QQAntiInjector qqAntiInjector, QQPrompter qqPrompter, QQMsgExecutor qqMsgExecutor
+        ) {
+            this.chatMemory = chatMemory;
+            this.model = model;
+            this.qqAntiInjector = qqAntiInjector;
+            this.qqPrompter = qqPrompter;
+            this.qqMsgExecutor = qqMsgExecutor;
+        }
+
+        public Builder maxTokens(int maxTokens) {
+            this.maxTokens = maxTokens;
+            return this;
+        }
+        public Builder toolRegistry(ToolRegistry toolRegistry, int maxToolCalls) {
+            this.toolRegistry = toolRegistry;
+            this.maxToolCalls = maxToolCalls;
+            return this;
+        }
+
+        public QQAiClient build() {
+            return new QQAiClient(
+                    chatMemory, model, maxTokens,
+                    qqAntiInjector, qqPrompter, qqMsgExecutor,
+                    toolRegistry, maxToolCalls
+            );
+        }
+    }
 
     // ======================================= 系统方法 ======================================
-
-    public QQAiClient withMaxTokens(int maxTokens) {
-        this.maxTokens = maxTokens;
-        return this;
-    }
-
-    public QQAiClient withToolCall(ToolRegistry toolRegistry, int maxToolCalls) {
-        this.maxToolCalls = maxToolCalls;
-        this.toolRegistry = toolRegistry;
-        return this;
-    }
 
     public void clear(String chatId) {
         chatMemory.clear(chatId);

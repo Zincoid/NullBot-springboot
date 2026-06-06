@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.*;
 
 @Getter
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ToolDef {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -16,16 +19,6 @@ public class ToolDef {
     private final String name;
     private final String description;
     private final ObjectNode parameters;
-
-    private ToolDef(String name, String description, ObjectNode parameters) {
-        this.name = name;
-        this.description = description;
-        this.parameters = parameters;
-    }
-
-    public static Builder builder(String name, String description) {
-        return new Builder(name, description);
-    }
 
     public static JsonNode parseArgs(String jsonArgs) {
         try {
@@ -43,43 +36,40 @@ public class ToolDef {
         }
     }
 
+    public static Builder builder(String name, String description) {
+        return new Builder(name, description);
+    }
+
+    @RequiredArgsConstructor
     public static class Builder {
+
         private final String name;
         private final String description;
         private final List<ParamSpec> params = new ArrayList<>();
-        private final Set<String> requiredNames = new LinkedHashSet<>();
-
-        private Builder(String name, String description) {
-            this.name = name;
-            this.description = description;
-        }
+        private final Set<String> required = new LinkedHashSet<>();
 
         public Builder addString(String name, String desc) {
             params.add(new ParamSpec(name, "string", desc, null));
             return this;
         }
-
         public Builder addString(String name, String desc, boolean required) {
             params.add(new ParamSpec(name, "string", desc, null));
-            if (required) requiredNames.add(name);
+            if (required) this.required.add(name);
             return this;
         }
-
         public Builder addEnum(String name, String desc, Set<String> values) {
             params.add(new ParamSpec(name, "string", desc, new TreeSet<>(values)));
             return this;
         }
-
         public Builder addEnum(String name, String desc, Set<String> values, boolean required) {
             params.add(new ParamSpec(name, "string", desc, new TreeSet<>(values)));
-            if (required) requiredNames.add(name);
+            if (required) this.required.add(name);
             return this;
         }
 
         public ToolDef build() {
             ObjectNode root = MAPPER.createObjectNode();
             root.put("type", "object");
-
             ObjectNode props = MAPPER.createObjectNode();
             for (ParamSpec spec : params) {
                 ObjectNode prop = MAPPER.createObjectNode();
@@ -93,13 +83,11 @@ public class ToolDef {
                 props.set(spec.name, prop);
             }
             root.set("properties", props);
-
-            if (!requiredNames.isEmpty()) {
+            if (!required.isEmpty()) {
                 ArrayNode requiredArr = MAPPER.createArrayNode();
-                requiredNames.forEach(requiredArr::add);
+                required.forEach(requiredArr::add);
                 root.set("required", requiredArr);
             }
-
             return new ToolDef(name, description, root);
         }
     }

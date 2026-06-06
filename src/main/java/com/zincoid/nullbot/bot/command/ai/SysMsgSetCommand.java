@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CommandMapping({"SysMsgSet", "提示词设置"})
+@CommandMapping({"SysMsgSet", "提示词设置", "提示词"})
 @Component
 public class SysMsgSetCommand implements Command {
 
@@ -34,7 +34,15 @@ public class SysMsgSetCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
+        String option = args.nextString();
 
+        if ("-view".equals(option)) {
+            String message = "ℹ️当前提示词: %s".formatted(
+                    sysMsgManager.getGroupMessage(groupId));
+            bot.sendGroupMsg(groupId, message, false);
+            log.info("☑ [SysMsgSet] 群聊提示词已查看 -> {}", groupId);
+            return;
+        }
         int userAccess = userService.getAccess(userId);
         if (userAccess < 1 && !BotCtxUtil.getSetting().isCustom()) {
             bot.sendGroupMsg(groupId, """
@@ -44,8 +52,6 @@ public class SysMsgSetCommand implements Command {
                         - 你的限权等级: %s""".formatted(userAccess), false);
             return;
         }
-
-        String option = args.nextString();
         if ("-reset".equals(option)) {
             sysMsgManager.resetGroup(groupId);
             qqAiClient.clear(BotCtxUtil.getChatId());
@@ -69,6 +75,13 @@ public class SysMsgSetCommand implements Command {
         Long userId = event.getUserId();
         String option = args.nextString();
 
+        if ("-view".equals(option)) {
+            String message = "ℹ️当前提示词: %s".formatted(
+                    sysMsgManager.getUserMessage(userId));
+            bot.sendPrivateMsg(userId, message, false);
+            log.info("☑ [SysMsgSet] 私聊提示词已查看 -> {}", userId);
+            return;
+        }
         if ("-reset".equals(option)) {
             sysMsgManager.resetUser(userId);
             qqAiClient.clear(BotCtxUtil.getChatId());
@@ -94,12 +107,13 @@ public class SysMsgSetCommand implements Command {
                 功能: 设置AI系统提示词并清空历史
                 限权: %d 级
                 格式:
-                1. SysMsgSet [-reset]
+                1. SysMsgSet [-view]
                 2. SysMsgSet [-set] [提示词]
-                别名: 提示词设置
+                3. SysMsgSet [-reset]
+                别名: 提示词设置/提示词
                 注意:
-                - 非Custom模式 操作需限权I及以上
-                - Custom模式 操作需限权0及以上""", getAccess()
+                - 非Custom模式 变更需限权I及以上
+                - Custom模式 变更需限权0及以上""", getAccess()
         );
     }
 }

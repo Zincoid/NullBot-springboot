@@ -3,8 +3,7 @@
 
 DROP TABLE IF EXISTS `file`;
 
-CREATE TABLE `file`
-(
+CREATE TABLE `file`(
     id INT PRIMARY KEY AUTO_INCREMENT,
     file_name VARCHAR(255) NOT NULL,
     file_size BIGINT NOT NULL,

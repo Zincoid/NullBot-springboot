@@ -17,8 +17,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -29,58 +31,63 @@ public class QQMsgExecutor {
     private final ApplicationEventPublisher eventPublisher;
     private final TtsClient ttsClient;
 
-    private static final Pattern INFO_PATTERN;
     private static final Pattern SEGMENT_PATTERN;
+    private static final Pattern NEWLINE_PATTERN;
+    private static final List<Pattern> FILTERED_PATTERNS;
 
     static {
-        INFO_PATTERN = Pattern.compile("\\[\\d+]\\[.+?\\(\\d+\\)]:");
-        SEGMENT_PATTERN = Pattern.compile("(\\{.*?}|[^{]+)");
+        SEGMENT_PATTERN = Pattern.compile("(<cmd>.*?</cmd>|(?:(?!<cmd>).)+)");
+        NEWLINE_PATTERN = Pattern.compile("(\r?\n)+");
+
+        FILTERED_PATTERNS = new ArrayList<>();
+        Set<String> allCmds = QQCmdAllows.getAll().stream().map(Pattern::quote).collect(Collectors.toSet());
+        FILTERED_PATTERNS.add(Pattern.compile("(?<!<cmd>)\\b(" + String.join("|", allCmds) + ")\\b(?!</cmd>)"));
+        FILTERED_PATTERNS.add(Pattern.compile("\\[\\d+]\\[.+?\\(\\d+\\)]:"));
     }
 
     // =================== 执行方法 ===================
 
     public QQMessage direct(QQMessage message, boolean voice) {
-        Bot bot = BotCtxUtil.getBot();
         boolean isPrivate = message.isPrivate();
         Long targetId = isPrivate ? message.getUserId() : message.getGroupId();
         String content = message.getContent();
-        if (content.contains("{Discard}"))
+        if (content.contains("<discard />"))
             return QQMessage.assistant("回复被拒绝");
         Integer messageId;
         if (filter(content)) {
             content = "回复被过滤";
-            messageId = send(bot, targetId, filtered(), isPrivate, voice);
+            messageId = send(targetId, filtered(), isPrivate, voice);
         } else {
-            content = content.replaceAll("(\r?\n)+", "\n").trim();
-            messageId = send(bot, targetId, content, isPrivate, voice);
+            content = NEWLINE_PATTERN.matcher(content).replaceAll("\n").trim();
+            messageId = send(targetId, content, isPrivate, voice);
         }
         return QQMessage.assistant(content).id(messageId);
     }
 
     public List<QQMessage> chain(QQMessage message, boolean voice) {
-        Bot bot = BotCtxUtil.getBot();
         boolean isPrivate = message.isPrivate();
-        Long targetId = message.isPrivate() ? message.getUserId() : message.getGroupId();
+        Long targetId = isPrivate ? message.getUserId() : message.getGroupId();
         String content = message.getContent();
-        if (content.contains("{Discard}"))
+        if (content.contains("<discard />"))
             return List.of(QQMessage.assistant("回复被拒绝"));
         if (filter(content)) {
-            Integer messageId = send(bot, targetId, filtered(), isPrivate, voice);
+            Integer messageId = send(targetId, filtered(), isPrivate, voice);
             return List.of(QQMessage.assistant("回复被过滤").id(messageId));
         }
-        content = content.replaceAll("(\r?\n)+", "\n").trim();
+        content = NEWLINE_PATTERN.matcher(content).replaceAll("\n").trim();
         Matcher matcher = SEGMENT_PATTERN.matcher(content);
         List<QQMessage> messages = new ArrayList<>();
         while (matcher.find()) {
             String segment = matcher.group(1).trim();
-            if (segment.startsWith("{") && segment.endsWith("}")) {
-                String command = segment.substring(1, segment.length() - 1).trim();
+            if (segment.startsWith("<cmd>") && segment.endsWith("</cmd>")) {
+                String command = segment.substring(
+                        "<cmd>".length(), segment.length() - "</cmd>".length()).trim();
                 if (command.isEmpty()) continue;
                 eventPublisher.publishEvent(InnerCommandEvent.of(command));
                 messages.add(QQMessage.assistant(segment));
             } else {
                 if (segment.isEmpty()) continue;
-                Integer messageId = send(bot, targetId, segment, isPrivate, voice);
+                Integer messageId = send(targetId, segment, isPrivate, voice);
                 messages.add(QQMessage.assistant(segment).id(messageId));
             }
         }
@@ -89,7 +96,8 @@ public class QQMsgExecutor {
 
     // =================== 工具方法 ===================
 
-    private Integer send(Bot bot, Long targetId, String message, boolean isPrivate, boolean voice) {
+    private Integer send(Long targetId, String message, boolean isPrivate, boolean voice) {
+        Bot bot = BotCtxUtil.getBot();
         ActionData<MsgId> msgIdActionData = isPrivate
                 ? bot.sendPrivateMsg(targetId, voice ? voiced(message) : message, false)
                 : bot.sendGroupMsg(targetId, voice ? voiced(message) : message, false);
@@ -97,14 +105,16 @@ public class QQMsgExecutor {
     }
 
     boolean filter(String message) {
-        return INFO_PATTERN.matcher(message).find();
+        for (Pattern pattern : FILTERED_PATTERNS)
+            if (pattern.matcher(message).find()) return true;
+        return false;
     }
 
     // =================== 消息方法 ===================
 
     private String filtered() {
         return MsgUtils.builder()
-                .text("[AI] ⚠️回复被过滤")
+                // .text("[AI] ⚠️回复被过滤")
                 .img("base64://" + Base64Util.from(resourceLoader
                         .getCache("static/image/Filtered.jpg")))
                 .build();

@@ -1,12 +1,19 @@
 package com.zincoid.nullbot.core.component.ai.chat.tool;
 
+import org.springframework.stereotype.Component;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class ToolRegistry {
 
     private final Map<String, Tool> toolMap = new LinkedHashMap<>();
+
+    public ToolRegistry(List<Tool> tools) {
+        tools.forEach(this::register);
+    }
 
     public void register(Tool tool) {
         toolMap.put(tool.getDef().getName(), tool);

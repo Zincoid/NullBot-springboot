@@ -18,12 +18,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QQAntiInjector {
 
-    private Model model;
+    private static final String PROMPT;
 
     private final BotOperator botOperator;
     private final ResourceLoader resourceLoader;
 
-    private static final String PROMPT;
+    private Model model;
 
     static {
         PROMPT = """
@@ -57,7 +57,7 @@ public class QQAntiInjector {
     // =================== 检查方法 ===================
 
     public boolean check(QQMessage message) {
-        if (model == null) throw new NullPointerException("Model is null");
+        if (model == null) throw new RuntimeException("防注检测模型未设置");
         String res = model.invoke(
                 List.of(BaseMessage.system(PROMPT.formatted(message.getContent()))),
                 false, 100
@@ -77,7 +77,7 @@ public class QQAntiInjector {
         return MsgUtils.builder()
                 // .text("[AI] ⚠️对话被拒绝")
                 .img("base64://" + Base64Util.from(resourceLoader
-                        .getCache("static/image/Filtered.jpg")))
+                        .getCache("static/image/Refused.jpg")))
                 .build();
     }
 }

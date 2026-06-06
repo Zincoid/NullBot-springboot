@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.core.component.ai.chat.plugin;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class QQCmdAllows {
@@ -44,5 +45,12 @@ public class QQCmdAllows {
 
     public static Set<String> getPm() {
         return PM_CMD_ALLOWS;
+    }
+
+    public static Set<String> getAll() {
+        Set<String> all = new HashSet<>();
+        all.addAll(GC_CMD_ALLOWS);
+        all.addAll(PM_CMD_ALLOWS);
+        return all;
     }
 }

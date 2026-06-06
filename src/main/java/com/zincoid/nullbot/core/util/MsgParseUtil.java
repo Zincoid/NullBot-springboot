@@ -58,6 +58,10 @@ public final class MsgParseUtil {
                 }
                 case at -> {
                     long qq = data.get("qq").asLong();
+                    if (qq == bot.getSelfId()) {
+                        message.append("@你");
+                        continue;
+                    }
                     String nickname = bot.getStrangerInfo(qq, true).getData().getNickname();
                     message.append("@").append(nickname).append("(").append(qq).append(")");
                 }

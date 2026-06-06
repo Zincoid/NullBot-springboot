@@ -9,13 +9,6 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQMsgExecutor;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
-import com.zincoid.nullbot.core.component.ai.chat.tool.impl.BaiduSearchTool;
-import com.zincoid.nullbot.core.component.ai.chat.tool.impl.BingSearchTool;
-import com.zincoid.nullbot.core.component.ai.chat.tool.impl.WebFetchTool;
-import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupCmdTool;
-import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQGroupInfoTool;
-import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQPrivateCmdTool;
-import com.zincoid.nullbot.core.component.ai.chat.tool.impl.QQUserInfoTool;
 import com.zincoid.nullbot.core.properties.ai.AiChatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -32,33 +25,22 @@ public class AiConfiguration {
         MsgWindowChatMemory msgWindowChatMemory = new MsgWindowChatMemory(
                 repository, properties.getMaxHistoryLength()
         );
-        log.info("▽ [MsgWindowChatMemory] 聊天存储已初始化 - Window Size: {}", properties.getMaxHistoryLength());
+        log.info("▽ [MsgWindowChatMemory] 聊天存储已初始化 - WindowSize: {}", properties.getMaxHistoryLength());
         return msgWindowChatMemory;
     }
 
     @Bean
     public QQAiClient qqAiClient(
-            ChatMemory memory, Model model, AiChatProperties properties,
-            QQGroupCmdTool qqGroupCmdTool, QQPrivateCmdTool qqPrivateCmdTool,
+            AiChatProperties properties, ChatMemory memory, Model model, ToolRegistry registry,
             QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
     ) {
-        ToolRegistry toolRegistry = new ToolRegistry();
-
-        toolRegistry.register(qqGroupCmdTool);
-        toolRegistry.register(qqPrivateCmdTool);
-        toolRegistry.register(new QQGroupInfoTool());
-        toolRegistry.register(new QQUserInfoTool());
-        toolRegistry.register(new BaiduSearchTool());
-        toolRegistry.register(new BingSearchTool());
-        toolRegistry.register(new WebFetchTool());
-
-        QQAiClient qqAiClient = new QQAiClient(
-                memory, model,
-                antiInjector.withModel(model),
-                prompter, executor
-        )
-                .withMaxTokens(properties.getMaxTokens())
-                .withToolCall(toolRegistry, properties.getMaxToolCalls());
+        QQAiClient qqAiClient = QQAiClient.builder(
+                        memory, model,
+                        antiInjector.withModel(model), prompter, executor
+                )
+                .maxTokens(properties.getMaxTokens())
+                .toolRegistry(registry, properties.getMaxToolCalls())
+                .build();
 
         log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}, MaxTokens: {}, MaxToolCalls: {}",
                 model.getClass().getSimpleName(), properties.getMaxTokens(), properties.getMaxToolCalls());

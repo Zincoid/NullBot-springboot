@@ -23,8 +23,7 @@ CREATE TABLE `user` (
     draw_times INT DEFAULT 50
 );
 
-create table `admin`
-(
+create table `admin`(
     id BIGINT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
