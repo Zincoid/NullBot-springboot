@@ -936,4 +936,5 @@
   - 修改 drift_bottle 表名为 bottle 并调整相关代码；
   - 修改 statistic 表名为 stats 并调整相关代码；
   - 修改 statistic_date 表名为 daily 并调整相关代码；
-- 调整 AI 组件命名 - 移除类名中的 Chat 描述。
+- 调整 AI 组件命名 - 移除类名中的 Chat 描述；
+- 新增 Save 指令 - 整合视频图片语录保存逻辑。
