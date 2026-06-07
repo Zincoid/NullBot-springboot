@@ -935,4 +935,5 @@
   - 移除 statistic 表的 user_name 字段并优化相关代码；
   - 修改 drift_bottle 表名为 bottle 并调整相关代码；
   - 修改 statistic 表名为 stats 并调整相关代码；
-  - 修改 statistic_date 表名为 daily 并调整相关代码。
+  - 修改 statistic_date 表名为 daily 并调整相关代码；
+- 调整 AI 组件命名 - 移除类名中的 Chat 描述。

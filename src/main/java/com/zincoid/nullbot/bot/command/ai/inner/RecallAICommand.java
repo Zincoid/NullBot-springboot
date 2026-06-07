@@ -5,7 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
-import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowChatMemory;
+import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowMemory;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +22,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecallAICommand implements Command {
 
-    private final MsgWindowChatMemory msgWindowChatMemory;
+    private final MsgWindowMemory msgWindowMemory;
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         int n = args.nextInt(1);
         if (n <= 0) throw new BotWarnException("消息数非正");
-        List<QQMessage> messages = msgWindowChatMemory.get(BotCtxUtil.getChatId()).stream().map(m -> (QQMessage) m).toList();
+        List<QQMessage> messages = msgWindowMemory.get(BotCtxUtil.getChatId()).stream().map(m -> (QQMessage) m).toList();
         List<QQMessage> filtered = messages.stream().filter(msg -> msg.getRole() == Role.ASSISTANT && msg.getMessageId() != null).toList();
         List<QQMessage> targets = filtered.subList(Math.max(0, filtered.size() - n), filtered.size());
         for (QQMessage target : targets) bot.deleteMsg(target.getMessageId());

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class InMemoryChatRepository implements ChatRepository {
+public class InMemoryRepository implements Repository {
 
     private final Map<String, List<Message>> data = new ConcurrentHashMap<>();
 

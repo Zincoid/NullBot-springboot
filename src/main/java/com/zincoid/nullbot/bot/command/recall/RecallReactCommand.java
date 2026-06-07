@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.recall;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
-import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowChatMemory;
+import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowMemory;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class RecallReactCommand implements Command {
 
-    private final MsgWindowChatMemory msgWindowChatMemory;
+    private final MsgWindowMemory msgWindowMemory;
 
     @Override
     public void execute(Bot bot, GroupMsgDeleteNoticeEvent event, CommandArgs args) {
@@ -32,7 +32,7 @@ public class RecallReactCommand implements Command {
         String operatorName = bot.getStrangerInfo(operatorId, true).getData().getNickname();
         Integer messageId = event.getMessageId();
 
-        List<QQMessage> messages = msgWindowChatMemory.get(ChatScope.MONITOR + "_" + groupId)
+        List<QQMessage> messages = msgWindowMemory.get(ChatScope.MONITOR + "_" + groupId)
                 .stream().map(m -> (QQMessage) m).toList();
         for (QQMessage message : messages) {
             if (!Objects.equals(message.getMessageId(), messageId)) continue;

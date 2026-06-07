@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.component.ai.chat.memory;
 
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
-import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
+import com.zincoid.nullbot.core.component.ai.chat.repository.Repository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -12,21 +12,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class MsgWindowChatMemory implements ChatMemory {
+public class MsgWindowMemory implements Memory {
 
     private final Map<String, ReentrantLock> locks = new ConcurrentHashMap<>();
 
-    private final ChatRepository chatRepository;
+    private final Repository repository;
     private final int windowSize;
 
-    public static Builder builder(ChatRepository chatRepository) {
-        return new Builder(chatRepository);
+    public static Builder builder(Repository repository) {
+        return new Builder(repository);
     }
 
     @RequiredArgsConstructor
     public static class Builder {
 
-        private final ChatRepository chatRepository;
+        private final Repository repository;
         private int windowSize = 25;
 
         public Builder windowSize(int windowSize) {
@@ -34,8 +34,8 @@ public class MsgWindowChatMemory implements ChatMemory {
             return this;
         }
 
-        public MsgWindowChatMemory build() {
-            return new MsgWindowChatMemory(chatRepository, windowSize);
+        public MsgWindowMemory build() {
+            return new MsgWindowMemory(repository, windowSize);
         }
     }
 
@@ -60,13 +60,13 @@ public class MsgWindowChatMemory implements ChatMemory {
         ReentrantLock lock = getLock(chatId);
         lock.lock();
         try {
-            List<Message> messages = chatRepository.get(chatId);
+            List<Message> messages = repository.get(chatId);
             if (messages.size() > windowSize) {
                 do messages.removeFirst();
                 while (!messages.isEmpty() && messages.getFirst().getRole() == Role.TOOL);
             }
             messages.add(message);
-            chatRepository.update(chatId, messages);
+            repository.update(chatId, messages);
         } finally {
             lock.unlock();
         }
@@ -77,7 +77,7 @@ public class MsgWindowChatMemory implements ChatMemory {
         ReentrantLock lock = getLock(chatId);
         lock.lock();
         try {
-            return chatRepository.get(chatId);
+            return repository.get(chatId);
         } finally {
             lock.unlock();
         }
@@ -88,7 +88,7 @@ public class MsgWindowChatMemory implements ChatMemory {
         ReentrantLock lock = getLock(chatId);
         lock.lock();
         try {
-            chatRepository.clear(chatId);
+            repository.clear(chatId);
         } finally {
             lock.unlock();
         }
@@ -96,7 +96,7 @@ public class MsgWindowChatMemory implements ChatMemory {
 
     @Override
     public void reset() {
-        chatRepository.reset();
+        repository.reset();
         locks.clear();
     }
 }

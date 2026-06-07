@@ -4,7 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
-import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowChatMemory;
+import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowMemory;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class MonitorListener {
 
     private final BotInputManager botInputManager;
     private final CommandProcessor commandProcessor;
-    private final MsgWindowChatMemory msgWindowChatMemory;
+    private final MsgWindowMemory msgWindowMemory;
     private final StorageProperties storageProperties;
     private final FileService fileService;
 
@@ -111,7 +111,7 @@ public class MonitorListener {
         if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // 按需 AI自动记录
         String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:MsgCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
-        msgWindowChatMemory.add(
+        msgWindowMemory.add(
                 ChatScope.MONITOR + "_" + event.getGroupId(),
                 QQMessage.user(parsed).with(event.getGroupId(), event.getUserId(), event.getSender().getNickname()).id(event.getMessageId())
         );

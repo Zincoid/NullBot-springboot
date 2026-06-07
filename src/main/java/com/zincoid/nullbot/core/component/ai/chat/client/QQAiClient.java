@@ -5,7 +5,7 @@ import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.model.ModelResponse;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQAntiInjector;
 import com.zincoid.nullbot.core.component.ai.chat.plugin.QQMsgExecutor;
-import com.zincoid.nullbot.core.component.ai.chat.memory.ChatMemory;
+import com.zincoid.nullbot.core.component.ai.chat.memory.Memory;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.component.ai.chat.model.Model;
@@ -25,7 +25,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)  // CGLIB REQUIRED
 public class QQAiClient implements AiClient<QQMessage> {
 
-    private final ChatMemory chatMemory;
+    private final Memory memory;
     private final Model model;
     private final int maxTokens;
 
@@ -37,15 +37,15 @@ public class QQAiClient implements AiClient<QQMessage> {
     private final int maxToolCalls;
 
     public static Builder builder(
-            ChatMemory chatMemory, Model model,
+            Memory memory, Model model,
             QQAntiInjector qqAntiInjector, QQPrompter qqPrompter, QQMsgExecutor qqMsgExecutor
     ) {
-        return new Builder(chatMemory, model, qqAntiInjector, qqPrompter, qqMsgExecutor);
+        return new Builder(memory, model, qqAntiInjector, qqPrompter, qqMsgExecutor);
     }
 
     public static class Builder {
 
-        private final ChatMemory chatMemory;
+        private final Memory memory;
         private final Model model;
         private int maxTokens = 512;
         private final QQAntiInjector qqAntiInjector;
@@ -55,10 +55,10 @@ public class QQAiClient implements AiClient<QQMessage> {
         private int maxToolCalls = 0;
 
         private Builder(
-                ChatMemory chatMemory, Model model,
+                Memory memory, Model model,
                 QQAntiInjector qqAntiInjector, QQPrompter qqPrompter, QQMsgExecutor qqMsgExecutor
         ) {
-            this.chatMemory = chatMemory;
+            this.memory = memory;
             this.model = model;
             this.qqAntiInjector = qqAntiInjector;
             this.qqPrompter = qqPrompter;
@@ -77,7 +77,7 @@ public class QQAiClient implements AiClient<QQMessage> {
 
         public QQAiClient build() {
             return new QQAiClient(
-                    chatMemory, model, maxTokens,
+                    memory, model, maxTokens,
                     qqAntiInjector, qqPrompter, qqMsgExecutor,
                     toolRegistry, maxToolCalls
             );
@@ -87,11 +87,11 @@ public class QQAiClient implements AiClient<QQMessage> {
     // ======================================= 系统方法 ======================================
 
     public void clear(String chatId) {
-        chatMemory.clear(chatId);
+        memory.clear(chatId);
     }
 
     public List<Message> history(String chatId) {
-        return chatMemory.get(chatId);
+        return memory.get(chatId);
     }
 
     // ======================================= 应用方法 ======================================
@@ -104,12 +104,12 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     public String chat(QQMessage message) {
         String chatId = BotCtxUtil.getChatId();
-        chatMemory.lock(chatId);
+        memory.lock(chatId);
         try {
-            chatMemory.add(chatId, message);
+            memory.add(chatId, message);
             if (!message.isPrivate() && BotCtxUtil.getSetting().isAntiInjection()) {
                 if (qqAntiInjector.check(message)) {
-                    chatMemory.add(chatId, QQMessage.assistant("对话被拒绝"));
+                    memory.add(chatId, QQMessage.assistant("对话被拒绝"));
                     return "Refused";
                 }
             }
@@ -125,7 +125,7 @@ public class QQAiClient implements AiClient<QQMessage> {
                 }
             };
         } finally {
-            chatMemory.unlock(chatId);
+            memory.unlock(chatId);
         }
     }
 
@@ -138,7 +138,7 @@ public class QQAiClient implements AiClient<QQMessage> {
                 ? qqPrompter.user(message.getUserId(), false)
                 : qqPrompter.group(message.getGroupId(), false);
         QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
-        chatMemory.add(BotCtxUtil.getChatId(), qqMsgExecutor.direct(_message, voice));
+        memory.add(BotCtxUtil.getChatId(), qqMsgExecutor.direct(_message, voice));
         return _message.getContent();
     }
 
@@ -152,7 +152,7 @@ public class QQAiClient implements AiClient<QQMessage> {
                 : qqPrompter.group(message.getGroupId(), true);
         QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
         List<QQMessage> messages = qqMsgExecutor.chain(_message, voice);
-        for (QQMessage msg : messages) chatMemory.add(BotCtxUtil.getChatId(), msg);
+        for (QQMessage msg : messages) memory.add(BotCtxUtil.getChatId(), msg);
         return _message.getContent();
     }
 
@@ -175,7 +175,7 @@ public class QQAiClient implements AiClient<QQMessage> {
         for (int i = 0; i < maxToolCalls; i++) {
             List<Message> messages = new ArrayList<>();
             messages.add(BaseMessage.system(prompt));
-            messages.addAll(chatMemory.get(chatId));
+            messages.addAll(memory.get(chatId));
             ModelResponse resp = model
                     .invoke(messages, toolRegistry.getAll(), thinking, maxTokens);
             if (!resp.hasToolCalls()) {
@@ -183,22 +183,22 @@ public class QQAiClient implements AiClient<QQMessage> {
                 break;
             }
             log.info("◎ [ToolCall] 第{}轮: {}个工具调用", i + 1, resp.getToolCalls().size());
-            chatMemory.add(chatId, BaseMessage.assistant(resp.getToolCalls())
+            memory.add(chatId, BaseMessage.assistant(resp.getToolCalls())
                     .withReasoning(resp.getReasoningContent()));
             for (ToolCall tc : resp.getToolCalls()) {
                 log.info("◎ [ToolCall] 执行工具: {}({})", tc.getName(), tc.getArguments());
                 String result = executeTool(tc);
                 log.info("◎ [ToolCall] 工具结果: {}", result);
-                chatMemory.add(chatId, BaseMessage.tool(tc.getId(), result));
+                memory.add(chatId, BaseMessage.tool(tc.getId(), result));
             }
         }
         if (finalResp == null) {
             log.warn("◎ [ToolCall] 达到最大迭代次数: {} ", maxToolCalls);
-            chatMemory.add(chatId, BaseMessage.user("达到最大工具调用轮数，请根据已有信息给出最终回答，不要再调用工具。"));
-            finalResp = model.invoke(chatMemory.get(chatId), false, maxTokens);
+            memory.add(chatId, BaseMessage.user("达到最大工具调用轮数，请根据已有信息给出最终回答，不要再调用工具。"));
+            finalResp = model.invoke(memory.get(chatId), false, maxTokens);
         }
         QQMessage _message = QQMessage.send(message, finalResp.getContent());
-        chatMemory.add(chatId, qqMsgExecutor.direct(_message, voice));
+        memory.add(chatId, qqMsgExecutor.direct(_message, voice));
         return _message;
     }
 
@@ -219,7 +219,7 @@ public class QQAiClient implements AiClient<QQMessage> {
     private QQMessage plainCall(String prompt, QQMessage message, boolean thinking, int maxTokens) {
         List<Message> messages = new ArrayList<>();
         messages.add(BaseMessage.system(prompt));
-        messages.addAll(chatMemory.get(BotCtxUtil.getChatId()));
+        messages.addAll(memory.get(BotCtxUtil.getChatId()));
         ModelResponse resp = model.invoke(messages, thinking, maxTokens);
         return QQMessage.send(message, resp.getContent());
     }

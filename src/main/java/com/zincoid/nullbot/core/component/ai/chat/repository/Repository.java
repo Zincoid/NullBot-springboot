@@ -4,7 +4,7 @@ import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 
 import java.util.List;
 
-public interface ChatRepository {
+public interface Repository {
 
     List<Message> get(String chatId);
 

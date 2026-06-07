@@ -4,7 +4,7 @@ import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 
 import java.util.List;
 
-public interface ChatMemory {
+public interface Memory {
 
     void add(String chatId, Message message);
 
