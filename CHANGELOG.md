@@ -923,7 +923,7 @@
 - 优化 AI - 拒绝和过滤回复使用不同图片；
 - 优化 指令嵌入 - 使用 xml 标签替代简单的嵌入标识。
 
-### 2026.6.7
+### 2026.6.7 - v2.1.7
 
 - 优化 AiConfiguration - 使用 IOC 管理 Tool 类组件；
 - 优化 QQAiClient - 使用 Builder 模式创建实例；
@@ -931,4 +931,8 @@
 - 优化 BotPageSelector 和 ToolDef 构造方法；
 - 增强 BotOperator - 先检查 BotCtxUtil 并优化代码；
 - 调整 AI 组件 - 使用 BotOperator 发送消息；
-- 移除 statistic 表的 user_name 字段并优化相关代码。
+- 数据库调整：
+  - 移除 statistic 表的 user_name 字段并优化相关代码；
+  - 修改 drift_bottle 表名为 bottle 并调整相关代码；
+  - 修改 statistic 表名为 stats 并调整相关代码；
+  - 修改 statistic_date 表名为 daily 并调整相关代码。

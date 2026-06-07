@@ -54,7 +54,7 @@ public class MonitorListener {
         if (freq < Math.random()) return;
         log.info("◉ [GroupMonitor:BottleAutoThrow] 自动投出漂流瓶 {} -> {}", event.getUserId(), event.getMessage());
         commandProcessor.processQQ(bot, new CommandEvent<>(
-                event, "DriftBottle", List.of("-auto"), false, false));
+                event, "Bottle", List.of("-auto"), false, false));
 
     }
 

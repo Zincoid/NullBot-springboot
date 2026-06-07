@@ -11,7 +11,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
-import com.zincoid.nullbot.core.service.system.StatisticService;
+import com.zincoid.nullbot.core.service.system.StatsService;
 import com.zincoid.nullbot.core.component.tool.WsSender;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -20,9 +20,9 @@ import org.springframework.stereotype.Component;
 @Order(3)
 @Component
 @RequiredArgsConstructor
-public class StatisticHandler implements Handler {
+public class StatsHandler implements Handler {
 
-    private final StatisticService statisticService;
+    private final StatsService statsService;
     private final WsSender wsSender;
 
     @Override
@@ -44,7 +44,7 @@ public class StatisticHandler implements Handler {
             groupId = 0L;  // 群号 0 代表私聊
             userId = privateMessageEvent.getUserId();
         } else {
-            log.info("├─[StatisticHandler] 默认不记录的事件");
+            log.info("├─[StatsHandler] 默认不记录的事件");
             chain.doHandle(bot, event, command);
             return;
         }
@@ -69,9 +69,9 @@ public class StatisticHandler implements Handler {
                 )
         );
 
-        statisticService.increase(groupId, userId, commandType);
-        statisticService.increaseOnDate();
-        log.info("├─[StatisticHandler] 指令记录完成");
+        statsService.increase(groupId, userId, commandType);
+        statsService.increaseDaily();
+        log.info("├─[StatsHandler] 指令记录完成");
 
         chain.doHandle(bot, event, command);
     }

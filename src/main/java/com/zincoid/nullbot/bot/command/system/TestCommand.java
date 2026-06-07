@@ -7,7 +7,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.service.render.RenderingService;
-import com.zincoid.nullbot.core.service.system.StatisticService;
+import com.zincoid.nullbot.core.service.system.StatsService;
 import com.zincoid.nullbot.core.util.DownloadUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TestCommand implements Command {
 
-    private final StatisticService statisticService;
+    private final StatsService statsService;
     private final RenderingService renderingService;
 
     @Override
@@ -29,7 +29,7 @@ public class TestCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
-        Long times = statisticService.getUsage(userId);
+        Long times = statsService.getUsage(userId);
         String url = ShiroUtils.getUserAvatar(userId, 5);
         FileInfo fileInfo = DownloadUtil.save(url);
         String response = MsgUtils.builder()

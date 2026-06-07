@@ -15,9 +15,9 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.component.control.BotInputManager;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
-import com.zincoid.nullbot.core.model.data.po.DriftBottlePO;
+import com.zincoid.nullbot.core.model.data.po.BottlePO;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.core.service.game.DriftBottleService;
+import com.zincoid.nullbot.core.service.game.BottleService;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.stereotype.Component;
@@ -27,16 +27,16 @@ import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
-@CommandMapping({"DriftBottle", "漂流瓶"})
+@CommandMapping({"Bottle", "漂流瓶"})
 @Component
 @RequiredArgsConstructor
-public class DriftBottleCommand implements Command {
+public class BottleCommand implements Command {
 
     private static final int KEEP_TIMEOUT_SECONDS = 30;  // 漂流瓶保留时间
 
     private final StorageProperties storageProperties;
     private final FileService fileService;
-    private final DriftBottleService driftBottleService;
+    private final BottleService bottleService;
     private final BotInputManager botInputManager;
 
     @Override
@@ -59,7 +59,7 @@ public class DriftBottleCommand implements Command {
             boolean thrown = false;
             try {
                 fileInfo = fileService.upload(imageUrl, bottlePath, imageName, userId);
-                thrown = driftBottleService.add(
+                thrown = bottleService.add(
                         userId,
                         bot.getStrangerInfo(userId, true).getData().getNickname(),
                         fileInfo.getPath(),
@@ -67,7 +67,7 @@ public class DriftBottleCommand implements Command {
                 );
                 if (!autoThrow)
                     bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️已投出" : "❌未投出", false);
-                log.info("☑ [DriftBottle] 扔漂流瓶(图片) - {} -> {}", userId, thrown);
+                log.info("☑ [Bottle] 扔漂流瓶(图片) - {} -> {}", userId, thrown);
             } finally {
                 if (fileInfo != null && !thrown)
                     fileService.delete(bottlePath, fileInfo.getName());
@@ -76,7 +76,7 @@ public class DriftBottleCommand implements Command {
         }
 
         if (args.hasNext()) {
-            boolean thrown = driftBottleService.add(
+            boolean thrown = bottleService.add(
                     userId,
                     bot.getStrangerInfo(userId, true).getData().getNickname(),
                     autoThrow ? message.trim() : args.nextFullString(),
@@ -84,11 +84,11 @@ public class DriftBottleCommand implements Command {
             );
             if (!autoThrow)
                 bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️已投出" : "❌未投出", false);
-            log.info("☑ [DriftBottle] 扔漂流瓶 - {} -> {}", userId, thrown);
+            log.info("☑ [Bottle] 扔漂流瓶 - {} -> {}", userId, thrown);
             return;
         }
 
-        DriftBottlePO bottle = driftBottleService.pick();
+        BottlePO bottle = bottleService.pick();
         if (bottle == null)
             throw new BotInfoException(Emoji.INFO, "没有漂流瓶了");
         bot.sendGroupMsg(groupId, bottle.toString(), false);
@@ -99,11 +99,11 @@ public class DriftBottleCommand implements Command {
         boolean thrownBack = false;
         if (!inputs.isEmpty()) {
             bottle.plusRethrowTimes();
-            thrownBack = driftBottleService.add(bottle);
+            thrownBack = bottleService.add(bottle);
             bot.sendGroupMsg(groupId, thrownBack ? "✉️已投回" : "❌未投回", true);
-            log.info("☑ [DriftBottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());
+            log.info("☑ [Bottle] 捡漂流瓶并投回 - {} -> #{}", userId, bottle.getId());
         } else {
-            log.info("☑ [DriftBottle] 捡漂流瓶并销毁 - {} -> #{}", userId, bottle.getId());
+            log.info("☑ [Bottle] 捡漂流瓶并销毁 - {} -> #{}", userId, bottle.getId());
         }
 
         if (!thrownBack && bottle.getIsImage()) {
@@ -119,10 +119,10 @@ public class DriftBottleCommand implements Command {
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ DriftBottle 命令
+                ◉ Bottle 命令
                 功能: 扔或者捡一个漂流瓶
                 限权: %d 级
-                格式: DriftBottle [可选: 文本/图片]
+                格式: Bottle [可选: 文本/图片]
                 别名: 漂流瓶
                 注意:
                 1. 可发送"扔回去"投回

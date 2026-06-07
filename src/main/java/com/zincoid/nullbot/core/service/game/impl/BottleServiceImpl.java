@@ -1,9 +1,9 @@
 package com.zincoid.nullbot.core.service.game.impl;
 
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.model.data.po.DriftBottlePO;
-import com.zincoid.nullbot.core.mapper.DriftBottleMapper;
-import com.zincoid.nullbot.core.service.game.DriftBottleService;
+import com.zincoid.nullbot.core.model.data.po.BottlePO;
+import com.zincoid.nullbot.core.mapper.BottleMapper;
+import com.zincoid.nullbot.core.service.game.BottleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,14 +12,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
-public class DriftBottleServiceImpl implements DriftBottleService {
+public class BottleServiceImpl implements BottleService {
 
-    private final DriftBottleMapper driftBottleMapper;
+    private final BottleMapper bottleMapper;
 
     @Override
-    public boolean add(DriftBottlePO bottle) {
+    public boolean add(BottlePO bottle) {
         try {
-            return driftBottleMapper.insert(bottle) == 1;
+            return bottleMapper.insert(bottle) == 1;
         } catch (Exception e) {
             return false;
         }
@@ -28,13 +28,13 @@ public class DriftBottleServiceImpl implements DriftBottleService {
     @Override
     public boolean add(Long userId, String userName, String content, boolean isImage) {
         try {
-            DriftBottlePO bottle = new DriftBottlePO();
+            BottlePO bottle = new BottlePO();
             bottle.setUserId(userId);
             bottle.setUserName(userName);
             bottle.setContent(content);
             bottle.setIsImage(isImage);
             bottle.setTime(LocalDateTime.now());
-            return driftBottleMapper.insert(bottle) == 1;
+            return bottleMapper.insert(bottle) == 1;
         } catch (Exception e) {
             return false;
         }
@@ -42,12 +42,12 @@ public class DriftBottleServiceImpl implements DriftBottleService {
 
     @Override
     @Transactional
-    public DriftBottlePO pick() {
-        long count = driftBottleMapper.selectCount(null);
+    public BottlePO pick() {
+        long count = bottleMapper.selectCount(null);
         if (count == 0) return null;
         long randomOffset = ThreadLocalRandom.current().nextLong(0, count);
-        DriftBottlePO bottle = driftBottleMapper.getOneByOffset(randomOffset);
-        if (bottle != null) driftBottleMapper.deleteById(bottle.getId());
+        BottlePO bottle = bottleMapper.getOneByOffset(randomOffset);
+        if (bottle != null) bottleMapper.deleteById(bottle.getId());
         return bottle;
     }
 }

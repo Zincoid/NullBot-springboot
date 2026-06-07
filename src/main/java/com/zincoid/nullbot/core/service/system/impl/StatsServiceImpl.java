@@ -2,12 +2,12 @@ package com.zincoid.nullbot.core.service.system.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.model.data.po.StatisticDatePO;
-import com.zincoid.nullbot.core.model.data.po.StatisticPO;
-import com.zincoid.nullbot.core.model.data.vo.StatisticVO;
-import com.zincoid.nullbot.core.mapper.StatisticDateMapper;
-import com.zincoid.nullbot.core.mapper.StatisticMapper;
-import com.zincoid.nullbot.core.service.system.StatisticService;
+import com.zincoid.nullbot.core.model.data.po.DailyPO;
+import com.zincoid.nullbot.core.model.data.po.StatsPO;
+import com.zincoid.nullbot.core.model.data.vo.StatsVO;
+import com.zincoid.nullbot.core.mapper.DailyMapper;
+import com.zincoid.nullbot.core.mapper.StatsMapper;
+import com.zincoid.nullbot.core.service.system.StatsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,60 +20,60 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class StatisticServiceImpl implements StatisticService {
+public class StatsServiceImpl implements StatsService {
 
-    private final StatisticMapper statisticMapper;
-    private final StatisticDateMapper statisticDateMapper;
+    private final StatsMapper statsMapper;
+    private final DailyMapper dailyMapper;
 
     @Override
     @Transactional
-    public void increaseOnDate() {
-        StatisticDatePO statisticDate = statisticDateMapper.selectOne(new LambdaQueryWrapper<StatisticDatePO>().eq(StatisticDatePO::getDate, LocalDate.now()));
-        if (statisticDate == null)
-            statisticDateMapper.insert(new StatisticDatePO(null, LocalDate.now(), 1L));
+    public void increaseDaily() {
+        DailyPO dailyPO = dailyMapper.selectOne(new LambdaQueryWrapper<DailyPO>().eq(DailyPO::getDate, LocalDate.now()));
+        if (dailyPO == null)
+            dailyMapper.insert(new DailyPO(null, LocalDate.now(), 1L));
         else {
-            statisticDate.setVisits(statisticDate.getVisits() + 1);
-            statisticDateMapper.updateById(statisticDate);
+            dailyPO.setVisits(dailyPO.getVisits() + 1);
+            dailyMapper.updateById(dailyPO);
         }
     }
 
     @Override
     @Transactional
     public void increase(Long groupId, Long userId, String command) {
-        StatisticPO statistic = statisticMapper.selectOne(new LambdaQueryWrapper<StatisticPO>()
-                .eq(StatisticPO::getGroupId, groupId)
-                .eq(StatisticPO::getUserId, userId)
-                .eq(StatisticPO::getCommand, command));
-        if (statistic == null)
-            statisticMapper.insert(new StatisticPO(null, groupId, userId, command, 1L));
+        StatsPO statsPO = statsMapper.selectOne(new LambdaQueryWrapper<StatsPO>()
+                .eq(StatsPO::getGroupId, groupId)
+                .eq(StatsPO::getUserId, userId)
+                .eq(StatsPO::getCommand, command));
+        if (statsPO == null)
+            statsMapper.insert(new StatsPO(null, groupId, userId, command, 1L));
         else {
-            statistic.setVisits(statistic.getVisits() + 1);
-            statisticMapper.updateById(statistic);
+            statsPO.setVisits(statsPO.getVisits() + 1);
+            statsMapper.updateById(statsPO);
         }
     }
 
     @Override
     @Transactional
-    public StatisticVO getStatistic() {
-        Long totalVisit = statisticDateMapper.selectTotalVisits();
+    public StatsVO getStatsVO() {
+        Long totalVisit = dailyMapper.selectTotalVisits();
 
         // 获取当前日期和10天前的日期
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(29);  // 包括今天共30天
 
         // 查询最近10天的数据
-        List<StatisticDatePO> recentData = statisticDateMapper.selectList(
-                new LambdaQueryWrapper<StatisticDatePO>()
-                        .ge(StatisticDatePO::getDate, startDate)
-                        .le(StatisticDatePO::getDate, endDate)
-                        .orderByAsc(StatisticDatePO::getDate)
+        List<DailyPO> recentData = dailyMapper.selectList(
+                new LambdaQueryWrapper<DailyPO>()
+                        .ge(DailyPO::getDate, startDate)
+                        .le(DailyPO::getDate, endDate)
+                        .orderByAsc(DailyPO::getDate)
         );
 
         // 将查询结果转换为 Map，方便查找
         Map<LocalDate, Long> dataMap = recentData.stream()
                 .collect(Collectors.toMap(
-                        StatisticDatePO::getDate,
-                        StatisticDatePO::getVisits
+                        DailyPO::getDate,
+                        DailyPO::getVisits
                 ));
 
         // 生成完整的10天日期列表
@@ -91,7 +91,7 @@ public class StatisticServiceImpl implements StatisticService {
         }
 
         // 查询访问次数最多的group
-        List<Map<String, Object>> topGroups = statisticMapper.selectTopGroups(20);
+        List<Map<String, Object>> topGroups = statsMapper.selectTopGroups(20);
         List<String> groupAxis = new ArrayList<>();
         List<Long> groupData = new ArrayList<>();
         for (Map<String, Object> map : topGroups) {
@@ -100,7 +100,7 @@ public class StatisticServiceImpl implements StatisticService {
         }
 
         // 查询访问次数最多的user
-        List<Map<String, Object>> topUsers = statisticMapper.selectTopUsers(20);
+        List<Map<String, Object>> topUsers = statsMapper.selectTopUsers(20);
         List<String> userAxis = new ArrayList<>();
         List<Long> userData = new ArrayList<>();
         for (Map<String, Object> map : topUsers) {
@@ -111,7 +111,7 @@ public class StatisticServiceImpl implements StatisticService {
         }
 
         // 查询访问次数最多的command
-        List<Map<String, Object>> topCommands = statisticMapper.selectTopCommands(20);
+        List<Map<String, Object>> topCommands = statsMapper.selectTopCommands(20);
         List<String> commandAxis = new ArrayList<>();
         List<Long> commandData = new ArrayList<>();
         for (Map<String, Object> map : topCommands) {
@@ -120,12 +120,12 @@ public class StatisticServiceImpl implements StatisticService {
         }
 
         // 封装为 VO
-        return StatisticVO.of(totalVisit, xAxis, data,
+        return StatsVO.of(totalVisit, xAxis, data,
                 groupAxis, groupData, userAxis, userData, commandAxis, commandData);
     }
 
     @Override
     public Long getUsage(Long userId) {
-        return statisticMapper.selectUses(userId);
+        return statsMapper.selectUses(userId);
     }
 }

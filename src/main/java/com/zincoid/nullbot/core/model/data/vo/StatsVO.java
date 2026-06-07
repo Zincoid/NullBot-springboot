@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StatisticVO {
+public class StatsVO {
 
     private Long totalVisits;
     private List<String> visitsXAxis;
@@ -22,13 +22,13 @@ public class StatisticVO {
     private List<String> topCommandsAxis;   // 前10 command的X轴（command）
     private List<Long> topCommandsData;     // 前10 command的访问量
 
-    public static StatisticVO of(
+    public static StatsVO of(
             Long totalVisits, List<String> visitsXAxis, List<Long> visitsData,
             List<String> topGroupsAxis, List<Long> topGroupsData,
             List<String> topUsersAxis, List<Long> topUsersData,
             List<String> topCommandsAxis, List<Long> topCommandsData
     ) {
-        StatisticVO vo = new StatisticVO();
+        StatsVO vo = new StatsVO();
         vo.setTotalVisits(totalVisits);
         vo.setVisitsXAxis(visitsXAxis);
         vo.setVisitsData(visitsData);

@@ -7,15 +7,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("`statistic`")
-public class StatisticPO {
+@TableName("`daily`")
+public class DailyPO {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-    private Long groupId;
-    private Long userId;
-    private String command;
+    private LocalDate date;
     private Long visits;
 }

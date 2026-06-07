@@ -1,9 +1,9 @@
 # CREATE DATABASE nullbot;
 # USE nullbot;
 
-DROP TABLE IF EXISTS `drift_bottle`;
+DROP TABLE IF EXISTS `bottle`;
 
-CREATE TABLE `drift_bottle` (
+CREATE TABLE `bottle` (
     id INT PRIMARY KEY AUTO_INCREMENT,
     time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id LONG NOT NULL,
