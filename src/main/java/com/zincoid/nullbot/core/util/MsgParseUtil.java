@@ -16,13 +16,21 @@ public final class MsgParseUtil {
 
     private MsgParseUtil() {}
 
+    private static final Pattern STANDARD_CQ_PATTERN = Pattern.compile("\\[CQ:.*?]");
+    private static final Pattern AT_CQ_PATTERN = Pattern.compile("\\[CQ:at,qq=(\\d+)]");
+    private static final Pattern IMAGE_CQ_PATTERN = Pattern.compile("\\[CQ:image([^]]+)]");
+    private static final Pattern VIDEO_CQ_PATTERN = Pattern.compile("\\[CQ:video([^]]+)]");
+    private static final Pattern RECORD_CQ_PATTERN = Pattern.compile("\\[CQ:record([^]]+)]");
+    private static final Pattern FILE_CQ_PATTERN = Pattern.compile("\\[CQ:file([^]]+)]");
+    private static final Pattern SAYING_PATTERN = Pattern.compile("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*");
+    private static final Pattern FILE_PARAM_PATTERN = Pattern.compile("file=([^,]+)");
+    private static final Pattern URL_PARAM_PATTERN = Pattern.compile("url=([^,]+)");
+
     // =================== @QQ号提取方法 ===================
 
     public static List<Long> extractAtNumbers(String rawMsg) {
         List<Long> qqNumbers = new ArrayList<>();
-        // 正则表达式匹配 [CQ:at,qq=数字]
-        Pattern pattern = Pattern.compile("\\[CQ:at,qq=(\\d+)]");
-        Matcher matcher = pattern.matcher(rawMsg);
+        Matcher matcher = AT_CQ_PATTERN.matcher(rawMsg);
         while (matcher.find()) {
             try {
                 long qq = Long.parseLong(matcher.group(1));
@@ -74,11 +82,10 @@ public final class MsgParseUtil {
     // =================== 语录格式化方法 ===================
 
     public static String formatSaying(Bot bot, String rawMsg) {
-        if(Pattern.matches("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*", ShiroUtils.unescape(rawMsg)))
+        if(SAYING_PATTERN.matcher(ShiroUtils.unescape(rawMsg)).matches())
             throw new BotWarnException("禁止套娃");
 
-        Pattern atPattern = Pattern.compile("\\[CQ:at,qq=(\\d+)]");
-        Matcher matcher = atPattern.matcher(rawMsg);
+        Matcher matcher = AT_CQ_PATTERN.matcher(rawMsg);
         StringBuilder result = new StringBuilder();
         while (matcher.find()) {
             try {
@@ -107,19 +114,19 @@ public final class MsgParseUtil {
     // =================== 资源 URL 提取方法 ===================
 
     public static Map<String, String> extractImgMap(String rawMsg) {
-        return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:image([^]]+)]"));
+        return parseCqCodeAsMap(rawMsg, IMAGE_CQ_PATTERN);
     }
 
     public static Map<String, String> extractVidMap(String rawMsg) {
-        return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:video([^]]+)]"));
+        return parseCqCodeAsMap(rawMsg, VIDEO_CQ_PATTERN);
     }
 
     public static Map<String, String> extractRecMap(String rawMsg) {
-        return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:record([^]]+)]"));
+        return parseCqCodeAsMap(rawMsg, RECORD_CQ_PATTERN);
     }
 
     public static Map<String, String> extractFileMap(String rawMsg) {
-        return parseCqCodeAsMap(rawMsg, Pattern.compile("\\[CQ:file([^]]+)]"));
+        return parseCqCodeAsMap(rawMsg, FILE_CQ_PATTERN);
     }
 
     private static Map<String, String> parseCqCodeAsMap(String rawMsg, Pattern cqPattern) {
@@ -128,9 +135,9 @@ public final class MsgParseUtil {
                 .results()
                 .map(match -> match.group(1))
                 .map(params -> new AbstractMap.SimpleEntry<>(
-                        Pattern.compile("file=([^,]+)").matcher(params).results()
+                        FILE_PARAM_PATTERN.matcher(params).results()
                                 .findFirst().map(m -> m.group(1)).orElse(null),
-                        Pattern.compile("url=([^,]+)").matcher(params).results()
+                        URL_PARAM_PATTERN.matcher(params).results()
                                 .findFirst().map(m -> m.group(1).replace("&amp;", "&")).orElse(null)
                 ))
                 .filter(entry -> entry.getKey() != null && entry.getValue() != null)
@@ -140,5 +147,13 @@ public final class MsgParseUtil {
                         (existing, replacement) -> replacement,
                         LinkedHashMap::new
                 ));
+    }
+
+    // =================== 违规CQ码检查方法 ===================
+
+    public static boolean validateCq(String rawMsg) {
+        if (rawMsg == null || !rawMsg.contains("CQ:")) return true;
+        String withoutStandard = STANDARD_CQ_PATTERN.matcher(rawMsg).replaceAll("");
+        return !withoutStandard.contains("CQ:");
     }
 }
