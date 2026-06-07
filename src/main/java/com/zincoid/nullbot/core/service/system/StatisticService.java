@@ -6,7 +6,7 @@ public interface StatisticService {
 
     void increaseOnDate();
 
-    void increase(Long groupId, Long userId, String userName, String command);
+    void increase(Long groupId, Long userId, String command);
 
     StatisticVO getStatistic();
 

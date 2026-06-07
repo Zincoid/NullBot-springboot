@@ -69,8 +69,7 @@ public class StatisticHandler implements Handler {
                 )
         );
 
-        String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-        statisticService.increase(groupId, userId, userName, commandType);
+        statisticService.increase(groupId, userId, commandType);
         statisticService.increaseOnDate();
         log.info("├─[StatisticHandler] 指令记录完成");
 

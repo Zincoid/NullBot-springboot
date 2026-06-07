@@ -5,6 +5,7 @@ import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
 import com.mikuac.shiro.dto.action.response.GroupInfoResp;
+import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,20 +29,15 @@ public class BotOperator {
     // =================== 获取方法 ===================
 
     public Bot getBot(int maxRetries, long retryInterval) {
-        int retryCount = 0;
-        Bot bot = botContainer.robots.get(botId);
-        while (bot == null && retryCount < maxRetries) {
-            retryCount++;
-            log.info("▽ [BotOperator] 获取Bot失败({}/{}): 将于 {}ms 后重试", retryCount, maxRetries, retryInterval);
-            try {
-                Thread.sleep(retryInterval);
-            } catch (InterruptedException e) {
-                throw new RuntimeException("BotOperator 错误: 中断异常", e);
-            }
+        Bot bot = BotCtxUtil.getBot();
+        if (bot != null) return bot;
+        for (int i = 0; i < maxRetries; i++) {
             bot = botContainer.robots.get(botId);
+            if (bot != null) return bot;
+            log.info("▽ [BotOperator] 获取Bot失败({}/{}): 将于 {}ms 后重试", i + 1, maxRetries, retryInterval);
+            sleep(retryInterval);
         }
-        if (bot == null) throw new RuntimeException("BotOperator 错误: Bot 获取重试超出最大次数");
-        return bot;
+        throw new RuntimeException("BotOperator 错误: Bot 获取重试超出最大次数");
     }
 
     public Bot getBot() {
@@ -87,5 +83,16 @@ public class BotOperator {
         ActionData<MsgId> actionData = bot.sendPrivateMsg(userId, message, false);
         log.info("▽ [BotOperator] 私聊({})消息已发送: {}", userId, message);
         return actionData.getData().getMessageId();
+    }
+
+    // =================== 工具方法 ===================
+
+    private static void sleep(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("BotOperator 错误: 中断异常", e);
+        }
     }
 }

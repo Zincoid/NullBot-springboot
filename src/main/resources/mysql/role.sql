@@ -15,7 +15,6 @@ CREATE TABLE `user` (
     id BIGINT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     access INT DEFAULT 0,
-
     level INT DEFAULT 1,
     experience INT DEFAULT 0,
     cash INT DEFAULT 0,

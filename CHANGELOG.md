@@ -927,4 +927,8 @@
 
 - 优化 AiConfiguration - 使用 IOC 管理 Tool 类组件；
 - 优化 QQAiClient - 使用 Builder 模式创建实例；
-- 优化 BotPageSelector 和 ToolDef 构造方法。
+- 优化 MsgWindowChatMemory - 使用 Builder 模式创建实例；
+- 优化 BotPageSelector 和 ToolDef 构造方法；
+- 增强 BotOperator - 先检查 BotCtxUtil 并优化代码；
+- 调整 AI 组件 - 使用 BotOperator 发送消息；
+- 移除 statistic 表的 user_name 字段并优化相关代码。

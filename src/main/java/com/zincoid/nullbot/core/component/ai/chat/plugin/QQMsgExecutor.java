@@ -1,14 +1,11 @@
 package com.zincoid.nullbot.core.component.ai.chat.plugin;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
-import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.dto.action.common.ActionData;
-import com.mikuac.shiro.dto.action.common.MsgId;
 import com.zincoid.nullbot.core.component.ai.voice.TtsClient;
 import com.zincoid.nullbot.core.component.resource.loader.ResourceLoader;
+import com.zincoid.nullbot.core.component.tool.BotOperator;
 import com.zincoid.nullbot.core.model.bot.event.InnerCommandEvent;
 import com.zincoid.nullbot.core.util.Base64Util;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class QQMsgExecutor {
 
+    private final BotOperator botOperator;
     private final ResourceLoader resourceLoader;
     private final ApplicationEventPublisher eventPublisher;
     private final TtsClient ttsClient;
@@ -97,11 +95,9 @@ public class QQMsgExecutor {
     // =================== 工具方法 ===================
 
     private Integer send(Long targetId, String message, boolean isPrivate, boolean voice) {
-        Bot bot = BotCtxUtil.getBot();
-        ActionData<MsgId> msgIdActionData = isPrivate
-                ? bot.sendPrivateMsg(targetId, voice ? voiced(message) : message, false)
-                : bot.sendGroupMsg(targetId, voice ? voiced(message) : message, false);
-        return msgIdActionData.getData().getMessageId();
+        return  isPrivate
+                ? botOperator.sendPrivateMsg(targetId, voice ? voiced(message) : message)
+                : botOperator.sendGroupMsg(targetId, voice ? voiced(message) : message);
     }
 
     boolean filter(String message) {

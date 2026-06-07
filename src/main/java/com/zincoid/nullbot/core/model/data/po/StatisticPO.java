@@ -16,7 +16,6 @@ public class StatisticPO {
     private Integer id;
     private Long groupId;
     private Long userId;
-    private String userName;
     private String command;
     private Long visits;
 }

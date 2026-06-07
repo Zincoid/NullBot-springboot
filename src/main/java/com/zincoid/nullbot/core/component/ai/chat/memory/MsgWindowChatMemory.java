@@ -3,6 +3,7 @@ package com.zincoid.nullbot.core.component.ai.chat.memory;
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 import com.zincoid.nullbot.core.component.ai.chat.repository.ChatRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -10,12 +11,33 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class MsgWindowChatMemory implements ChatMemory {
+
+    private final Map<String, ReentrantLock> locks = new ConcurrentHashMap<>();
 
     private final ChatRepository chatRepository;
     private final int windowSize;
-    private final Map<String, ReentrantLock> locks = new ConcurrentHashMap<>();
+
+    public static Builder builder(ChatRepository chatRepository) {
+        return new Builder(chatRepository);
+    }
+
+    @RequiredArgsConstructor
+    public static class Builder {
+
+        private final ChatRepository chatRepository;
+        private int windowSize = 25;
+
+        public Builder windowSize(int windowSize) {
+            this.windowSize = windowSize;
+            return this;
+        }
+
+        public MsgWindowChatMemory build() {
+            return new MsgWindowChatMemory(chatRepository, windowSize);
+        }
+    }
 
     private ReentrantLock getLock(String chatId) {
         return locks.computeIfAbsent(chatId, k -> new ReentrantLock());

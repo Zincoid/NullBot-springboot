@@ -22,9 +22,10 @@ public class AiConfiguration {
     public MsgWindowChatMemory msgWindowChatMemory(
             ChatRepository repository, AiChatProperties properties
     ) {
-        MsgWindowChatMemory msgWindowChatMemory = new MsgWindowChatMemory(
-                repository, properties.getMaxHistoryLength()
-        );
+        MsgWindowChatMemory msgWindowChatMemory = MsgWindowChatMemory.builder(repository)
+                .windowSize(properties.getMaxHistoryLength())
+                .build();
+
         log.info("▽ [MsgWindowChatMemory] 聊天存储已初始化 - WindowSize: {}", properties.getMaxHistoryLength());
         return msgWindowChatMemory;
     }
