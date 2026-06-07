@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 
 public final class MsgParseUtil {
 
-    private MsgParseUtil() {}
-
     private static final Pattern STANDARD_CQ_PATTERN = Pattern.compile("\\[CQ:.*?]");
     private static final Pattern AT_CQ_PATTERN = Pattern.compile("\\[CQ:at,qq=(\\d+)]");
     private static final Pattern IMAGE_CQ_PATTERN = Pattern.compile("\\[CQ:image([^]]+)]");
@@ -25,6 +23,8 @@ public final class MsgParseUtil {
     private static final Pattern SAYING_PATTERN = Pattern.compile("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*");
     private static final Pattern FILE_PARAM_PATTERN = Pattern.compile("file=([^,]+)");
     private static final Pattern URL_PARAM_PATTERN = Pattern.compile("url=([^,]+)");
+
+    private MsgParseUtil() {}
 
     // =================== @QQ号提取方法 ===================
 
