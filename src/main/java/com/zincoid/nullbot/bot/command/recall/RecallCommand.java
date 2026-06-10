@@ -23,7 +23,7 @@ public class RecallCommand implements Command {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
             throw new BotWarnException("需引用消息");
-        int messageId = reply.getData().get("id").asInt();
+        int messageId = (int) reply.getLongData("id");
         bot.deleteMsg(messageId);
         log.info("☑ [Recall] 引用消息已撤回 - MessageId: {}", messageId);
     }

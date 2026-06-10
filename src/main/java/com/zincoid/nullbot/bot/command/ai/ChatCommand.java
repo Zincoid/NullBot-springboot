@@ -36,7 +36,7 @@ public class ChatCommand implements Command {
         String response = qqAiClient.chat(message);
         for (ArrayMsg msg : event.getArrayMsg()) {
             if (msg.getType() != MsgTypeEnum.text) continue;
-            String text = msg.getData().get("text").asString().trim();
+            String text = msg.getStringData("text").trim();
             if (!text.startsWith(commandPrefix) || text.startsWith(commandPrefix + "Chat") || text.startsWith(commandPrefix + "对话")) continue;
             bot.sendGroupMsg(event.getGroupId(), """
                             ⚠️检测到指令前缀

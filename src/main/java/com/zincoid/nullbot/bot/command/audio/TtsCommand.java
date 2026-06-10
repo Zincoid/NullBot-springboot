@@ -50,8 +50,8 @@ public class TtsCommand implements Command {
                     ArrayMsg reply = event.getArrayMsg().getFirst();
                     if (reply.getType() != MsgTypeEnum.reply)
                         throw new BotWarnException("未引用模板音频");
-                    MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-                    Map<String, String> fileMap = MsgParseUtil.extractFileMap(replyMsg.getRawMessage());
+                    MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
+                    Map<String, String> fileMap = MsgParseUtil.extractFileMap(replyMsg.getArrayMsg());
                     if (fileMap.isEmpty())
                         throw new BotWarnException("引用未包含音频");
                     if (fileMap.size() > 1)

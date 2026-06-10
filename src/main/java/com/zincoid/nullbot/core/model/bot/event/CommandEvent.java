@@ -26,7 +26,7 @@ public class CommandEvent<T extends Event> {
 
     public static CommandEvent<GroupMessageEvent> of(GroupMessageEvent event) {
         int i = event.getArrayMsg().getFirst().getType() == MsgTypeEnum.reply ? 1 : 0;
-        String command = event.getArrayMsg().get(i).getData().get("text").asString().substring(1);
+        String command = event.getArrayMsg().get(i).getStringData("text").substring(1);
         List<String> information = List.of(command.split(" "));
         return CommandEvent.of(event, information.getFirst(), information.subList(1, information.size()), true, true);
     }

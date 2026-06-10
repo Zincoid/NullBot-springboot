@@ -39,8 +39,8 @@ public class SymmetryCommand implements Command {
 
         if (reply.getType() == MsgTypeEnum.reply) {
             // 引用收集
-            MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-            Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
+            MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
+            Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getArrayMsg());
             urls.addAll(imageMap.values());
         }
         if (args.hasNext()) {
@@ -58,7 +58,7 @@ public class SymmetryCommand implements Command {
                     long qqNumber = args.nextLong();
                     urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
                 } else {
-                    List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
+                    List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getArrayMsg());
                     for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
                 }
             } else {
@@ -67,7 +67,7 @@ public class SymmetryCommand implements Command {
             }
         } else {
             // AT 收集
-            List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
+            List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getArrayMsg());
             for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
         }
 

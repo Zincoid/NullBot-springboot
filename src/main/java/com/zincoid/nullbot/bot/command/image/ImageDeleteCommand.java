@@ -41,8 +41,8 @@ public class ImageDeleteCommand implements Command {
             return;
         }
         if (reply.getType() == MsgTypeEnum.reply) {
-            MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-            Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
+            MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
+            Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getArrayMsg());
             if (imageMap.isEmpty()) throw new BotWarnException("引用未包含图片");
             imageMap.forEach((name, url) -> {
                 String key = name.substring(0, name.lastIndexOf("."));  // QQ图片扩展名错误

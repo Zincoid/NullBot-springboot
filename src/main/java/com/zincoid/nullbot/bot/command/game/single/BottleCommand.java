@@ -45,7 +45,7 @@ public class BottleCommand implements Command {
         Long userId = event.getUserId();
         String message = event.getMessage();
         boolean autoThrow = "-auto".equals(args.getString(0, ""));
-        Map<String, String> imageMap = MsgParseUtil.extractImgMap(event.getRawMessage());
+        Map<String, String> imageMap = MsgParseUtil.extractImgMap(event.getArrayMsg());
 
         if (!imageMap.isEmpty()) {
             if (imageMap.size() != 1) {

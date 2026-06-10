@@ -35,9 +35,9 @@ public class VideoSaveCommand implements Command {
         if (reply.getType() != MsgTypeEnum.reply)
             throw new BotWarnException("缺少视频引用");
 
-        MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
+        MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
         // 可优化为单个键值对?
-        Map<String, String> videoMap = MsgParseUtil.extractVidMap(replyMsg.getRawMessage());
+        Map<String, String> videoMap = MsgParseUtil.extractVidMap(replyMsg.getArrayMsg());
         if (videoMap.isEmpty())
             throw new BotWarnException("引用未包含视频");
         if (videoMap.size() > 1)

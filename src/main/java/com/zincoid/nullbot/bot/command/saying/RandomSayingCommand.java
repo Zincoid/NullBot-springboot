@@ -26,7 +26,7 @@ public class RandomSayingCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        List<Long> atNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
+        List<Long> atNumbers = MsgParseUtil.extractAtNumbers(event.getArrayMsg());
         SayingPO saying = atNumbers.isEmpty()
                 ? args.hasNext()
                 ? sayingService.getRandByUserId(args.nextLong())

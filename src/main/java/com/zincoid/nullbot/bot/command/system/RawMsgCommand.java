@@ -23,7 +23,7 @@ public class RawMsgCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply) throw new BotWarnException("需引用消息");
-        MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
+        MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
         log.info("☑ [RawMsg] 原消息已输出:\n{}", replyMsg.getRawMessage());
         bot.sendGroupMsg(event.getGroupId(), "✅原消息已输出至控制台", false);
     }

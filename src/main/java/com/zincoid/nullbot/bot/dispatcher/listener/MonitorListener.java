@@ -3,7 +3,6 @@ package com.zincoid.nullbot.bot.dispatcher.listener;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
-import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowMemory;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
@@ -20,9 +19,9 @@ import com.zincoid.nullbot.core.util.BotCtxUtil;
 import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import tools.jackson.databind.JsonNode;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -62,13 +61,12 @@ public class MonitorListener {
         if (event.getMessage().startsWith(commandPrefix)) {
             return false;
         } else if (event.getArrayMsg().size() > 1 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
-            JsonNode textNode = event.getArrayMsg().get(1).getData().get("text");
-            if (textNode != null && textNode.asString().startsWith(commandPrefix)) return false;
+            if (event.getArrayMsg().get(1).getStringData("text").startsWith(commandPrefix)) return false;
         }
 
         double freq = BotCtxUtil.getSetting().getReplyFrequency();
         if (freq < Math.random()) return false;
-        String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
+        String parsed = MsgParseUtil.formatMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至群聊 {}", event.getGroupId());
         commandProcessor.processQQ(bot, CommandEvent.of(event, "Chat", List.of(parsed), false, false));
         return true;
@@ -83,16 +81,15 @@ public class MonitorListener {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
+        String filePath = storageProperties.getImagePath() + "/monitor/" + groupId;
 
-        for (ArrayMsg msg : event.getArrayMsg()) {
-            if (msg.getType() != MsgTypeEnum.image) continue;
+        Map<String, String> imageMap = MsgParseUtil.extractImgMap(event.getArrayMsg());
+        for (Map.Entry<String, String> entry : imageMap.entrySet()) {
             log.info("◉ [GroupMonitor:ImgCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
-            String originName = msg.getData().get("file").asString();
-            String url = msg.getData().get("url").asString();
-            String fileName = originName.substring(0, originName.lastIndexOf("."));
-            String filePath = storageProperties.getImagePath() + "/monitor/" + groupId;
+            String filename = entry.getKey();
+            String url = entry.getValue();
             try {
-                FileInfo fileInfo = fileService.upload(url, filePath, fileName, userId);
+                FileInfo fileInfo = fileService.upload(url, filePath, filename.substring(0, filename.lastIndexOf(".")), userId);
                 log.info("└─[Saved] {}", fileInfo.getName());
             } catch (Exception e) {
                 log.info("└─[Error] {}", e.getMessage());
@@ -106,7 +103,7 @@ public class MonitorListener {
         if (!BotCtxUtil.getSetting().isMessageCollect()) return;
 
         if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // 按需 AI自动记录
-        String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
+        String parsed = MsgParseUtil.formatMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:MsgCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         msgWindowMemory.add(
                 ChatScope.MONITOR + "_" + event.getGroupId(),

@@ -28,10 +28,10 @@ public class SayingSaveCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply) throw new BotWarnException("需引用文本");
-        MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
+        MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
         long userId = Long.parseLong(replyMsg.getSender().getUserId());
         String userName = replyMsg.getSender().getNickname();
-        String text = MsgParseUtil.formatSaying(bot, replyMsg.getRawMessage());
+        String text = MsgParseUtil.formatSaying(bot, replyMsg.getArrayMsg());
         if (!sayingService.add(userId, userName, text)) throw new BotErrorException("语录保存出错");
         bot.sendGroupMsg(event.getGroupId(), "\uD83D\uDCBE语录已保存", false);
         log.info("☑ [SayingSave] 语录已保存 - {}: {}", userName, text);

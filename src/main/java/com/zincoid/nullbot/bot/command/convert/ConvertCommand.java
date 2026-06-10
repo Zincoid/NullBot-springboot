@@ -38,8 +38,8 @@ public class ConvertCommand implements Command {
 
         if (reply.getType() == MsgTypeEnum.reply) {
             // 引用收集
-            MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-            Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
+            MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
+            Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getArrayMsg());
             urls.addAll(imageMap.values());
         }
         if (args.hasNext()) {
@@ -48,7 +48,7 @@ public class ConvertCommand implements Command {
             urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         } else {
             // AT 收集
-            List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
+            List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getArrayMsg());
             for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         }
 

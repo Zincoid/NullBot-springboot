@@ -31,11 +31,11 @@ public class SaveCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply) throw new BotWarnException("缺少引用");
-        MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
+        MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
 
-        if (!MsgParseUtil.extractVidMap(replyMsg.getRawMessage()).isEmpty()) {
+        if (!MsgParseUtil.extractVidMap(replyMsg.getArrayMsg()).isEmpty()) {
             videoSaveCommand.execute(bot, event, args);
-        } else if (!MsgParseUtil.extractImgMap(replyMsg.getRawMessage()).isEmpty()) {
+        } else if (!MsgParseUtil.extractImgMap(replyMsg.getArrayMsg()).isEmpty()) {
             imageSaveCommand.execute(bot, event, args);
         } else sayingSaveCommand.execute(bot, event, args);
     }

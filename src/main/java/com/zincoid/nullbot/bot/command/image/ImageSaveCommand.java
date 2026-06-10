@@ -33,8 +33,8 @@ public class ImageSaveCommand implements Command {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply)
             throw new BotWarnException("缺少图片引用");
-        MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-        Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getRawMessage());
+        MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
+        Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getArrayMsg());
         if (imageMap.isEmpty())
             throw new BotWarnException("引用未包含图片");
 

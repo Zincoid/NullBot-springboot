@@ -22,7 +22,6 @@ import com.zincoid.nullbot.core.util.MsgParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.Objects;
@@ -81,7 +80,7 @@ public class CommandListener {
             bot.sendPrivateMsg(userId, "❌访问码错误", false);
         } else {
             // 私聊对话处理
-            String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
+            String parsed = MsgParseUtil.formatMsg(bot, event.getArrayMsg());
             log.info("◉ [PrivateAction:Chat] 私聊 {}({}) -> {}", userName, userId, parsed);
             commandProcessor.processQQ(bot, CommandEvent.of(
                     event, "Chat", List.of(parsed), false, false));
@@ -131,8 +130,7 @@ public class CommandListener {
             commandProcessor.processQQ(bot, CommandEvent.of(event));
         } else if (event.getArrayMsg().size() > 1 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
             // 引用命令处理
-            JsonNode textNode = event.getArrayMsg().get(1).getData().get("text");
-            if (textNode == null || !textNode.asString().startsWith(commandPrefix)) return;
+            if (!event.getArrayMsg().get(1).getStringData("text").startsWith(commandPrefix)) return;
             log.info("◉ [GroupAction:ReplyCmd] 群聊 {} - {}({}) -> {}", groupId, userName, userId, message);
             commandProcessor.processQQ(bot, CommandEvent.of(event));
         }
@@ -163,7 +161,7 @@ public class CommandListener {
         monitorListener.doGroupImgCollect(event);
         monitorListener.doGroupBottleAutoThrow(bot, event);
 
-        String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
+        String parsed = MsgParseUtil.formatMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupAction:At] 群聊 {} - {}({}) -> {}",
                 event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         commandProcessor.processQQ(bot, CommandEvent.of(

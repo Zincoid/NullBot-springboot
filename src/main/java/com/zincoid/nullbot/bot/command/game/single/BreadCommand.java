@@ -93,7 +93,7 @@ public class BreadCommand implements Command {
     }
 
     private void rob(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
-        List<Long> atUserIds = MsgParseUtil.extractAtNumbers(groupMessageEvent.getRawMessage());
+        List<Long> atUserIds = MsgParseUtil.extractAtNumbers(groupMessageEvent.getArrayMsg());
         if (atUserIds.isEmpty()) throw new BotWarnException("未指定对象");
         long targetId = atUserIds.getFirst(); // 抢第一人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
@@ -105,7 +105,7 @@ public class BreadCommand implements Command {
     }
 
     private void gift(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
-        List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(groupMessageEvent.getRawMessage());
+        List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(groupMessageEvent.getArrayMsg());
         if (qqNumbers.isEmpty()) throw new BotWarnException("未指定对象");
         long targetId = qqNumbers.getFirst(); // 送第一人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();

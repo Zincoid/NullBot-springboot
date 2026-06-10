@@ -38,8 +38,8 @@ public class VideoDeleteCommand implements Command {
             return;
         }
         if (reply.getType() == MsgTypeEnum.reply) {
-            MsgResp replyMsg = bot.getMsg(reply.getData().get("id").asInt()).getData();
-            Map<String, String> videoMap = MsgParseUtil.extractVidMap(replyMsg.getRawMessage());
+            MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
+            Map<String, String> videoMap = MsgParseUtil.extractVidMap(replyMsg.getArrayMsg());
             if (videoMap.isEmpty()) throw new BotWarnException("引用未包含视频");
             videoMap.forEach((name, url) -> deleteFile(bot, event, directory, name));
             return;
