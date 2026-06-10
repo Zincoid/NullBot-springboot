@@ -938,6 +938,11 @@
   - 修改 statistic_date 表名为 daily 并调整相关代码；
 - 调整 AI 组件命名 - 移除类名中的 Chat 描述；
 - 新增 Save 指令 - 整合视频图片语录保存逻辑；
-- 新增 MsgParseUtil 方法 - 新增 validateCq 方法用于校验 CQ 泄露；
+- 新增 MsgParseUtil 方法 - 新增 CQ 校验方法用于泄露校验；
 - 优化 MsgParseUtil - 将 Pattern 提取为静态变量并优化使用；
 - 增强 QQMsgExecutor - 校验 CQ 泄露并过滤。
+
+### 2026.6.10
+
+- 新增 Trait 内部指令 - 实现多种 AI 性格模式切换；
+- 增强 RandomSaying 指令 - 支持通过 AT 指定用户。

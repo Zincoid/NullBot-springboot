@@ -1,2 +1,29 @@
+# IDE
 /.idea/
+.idea/
+*.iml
+
+# Maven
 /.mvn/
+target/
+
+# Sensitive config
+/src/main/resources/application.yml
+/docker-compose.yml
+
+# Secrets & keys
+**/secret/
+*.jks
+*.p12
+*.pem
+*.key
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

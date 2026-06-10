@@ -5,6 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.enums.Emoji;
+import com.zincoid.nullbot.core.util.MsgParseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -12,6 +13,8 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.model.data.po.SayingPO;
 import com.zincoid.nullbot.core.service.basic.SayingService;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Slf4j
 @CommandMapping({"RandomSaying", "Saying", "saying", "say", "随机语录", "语录"})
@@ -23,9 +26,12 @@ public class RandomSayingCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        SayingPO saying = args.hasNext()
+        List<Long> atNumbers = MsgParseUtil.extractAtNumbers(event.getRawMessage());
+        SayingPO saying = atNumbers.isEmpty()
+                ? args.hasNext()
                 ? sayingService.getRandByUserId(args.nextLong())
-                : sayingService.getRand();
+                : sayingService.getRand()
+                : sayingService.getRandByUserId(atNumbers.getFirst());
         if (saying == null) throw new BotInfoException(Emoji.INFO, "暂无用户记录");
         bot.sendGroupMsg(event.getGroupId(), saying.toString(), false);
         log.info("☑ [RandomSaying] 语录已发送 -> No.{}", saying.getId());
