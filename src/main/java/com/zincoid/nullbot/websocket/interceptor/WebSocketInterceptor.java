@@ -7,7 +7,7 @@ import com.zincoid.nullbot.core.component.security.JwtTool;
 import com.zincoid.nullbot.core.model.authentication.StompPrincipal;
 import com.zincoid.nullbot.core.model.data.po.AdminPO;
 import com.zincoid.nullbot.core.service.system.AdminService;
-import com.zincoid.nullbot.core.util.WebCtxUtil;
+import com.zincoid.nullbot.core.context.WebCtx;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -60,7 +60,7 @@ public class WebSocketInterceptor implements ChannelInterceptor {
                 }
                 Long userId = jwtTool.getAs(jwt, "id", Long.class);
                 Integer userType = jwtTool.getAs(jwt, "type", Integer.class);
-                WebCtxUtil.set(userId, userType);  // 存储此次用户信息
+                WebCtx.set(userId, userType);  // 存储此次用户信息
                 AdminPO admin = adminService.getById(userId);
                 if (admin == null) {
                     log.info("├─[WebSocketInterceptor] 管理员不存在");

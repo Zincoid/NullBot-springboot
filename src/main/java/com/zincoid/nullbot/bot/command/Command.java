@@ -6,6 +6,7 @@ import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 
 public interface Command {
 

@@ -5,7 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

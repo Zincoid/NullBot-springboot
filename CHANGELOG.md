@@ -951,4 +951,5 @@
   - CommandEvent 创建改为静态重载方法；
   - 优化文本；
 - 优化 MsgParseUtil 工具类 - 解析使用数组消息格式；
-- 优化 ArrayMsg 属性获取。
+- 优化 ArrayMsg 属性获取；
+- 调整 项目结构。

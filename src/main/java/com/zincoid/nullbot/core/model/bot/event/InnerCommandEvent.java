@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.model.bot.event;
 
 import com.mikuac.shiro.core.Bot;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,12 +17,12 @@ public class InnerCommandEvent {
     public static InnerCommandEvent of(String command) {
         List<String> information = List.of(command.split(" "));
         return InnerCommandEvent.of(
-                BotCtxUtil.getBot(),
+                BotCtx.getBot(),
                 CommandEvent.of(
-                        BotCtxUtil.getEvent(),
+                        BotCtx.getEvent(),
                         information.getFirst(),
                         information.subList(1, information.size()),
-                        !BotCtxUtil.getIsPrivate() && BotCtxUtil.getSetting().isInnerCmdAuth(),
+                        !BotCtx.getIsPrivate() && BotCtx.getSetting().isInnerCmdAuth(),
                         false
                 )
         );
@@ -31,9 +31,9 @@ public class InnerCommandEvent {
     public static InnerCommandEvent of(String command, boolean authRequired) {
         List<String> information = List.of(command.split(" "));
         return InnerCommandEvent.of(
-                BotCtxUtil.getBot(),
+                BotCtx.getBot(),
                 CommandEvent.of(
-                        BotCtxUtil.getEvent(),
+                        BotCtx.getEvent(),
                         information.getFirst(),
                         information.subList(1, information.size()),
                         authRequired,

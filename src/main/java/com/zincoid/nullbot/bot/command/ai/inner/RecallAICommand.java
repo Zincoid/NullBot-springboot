@@ -2,12 +2,12 @@ package com.zincoid.nullbot.bot.command.ai.inner;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
 import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowMemory;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -28,7 +28,7 @@ public class RecallAICommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         int n = args.nextInt(1);
         if (n <= 0) throw new BotWarnException("消息数非正");
-        List<QQMessage> messages = msgWindowMemory.get(BotCtxUtil.getChatId()).stream().map(m -> (QQMessage) m).toList();
+        List<QQMessage> messages = msgWindowMemory.get(BotCtx.getChatId()).stream().map(m -> (QQMessage) m).toList();
         List<QQMessage> filtered = messages.stream().filter(msg -> msg.getRole() == Role.ASSISTANT && msg.getMessageId() != null).toList();
         List<QQMessage> targets = filtered.subList(Math.max(0, filtered.size() - n), filtered.size());
         for (QQMessage target : targets) bot.deleteMsg(target.getMessageId());

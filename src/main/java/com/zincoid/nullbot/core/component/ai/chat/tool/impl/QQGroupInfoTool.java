@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.component.ai.chat.tool.impl;
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,8 +28,8 @@ public class QQGroupInfoTool implements Tool {
     public String execute(String jsonArgs) {
         try {
             Args args = ToolDef.parseArgs(jsonArgs, Args.class);
-            long groupId = args.id() == 0 ? BotCtxUtil.getGroupId() : args.id();
-            Bot bot = BotCtxUtil.getBot();
+            long groupId = args.id() == 0 ? BotCtx.getGroupId() : args.id();
+            Bot bot = BotCtx.getBot();
             String groupInfo = bot.getGroupInfo(groupId, true).toString();
             String groupUsers = bot.getGroupMemberList(groupId).toString();
             return "群信息: " + groupInfo + " 群成员: " + groupUsers;

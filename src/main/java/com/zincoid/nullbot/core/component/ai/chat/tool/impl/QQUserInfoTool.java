@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.component.ai.chat.tool.impl;
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolDef;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,7 +29,7 @@ public class QQUserInfoTool implements Tool {
         try {
             Args args = ToolDef.parseArgs(jsonArgs, Args.class);
             if (args.id() == 0) return "未指定QQ号";
-            Bot bot = BotCtxUtil.getBot();
+            Bot bot = BotCtx.getBot();
             return bot.getStrangerInfo(args.id(), true).toString();
         } catch (Exception e) {
             return "错误: " + e.getMessage();

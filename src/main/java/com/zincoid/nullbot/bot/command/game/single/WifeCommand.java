@@ -5,7 +5,7 @@ import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.GroupMemberInfoResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.file.FileService;
-import com.zincoid.nullbot.core.util.Base64Util;
+import com.zincoid.nullbot.core.utils.Base64Util;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

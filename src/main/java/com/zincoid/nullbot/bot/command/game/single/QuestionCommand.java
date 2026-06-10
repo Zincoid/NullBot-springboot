@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;

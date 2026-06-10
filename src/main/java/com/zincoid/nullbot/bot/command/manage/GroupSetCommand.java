@@ -2,7 +2,7 @@ package com.zincoid.nullbot.bot.command.manage;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatStrategy;
 import com.zincoid.nullbot.core.enums.LimitScope;
 import com.zincoid.nullbot.core.service.system.SettingService;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +37,7 @@ public class GroupSetCommand implements Command {
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         Long groupId = event.getGroupId();
         String option = args.nextString();
-        SettingPO setting = BotCtxUtil.getSetting();
+        SettingPO setting = BotCtx.getSetting();
 
         if ("-view".equals(option)) {
             bot.sendGroupMsg(groupId, setting.toString(), false);
@@ -88,7 +88,7 @@ public class GroupSetCommand implements Command {
                     msg = "会话范围 -> %s".formatted(newScope);
                 }
                 case "stg" -> {
-                    qqAiClient.clear(BotCtxUtil.getChatId());
+                    qqAiClient.clear(BotCtx.getChatId());
                     ChatStrategy strategy = setting.switchChatStrategy();
                     msg = "对话策略 -> %s".formatted(strategy);
                 }
@@ -114,7 +114,7 @@ public class GroupSetCommand implements Command {
                     msg = "内令鉴权 -> %s".formatted(enabled ? "ON" : "OFF");
                 }
                 case "cus" -> {
-                    qqAiClient.clear(BotCtxUtil.getChatId());
+                    qqAiClient.clear(BotCtx.getChatId());
                     boolean enabled = setting.switchCustom();
                     msg = "允许自定 -> %s".formatted(enabled ? "ON" : "OFF");
                 }

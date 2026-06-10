@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.util;
+package com.zincoid.nullbot.core.utils;
 
 import java.io.IOException;
 import java.nio.file.Files;

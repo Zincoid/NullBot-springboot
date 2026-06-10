@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotErrorException;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.enums.Emoji;
@@ -17,7 +17,7 @@ import com.zincoid.nullbot.core.component.storage.DuelStorage;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.information.DuelInfo;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.core.util.Base64Util;
+import com.zincoid.nullbot.core.utils.Base64Util;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

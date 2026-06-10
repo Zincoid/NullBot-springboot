@@ -14,7 +14,7 @@ import org.aspectj.lang.annotation.Aspect;
 import com.zincoid.nullbot.core.annotation.BotContext;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.service.system.SettingService;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -29,7 +29,7 @@ public class BotCtxAspect {
     public Object load(ProceedingJoinPoint joinPoint, BotContext context) throws Throwable {
         for (Object arg : joinPoint.getArgs()) {
             if (arg instanceof Bot bot) {
-                BotCtxUtil.setBot(bot);
+                BotCtx.setBot(bot);
                 continue;
             }
             Long groupId = null;
@@ -48,18 +48,18 @@ public class BotCtxAspect {
             }
             if (userId == null) continue;
             if (groupId == null) {
-                BotCtxUtil.setPrivate(userId);
+                BotCtx.setPrivate(userId);
             } else {
                 SettingPO setting = settingService.get(groupId);
-                BotCtxUtil.setGroup(userId, groupId, setting);
+                BotCtx.setGroup(userId, groupId, setting);
             }
-            BotCtxUtil.setEvent((Event) arg);
+            BotCtx.setEvent((Event) arg);
             break;
         }
         try {
             return joinPoint.proceed();
         } finally {
-            BotCtxUtil.remove();
+            BotCtx.remove();
         }
     }
 }

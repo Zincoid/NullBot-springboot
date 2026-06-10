@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.util;
+package com.zincoid.nullbot.core.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.model.information.FileInfo;

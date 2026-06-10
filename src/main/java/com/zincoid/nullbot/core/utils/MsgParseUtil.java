@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.util;
+package com.zincoid.nullbot.core.utils;
 
 import com.mikuac.shiro.common.utils.MessageConverser;
 import com.mikuac.shiro.common.utils.ShiroUtils;

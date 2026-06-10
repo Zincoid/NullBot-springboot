@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.util;
+package com.zincoid.nullbot.core.utils;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;

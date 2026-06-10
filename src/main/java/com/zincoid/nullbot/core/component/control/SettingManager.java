@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.component.control;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
-import com.zincoid.nullbot.core.util.CsvUtil;
+import com.zincoid.nullbot.core.utils.CsvUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

@@ -2,9 +2,9 @@ package com.zincoid.nullbot.bot.command.ai;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
@@ -24,7 +24,7 @@ public class ChatResetCommand implements Command {
 
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
-        String chatId = BotCtxUtil.getChatId();
+        String chatId = BotCtx.getChatId();
         qqAiClient.clear(chatId);
         bot.sendGroupMsg(event.getGroupId(), "♻️历史已重置", false);
         log.info("☑ [ChatReset] 历史已重置 - ChatId: {}", chatId);

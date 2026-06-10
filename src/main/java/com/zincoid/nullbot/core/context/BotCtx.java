@@ -1,11 +1,11 @@
-package com.zincoid.nullbot.core.util;
+package com.zincoid.nullbot.core.context;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.Event;
 import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 
-public final class BotCtxUtil {
+public final class BotCtx {
 
     private static final ThreadLocal<Bot> bot = new ThreadLocal<>();
     private static final ThreadLocal<Event> event = new ThreadLocal<>();
@@ -15,15 +15,15 @@ public final class BotCtxUtil {
     private static final ThreadLocal<Long> groupId = new ThreadLocal<>();
     private static final ThreadLocal<SettingPO> setting = new ThreadLocal<>();
 
-    private BotCtxUtil() {}
+    private BotCtx() {}
 
     // =================== 系统资源方法 ===================
 
     public static void setBot(Bot bot) {
-        BotCtxUtil.bot.set(bot);
+        BotCtx.bot.set(bot);
     }
     public static void setEvent(Event event) {
-        BotCtxUtil.event.set(event);
+        BotCtx.event.set(event);
     }
 
     public static Bot getBot() {
@@ -47,16 +47,16 @@ public final class BotCtxUtil {
     }
 
     public static void setIsPrivate(boolean isPrivate) {
-        BotCtxUtil.isPrivate.set(isPrivate);
+        BotCtx.isPrivate.set(isPrivate);
     }
     public static void setUserId(Long userId) {
-        BotCtxUtil.userId.set(userId);
+        BotCtx.userId.set(userId);
     }
     public static void setGroupId(Long groupId) {
-        BotCtxUtil.groupId.set(groupId);
+        BotCtx.groupId.set(groupId);
     }
     public static void setSetting(SettingPO setting) {
-        BotCtxUtil.setting.set(setting);
+        BotCtx.setting.set(setting);
     }
 
     public static boolean getIsPrivate() {

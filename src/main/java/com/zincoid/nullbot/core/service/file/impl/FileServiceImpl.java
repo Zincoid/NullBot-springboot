@@ -17,7 +17,7 @@ import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.web.exception.CommonException;
 import com.zincoid.nullbot.core.mapper.FileMapper;
 import com.zincoid.nullbot.core.service.file.FileService;
-import com.zincoid.nullbot.core.util.DownloadUtil;
+import com.zincoid.nullbot.core.utils.DownloadUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;

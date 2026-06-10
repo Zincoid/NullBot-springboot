@@ -5,7 +5,7 @@ import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
 import com.mikuac.shiro.dto.action.response.GroupInfoResp;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +29,7 @@ public class BotOperator {
     // =================== 获取方法 ===================
 
     public Bot getBot(int maxRetries, long retryInterval) {
-        Bot bot = BotCtxUtil.getBot();
+        Bot bot = BotCtx.getBot();
         if (bot != null) return bot;
         for (int i = 0; i < maxRetries; i++) {
             bot = botContainer.robots.get(botId);

@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.component.security.JwtTool;
 import com.zincoid.nullbot.core.model.result.WebResult;
-import com.zincoid.nullbot.core.util.WebCtxUtil;
-import com.zincoid.nullbot.core.util.WebUtil;
+import com.zincoid.nullbot.core.context.WebCtx;
+import com.zincoid.nullbot.core.utils.WebUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -93,7 +93,7 @@ public class WebInterceptor implements HandlerInterceptor {
         Long userId = jwtTool.getAs(jwt, "id", Long.class);
         Integer userType = jwtTool.getAs(jwt, "type", Integer.class);
 
-        WebCtxUtil.set(userId, userType);  // 存储此次用户信息
+        WebCtx.set(userId, userType);  // 存储此次用户信息
 
         if (userType == 0) {
             for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
@@ -122,6 +122,6 @@ public class WebInterceptor implements HandlerInterceptor {
             @NonNull Object handler,
             Exception ex
     ) {
-        WebCtxUtil.remove();
+        WebCtx.remove();
     }
 }

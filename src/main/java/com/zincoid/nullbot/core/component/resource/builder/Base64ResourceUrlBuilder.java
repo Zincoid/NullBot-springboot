@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.component.resource.builder;
 
 import com.zincoid.nullbot.core.mapper.FileMapper;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
-import com.zincoid.nullbot.core.util.Base64Util;
+import com.zincoid.nullbot.core.utils.Base64Util;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

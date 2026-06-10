@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.util;
+package com.zincoid.nullbot.core.utils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

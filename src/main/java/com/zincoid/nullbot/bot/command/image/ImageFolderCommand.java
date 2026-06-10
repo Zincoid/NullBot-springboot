@@ -2,13 +2,13 @@ package com.zincoid.nullbot.bot.command.image;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
-import com.zincoid.nullbot.core.util.StringUtil;
+import com.zincoid.nullbot.core.utils.StringUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

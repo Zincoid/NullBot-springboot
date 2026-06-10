@@ -4,9 +4,9 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import com.zincoid.nullbot.core.component.ai.voice.TtsClient;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
@@ -24,7 +24,7 @@ public class ReplyCommand implements Command {
     @Override
     public void execute(Bot bot, GroupMessageEvent event, CommandArgs args) {
         String message = args.nextFullString();
-        String content = BotCtxUtil.getSetting().isVoice() ?
+        String content = BotCtx.getSetting().isVoice() ?
                 MsgUtils.builder().voice("base64://" + ttsClient.synthesize(message)).build() : message;
         bot.sendGroupMsg(event.getGroupId(), content, false);
         log.info("☑ [Reply] 群聊已回复: {}", message);

@@ -11,7 +11,7 @@ import com.zincoid.nullbot.core.model.data.po.AdminPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.model.data.dto.LoginDTO;
 import com.zincoid.nullbot.core.service.system.AdminService;
-import com.zincoid.nullbot.core.util.WebCtxUtil;
+import com.zincoid.nullbot.core.context.WebCtx;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,7 +65,7 @@ public class LoginController {
 
     @DeleteMapping("/delete")
     public WebResult<Void> delete() {
-        Long id = WebCtxUtil.getId();
+        Long id = WebCtx.getId();
         log.info("└─[LoginController] 管理员注销 - ID: {}", id);
         if (adminService.removeById(id)) {
             return WebResult.success("管理员注销成功");
@@ -76,7 +76,7 @@ public class LoginController {
 
     @PostMapping("/update")
     public WebResult<Void> update(@RequestBody @Validated AdminUpdateDTO adminUpdateDTO) {
-        Long id = WebCtxUtil.getId();
+        Long id = WebCtx.getId();
         adminUpdateDTO.setId(id);
         log.info("└─[LoginController] 管理员更新 - ID: {}", id);
         if (adminService.update(adminUpdateDTO)) {
@@ -88,7 +88,7 @@ public class LoginController {
 
     @PostMapping("/changePwd")
     public WebResult<Void> changePwd(@RequestBody @Validated PwdChangeDTO pwdChangeDTO) {
-        Long id = WebCtxUtil.getId();
+        Long id = WebCtx.getId();
         log.info("└─[LoginController] 管理员密码更改 - ID: {}", id);
         if (adminService.changePwd(id, pwdChangeDTO)) {
             return WebResult.success("管理员密码更改成功");
@@ -99,7 +99,7 @@ public class LoginController {
 
     @GetMapping("/info")
     public WebResult<Map<String, Object>> info() {
-        Integer type = WebCtxUtil.getType();
+        Integer type = WebCtx.getType();
         if (type == 0) {
             AdminPO admin = new AdminPO(
                     null, "Guest",
@@ -111,7 +111,7 @@ public class LoginController {
             data.put("userType", 0);
             return WebResult.success("获取访客信息成功", data);
         } else if (type == 1) {
-            Long id = WebCtxUtil.getId();
+            Long id = WebCtx.getId();
             log.info("└─[LoginController] 获取管理员信息 - ID: {}", id);
             AdminPO admin = adminService.getById(id);
             if (admin != null) {

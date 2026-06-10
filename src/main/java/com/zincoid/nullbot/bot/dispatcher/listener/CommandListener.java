@@ -17,8 +17,8 @@ import com.zincoid.nullbot.core.component.security.SecurityCodeScheduler;
 import com.zincoid.nullbot.bot.dispatcher.CommandProcessor;
 import com.zincoid.nullbot.bot.dispatcher.handler.impl.PermissionHandler;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
-import com.zincoid.nullbot.core.util.MsgParseUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
+import com.zincoid.nullbot.core.utils.MsgParseUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -141,7 +141,7 @@ public class CommandListener {
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupPokeInteraction(Bot bot, PokeNoticeEvent event) throws Exception {
-        if (!BotCtxUtil.getSetting().isPokeDetect()) return;
+        if (!BotCtx.getSetting().isPokeDetect()) return;
         if (Objects.equals(event.getTargetId(), event.getSelfId())) {
             log.info("◉ [GroupAction:Poke] 群聊 {} -> From {} to {} (仅戳Bot)", event.getGroupId(), event.getUserId(), event.getTargetId());
             commandProcessor.processQQ(bot, CommandEvent.of(event));
@@ -173,7 +173,7 @@ public class CommandListener {
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupRecallInteraction(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
-        if (!BotCtxUtil.getSetting().isRecallDetect()) return;
+        if (!BotCtx.getSetting().isRecallDetect()) return;
         log.info("◉ [GroupAction:Recall] 群聊 {} -> {}", event.getGroupId(), event.getUserId());
         commandProcessor.processQQ(bot, CommandEvent.of(event));
     }

@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.bot.command;
+package com.zincoid.nullbot.core.model.bot.args;
 
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.Data;

@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.component.storage;
 
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.information.DuelInfo;
-import com.zincoid.nullbot.core.util.DuelUtil;
+import com.zincoid.nullbot.core.utils.DuelUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.util;
+package com.zincoid.nullbot.core.utils;
 
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.enums.Rarity;

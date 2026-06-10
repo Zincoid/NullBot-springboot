@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.zincoid.nullbot.bot.command.game.single.BottleCommand;
-import com.zincoid.nullbot.core.util.Base64Util;
+import com.zincoid.nullbot.core.utils.Base64Util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.component.ai.chat.plugin;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.zincoid.nullbot.core.component.resource.loader.ResourceLoader;
 import com.zincoid.nullbot.core.component.tool.BotOperator;
-import com.zincoid.nullbot.core.util.Base64Util;
+import com.zincoid.nullbot.core.utils.Base64Util;
 import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.component.ai.chat.model.Model;

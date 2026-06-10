@@ -2,7 +2,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotOmitException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
@@ -19,7 +19,7 @@ import com.zincoid.nullbot.core.model.data.po.BottlePO;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.service.game.BottleService;
 import com.zincoid.nullbot.core.service.file.FileService;
-import com.zincoid.nullbot.core.util.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgParseUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

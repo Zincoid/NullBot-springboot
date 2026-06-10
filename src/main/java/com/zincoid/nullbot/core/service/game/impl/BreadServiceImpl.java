@@ -11,7 +11,7 @@ import com.zincoid.nullbot.core.enums.Rarity;
 import com.zincoid.nullbot.core.service.game.BreadService;
 import com.zincoid.nullbot.core.service.basic.InventoryService;
 import com.zincoid.nullbot.core.service.basic.UserService;
-import com.zincoid.nullbot.core.util.DrawUtil;
+import com.zincoid.nullbot.core.utils.DrawUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

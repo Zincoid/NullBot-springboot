@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.game.single;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.enums.Emoji;
@@ -18,8 +18,8 @@ import com.zincoid.nullbot.core.model.information.GuessInfo;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.service.basic.UserService;
-import com.zincoid.nullbot.core.util.Base64Util;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.utils.Base64Util;
+import com.zincoid.nullbot.core.context.BotCtx;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -58,7 +58,7 @@ public class GuessCommand implements Command {
 
         try {
             GuessInfo guess = guessStorage.initGuess(groupId, args.nextString());
-            SettingPO setting = BotCtxUtil.getSetting();
+            SettingPO setting = BotCtx.getSetting();
 
             String start = MsgUtils.builder()
                     .text("[猜角色] ✨题目是\n")

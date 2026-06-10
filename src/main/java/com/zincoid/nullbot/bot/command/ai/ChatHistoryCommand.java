@@ -2,7 +2,7 @@ package com.zincoid.nullbot.bot.command.ai;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.component.ai.chat.enums.Role;
@@ -10,7 +10,7 @@ import com.zincoid.nullbot.core.component.ai.chat.message.BaseMessage;
 import com.zincoid.nullbot.core.component.ai.chat.message.Message;
 import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.enums.Emoji;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
@@ -40,7 +40,7 @@ public class ChatHistoryCommand implements Command {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
-        List<Message> history = qqAiClient.history(BotCtxUtil.getChatId());
+        List<Message> history = qqAiClient.history(BotCtx.getChatId());
         if (history.isEmpty())
             throw new BotInfoException(Emoji.INFO, "暂无历史");
 

@@ -9,7 +9,7 @@ import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.service.file.FileService;
-import com.zincoid.nullbot.core.util.WebCtxUtil;
+import com.zincoid.nullbot.core.context.WebCtx;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,7 +41,7 @@ public class FileController {
 
     @GetMapping("/page")
     public WebResult<PageResult<FilePO>> page(FileQuery query) {
-        query.setHidden(WebCtxUtil.getType() == 0);
+        query.setHidden(WebCtx.getType() == 0);
         PageResult<FilePO> filePage = fileService.page(query);
         return WebResult.success("查询成功", filePage);
     }
@@ -51,7 +51,7 @@ public class FileController {
             String keyword,
             String directory
     ) {
-        Integer userType = WebCtxUtil.getType();
+        Integer userType = WebCtx.getType();
         List<FilePO> fileList = fileService.search(
                 keyword, directory, userType == 0);
         return WebResult.success("查询成功", fileList);
@@ -62,7 +62,7 @@ public class FileController {
             MultipartFile file,
             @RequestParam(defaultValue = "/") String directory
     ) throws IOException {
-        Long userId = WebCtxUtil.getId();
+        Long userId = WebCtx.getId();
         fileService.upload(file, directory, userId);
         return WebResult.success("上传成功");
     }
@@ -81,7 +81,7 @@ public class FileController {
             String directory,
             String name
     ) {
-        Long userId = WebCtxUtil.getId();
+        Long userId = WebCtx.getId();
         fileService.mkdir(directory, name, userId);
         return WebResult.success("创建成功");
     }

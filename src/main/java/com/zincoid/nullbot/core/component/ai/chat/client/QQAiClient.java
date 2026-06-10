@@ -13,7 +13,7 @@ import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.component.ai.chat.tool.Tool;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolCall;
 import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -103,18 +103,18 @@ public class QQAiClient implements AiClient<QQMessage> {
     }
 
     public String chat(QQMessage message) {
-        String chatId = BotCtxUtil.getChatId();
+        String chatId = BotCtx.getChatId();
         memory.lock(chatId);
         try {
             memory.add(chatId, message);
-            if (!message.isPrivate() && BotCtxUtil.getSetting().isAntiInjection()) {
+            if (!message.isPrivate() && BotCtx.getSetting().isAntiInjection()) {
                 if (qqAntiInjector.check(message)) {
                     memory.add(chatId, QQMessage.assistant("对话被拒绝"));
                     return "Refused";
                 }
             }
             ChatStrategy strategy = message.isPrivate()
-                    ? ChatStrategy.EMBEDDING : BotCtxUtil.getSetting().getChatStrategy();
+                    ? ChatStrategy.EMBEDDING : BotCtx.getSetting().getChatStrategy();
             return switch (strategy) {
                 case DIRECT -> chatDirect(message);
                 case EMBEDDING -> chatEmbedding(message);
@@ -132,35 +132,35 @@ public class QQAiClient implements AiClient<QQMessage> {
     // ------------------------------------- DIRECT 方案 ------------------------------------
 
     private String chatDirect(QQMessage message) {
-        boolean thinking = !message.isPrivate() && BotCtxUtil.getSetting().isThinking();
-        boolean voice = !message.isPrivate() && BotCtxUtil.getSetting().isVoice();
+        boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();
+        boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), false)
                 : qqPrompter.group(message.getGroupId(), false);
         QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
-        memory.add(BotCtxUtil.getChatId(), qqMsgExecutor.direct(_message, voice));
+        memory.add(BotCtx.getChatId(), qqMsgExecutor.direct(_message, voice));
         return _message.getContent();
     }
 
     // ----------------------------------- EMBEDDING 方案 -----------------------------------
 
     private String chatEmbedding(QQMessage message) {
-        boolean thinking = !message.isPrivate() && BotCtxUtil.getSetting().isThinking();
-        boolean voice = !message.isPrivate() && BotCtxUtil.getSetting().isVoice();
+        boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();
+        boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), true)
                 : qqPrompter.group(message.getGroupId(), true);
         QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
         List<QQMessage> messages = qqMsgExecutor.chain(_message, voice);
-        for (QQMessage msg : messages) memory.add(BotCtxUtil.getChatId(), msg);
+        for (QQMessage msg : messages) memory.add(BotCtx.getChatId(), msg);
         return _message.getContent();
     }
 
     // ------------------------------------- TOOLS 方案 -------------------------------------
 
     private String chatTools(QQMessage message) {
-        boolean thinking = !message.isPrivate() && BotCtxUtil.getSetting().isThinking();
-        boolean voice = !message.isPrivate() && BotCtxUtil.getSetting().isVoice();
+        boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();
+        boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), false)
                 : qqPrompter.group(message.getGroupId(), false);
@@ -170,7 +170,7 @@ public class QQAiClient implements AiClient<QQMessage> {
 
     private QQMessage callAndStoreWithTools(String prompt, QQMessage message,
                                             boolean thinking, boolean voice) {
-        String chatId = BotCtxUtil.getChatId();
+        String chatId = BotCtx.getChatId();
         ModelResponse finalResp = null;
         for (int i = 0; i < maxToolCalls; i++) {
             List<Message> messages = new ArrayList<>();
@@ -219,7 +219,7 @@ public class QQAiClient implements AiClient<QQMessage> {
     private QQMessage plainCall(String prompt, QQMessage message, boolean thinking, int maxTokens) {
         List<Message> messages = new ArrayList<>();
         messages.add(BaseMessage.system(prompt));
-        messages.addAll(memory.get(BotCtxUtil.getChatId()));
+        messages.addAll(memory.get(BotCtx.getChatId()));
         ModelResponse resp = model.invoke(messages, thinking, maxTokens);
         return QQMessage.send(message, resp.getContent());
     }

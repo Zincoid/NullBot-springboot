@@ -8,7 +8,7 @@ import io.github.bucket4j.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
-import com.zincoid.nullbot.core.util.BotCtxUtil;
+import com.zincoid.nullbot.core.context.BotCtx;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,7 +23,7 @@ public class CommandRateLimiter {
 
     public boolean tryConsume(Long groupId, Long userId, String commandType) {
         if (isSpam(groupId, 500)) return false;
-        SettingPO setting = BotCtxUtil.getSetting();
+        SettingPO setting = BotCtx.getSetting();
         String key = switch (setting.getLimitScope()) {
             case GROUP -> "[%s]".formatted(groupId);
             case USER -> "[%s][User:%s]".formatted(groupId, userId);

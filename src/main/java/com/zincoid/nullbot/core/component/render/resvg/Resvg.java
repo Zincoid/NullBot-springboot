@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.component.render.resvg;
 
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
-import com.zincoid.nullbot.core.util.Base64Util;
+import com.zincoid.nullbot.core.utils.Base64Util;
 import lombok.RequiredArgsConstructor;
 import me.aloic.ResvgJNI;
 import org.springframework.stereotype.Component;

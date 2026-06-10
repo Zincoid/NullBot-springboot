@@ -1,11 +1,11 @@
-package com.zincoid.nullbot.core.util;
+package com.zincoid.nullbot.core.context;
 
-public final class WebCtxUtil {
+public final class WebCtx {
 
     private static final ThreadLocal<Long> userId = new ThreadLocal<>();
     private static final ThreadLocal<Integer> userType = new ThreadLocal<>();
 
-    private WebCtxUtil() {}
+    private WebCtx() {}
 
     public static void set(Long id, Integer type) {
         setId(id);
