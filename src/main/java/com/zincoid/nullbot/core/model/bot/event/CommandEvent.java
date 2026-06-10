@@ -9,7 +9,6 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -19,7 +18,6 @@ public class CommandEvent<T extends Event> {
     private T event;
     private String commandType;
     private List<String> commandParameters;
-
     private boolean authRequired = true;
     private boolean rateLimit = true;
 
@@ -28,14 +26,14 @@ public class CommandEvent<T extends Event> {
     // 基础 创建事件 (根据事件类型自动获取指令名和参数)
     public CommandEvent(T event) {
         this.event = event;
-        if(event instanceof GroupMessageEvent groupMessageEvent)
-            parseGroupMessageEvent(groupMessageEvent, groupMessageEvent.getArrayMsg().getFirst().getType() == MsgTypeEnum.reply ? 1 : 0);
-        else if(event instanceof PokeNoticeEvent)
-            parseGroupPokeNoticeEvent();
+        if (event instanceof GroupMessageEvent _event)
+            parseGroupMessageEvent(_event);
+        else if (event instanceof PokeNoticeEvent)
+            parsePokeNoticeEvent();
         else if (event instanceof GroupMsgDeleteNoticeEvent)
             parseGroupMsgDeleteNoticeEvent();
-        else if (event instanceof PrivateMessageEvent privateMessageEvent)
-            parsePrivateMessageEvent(privateMessageEvent);
+        else if (event instanceof PrivateMessageEvent _event)
+            parsePrivateMessageEvent(_event);
     }
 
     // 自定 创建事件 (嵌入调用 关键词等使用) (可优化?)
@@ -50,7 +48,8 @@ public class CommandEvent<T extends Event> {
 
     // =================== 工具方法 ===================
 
-    private void parseGroupMessageEvent(GroupMessageEvent event, int i) {
+    private void parseGroupMessageEvent(GroupMessageEvent event) {
+        int i = event.getArrayMsg().getFirst().getType() == MsgTypeEnum.reply ? 1 : 0;
         String command = event.getArrayMsg().get(i).getData().get("text").asString().substring(1);
         List<String> information = List.of(command.split(" "));
         commandType = information.getFirst();
@@ -64,15 +63,16 @@ public class CommandEvent<T extends Event> {
         commandParameters = information.subList(1, information.size());
     }
 
-    private void parseGroupPokeNoticeEvent() {
+    private void parsePokeNoticeEvent() {
         commandType = "PokeReact";
-        commandParameters = new ArrayList<>();
+        commandParameters = List.of();
     }
 
     private void parseGroupMsgDeleteNoticeEvent() {
         authRequired = false;
+        rateLimit = false;
         commandType = "RecallReact";
-        commandParameters = new ArrayList<>();
+        commandParameters = List.of();
     }
 
     @Override

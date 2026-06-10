@@ -54,7 +54,7 @@ public class RateLimitHandler implements Handler {
             }
         } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
             if (pokeNoticeEvent.getGroupId() == null) {
-                log.info("├─[PermissionHandler] 私信戳戳事件不限速");
+                log.info("├─[RateLimitHandler] 私信戳戳事件不限速");
                 chain.doHandle(bot, event, command);
                 return;
             }
