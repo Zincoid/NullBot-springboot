@@ -22,36 +22,30 @@ public class CommandProcessor {
 
     // 处理用户指令
     public void processQQ(Bot bot, CommandEvent<?> event) throws Exception {
-        Command command = registry.getCommand(event.getCommandType());
-        if (command != null) {
-            log.info("▶ [CommandProcessor::QQ] 正在处理 {} 命令...", event.getCommandType());
-            chainProcess(bot, event, command);
-            log.info("■ [CommandProcessor::QQ] {} 命令处理完毕", event.getCommandType());
-        } else
-            log.info("■ [CommandProcessor::QQ] 命令不存在");
+        doProcess("▶ [CommandProcessor::QQ]", bot, event);
     }
 
     // 处理内部指令
     @EventListener
     public void processInner(InnerCommandEvent event) throws Exception {
-        Command command = registry.getCommand(event.getEvent().getCommandType());
-        if (command != null) {
-            log.info("▷ [CommandProcessor::Inner] 正在处理 {} 命令...", event.getEvent().getCommandType());
-            chainProcess(event.getBot(), event.getEvent(), command);
-            log.info("□ [CommandProcessor::Inner] {} 命令处理完毕", event.getEvent().getCommandType());
-        } else
-            log.info("□ [CommandProcessor::Inner] 命令不存在");
+        doProcess("▷ [CommandProcessor::Inner]", event.getBot(), event.getEvent());
     }
 
     // 处理测试指令
     public void processTest(CommandEvent<?> event) throws Exception {
+        doProcess("▶ [CommandProcessor::Test]", null, event);
+    }
+
+    // =========== 工具 ===========
+
+    private void doProcess(String tag, Bot bot, CommandEvent<?> event) throws Exception {
+        if (tag == null) tag = "▶ [CommandProcessor]";
         Command command = registry.getCommand(event.getCommandType());
         if (command != null) {
-            log.info("▶ [CommandProcessor::Test] 正在处理 {} 命令...", event.getCommandType());
-            chainProcess(null, event, command);
-            log.info("■ [CommandProcessor::Test] {} 命令处理完毕", event.getCommandType());
-        } else
-            log.info("■ [CommandProcessor::Test] 命令不存在");
+            log.info("{} {} 指令处理中...", tag, event.getCommandType());
+            chainProcess(bot, event, command);
+            log.info("{} {} 指令已处理", tag, event.getCommandType());
+        } else log.info("{} 指令不存在", tag);
     }
 
     public void chainProcess(Bot bot, CommandEvent<?> event, Command command) throws Exception {

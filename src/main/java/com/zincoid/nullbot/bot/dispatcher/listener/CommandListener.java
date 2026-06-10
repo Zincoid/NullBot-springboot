@@ -30,6 +30,7 @@ import java.util.Objects;
 @Shiro
 @Component
 @RequiredArgsConstructor
+@BotContext
 public class CommandListener {
 
     /* 聊天机器人入口监听器 */
@@ -47,7 +48,6 @@ public class CommandListener {
 
     // ================================== 私聊动作捕获 ==================================
 
-    @BotContext
     @FunctionControl("PrivateCmd")
     @PrivateMessageHandler
     @Async("ThreadExecutor")
@@ -87,7 +87,6 @@ public class CommandListener {
         }
     }
 
-    @BotContext
     @FunctionControl("PrivateCmd")
     @PrivatePokeNoticeHandler
     @Async("ThreadExecutor")
@@ -100,7 +99,6 @@ public class CommandListener {
 
     // ================================== 群聊动作捕获 ==================================
 
-    @BotContext
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)
     @Async("ThreadExecutor")
@@ -136,7 +134,6 @@ public class CommandListener {
         }
     }
 
-    @BotContext
     @FunctionControl("PokeDetect")
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
@@ -148,7 +145,6 @@ public class CommandListener {
         }
     }
 
-    @BotContext
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NEED)
     @Async("ThreadExecutor")
@@ -168,7 +164,6 @@ public class CommandListener {
                 event, "Chat", List.of(parsed), true, true));
     }
 
-    @BotContext
     @FunctionControl("RecallDetect")
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")

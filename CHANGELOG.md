@@ -953,3 +953,9 @@
 - 优化 MsgParseUtil 工具类 - 解析使用数组消息格式；
 - 优化 ArrayMsg 属性获取；
 - 调整 项目结构。
+
+### 2026.6.11
+
+- 重构 BotCtx 上下文管理机制并优化 CommandEvent 信息获取；
+- 优化 InnerCommandEvent 和 CommandProcessor 代码；
+- 增强 BotContext 注解 - 同时支持注解类和方法。
