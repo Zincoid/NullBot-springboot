@@ -2,12 +2,12 @@ package com.zincoid.nullbot.bot.dispatcher.handler.impl;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
+import com.zincoid.nullbot.core.enums.EventScope;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import com.zincoid.nullbot.core.component.control.CommandRateLimiter;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,50 +28,31 @@ public class RateLimitHandler implements Handler {
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         if (!enabled) {
-            log.info("├─[RateLimitHandler] 未启用速率限制");
+            log.info("├─[RateLimitHandler] 未启用限速器");
             chain.doHandle(bot, event, command);
             return;
         }
-
         if (!event.isRateLimit()) {
-            log.info("├─[RateLimitHandler] 无需速率限制");
+            log.info("├─[RateLimitHandler] 事件无需限速");
+            chain.doHandle(bot, event, command);
+            return;
+        }
+        if (event.getEventScope() == EventScope.PRIVATE) {
+            log.info("├─[RateLimitHandler] 私聊无需限速");
             chain.doHandle(bot, event, command);
             return;
         }
 
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            if (
-                    commandRateLimiter.tryConsume(
-                            groupMessageEvent.getGroupId(),
-                            groupMessageEvent.getUserId(),
-                            event.getCommandType())
-            ) {
-                log.info("├─[RateLimitHandler] 基本消息未达到速率限制");
-                chain.doHandle(bot, event, command);
-            } else {
-                log.info("├─[RateLimitHandler] 基本消息达到速率限制");
-                bot.sendGroupMsg(groupMessageEvent.getGroupId(), "请求太多啦！", false);
-            }
-        } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            if (pokeNoticeEvent.getGroupId() == null) {
-                log.info("├─[RateLimitHandler] 私信戳戳事件不限速");
-                chain.doHandle(bot, event, command);
-                return;
-            }
-            if (
-                    commandRateLimiter.tryConsume(
-                            pokeNoticeEvent.getGroupId(),
-                            pokeNoticeEvent.getUserId(),
-                            event.getCommandType())
-            ) {
-                log.info("├─[RateLimitHandler] 戳一戳未达到速率限制");
-                chain.doHandle(bot, event, command);
-            } else {
-                log.info("├─[RateLimitHandler] 戳一戳达到速率限制");
-            }
-        } else {
-            log.info("├─[RateLimitHandler] 默认不限速的事件类型");
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        if (commandRateLimiter.tryConsume(groupId, userId, event.getCommandType())) {
+            log.info("├─[RateLimitHandler] 未达速率限制");
             chain.doHandle(bot, event, command);
+        } else {
+            log.info("├─[RateLimitHandler] 达到速率限制");
+            // 仅文字消息提示限速 戳一戳等交互静默忽略
+            if (event.getEvent() instanceof GroupMessageEvent)
+                bot.sendGroupMsg(groupId, "请求太多啦！", false);
         }
     }
 }

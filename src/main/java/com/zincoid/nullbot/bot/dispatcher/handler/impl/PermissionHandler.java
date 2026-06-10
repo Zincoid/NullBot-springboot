@@ -2,15 +2,12 @@ package com.zincoid.nullbot.bot.dispatcher.handler.impl;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
-import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
-import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
+import com.zincoid.nullbot.core.enums.EventScope;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import com.zincoid.nullbot.core.service.basic.GroupService;
 import com.zincoid.nullbot.core.service.basic.UserService;
@@ -47,30 +44,20 @@ public class PermissionHandler implements Handler {
 
         Class<? extends Command> commandClass = command.getClass();
         List<String> params = event.getCommandParameters();
-        Long groupId;
-        Long userId;
+        EventScope eventScope = event.getEventScope();
 
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            groupId = groupMessageEvent.getGroupId();
-            userId = groupMessageEvent.getUserId();
-        } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            groupId = pokeNoticeEvent.getGroupId() == null ? 0L : pokeNoticeEvent.getGroupId();  // 群号 0 代表私聊
-            userId = pokeNoticeEvent.getUserId();
-        } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent  groupMsgDeleteNoticeEvent) {
-            groupId = groupMsgDeleteNoticeEvent.getGroupId();
-            userId = groupMsgDeleteNoticeEvent.getUserId();
-        } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
-            groupId = 0L;  // 群号 0 代表私聊
-            userId = privateMessageEvent.getUserId();
-        } else {
-            log.info("├─[PermissionHandler] 默认通过的事件类型");
+        // =================== 未知类型验证 ===================
+
+        if (eventScope == EventScope.UNKNOWN) {
+            log.info("├─[PermissionHandler] 未知事件默认通过");
             chain.doHandle(bot, event, command);
             return;
         }
 
-        // =================== 私聊独立验证 ===================
+        // =================== 私聊类型验证 ===================
 
-        if (groupId == 0L) {
+        if (eventScope == EventScope.PRIVATE) {
+            Long userId = event.getUserId();
             if (inMaintenance) {
                 log.info("├─[PermissionHandler] 系统已锁定");
                 bot.sendPrivateMsg(userId, "[访问] 🔐系统已锁定", false);
@@ -88,13 +75,18 @@ public class PermissionHandler implements Handler {
             return;
         }
 
-        // =================== 限权信息查询 ===================
+        // =================== 群聊类型验证 ===================
+
+        Long userId = event.getUserId();
+        Long groupId = event.getGroupId();
+
+        // ------------------- 限权信息查询 -------------------
 
         int commandAccess = command.getAccess();
         int groupAccess = groupService.getAccess(groupId);
         int userAccess = userService.getAccess(userId);
 
-        // =================== 系统锁定验证 ===================
+        // ------------------- 系统锁定验证 -------------------
 
         if (inMaintenance && userAccess < 2) {
             log.info("├─[PermissionHandler] 系统已锁定");
@@ -104,7 +96,7 @@ public class PermissionHandler implements Handler {
             return;
         }
 
-        // =================== 指令限权验证 ===================
+        // ------------------- 指令限权验证 -------------------
 
         if (groupAccess >= commandAccess) {
             log.info("├─[PermissionHandler] 群限权满足");
@@ -128,7 +120,7 @@ public class PermissionHandler implements Handler {
             log.info("├─[PermissionHandler] 无需验证用户限权");
         }
 
-        // =================== 群组停用验证 ===================
+        // ------------------- 群组停用验证 -------------------
 
         if (!params.isEmpty() && "-x".equals(params.getFirst())) {
             if (userAccess < 1) {
@@ -153,7 +145,7 @@ public class PermissionHandler implements Handler {
             return;
         }
 
-        // =================== 用户禁用验证 ===================
+        // ------------------- 用户禁用验证 -------------------
 
         if (!params.isEmpty() && "-b".equals(params.getFirst())) {
             if (userAccess < 1) {

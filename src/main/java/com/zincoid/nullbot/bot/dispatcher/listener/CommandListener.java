@@ -39,7 +39,7 @@ public class CommandListener {
     private final CommandProcessor commandProcessor;
     private final MonitorListener monitorListener;
     private final SecurityCodeScheduler securityCodeScheduler;
-    private final PermissionHandler  permissionHandler;
+    private final PermissionHandler permissionHandler;
 
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
@@ -67,7 +67,7 @@ public class CommandListener {
         if (message.startsWith(commandPrefix)) {
             // 普通命令处理
             log.info("◉ [PrivateAction:Cmd] 私聊 {}({}) -> {}", userName, userId, message);
-            commandProcessor.processQQ(bot, new CommandEvent<>(event));
+            commandProcessor.processQQ(bot, CommandEvent.of(event));
         } else if (message.startsWith("#")) {
             // 授权命令处理
             log.info("◉ [PrivateAction:Auth] 私聊 {}({}) -> {}", userName, userId, message);
@@ -83,7 +83,7 @@ public class CommandListener {
             // 私聊对话处理
             String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
             log.info("◉ [PrivateAction:Chat] 私聊 {}({}) -> {}", userName, userId, parsed);
-            commandProcessor.processQQ(bot, new CommandEvent<>(
+            commandProcessor.processQQ(bot, CommandEvent.of(
                     event, "Chat", List.of(parsed), false, false));
         }
     }
@@ -95,7 +95,7 @@ public class CommandListener {
     public void onPrivatePokeInteraction(Bot bot, PokeNoticeEvent event) throws Exception {
         if (Objects.equals(event.getTargetId(), event.getSelfId())) {
             log.info("◉ [PrivateAction:Poke] 私聊 -> From {} to {} (仅戳Bot)", event.getUserId(), event.getTargetId());
-            commandProcessor.processQQ(bot, new CommandEvent<>(event));
+            commandProcessor.processQQ(bot, CommandEvent.of(event));
         }
     }
 
@@ -128,13 +128,13 @@ public class CommandListener {
         if (message.startsWith(commandPrefix)) {
             // 普通命令处理
             log.info("◉ [GroupAction:Cmd] 群聊 {} - {}({}) -> {}", groupId, userName, userId, message);
-            commandProcessor.processQQ(bot, new CommandEvent<>(event));
+            commandProcessor.processQQ(bot, CommandEvent.of(event));
         } else if (event.getArrayMsg().size() > 1 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
             // 引用命令处理
             JsonNode textNode = event.getArrayMsg().get(1).getData().get("text");
             if (textNode == null || !textNode.asString().startsWith(commandPrefix)) return;
             log.info("◉ [GroupAction:ReplyCmd] 群聊 {} - {}({}) -> {}", groupId, userName, userId, message);
-            commandProcessor.processQQ(bot, new CommandEvent<>(event));
+            commandProcessor.processQQ(bot, CommandEvent.of(event));
         }
     }
 
@@ -146,7 +146,7 @@ public class CommandListener {
         if (!BotCtxUtil.getSetting().isPokeDetect()) return;
         if (Objects.equals(event.getTargetId(), event.getSelfId())) {
             log.info("◉ [GroupAction:Poke] 群聊 {} -> From {} to {} (仅戳Bot)", event.getGroupId(), event.getUserId(), event.getTargetId());
-            commandProcessor.processQQ(bot, new CommandEvent<>(event));
+            commandProcessor.processQQ(bot, CommandEvent.of(event));
         }
     }
 
@@ -166,7 +166,7 @@ public class CommandListener {
         String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupAction:At] 群聊 {} - {}({}) -> {}",
                 event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
-        commandProcessor.processQQ(bot, new CommandEvent<>(
+        commandProcessor.processQQ(bot, CommandEvent.of(
                 event, "Chat", List.of(parsed), true, true));
     }
 
@@ -177,6 +177,6 @@ public class CommandListener {
     public void onGroupRecallInteraction(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
         if (!BotCtxUtil.getSetting().isRecallDetect()) return;
         log.info("◉ [GroupAction:Recall] 群聊 {} -> {}", event.getGroupId(), event.getUserId());
-        commandProcessor.processQQ(bot, new CommandEvent<>(event));
+        commandProcessor.processQQ(bot, CommandEvent.of(event));
     }
 }

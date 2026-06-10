@@ -5,26 +5,40 @@ import com.zincoid.nullbot.core.util.BotCtxUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 public class InnerCommandEvent {
 
-    private Bot bot;
-    private CommandEvent<?> event;
+    private final Bot bot;
+    private final CommandEvent<?> event;
 
     public static InnerCommandEvent of(String command) {
-        return new InnerCommandEvent(
+        List<String> information = List.of(command.split(" "));
+        return InnerCommandEvent.of(
                 BotCtxUtil.getBot(),
-                new CommandEvent<>(BotCtxUtil.getEvent(), command,
+                CommandEvent.of(
+                        BotCtxUtil.getEvent(),
+                        information.getFirst(),
+                        information.subList(1, information.size()),
                         !BotCtxUtil.getIsPrivate() && BotCtxUtil.getSetting().isInnerCmdAuth(),
-                        false)
+                        false
+                )
         );
     }
 
     public static InnerCommandEvent of(String command, boolean authRequired) {
-        return new InnerCommandEvent(
+        List<String> information = List.of(command.split(" "));
+        return InnerCommandEvent.of(
                 BotCtxUtil.getBot(),
-                new CommandEvent<>(BotCtxUtil.getEvent(), command, authRequired, false)
+                CommandEvent.of(
+                        BotCtxUtil.getEvent(),
+                        information.getFirst(),
+                        information.subList(1, information.size()),
+                        authRequired,
+                        false
+                )
         );
     }
 }

@@ -53,9 +53,7 @@ public class MonitorListener {
         double freq = 0.001;  // 固定自动投出频率
         if (freq < Math.random()) return;
         log.info("◉ [GroupMonitor:BottleAutoThrow] 自动投出漂流瓶 {} -> {}", event.getUserId(), event.getMessage());
-        commandProcessor.processQQ(bot, new CommandEvent<>(
-                event, "Bottle", List.of("-auto"), false, false));
-
+        commandProcessor.processQQ(bot, CommandEvent.of(event, "Bottle", List.of("-auto"), false, false));
     }
 
     @FunctionControl("AIAutoReply")
@@ -72,8 +70,7 @@ public class MonitorListener {
         if (freq < Math.random()) return false;
         String parsed = MsgParseUtil.formatUserMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至群聊 {}", event.getGroupId());
-        commandProcessor.processQQ(bot, new CommandEvent<>(
-                event, "Chat", List.of(parsed), false, false));
+        commandProcessor.processQQ(bot, CommandEvent.of(event, "Chat", List.of(parsed), false, false));
         return true;
     }
 
@@ -128,8 +125,8 @@ public class MonitorListener {
         }
         if (event.getMessage().contains("受着")) {
             log.info("◉ [GroupMonitor:KeywordAct] 检测到\"受着\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
-            commandProcessor.processQQ(bot, new CommandEvent<>(event, "UserBan", List.of(event.getUserId().toString(), "1"), false, false));
-            // commandProcessor.processQQ(bot, new CommandEvent<>(event, "Reply", List.of("你也受着"), false, false));
+            commandProcessor.processQQ(bot, CommandEvent.of(event, "UserBan", List.of(event.getUserId().toString(), "1"), false, false));
+            // commandProcessor.processQQ(bot, CommandEvent.of(event, "Reply", List.of("你也受着"), false, false));
         }
     }
 }

@@ -1,15 +1,12 @@
 package com.zincoid.nullbot.bot.dispatcher.handler.impl;
 
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
-import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
-import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.command.Command;
 import com.zincoid.nullbot.bot.dispatcher.CommandHandlerChain;
 import com.zincoid.nullbot.bot.dispatcher.handler.Handler;
+import com.zincoid.nullbot.core.enums.EventScope;
 import com.zincoid.nullbot.core.model.bot.event.CommandEvent;
 import com.zincoid.nullbot.core.service.system.StatsService;
 import com.zincoid.nullbot.core.component.tool.WsSender;
@@ -28,39 +25,19 @@ public class StatsHandler implements Handler {
     @Override
     public void handle(Bot bot, Command command, CommandEvent<?> event, CommandHandlerChain chain) throws Exception {
         String commandType = command.getClass().getSimpleName().replace("Command", "");
-        Long groupId;
-        Long userId;
+        EventScope eventScope = event.getEventScope();
 
-        if (event.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
-            groupId = groupMessageEvent.getGroupId();
-            userId = groupMessageEvent.getUserId();
-        } else if (event.getEvent() instanceof PokeNoticeEvent pokeNoticeEvent) {
-            groupId = pokeNoticeEvent.getGroupId() == null ? 0L : pokeNoticeEvent.getGroupId();  // 群号 0 代表私聊
-            userId = pokeNoticeEvent.getUserId();
-        } else if (event.getEvent() instanceof GroupMsgDeleteNoticeEvent groupMsgDeleteNoticeEvent) {
-            groupId = groupMsgDeleteNoticeEvent.getGroupId();
-            userId = groupMsgDeleteNoticeEvent.getUserId();
-        } else if (event.getEvent() instanceof PrivateMessageEvent privateMessageEvent) {
-            groupId = 0L;  // 群号 0 代表私聊
-            userId = privateMessageEvent.getUserId();
-        } else {
+        if (eventScope == EventScope.UNKNOWN) {
             log.info("├─[StatsHandler] 默认不记录的事件");
             chain.doHandle(bot, event, command);
             return;
         }
 
-        // WebSocketHandler.broadcast(
-        //         groupId == 0 ? "私聊" : "群聊" + groupId,
-        //         "%s(%s) -> %s %s".formatted(
-        //                 bot.getStrangerInfo(userId, true).getData().getNickname(),
-        //                 userId,
-        //                 commandType,
-        //                 String.join(" ", event.getCommandParameters())
-        //         )
-        // );
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
 
         wsSender.broadcast(
-                groupId == 0 ? "私聊" : "群聊 " + groupId,
+                eventScope == EventScope.PRIVATE ? "私聊" : "群聊 " + groupId,
                 "%s(%s) -> %s %s".formatted(
                         bot.getStrangerInfo(userId, true).getData().getNickname(),
                         userId,

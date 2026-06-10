@@ -945,4 +945,8 @@
 ### 2026.6.10
 
 - 新增 Trait 内部指令 - 实现多种 AI 性格模式切换；
-- 增强 RandomSaying 指令 - 支持通过 AT 指定用户。
+- 增强 RandomSaying 指令 - 支持通过 AT 指定用户；
+- 优化 bot 入口 dispatcher 包：
+  - 提取重复 ID 获取逻辑至 CommandEvent 类；
+  - CommandEvent 创建改为静态重载方法；
+  - 优化文本。
