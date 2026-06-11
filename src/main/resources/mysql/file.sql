@@ -8,7 +8,7 @@ CREATE TABLE `file`(
     file_name VARCHAR(255) NOT NULL,
     file_size BIGINT NOT NULL,
     directory VARCHAR(255) NOT NULL,
-    is_dir INT DEFAULT 0 NOT NULL,
+    is_dir BOOLEAN NOT NULL DEFAULT FALSE,
     visible BOOLEAN NOT NULL DEFAULT TRUE,
     owner_id BIGINT,
     owner_name VARCHAR(255),

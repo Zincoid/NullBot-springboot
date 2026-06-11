@@ -964,3 +964,7 @@
   - 移除 InnerCommandEvent；
   - 简化 Command 相关类名和参数名；
   - 优化 部分逻辑。
+- 优化 Endfield 指令 - 增强版本获取方式；
+- 优化 FilePO 类：
+  - 优化 getName 方法；
+  - isDir 参数类型改为 Boolean。

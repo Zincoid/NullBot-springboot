@@ -19,13 +19,13 @@ public class FilePO {
     private String fileName;
     private Long fileSize;
     private String directory;
-    private Integer isDir;
+    private Boolean isDir;
     private Boolean visible;
     private Long ownerId;
     private String ownerName;
     private LocalDateTime lastModified;
 
-    public FilePO(String fileName, Long fileSize, String directory, Integer isDir,
+    public FilePO(String fileName, Long fileSize, String directory, Boolean isDir,
                   Boolean visible, Long ownerId, String ownerName, LocalDateTime lastModified) {
         this.fileName = fileName;
         this.fileSize = fileSize;
@@ -42,7 +42,7 @@ public class FilePO {
     }
 
     public String getName() {
-        if (fileName.contains("."))
+        if (!isDir && fileName.contains("."))
             return fileName.substring(0, fileName.lastIndexOf("."));
         return fileName;
     }

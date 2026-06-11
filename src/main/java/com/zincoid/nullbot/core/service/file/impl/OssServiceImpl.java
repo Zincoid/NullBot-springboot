@@ -48,7 +48,7 @@ public class OssServiceImpl implements OssService {
             log.warn("[OssService] 文件路径不唯一 - path={}", path);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        if (files.getFirst().getIsDir() == 1) {
+        if (files.getFirst().getIsDir()) {
             log.warn("[OssService] 目标是文件夹 - path={}", path);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -62,7 +62,7 @@ public class OssServiceImpl implements OssService {
             log.warn("[OssService] 文件记录未找到 - id={}", id);
             return ResponseEntity.notFound().build();
         }
-        if (file.getIsDir() == 1) {
+        if (file.getIsDir()) {
             log.warn("[OssService] 目标是文件夹 - id={}", id);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

@@ -7,6 +7,7 @@ import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.enums.Emoji;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
@@ -25,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @CmdMapping({"Endfield", "endfield", "end", "终末地查询", "终末地"})
@@ -34,8 +36,8 @@ public class EndfieldCmd implements Cmd {
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT_SECONDS = 30;  // 等待超时时间
-    private static final Set<String> ALLOWED_VERSIONS = Set.of("1.0", "1.1", "1.2");  // 可用资源版本
-    private static final String DEFAULT_VERSION = "1.2";  // 默认资源版本
+    private static Set<String> ALLOWED_VERSIONS;  // 可用资源版本
+    private static String DEFAULT_VERSION;  // 默认资源版本
 
     private final Map<Long, String> versions = new ConcurrentHashMap<>();  // 群聊版本存储
 
@@ -43,6 +45,15 @@ public class EndfieldCmd implements Cmd {
     private final FileService fileService;
     private final BotInputManager botInputManager;
     private final ResourceUrlBuilder resourceUrlBuilder;
+
+    @PostConstruct
+    public void init() {
+        ALLOWED_VERSIONS = fileService.list(storageProperties.getResourcePath() + "/endfield").stream()
+                .map(FilePO::getFileName).collect(Collectors.toSet());
+        DEFAULT_VERSION = ALLOWED_VERSIONS.stream()
+                .filter(v -> Character.isDigit(v.charAt(0)))
+                .max(Comparator.naturalOrder()).orElse("public");
+    }
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
@@ -58,6 +69,12 @@ public class EndfieldCmd implements Cmd {
                 throw new BotWarnException("版本非法");
             versions.put(groupId, newVersion);
             bot.sendGroupMsg(groupId, "\uD83D\uDD79️版本已切换", false);
+            return;
+        }
+
+        if ("-r".equals(keyword)) {
+            init();
+            bot.sendGroupMsg(groupId, "\uD83D\uDD79️版本已更新", false);
             return;
         }
 

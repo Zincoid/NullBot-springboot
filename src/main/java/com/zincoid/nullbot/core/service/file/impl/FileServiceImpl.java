@@ -77,7 +77,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         if (lambdaQuery().eq(FilePO::getDirectory, rootDir)
                 .eq(FilePO::getFileName, rootName).one() != null)
             return false;
-        FilePO newRoot = new FilePO(rootName, 0L, rootDir, 1,
+        FilePO newRoot = new FilePO(rootName, 0L, rootDir, true,
                 true, 0L, "root", LocalDateTime.now());
         FilePO existRoot = lambdaQuery()
                 .eq(FilePO::getOwnerId, 0L)
@@ -149,7 +149,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         }
         try {
             save(new FilePO(file.getOriginalFilename(), file.getSize(),
-                    directory, 0, dir.getVisible(), uid,
+                    directory, false, dir.getVisible(), uid,
                     adminService.getById(uid).getUsername(),
                     getLastModifiedTime(Path.of(filePath))));
         } catch (Exception e) {
@@ -171,7 +171,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     public void delete(Integer id) {
         FilePO file = checkFileExists(id);
         String filePath = file.getDirectory() + "/" + file.getFileName();
-        if (file.getIsDir() == 1)
+        if (file.getIsDir())
             lambdaUpdate()
                     .eq(FilePO::getDirectory, filePath)
                     .or()
@@ -214,7 +214,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
             throw new RuntimeException("目录创建失败", e);
         }
         try {
-            save(new FilePO(name, 0L, directory, 1, dir.getVisible(), uid,
+            save(new FilePO(name, 0L, directory, true, dir.getVisible(), uid,
                     adminService.getById(uid).getUsername(),
                     getLastModifiedTime(dirPath)));
         } catch (Exception e) {
@@ -239,7 +239,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
 
         String oldFilePath = file.getDirectory() + "/" + file.getFileName();
         String newFilePath = file.getDirectory() + "/" + filename;
-        if (file.getIsDir() == 1)
+        if (file.getIsDir())
             updateSubFilesPath(oldFilePath, newFilePath);
         file.setFileName(filename);
         updateById(file);
@@ -258,10 +258,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         checkNameConflict(directory, file.getFileName(), null);
 
         String sourcePath = file.getDirectory() + "/" + file.getFileName();
-        if (file.getIsDir() == 1 && directory.startsWith(sourcePath + "/"))
+        if (file.getIsDir() && directory.startsWith(sourcePath + "/"))
             throw new CommonException("无法将目录移入自身子目录");
         String targetPath = directory + "/" + file.getFileName();
-        if (file.getIsDir() == 1)
+        if (file.getIsDir())
             updateSubFilesPath(sourcePath, targetPath);
         file.setDirectory(directory);
         updateById(file);
@@ -273,7 +273,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     @Transactional
     public void visualize(Integer id, boolean flag) {
         FilePO file = checkFileExists(id);
-        if (file.getIsDir() == 1) {
+        if (file.getIsDir()) {
             String subDirPath = file.getDirectory() + "/" + file.getFileName();
             lambdaUpdate()
                     .eq(FilePO::getDirectory, subDirPath)
@@ -305,10 +305,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         FilePO dir = lambdaQuery()
                 .eq(FilePO::getDirectory, path.getParent().toString())
                 .eq(FilePO::getFileName, path.getFileName().toString())
-                .eq(FilePO::getIsDir, 1)
+                .eq(FilePO::getIsDir, true)
                 .one();
         if (dir == null) return false;
-        return save(new FilePO(filename, fileSize, directory, 0,
+        return save(new FilePO(filename, fileSize, directory, false,
                 dir.getVisible(), ownerId, ownerName, lastModified));
     }
 
@@ -390,7 +390,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         FilePO dir = lambdaQuery()
                 .eq(FilePO::getDirectory, path.getParent().toString())
                 .eq(FilePO::getFileName, path.getFileName().toString())
-                .eq(FilePO::getIsDir, 1)
+                .eq(FilePO::getIsDir, true)
                 .one();
         if (dir == null)
             throw new CommonException("数据库目录不存在");
@@ -497,7 +497,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                 // 新增文件记录
                 save(new FilePO(filePath.getFileName().toString(),
                         info.size(), getNormalizedPath(filePath.getParent().toString()),
-                        info.isDirectory() ? 1 : 0, null, null, null,
+                        info.isDirectory(), null, null, null,
                         Instant.ofEpochMilli(info.lastModified()).atZone(ZoneId.systemDefault()).toLocalDateTime()));
             }
         }

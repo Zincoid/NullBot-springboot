@@ -9,6 +9,7 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/zincoid/nullbot/core/mapper/SayingMapper.java" value="35934583-5f88-4fd0-86ba-b478c28c247d" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/zincoid/nullbot/core/mapper/StatsMapper.java" value="35934583-5f88-4fd0-86ba-b478c28c247d" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/zincoid/nullbot/core/mapper/UserMapper.java" value="135bc4e9-c1a8-482d-8c52-3205c86100b5" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/mysql/bottle.sql" value="35934583-5f88-4fd0-86ba-b478c28c247d" />
     <file url="file://$PROJECT_DIR$/src/main/resources/mysql/data/itemlist.sql" value="135bc4e9-c1a8-482d-8c52-3205c86100b5" />
     <file url="file://$PROJECT_DIR$/src/main/resources/mysql/file.sql" value="135bc4e9-c1a8-482d-8c52-3205c86100b5" />
     <file url="file://$PROJECT_DIR$/src/main/resources/mysql/game.sql" value="135bc4e9-c1a8-482d-8c52-3205c86100b5" />
