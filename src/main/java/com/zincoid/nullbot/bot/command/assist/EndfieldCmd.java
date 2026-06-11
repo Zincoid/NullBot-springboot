@@ -74,6 +74,7 @@ public class EndfieldCmd implements Cmd {
 
         if ("-r".equals(keyword)) {
             init();
+            versions.remove(groupId);
             bot.sendGroupMsg(groupId, "\uD83D\uDD79️版本已更新", false);
             return;
         }
@@ -148,8 +149,12 @@ public class EndfieldCmd implements Cmd {
                 功能: 获取终末地攻略
                 限权: %d 级
                 格式:
-                1. Endfield [可选: -c(连查模式)] [可选: 关键字]
-                2. Endfield [-v] [版本号]
+                1. 按关键字检索
+                - Endfield [可选: -c(启用连查)] [可选: 关键字]
+                2. 资源版本切换
+                - Endfield [-v] [版本号]
+                3. 更新版本目录
+                - Endfield [-r]
                 别名: endfield/end/终末地查询/终末地""", getAccess()
         );
     }
