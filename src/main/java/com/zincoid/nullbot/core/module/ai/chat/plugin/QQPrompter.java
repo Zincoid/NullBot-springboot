@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.module.ai.chat.plugin;
 
-import com.zincoid.nullbot.bot.gateway.processor.CommandRegistry;
+import com.zincoid.nullbot.bot.gateway.processor.CmdRegistry;
 import com.zincoid.nullbot.core.module.control.SysMsgManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class QQPrompter {
     private static final String MEMORY_PROMPT;
 
     private final SysMsgManager sysMsgManager;
-    private final CommandRegistry commandRegistry;
+    private final CmdRegistry cmdRegistry;
 
     static {
 
@@ -74,7 +74,7 @@ public class QQPrompter {
         sb.append(MEMORY_PROMPT.formatted(
                 formatMemories(sysMsgManager.getUserMemory(userId))));
         if (cmd) sb.append(CMD_PROMPT.formatted(
-                commandRegistry.getCommandHelpsForAI(QQCmdAllows.getPm())));
+                cmdRegistry.getCmdHelpsForAI(QQCmdAllows.getPm())));
         return sb.toString();
     }
 
@@ -85,7 +85,7 @@ public class QQPrompter {
         sb.append(MEMORY_PROMPT.formatted(
                 sysMsgManager.getGroupMemory(groupId)));
         if (cmd) sb.append(CMD_PROMPT.formatted(
-                commandRegistry.getCommandHelpsForAI(QQCmdAllows.getGc())));
+                cmdRegistry.getCmdHelpsForAI(QQCmdAllows.getGc())));
         return sb.toString();
     }
 

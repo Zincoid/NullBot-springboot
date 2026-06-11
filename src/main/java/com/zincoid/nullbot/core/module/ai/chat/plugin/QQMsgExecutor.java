@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.module.ai.chat.plugin;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
-import com.zincoid.nullbot.bot.gateway.processor.CommandEvent;
+import com.zincoid.nullbot.bot.gateway.processor.CmdEvent;
 import com.zincoid.nullbot.core.module.ai.voice.TtsClient;
 import com.zincoid.nullbot.core.module.resource.loader.ResourceLoader;
 import com.zincoid.nullbot.core.module.system.BotOperator;
@@ -79,10 +79,10 @@ public class QQMsgExecutor {
         while (matcher.find()) {
             String segment = matcher.group(1).trim();
             if (segment.startsWith("<cmd>") && segment.endsWith("</cmd>")) {
-                String command = segment.substring(
+                String cmd = segment.substring(
                         "<cmd>".length(), segment.length() - "</cmd>".length()).trim();
-                if (command.isEmpty()) continue;
-                eventPublisher.publishEvent(CommandEvent.of(command));
+                if (cmd.isEmpty()) continue;
+                eventPublisher.publishEvent(CmdEvent.of(cmd));
                 messages.add(QQMessage.assistant(segment));
             } else {
                 if (segment.isEmpty()) continue;

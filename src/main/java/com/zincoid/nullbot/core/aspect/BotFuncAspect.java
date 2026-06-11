@@ -6,7 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import com.zincoid.nullbot.core.annotation.FunctionControl;
+import com.zincoid.nullbot.core.annotation.FuncControl;
 import com.zincoid.nullbot.core.module.control.FunctionManager;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ public class BotFuncAspect {
     private final FunctionManager functionManager;
 
     @Around("@annotation(function)")
-    public Object check(ProceedingJoinPoint joinPoint, FunctionControl function) throws Throwable {
+    public Object check(ProceedingJoinPoint joinPoint, FuncControl function) throws Throwable {
         if (functionManager.isEnabled(function.value()))
             return joinPoint.proceed();
         // 根据方法返回类型返回默认值

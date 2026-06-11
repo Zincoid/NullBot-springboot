@@ -4,7 +4,7 @@ import com.zincoid.nullbot.core.module.ai.chat.client.QQAiClient;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.module.control.CommandRateLimiter;
+import com.zincoid.nullbot.core.module.control.CmdRateLimiter;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.service.system.SettingService;
@@ -23,12 +23,12 @@ import java.util.List;
 public class SettingController {
 
     private final SettingService settingService;
-    private final CommandRateLimiter commandRateLimiter;
+    private final CmdRateLimiter cmdRateLimiter;
     private final QQAiClient qqAiClient;
 
-    public SettingController(SettingService settingService, CommandRateLimiter commandRateLimiter, @Lazy QQAiClient qqAiClient) {
+    public SettingController(SettingService settingService, CmdRateLimiter cmdRateLimiter, @Lazy QQAiClient qqAiClient) {
         this.settingService = settingService;
-        this.commandRateLimiter = commandRateLimiter;
+        this.cmdRateLimiter = cmdRateLimiter;
         this.qqAiClient = qqAiClient;
     }
 
@@ -49,7 +49,7 @@ public class SettingController {
         if (settingService.set(setting)) {
             if (oldScope != ChatScope.PERSONAL)
                 qqAiClient.clear(oldScope + "_" + groupId);
-            commandRateLimiter.reset(groupId);
+            cmdRateLimiter.reset(groupId);
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新失败");

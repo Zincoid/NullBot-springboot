@@ -959,4 +959,8 @@
 - 重构 BotCtx 上下文管理机制并优化 CommandEvent 信息获取；
 - 优化 InnerCommandEvent 和 CommandProcessor 代码；
 - 增强 BotContext 注解 - 同时支持注解类和方法；
-- 调整 项目结构。
+- 优化 项目结构：
+  - 优化 包结构；
+  - 移除 InnerCommandEvent；
+  - 简化 Command 相关类名和参数名；
+  - 优化 部分逻辑。

@@ -9,14 +9,14 @@ import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.mikuac.shiro.enums.AtEnum;
 import com.mikuac.shiro.enums.MsgTypeEnum;
-import com.zincoid.nullbot.bot.gateway.processor.CommandProcessor;
+import com.zincoid.nullbot.bot.gateway.handler.AuthHandler;
+import com.zincoid.nullbot.bot.gateway.processor.CmdEvent;
+import com.zincoid.nullbot.bot.gateway.processor.CmdProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.BotContext;
-import com.zincoid.nullbot.core.annotation.FunctionControl;
+import com.zincoid.nullbot.core.annotation.FuncControl;
 import com.zincoid.nullbot.core.module.security.SecurityCodeScheduler;
-import com.zincoid.nullbot.bot.gateway.handler.PermissionHandler;
-import com.zincoid.nullbot.bot.gateway.processor.CommandEvent;
 import com.zincoid.nullbot.core.context.BotCtx;
 import com.zincoid.nullbot.core.utils.MsgParseUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,10 +36,10 @@ public class BotListener {
     /* 聊天机器人入口监听器 */
     /* Shiro 2.3.3 框架有BUG 回复消息中有@机器人和另一个人时会被判定为 AtEnum.NOT_NEED 的方法 */
 
-    private final CommandProcessor commandProcessor;
+    private final CmdProcessor cmdProcessor;
     private final BotMonitor botMonitor;
     private final SecurityCodeScheduler securityCodeScheduler;
-    private final PermissionHandler permissionHandler;
+    private final AuthHandler authHandler;
 
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
@@ -48,7 +48,7 @@ public class BotListener {
 
     // ================================== 私聊动作捕获 ==================================
 
-    @FunctionControl("PrivateCmd")
+    @FuncControl("PrivateCmd")
     @PrivateMessageHandler
     @Async("ThreadExecutor")
     public void onPrivateMessageInteraction(Bot bot, PrivateMessageEvent event) throws Exception {
@@ -66,12 +66,12 @@ public class BotListener {
         if (message.startsWith(commandPrefix)) {
             // 普通命令处理
             log.info("◉ [PrivateAction:Cmd] 私聊 {}({}) -> {}", userName, userId, message);
-            commandProcessor.processQQ(bot, CommandEvent.of(event));
+            cmdProcessor.processQQ(bot, CmdEvent.of(event));
         } else if (message.startsWith("#")) {
             // 授权命令处理
             log.info("◉ [PrivateAction:Auth] 私聊 {}({}) -> {}", userName, userId, message);
             if (securityCodeScheduler.validateCode("access", message.substring(1))) {
-                permissionHandler.addAllowedPrivateUser(userId);
+                authHandler.addAllowedPrivateUser(userId);
                 log.info("└─[Success] {}({}) 已授权", userName, userId);
                 bot.sendPrivateMsg(userId, "✅已授权", false);
                 return;
@@ -82,18 +82,18 @@ public class BotListener {
             // 私聊对话处理
             String parsed = MsgParseUtil.formatMsg(bot, event.getArrayMsg());
             log.info("◉ [PrivateAction:Chat] 私聊 {}({}) -> {}", userName, userId, parsed);
-            commandProcessor.processQQ(bot, CommandEvent.of(
+            cmdProcessor.processQQ(bot, CmdEvent.of(
                     event, "Chat", List.of(parsed), false, false));
         }
     }
 
-    @FunctionControl("PrivateCmd")
+    @FuncControl("PrivateCmd")
     @PrivatePokeNoticeHandler
     @Async("ThreadExecutor")
     public void onPrivatePokeInteraction(Bot bot, PokeNoticeEvent event) throws Exception {
         if (Objects.equals(event.getTargetId(), event.getSelfId())) {
             log.info("◉ [PrivateAction:Poke] 私聊 -> From {} to {} (仅戳Bot)", event.getUserId(), event.getTargetId());
-            commandProcessor.processQQ(bot, CommandEvent.of(event));
+            cmdProcessor.processQQ(bot, CmdEvent.of(event));
         }
     }
 
@@ -125,23 +125,23 @@ public class BotListener {
         if (message.startsWith(commandPrefix)) {
             // 普通命令处理
             log.info("◉ [GroupAction:Cmd] 群聊 {} - {}({}) -> {}", groupId, userName, userId, message);
-            commandProcessor.processQQ(bot, CommandEvent.of(event));
+            cmdProcessor.processQQ(bot, CmdEvent.of(event));
         } else if (event.getArrayMsg().size() > 1 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
             // 引用命令处理
             if (!event.getArrayMsg().get(1).getStringData("text").startsWith(commandPrefix)) return;
             log.info("◉ [GroupAction:ReplyCmd] 群聊 {} - {}({}) -> {}", groupId, userName, userId, message);
-            commandProcessor.processQQ(bot, CommandEvent.of(event));
+            cmdProcessor.processQQ(bot, CmdEvent.of(event));
         }
     }
 
-    @FunctionControl("PokeDetect")
+    @FuncControl("PokeDetect")
     @GroupPokeNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupPokeInteraction(Bot bot, PokeNoticeEvent event) throws Exception {
         if (!BotCtx.getSetting().isPokeDetect()) return;
         if (Objects.equals(event.getTargetId(), event.getSelfId())) {
             log.info("◉ [GroupAction:Poke] 群聊 {} -> From {} to {} (仅戳Bot)", event.getGroupId(), event.getUserId(), event.getTargetId());
-            commandProcessor.processQQ(bot, CommandEvent.of(event));
+            cmdProcessor.processQQ(bot, CmdEvent.of(event));
         }
     }
 
@@ -160,16 +160,16 @@ public class BotListener {
         String parsed = MsgParseUtil.formatMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupAction:At] 群聊 {} - {}({}) -> {}",
                 event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
-        commandProcessor.processQQ(bot, CommandEvent.of(
+        cmdProcessor.processQQ(bot, CmdEvent.of(
                 event, "Chat", List.of(parsed), true, true));
     }
 
-    @FunctionControl("RecallDetect")
+    @FuncControl("RecallDetect")
     @GroupMsgDeleteNoticeHandler
     @Async("ThreadExecutor")
     public void onGroupRecallInteraction(Bot bot, GroupMsgDeleteNoticeEvent event) throws Exception {
         if (!BotCtx.getSetting().isRecallDetect()) return;
         log.info("◉ [GroupAction:Recall] 群聊 {} -> {}", event.getGroupId(), event.getUserId());
-        commandProcessor.processQQ(bot, CommandEvent.of(event));
+        cmdProcessor.processQQ(bot, CmdEvent.of(event));
     }
 }

@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.module.control;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.annotation.FunctionControl;
+import com.zincoid.nullbot.core.annotation.FuncControl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
@@ -26,14 +26,14 @@ public class FunctionManager {
             if (beanName.equals("functionManager")) continue;
             Class<?> beanType = applicationContext.getType(beanName);
             if (beanType == null) continue;
-            FunctionControl classAnno = AnnotationUtils
-                    .findAnnotation(beanType, FunctionControl.class);
+            FuncControl classAnno = AnnotationUtils
+                    .findAnnotation(beanType, FuncControl.class);
             if (classAnno != null)
                 enableFlags.put(classAnno.value(), true);
             Arrays.stream(beanType.getDeclaredMethods())
                     .forEach(method -> {
-                        FunctionControl methodAnno = AnnotationUtils
-                                .findAnnotation(method, FunctionControl.class);
+                        FuncControl methodAnno = AnnotationUtils
+                                .findAnnotation(method, FuncControl.class);
                         if (methodAnno != null)
                             enableFlags.put(methodAnno.value(), methodAnno.enabled());
                     });

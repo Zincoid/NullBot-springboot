@@ -7,7 +7,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.zincoid.nullbot.bot.command.game.single.BottleCommand;
+import com.zincoid.nullbot.bot.command.game.single.BottleCmd;
 import com.zincoid.nullbot.core.utils.Base64Util;
 
 import java.time.LocalDateTime;
@@ -44,7 +44,7 @@ public class BottlePO {
             
             """
                 .formatted(
-                        BottleCommand.getKeepTimeoutSeconds(),
+                        BottleCmd.getKeepTimeoutSeconds(),
                         id,
                         rethrowTimes == 0 ? "首次被捡到" : "已被投回 " + rethrowTimes + " 次",
                         formattedTime
