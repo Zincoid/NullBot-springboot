@@ -3,7 +3,7 @@ package com.zincoid.nullbot.websocket.interceptor;
 import cn.hutool.jwt.JWT;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.component.security.JwtTool;
+import com.zincoid.nullbot.core.module.security.JwtTool;
 import com.zincoid.nullbot.core.model.authentication.StompPrincipal;
 import com.zincoid.nullbot.core.model.data.po.AdminPO;
 import com.zincoid.nullbot.core.service.system.AdminService;

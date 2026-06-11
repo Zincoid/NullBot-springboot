@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.service.basic.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mikuac.shiro.core.Bot;
-import com.zincoid.nullbot.core.component.tool.BotOperator;
+import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.model.data.query.UserQuery;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.result.PageResult;

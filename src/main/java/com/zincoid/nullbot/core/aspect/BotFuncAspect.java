@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import com.zincoid.nullbot.core.annotation.FunctionControl;
-import com.zincoid.nullbot.core.component.control.FunctionManager;
+import com.zincoid.nullbot.core.module.control.FunctionManager;
 import org.springframework.stereotype.Component;
 
 @Slf4j

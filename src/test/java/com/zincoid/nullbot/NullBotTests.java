@@ -1,7 +1,6 @@
 package com.zincoid.nullbot;
 
-import com.zincoid.nullbot.core.component.ai.chat.tool.impl.BaiduSearchTool;
-import com.zincoid.nullbot.core.component.ai.chat.tool.impl.BingSearchTool;
+import com.zincoid.nullbot.core.module.ai.chat.tool.impl.BingSearchTool;
 import org.junit.jupiter.api.Test;
 
 public class NullBotTests {

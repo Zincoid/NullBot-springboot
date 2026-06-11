@@ -2,14 +2,14 @@ package com.zincoid.nullbot.bot.command.schedule;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.component.control.BotTaskScheduler;
+import com.zincoid.nullbot.core.module.control.BotTaskScheduler;
 import org.springframework.stereotype.Component;
 
 @Slf4j

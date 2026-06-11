@@ -21,7 +21,7 @@ QQ client → NapCat (WS) → Shiro framework → @Shiro-annotated methods
 ```
 
 1. **`CommandListener`** (`dispatcher/listener/`) — `@Shiro`-annotated, receives `GroupMessageEvent`, `PrivateMessageEvent`, `@At` pokes, etc. Messages starting with the `command.prefix` (`/`) are treated as commands; others may trigger AI chat or be ignored.
-2. **`MonitorListener`** — hooks into the same events for passive behaviors: poke/reaction detection, message collection (for AI memory), keyword detection, image collection, auto-reply, etc. Each is individually toggleable via `@FunctionControl`.
+2. **`BotMonitor`** — hooks into the same events for passive behaviors: poke/reaction detection, message collection (for AI memory), keyword detection, image collection, auto-reply, etc. Each is individually toggleable via `@FunctionControl`.
 3. **`CommandProcessor`** — looks up the command name in `CommandRegistry`, wraps it in a `CommandHandlerChain`.
 4. **Handler chain** (ordered via `@Order`):
    - `RegisterHandler` (-1): auto-registers new groups/users in DB

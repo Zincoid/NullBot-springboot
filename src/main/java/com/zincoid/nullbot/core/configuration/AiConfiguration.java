@@ -1,14 +1,14 @@
 package com.zincoid.nullbot.core.configuration;
 
-import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
-import com.zincoid.nullbot.core.component.ai.chat.memory.Memory;
-import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowMemory;
-import com.zincoid.nullbot.core.component.ai.chat.model.Model;
-import com.zincoid.nullbot.core.component.ai.chat.plugin.QQAntiInjector;
-import com.zincoid.nullbot.core.component.ai.chat.plugin.QQMsgExecutor;
-import com.zincoid.nullbot.core.component.ai.chat.plugin.QQPrompter;
-import com.zincoid.nullbot.core.component.ai.chat.repository.Repository;
-import com.zincoid.nullbot.core.component.ai.chat.tool.ToolRegistry;
+import com.zincoid.nullbot.core.module.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.module.ai.chat.memory.Memory;
+import com.zincoid.nullbot.core.module.ai.chat.memory.MsgWindowMemory;
+import com.zincoid.nullbot.core.module.ai.chat.model.Model;
+import com.zincoid.nullbot.core.module.ai.chat.plugin.QQAntiInjector;
+import com.zincoid.nullbot.core.module.ai.chat.plugin.QQMsgExecutor;
+import com.zincoid.nullbot.core.module.ai.chat.plugin.QQPrompter;
+import com.zincoid.nullbot.core.module.ai.chat.repository.Repository;
+import com.zincoid.nullbot.core.module.ai.chat.tool.ToolRegistry;
 import com.zincoid.nullbot.core.properties.ai.AiChatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

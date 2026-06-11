@@ -2,10 +2,10 @@ package com.zincoid.nullbot.bot.command.recall;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
-import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
-import com.zincoid.nullbot.core.component.ai.chat.memory.MsgWindowMemory;
-import com.zincoid.nullbot.core.component.ai.chat.message.QQMessage;
-import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
+import com.zincoid.nullbot.bot.command.CommandArgs;
+import com.zincoid.nullbot.core.module.ai.chat.memory.MsgWindowMemory;
+import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
+import com.zincoid.nullbot.core.enums.ChatScope;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;

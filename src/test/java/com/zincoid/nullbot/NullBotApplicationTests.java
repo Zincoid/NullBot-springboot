@@ -5,7 +5,7 @@ package com.zincoid.nullbot;
 // import jdash.common.LevelSearchFilter;
 // import jdash.common.LevelSearchMode;
 // import jdash.common.entity.GDLevel;
-import com.zincoid.nullbot.core.component.render.resvg.SvgRenderer;
+import com.zincoid.nullbot.core.module.render.resvg.SvgRenderer;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

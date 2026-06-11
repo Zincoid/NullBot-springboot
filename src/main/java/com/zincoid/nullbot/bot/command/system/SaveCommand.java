@@ -6,7 +6,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.command.image.ImageSaveCommand;
 import com.zincoid.nullbot.bot.command.saying.SayingSaveCommand;
 import com.zincoid.nullbot.bot.command.video.VideoSaveCommand;

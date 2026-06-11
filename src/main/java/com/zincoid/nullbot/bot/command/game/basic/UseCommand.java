@@ -2,14 +2,14 @@ package com.zincoid.nullbot.bot.command.game.basic;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import com.zincoid.nullbot.core.model.bot.args.CommandArgs;
+import com.zincoid.nullbot.bot.command.CommandArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
+import com.zincoid.nullbot.bot.gateway.processor.CommandEvent;
 import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CommandMapping;
 import com.zincoid.nullbot.bot.command.Command;
-import com.zincoid.nullbot.core.model.bot.event.InnerCommandEvent;
 import com.zincoid.nullbot.core.service.basic.InventoryService;
 import com.zincoid.nullbot.core.service.basic.ItemService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -40,7 +40,7 @@ public class UseCommand implements Command {
 
         String originalCmd = itemService.getCommand(itemId);
         String executeCmd = originalCmd.replace("userId", userId.toString());
-        eventPublisher.publishEvent(InnerCommandEvent.of(executeCmd, false));
+        eventPublisher.publishEvent(CommandEvent.of(executeCmd, false));
 
         String itemName = itemService.getById(itemId).getName();
         bot.sendGroupMsg(event.getGroupId(), "✅%s已使用%s".formatted(userName, itemName), false);

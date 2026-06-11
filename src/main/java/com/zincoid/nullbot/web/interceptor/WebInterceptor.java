@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.component.security.JwtTool;
+import com.zincoid.nullbot.core.module.security.JwtTool;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.context.WebCtx;
 import com.zincoid.nullbot.core.utils.WebUtil;

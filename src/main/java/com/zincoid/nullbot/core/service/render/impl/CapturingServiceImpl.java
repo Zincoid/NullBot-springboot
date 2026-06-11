@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.service.render.impl;
 
-import com.zincoid.nullbot.core.component.render.browser.WebCapturer;
+import com.zincoid.nullbot.core.module.render.browser.WebCapturer;
 import com.zincoid.nullbot.core.service.render.CapturingService;
 import com.zincoid.nullbot.web.exception.CommonException;
 import lombok.RequiredArgsConstructor;

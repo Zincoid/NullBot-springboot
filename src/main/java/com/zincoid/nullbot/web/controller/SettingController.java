@@ -1,10 +1,10 @@
 package com.zincoid.nullbot.web.controller;
 
-import com.zincoid.nullbot.core.component.ai.chat.client.QQAiClient;
-import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
+import com.zincoid.nullbot.core.module.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.enums.ChatScope;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.component.control.CommandRateLimiter;
+import com.zincoid.nullbot.core.module.control.CommandRateLimiter;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.service.system.SettingService;

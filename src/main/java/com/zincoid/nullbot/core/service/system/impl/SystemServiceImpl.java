@@ -1,8 +1,8 @@
 package com.zincoid.nullbot.core.service.system.impl;
 
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.component.tool.Restarter;
-import com.zincoid.nullbot.core.component.tool.Invoker;
+import com.zincoid.nullbot.core.module.system.Restarter;
+import com.zincoid.nullbot.core.module.system.Invoker;
 import com.zincoid.nullbot.core.service.system.SystemService;
 import org.springframework.stereotype.Service;
 

@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.context;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.Event;
-import com.zincoid.nullbot.core.component.ai.chat.enums.ChatScope;
+import com.zincoid.nullbot.core.enums.ChatScope;
 import com.zincoid.nullbot.core.enums.EventScope;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 

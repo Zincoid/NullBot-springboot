@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.service.system.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zincoid.nullbot.core.service.basic.UserService;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.component.security.SecurityCodeScheduler;
+import com.zincoid.nullbot.core.module.security.SecurityCodeScheduler;
 import com.zincoid.nullbot.core.converter.AdminConverter;
 import com.zincoid.nullbot.core.model.data.dto.AdminUpdateDTO;
 import com.zincoid.nullbot.core.model.data.dto.LoginDTO;
