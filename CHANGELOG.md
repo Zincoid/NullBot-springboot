@@ -967,4 +967,6 @@
 - 优化 Endfield 指令 - 增强版本获取方式；
 - 优化 FilePO 类：
   - 优化 getName 方法；
-  - isDir 参数类型改为 Boolean。
+  - isDir 参数类型改为 Boolean；
+- 修正 消息窗口内存消息添加顺序；
+- 更新 AI 提示词。

@@ -61,11 +61,11 @@ public class MsgWindowMemory implements Memory {
         lock.lock();
         try {
             List<Message> messages = repository.get(chatId);
+            messages.add(message);
             if (messages.size() > windowSize) {
                 do messages.removeFirst();
                 while (!messages.isEmpty() && messages.getFirst().getRole() == Role.TOOL);
             }
-            messages.add(message);
             repository.update(chatId, messages);
         } finally {
             lock.unlock();

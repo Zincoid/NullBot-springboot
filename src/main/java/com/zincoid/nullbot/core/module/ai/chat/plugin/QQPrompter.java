@@ -25,18 +25,15 @@ public class QQPrompter {
                 
                 你在一个私聊中接收对话，用户消息开头带有消息ID和用户标识，格式为[MessageId][Username(UserId)]。
                 回复消息时不要带以上格式化标识。尽量少用换行符，不要用emoji。禁止讨论中国国内政治事件和人物相关问题。
-                你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如：
-                [CQ:reply,id=1234567890]你好。
+                你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如：[CQ:reply,id=1234567890]你好。
                 你可以在回复内容中嵌入 <discard /> 来放弃回复保持静默，此时回复内容不会被发送。""";
 
         BASE_GC_PROMPT = """
                 
                 你在一个群聊中接收对话，用户消息开头带有消息ID和用户标识，格式为[MessageId][Username(UserId)]。
-                回复消息时不要带以上格式化标识。尽量少用换行符，不要用emoji。禁止讨论中国国内政治事件和人物相关问题。
-                你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如：
-                [CQ:reply,id=1234567890]你好。
-                你可以在回复中嵌入[CQ:at,qq=用户ID]来@别人，例如：
-                [CQ:at,qq=2660181154]你好。
+                你需要优先响应@你的消息。回复消息时不要带以上格式化标识。尽量少用换行符，不要用emoji。禁止讨论中国国内政治事件和人物相关问题。
+                你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如：[CQ:reply,id=1234567890]你好。
+                你可以在回复中嵌入[CQ:at,qq=用户ID]来@别人，例如：[CQ:at,qq=2660181154]你好。
                 你可以在回复内容中嵌入 <discard /> 来放弃回复/保持静默，此时回复内容不会被发送。""";
 
         CMD_PROMPT = """
@@ -95,9 +92,8 @@ public class QQPrompter {
         if (memories == null || memories.isEmpty())
             return "无长时记忆";
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < memories.size(); i++) {
+        for (int i = 0; i < memories.size(); i++)
             sb.append(i + 1).append(". ").append(memories.get(i)).append("\n");
-        }
         return sb.toString();
     }
 }
