@@ -1,6 +1,6 @@
 package com.zincoid.nullbot;
 
-import com.zincoid.nullbot.core.module.ai.voice.TtsClient;
+import com.zincoid.nullbot.core.module.ai.tts.TtsClient;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -106,6 +106,7 @@ public class GroupSetCmd implements Cmd {
                     msg = "思考模式 -> %s".formatted(enabled ? "ON" : "OFF");
                 }
                 case "voi" -> {
+                    qqChatClient.clear(BotCtx.getChatId());
                     boolean enabled = setting.switchVoice();
                     msg = "语音模式 -> %s".formatted(enabled ? "ON" : "OFF");
                 }

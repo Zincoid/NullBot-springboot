@@ -13,6 +13,7 @@ public class QQPrompter {
 
     private static final String BASE_PM_PROMPT;
     private static final String BASE_GC_PROMPT;
+    private static final String CQ_PROMPT;
     private static final String CMD_PROMPT;
     private static final String MEMORY_PROMPT;
 
@@ -25,16 +26,18 @@ public class QQPrompter {
                 
                 你在一个私聊中接收对话，用户消息开头带有消息ID和用户标识，格式为[MessageId][Username(UserId)]。
                 回复消息时不要带以上格式化标识。尽量少用换行符，不要用emoji。禁止讨论中国国内政治事件和人物相关问题。
-                你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如：[CQ:reply,id=1234567890]你好。
                 你可以在回复内容中嵌入 <discard /> 来放弃回复保持静默，此时回复内容不会被发送。""";
 
         BASE_GC_PROMPT = """
                 
                 你在一个群聊中接收对话，用户消息开头带有消息ID和用户标识，格式为[MessageId][Username(UserId)]。
                 你需要优先响应@你的消息。回复消息时不要带以上格式化标识。尽量少用换行符，不要用emoji。禁止讨论中国国内政治事件和人物相关问题。
-                你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如：[CQ:reply,id=1234567890]你好。
-                你可以在回复中嵌入[CQ:at,qq=用户ID]来@别人，例如：[CQ:at,qq=2660181154]你好。
                 你可以在回复内容中嵌入 <discard /> 来放弃回复/保持静默，此时回复内容不会被发送。""";
+
+        CQ_PROMPT = """
+                
+                你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如：[CQ:reply,id=1234567890]你好。
+                你可以在回复中嵌入[CQ:at,qq=用户ID]来@别人，例如：[CQ:at,qq=2660181154]你好。""";
 
         CMD_PROMPT = """
 
@@ -64,25 +67,27 @@ public class QQPrompter {
 
     // =================== 生成方法 ===================
 
-    public String user(Long userId, boolean cmd) {
+    public String user(Long userId, boolean cq, boolean cmd) {
         StringBuilder sb = new StringBuilder();
         sb.append(sysMsgManager.getUserMessage(userId));
         sb.append(BASE_PM_PROMPT);
-        sb.append(MEMORY_PROMPT.formatted(
-                formatMemories(sysMsgManager.getUserMemory(userId))));
+        if (cq) sb.append(CQ_PROMPT);
         if (cmd) sb.append(CMD_PROMPT.formatted(
                 cmdRegistry.getCmdHelpsForAI(QQCmdAllows.getPm())));
+        sb.append(MEMORY_PROMPT.formatted(
+                formatMemories(sysMsgManager.getUserMemory(userId))));
         return sb.toString();
     }
 
-    public String group(Long groupId, boolean cmd) {
+    public String group(Long groupId, boolean cq, boolean cmd) {
         StringBuilder sb = new StringBuilder();
         sb.append(sysMsgManager.getGroupMessage(groupId));
         sb.append(BASE_GC_PROMPT);
-        sb.append(MEMORY_PROMPT.formatted(
-                sysMsgManager.getGroupMemory(groupId)));
+        if (cq) sb.append(CQ_PROMPT);
         if (cmd) sb.append(CMD_PROMPT.formatted(
                 cmdRegistry.getCmdHelpsForAI(QQCmdAllows.getGc())));
+        sb.append(MEMORY_PROMPT.formatted(
+                formatMemories(sysMsgManager.getGroupMemory(groupId))));
         return sb.toString();
     }
 

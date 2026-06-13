@@ -109,7 +109,7 @@ ai:
 #      api-key:
       model: deepseek-v4-flash
   tts:  # TTS Settings
-    api-url: https://gsv2p.acgnai.top
+    api-url:  # GSVI API 或 https://gsv2p.acgnai.top
     api-key:
     version: v4
     model_name: 明日方舟-中文-羽毛笔

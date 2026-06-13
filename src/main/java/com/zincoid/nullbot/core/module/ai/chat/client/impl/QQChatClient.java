@@ -158,8 +158,8 @@ public class QQChatClient implements Client<QQMessage> {
         boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();
         boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
         String prompt = message.isPrivate()
-                ? qqPrompter.user(message.getUserId(), false)
-                : qqPrompter.group(message.getGroupId(), false);
+                ? qqPrompter.user(message.getUserId(), !voice, false)
+                : qqPrompter.group(message.getGroupId(), !voice, false);
         QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
         memory.add(BotCtx.getChatId(), qqMsgExecutor.direct(_message, voice));
         return _message;
@@ -171,8 +171,8 @@ public class QQChatClient implements Client<QQMessage> {
         boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();
         boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
         String prompt = message.isPrivate()
-                ? qqPrompter.user(message.getUserId(), true)
-                : qqPrompter.group(message.getGroupId(), true);
+                ? qqPrompter.user(message.getUserId(), !voice, true)
+                : qqPrompter.group(message.getGroupId(), !voice, true);
         QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
         List<QQMessage> messages = qqMsgExecutor.chain(_message, voice);
         for (QQMessage msg : messages) memory.add(BotCtx.getChatId(), msg);
@@ -185,8 +185,8 @@ public class QQChatClient implements Client<QQMessage> {
         boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();
         boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
         String prompt = message.isPrivate()
-                ? qqPrompter.user(message.getUserId(), false)
-                : qqPrompter.group(message.getGroupId(), false);
+                ? qqPrompter.user(message.getUserId(), !voice, false)
+                : qqPrompter.group(message.getGroupId(), !voice, false);
         return callAndStoreWithTools(prompt, message, thinking, voice);
     }
 

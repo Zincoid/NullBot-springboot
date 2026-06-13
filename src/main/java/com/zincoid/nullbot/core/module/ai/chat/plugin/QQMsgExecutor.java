@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.module.ai.chat.plugin;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.zincoid.nullbot.bot.gateway.processor.CmdEvent;
-import com.zincoid.nullbot.core.module.ai.voice.TtsClient;
+import com.zincoid.nullbot.core.module.ai.tts.TtsClient;
 import com.zincoid.nullbot.core.module.resource.loader.ResourceLoader;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.utils.Base64Util;

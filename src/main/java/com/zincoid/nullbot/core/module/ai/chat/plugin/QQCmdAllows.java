@@ -19,7 +19,7 @@ public class QQCmdAllows {
                 "Help", "ImageFolder", "PUBG",
                 "Anime", "OneTimeAlarm",
                 /* ========== 合成命令 ========== */
-                "Convert", "Symmetry",
+                "Convert", "Symmetry", "Tts",
                 /* ========== 加密命令 ========== */
                 "eb0f8545", "4ed1314d", "65275d24",
                 "1e7bd161", "b6713262", "db3fbe2b",
@@ -33,6 +33,7 @@ public class QQCmdAllows {
                 /* ========== 普通命令 ========== */
                 "Help",
                 /* ========== 合成命令 ========== */
+                "Tts",
                 /* ========== 加密命令 ========== */
                 "65275d24", "0167a25a", "bab329aa",
                 "1a0d3829", "a7b3c9d1"

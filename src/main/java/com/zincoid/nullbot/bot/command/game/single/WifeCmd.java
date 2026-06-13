@@ -58,8 +58,9 @@ public class WifeCmd implements Cmd {
             String wifeName = bot.getStrangerInfo(wifeId, true).getData().getNickname();
             String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
             String response = MsgUtils.builder()
+                    .at(userId)
                     .text("""
-                            今天已经选过了哦\uD83D\uDCA6...
+                            \n今天已经选过了哦\uD83D\uDCA6...
                             你的群友老婆是
                             %s(%s)""".formatted(wifeName, wifeId))
                     .img(avatarUrl)
@@ -78,8 +79,9 @@ public class WifeCmd implements Cmd {
         String wifeName = wife.getNickname();
         String avatarUrl = ShiroUtils.getUserAvatar(wifeId, 5);
         String response = MsgUtils.builder()
+                .at(userId)
                 .text("""
-                        你的今日群友老婆是✨
+                        \n你的今日群友老婆是✨
                         %s(%s)""".formatted(wifeName, wifeId))
                 .img(avatarUrl)
                 .build();
@@ -96,8 +98,9 @@ public class WifeCmd implements Cmd {
             FilePO wife = acgWifeMap.get(userId);
             String wifeName = wife.getName().split("_")[0];
             String response = MsgUtils.builder()
+                    .at(userId)
                     .text("""
-                            今天已经选过了哦\uD83D\uDCA6...
+                            \n今天已经选过了哦\uD83D\uDCA6...
                             你的二次元老婆是
                             %s""".formatted(wifeName))
                     .img("base64://" + Base64Util.from(wife.getPath()))
@@ -114,8 +117,9 @@ public class WifeCmd implements Cmd {
         FilePO wife = wives.get(ThreadLocalRandom.current().nextInt(wives.size()));
         String wifeName = wife.getName().split("_")[0];
         String response = MsgUtils.builder()
+                .at(userId)
                 .text("""
-                        你的今日二次元老婆是✨
+                        \n你的今日二次元老婆是✨
                         %s - %s""".formatted(category, wifeName))
                 .img("base64://" + Base64Util.from(wife.getPath()))
                 .build();
