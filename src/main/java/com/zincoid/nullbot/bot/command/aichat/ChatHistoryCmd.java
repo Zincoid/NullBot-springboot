@@ -5,9 +5,9 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
-import com.zincoid.nullbot.core.module.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import com.zincoid.nullbot.core.enums.Role;
-import com.zincoid.nullbot.core.module.ai.chat.message.BaseMessage;
+import com.zincoid.nullbot.core.module.ai.chat.message.StdMessage;
 import com.zincoid.nullbot.core.module.ai.chat.message.Message;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.enums.Emoji;
@@ -29,10 +29,10 @@ public class ChatHistoryCmd implements Cmd {
     private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT_SECONDS = 60;  // 等待超时时间
 
-    private final QQAiClient qqAiClient;
+    private final QQChatClient qqChatClient;
 
-    public ChatHistoryCmd(@Lazy QQAiClient qqAiClient) {
-        this.qqAiClient = qqAiClient;
+    public ChatHistoryCmd(@Lazy QQChatClient qqChatClient) {
+        this.qqChatClient = qqChatClient;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ChatHistoryCmd implements Cmd {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
-        List<Message> history = qqAiClient.history(BotCtx.getChatId());
+        List<Message> history = qqChatClient.history(BotCtx.getChatId());
         if (history.isEmpty())
             throw new BotInfoException(Emoji.INFO, "暂无历史");
 
@@ -49,7 +49,7 @@ public class ChatHistoryCmd implements Cmd {
                         return qMsg.getRole() == Role.USER
                                 ? qMsg.getUserName() + ": " + qMsg.getContent()
                                 : "Null: " + msg.getContent();
-                    if (msg instanceof BaseMessage bMsg)
+                    if (msg instanceof StdMessage bMsg)
                         return switch (bMsg.getRole()) {
                             case USER -> "User: [Extra]";
                             case ASSISTANT -> "Null: [ToolCalls]";

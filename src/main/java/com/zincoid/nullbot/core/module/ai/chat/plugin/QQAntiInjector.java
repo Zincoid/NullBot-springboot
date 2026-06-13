@@ -1,10 +1,11 @@
 package com.zincoid.nullbot.core.module.ai.chat.plugin;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
+import com.zincoid.nullbot.core.module.ai.chat.model.ModelReq;
 import com.zincoid.nullbot.core.module.resource.loader.ResourceLoader;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.utils.Base64Util;
-import com.zincoid.nullbot.core.module.ai.chat.message.BaseMessage;
+import com.zincoid.nullbot.core.module.ai.chat.message.StdMessage;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.module.ai.chat.model.Model;
 import lombok.RequiredArgsConstructor;
@@ -59,8 +60,11 @@ public class QQAntiInjector {
     public boolean check(QQMessage message) {
         if (model == null) throw new RuntimeException("防注检测模型未设置");
         String res = model.invoke(
-                List.of(BaseMessage.system(PROMPT.formatted(message.getContent()))),
-                false, 100
+                ModelReq.of(
+                        List.of(StdMessage.system(PROMPT.formatted(message.getContent()))),
+                        false,
+                        100
+                )
         ).getContent();
         if (!"YES".equals(res.trim())) return false;
         if (message.isPrivate()) {

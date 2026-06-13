@@ -5,7 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
 import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
-import com.zincoid.nullbot.core.module.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
@@ -20,12 +20,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class SysMsgSetCmd implements Cmd {
 
-    private final QQAiClient qqAiClient;
+    private final QQChatClient qqChatClient;
     private final SysMsgManager sysMsgManager;
     private final UserService userService;
 
-    public SysMsgSetCmd(@Lazy QQAiClient qqAiClient, SysMsgManager sysMsgManager, UserService userService) {
-        this.qqAiClient = qqAiClient;
+    public SysMsgSetCmd(@Lazy QQChatClient qqChatClient, SysMsgManager sysMsgManager, UserService userService) {
+        this.qqChatClient = qqChatClient;
         this.sysMsgManager = sysMsgManager;
         this.userService = userService;
     }
@@ -53,7 +53,7 @@ public class SysMsgSetCmd implements Cmd {
         }
         if ("-reset".equals(option)) {
             sysMsgManager.resetGroup(groupId);
-            qqAiClient.clear(BotCtx.getChatId());
+            qqChatClient.clear(BotCtx.getChatId());
             bot.sendGroupMsg(groupId, "✅提示词已重置", false);
             log.info("☑ [SysMsgSet] 群聊提示词已重置 -> {}", groupId);
             return;
@@ -61,7 +61,7 @@ public class SysMsgSetCmd implements Cmd {
         if ("-set".equals(option)) {
             String newMessage = args.nextFullString();
             sysMsgManager.setGroupMessage(groupId, newMessage);
-            qqAiClient.clear(BotCtx.getChatId());
+            qqChatClient.clear(BotCtx.getChatId());
             bot.sendGroupMsg(groupId, "✅提示词已设置", false);
             log.info("☑ [SysMsgSet] 群聊提示词已设置 - {} -> {}", groupId, newMessage);
             return;
@@ -83,7 +83,7 @@ public class SysMsgSetCmd implements Cmd {
         }
         if ("-reset".equals(option)) {
             sysMsgManager.resetUser(userId);
-            qqAiClient.clear(BotCtx.getChatId());
+            qqChatClient.clear(BotCtx.getChatId());
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已重置", false);
             log.info("☑ [SysMsgSet] 私聊提示词已重置 -> {}", userId);
             return;
@@ -91,7 +91,7 @@ public class SysMsgSetCmd implements Cmd {
         if ("-set".equals(option)) {
             String newMessage = args.nextFullString();
             sysMsgManager.setUserMessage(userId, newMessage);
-            qqAiClient.clear(BotCtx.getChatId());
+            qqChatClient.clear(BotCtx.getChatId());
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已设置", false);
             log.info("☑ [SysMsgSet] 私聊提示词已设置 - {} -> {}", userId, newMessage);
             return;

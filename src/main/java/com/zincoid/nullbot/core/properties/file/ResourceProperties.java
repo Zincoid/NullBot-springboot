@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "file.resource")
 public class ResourceProperties {
+
     private String ossBaseUrl;
     private String mode = "path";
 }

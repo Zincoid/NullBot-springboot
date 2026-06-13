@@ -5,6 +5,7 @@ package com.zincoid.nullbot;
 // import jdash.common.LevelSearchFilter;
 // import jdash.common.LevelSearchMode;
 // import jdash.common.entity.GDLevel;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.SimpleChatClient;
 import com.zincoid.nullbot.core.module.render.resvg.SvgRenderer;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
@@ -13,44 +14,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Scanner;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class NullBotApplicationTests {
 
     @Resource
     private SvgRenderer svgRenderer;
-
-    @Test
-    void GDTest() {
-        // Scanner scanner = new Scanner(System.in);
-        // while (true)
-        // {
-        //     System.out.println("输入查询关键字: ");
-        //     List<GDLevel> levels;
-        //     try {
-        //         levels = GDClient.create()
-        //                 .searchLevels(
-        //                         LevelSearchMode.SEARCH,
-        //                         scanner.nextLine(),
-        //                         LevelSearchFilter.create()
-        //                                 .withToggles(EnumSet.of(LevelSearchFilter.Toggle.STAR)),
-        //                         1
-        //                 )
-        //                 .collectList().block();
-        //     } catch (Exception e) {
-        //         System.out.println("ERROR.");
-        //         continue;
-        //     }
-        //
-        //     for (GDLevel level : levels) {
-        //         System.out.println("[%s] %s by %s".formatted(level.difficulty(), level.name(), level.creatorName().isPresent() ? level.creatorName().get() : "-"));
-        //     }
-        //
-        //     System.out.println("输入查询序号: ");
-        //     System.out.println(levels.get(scanner.nextInt() - 1));
-        //     scanner.nextLine();
-        // }
-    }
+    @Resource
+    private SimpleChatClient simpleChatClient;
 
     @Test
     void ThymeleafTest() throws IOException {
@@ -61,4 +33,50 @@ class NullBotApplicationTests {
             fos.write(imageBytes);
         }
     }
+
+    @Test
+    void AiTest() {
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNext()) {
+            String input = sc.nextLine();
+            String content = simpleChatClient.chat("zincoid_01")
+                    .prompt("你是一只猫娘")
+                    .message(input)
+                    .call()
+                    .getContent();
+            System.out.println("AI: " + content);
+        }
+    }
+
+    // @Test
+    // void GDTest() {
+    //     Scanner scanner = new Scanner(System.in);
+    //     while (true)
+    //     {
+    //         System.out.println("输入查询关键字: ");
+    //         List<GDLevel> levels;
+    //         try {
+    //             levels = GDClient.create()
+    //                     .searchLevels(
+    //                             LevelSearchMode.SEARCH,
+    //                             scanner.nextLine(),
+    //                             LevelSearchFilter.create()
+    //                                     .withToggles(EnumSet.of(LevelSearchFilter.Toggle.STAR)),
+    //                             1
+    //                     )
+    //                     .collectList().block();
+    //         } catch (Exception e) {
+    //             System.out.println("ERROR.");
+    //             continue;
+    //         }
+    //
+    //         for (GDLevel level : levels) {
+    //             System.out.println("[%s] %s by %s".formatted(level.difficulty(), level.name(), level.creatorName().isPresent() ? level.creatorName().get() : "-"));
+    //         }
+    //
+    //         System.out.println("输入查询序号: ");
+    //         System.out.println(levels.get(scanner.nextInt() - 1));
+    //         scanner.nextLine();
+    //     }
+    // }
 }

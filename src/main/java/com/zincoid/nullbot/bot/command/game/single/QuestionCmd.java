@@ -10,8 +10,7 @@ import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.bot.gateway.handler.AuthHandler;
-import com.zincoid.nullbot.core.module.ai.chat.message.BaseMessage;
-import com.zincoid.nullbot.core.module.ai.chat.model.OpenAiModel;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.SingleCallClient;
 import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,12 +31,10 @@ public class QuestionCmd implements Cmd {
 
     private static final int BLOCK_TIME_MINUTES = 1;  // 封禁时间
 
-    private boolean thinking = true;  // 思考模式
-
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Set<Long> inGameUsers = new ConcurrentHashSet<>();
 
-    private final OpenAiModel openAiModel;
+    private final SingleCallClient singleCallClient;
     private final BotInputManager botInputManager;
     private final AuthHandler authHandler;
 
@@ -56,17 +53,18 @@ public class QuestionCmd implements Cmd {
 
             String raw;
             try {
-                raw = openAiModel.invoke(
-                        List.of(BaseMessage.system("""
+                raw = singleCallClient.prompt("""
                                 出一道单选题并给出题目和答案，问题主题：%s。请严格按照以下JSON格式回复，不要包含任何其他内容：
                                 {"answer":"正确选项字母","timeout":回答限时秒数,"question":"题目内容(选项要换行)"}
                                 注:
                                 1. timeout根据题目难度设定，简单题15-30秒，中等题45-60秒，困难题90-120秒，
                                 2. 公式相关内容不要使用Latex格式
                                 3. 禁止生成中国国内政治事件和政治人物相关问题，当主题涉及时仅回复REFUSED"""
-                                .formatted(args.nextFullString("二次元")))),
-                        thinking, 2500
-                ).getContent();
+                                .formatted(args.nextFullString("二次元")))
+                        .thinking(true)
+                        .maxTokens(2048)
+                        .call()
+                        .getContent();
             } catch (Exception e) {
                 throw new BotWarnException("生成请求出错");
             }
@@ -114,10 +112,6 @@ public class QuestionCmd implements Cmd {
         } finally {
             inGameUsers.remove(userId);
         }
-    }
-
-    public boolean switchThinking() {
-        return thinking = !thinking;
     }
 
     @Override

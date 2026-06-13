@@ -11,6 +11,7 @@ import java.time.Duration;
 @Component
 @ConfigurationProperties(prefix = "web.jwt")
 public class JwtProperties {
+
     private Resource location;
     private String password;
     private String alias;

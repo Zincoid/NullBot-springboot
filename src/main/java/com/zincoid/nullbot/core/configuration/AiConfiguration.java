@@ -1,6 +1,8 @@
 package com.zincoid.nullbot.core.configuration;
 
-import com.zincoid.nullbot.core.module.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.SimpleChatClient;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.SingleCallClient;
 import com.zincoid.nullbot.core.module.ai.chat.memory.Memory;
 import com.zincoid.nullbot.core.module.ai.chat.memory.MsgWindowMemory;
 import com.zincoid.nullbot.core.module.ai.chat.model.Model;
@@ -32,11 +34,11 @@ public class AiConfiguration {
     }
 
     @Bean
-    public QQAiClient qqAiClient(
+    public QQChatClient qqChatClient(
             AiChatProperties properties, Memory memory, Model model, ToolRegistry registry,
             QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
     ) {
-        QQAiClient qqAiClient = QQAiClient.builder(
+        QQChatClient qqChatClient = QQChatClient.builder(
                         memory, model,
                         antiInjector.withModel(model), prompter, executor
                 )
@@ -44,8 +46,26 @@ public class AiConfiguration {
                 .toolRegistry(registry, properties.getMaxToolCalls())
                 .build();
 
-        log.info("▽ [QQAiClient] 聊天客户端已初始化 - Model: {}, MaxTokens: {}, MaxToolCalls: {}",
+        log.info("▽ [QQChatClient] QQ 聊天客户端已初始化 - Model: {}, MaxTokens: {}, MaxToolCalls: {}",
                 model.getClass().getSimpleName(), properties.getMaxTokens(), properties.getMaxToolCalls());
-        return qqAiClient;
+        return qqChatClient;
+    }
+
+    @Bean
+    public SingleCallClient singleCallClient(
+            Model model
+    ) {
+        SingleCallClient singleCallClient = SingleCallClient.of(model);
+        log.info("▽ [SingleCallClient] 单次调用客户端已初始化 - Model: {}", model.getClass().getSimpleName());
+        return singleCallClient;
+    }
+
+    @Bean
+    public SimpleChatClient simpleChatClient(
+            Memory memory, Model model
+    ) {
+        SimpleChatClient simpleChatClient = SimpleChatClient.of(memory, model);
+        log.info("▽ [SimpleChatClient] 简单聊天客户端已初始化 - Model: {}", model.getClass().getSimpleName());
+        return simpleChatClient;
     }
 }

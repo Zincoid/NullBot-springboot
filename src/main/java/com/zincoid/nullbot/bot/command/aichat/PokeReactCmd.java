@@ -4,7 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.core.module.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
@@ -18,10 +18,10 @@ import java.util.Objects;
 @Component
 public class PokeReactCmd implements Cmd {
 
-    private final QQAiClient qqAiClient;
+    private final QQChatClient qqChatClient;
 
-    public PokeReactCmd(@Lazy QQAiClient qqAiClient) {
-        this.qqAiClient = qqAiClient;
+    public PokeReactCmd(@Lazy QQChatClient qqChatClient) {
+        this.qqChatClient = qqChatClient;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class PokeReactCmd implements Cmd {
         QQMessage message = groupId != null
                 ? QQMessage.user("揉了你一下").with(groupId, userId, userName)
                 : QQMessage.user("揉了你一下").with(userId, userName);
-        String response = qqAiClient.chat(message);
+        String response = qqChatClient.handle(message).call().getContent();
         log.info("☑ [PokeReact] 戳戳已回复: {}", response);
     }
 }

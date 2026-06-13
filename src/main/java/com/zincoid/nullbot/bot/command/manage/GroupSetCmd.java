@@ -5,7 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
-import com.zincoid.nullbot.core.module.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.module.control.CmdRateLimiter;
@@ -23,12 +23,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class GroupSetCmd implements Cmd {
 
-    private final QQAiClient qqAiClient;
+    private final QQChatClient qqChatClient;
     private final SettingService settingService;
     private final CmdRateLimiter cmdRateLimiter;
 
-    public GroupSetCmd(@Lazy QQAiClient qqAiClient, SettingService settingService, CmdRateLimiter cmdRateLimiter) {
-        this.qqAiClient = qqAiClient;
+    public GroupSetCmd(@Lazy QQChatClient qqChatClient, SettingService settingService, CmdRateLimiter cmdRateLimiter) {
+        this.qqChatClient = qqChatClient;
         this.settingService = settingService;
         this.cmdRateLimiter = cmdRateLimiter;
     }
@@ -88,7 +88,7 @@ public class GroupSetCmd implements Cmd {
                     msg = "会话范围 -> %s".formatted(newScope);
                 }
                 case "stg" -> {
-                    qqAiClient.clear(BotCtx.getChatId());
+                    qqChatClient.clear(BotCtx.getChatId());
                     ChatStrategy strategy = setting.switchChatStrategy();
                     msg = "对话策略 -> %s".formatted(strategy);
                 }
@@ -114,7 +114,7 @@ public class GroupSetCmd implements Cmd {
                     msg = "内令鉴权 -> %s".formatted(enabled ? "ON" : "OFF");
                 }
                 case "cus" -> {
-                    qqAiClient.clear(BotCtx.getChatId());
+                    qqChatClient.clear(BotCtx.getChatId());
                     boolean enabled = setting.switchCustom();
                     msg = "允许自定 -> %s".formatted(enabled ? "ON" : "OFF");
                 }

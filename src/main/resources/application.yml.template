@@ -105,6 +105,8 @@ ai:
     openai:
       api-url: https://api.deepseek.com
       api-key:
+#      api-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+#      api-key:
       model: deepseek-v4-flash
   tts:  # TTS Settings
     api-url: https://gsv2p.acgnai.top

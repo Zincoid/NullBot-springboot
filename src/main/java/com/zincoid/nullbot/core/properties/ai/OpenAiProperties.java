@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "ai.chat.openai")
 public class OpenAiProperties {
+
     private String apiKey;
     private String apiUrl;
     private String model;

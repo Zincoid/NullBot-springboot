@@ -7,7 +7,7 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.core.module.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
@@ -22,10 +22,10 @@ public class ChatCmd implements Cmd {
 
     @Value("${nullbot.command.prefix}")
     private String commandPrefix;
-    private final QQAiClient qqAiClient;
+    private final QQChatClient qqChatClient;
 
-    public ChatCmd(@Lazy QQAiClient qqAiClient) {
-        this.qqAiClient = qqAiClient;
+    public ChatCmd(@Lazy QQChatClient qqChatClient) {
+        this.qqChatClient = qqChatClient;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class ChatCmd implements Cmd {
         QQMessage message = QQMessage.user(args.nextFullString())
                 .with(event.getGroupId(), event.getUserId(), event.getSender().getNickname())
                 .id(event.getMessageId());
-        String response = qqAiClient.chat(message);
+        String response = qqChatClient.handle(message).call().getContent();
         for (ArrayMsg msg : event.getArrayMsg()) {
             if (msg.getType() != MsgTypeEnum.text) continue;
             String text = msg.getStringData("text").trim();
@@ -54,7 +54,7 @@ public class ChatCmd implements Cmd {
         QQMessage message = QQMessage.user(args.nextFullString())
                 .with(event.getUserId(), event.getPrivateSender().getNickname())
                 .id(event.getMessageId());
-        String response = qqAiClient.chat(message);
+        String response = qqChatClient.handle(message).call().getContent();
         log.info("☑ [Chat] 私聊已回复: {}", response);
     }
 

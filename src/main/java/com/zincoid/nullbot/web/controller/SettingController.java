@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.web.controller;
 
-import com.zincoid.nullbot.core.module.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import com.zincoid.nullbot.core.enums.ChatScope;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +24,12 @@ public class SettingController {
 
     private final SettingService settingService;
     private final CmdRateLimiter cmdRateLimiter;
-    private final QQAiClient qqAiClient;
+    private final QQChatClient qqChatClient;
 
-    public SettingController(SettingService settingService, CmdRateLimiter cmdRateLimiter, @Lazy QQAiClient qqAiClient) {
+    public SettingController(SettingService settingService, CmdRateLimiter cmdRateLimiter, @Lazy QQChatClient qqChatClient) {
         this.settingService = settingService;
         this.cmdRateLimiter = cmdRateLimiter;
-        this.qqAiClient = qqAiClient;
+        this.qqChatClient = qqChatClient;
     }
 
     @GetMapping("/{id}")
@@ -48,7 +48,7 @@ public class SettingController {
         ChatScope oldScope = settingService.get(groupId).getChatScope();
         if (settingService.set(setting)) {
             if (oldScope != ChatScope.PERSONAL)
-                qqAiClient.clear(oldScope + "_" + groupId);
+                qqChatClient.clear(oldScope + "_" + groupId);
             cmdRateLimiter.reset(groupId);
             return WebResult.success("更新成功");
         } else {

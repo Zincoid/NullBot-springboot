@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "ai.tts")
 public class TtsProperties {
+
     private String apiUrl;
     private String apiKey;
     private String version;

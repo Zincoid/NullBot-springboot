@@ -12,13 +12,13 @@ import java.util.Map;
 
 @Getter
 @ToString(callSuper = true)
-public class BaseMessage extends AbstractMessage {
+public class StdMessage extends AbstractMessage {
 
     private String reasoningContent;
     private final List<ToolCall> toolCalls;
     private final String toolCallId;
 
-    private BaseMessage(Role role, String content, String reasoningContent, List<ToolCall> toolCalls, String toolCallId) {
+    private StdMessage(Role role, String content, String reasoningContent, List<ToolCall> toolCalls, String toolCallId) {
         super(role, content);
         this.reasoningContent = reasoningContent;
         this.toolCalls = toolCalls;
@@ -54,24 +54,28 @@ public class BaseMessage extends AbstractMessage {
 
     // ==================== 构建方法 ====================
 
-    public BaseMessage withReasoning(String content) {
+    public StdMessage withReasoning(String content) {
         this.reasoningContent = content;
         return this;
     }
 
-    public static BaseMessage user(String content) {
-        return new BaseMessage(Role.USER, content, null, null, null);
+    public static StdMessage user(String content) {
+        return new StdMessage(Role.USER, content, null, null, null);
     }
-    public static BaseMessage assistant(String content) {
-        return new BaseMessage(Role.ASSISTANT, content, null, null, null);
+
+    public static StdMessage assistant(String content) {
+        return new StdMessage(Role.ASSISTANT, content, null, null, null);
     }
-    public static BaseMessage assistant(List<ToolCall> toolCalls) {
-        return new BaseMessage(Role.ASSISTANT, null, null, toolCalls, null);
+
+    public static StdMessage assistant(List<ToolCall> toolCalls) {
+        return new StdMessage(Role.ASSISTANT, null, null, toolCalls, null);
     }
-    public static BaseMessage system(String content) {
-        return new BaseMessage(Role.SYSTEM, content, null, null, null);
+
+    public static StdMessage system(String content) {
+        return new StdMessage(Role.SYSTEM, content, null, null, null);
     }
-    public static BaseMessage tool(String toolCallId, String content) {
-        return new BaseMessage(Role.TOOL, content, null, null, toolCallId);
+
+    public static StdMessage tool(String toolCallId, String content) {
+        return new StdMessage(Role.TOOL, content, null, null, toolCallId);
     }
 }

@@ -3,7 +3,7 @@ package com.zincoid.nullbot.bot.command.aichat;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.core.module.ai.chat.client.QQAiClient;
+import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import com.zincoid.nullbot.core.context.BotCtx;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
@@ -16,16 +16,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class ChatResetCmd implements Cmd {
 
-    private final QQAiClient qqAiClient;
+    private final QQChatClient qqChatClient;
 
-    public ChatResetCmd(@Lazy QQAiClient qqAiClient) {
-        this.qqAiClient = qqAiClient;
+    public ChatResetCmd(@Lazy QQChatClient qqChatClient) {
+        this.qqChatClient = qqChatClient;
     }
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         String chatId = BotCtx.getChatId();
-        qqAiClient.clear(chatId);
+        qqChatClient.clear(chatId);
         bot.sendGroupMsg(event.getGroupId(), "♻️历史已重置", false);
         log.info("☑ [ChatReset] 历史已重置 - ChatId: {}", chatId);
     }

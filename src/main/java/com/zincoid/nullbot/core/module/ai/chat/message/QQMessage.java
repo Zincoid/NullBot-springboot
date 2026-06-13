@@ -42,9 +42,11 @@ public class QQMessage extends AbstractMessage {
                 ? QQMessage.assistant(content).with(message.userId, message.userName)
                 : QQMessage.assistant(content).with(message.groupId, message.userId, message.userName);
     }
+
     public static QQMessage user(String content) {
         return new QQMessage(Role.USER, content);
     }
+
     public static QQMessage assistant(String content) {
         return new QQMessage(Role.ASSISTANT, content);
     }
@@ -55,6 +57,7 @@ public class QQMessage extends AbstractMessage {
         this.messageId = messageId;
         return this;
     }
+
     public QQMessage with(Long groupId, Long userId, String userName) {
         this.isPrivate = false;
         this.groupId = groupId;
@@ -62,6 +65,7 @@ public class QQMessage extends AbstractMessage {
         this.userName = userName;
         return this;
     }
+
     public QQMessage with(Long userId, String userName) {
         this.isPrivate = true;
         this.userId = userId;
