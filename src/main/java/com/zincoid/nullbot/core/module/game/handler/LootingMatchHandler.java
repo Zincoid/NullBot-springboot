@@ -76,9 +76,26 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
         if (!p.isAlive()) return getSuccessResult(userId, match, true, "💀你已死亡 无法继续行动", "");
         if (p.isEvacuated()) return getSuccessResult(userId, match, true, "🚪你已撤离 无法继续行动", "");
 
-        // 执行动作
-        String actionOutput = executeAction(state, p, command);
-        if (actionOutput == null) return getErrorResult("❌指令不存在");
+        // 执行动作（攻击玩家单独处理，需要获取被攻击方反馈）
+        String actionOutput;
+        String opponentExtra = "";
+        if (command.equals(CMD_ATTACK_PLAYER)) {
+            List<String> output = gameLogic.attackPlayer(state, p);
+            actionOutput = output.get(0);
+            opponentExtra = output.get(1);
+        } else if (command.startsWith(CMD_MOVE)) {
+            actionOutput = gameLogic.move(state, p, command.substring(2).trim());
+        } else if (command.equals(CMD_SCOUT)) {
+            actionOutput = gameLogic.view(state, p);
+        } else if (command.equals(CMD_LOOT)) {
+            actionOutput = gameLogic.loot(state, p);
+        } else if (command.equals(CMD_ATTACK_AI)) {
+            actionOutput = gameLogic.attackAi(state, p);
+        } else if (command.equals(CMD_EVAC)) {
+            actionOutput = gameLogic.evac(state, p);
+        } else {
+            return getErrorResult("❌指令不存在");
+        }
 
         // 推进游戏刻（侦察不消耗刻）
         String selfTick = "";
@@ -92,11 +109,15 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
         String enemyInfo = gameLogic.checkEnemies(state, p);
 
         // 构建输出
-        String statusLine = "❤️HP: " + p.getHp() + "\n[=== 🕒距迷失还剩 " + (25 - state.getTick()) + " 刻 ===]";
+        String statusLine = """
+                【玩家%s】 HP: %s\uD83D\uDC9F
+                [=== 🕒距迷失还剩 %s 刻 ===]""".formatted(userId, p.getHp(), 25 - state.getTick());
         String availableActions = nextActions(state, p);
 
         String selfInfo = statusLine + "\n" + actionOutput + selfTick + enemyInfo + "\n" + availableActions;
         String opponentInfo = opponentTick;
+        if (!opponentExtra.isEmpty())
+            opponentInfo = opponentInfo.isEmpty() ? opponentExtra : opponentExtra + "\n" + opponentInfo;
 
         // 游戏结束（撤离 / 迷失 / 死亡）
         if (state.isFinished()) {
@@ -107,19 +128,6 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
     }
 
     // ================== 工具方法 ==================
-
-    private String executeAction(LootingGameState state, LootingPlayer p, String command) {
-        if (command.startsWith(CMD_MOVE)) return gameLogic.move(state, p, command.substring(2).trim());
-        if (command.equals(CMD_SCOUT)) return gameLogic.view(state, p);
-        if (command.equals(CMD_LOOT)) return gameLogic.loot(state, p);
-        if (command.equals(CMD_ATTACK_AI)) return gameLogic.attackAi(state, p);
-        if (command.equals(CMD_ATTACK_PLAYER)) {
-            List<String> output = gameLogic.attackPlayer(state, p);
-            return output.getFirst();
-        }
-        if (command.equals(CMD_EVAC)) return gameLogic.evac(state, p);
-        return null;
-    }
 
     private String nextActions(LootingGameState s, LootingPlayer p) {
         if (s.isFinished()) return "";

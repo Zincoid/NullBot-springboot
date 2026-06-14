@@ -20,8 +20,8 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
             MatchManager matchManager,
             PlayerManager playerManager,
             UserService userService,
-            TicTacToeGameLogic gameLogic)
-    {
+            TicTacToeGameLogic gameLogic
+    ) {
         super(botContainer, matchManager, playerManager, gameLogic);
         this.userService = userService;
     }

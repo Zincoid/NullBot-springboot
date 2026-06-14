@@ -20,8 +20,8 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
             MatchManager matchManager,
             PlayerManager playerManager,
             UserService userService,
-            ReversiGameLogic gameLogic)
-    {
+            ReversiGameLogic gameLogic
+    ) {
         super(botContainer, matchManager, playerManager, gameLogic);
         this.userService = userService;
     }
