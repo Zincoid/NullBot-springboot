@@ -5,7 +5,7 @@ import com.zincoid.nullbot.core.model.data.po.ItemPO;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Data
 public class LootingPlayer {
@@ -26,7 +26,6 @@ public class LootingPlayer {
     }
 
     public int getAtk() {
-        Random rand = new Random();
-        return atk + rand.nextInt(atk);
+        return atk + ThreadLocalRandom.current().nextInt(atk);
     }
 }

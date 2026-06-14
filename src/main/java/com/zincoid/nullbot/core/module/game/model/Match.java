@@ -14,14 +14,13 @@ public class Match {
     private Player player2;
 
     private LocalDateTime createTime;
-    private LocalDateTime startTime;
     private LocalDateTime endTime;
 
     private LocalDateTime lastActionTime;
     private MatchStatus status = MatchStatus.CREATED;
 
     public enum MatchStatus {
-        CREATED, WAITING, PLAYING, FINISHED
+        CREATED, PLAYING, FINISHED
     }
 
     // 用于快速获取对方群号

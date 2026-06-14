@@ -1,10 +1,18 @@
 package com.zincoid.nullbot.core.module.game.logic;
 
 import com.zincoid.nullbot.core.module.game.state.TicTacToeGameState;
+import com.zincoid.nullbot.core.module.game.model.Match;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TicTacToeGameLogic extends GameLogic {
+public class TicTacToeGameLogic extends GameLogic<TicTacToeGameState> {
+
+    public TicTacToeGameState create(Match match) {
+        TicTacToeGameState state = new TicTacToeGameState();
+        state.setPlayerX(match.getPlayer1().getUserId());
+        state.setPlayerO(match.getPlayer2().getUserId());
+        return state;
+    }
 
     public boolean place(TicTacToeGameState s, int r, int c) {
         if (r < 0 || r >= 3 || c < 0 || c >= 3) return false;

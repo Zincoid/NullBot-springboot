@@ -1,17 +1,14 @@
 package com.zincoid.nullbot.core.module.game.handler;
 
-import com.mikuac.shiro.core.BotContainer;
 import com.zincoid.nullbot.core.module.game.manager.MatchManager;
 import com.zincoid.nullbot.core.module.game.manager.PlayerManager;
 import com.zincoid.nullbot.core.module.game.logic.TicTacToeGameLogic;
 import com.zincoid.nullbot.core.model.result.GameResult;
 import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.state.TicTacToeGameState;
+import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.service.basic.UserService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, TicTacToeGameLogic> {
@@ -19,31 +16,19 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
     private final UserService userService;
 
     public TicTacToeMatchHandler(
-            @Value("${bot.bot-id}") Long botId,
-            BotContainer botContainer,
+            BotOperator botContainer,
             MatchManager matchManager,
             PlayerManager playerManager,
             UserService userService,
             TicTacToeGameLogic gameLogic)
     {
-        super(botId, botContainer, matchManager, playerManager, gameLogic, new ConcurrentHashMap<>());
+        super(botContainer, matchManager, playerManager, gameLogic);
         this.userService = userService;
     }
 
     @Override
     public String gameType() {
         return "井字棋";
-    }
-
-    @Override
-    public void onMatchStart(Match match) {
-        TicTacToeGameState state = new TicTacToeGameState();
-        state.setPlayerX(match.getPlayer1().getUserId());
-        state.setPlayerO(match.getPlayer2().getUserId());
-        games.put(match.getMatchId(), state);
-
-        super.onMatchStart(match);
-        sendInitMessage(match, state);
     }
 
     @Override

@@ -13,14 +13,13 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @RequiredArgsConstructor
-public class LootingGameLogic extends GameLogic {
+public class LootingGameLogic extends GameLogic<LootingGameState> {
 
     private final LootingMapFactory mapFactory;
-    private static final Random R = new Random();
 
     public LootingGameState create(Match match) {
         LootingGameState s = new LootingGameState();
@@ -31,16 +30,16 @@ public class LootingGameLogic extends GameLogic {
                 .map(MapNode::getName).toList();
 
         s.getPlayers().put(match.getPlayer1().getUserId(),
-                new LootingPlayer(match.getPlayer1().getUserId(), spawns.get(R.nextInt(spawns.size()))));
+                new LootingPlayer(match.getPlayer1().getUserId(), spawns.get(ThreadLocalRandom.current().nextInt(spawns.size()))));
         s.getPlayers().put(match.getPlayer2().getUserId(),
-                new LootingPlayer(match.getPlayer2().getUserId(), spawns.get(R.nextInt(spawns.size()))));
+                new LootingPlayer(match.getPlayer2().getUserId(), spawns.get(ThreadLocalRandom.current().nextInt(spawns.size()))));
 
         initAi(s);
         return s;
     }
 
     private void initAi(LootingGameState s) {
-        int n = 1 + R.nextInt(3);
+        int n = 1 + ThreadLocalRandom.current().nextInt(3);
         List<String> nodes = new ArrayList<>(s.getMap().getNodes().keySet());
 
         // 定制 AI
@@ -49,7 +48,7 @@ public class LootingGameLogic extends GameLogic {
             ai.setName("德穆兰");
             ai.setHp(100);
             ai.setAtk(20);
-            ai.setLocation(nodes.get(R.nextInt(nodes.size())));
+            ai.setLocation(nodes.get(ThreadLocalRandom.current().nextInt(nodes.size())));
             ai.getBackpack().addAll(mapFactory.randItems(true));
             s.getEnemies().add(ai);
         }
@@ -58,7 +57,7 @@ public class LootingGameLogic extends GameLogic {
         for (int i = 0; i < n; i++) {
             AiEnemy ai = new AiEnemy();
             ai.setName("士兵-" + (i + 1));
-            ai.setLocation(nodes.get(R.nextInt(nodes.size())));
+            ai.setLocation(nodes.get(ThreadLocalRandom.current().nextInt(nodes.size())));
             ai.getBackpack().addAll(mapFactory.randItems(false));
             s.getEnemies().add(ai);
         }
@@ -198,7 +197,7 @@ public class LootingGameLogic extends GameLogic {
         StringBuilder sb2 = new StringBuilder();
         for (AiEnemy ai : s.getEnemies()) {
             if (!ai.alive()) continue;
-            if(R.nextBoolean()){
+            if(ThreadLocalRandom.current().nextBoolean()){
                 for (LootingPlayer p : s.getPlayers().values()) {
                     if (p.isAlive() && p.getLocation().equals(ai.getLocation())) {
                         if(Objects.equals(p.getUserId(), selfId)){
@@ -229,7 +228,7 @@ public class LootingGameLogic extends GameLogic {
                 MapNode node = s.getMap().node(ai.getLocation());
                 if (!node.getNeighbors().isEmpty()) {
                     ai.setLocation(node.getNeighbors()
-                            .get(R.nextInt(node.getNeighbors().size())));
+                            .get(ThreadLocalRandom.current().nextInt(node.getNeighbors().size())));
                 }
             }
         }

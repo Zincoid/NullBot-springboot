@@ -40,9 +40,9 @@ public class MatchCmd implements Cmd {
                 限权: %d 级
                 格式: Match [游戏类型]
                 游戏类型:
-                - Tictactoe 井字棋
-                - Reversi 黑白棋
-                - Looting 摸金
+                - 井字棋 (TicTacToe)
+                - 黑白棋 (Reversi)
+                - 摸金 (Looting)
                 别名: 匹配""", getAccess()
         );
     }

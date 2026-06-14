@@ -1,16 +1,24 @@
 package com.zincoid.nullbot.core.module.game.logic;
 
 import com.zincoid.nullbot.core.module.game.state.ReversiGameState;
+import com.zincoid.nullbot.core.module.game.model.Match;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReversiGameLogic extends GameLogic {
+public class ReversiGameLogic extends GameLogic<ReversiGameState> {
 
     private static final int[][] DIRS = {
             {-1, -1}, {-1, 0}, {-1, 1},
             {0, -1},           {0, 1},
             {1, -1},  {1, 0},  {1, 1}
     };
+
+    public ReversiGameState create(Match match) {
+        ReversiGameState state = new ReversiGameState();
+        state.setBlackPlayerId(match.getPlayer1().getUserId());
+        state.setWhitePlayerId(match.getPlayer2().getUserId());
+        return state;
+    }
 
     public boolean place(ReversiGameState s, int r, int c) {
         if (!in(r, c) || s.getBoard()[r][c] != '.') return false;

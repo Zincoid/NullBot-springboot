@@ -1,9 +1,8 @@
 package com.zincoid.nullbot.core.module.game.handler;
 
-import com.mikuac.shiro.core.BotContainer;
 import com.zincoid.nullbot.core.module.game.manager.PlayerManager;
+import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.service.basic.UserService;
-import org.springframework.beans.factory.annotation.Value;
 import com.zincoid.nullbot.core.module.game.manager.MatchManager;
 import com.zincoid.nullbot.core.model.result.GameResult;
 import com.zincoid.nullbot.core.module.game.model.Match;
@@ -11,39 +10,25 @@ import com.zincoid.nullbot.core.module.game.state.ReversiGameState;
 import com.zincoid.nullbot.core.module.game.logic.ReversiGameLogic;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 @Component
 public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, ReversiGameLogic> {
 
     private final UserService userService;
 
     public ReversiMatchHandler(
-            @Value("${bot.bot-id}") Long botId,
-            BotContainer botContainer,
+            BotOperator botContainer,
             MatchManager matchManager,
             PlayerManager playerManager,
             UserService userService,
             ReversiGameLogic gameLogic)
     {
-        super(botId, botContainer, matchManager, playerManager, gameLogic, new ConcurrentHashMap<>());
+        super(botContainer, matchManager, playerManager, gameLogic);
         this.userService = userService;
     }
 
     @Override
     public String gameType() {
         return "黑白棋";
-    }
-
-    @Override
-    public void onMatchStart(Match match) {
-        ReversiGameState state = new ReversiGameState();
-        state.setBlackPlayerId(match.getPlayer1().getUserId());
-        state.setWhitePlayerId(match.getPlayer2().getUserId());
-        games.put(match.getMatchId(), state);
-
-        super.onMatchStart(match);
-        sendInitMessage(match, state);
     }
 
     @Override

@@ -9,17 +9,16 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @RequiredArgsConstructor
 public class LootingMapFactory {
 
     private final ItemService itemService;
-    private static final Random R = new Random();
 
     public LootingMap randomMap() {
-        return switch (R.nextInt(2)) {
+        return switch (ThreadLocalRandom.current().nextInt(2)) {
             case 0 -> lab();
             case 1 -> spaceport();
             default -> throw new IllegalStateException();
@@ -75,7 +74,7 @@ public class LootingMapFactory {
     }
 
     public List<ItemPO> randItems(boolean highValue) {
-        int n = 1 + R.nextInt(3);
+        int n = 1 + ThreadLocalRandom.current().nextInt(3);
         List<ItemPO> list = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             if(highValue)

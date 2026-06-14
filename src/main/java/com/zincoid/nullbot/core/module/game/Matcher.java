@@ -1,7 +1,6 @@
 package com.zincoid.nullbot.core.module.game;
 
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.core.BotContainer;
 import com.zincoid.nullbot.core.module.game.handler.GameMatchHandler;
 import com.zincoid.nullbot.core.module.game.manager.MatchManager;
 import com.zincoid.nullbot.core.module.game.manager.MatchPoolManager;
@@ -9,42 +8,21 @@ import com.zincoid.nullbot.core.module.game.manager.PlayerManager;
 import com.zincoid.nullbot.core.model.result.MatchResult;
 import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.model.Player;
-import org.springframework.beans.factory.annotation.Value;
+import com.zincoid.nullbot.core.module.system.BotOperator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
 
 @Component
+@RequiredArgsConstructor
 public class Matcher {
 
-    @Value("${bot.bot-id}")
-    private Long botId;
-    private final BotContainer botContainer;
-
+    private final BotOperator botOperator;
     private final PlayerManager playerManager;
     private final MatchManager matchManager;
     private final MatchPoolManager poolManager;
-
-    // gameType -> match handler
-    private final Map<String, GameMatchHandler> handlerMap;
-
-    public Matcher(
-            BotContainer botContainer,
-            PlayerManager playerManager,
-            MatchPoolManager poolManager,
-            MatchManager matchManager,
-            List<GameMatchHandler> handlers
-    ) {
-        this.botContainer = botContainer;
-        this.playerManager = playerManager;
-        this.poolManager = poolManager;
-        this.matchManager = matchManager;
-
-        // 自动注册所有 Handler
-        handlerMap = new ConcurrentHashMap<>();
-        handlers.forEach(h -> handlerMap.put(h.gameType(), h));
-    }
+    private final HandlerRegistry handlerRegistry;
 
     /**
      * 加入匹配
@@ -54,7 +32,7 @@ public class Matcher {
         if (player.getStatus() != Player.PlayerStatus.IDLE)
             return MatchResult.notMatched("你已经在匹配或游戏中！");
 
-        GameMatchHandler handler = handlerMap.get(gameType);
+        GameMatchHandler<?, ?> handler = handlerRegistry.get(gameType);
         if (handler == null)
             return MatchResult.notMatched("暂不支持该类型游戏");
 
@@ -118,20 +96,21 @@ public class Matcher {
         if (player == null) return false;
         String matchId = player.getInProgressMatchId();
         if (matchId == null) return false;
-
         Match match = matchManager.getMatch(matchId);
+        if (match == null) return false;
+        GameMatchHandler<?, ?> handler = handlerRegistry.get(match.getGameType());
+        if (handler == null) return false;
+
         Player p1 = match.getPlayer1();
         Player p2 = match.getPlayer2();
 
         // 在对应游戏执行器中触发对局结束流程
-        handlerMap.get(match.getGameType()).onMatchEnd(match);
-
+        handler.onMatchEnd(match);
         // 发送终止提醒
-        Bot bot = botContainer.robots.get(botId);
-        if(!Objects.equals(p1.getGroupId(), p2.getGroupId())){
-            bot.sendGroupMsg(p1.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已被终止", false);
-        }
-        bot.sendGroupMsg(p2.getGroupId(), p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已被终止", false);
+        String info = p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\n对局已被终止";
+        if (!Objects.equals(p1.getGroupId(), p2.getGroupId()))
+            botOperator.sendGroupMsg(p1.getGroupId(), info);
+        botOperator.sendGroupMsg(p2.getGroupId(), info);
 
         return true;
     }

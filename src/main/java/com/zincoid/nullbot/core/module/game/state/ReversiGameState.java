@@ -1,7 +1,9 @@
 package com.zincoid.nullbot.core.module.game.state;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.Arrays;
 
@@ -18,7 +20,13 @@ public class ReversiGameState  extends GameState {
     private Long winnerId;
 
     private char currentTurn; // 'B' or 'W'
+    @Getter(AccessLevel.NONE)
     private boolean finished = false;
+
+    @Override
+    public boolean isFinished() {
+        return finished;
+    }
 
     public ReversiGameState() {
         init();

@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.core.module.game.manager;
 
 import com.zincoid.nullbot.core.module.game.model.Player;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class PlayerManager {
 
@@ -25,7 +27,7 @@ public class PlayerManager {
         return playerMap.values().stream()
                 .filter(player -> player.getLastActionTime() != null)
                 .sorted(Comparator.comparing(Player::getLastActionTime).reversed())
-                .limit(Math.min(count, playerMap.size()))
+                .limit(count)
                 .collect(Collectors.toList());
     }
 
@@ -43,16 +45,26 @@ public class PlayerManager {
         }
         return player;
     }
-
-    public void updateStatus(Player player, Player.PlayerStatus status) {
-        player.setStatus(status);
+    
+    public void updateStatus(Player player, Player.PlayerStatus newStatus) {
+        Player.PlayerStatus oldStatus = player.getStatus();
+        boolean valid = switch (oldStatus) {
+            case IDLE -> newStatus == Player.PlayerStatus.WAITING
+                    || newStatus == Player.PlayerStatus.PLAYING
+                    || newStatus == Player.PlayerStatus.IDLE;
+            case WAITING -> newStatus == Player.PlayerStatus.IDLE
+                    || newStatus == Player.PlayerStatus.PLAYING;
+            case PLAYING -> newStatus == Player.PlayerStatus.IDLE;
+        };
+        if (!valid) {
+            log.warn("玩家 {} 非法状态转换: {} -> {}", player.getUserId(), oldStatus, newStatus);
+        }
+        player.setStatus(newStatus);
         player.setLastActionTime(LocalDateTime.now());
     }
 
     public void resetPlayer(Player player) {
-        player.setStatus(Player.PlayerStatus.IDLE);
-        player.setLastActionTime(LocalDateTime.now());
-        // player.setGroupId(null);  // 不重置 作为上次活跃群聊
+        updateStatus(player, Player.PlayerStatus.IDLE);
         player.setInProgressMatchId(null);
     }
 }
