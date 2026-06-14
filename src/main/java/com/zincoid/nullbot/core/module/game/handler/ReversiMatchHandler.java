@@ -19,7 +19,7 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
     private final UserService userService;
 
     public ReversiMatchHandler(
-            @Value("${nullbot.bot-id}") Long botId,
+            @Value("${bot.bot-id}") Long botId,
             BotContainer botContainer,
             MatchManager matchManager,
             PlayerManager playerManager,

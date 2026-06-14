@@ -1,0 +1,137 @@
+# ============== NullBot 基础配置文件 ============== #
+# 1. 可使用 logback.xml 迁移 logging 配置;
+# 2. 暂不使用 Shiro SDK 内置线程池;
+# 3. file.storage 配置各级目录路径为根下子目录且:
+# I. config-path 下可配置文件:
+#   - 持久化群设置: Settings.csv;
+# II. resource-path 下需资源文件:
+#   - AI表情包: ai/meme/*;
+#   - 终末地资源: endfield/public或版本号/*;
+#   - PUBG地图: pubg/固定图片;
+#   - 斗蛐蛐资源: duel/data.csv, duel/icon/*.png;
+# 4. Docker 环境下如果 chrome.driver-path 指向
+#    /root/Nullbot/driver/chromedriver 但文件不存在
+#    则使用由 Dockerfile.base 构建的
+#    nullbot-jre-chrome:21 环境内置 Chrome 驱动程序.
+# ================================================ #
+
+spring:
+  application:
+    name: NullBot
+  profiles:
+    active: prod  # 激活配置文件
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${nullbot.database.url}
+    username: ${nullbot.database.username}
+    password: ${nullbot.database.password}
+
+server:
+  port: 8080
+  tomcat:
+    max-swallow-size: -1
+    max-http-form-post-size: 1073741824
+    connection-timeout: 300000
+    max-connections: 10000
+  compression:
+    enabled: true
+    mime-types:
+      - application/json
+      - application/xml
+      - text/html
+      - text/xml
+      - text/plain
+      - text/css
+      - application/
+  max-http-request-header-size: 65536
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+
+logging:
+  file:
+    name: ${nullbot.logging.path}
+  level:
+    root: ${nullbot.logging.level}
+    com.zincoid.nullbot: ${nullbot.logging.level}
+
+shiro:
+  ws:
+    server:
+      enable: true
+      url: ${nullbot.shiro.url}
+    timeout: 20
+    max-binary-message-buffer-size: 512000
+    max-text-message-buffer-size: 512000
+    access-token: ${nullbot.shiro.token}
+  interceptor: com.zincoid.nullbot.bot.interceptor.BotInterceptor
+  limiter:
+    enable: true
+    rate: 10
+    capacity: 30
+    awaitTask: true
+    timeout: 20
+#  task-pool:
+#    core-pool-size: 10
+#    queue-capacity: 200
+#    keep-alive-time: 10
+#    max-pool-size: 30
+#    thread-name-prefix: "ShiroTaskPool-"
+
+bot:
+  bot-id: ${nullbot.basic.ids.bot}
+  admin-id: ${nullbot.basic.ids.admin}
+  log-id: ${nullbot.basic.ids.log}
+  command:
+    prefix: ${nullbot.basic.cmd.prefix}
+    limit: ${nullbot.basic.cmd.limit}
+
+web:
+  jwt:
+    location: ${nullbot.web.jwt.location}
+    alias: ${nullbot.web.jwt.alias}
+    password: ${nullbot.web.jwt.password}
+    tokenTTL: ${nullbot.web.jwt.ttl}
+
+file:
+  storage:
+    init: ${nullbot.file.storage.init}
+    file-directory: ${nullbot.file.storage.root}
+    config-path: /config
+    resource-path: /resource
+    temp-path: /temp
+    image-path: /image
+    video-path: /video
+    audio-path: /audio
+  resource:
+    mode: ${nullbot.file.resource.mode}
+    oss-base-url: ${nullbot.file.resource.base-url}
+
+ai:
+  chat:
+    max-history-length: ${nullbot.ai.chat.max-history-length}
+    max-tokens: ${nullbot.ai.chat.max-tokens}
+    max-tool-calls: ${nullbot.ai.chat.max-tool-calls}
+    default-sys-msg: ${nullbot.ai.chat.default-prompt}
+    openai:
+      api-url: ${nullbot.ai.chat.openai.api-url}
+      api-key: ${nullbot.ai.chat.openai.api-key}
+      model: ${nullbot.ai.chat.openai.model}
+  tts:
+    api-url: ${nullbot.ai.tts.api-url}
+    api-key: ${nullbot.ai.tts.api-key}
+    version: ${nullbot.ai.tts.version}
+    model-name: ${nullbot.ai.tts.model}
+    prompt-text-lang: 中文
+    text-lang: 中文
+    emotion: 默认
+
+chrome:
+  driver-auto: ${nullbot.chrome.driver.auto}
+  driver-path: ${nullbot.chrome.driver.path}
+  max-retries: 5
+  load-timeout: 10

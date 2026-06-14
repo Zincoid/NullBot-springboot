@@ -10,12 +10,14 @@ import com.zincoid.nullbot.core.module.render.resvg.SvgRenderer;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Scanner;
 
+@ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class NullBotApplicationTests {
 

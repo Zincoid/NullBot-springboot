@@ -24,7 +24,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
     private final UserService userService;
 
     public LootingMatchHandler(
-            @Value("${nullbot.bot-id}") Long botId,
+            @Value("${bot.bot-id}") Long botId,
             BotContainer botContainer,
             MatchManager matchManager,
             PlayerManager playerManager,

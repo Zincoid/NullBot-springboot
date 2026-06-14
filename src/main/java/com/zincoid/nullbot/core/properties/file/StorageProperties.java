@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 public class StorageProperties {
 
     @Getter
+    private boolean init;
+    @Getter
     private String fileDirectory;
     private String configPath;
     private String resourcePath;

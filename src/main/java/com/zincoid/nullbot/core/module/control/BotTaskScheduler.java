@@ -19,7 +19,7 @@ import java.util.concurrent.*;
 @Component
 public class BotTaskScheduler {
 
-    @Value("${nullbot.bot-id}")
+    @Value("${bot.bot-id}")
     private Long botId;
     private final BotContainer botContainer;
 

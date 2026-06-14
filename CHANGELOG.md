@@ -979,7 +979,7 @@
   - 重构 AI Model 类结构 - 封装模型请求和响应参数；
   - 优化 请求方式 - 使用 RestClient 代替 HttpClient。
 
-### 2026.6.13
+### 2026.6.13 - v2.1.9
 
 - 优化 TTS 架构：
   - 使用 本地部署方式进行 GSVI TTS 推理并恢复 Tts 指令；
@@ -989,4 +989,7 @@
   - 优化 TtsClient 结构 - 拆分请求响应类并使用 RestClient；
   - 优化 其他部分代码；
 - 优化 Wife 指令 - 添加用户 AT 反馈；
-- 优化 Tts 指令。
+- 优化 Tts 指令；
+- 优化 配置文件结构 - 拆分 prod 和 dev 配置；
+- 修复 Windows 环境下 FileService 路径处理异常的问题；
+- 添加 项目文档和许可证。

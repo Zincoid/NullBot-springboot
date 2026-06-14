@@ -27,7 +27,7 @@ public class MatchCleaner {
     private static final long WAITING_TIMEOUT = 120;  // 匹配等待超时 (单位: Sec)
     private static final long PLAYING_TIMEOUT = 240;  // 游戏等待超时 (单位: Sec)
 
-    @Value("${nullbot.bot-id}")
+    @Value("${bot.bot-id}")
     private Long botId;
     private final BotContainer botContainer;
 

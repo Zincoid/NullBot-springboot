@@ -18,7 +18,6 @@ import com.zincoid.nullbot.web.exception.CommonException;
 import com.zincoid.nullbot.core.mapper.FileMapper;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.utils.DownloadUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpHeaders;
@@ -50,15 +49,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     private final AdminService adminService;
     private final UserService userService;
 
-    @Value("${file.init}")
-    private boolean init;
-
     // ================== 预载方法 ==================
 
     // @PostConstruct  // 阻塞启动
     @EventListener(ApplicationReadyEvent.class)
     public void load() {
-        if (!init) return;
+        if (!storageProperties.isInit()) return;
         log.info("◎ [FileService] 初始化文件同步中...");
         scanAndSyncFiles();
     }
@@ -301,10 +297,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                 .set(FilePO::getOwnerName, ownerName)
                 .update())
             return true;
-        Path path = Path.of(directory);
+        int lastSlash = directory.lastIndexOf('/');
+        String parentDir = lastSlash > 0 ? directory.substring(0, lastSlash) : "/";
+        String dirName = directory.substring(lastSlash + 1);
         FilePO dir = lambdaQuery()
-                .eq(FilePO::getDirectory, path.getParent().toString())
-                .eq(FilePO::getFileName, path.getFileName().toString())
+                .eq(FilePO::getDirectory, parentDir)
+                .eq(FilePO::getFileName, dirName)
                 .eq(FilePO::getIsDir, true)
                 .one();
         if (dir == null) return false;
@@ -386,14 +384,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     }
 
     private FilePO checkDirectoryExists(String fullDir) {
-        Path path = Path.of(fullDir);
+        int lastSlash = fullDir.lastIndexOf('/');
+        String parentDir = lastSlash > 0 ? fullDir.substring(0, lastSlash) : "/";
+        String dirName = fullDir.substring(lastSlash + 1);
         FilePO dir = lambdaQuery()
-                .eq(FilePO::getDirectory, path.getParent().toString())
-                .eq(FilePO::getFileName, path.getFileName().toString())
+                .eq(FilePO::getDirectory, parentDir)
+                .eq(FilePO::getFileName, dirName)
                 .eq(FilePO::getIsDir, true)
                 .one();
         if (dir == null)
             throw new CommonException("数据库目录不存在");
+        Path path = Path.of(fullDir);
         if (!Files.exists(path) || !Files.isDirectory(path))
             throw new RuntimeException("磁盘目录不存在");
         return dir;

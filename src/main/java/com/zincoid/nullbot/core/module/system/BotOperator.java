@@ -19,9 +19,9 @@ public class BotOperator {
     private static final int DEFAULT_MAX_RETRIES = 10;
     private static final int DEFAULT_RETRY_INTERVAL = 1000;
 
-    @Value("${nullbot.bot-id}")
+    @Value("${bot.bot-id}")
     private Long botId;
-    @Value("${nullbot.log-id}")
+    @Value("${bot.log-id}")
     private Long logId;
 
     private final BotContainer botContainer;

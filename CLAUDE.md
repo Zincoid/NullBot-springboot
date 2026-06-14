@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 
-- Java 21, Spring Boot 4.0.0, Maven. Compiler plugin is set to Java 19 source/target.
+- Java 21, Spring Boot 4.0.6, Maven. Compiler plugin is set to Java 19 source/target.
 - Active config is `src/main/resources/application.yml`. Secrets are in that file — do not commit these publicly.
 
 ## Architecture Overview
@@ -83,6 +83,6 @@ Three services: `nullbot-backend` (this app), `nullbot-frontend` (Nginx), and op
 
 ### Deployment (from README)
 
-- Bot process: `screen -dmS nullbot bash -c "java -jar /root/Nullbot/target/NullBot-springboot-0.0.1-SNAPSHOT.jar"`
+- Bot process: `screen -dmS nullbot bash -c "java -jar /root/Nullbot/target/NullBot-springboot-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod"`
 - System watchdog: `syswatch.sh` monitors for crashes
 - Chrome version: 144.0.7559.59 for local testing

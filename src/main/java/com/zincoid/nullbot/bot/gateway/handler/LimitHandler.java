@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LimitHandler implements Handler {
 
-    @Value("${nullbot.command.limit}")
+    @Value("${bot.command.limit}")
     private boolean enabled;
 
     private final CmdRateLimiter cmdRateLimiter;

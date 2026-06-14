@@ -33,5 +33,3 @@ create table `admin`(
 # 预设置 - 管理级用户
 INSERT INTO `user` (id, name, access) VALUES
     (2660181154, 'Zincoid', 2);
-INSERT INTO `admin` (id, username, password, email) VALUES
-    (2660181154, 'Zincoid', 'KJFHQAUJWDHKIA', '2660181154@qq.com');

@@ -41,9 +41,9 @@ public class BotListener {
     private final SecurityCodeScheduler securityCodeScheduler;
     private final AuthHandler authHandler;
 
-    @Value("${nullbot.command.prefix}")
+    @Value("${bot.command.prefix}")
     private String commandPrefix;
-    @Value("${nullbot.admin-id}")
+    @Value("${bot.admin-id}")
     private Long adminId;
 
     // ================================== 私聊动作捕获 ==================================

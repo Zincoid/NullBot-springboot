@@ -2,7 +2,9 @@ package com.zincoid.nullbot;
 
 import com.zincoid.nullbot.core.module.ai.chat.tool.impl.BingSearchTool;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("dev")
 public class NullBotTests {
 
     @Test

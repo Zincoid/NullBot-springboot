@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class Matcher {
 
-    @Value("${nullbot.bot-id}")
+    @Value("${bot.bot-id}")
     private Long botId;
     private final BotContainer botContainer;
 

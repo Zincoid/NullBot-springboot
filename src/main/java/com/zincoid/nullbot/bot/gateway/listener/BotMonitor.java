@@ -36,7 +36,7 @@ public class BotMonitor {
     private final StorageProperties storageProperties;
     private final FileService fileService;
 
-    @Value("${nullbot.command.prefix}")
+    @Value("${bot.command.prefix}")
     private String commandPrefix;
 
     // =================== 输入响应方法 ===================

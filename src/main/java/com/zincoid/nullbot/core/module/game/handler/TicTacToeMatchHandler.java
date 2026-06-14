@@ -19,7 +19,7 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
     private final UserService userService;
 
     public TicTacToeMatchHandler(
-            @Value("${nullbot.bot-id}") Long botId,
+            @Value("${bot.bot-id}") Long botId,
             BotContainer botContainer,
             MatchManager matchManager,
             PlayerManager playerManager,

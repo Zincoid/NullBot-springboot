@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ChatCmd implements Cmd {
 
-    @Value("${nullbot.command.prefix}")
+    @Value("${bot.command.prefix}")
     private String commandPrefix;
     private final QQChatClient qqChatClient;
 

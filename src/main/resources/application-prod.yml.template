@@ -1,0 +1,72 @@
+# ====================== NullBot 部署配置文件 ====================== #
+# 注: 用户使用 部署修改配置使用此配置文件.
+# ================================================================ #
+
+nullbot:
+  # -------------------------- 数据库 -------------------------- #
+  database:
+    url: jdbc:mysql://localhost:3306/nullbot          # 本地部署
+    # url: jdbc:mysql://nullbot-mysql:3306/nullbot    # 容器部署
+    # url: jdbc:mysql://172.17.0.1:3306/nullbot       # 宿主数据库
+    username: root                                    # 数据库用户名
+    password:                                         # 数据库密码
+
+  # --------------------------- 日志 --------------------------- #
+  logging:
+    level: INFO                                       # 日志级别
+    path: ./output.log                                # 日志路径
+
+  # --------------------------- 连接 --------------------------- #
+  shiro:
+    url: /napcat                                      # Ws 客户端点
+    token:                                            # Ws 鉴权口令
+
+  # --------------------------- 基本 --------------------------- #
+  basic:
+    ids:
+      bot:                                            # 机器人账号
+      admin:                                          # 管理员账号
+      log:                                            # 日志输出群聊
+    cmd:
+      prefix: "/"                                     # 指令前缀
+      limit: true                                     # 指令限速
+
+  # --------------------------- 网页 --------------------------- #
+  web:
+    jwt:
+      location: classpath:secret/JwtSignKey.jks       # jks 密钥路径
+      alias:                                          # jks 密钥别名
+      password:                                       # jks 密钥密码
+      ttl: 24h                                        # jwt 生存时间
+
+  # --------------------------- 文件 --------------------------- #
+  file:
+    storage:
+      init: false                                     # 启动时文件同步
+      root: ./file                                    # 文件管理根目录 (绝对路径)
+    resource:
+      mode: path                                      # 资源模式: path(默认)/base64/oss
+#      base-url: http://localhost:8080                 # 基础访问路径: OSS 模式下使用
+
+  # ---------------------------- AI --------------------------- #
+  ai:
+    chat:                                             # AI 对话配置
+      openai:                                         # OpenAI API
+        api-url: https://api.deepseek.com
+        api-key:
+        model: deepseek-v4-flash
+      max-history-length: 100
+      max-tokens: 750
+      max-tool-calls: 5
+      default-prompt: "你是一只猫娘，你的名字叫Null。"
+    tts:                                              # TTS 合成配置
+      api-url: http://localhost:8000                  # GSVI API
+      api-key: null
+      version: v4
+      model: 明日方舟-中文-羽毛笔
+
+  # -------------------------- Chrome ------------------------- #
+  chrome:
+    driver:
+      auto: true                                      # 驱动自动下载
+      path:                                           # 驱动自定路径
