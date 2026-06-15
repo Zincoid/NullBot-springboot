@@ -21,15 +21,15 @@ public class MatchCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        Long groupId = event.getGroupId();
-        Long userId = event.getUserId();
-        String userName = event.getSender().getNickname();
         String gameType = args.nextString();
-        MatchResult result = matcher.joinMatch(userId, groupId, userName, gameType);
-        if (result.getIsMatched() && !result.getIsSameGroup())
-            bot.sendGroupMsg(result.getOpponentGroupId(), result.getInfo(), false);
-        bot.sendGroupMsg(groupId, result.getInfo(), false);
-        log.info("☑ [Match] 匹配 -> {}", result.getInfo());
+        MatchResult result = matcher.join(
+                event.getUserId(),
+                event.getGroupId(),
+                event.getSender().getNickname(),
+                gameType
+        );
+        result.send();
+        log.info("☑ [Match] 匹配 -> {}", result.isOk());
     }
 
     @Override

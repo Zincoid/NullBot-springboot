@@ -53,7 +53,7 @@ public class ReversiMatchHandler extends GameMatchHandler<ReversiGameState, Reve
      * 黑白棋落子 (用户调用)
      */
     public GameResult move(Long userId, String pos) {
-        Match match = matchManager.getMatchBySelfId(userId);
+        Match match = matchManager.get(userId);
         if (match == null) return getErrorResult("❌对局不存在");
 
         ReversiGameState state = games.get(match.getMatchId());

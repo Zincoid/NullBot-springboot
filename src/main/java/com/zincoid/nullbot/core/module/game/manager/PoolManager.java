@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.core.module.game.manager;
 
 import com.zincoid.nullbot.core.module.game.model.Player;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -12,40 +13,43 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
 @Component
-public class MatchPoolManager {
+@RequiredArgsConstructor
+public class PoolManager {
 
-    // gameType -> waiting Queue
-    private final Map<String, Queue<Player>> waitingPools = new ConcurrentHashMap<>();
-    // playerId -> gameType  反向索引，避免 removePlayer 遍历所有队列
-    private final Map<Long, String> playerGameTypeIndex = new ConcurrentHashMap<>();
+    private final Map<String, Queue<Player>> waitingPools = new ConcurrentHashMap<>();  // gameType -> waiting Queue
+    private final Map<Long, String> playerGameTypeIndex = new ConcurrentHashMap<>();  // playerId -> gameType
 
-    public void addPlayer(Player player, String gameType) {
+    private final PlayerManager playerManager;
+
+    public void add(Long userId, String gameType) {
+        Player player = playerManager.get(userId);
+        if (player == null) throw new RuntimeException("玩家未注册");
         waitingPools.computeIfAbsent(gameType, k -> new ConcurrentLinkedQueue<>()).add(player);
-        playerGameTypeIndex.put(player.getUserId(), gameType);
+        playerGameTypeIndex.put(player.getId(), gameType);
     }
 
-    public Player pollPlayer(String gameType) {
+    public Player poll(String gameType) {
         Queue<Player> queue = waitingPools.get(gameType);
         Player player = queue != null ? queue.poll() : null;
-        if (player != null) {
-            playerGameTypeIndex.remove(player.getUserId());
-        }
+        if (player != null) playerGameTypeIndex.remove(player.getId());
         return player;
     }
 
-    public boolean removePlayer(Player player) {
-        String gameType = playerGameTypeIndex.remove(player.getUserId());
+    public boolean remove(Long userId) {
+        Player player = playerManager.get(userId);
+        if (player == null) return false;
+        String gameType = playerGameTypeIndex.remove(player.getId());
         if (gameType == null) return false;
         Queue<Player> queue = waitingPools.get(gameType);
         return queue != null && queue.remove(player);
     }
 
-    public void removeTimeoutPlayers(long timeoutSeconds, Consumer<Player> onTimeout) {
+    public void clean(long timeoutSeconds, Consumer<Player> onTimeout) {
         LocalDateTime now = LocalDateTime.now();
         waitingPools.forEach((gameType, queue) -> queue.removeIf(p -> {
             long seconds = Duration.between(p.getLastActionTime(), now).getSeconds();
             if (seconds >= timeoutSeconds) {
-                playerGameTypeIndex.remove(p.getUserId());
+                playerGameTypeIndex.remove(p.getId());
                 onTimeout.accept(p);
                 return true;
             }

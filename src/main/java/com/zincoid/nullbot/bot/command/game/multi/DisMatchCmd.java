@@ -21,9 +21,12 @@ public class DisMatchCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        MatchResult result = matcher.cancelMatch(event.getUserId());
-        bot.sendGroupMsg(event.getGroupId(), result.getInfo(), false);
-        log.info("☑ [DisMatch] 取消匹配 -> {}", result.getInfo());
+        MatchResult result = matcher.cancel(
+                event.getUserId(),
+                event.getGroupId()
+        );
+        result.send();
+        log.info("☑ [DisMatch] 取消匹配 -> {}", result.isOk());
     }
 
     @Override

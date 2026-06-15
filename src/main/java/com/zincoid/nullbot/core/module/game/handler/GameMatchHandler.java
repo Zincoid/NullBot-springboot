@@ -27,18 +27,15 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic<
     // 定义游戏类型名称
     public abstract String gameType();
 
-    // 判断是否能够匹配
-    public boolean canMatch(Player p1, Player p2) { return true; }
-
     // 游戏开始前初始化
     public void onMatchStart(Match match) {
         S state = gameLogic.create(match);
         games.put(match.getMatchId(), state);
         // 更新玩家状态
-        playerManager.updateStatus(match.getPlayer1(), Player.PlayerStatus.PLAYING);
-        playerManager.updateStatus(match.getPlayer2(), Player.PlayerStatus.PLAYING);
+        playerManager.update(match.getPlayer1().getId(), Player.PlayerStatus.PLAYING);
+        playerManager.update(match.getPlayer2().getId(), Player.PlayerStatus.PLAYING);
         // 更新对局状态
-        matchManager.updateMatchStatus(match, Match.MatchStatus.PLAYING);
+        matchManager.update(match.getMatchId(), Match.MatchStatus.PLAYING);
         sendInitMessage(match, state);
     }
 
@@ -47,10 +44,10 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic<
         // 移除游戏数据
         games.remove(match.getMatchId());
         // 重置玩家状态
-        playerManager.resetPlayer(match.getPlayer1());
-        playerManager.resetPlayer(match.getPlayer2());
+        playerManager.reset(match.getPlayer1().getId());
+        playerManager.reset(match.getPlayer2().getId());
         // 移除游戏会话
-        matchManager.removeMatch(match.getMatchId());
+        matchManager.remove(match.getMatchId());
     }
 
     // 游戏输出渲染方法
@@ -65,9 +62,9 @@ public abstract class GameMatchHandler<S extends GameState, L extends GameLogic<
         Player p1 = match.getPlayer1();
         Player p2 = match.getPlayer2();
         String info = render(state);
-        if (!Objects.equals(p1.getGroupId(), p2.getGroupId()))
-            botOperator.sendGroupMsg(p1.getGroupId(), info);
-        botOperator.sendGroupMsg(p2.getGroupId(), info);
+        if (!Objects.equals(p1.getInProgressGroupId(), p2.getInProgressGroupId()))
+            botOperator.sendGroupMsg(p1.getInProgressGroupId(), info);
+        botOperator.sendGroupMsg(p2.getInProgressGroupId(), info);
     }
 
     // 失败消息结果

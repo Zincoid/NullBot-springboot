@@ -9,8 +9,8 @@ public class TicTacToeGameLogic extends GameLogic<TicTacToeGameState> {
 
     public TicTacToeGameState create(Match match) {
         TicTacToeGameState state = new TicTacToeGameState();
-        state.setPlayerX(match.getPlayer1().getUserId());
-        state.setPlayerO(match.getPlayer2().getUserId());
+        state.setPlayerX(match.getPlayer1().getId());
+        state.setPlayerO(match.getPlayer2().getId());
         return state;
     }
 

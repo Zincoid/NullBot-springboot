@@ -1,22 +1,24 @@
 package com.zincoid.nullbot.core.module.game.model;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Data
+@RequiredArgsConstructor(staticName = "of")
 public class Match {
 
-    private String matchId;
-    private String gameType;
-    private Player player1;
-    private Player player2;
+    private final String matchId;
+    private final String gameType;
+    private final Player player1;
+    private final Player player2;
 
-    private LocalDateTime createTime;
+    private final LocalDateTime createTime = LocalDateTime.now();
+    private LocalDateTime lastActionTime = LocalDateTime.now();
     private LocalDateTime endTime;
 
-    private LocalDateTime lastActionTime;
     private MatchStatus status = MatchStatus.CREATED;
 
     public enum MatchStatus {
@@ -25,11 +27,11 @@ public class Match {
 
     // 用于快速获取对方群号
     public Long getOpponentGroupIdBySelfId(Long id) {
-        return Objects.equals(id, player1.getUserId()) ? player2.getGroupId() : player1.getGroupId();
+        return Objects.equals(id, player1.getId()) ? player2.getInProgressGroupId() : player1.getInProgressGroupId();
     }
 
     // 用于快速获取自己群号
     public Long getSelfGroupIdBySelfId(Long id) {
-        return Objects.equals(id, player1.getUserId()) ? player1.getGroupId() : player2.getGroupId();
+        return Objects.equals(id, player1.getId()) ? player1.getInProgressGroupId() : player2.getInProgressGroupId();
     }
 }

@@ -66,7 +66,7 @@ public class LootingMatchHandler extends GameMatchHandler<LootingGameState, Loot
      * 玩家行为 (用户调用)
      */
     public GameResult action(Long userId, String command) {
-        Match match = matchManager.getMatchBySelfId(userId);
+        Match match = matchManager.get(userId);
         if (match == null) return getErrorResult("❌对局不存在");
         LootingGameState state = games.get(match.getMatchId());
         if (state == null) return getErrorResult("❌状态不存在");

@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.module.game;
 
 import com.zincoid.nullbot.core.module.game.handler.GameMatchHandler;
 import com.zincoid.nullbot.core.module.game.manager.MatchManager;
-import com.zincoid.nullbot.core.module.game.manager.MatchPoolManager;
+import com.zincoid.nullbot.core.module.game.manager.PoolManager;
 import com.zincoid.nullbot.core.module.game.manager.PlayerManager;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class MatchCleaner {
     private static final long PLAYING_TIMEOUT = 240;  // 游戏等待超时 (单位: Sec)
 
     private final BotOperator botOperator;
-    private final MatchPoolManager poolManager;
+    private final PoolManager poolManager;
     private final MatchManager matchManager;
     private final PlayerManager playerManager;
     private final HandlerRegistry handlerRegistry;
@@ -43,10 +43,10 @@ public class MatchCleaner {
      * 等待匹配超时清理
      */
     private void cleanWaitingPlayers() {
-        poolManager.removeTimeoutPlayers(WAITING_TIMEOUT, p -> {
-            log.info("▽ [MatchCleaner] 清理匹配超时玩家 {}", p.getUserId());
-            botOperator.sendGroupMsg(p.getGroupId(), p.getUserName() + "(" + p.getUserId() + ") 匹配超时");
-            playerManager.resetPlayer(p);
+        poolManager.clean(WAITING_TIMEOUT, p -> {
+            log.info("▽ [MatchCleaner] 清理匹配超时玩家 {}", p.getId());
+            botOperator.sendGroupMsg(p.getInProgressGroupId(), p.getName() + "(" + p.getId() + ") 匹配超时");
+            playerManager.reset(p.getId());
         });
     }
 
@@ -55,7 +55,7 @@ public class MatchCleaner {
      */
     private void cleanTimeoutMatches() {
         LocalDateTime now = LocalDateTime.now();
-        matchManager.getAllMatches().forEach(match -> {
+        matchManager.getAll().forEach(match -> {
             if (match.getStatus() != Match.MatchStatus.PLAYING) return;
             LocalDateTime lastActionTime = match.getLastActionTime();
             if (lastActionTime == null) lastActionTime = match.getCreateTime();
@@ -64,10 +64,10 @@ public class MatchCleaner {
                 log.warn("▽ [MatchCleaner] Match {} 超时未响应自动结束", match.getMatchId());
                 Player p1 = match.getPlayer1();
                 Player p2 = match.getPlayer2();
-                String info = "对局已超时 玩家:\n" + p1.getUserName() + "(" + p1.getUserId() + ")\n" + p2.getUserName() + "(" + p2.getUserId() + ")\nMatch ID: " + match.getMatchId();
-                if (!Objects.equals(p1.getGroupId(), p2.getGroupId()))
-                    botOperator.sendGroupMsg(p1.getGroupId(), info);
-                botOperator.sendGroupMsg(p2.getGroupId(), info);
+                String info = "对局已超时 玩家:\n" + p1.getName() + "(" + p1.getId() + ")\n" + p2.getName() + "(" + p2.getId() + ")\nMatch ID: " + match.getMatchId();
+                if (!Objects.equals(p1.getInProgressGroupId(), p2.getInProgressGroupId()))
+                    botOperator.sendGroupMsg(p1.getInProgressGroupId(), info);
+                botOperator.sendGroupMsg(p2.getInProgressGroupId(), info);
                 // 在对应游戏执行器中触发对局结束流程
                 GameMatchHandler<?, ?> handler = handlerRegistry.get(match.getGameType());
                 if (handler != null) handler.onMatchEnd(match);

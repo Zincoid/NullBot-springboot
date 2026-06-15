@@ -53,7 +53,7 @@ public class TicTacToeMatchHandler extends GameMatchHandler<TicTacToeGameState, 
      * 井字棋落子 (用户调用)
      */
     public GameResult move(Long userId, int r, int c) {
-        Match match = matchManager.getMatchBySelfId(userId);
+        Match match = matchManager.get(userId);
         if (match == null) return getErrorResult("❌对局不存在");
         TicTacToeGameState state = games.get(match.getMatchId());
         if (state == null) return getErrorResult("❌状态不存在");

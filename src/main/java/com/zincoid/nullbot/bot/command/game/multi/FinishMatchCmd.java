@@ -4,8 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.bot.exception.BotInfoException;
-import com.zincoid.nullbot.core.enums.Emoji;
+import com.zincoid.nullbot.core.model.result.MatchResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
@@ -22,9 +21,12 @@ public class FinishMatchCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        if(!matcher.finishMatch(event.getUserId()))
-            throw new BotInfoException(Emoji.INFO, "对局未找到");
-        log.info("☑ [FinishMatch] 对局已终止");
+        MatchResult result = matcher.finish(
+                event.getUserId(),
+                event.getGroupId()
+        );
+        result.send();
+        log.info("☑ [FinishMatch] 对局终止 -> {}", result.isOk());
     }
 
     @Override

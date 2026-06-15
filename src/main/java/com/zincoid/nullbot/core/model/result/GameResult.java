@@ -31,12 +31,12 @@ public class GameResult {
         );
     }
 
-    public static GameResult success(Boolean isSeperated, Long selfGroupId, Long opponentGroupId,
+    public static GameResult success(Boolean isSeparated, Long selfGroupId, Long opponentGroupId,
                                      String selfInfo, String opponentInfo) {
         return new GameResult(
                 true,
                 Objects.equals(selfGroupId, opponentGroupId),
-                isSeperated,
+                isSeparated,
                 selfGroupId,
                 opponentGroupId,
                 selfInfo,

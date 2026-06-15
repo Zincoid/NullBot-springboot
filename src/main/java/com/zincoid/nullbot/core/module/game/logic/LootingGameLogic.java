@@ -29,10 +29,10 @@ public class LootingGameLogic extends GameLogic<LootingGameState> {
                 .stream().filter(MapNode::isSpawn)
                 .map(MapNode::getName).toList();
 
-        s.getPlayers().put(match.getPlayer1().getUserId(),
-                new LootingPlayer(match.getPlayer1().getUserId(), spawns.get(ThreadLocalRandom.current().nextInt(spawns.size()))));
-        s.getPlayers().put(match.getPlayer2().getUserId(),
-                new LootingPlayer(match.getPlayer2().getUserId(), spawns.get(ThreadLocalRandom.current().nextInt(spawns.size()))));
+        s.getPlayers().put(match.getPlayer1().getId(),
+                new LootingPlayer(match.getPlayer1().getId(), spawns.get(ThreadLocalRandom.current().nextInt(spawns.size()))));
+        s.getPlayers().put(match.getPlayer2().getId(),
+                new LootingPlayer(match.getPlayer2().getId(), spawns.get(ThreadLocalRandom.current().nextInt(spawns.size()))));
 
         initAi(s);
         return s;

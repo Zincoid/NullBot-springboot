@@ -15,8 +15,8 @@ public class ReversiGameLogic extends GameLogic<ReversiGameState> {
 
     public ReversiGameState create(Match match) {
         ReversiGameState state = new ReversiGameState();
-        state.setBlackPlayerId(match.getPlayer1().getUserId());
-        state.setWhitePlayerId(match.getPlayer2().getUserId());
+        state.setBlackPlayerId(match.getPlayer1().getId());
+        state.setWhitePlayerId(match.getPlayer2().getId());
         return state;
     }
 

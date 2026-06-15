@@ -26,13 +26,13 @@ public class RecentPlayerCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        List<Player> players = playerManager.getRecentPlayers(5);
+        List<Player> players = playerManager.recent(5);
         if (players.isEmpty())
             throw new BotInfoException(Emoji.INFO, "暂无记录");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         StringBuilder sb = new StringBuilder().append("[最近玩家] 当前状态-上次活跃");
         for (Player player : players)
-            sb.append("\n").append(player.getUserName()).append("(").append(player.getUserId()).append(") :\n")
+            sb.append("\n").append(player.getName()).append("(").append(player.getId()).append(") :\n")
               .append(player.getStatus()).append(" ~ ").append(player.getLastActionTime().format(formatter));
         bot.sendGroupMsg(event.getGroupId(), sb.toString(), false);
         log.info("☑ [RecentPlayer] 最近玩家已获取 - Players: {}", players.size());
