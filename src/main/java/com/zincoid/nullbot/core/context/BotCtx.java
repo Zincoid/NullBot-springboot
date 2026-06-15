@@ -8,71 +8,71 @@ import com.zincoid.nullbot.core.model.data.po.SettingPO;
 
 public final class BotCtx {
 
-    private static final ThreadLocal<Bot> bot = new ThreadLocal<>();
-    private static final ThreadLocal<Event> event = new ThreadLocal<>();
-    private static final ThreadLocal<EventScope> scope = new ThreadLocal<>();
-    private static final ThreadLocal<Long> userId = new ThreadLocal<>();
-    private static final ThreadLocal<Long> groupId = new ThreadLocal<>();
-    private static final ThreadLocal<SettingPO> setting = new ThreadLocal<>();
+    private static final ThreadLocal<Bot> BOT = new ThreadLocal<>();
+    private static final ThreadLocal<Event> EVENT = new ThreadLocal<>();
+    private static final ThreadLocal<EventScope> SCOPE = new ThreadLocal<>();
+    private static final ThreadLocal<Long> USER_ID = new ThreadLocal<>();
+    private static final ThreadLocal<Long> GROUP_ID = new ThreadLocal<>();
+    private static final ThreadLocal<SettingPO> SETTING = new ThreadLocal<>();
 
     private BotCtx() {}
 
     // =================== 系统资源方法 ===================
 
     public static void setCore(Bot bot, Event event) {
-        BotCtx.bot.set(bot);
-        BotCtx.event.set(event);
+        BotCtx.BOT.set(bot);
+        BotCtx.EVENT.set(event);
     }
     public static Bot getBot() {
-        return bot.get();
+        return BOT.get();
     }
     public static Event getEvent() {
-        return event.get();
+        return EVENT.get();
     }
 
     // =================== 基本数据方法 ===================
 
     public static void setGroup(Long userId, Long groupId, SettingPO setting) {
-        BotCtx.scope.set(EventScope.GROUP);
-        BotCtx.userId.set(userId);
-        BotCtx.groupId.set(groupId);
-        BotCtx.setting.set(setting);
+        BotCtx.SCOPE.set(EventScope.GROUP);
+        BotCtx.USER_ID.set(userId);
+        BotCtx.GROUP_ID.set(groupId);
+        BotCtx.SETTING.set(setting);
     }
     public static void setPrivate(Long userId) {
-        BotCtx.scope.set(EventScope.PRIVATE);
-        BotCtx.userId.set(userId);
-        BotCtx.groupId.set(0L);
-        BotCtx.setting.remove();
+        BotCtx.SCOPE.set(EventScope.PRIVATE);
+        BotCtx.USER_ID.set(userId);
+        BotCtx.GROUP_ID.set(0L);
+        BotCtx.SETTING.remove();
     }
     public static void setUnknown() {
-        BotCtx.scope.set(EventScope.UNKNOWN);
-        BotCtx.userId.remove();
-        BotCtx.groupId.remove();
-        BotCtx.setting.remove();
+        BotCtx.SCOPE.set(EventScope.UNKNOWN);
+        BotCtx.USER_ID.remove();
+        BotCtx.GROUP_ID.remove();
+        BotCtx.SETTING.remove();
     }
 
     public static EventScope getScope() {
-        return scope.get();
+        return SCOPE.get();
     }
     public static Long getUserId() {
-        return userId.get();
+        return USER_ID.get();
     }
     public static Long getGroupId() {
-        return groupId.get();
+        return GROUP_ID.get();
     }
     public static SettingPO getSetting() {
-        return setting.get();
+        return SETTING.get();
     }
 
     // =================== 清除数据方法 ===================
 
     public static void remove() {
-        bot.remove();
-        event.remove();
-        scope.remove();
-        userId.remove();
-        groupId.remove();
-        setting.remove();
+        BOT.remove();
+        EVENT.remove();
+        SCOPE.remove();
+        USER_ID.remove();
+        GROUP_ID.remove();
+        SETTING.remove();
     }
 
     // =================== 应用工具方法 ===================

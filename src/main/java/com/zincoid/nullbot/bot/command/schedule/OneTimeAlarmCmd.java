@@ -24,8 +24,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OneTimeAlarmCmd implements Cmd {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private final List<DateTimeFormatter> formatters = Arrays.asList(
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final List<DateTimeFormatter> FORMATTERS = Arrays.asList(
             DateTimeFormatter.ofPattern("yy-MM-dd'T'HH:mm"),
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"),
             DateTimeFormatter.ofPattern("yy-MM-dd'T'HH:mm:ss"),
@@ -46,7 +46,7 @@ public class OneTimeAlarmCmd implements Cmd {
         try {
             switch (option) {
                 case "-t" -> {
-                    alarmTime = parseDateTime(timeStr, formatters);
+                    alarmTime = parseDateTime(timeStr, FORMATTERS);
                     botTaskScheduler.setOneTimeGroupAtMsgAlarm(
                             alarmId, groupId, userId, message, alarmTime);
                 }
@@ -64,7 +64,7 @@ public class OneTimeAlarmCmd implements Cmd {
         bot.sendGroupMsg(groupId, """
                     ⏰单次闹钟已设置
                     - AlarmID: %s
-                    - Time: %s""".formatted(alarmId, alarmTime.format(formatter)),
+                    - Time: %s""".formatted(alarmId, alarmTime.format(FORMATTER)),
                 false
         );
         log.info("☑ [OneTimeAlarm] 闹钟已设置 - AlarmID: {}", alarmId);

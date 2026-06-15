@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.module.security;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.module.system.WsSender;
@@ -21,41 +21,28 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SecurityCodeScheduler {
 
-    private final BotOperator botOperator;  // 管理群通知工具
-    private final WsSender wsSender;  // 客户端通知工具
-    private final ScheduledExecutorService scheduler;  // 任务调度器
-    private final ConcurrentHashMap<String, CodeEntry> codeEntries;  // 存储安全码及调度任务
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
     private static final long DEFAULT_REFRESH_INTERVAL = 600_000;  // 默认刷新间隔: 10 Min
-    // private static final long DEFAULT_REFRESH_INTERVAL = 10_000;  // 测试刷新间隔: 10 Sec
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
 
-    @AllArgsConstructor
-    private static class CodeEntry {
-        private final String code;
-        private final ScheduledFuture<?> future;
-        private final long refreshInterval;
-        private final boolean logging;
-    }
+    private final BotOperator botOperator;
+    private final WsSender wsSender;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+    private final ConcurrentHashMap<String, CodeEntry> codeEntries = new ConcurrentHashMap<>();
 
-    public SecurityCodeScheduler(BotOperator botOperator, WsSender wsSender) {
-        this.botOperator = botOperator;
-        this.wsSender = wsSender;
-        scheduler = Executors.newScheduledThreadPool(5);
-        codeEntries = new ConcurrentHashMap<>();
-    }
+    private record CodeEntry(String code, ScheduledFuture<?> future, long refreshInterval, boolean logging) {}
 
     @PostConstruct
-    public void init() {  // 初始化安全码 (废弃 无法发送群日志)
-        // createCode("regist");
+    public void init() {
+        // createCode("regist");  // 初始化安全码 (废弃 无法发送群日志)
         // createCode("access", 86_400_000, true);
-        log.info("▽ [SecurityCodeScheduler] 安全码调度器已初始化");
+        log.info("▽ [SecurityCodeScheduler] 安全码调度器已启动");
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public void initCode() {  // 初始化安全码
+    public void initCode() {
         createCode("regist");
         createCode("access", 86_400_000, false);
         log.info("▽ [SecurityCodeScheduler] 默认安全码已初始化");
@@ -63,7 +50,7 @@ public class SecurityCodeScheduler {
 
     @PreDestroy
     public void destroy() {
-        if (scheduler != null && !scheduler.isShutdown()) scheduler.shutdownNow();
+        if (!scheduler.isShutdown()) scheduler.shutdownNow();
         log.info("▽ [SecurityCodeScheduler] 安全码调度器已关闭");
     }
 
@@ -96,7 +83,7 @@ public class SecurityCodeScheduler {
                 TimeUnit.MILLISECONDS
         );
         codeEntries.put(codeId, new CodeEntry(initCode, future, refreshInterval, logging));  // 存储
-        log.info("▽ [SecurityCodeScheduler] 安全码已创建 - CodeId: {}, InitCode: {}", codeId, initCode);
+        log.info("▽ [SecurityCodeScheduler] 安全码已创建 - CodeID: {}, InitCode: {}", codeId, initCode);
         if (logging) botOperator.sendLogGroupMsg("""
                 [安全码调度] 🔑已初始化
                 - CodeID: %s
@@ -116,7 +103,7 @@ public class SecurityCodeScheduler {
         CodeEntry entry = codeEntries.remove(codeId);
         if (entry.future != null)
             entry.future.cancel(false);
-        log.info("▽ [SecurityCodeScheduler] 安全码已移除 - CodeId: {}", codeId);
+        log.info("▽ [SecurityCodeScheduler] 安全码已移除 - CodeID: {}", codeId);
     }
 
     /**
@@ -141,7 +128,7 @@ public class SecurityCodeScheduler {
                 entry.refreshInterval,
                 entry.logging
         ));
-        log.info("▽ [SecurityCodeScheduler] 安全码已刷新 - CodeId: {}, NewCode: {}", codeId, newCode);
+        log.info("▽ [SecurityCodeScheduler] 安全码已刷新 - CodeID: {}, NewCode: {}", codeId, newCode);
         if (entry.logging) {
             wsSender.broadcast("INFO", "安全码已刷新 -> %s: %s".formatted(codeId, newCode));
             botOperator.sendLogGroupMsg("""
@@ -149,7 +136,7 @@ public class SecurityCodeScheduler {
                 - CodeID: %s
                 - NextOn: %s
                 - NewCode: %s"""
-                    .formatted(codeId, resetTimer ? LocalDateTime.now().plus(Duration.ofMillis(entry.refreshInterval)).format(formatter) : "Original", newCode)
+                    .formatted(codeId, resetTimer ? LocalDateTime.now().plus(Duration.ofMillis(entry.refreshInterval)).format(FORMATTER) : "Original", newCode)
             );
         }
         return newCode;
@@ -184,7 +171,7 @@ public class SecurityCodeScheduler {
                 TimeUnit.MILLISECONDS
         );
         codeEntries.put(codeId, new CodeEntry(entry.code, newFuture, newInterval, entry.logging));  // 更新
-        log.info("▽ [SecurityCodeScheduler] 安全码刷新间隔已更新 - CodeId: {}, NewInterval: {} ms", codeId, newInterval);
+        log.info("▽ [SecurityCodeScheduler] 安全码刷新间隔已更新 - CodeID: {}, NewInterval: {} ms", codeId, newInterval);
     }
 
     /**

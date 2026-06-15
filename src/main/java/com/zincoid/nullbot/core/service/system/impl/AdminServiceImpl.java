@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.service.system.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zincoid.nullbot.core.service.basic.UserService;
+import com.zincoid.nullbot.core.service.base.UserService;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.module.security.SecurityCodeScheduler;
 import com.zincoid.nullbot.core.converter.AdminConverter;

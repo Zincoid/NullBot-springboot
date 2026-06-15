@@ -2,8 +2,8 @@ package com.zincoid.nullbot.core.context;
 
 public final class WebCtx {
 
-    private static final ThreadLocal<Long> userId = new ThreadLocal<>();
-    private static final ThreadLocal<Integer> userType = new ThreadLocal<>();
+    private static final ThreadLocal<Long> USER_ID = new ThreadLocal<>();
+    private static final ThreadLocal<Integer> USER_TYPE = new ThreadLocal<>();
 
     private WebCtx() {}
 
@@ -13,21 +13,21 @@ public final class WebCtx {
     }
 
     public static void setId(Long id) {
-        userId.set(id);
+        USER_ID.set(id);
     }
     public static void setType(Integer type) {
-        userType.set(type);
+        USER_TYPE.set(type);
     }
 
     public static Long getId() {
-        return userId.get();
+        return USER_ID.get();
     }
     public static Integer getType() {
-        return userType.get();
+        return USER_TYPE.get();
     }
 
     public static void remove() {
-        userId.remove();
-        userType.remove();
+        USER_ID.remove();
+        USER_TYPE.remove();
     }
 }

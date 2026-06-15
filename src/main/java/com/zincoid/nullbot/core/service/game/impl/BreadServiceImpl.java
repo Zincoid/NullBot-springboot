@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.service.game.impl;
 
-import com.zincoid.nullbot.core.service.basic.ItemService;
+import com.zincoid.nullbot.core.service.base.ItemService;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.data.po.InventoryPO;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
@@ -9,8 +9,8 @@ import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
 import com.zincoid.nullbot.core.enums.Category;
 import com.zincoid.nullbot.core.enums.Rarity;
 import com.zincoid.nullbot.core.service.game.BreadService;
-import com.zincoid.nullbot.core.service.basic.InventoryService;
-import com.zincoid.nullbot.core.service.basic.UserService;
+import com.zincoid.nullbot.core.service.base.InventoryService;
+import com.zincoid.nullbot.core.service.base.UserService;
 import com.zincoid.nullbot.core.utils.DrawUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

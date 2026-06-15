@@ -995,9 +995,22 @@
 - 优化 Tts 指令；
 - 优化 配置文件结构 - 拆分 prod 和 dev 配置；
 - 修复 Windows 环境下 FileService 路径处理异常的问题；
-- 优化 游戏模块；
+- 优化 游戏模块 - 添加 GameRegistry 组件管理 Handler；
 - 添加 项目文档和许可证。
 
 ### 2026.6.15
 
-- 大幅调整 游戏模块。
+- 大幅调整 游戏模块：
+  - 重构 MatchResult 和 GameResult 并调整通知方法；
+  - 重构 GameMatchHandler -> GameHandler 处理器 - 优化结构和代码；
+  - 重构 各个 Manager 组件 - 调整方法签名并优化逻辑；
+  - 重构 Matcher -> GameEngine 组件 - 优化结构和代码；
+  - 合并 MatchCleaner 至 GameEngine 组件 - 优化结构和代码；
+  - 新增 GameRenderer 结构；
+  - 优化 对应的 GameHandler 实现类；
+  - 调整 部分类名和包结构；
+  - 增强 游戏输入监听 - 使用 InputOrchestrator 监听游戏输入；
+- 修复 BanChat 指令逻辑错误；
+- 优化 变量命名规范、部分包名和文本；
+- 优化 BotTaskScheduler 和 SecurityCodeScheduler 构造方法；
+- 使用 BotOperator 替换部分 BotContainer。

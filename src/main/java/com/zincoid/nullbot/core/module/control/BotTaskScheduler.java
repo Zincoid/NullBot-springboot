@@ -1,12 +1,14 @@
 package com.zincoid.nullbot.core.module.control;
 
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.dto.action.response.GroupInfoResp;
+import com.zincoid.nullbot.core.module.system.BotOperator;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -17,23 +19,20 @@ import java.util.concurrent.*;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class BotTaskScheduler {
 
-    @Value("${bot.bot-id}")
-    private Long botId;
-    private final BotContainer botContainer;
-
-    private final ScheduledExecutorService scheduler;
-    private final ConcurrentHashMap<String, ScheduledFuture<?>> tasks;
-
-    public BotTaskScheduler(BotContainer botContainer) {
-        this.botContainer = botContainer;
-        scheduler = Executors.newScheduledThreadPool(5);
-        tasks = new ConcurrentHashMap<>();
-    }
+    private final BotOperator botOperator;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+    private final ConcurrentHashMap<String, ScheduledFuture<?>> tasks = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init() {
+        log.info("▽ [BotTaskScheduler] 任务调度器已启动");
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void initTask() {
         setDailyAllGroupMsgAlarm(
                 "0721",
                 """
@@ -41,46 +40,44 @@ public class BotTaskScheduler {
                         Ciallo～(∠・ω< )⌒☆""",
                 7, 21, 0
         );
-        log.info("▽ [BotTaskScheduler] 任务调度器已初始化");
+        log.info("▽ [BotTaskScheduler] 默认任务已初始化");
     }
 
     @PreDestroy
     public void destroy() {
-        if (scheduler != null && !scheduler.isShutdown()) scheduler.shutdownNow();
+        if (!scheduler.isShutdown()) scheduler.shutdownNow();
         log.info("▽ [BotTaskScheduler] 任务调度器已关闭");
     }
 
     // =================== BOT方法 ===================
 
-    public void setOneTimeGroupAtMsgAlarm(String alarmId, Long groupId, Long userId,
-                                          String message, LocalDateTime alarmTime)
-    {
+    public void setOneTimeGroupAtMsgAlarm(
+            String alarmId, Long groupId, Long userId,
+            String message, LocalDateTime alarmTime
+    ) {
         String taskId = "Alarm-%s-%s".formatted(userId, alarmId);
-        setOneTimeTask(taskId, alarmTime, () -> {
-            Bot bot = botContainer.robots.get(botId);
-            bot.sendGroupMsg(groupId, "[CQ:at,qq=%s] %s".formatted(userId, message), false);
-        });
+        setOneTimeTask(taskId, alarmTime, () -> botOperator.sendGroupMsg(groupId, "[CQ:at,qq=%s] %s".formatted(userId, message)));
+        log.info("▽ [BotTaskScheduler] 单次群@通知任务已设置 - TaskID: {}", taskId);
     }
 
-    public void setDailyGroupMsgAlarm(String alarmId, Long groupId, String message,
-                                      int hour, int minute, int second)
-    {
+    public void setDailyGroupMsgAlarm(
+            String alarmId, Long groupId, String message,
+            int hour, int minute, int second
+    ) {
         String taskId = "Alarm-%s-%s".formatted(groupId, alarmId);
-        setDailyTask(taskId, hour, minute, second, () -> {
-            Bot bot = botContainer.robots.get(botId);
-            bot.sendGroupMsg(groupId, message, false);
-        });
+        setDailyTask(taskId, hour, minute, second, () -> botOperator.sendGroupMsg(groupId, message));
+        log.info("▽ [BotTaskScheduler] 每日群通知任务已设置 - TaskID: {}", taskId);
     }
 
     public void setDailyAllGroupMsgAlarm(String alarmId, String message,
-                                         int hour, int minute, int second)
-    {
+                                         int hour, int minute, int second) {
         String taskId = "Alarm-%s-%s".formatted("Global", alarmId);
         setDailyTask(taskId, hour, minute, second, () -> {
-            Bot bot = botContainer.robots.get(botId);
+            Bot bot = botOperator.getBot();
             for (GroupInfoResp group : bot.getGroupList().getData())
                 bot.sendGroupMsg(group.getGroupId(), message, false);
         });
+        log.info("▽ [BotTaskScheduler] 每日全群通知任务已设置 - TaskID: {}", taskId);
     }
 
     // =================== 任务方法 ===================

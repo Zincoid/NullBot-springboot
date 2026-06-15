@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.service.file.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zincoid.nullbot.core.model.data.query.FileQuery;
-import com.zincoid.nullbot.core.service.basic.UserService;
+import com.zincoid.nullbot.core.service.base.UserService;
 import com.zincoid.nullbot.core.service.system.AdminService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;

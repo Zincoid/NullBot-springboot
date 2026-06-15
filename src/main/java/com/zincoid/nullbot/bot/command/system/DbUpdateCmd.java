@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
-import com.zincoid.nullbot.core.service.basic.GroupService;
-import com.zincoid.nullbot.core.service.basic.UserService;
+import com.zincoid.nullbot.core.service.base.GroupService;
+import com.zincoid.nullbot.core.service.base.UserService;
 import org.springframework.stereotype.Component;
 
 @Slf4j

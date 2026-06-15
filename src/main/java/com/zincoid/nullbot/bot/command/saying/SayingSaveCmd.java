@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.utils.MsgParseUtil;
-import com.zincoid.nullbot.core.service.basic.SayingService;
+import com.zincoid.nullbot.core.service.base.SayingService;
 import org.springframework.stereotype.Component;
 
 @Slf4j

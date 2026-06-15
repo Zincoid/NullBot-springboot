@@ -11,8 +11,8 @@ import com.zincoid.nullbot.core.enums.EventScope;
 import com.zincoid.nullbot.bot.gateway.processor.CmdEvent;
 import com.zincoid.nullbot.core.model.data.po.GroupPO;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
-import com.zincoid.nullbot.core.service.basic.GroupService;
-import com.zincoid.nullbot.core.service.basic.UserService;
+import com.zincoid.nullbot.core.service.base.GroupService;
+import com.zincoid.nullbot.core.service.base.UserService;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 

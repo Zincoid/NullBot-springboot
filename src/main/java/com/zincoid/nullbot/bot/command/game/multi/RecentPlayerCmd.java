@@ -9,7 +9,7 @@ import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
-import com.zincoid.nullbot.core.module.game.manager.PlayerManager;
+import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import org.springframework.stereotype.Component;
 

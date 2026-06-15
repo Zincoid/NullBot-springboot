@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
-import com.zincoid.nullbot.core.module.game.Matcher;
+import com.zincoid.nullbot.core.module.game.GameEngine;
 import com.zincoid.nullbot.core.model.result.MatchResult;
 import org.springframework.stereotype.Component;
 
@@ -17,16 +17,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MatchCmd implements Cmd {
 
-    private final Matcher matcher;
+    private final GameEngine gameEngine;
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        String gameType = args.nextString();
-        MatchResult result = matcher.join(
+        String type = args.nextString();
+        MatchResult result = gameEngine.join(
                 event.getUserId(),
-                event.getGroupId(),
                 event.getSender().getNickname(),
-                gameType
+                type
         );
         result.send();
         log.info("☑ [Match] 匹配 -> {}", result.isOk());

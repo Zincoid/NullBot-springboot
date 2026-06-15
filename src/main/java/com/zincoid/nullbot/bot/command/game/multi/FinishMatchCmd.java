@@ -8,7 +8,7 @@ import com.zincoid.nullbot.core.model.result.MatchResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
-import com.zincoid.nullbot.core.module.game.Matcher;
+import com.zincoid.nullbot.core.module.game.GameEngine;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -17,14 +17,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class FinishMatchCmd implements Cmd {
 
-    private final Matcher matcher;
+    private final GameEngine gameEngine;
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        MatchResult result = matcher.finish(
-                event.getUserId(),
-                event.getGroupId()
-        );
+        MatchResult result = gameEngine.finish(event.getUserId());
         result.send();
         log.info("☑ [FinishMatch] 对局终止 -> {}", result.isOk());
     }

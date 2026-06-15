@@ -23,21 +23,27 @@ public class BanChatCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        banChat(bot, event.getGroupId(), event.getUserId(), args.nextInt());
+        banChat(bot, event.getGroupId(), args.nextLong(), args.nextInt());
     }
     @Override
     public void run(Bot bot, PokeNoticeEvent event, CmdArgs args) {
-        banChat(bot, event.getGroupId(), event.getUserId(), args.nextInt());
+        banChat(bot, event.getGroupId(), args.nextLong(), args.nextInt());
     }
 
     private void banChat(Bot bot, Long groupId, Long userId, int banTime) {
         authHandler.setUserBan(userId, ChatCmd.class, banTime);
         authHandler.setUserBan(userId, PokeReactCmd.class, banTime);
         if (banTime > 0) {
-            bot.sendGroupMsg(groupId, "⛔️已封禁[CQ:at,qq=%s](%s Min)".formatted(userId, banTime), false);
+            bot.sendGroupMsg(groupId, """
+                    ⛔️对话已临时封禁
+                    - [CQ:at,qq=%s]: %s分钟"""
+                    .formatted(userId, banTime), false);
             log.info("☑ [BanChat] 对话已封禁 - {} -> {} Min", userId, banTime);
         } else {
-            bot.sendGroupMsg(groupId, "✅已解封[CQ:at,qq=%s]".formatted(userId), false);
+            bot.sendGroupMsg(groupId, """
+                    ✅对话已解封
+                    - [CQ:at,qq=%s]"""
+                    .formatted(userId), false);
             log.info("☑ [BanChat] 对话已解封 - {} -> Unblock", userId);
         }
     }

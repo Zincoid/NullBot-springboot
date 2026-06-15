@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.core.module.control.SysMsgManager;
-import com.zincoid.nullbot.core.service.basic.UserService;
+import com.zincoid.nullbot.core.service.base.UserService;
 import com.zincoid.nullbot.core.context.BotCtx;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;

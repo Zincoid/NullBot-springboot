@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.core.model.data.po.SayingPO;
-import com.zincoid.nullbot.core.service.basic.SayingService;
+import com.zincoid.nullbot.core.service.base.SayingService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
