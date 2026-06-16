@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.core.module.game.GameEngine;
-import com.zincoid.nullbot.core.model.result.MatchResult;
+import com.zincoid.nullbot.core.module.game.model.MatchRes;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -21,7 +21,7 @@ public class DisMatchCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        MatchResult result = gameEngine.cancel(event.getUserId());
+        MatchRes result = gameEngine.cancel(event.getUserId());
         result.send();
         log.info("☑ [DisMatch] 取消匹配 -> {}", result.isOk());
     }

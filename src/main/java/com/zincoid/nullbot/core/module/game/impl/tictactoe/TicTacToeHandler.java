@@ -4,7 +4,7 @@ import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.core.module.game.framework.GameHandler;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
-import com.zincoid.nullbot.core.model.result.GameResult;
+import com.zincoid.nullbot.core.module.game.model.GameRes;
 import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.system.BotOperator;
@@ -66,7 +66,7 @@ public class TicTacToeHandler extends GameHandler<TicTacToeState, TicTacToeLogic
     }
 
     @Override
-    public GameResult onAction(TicTacToeState state, Player self, Player opp, CmdArgs args) {
+    public GameRes onAction(TicTacToeState state, Player self, Player opp, CmdArgs args) {
         int r = args.nextInt() - 1;
         int c = args.nextInt() - 1;
         Character symbol = symbolOf(state, self);

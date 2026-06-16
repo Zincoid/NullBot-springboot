@@ -4,7 +4,7 @@ import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.core.module.game.framework.GameHandler;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
-import com.zincoid.nullbot.core.model.result.GameResult;
+import com.zincoid.nullbot.core.module.game.model.GameRes;
 import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.LootingPlayer;
@@ -78,7 +78,7 @@ public class LootingHandler extends GameHandler<LootingState, LootingLogic, Loot
     }
 
     @Override
-    public GameResult onAction(LootingState state, Player self, Player opp, CmdArgs args) {
+    public GameRes onAction(LootingState state, Player self, Player opp, CmdArgs args) {
         String command = args.nextFullString("侦察");
 
         if (state.isFinished()) return fail("对局已结束");

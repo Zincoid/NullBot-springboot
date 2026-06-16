@@ -7,7 +7,7 @@ import com.zincoid.nullbot.core.module.system.BotOperator;
 import lombok.AllArgsConstructor;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
-import com.zincoid.nullbot.core.model.result.GameResult;
+import com.zincoid.nullbot.core.module.game.model.GameRes;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,7 +48,7 @@ public abstract class GameHandler<S extends GameState, L extends GameLogic<S>, R
         onEnd(match, state);
     }
 
-    public final GameResult act(Long userId, CmdArgs args) {
+    public final GameRes act(Long userId, CmdArgs args) {
         Match match = matchManager.get(userId);
         if (match == null) return fail("对局不存在");
         S state = games.get(match.getId());
@@ -74,21 +74,22 @@ public abstract class GameHandler<S extends GameState, L extends GameLogic<S>, R
 
     protected abstract void onEnd(Match match, S state);
 
-    protected abstract GameResult onAction(S state, Player self, Player opp, CmdArgs args);
+    protected abstract GameRes onAction(S state, Player self, Player opp, CmdArgs args);
 
     // ================ 响应构建方法 ================
 
-    protected final GameResult fail(String message) {
-        return GameResult.fail(message);
+    protected final GameRes fail(String message) {
+        Player self = CURRENT_PLAYER.get();
+        return GameRes.fail(self.getInProgressGroupId(), message);
     }
 
-    protected final GameResult success(boolean async, String selfMessage, String oppMessage) {
+    protected final GameRes success(boolean async, String selfMessage, String oppMessage) {
         Match match = CURRENT_MATCH.get();
         Player self = CURRENT_PLAYER.get();
         Player opp = playerManager.get(match.getP1().getId().equals(self.getId())
                 ? match.getP2().getId()
                 : match.getP1().getId());
-        return GameResult.success(
+        return GameRes.success(
                 async,
                 self.getInProgressGroupId(),
                 opp.getInProgressGroupId(),
@@ -96,9 +97,9 @@ public abstract class GameHandler<S extends GameState, L extends GameLogic<S>, R
         );
     }
 
-    protected final GameResult finish(boolean async, String selfMessage, String oppMessage) {
+    protected final GameRes finish(boolean async, String selfMessage, String oppMessage) {
         Match match = CURRENT_MATCH.get();
-        GameResult result = success(
+        GameRes result = success(
                 async,
                 selfMessage + "\n\n对局已结束: " + match.getId(),
                 oppMessage + "\n\n对局已结束: " + match.getId()

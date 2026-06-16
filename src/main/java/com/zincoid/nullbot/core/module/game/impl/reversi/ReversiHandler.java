@@ -4,7 +4,7 @@ import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.core.module.game.framework.GameHandler;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
-import com.zincoid.nullbot.core.model.result.GameResult;
+import com.zincoid.nullbot.core.module.game.model.GameRes;
 import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.system.BotOperator;
@@ -66,7 +66,7 @@ public class ReversiHandler extends GameHandler<ReversiState, ReversiLogic, Reve
     }
 
     @Override
-    public GameResult onAction(ReversiState state, Player self, Player opp, CmdArgs args) {
+    public GameRes onAction(ReversiState state, Player self, Player opp, CmdArgs args) {
         String pos = args.nextString().toUpperCase();
         if (!pos.matches("^[A-H][1-8]$")) return fail("坐标错误 范围: A1~H8");
         Character sym = symbolOf(state, self);
@@ -83,7 +83,7 @@ public class ReversiHandler extends GameHandler<ReversiState, ReversiLogic, Reve
         return success(false, board, null);
     }
 
-    private GameResult finishGame(ReversiState state, String board) {
+    private GameRes finishGame(ReversiState state, String board) {
         state.setFinished(true);
         int b = 0, w = 0;
         for (char[] row : state.getBoard())

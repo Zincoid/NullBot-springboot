@@ -4,7 +4,7 @@ import com.zincoid.nullbot.core.context.BotCtx;
 import com.zincoid.nullbot.core.module.game.runtime.InputOrchestrator;
 import com.zincoid.nullbot.core.module.game.runtime.*;
 import com.zincoid.nullbot.core.module.game.framework.GameHandler;
-import com.zincoid.nullbot.core.model.result.MatchResult;
+import com.zincoid.nullbot.core.module.game.model.MatchRes;
 import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.system.BotOperator;
@@ -30,18 +30,18 @@ public class GameEngine {
     private final BotOperator botOperator;
     private final InputOrchestrator inputOrchestrator;
 
-    public MatchResult join(Long userId, String userName, String type) {
+    public MatchRes join(Long userId, String userName, String type) {
         Player self = playerManager.set(userId, BotCtx.getGroupId(), userName);
         if (self.getStatus() != Player.PlayerStatus.IDLE)
-            return MatchResult.fail("已在匹配或游戏中");
+            return MatchRes.fail("已在匹配或游戏中");
         GameHandler<?, ?, ?> handler = handlerRegistry.get(type);
         if (handler == null)
-            return MatchResult.fail("不支持该游戏类型");
+            return MatchRes.fail("不支持该游戏类型");
         Player opp = matchingPool.poll(type);
         if (opp == null) {
             matchingPool.add(userId, type);
             playerManager.update(userId, Player.PlayerStatus.WAITING);
-            return MatchResult.success("已加入匹配队列...");
+            return MatchRes.success("已加入匹配队列...");
         }
         Match match = matchManager.create(userId, opp.getId(), type);
         self.setInProgressMatchId(match.getId());
@@ -54,34 +54,34 @@ public class GameEngine {
                 - P2: %s(%s)
                 - MatchID: %s"""
                 .formatted(type, self.getName(), self.getId(), opp.getName(), opp.getId(), match.getId());
-        return MatchResult.success(opp.getInProgressGroupId(), message);
+        return MatchRes.success(opp.getInProgressGroupId(), message);
     }
 
-    public MatchResult cancel(Long userId) {
+    public MatchRes cancel(Long userId) {
         Player player = playerManager.get(userId);
         if (player == null)
-            return MatchResult.fail("玩家暂未注册");
+            return MatchRes.fail("玩家暂未注册");
         if (player.getStatus() != Player.PlayerStatus.WAITING)
-            return MatchResult.fail("非匹配中状态");
+            return MatchRes.fail("非匹配中状态");
         if (!matchingPool.remove(userId))
-            return MatchResult.fail("不在匹配队列");
+            return MatchRes.fail("不在匹配队列");
         playerManager.update(userId, Player.PlayerStatus.IDLE);
-        return MatchResult.fail("取消匹配成功");
+        return MatchRes.fail("取消匹配成功");
     }
 
-    public MatchResult finish(Long userId) {
+    public MatchRes finish(Long userId) {
         Player player = playerManager.get(userId);
         if (player == null)
-            return MatchResult.fail("玩家暂未注册");
+            return MatchRes.fail("玩家暂未注册");
         String matchId = player.getInProgressMatchId();
         if (matchId == null)
-            return MatchResult.fail("玩家未在游戏");
+            return MatchRes.fail("玩家未在游戏");
         Match match = matchManager.get(matchId);
         if (match == null)
-            return MatchResult.fail("对局信息错误");
+            return MatchRes.fail("对局信息错误");
         GameHandler<?, ?, ?> handler = handlerRegistry.get(match.getType());
         if (handler == null)
-            return MatchResult.fail("游戏类型错误");
+            return MatchRes.fail("游戏类型错误");
         Player p1 = match.getP1();
         Player p2 = match.getP2();
         handler.end(match);
@@ -91,7 +91,7 @@ public class GameEngine {
                 - 玩家2: %s
                 - MatchID: %s"""
                 .formatted(match.getType(), p1.getId(), p2.getId(), matchId);
-        return MatchResult.success(p1.getInProgressGroupId(), p2.getInProgressGroupId(), message);
+        return MatchRes.success(p1.getInProgressGroupId(), p2.getInProgressGroupId(), message);
     }
 
     @Scheduled(fixedDelay = 10_000)

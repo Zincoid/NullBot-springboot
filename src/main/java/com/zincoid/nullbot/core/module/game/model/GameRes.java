@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.model.result;
+package com.zincoid.nullbot.core.module.game.model;
 
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.context.BotCtx;
@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Data
 @AllArgsConstructor
-public class GameResult {
+public class GameRes {
 
     private boolean ok;
     private boolean async;
@@ -18,20 +18,12 @@ public class GameResult {
     private String selfMessage;
     private String oppMessage;
 
-    public static GameResult success(boolean async, Long selfGroupId, Long oppGroupId, String selfMessage, String oppMessage) {
-        return new GameResult(true, async, selfGroupId, oppGroupId, selfMessage, oppMessage);
+    public static GameRes success(boolean async, Long selfGroupId, Long oppGroupId, String selfMessage, String oppMessage) {
+        return new GameRes(true, async, selfGroupId, oppGroupId, selfMessage, oppMessage);
     }
 
-    public static GameResult success(boolean async, Long oppGroupId, String selfMessage, String oppMessage) {
-        return success(async, BotCtx.getGroupId(), oppGroupId, selfMessage, oppMessage);
-    }
-
-    public static GameResult fail(Long groupId, String message) {
-        return new GameResult(false, false, groupId, null, "❌" + message, null);
-    }
-
-    public static GameResult fail(String message) {
-        return fail(BotCtx.getGroupId(), message);
+    public static GameRes fail(Long groupId, String message) {
+        return new GameRes(false, false, groupId, null, "❌" + message, null);
     }
 
     public void send(Bot bot) {
