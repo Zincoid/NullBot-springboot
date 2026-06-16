@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -54,7 +55,7 @@ public class GameEngine {
                 - P2: %s(%s)
                 - MatchID: %s"""
                 .formatted(type, self.getName(), self.getId(), opp.getName(), opp.getId(), match.getId());
-        return MatchRes.success(opp.getInProgressGroupId(), message);
+        return MatchRes.success(Set.of(BotCtx.getGroupId(), opp.getInProgressGroupId()), message);
     }
 
     public MatchRes cancel(Long userId) {
@@ -91,7 +92,7 @@ public class GameEngine {
                 - 玩家2: %s
                 - MatchID: %s"""
                 .formatted(match.getType(), p1.getId(), p2.getId(), matchId);
-        return MatchRes.success(p1.getInProgressGroupId(), p2.getInProgressGroupId(), message);
+        return MatchRes.success(Set.of(p1.getInProgressGroupId(), p2.getInProgressGroupId()), message);
     }
 
     @Scheduled(fixedDelay = 10_000)
