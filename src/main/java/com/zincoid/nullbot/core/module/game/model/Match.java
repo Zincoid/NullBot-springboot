@@ -1,23 +1,28 @@
 package com.zincoid.nullbot.core.module.game.model;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
-@RequiredArgsConstructor(staticName = "of")
-public class Match {
+public abstract class Match {
 
     private final String id;
     private final String type;
-    private final Player p1;
-    private final Player p2;
 
     private final LocalDateTime createTime = LocalDateTime.now();
     private LocalDateTime lastActionTime = LocalDateTime.now();
     private LocalDateTime endTime;
 
     private MatchStatus status = MatchStatus.CREATED;
+
+    public Match(String id, String type) {
+        this.id = id;
+        this.type = type;
+    }
+
+    public abstract List<Player> getPlayers();
 
     public enum MatchStatus {
         CREATED, PLAYING, FINISHED

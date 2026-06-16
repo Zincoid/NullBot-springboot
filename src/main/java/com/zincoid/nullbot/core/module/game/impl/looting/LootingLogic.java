@@ -4,8 +4,8 @@ import com.zincoid.nullbot.core.module.game.framework.GameLogic;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.AiEnemy;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.LootingPlayer;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.MapNode;
+import com.zincoid.nullbot.core.module.game.model.DualMatch;
 import lombok.RequiredArgsConstructor;
-import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import org.springframework.stereotype.Component;
 
@@ -16,11 +16,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @RequiredArgsConstructor
-public class LootingLogic extends GameLogic<LootingState> {
+public class LootingLogic extends GameLogic<DualMatch, LootingState> {
 
     private final LootingMapFactory mapFactory;
 
-    public LootingState create(Match match) {
+    @Override
+    public LootingState create(DualMatch match) {
         LootingState s = new LootingState();
         s.setMap(mapFactory.randomMap());
 
@@ -42,7 +43,7 @@ public class LootingLogic extends GameLogic<LootingState> {
         List<String> nodes = new ArrayList<>(s.getMap().getNodes().keySet());
 
         // 定制 AI
-        if("航天基地".equals(s.getMap().getName())){
+        if ("航天基地".equals(s.getMap().getName())) {
             AiEnemy ai = new AiEnemy();
             ai.setName("德穆兰");
             ai.setHp(100);
@@ -65,7 +66,7 @@ public class LootingLogic extends GameLogic<LootingState> {
     public void checkFinished(LootingState s) {
         boolean isFinished = true;
         if (s.getTick() <= 25) {
-            for(LootingPlayer p : s.getPlayers().values()){
+            for (LootingPlayer p : s.getPlayers().values()) {
                 if (p.isAlive() && !p.isEvacuated()) {
                     isFinished = false;
                     break;
@@ -169,7 +170,7 @@ public class LootingLogic extends GameLogic<LootingState> {
                         sb.append("\n🎁").append(i.getName()).append(" (").append(i.getRarity().getDescription()).append(")");
                     }
                 }
-                return List.of(sb.toString(), "⚔️玩家攻击了" + other.getUserId() +" 造成" + dmg + "伤害 对方剩余HP: " + other.getHp());
+                return List.of(sb.toString(), "⚔️玩家攻击了" + other.getUserId() + " 造成" + dmg + "伤害 对方剩余HP: " + other.getHp());
             }
         }
         return List.of("\n❌未找到玩家", "");

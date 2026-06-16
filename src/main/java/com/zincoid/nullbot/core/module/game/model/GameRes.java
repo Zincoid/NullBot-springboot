@@ -5,45 +5,41 @@ import com.zincoid.nullbot.core.context.BotCtx;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
 public class GameRes {
 
     private boolean ok;
-    private boolean async;
-    private Long selfGroupId;
-    private Long oppGroupId;
-    private String selfMessage;
-    private String oppMessage;
+    private Map<Long, List<String>> messages;  // groupId -> messages
 
-    public static GameRes success(boolean async, Long selfGroupId, Long oppGroupId, String selfMessage, String oppMessage) {
-        return new GameRes(true, async, selfGroupId, oppGroupId, selfMessage, oppMessage);
+    public static GameRes success() {
+        return new GameRes(true, new LinkedHashMap<>());
     }
 
     public static GameRes fail(Long groupId, String message) {
-        return new GameRes(false, false, groupId, null, "❌" + message, null);
+        return new GameRes(false, Map.of(groupId, List.of("❌" + message)));
     }
 
-    public void send(Bot bot) {
-        if (!ok) {
-            if (selfGroupId != null)
-                bot.sendGroupMsg(selfGroupId, selfMessage, false);
-            return;
-        }
-        if (selfGroupId != null)
-            bot.sendGroupMsg(selfGroupId, selfMessage, false);
-        if (oppGroupId != null) {
-            if (async) {
-                bot.sendGroupMsg(oppGroupId, oppMessage, false);
-            } else if (!Objects.equals(selfGroupId, oppGroupId)) {
-                bot.sendGroupMsg(oppGroupId, selfMessage, false);
-            }
-        }
+    public GameRes add(Long groupId, String msg) {
+        if (groupId != null && msg != null && !msg.isEmpty())
+            messages.computeIfAbsent(groupId, k -> new ArrayList<>()).add(msg);
+        return this;
     }
 
     public void send() {
         send(BotCtx.getBot());
+    }
+
+    public void send(Bot bot) {
+        for (var entry : messages.entrySet())
+            if (entry.getKey() != null)
+                for (String msg : entry.getValue())
+                    if (msg != null)
+                        bot.sendGroupMsg(entry.getKey(), msg, false);
     }
 }

@@ -19,15 +19,12 @@ public class MatchRes {
     public static MatchRes success(Set<Long> groupIds, String message) {
         return new MatchRes(true, groupIds, message);
     }
-
     public static MatchRes success(String message) {
         return success(Set.of(BotCtx.getGroupId()), message);
     }
-
     public static MatchRes fail(Set<Long> groupIds, String message) {
         return new MatchRes(false, groupIds, "❌" + message);
     }
-
     public static MatchRes fail(String message) {
         return fail(Set.of(BotCtx.getGroupId()), message);
     }
@@ -35,7 +32,6 @@ public class MatchRes {
     public void send() {
         send(BotCtx.getBot());
     }
-
     public void send(Bot bot) {
         Set<Long> sent = new HashSet<>();
         for (Long gid : groupIds)

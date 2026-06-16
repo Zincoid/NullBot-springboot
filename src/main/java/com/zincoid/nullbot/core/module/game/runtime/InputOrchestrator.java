@@ -5,6 +5,7 @@ import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.module.control.BotInputManager;
 import com.zincoid.nullbot.core.module.game.framework.GameHandler;
 import com.zincoid.nullbot.core.module.game.model.Match;
+import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -39,12 +40,12 @@ public class InputOrchestrator {
         log.info("▽ [InputOrchestrator] 游戏监听器已关闭");
     }
 
-    public void listen(Match match, GameHandler<?, ?, ?> handler) {
-        executor.submit(() -> loop(match, handler, match.getP1().getId()));
-        executor.submit(() -> loop(match, handler, match.getP2().getId()));
+    public void listen(Match match, GameHandler<?, ?, ?, ?> handler) {
+        for (Player p : match.getPlayers())
+            executor.submit(() -> loop(match, handler, p.getId()));
     }
 
-    private void loop(Match match, GameHandler<?, ?, ?> handler, Long playerId) {
+    private void loop(Match match, GameHandler<?, ?, ?, ?> handler, Long playerId) {
         log.info("▽ [InputOrchestrator] 游戏监听开始 - PlayerID: {}, MatchID: {}, Type: {}", playerId, match.getId(), match.getType());
         try {
             while (handler.isActive(match.getId())) {

@@ -1,13 +1,14 @@
 package com.zincoid.nullbot.core.module.game.impl.tictactoe;
 
 import com.zincoid.nullbot.core.module.game.framework.GameLogic;
-import com.zincoid.nullbot.core.module.game.model.Match;
+import com.zincoid.nullbot.core.module.game.model.DualMatch;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TicTacToeLogic extends GameLogic<TicTacToeState> {
+public class TicTacToeLogic extends GameLogic<DualMatch, TicTacToeState> {
 
-    public TicTacToeState create(Match match) {
+    @Override
+    public TicTacToeState create(DualMatch match) {
         TicTacToeState state = new TicTacToeState();
         state.setX(match.getP1().getId());
         state.setO(match.getP2().getId());

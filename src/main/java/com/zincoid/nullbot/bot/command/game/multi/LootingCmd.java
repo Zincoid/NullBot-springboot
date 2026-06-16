@@ -3,12 +3,15 @@ package com.zincoid.nullbot.bot.command.game.multi;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CmdArgs;
+import com.zincoid.nullbot.core.module.game.model.GameRes;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.core.module.game.impl.looting.LootingHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @CmdMapping({"Looting", "摸金"})
 @Component
 @RequiredArgsConstructor
@@ -18,7 +21,9 @@ public class LootingCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        lootingHandler.act(event.getUserId(), args).send();
+        GameRes result = lootingHandler.act(event.getUserId(), args);
+        result.send();
+        log.info("☑ [Looting] 摸金操作 -> {}", result.isOk());
     }
 
     @Override

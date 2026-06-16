@@ -1014,3 +1014,12 @@
 - 优化 变量命名规范、部分包名和文本；
 - 优化 BotTaskScheduler 和 SecurityCodeScheduler 构造方法；
 - 使用 BotOperator 替换部分 BotContainer。
+
+### 2026.6.16
+
+- 继续优化 游戏模块：
+  - 新增 游戏模式结构；
+  - 重构 GameHandler 作为多模式处理器抽象父类；
+  - 重构 Match 类作为多模式对局抽象父类；
+  - 重构 MatchRes 类 - 优化响应逻辑至 Handler；
+  - 优化相关代码。

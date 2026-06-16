@@ -6,9 +6,12 @@ import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.module.game.impl.tictactoe.TicTacToeHandler;
+import com.zincoid.nullbot.core.module.game.model.GameRes;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @CmdMapping({"TicTacToe", "井字棋"})
 @Component
 @RequiredArgsConstructor
@@ -18,7 +21,9 @@ public class TicTacToeCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        ticTacToeHandler.act(event.getUserId(), args).send();
+        GameRes result = ticTacToeHandler.act(event.getUserId(), args);
+        result.send();
+        log.info("☑ [TicTacToe] 井字棋操作 -> {}", result.isOk());
     }
 
     @Override

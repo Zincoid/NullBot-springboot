@@ -1,11 +1,11 @@
 package com.zincoid.nullbot.core.module.game.impl.looting;
 
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.core.module.game.framework.GameHandler;
+import com.zincoid.nullbot.core.module.game.framework.DualHandler;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
+import com.zincoid.nullbot.core.module.game.model.DualMatch;
 import com.zincoid.nullbot.core.module.game.model.GameRes;
-import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.LootingPlayer;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
@@ -20,7 +20,7 @@ import java.util.Objects;
 
 @Slf4j
 @Component
-public class LootingHandler extends GameHandler<LootingState, LootingLogic, LootingRenderer> {
+public class LootingHandler extends DualHandler<LootingState, LootingLogic, LootingRenderer> {
 
     private static final String CMD_MOVE = "移动";
     private static final String CMD_SCOUT = "侦察";
@@ -41,7 +41,7 @@ public class LootingHandler extends GameHandler<LootingState, LootingLogic, Loot
             LootingLogic gameLogic,
             LootingRenderer renderer
     ) {
-        super(botOperator, matchManager, playerManager, gameLogic, renderer);
+        super(gameLogic, renderer, botOperator, matchManager, playerManager);
         this.inventoryService = inventoryService;
         this.userService = userService;
     }
@@ -57,7 +57,7 @@ public class LootingHandler extends GameHandler<LootingState, LootingLogic, Loot
     }
 
     @Override
-    public void onStart(Match match, LootingState state) {
+    public void onStart(DualMatch match, LootingState state) {
         Player p1 = match.getP1();
         Player p2 = match.getP2();
         String message = renderer.render(state);
@@ -67,7 +67,7 @@ public class LootingHandler extends GameHandler<LootingState, LootingLogic, Loot
     }
 
     @Override
-    public void onEnd(Match match, LootingState state) {
+    public void onEnd(DualMatch match, LootingState state) {
         state.getPlayers().values().forEach(p -> {
             if (p.isEvacuated()) {
                 userService.plusExperience(p.getUserId(), 200);
@@ -78,7 +78,7 @@ public class LootingHandler extends GameHandler<LootingState, LootingLogic, Loot
     }
 
     @Override
-    public GameRes onAction(LootingState state, Player self, Player opp, CmdArgs args) {
+    public GameRes onAction(DualMatch match, LootingState state, Player self, CmdArgs args) {
         String command = args.nextFullString("侦察");
 
         if (state.isFinished()) return fail("对局已结束");
@@ -92,19 +92,19 @@ public class LootingHandler extends GameHandler<LootingState, LootingLogic, Loot
         String actionOutput;
         String opponentExtra = "";
         if (command.equals(CMD_ATTACK_PLAYER)) {
-            List<String> output = gameLogic.attackPlayer(state, p);
+            List<String> output = logic.attackPlayer(state, p);
             actionOutput = output.get(0);
             opponentExtra = output.get(1);
         } else if (command.startsWith(CMD_MOVE)) {
-            actionOutput = gameLogic.move(state, p, command.substring(2).trim());
+            actionOutput = logic.move(state, p, command.substring(2).trim());
         } else if (command.equals(CMD_SCOUT)) {
-            actionOutput = gameLogic.view(state, p);
+            actionOutput = logic.view(state, p);
         } else if (command.equals(CMD_LOOT)) {
-            actionOutput = gameLogic.loot(state, p);
+            actionOutput = logic.loot(state, p);
         } else if (command.equals(CMD_ATTACK_AI)) {
-            actionOutput = gameLogic.attackAi(state, p);
+            actionOutput = logic.attackAi(state, p);
         } else if (command.equals(CMD_EVAC)) {
-            actionOutput = gameLogic.evac(state, p);
+            actionOutput = logic.evac(state, p);
         } else {
             return fail("指令不存在");
         }
@@ -112,12 +112,12 @@ public class LootingHandler extends GameHandler<LootingState, LootingLogic, Loot
         String selfTick = "";
         String opponentTick = "";
         if (!command.equals(CMD_SCOUT)) {
-            List<String> tickOutput = gameLogic.tick(state, self.getId());
+            List<String> tickOutput = logic.tick(state, self.getId());
             selfTick = tickOutput.get(0);
             opponentTick = tickOutput.get(1);
         }
 
-        String enemyInfo = gameLogic.checkEnemies(state, p);
+        String enemyInfo = logic.checkEnemies(state, p);
         String statusLine = renderer.statusLine(p, 25 - state.getTick());
         String menu = renderer.actionMenu(state.isFinished(),
                 state.getMap().node(p.getLocation()).isEvac(), !enemyInfo.isEmpty());

@@ -1,11 +1,11 @@
 package com.zincoid.nullbot.core.module.game.impl.reversi;
 
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.core.module.game.framework.GameHandler;
+import com.zincoid.nullbot.core.module.game.framework.DualHandler;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
+import com.zincoid.nullbot.core.module.game.model.DualMatch;
 import com.zincoid.nullbot.core.module.game.model.GameRes;
-import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.service.base.UserService;
@@ -16,7 +16,7 @@ import java.util.Objects;
 
 @Slf4j
 @Component
-public class ReversiHandler extends GameHandler<ReversiState, ReversiLogic, ReversiRenderer> {
+public class ReversiHandler extends DualHandler<ReversiState, ReversiLogic, ReversiRenderer> {
 
     private final UserService userService;
 
@@ -28,7 +28,7 @@ public class ReversiHandler extends GameHandler<ReversiState, ReversiLogic, Reve
             ReversiLogic gameLogic,
             ReversiRenderer renderer
     ) {
-        super(botContainer, matchManager, playerManager, gameLogic, renderer);
+        super(gameLogic, renderer, botContainer, matchManager, playerManager);
         this.userService = userService;
     }
 
@@ -43,7 +43,7 @@ public class ReversiHandler extends GameHandler<ReversiState, ReversiLogic, Reve
     }
 
     @Override
-    public void onStart(Match match, ReversiState state) {
+    public void onStart(DualMatch match, ReversiState state) {
         Player p1 = match.getP1();
         Player p2 = match.getP2();
         String message = renderer.render(state);
@@ -53,7 +53,7 @@ public class ReversiHandler extends GameHandler<ReversiState, ReversiLogic, Reve
     }
 
     @Override
-    public void onEnd(Match match, ReversiState state) {
+    public void onEnd(DualMatch match, ReversiState state) {
         if (state.getWinner() != null) {
             userService.plusExperience(state.getWinner(), 200);
             userService.increaseDrawTimes(state.getWinner(), 50);
@@ -66,7 +66,7 @@ public class ReversiHandler extends GameHandler<ReversiState, ReversiLogic, Reve
     }
 
     @Override
-    public GameRes onAction(ReversiState state, Player self, Player opp, CmdArgs args) {
+    public GameRes onAction(DualMatch match, ReversiState state, Player self, CmdArgs args) {
         String pos = args.nextString().toUpperCase();
         if (!pos.matches("^[A-H][1-8]$")) return fail("坐标错误 范围: A1~H8");
         Character sym = symbolOf(state, self);
@@ -75,10 +75,10 @@ public class ReversiHandler extends GameHandler<ReversiState, ReversiLogic, Reve
         if (state.isFinished()) return fail("对局已结束");
         int col = pos.charAt(0) - 'A';
         int row = pos.charAt(1) - '1';
-        if (!gameLogic.place(state, row, col)) return fail("非法落子");
+        if (!logic.place(state, row, col)) return fail("非法落子");
         log.info("☑ [Reversi] 玩家 {} 落子 [{}]", self.getId(), pos);
         String board = renderer.render(state);
-        if (gameLogic.noMoves(state, 'B') && gameLogic.noMoves(state, 'W'))
+        if (logic.noMoves(state, 'B') && logic.noMoves(state, 'W'))
             return finishGame(state, board);
         return success(false, board, null);
     }

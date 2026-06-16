@@ -1,11 +1,11 @@
 package com.zincoid.nullbot.core.module.game.impl.tictactoe;
 
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.core.module.game.framework.GameHandler;
+import com.zincoid.nullbot.core.module.game.framework.DualHandler;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
+import com.zincoid.nullbot.core.module.game.model.DualMatch;
 import com.zincoid.nullbot.core.module.game.model.GameRes;
-import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.service.base.UserService;
@@ -16,7 +16,7 @@ import java.util.Objects;
 
 @Slf4j
 @Component
-public class TicTacToeHandler extends GameHandler<TicTacToeState, TicTacToeLogic, TicTacToeRenderer> {
+public class TicTacToeHandler extends DualHandler<TicTacToeState, TicTacToeLogic, TicTacToeRenderer> {
 
     private final UserService userService;
 
@@ -28,7 +28,7 @@ public class TicTacToeHandler extends GameHandler<TicTacToeState, TicTacToeLogic
             TicTacToeLogic gameLogic,
             TicTacToeRenderer renderer
     ) {
-        super(botContainer, matchManager, playerManager, gameLogic, renderer);
+        super(gameLogic, renderer, botContainer, matchManager, playerManager);
         this.userService = userService;
     }
 
@@ -43,7 +43,7 @@ public class TicTacToeHandler extends GameHandler<TicTacToeState, TicTacToeLogic
     }
 
     @Override
-    public void onStart(Match match, TicTacToeState state) {
+    public void onStart(DualMatch match, TicTacToeState state) {
         Player p1 = match.getP1();
         Player p2 = match.getP2();
         String message = renderer.render(state);
@@ -53,7 +53,7 @@ public class TicTacToeHandler extends GameHandler<TicTacToeState, TicTacToeLogic
     }
 
     @Override
-    public void onEnd(Match match, TicTacToeState state) {
+    public void onEnd(DualMatch match, TicTacToeState state) {
         if (state.getWin() != null) {
             userService.plusExperience(state.getWin(), 100);
             userService.increaseDrawTimes(state.getWin(), 30);
@@ -66,22 +66,22 @@ public class TicTacToeHandler extends GameHandler<TicTacToeState, TicTacToeLogic
     }
 
     @Override
-    public GameRes onAction(TicTacToeState state, Player self, Player opp, CmdArgs args) {
+    public GameRes onAction(DualMatch match, TicTacToeState state, Player self, CmdArgs args) {
         int r = args.nextInt() - 1;
         int c = args.nextInt() - 1;
         Character symbol = symbolOf(state, self);
         if (symbol == null) return fail("非对局玩家");
         if (state.getCurrent() != symbol) return fail("没轮到你");
-        if (!gameLogic.place(state, r, c)) return fail("非法落子");
+        if (!logic.place(state, r, c)) return fail("非法落子");
         log.info("☑ [TicTacToe] 玩家 {} 落子 [{}, {}]", self.getId(), r + 1, c + 1);
         String board = renderer.render(state);
-        Character winner = gameLogic.check(state);
+        Character winner = logic.check(state);
         if (winner != null) {
             state.setFinished(true);
             state.setWin(winner == 'X' ? state.getX() : state.getO());
             return finish(false, board + renderer.resultMessage(winner), null);
         }
-        if (gameLogic.draw(state)) {
+        if (logic.draw(state)) {
             state.setFinished(true);
             return finish(false, board + renderer.drawMessage(), null);
         }
