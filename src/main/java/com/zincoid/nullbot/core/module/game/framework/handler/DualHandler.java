@@ -1,17 +1,22 @@
-package com.zincoid.nullbot.core.module.game.framework;
+package com.zincoid.nullbot.core.module.game.framework.handler;
 
 import com.zincoid.nullbot.core.enums.GameMode;
+import com.zincoid.nullbot.core.module.game.framework.Handler;
+import com.zincoid.nullbot.core.module.game.framework.Logic;
+import com.zincoid.nullbot.core.module.game.framework.Renderer;
+import com.zincoid.nullbot.core.module.game.framework.State;
 import com.zincoid.nullbot.core.module.game.model.*;
+import com.zincoid.nullbot.core.module.game.model.match.DualMatch;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 
-public abstract class DualHandler<S extends GameState, L extends GameLogic<DualMatch, S>, R extends GameRenderer<S>>
-        extends GameHandler<DualMatch, S, L, R> {
+public abstract class DualHandler<S extends State, L extends Logic<DualMatch, S>, R extends Renderer<S>>
+        extends Handler<DualMatch, S, L, R> {
 
-    protected DualHandler(L gameLogic, R renderer, BotOperator botOperator,
+    protected DualHandler(L logic, R renderer, BotOperator botOperator,
                           MatchManager matchManager, PlayerManager playerManager) {
-        super(gameLogic, renderer, botOperator, matchManager, playerManager);
+        super(logic, renderer, botOperator, matchManager, playerManager);
     }
 
     @Override
@@ -20,38 +25,28 @@ public abstract class DualHandler<S extends GameState, L extends GameLogic<DualM
     }
 
     @Override
-    protected final GameRes success(boolean async, String self, String opp) {
+    protected final Result success(boolean async, String self, String opp) {
         Match match = CURRENT_MATCH.get();
         Player _self = CURRENT_PLAYER.get();
         DualMatch dm = (DualMatch) match;
         Player _opp = playerManager.get(dm.getP1().getId().equals(_self.getId())
                 ? dm.getP2().getId()
                 : dm.getP1().getId());
-        GameRes res = GameRes.success().add(_self.getInProgressGroupId(), self);
+        Result res = Result.success().add(_self.getInProgressGroupId(), self);
         if (async || !_self.getInProgressGroupId().equals(_opp.getInProgressGroupId()))
             res.add(_opp.getInProgressGroupId(), async ? opp : self);
         return res;
     }
 
     @Override
-    protected final GameRes finish(boolean async, String self, String opp) {
+    protected final Result finish(boolean async, String self, String opp) {
         DualMatch match = (DualMatch) CURRENT_MATCH.get();
-        GameRes result = success(
+        Result result = success(
                 async,
                 self + "\n\n对局已结束: " + match.getId(),
                 opp + "\n\n对局已结束: " + match.getId()
         );
         end(match);
         return result;
-    }
-
-    @Override
-    protected final GameRes success(String msg) {
-        throw new UnsupportedOperationException("不支持的模式响应");
-    }
-
-    @Override
-    protected final GameRes finish(String msg) {
-        throw new UnsupportedOperationException("不支持的模式响应");
     }
 }

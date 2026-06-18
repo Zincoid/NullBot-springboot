@@ -1,19 +1,15 @@
 package com.zincoid.nullbot.core.module.game.runtime;
 
-import com.zincoid.nullbot.core.module.game.model.DualMatch;
+import com.zincoid.nullbot.core.module.game.model.match.DualMatch;
 import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.model.Player;
-import com.zincoid.nullbot.core.module.game.model.SoloMatch;
+import com.zincoid.nullbot.core.module.game.model.match.SoloMatch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -21,7 +17,8 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor
 public class MatchManager {
 
-    private final Map<Long, String> playerMatchIndex = new ConcurrentHashMap<>();
+    private final Map<Long, String> matchIndex = new ConcurrentHashMap<>();
+    private final Map<Long, List<String>> historyIndex = new ConcurrentHashMap<>();
     private final Map<String, Match> matchMap = new ConcurrentHashMap<>();
     private final Map<String, Match> historyMap = new ConcurrentHashMap<>();
 
@@ -33,8 +30,8 @@ public class MatchManager {
         Player p2 = playerManager.get(p2Id);
         if (p2 == null) throw new IllegalArgumentException("玩家2不存在");
         DualMatch match = new DualMatch(UUID.randomUUID().toString(), type, p1, p2);
-        playerMatchIndex.put(p1.getId(), match.getId());
-        playerMatchIndex.put(p2.getId(), match.getId());
+        matchIndex.put(p1.getId(), match.getId());
+        matchIndex.put(p2.getId(), match.getId());
         matchMap.put(match.getId(), match);
         return match;
     }
@@ -43,7 +40,7 @@ public class MatchManager {
         Player player = playerManager.get(playerId);
         if (player == null) throw new IllegalArgumentException("玩家不存在");
         SoloMatch match = new SoloMatch(UUID.randomUUID().toString(), type, player);
-        playerMatchIndex.put(player.getId(), match.getId());
+        matchIndex.put(player.getId(), match.getId());
         matchMap.put(match.getId(), match);
         return match;
     }
@@ -53,7 +50,7 @@ public class MatchManager {
     }
 
     public Match get(Long userId) {
-        String matchId = playerMatchIndex.get(userId);
+        String matchId = matchIndex.get(userId);
         if (matchId != null) return matchMap.get(matchId);
         return null;
     }
@@ -61,8 +58,10 @@ public class MatchManager {
     public void remove(String matchId) {
         Match match = matchMap.remove(matchId);
         if (match == null) return;
-        for (Player p : match.getPlayers())
-            playerMatchIndex.remove(p.getId());
+        for (Player p : match.getPlayers()) {
+            matchIndex.remove(p.getId());
+            historyIndex.computeIfAbsent(p.getId(), k -> new ArrayList<>()).add(matchId);
+        }
         match.setStatus(Match.MatchStatus.FINISHED);
         match.setLastActionTime(LocalDateTime.now());
         match.setEndTime(LocalDateTime.now());
@@ -70,8 +69,11 @@ public class MatchManager {
     }
 
     public Collection<Match> history(Long userId) {
-        return historyMap.values().stream()
-                .filter(m -> m.getPlayers().stream().anyMatch(p -> p.getId().equals(userId)))
+        List<String> matchIds = historyIndex.get(userId);
+        if (matchIds == null) return List.of();
+        return matchIds.stream()
+                .map(historyMap::get)
+                .filter(Objects::nonNull)
                 .toList();
     }
 

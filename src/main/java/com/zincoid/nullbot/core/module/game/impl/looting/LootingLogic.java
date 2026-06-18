@@ -1,10 +1,10 @@
 package com.zincoid.nullbot.core.module.game.impl.looting;
 
-import com.zincoid.nullbot.core.module.game.framework.GameLogic;
+import com.zincoid.nullbot.core.module.game.framework.Logic;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.AiEnemy;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.LootingPlayer;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.MapNode;
-import com.zincoid.nullbot.core.module.game.model.DualMatch;
+import com.zincoid.nullbot.core.module.game.model.match.DualMatch;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @RequiredArgsConstructor
-public class LootingLogic extends GameLogic<DualMatch, LootingState> {
+public class LootingLogic extends Logic<DualMatch, LootingState> {
 
     private final LootingMapFactory mapFactory;
 

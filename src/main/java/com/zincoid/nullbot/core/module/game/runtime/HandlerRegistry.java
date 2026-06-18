@@ -1,9 +1,9 @@
 package com.zincoid.nullbot.core.module.game.runtime;
 
-import com.zincoid.nullbot.core.module.game.framework.GameHandler;
-import com.zincoid.nullbot.core.module.game.framework.GameLogic;
-import com.zincoid.nullbot.core.module.game.framework.GameRenderer;
-import com.zincoid.nullbot.core.module.game.framework.GameState;
+import com.zincoid.nullbot.core.module.game.framework.Handler;
+import com.zincoid.nullbot.core.module.game.framework.Logic;
+import com.zincoid.nullbot.core.module.game.framework.Renderer;
+import com.zincoid.nullbot.core.module.game.framework.State;
 import com.zincoid.nullbot.core.module.game.model.Match;
 import org.springframework.stereotype.Component;
 
@@ -15,18 +15,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class HandlerRegistry {
 
-    private final Map<String, GameHandler<?, ?, ?, ?>> handlerMap = new ConcurrentHashMap<>();
+    private final Map<String, Handler<?, ?, ?, ?>> handlerMap = new ConcurrentHashMap<>();
 
-    public HandlerRegistry(List<GameHandler<?, ?, ?, ?>> handlers) {
+    public HandlerRegistry(List<Handler<?, ?, ?, ?>> handlers) {
         handlers.forEach(h -> handlerMap.put(h.getType(), h));
     }
 
     @SuppressWarnings("unchecked")
-    public <M extends Match, S extends GameState, L extends GameLogic<M, S>, R extends GameRenderer<S>> GameHandler<M, S, L, R> get(String type) {
-        return (GameHandler<M, S, L, R>) handlerMap.get(type);
+    public <M extends Match, S extends State, L extends Logic<M, S>, R extends Renderer<S>> Handler<M, S, L, R> get(String type) {
+        return (Handler<M, S, L, R>) handlerMap.get(type);
     }
 
-    public Collection<GameHandler<?, ?, ?, ?>> getAll() {
+    public Collection<Handler<?, ?, ?, ?>> getAll() {
         return handlerMap.values();
     }
 }

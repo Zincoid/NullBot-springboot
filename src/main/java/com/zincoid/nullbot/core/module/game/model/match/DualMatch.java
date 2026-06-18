@@ -1,5 +1,7 @@
-package com.zincoid.nullbot.core.module.game.model;
+package com.zincoid.nullbot.core.module.game.model.match;
 
+import com.zincoid.nullbot.core.module.game.model.Match;
+import com.zincoid.nullbot.core.module.game.model.Player;
 import lombok.Getter;
 
 import java.util.List;

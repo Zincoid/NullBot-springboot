@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.module.game.impl.reversi;
 
-import com.zincoid.nullbot.core.module.game.framework.GameState;
+import com.zincoid.nullbot.core.module.game.framework.State;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ReversiState extends GameState {
+public class ReversiState extends State {
 
     private char[][] board = new char[8][8];
 
@@ -26,5 +26,10 @@ public class ReversiState extends GameState {
         board[4][3] = 'B';
         board[4][4] = 'W';
         current = 'B';
+    }
+
+    @Override
+    public boolean isFinished() {
+        return finished;
     }
 }

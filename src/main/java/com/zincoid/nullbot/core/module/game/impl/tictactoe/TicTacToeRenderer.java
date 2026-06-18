@@ -1,10 +1,10 @@
 package com.zincoid.nullbot.core.module.game.impl.tictactoe;
 
-import com.zincoid.nullbot.core.module.game.framework.GameRenderer;
+import com.zincoid.nullbot.core.module.game.framework.Renderer;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TicTacToeRenderer extends GameRenderer<TicTacToeState> {
+public class TicTacToeRenderer extends Renderer<TicTacToeState> {
 
     private static final char EMPTY = '　';
     private static final char FULL_X = 'Ｘ';

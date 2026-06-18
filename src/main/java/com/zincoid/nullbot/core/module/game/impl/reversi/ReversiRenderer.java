@@ -1,10 +1,10 @@
 package com.zincoid.nullbot.core.module.game.impl.reversi;
 
-import com.zincoid.nullbot.core.module.game.framework.GameRenderer;
+import com.zincoid.nullbot.core.module.game.framework.Renderer;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReversiRenderer extends GameRenderer<ReversiState> {
+public class ReversiRenderer extends Renderer<ReversiState> {
 
     private static final String[] COLS = {
             "🅰️", "🅱️", "🅲", "🅳", "🅴", "🅵", "🅶", "🅷"

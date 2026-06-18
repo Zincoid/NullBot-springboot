@@ -1,11 +1,11 @@
 package com.zincoid.nullbot.core.module.game.impl.reversi;
 
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.core.module.game.framework.DualHandler;
+import com.zincoid.nullbot.core.module.game.framework.handler.DualHandler;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
-import com.zincoid.nullbot.core.module.game.model.DualMatch;
-import com.zincoid.nullbot.core.module.game.model.GameRes;
+import com.zincoid.nullbot.core.module.game.model.match.DualMatch;
+import com.zincoid.nullbot.core.module.game.model.Result;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.service.base.UserService;
@@ -21,14 +21,14 @@ public class ReversiHandler extends DualHandler<ReversiState, ReversiLogic, Reve
     private final UserService userService;
 
     public ReversiHandler(
+            ReversiLogic logic,
+            ReversiRenderer renderer,
             BotOperator botContainer,
             MatchManager matchManager,
             PlayerManager playerManager,
-            UserService userService,
-            ReversiLogic gameLogic,
-            ReversiRenderer renderer
+            UserService userService
     ) {
-        super(gameLogic, renderer, botContainer, matchManager, playerManager);
+        super(logic, renderer, botContainer, matchManager, playerManager);
         this.userService = userService;
     }
 
@@ -66,7 +66,7 @@ public class ReversiHandler extends DualHandler<ReversiState, ReversiLogic, Reve
     }
 
     @Override
-    public GameRes onAction(DualMatch match, ReversiState state, Player self, CmdArgs args) {
+    public Result onAction(DualMatch match, ReversiState state, Player self, CmdArgs args) {
         String pos = args.nextString().toUpperCase();
         if (!pos.matches("^[A-H][1-8]$")) return fail("坐标错误 范围: A1~H8");
         Character sym = symbolOf(state, self);
@@ -83,7 +83,7 @@ public class ReversiHandler extends DualHandler<ReversiState, ReversiLogic, Reve
         return success(false, board, null);
     }
 
-    private GameRes finishGame(ReversiState state, String board) {
+    private Result finishGame(ReversiState state, String board) {
         state.setFinished(true);
         int b = 0, w = 0;
         for (char[] row : state.getBoard())

@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.module.game.impl.looting;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.AiEnemy;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.LootingMap;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.LootingPlayer;
-import com.zincoid.nullbot.core.module.game.framework.GameState;
+import com.zincoid.nullbot.core.module.game.framework.State;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class LootingState extends GameState {
+public class LootingState extends State {
 
     private LootingMap map;
     private int tick;
@@ -23,4 +23,9 @@ public class LootingState extends GameState {
     private List<AiEnemy> enemies = new CopyOnWriteArrayList<>();
 
     private boolean finished;
+
+    @Override
+    public boolean isFinished() {
+        return finished;
+    }
 }

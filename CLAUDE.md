@@ -59,7 +59,7 @@ QQ client → NapCat (WS) → Shiro framework → @Shiro-annotated methods
 Multiplayer games (`game/multi/`) use a matchmaking pattern:
 - `Matcher` queues players, `MatchPoolManager` holds pending pools per game type.
 - When matched, a `GameMatchHandler` subclass (e.g., `TicTacToeMatchHandler`) creates the game state and processes moves.
-- `GameLogic` subclasses (e.g., `TicTacToeGameLogic`) contain pure game rules.
+- `Logic` subclasses (e.g., `TicTacToeLogic`) contain pure game rules.
 - `MatchCleanupScheduler` periodically cleans expired matches.
 
 ### External Services

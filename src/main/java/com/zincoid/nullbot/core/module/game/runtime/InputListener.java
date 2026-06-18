@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.module.game.runtime;
 import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.module.control.BotInputManager;
-import com.zincoid.nullbot.core.module.game.framework.GameHandler;
+import com.zincoid.nullbot.core.module.game.framework.Handler;
 import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.system.BotOperator;
@@ -21,44 +21,46 @@ import java.util.concurrent.Executors;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class InputOrchestrator {
+public class InputListener {
 
     private static final long INPUT_TIMEOUT_SECONDS = 300;
 
     private final BotInputManager botInputManager;
     private final BotOperator botOperator;
-    private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     @PostConstruct
     public void init() {
-        log.info("▽ [InputOrchestrator] 游戏监听器已启动");
+        log.info("▽ [InputListener] 游戏监听器已启动");
     }
 
     @PreDestroy
     public void destroy() {
         if (!executor.isShutdown()) executor.shutdownNow();
-        log.info("▽ [InputOrchestrator] 游戏监听器已关闭");
+        log.info("▽ [InputListener] 游戏监听器已关闭");
     }
 
-    public void listen(Match match, GameHandler<?, ?, ?, ?> handler) {
+    public void listen(Match match, Handler<?, ?, ?, ?> handler) {
         for (Player p : match.getPlayers())
             executor.submit(() -> loop(match, handler, p.getId()));
     }
 
-    private void loop(Match match, GameHandler<?, ?, ?, ?> handler, Long playerId) {
-        log.info("▽ [InputOrchestrator] 游戏监听开始 - PlayerID: {}, MatchID: {}, Type: {}", playerId, match.getId(), match.getType());
+    private void loop(Match match, Handler<?, ?, ?, ?> handler, Long playerId) {
+        String matchId = match.getId();
+        log.info("▽ [InputListener] 监听开始 - MID: {}, PID: {}", matchId, playerId);
         try {
-            while (handler.isActive(match.getId())) {
-                List<Pair<Long, String>> inputs = botInputManager.request(BniMode.PS, playerId, handler.getPattern(), INPUT_TIMEOUT_SECONDS);
-                if (inputs.isEmpty() || !handler.isActive(match.getId())) break;
+            while (handler.isActive(matchId)) {
+                List<Pair<Long, String>> inputs = botInputManager
+                        .request(BniMode.PS, playerId, handler.getPattern(), INPUT_TIMEOUT_SECONDS);
+                if (inputs.isEmpty() || !handler.isActive(matchId)) break;
                 String input = inputs.getFirst().getValue().trim();
-                log.info("[InputOrchestrator] 游戏监听输入 - PlayerID: {}, MatchID: {}, Input: {}", playerId, match.getId(), input);
+                log.info("[InputListener] 监听输入 - MID: {}, PID: {}, Input: {}", matchId, playerId, input);
                 CmdArgs args = CmdArgs.of(List.of(input.split("\\s+")));
                 handler.act(playerId, args).send(botOperator.getBot());
             }
         } catch (Exception e) {
-            log.error("▽ [InputOrchestrator] 游戏监听异常 - PlayerID: {}, MatchID: {}", playerId, match.getId(), e);
+            log.error("▽ [InputListener] 监听异常 - MID: {}, PID: {}", matchId, playerId, e);
         }
-        log.info("▽ [InputOrchestrator] 游戏监听结束 - PlayerID: {}, MatchID: {}", playerId, match.getId());
+        log.info("▽ [InputListener] 监听结束 - MID: {}, PID: {}", matchId, playerId);
     }
 }

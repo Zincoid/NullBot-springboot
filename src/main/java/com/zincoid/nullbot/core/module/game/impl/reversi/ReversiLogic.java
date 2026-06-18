@@ -1,11 +1,11 @@
 package com.zincoid.nullbot.core.module.game.impl.reversi;
 
-import com.zincoid.nullbot.core.module.game.framework.GameLogic;
-import com.zincoid.nullbot.core.module.game.model.DualMatch;
+import com.zincoid.nullbot.core.module.game.framework.Logic;
+import com.zincoid.nullbot.core.module.game.model.match.DualMatch;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReversiLogic extends GameLogic<DualMatch, ReversiState> {
+public class ReversiLogic extends Logic<DualMatch, ReversiState> {
 
     private static final int[][] DIRS = {
             {-1, -1}, {-1, 0}, {-1, 1},

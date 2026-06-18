@@ -1,12 +1,12 @@
 package com.zincoid.nullbot.core.module.game.impl.tictactoe;
 
-import com.zincoid.nullbot.core.module.game.framework.GameState;
+import com.zincoid.nullbot.core.module.game.framework.State;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class TicTacToeState extends GameState {
+public class TicTacToeState extends State {
 
     private char[][] board = {
         {'.', '.', '.'},
@@ -20,4 +20,9 @@ public class TicTacToeState extends GameState {
 
     private char current = 'X';
     private boolean finished;
+
+    @Override
+    public boolean isFinished() {
+        return finished;
+    }
 }

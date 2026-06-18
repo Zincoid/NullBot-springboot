@@ -7,7 +7,7 @@ import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
-import com.zincoid.nullbot.core.module.game.model.GameRes;
+import com.zincoid.nullbot.core.module.game.model.Result;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class GameHandler<M extends Match, S extends GameState, L extends GameLogic<M, S>, R extends GameRenderer<S>> {
+public abstract class Handler<M extends Match, S extends State, L extends Logic<M, S>, R extends Renderer<S>> {
 
     protected static final ThreadLocal<Match> CURRENT_MATCH = new ThreadLocal<>();
     protected static final ThreadLocal<Player> CURRENT_PLAYER = new ThreadLocal<>();
 
-    protected final Map<String, S> states = new ConcurrentHashMap<>();  // MatchId -> GameState
+    protected final Map<String, S> states = new ConcurrentHashMap<>();  // MatchId -> State
     protected final L logic;
     protected final R renderer;
 
@@ -57,17 +57,18 @@ public abstract class GameHandler<M extends Match, S extends GameState, L extend
     }
 
     @SuppressWarnings("unchecked")
-    public final GameRes act(Long userId, CmdArgs args) {
+    public final Result act(Long userId, CmdArgs args) {
         Match match = matchManager.get(userId);
         if (match == null) return fail("对局不存在");
         S state = states.get(match.getId());
         if (state == null) return fail("状态不存在");
         Player self = playerManager.get(userId);
-        M m = (M) match;
-        CURRENT_MATCH.set(m);
+        CURRENT_MATCH.set(match);
         CURRENT_PLAYER.set(self);
         try {
-            return onAction(m, state, self, args);
+            synchronized (state) {
+                return onAction((M) match, state, self, args);
+            }
         } finally {
             CURRENT_MATCH.remove();
             CURRENT_PLAYER.remove();
@@ -80,28 +81,36 @@ public abstract class GameHandler<M extends Match, S extends GameState, L extend
 
     protected abstract void onEnd(M match, S state);
 
-    protected abstract GameRes onAction(M match, S state, Player self, CmdArgs args);
+    protected abstract Result onAction(M match, S state, Player self, CmdArgs args);
 
     // ================== 响应构建方法 ==================
 
     // ---------------- 通用错误响应方法 ----------------
 
-    protected final GameRes fail(String message) {
+    protected final Result fail(String message) {
         Player self = CURRENT_PLAYER.get();
-        return GameRes.fail(self.getInProgressGroupId(), message);
+        return Result.fail().add(self.getInProgressGroupId(), "❌" + message);
     }
 
     // ---------------- 单人模式响应方法 ----------------
 
-    protected abstract GameRes success(String msg);
+    protected Result success(String msg) {
+        throw new UnsupportedOperationException("不支持的模式响应");
+    }
 
-    protected abstract GameRes finish(String msg);
+    protected Result finish(String msg) {
+        throw new UnsupportedOperationException("不支持的模式响应");
+    }
 
     // ---------------- 双人模式响应方法 ----------------
 
-    protected abstract GameRes success(boolean async, String self, String opp);
+    protected Result success(boolean async, String self, String opp) {
+        throw new UnsupportedOperationException("不支持的模式响应");
+    }
 
-    protected abstract GameRes finish(boolean async, String self, String opp);
+    protected Result finish(boolean async, String self, String opp) {
+        throw new UnsupportedOperationException("不支持的模式响应");
+    }
 
 
     // ================== 输入监听方法 ==================

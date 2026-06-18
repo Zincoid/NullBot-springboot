@@ -1,11 +1,11 @@
 package com.zincoid.nullbot.core.module.game.impl.tictactoe;
 
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.core.module.game.framework.DualHandler;
+import com.zincoid.nullbot.core.module.game.framework.handler.DualHandler;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
-import com.zincoid.nullbot.core.module.game.model.DualMatch;
-import com.zincoid.nullbot.core.module.game.model.GameRes;
+import com.zincoid.nullbot.core.module.game.model.match.DualMatch;
+import com.zincoid.nullbot.core.module.game.model.Result;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.service.base.UserService;
@@ -21,14 +21,14 @@ public class TicTacToeHandler extends DualHandler<TicTacToeState, TicTacToeLogic
     private final UserService userService;
 
     public TicTacToeHandler(
+            TicTacToeLogic logic,
+            TicTacToeRenderer renderer,
             BotOperator botContainer,
             MatchManager matchManager,
             PlayerManager playerManager,
-            UserService userService,
-            TicTacToeLogic gameLogic,
-            TicTacToeRenderer renderer
+            UserService userService
     ) {
-        super(gameLogic, renderer, botContainer, matchManager, playerManager);
+        super(logic, renderer, botContainer, matchManager, playerManager);
         this.userService = userService;
     }
 
@@ -66,7 +66,7 @@ public class TicTacToeHandler extends DualHandler<TicTacToeState, TicTacToeLogic
     }
 
     @Override
-    public GameRes onAction(DualMatch match, TicTacToeState state, Player self, CmdArgs args) {
+    public Result onAction(DualMatch match, TicTacToeState state, Player self, CmdArgs args) {
         int r = args.nextInt() - 1;
         int c = args.nextInt() - 1;
         Character symbol = symbolOf(state, self);

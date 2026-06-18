@@ -1,11 +1,11 @@
 package com.zincoid.nullbot.core.module.game.impl.tictactoe;
 
-import com.zincoid.nullbot.core.module.game.framework.GameLogic;
-import com.zincoid.nullbot.core.module.game.model.DualMatch;
+import com.zincoid.nullbot.core.module.game.framework.Logic;
+import com.zincoid.nullbot.core.module.game.model.match.DualMatch;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TicTacToeLogic extends GameLogic<DualMatch, TicTacToeState> {
+public class TicTacToeLogic extends Logic<DualMatch, TicTacToeState> {
 
     @Override
     public TicTacToeState create(DualMatch match) {

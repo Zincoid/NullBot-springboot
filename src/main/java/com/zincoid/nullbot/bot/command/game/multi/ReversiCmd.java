@@ -4,7 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.core.module.game.model.GameRes;
+import com.zincoid.nullbot.core.module.game.model.Result;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.module.game.impl.reversi.ReversiHandler;
@@ -21,7 +21,7 @@ public class ReversiCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        GameRes result = reversiHandler.act(event.getUserId(), args);
+        Result result = reversiHandler.act(event.getUserId(), args);
         result.send();
         log.info("☑ [Reversi] 黑白棋操作 -> {}", result.isOk());
     }

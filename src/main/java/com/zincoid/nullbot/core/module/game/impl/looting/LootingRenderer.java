@@ -1,11 +1,11 @@
 package com.zincoid.nullbot.core.module.game.impl.looting;
 
 import com.zincoid.nullbot.core.module.game.impl.looting.model.LootingPlayer;
-import com.zincoid.nullbot.core.module.game.framework.GameRenderer;
+import com.zincoid.nullbot.core.module.game.framework.Renderer;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LootingRenderer extends GameRenderer<LootingState> {
+public class LootingRenderer extends Renderer<LootingState> {
 
     @Override
     public String render(LootingState state) {

@@ -1,11 +1,11 @@
 package com.zincoid.nullbot.core.module.game.impl.looting;
 
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.core.module.game.framework.DualHandler;
+import com.zincoid.nullbot.core.module.game.framework.handler.DualHandler;
 import com.zincoid.nullbot.core.module.game.runtime.MatchManager;
 import com.zincoid.nullbot.core.module.game.runtime.PlayerManager;
-import com.zincoid.nullbot.core.module.game.model.DualMatch;
-import com.zincoid.nullbot.core.module.game.model.GameRes;
+import com.zincoid.nullbot.core.module.game.model.match.DualMatch;
+import com.zincoid.nullbot.core.module.game.model.Result;
 import com.zincoid.nullbot.core.module.game.model.Player;
 import com.zincoid.nullbot.core.module.game.impl.looting.model.LootingPlayer;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
@@ -33,15 +33,15 @@ public class LootingHandler extends DualHandler<LootingState, LootingLogic, Loot
     private final UserService userService;
 
     public LootingHandler(
+            LootingLogic logic,
+            LootingRenderer renderer,
             BotOperator botOperator,
             MatchManager matchManager,
             PlayerManager playerManager,
             InventoryService inventoryService,
-            UserService userService,
-            LootingLogic gameLogic,
-            LootingRenderer renderer
+            UserService userService
     ) {
-        super(gameLogic, renderer, botOperator, matchManager, playerManager);
+        super(logic, renderer, botOperator, matchManager, playerManager);
         this.inventoryService = inventoryService;
         this.userService = userService;
     }
@@ -78,7 +78,7 @@ public class LootingHandler extends DualHandler<LootingState, LootingLogic, Loot
     }
 
     @Override
-    public GameRes onAction(DualMatch match, LootingState state, Player self, CmdArgs args) {
+    public Result onAction(DualMatch match, LootingState state, Player self, CmdArgs args) {
         String command = args.nextFullString("侦察");
 
         if (state.isFinished()) return fail("对局已结束");

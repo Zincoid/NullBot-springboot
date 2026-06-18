@@ -1,14 +1,13 @@
 package com.zincoid.nullbot.core.module.game;
 
-import com.zincoid.nullbot.core.context.BotCtx;
-import com.zincoid.nullbot.core.module.game.framework.GameHandler;
-import com.zincoid.nullbot.core.module.game.runtime.InputOrchestrator;
+import com.zincoid.nullbot.core.module.game.framework.Handler;
+import com.zincoid.nullbot.core.module.game.runtime.InputListener;
 import com.zincoid.nullbot.core.module.game.runtime.*;
-import com.zincoid.nullbot.core.module.game.model.DualMatch;
-import com.zincoid.nullbot.core.module.game.model.MatchRes;
+import com.zincoid.nullbot.core.module.game.model.match.DualMatch;
+import com.zincoid.nullbot.core.module.game.model.Result;
 import com.zincoid.nullbot.core.module.game.model.Match;
 import com.zincoid.nullbot.core.module.game.model.Player;
-import com.zincoid.nullbot.core.module.game.model.SoloMatch;
+import com.zincoid.nullbot.core.module.game.model.match.SoloMatch;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,75 +30,75 @@ public class GameEngine {
     private final MatchingPool matchingPool;
     private final HandlerRegistry handlerRegistry;
     private final BotOperator botOperator;
-    private final InputOrchestrator inputOrchestrator;
+    private final InputListener inputListener;
 
-    public MatchRes join(Long userId, String userName, String type) {
-        Player self = playerManager.set(userId, BotCtx.getGroupId(), userName);
+    public Result join(Long groupId, Long userId, String userName, String type) {
+        Player self = playerManager.set(userId, groupId, userName);
         if (self.getStatus() != Player.PlayerStatus.IDLE)
-            return MatchRes.fail("已在匹配或游戏中");
-        GameHandler<?, ?, ?, ?> handler = handlerRegistry.get(type);
+            return Result.fail(groupId, "已在匹配或游戏中");
+        Handler<?, ?, ?, ?> handler = handlerRegistry.get(type);
         if (handler == null)
-            return MatchRes.fail("不支持该游戏类型");
+            return Result.fail(groupId, "不支持该游戏类型");
         return switch (handler.getMode()) {
             case DUAL -> joinDual(self, type, handler);
             case SOLO -> joinSolo(self, type, handler);
         };
     }
 
-    private MatchRes joinDual(Player self, String type, GameHandler<?, ?, ?, ?> handler) {
+    private Result joinDual(Player self, String type, Handler<?, ?, ?, ?> handler) {
         Player opp = matchingPool.poll(type);
         if (opp == null) {
             matchingPool.add(self.getId(), type);
             playerManager.update(self.getId(), Player.PlayerStatus.WAITING);
-            return MatchRes.success("已加入匹配队列...");
+            return Result.success().add(self.getInProgressGroupId(), "已加入匹配队列...");
         }
         DualMatch match = matchManager.createDual(self.getId(), opp.getId(), type);
         self.setInProgressMatchId(match.getId());
         opp.setInProgressMatchId(match.getId());
         handler.start(match);
-        inputOrchestrator.listen(match, handler);
+        inputListener.listen(match, handler);
         String message = """
                 ✅%s对局匹配成功
                 - P1: %s(%s)
                 - P2: %s(%s)
                 - MatchID: %s"""
                 .formatted(type, self.getName(), self.getId(), opp.getName(), opp.getId(), match.getId());
-        return MatchRes.success(Set.of(BotCtx.getGroupId(), opp.getInProgressGroupId()), message);
+        return Result.success(Set.of(self.getInProgressGroupId(), opp.getInProgressGroupId()), message);
     }
 
-    private MatchRes joinSolo(Player self, String type, GameHandler<?, ?, ?, ?> handler) {
+    private Result joinSolo(Player self, String type, Handler<?, ?, ?, ?> handler) {
         SoloMatch match = matchManager.createSolo(self.getId(), type);
         self.setInProgressMatchId(match.getId());
         handler.start(match);
-        inputOrchestrator.listen(match, handler);
-        return MatchRes.success("单人%s游戏已开始".formatted(type));
+        inputListener.listen(match, handler);
+        return Result.success().add(self.getInProgressGroupId(), "单人%s游戏已开始".formatted(type));
     }
 
-    public MatchRes cancel(Long userId) {
+    public Result cancel(Long groupId, Long userId) {
         Player player = playerManager.get(userId);
         if (player == null)
-            return MatchRes.fail("玩家暂未注册");
+            return Result.fail(groupId, "玩家暂未注册");
         if (player.getStatus() != Player.PlayerStatus.WAITING)
-            return MatchRes.fail("非匹配中状态");
+            return Result.fail(groupId, "非匹配中状态");
         if (!matchingPool.remove(userId))
-            return MatchRes.fail("不在匹配队列");
+            return Result.fail(groupId, "不在匹配队列");
         playerManager.update(userId, Player.PlayerStatus.IDLE);
-        return MatchRes.fail("取消匹配成功");
+        return Result.success().add(groupId, "取消匹配成功");
     }
 
-    public MatchRes finish(Long userId) {
+    public Result finish(Long groupId, Long userId) {
         Player player = playerManager.get(userId);
         if (player == null)
-            return MatchRes.fail("玩家暂未注册");
+            return Result.fail(groupId, "玩家暂未注册");
         String matchId = player.getInProgressMatchId();
         if (matchId == null)
-            return MatchRes.fail("玩家未在游戏");
+            return Result.fail(groupId, "玩家未在游戏");
         Match match = matchManager.get(matchId);
         if (match == null)
-            return MatchRes.fail("对局信息错误");
-        GameHandler<?, ?, ?, ?> handler = handlerRegistry.get(match.getType());
+            return Result.fail(groupId, "对局信息错误");
+        Handler<?, ?, ?, ?> handler = handlerRegistry.get(match.getType());
         if (handler == null)
-            return MatchRes.fail("游戏类型错误");
+            return Result.fail(groupId, "游戏类型错误");
         handler.end(match);
         StringBuilder sb = new StringBuilder();
         sb.append("⚠️%s对局强制终止\n".formatted(match.getType()));
@@ -111,7 +110,7 @@ public class GameEngine {
         for (Player p : match.getPlayers())
             if (p.getInProgressGroupId() != null)
                 groups.add(p.getInProgressGroupId());
-        return MatchRes.success(groups, message);
+        return Result.success(groups, message);
     }
 
     @Scheduled(fixedDelay = 10_000)
@@ -141,7 +140,7 @@ public class GameEngine {
             for (Player p : m.getPlayers())
                 if (groups.add(p.getInProgressGroupId()))
                     botOperator.sendGroupMsg(p.getInProgressGroupId(), info);
-            GameHandler<?, ?, ?, ?> handler = handlerRegistry.get(m.getType());
+            Handler<?, ?, ?, ?> handler = handlerRegistry.get(m.getType());
             if (handler != null) handler.end(m);
         });
     }

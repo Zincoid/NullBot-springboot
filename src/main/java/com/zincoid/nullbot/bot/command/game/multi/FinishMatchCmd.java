@@ -4,7 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
-import com.zincoid.nullbot.core.module.game.model.MatchRes;
+import com.zincoid.nullbot.core.module.game.model.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
@@ -21,7 +21,10 @@ public class FinishMatchCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        MatchRes result = gameEngine.finish(event.getUserId());
+        Result result = gameEngine.finish(
+                event.getGroupId(),
+                event.getUserId()
+        );
         result.send();
         log.info("☑ [FinishMatch] 对局终止 -> {}", result.isOk());
     }

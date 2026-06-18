@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.core.module.game.GameEngine;
-import com.zincoid.nullbot.core.module.game.model.MatchRes;
+import com.zincoid.nullbot.core.module.game.model.Result;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -22,8 +22,8 @@ public class MatchCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         String type = args.nextString();
-        MatchRes result = gameEngine.join(
-                event.getUserId(),
+        Result result = gameEngine.join(
+                event.getGroupId(), event.getUserId(),
                 event.getSender().getNickname(),
                 type
         );
