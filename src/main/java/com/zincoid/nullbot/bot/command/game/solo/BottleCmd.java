@@ -44,7 +44,7 @@ public class BottleCmd implements Cmd {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String message = event.getMessage();
-        boolean autoThrow = "-auto".equals(args.getString(0, ""));
+        boolean autoThrow = args.hasOpt("auto", "a");
         Map<String, String> imageMap = MsgParseUtil.extractImgMap(event.getArrayMsg());
 
         if (!imageMap.isEmpty()) {

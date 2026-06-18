@@ -45,7 +45,7 @@ public class TtsCmd implements Cmd {
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
         String option = args.nextString();
-        if ("-clone".equals(option)) {
+        if ("--clone".equals(option) || "-c".equals(option)) {
             switch (args.nextString()) {
                 case "save"  -> handleCloneSave(bot, event, args, groupId, userId, userName);
                 case "delete" -> handleCloneDelete(bot, args, groupId);
@@ -55,7 +55,7 @@ public class TtsCmd implements Cmd {
             }
             return;
         }
-        if ("-synth".equals(option)) {
+        if ("--synth".equals(option) || "-s".equals(option)) {
             String voiceMsg = handleSynthesize(args.nextFullString());
             bot.sendGroupMsg(groupId, voiceMsg, false);
             return;
@@ -66,7 +66,7 @@ public class TtsCmd implements Cmd {
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
         String option = args.nextString();
-        if ("-synth".equals(option)) {
+        if ("--synth".equals(option) || "-s".equals(option)) {
             String voiceMsg = handleSynthesize(args.nextFullString());
             bot.sendPrivateMsg(event.getUserId(), voiceMsg, false);
             return;
@@ -164,23 +164,17 @@ public class TtsCmd implements Cmd {
                 ◉ Tts 命令
                 功能: 文本转语音
                 限权: %d 级
-                格式: Tts [操作方式] [参数...]
+                用法: Tts [选项] [参数...]
 
-                操作方式与参数:
-                • [-synth] [目标文本]
-                   一般合成
-                • [-clone] [克隆选项] [参数...]
-                   克隆合成
+                选项:
+                  -s, --synth [文本]  一般合成
+                  -c, --clone [子命令]  克隆合成
 
-                克隆选项与参数:
-                - [list]
-                   模板列表
-                - [save] [模板名] [音频文本]
-                   保存模板 (需引用音频文件)
-                - [delete] [模板名]
-                   删除模板
-                - [use] [模板名] [目标文本]
-                   音频合成 (使用模板)
+                克隆子命令:
+                  list                模板列表
+                  save [模板名] [文本]  保存模板 (需引用音频文件)
+                  delete [模板名]     删除模板
+                  use [模板名] [文本]  音频合成 (使用模板)
 
                 注意:
                 - 一般合成使用固定人物模型
@@ -196,7 +190,7 @@ public class TtsCmd implements Cmd {
         return """
                 ◉ Tts 命令
                 功能: 文本转语音并发送到群中
-                格式: Tts -synth [文本]
+                用法: Tts --synth [文本]
                 注意: 需发送语音替代文字回复时使用""";
     }
 }

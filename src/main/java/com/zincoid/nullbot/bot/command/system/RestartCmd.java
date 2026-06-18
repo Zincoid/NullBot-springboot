@@ -24,7 +24,7 @@ public class RestartCmd implements Cmd {
         Long groupId = event.getGroupId();
         String option = args.nextString();
         switch (option) {
-            case "-app" -> {
+            case "--app", "-a" -> {
                 bot.sendGroupMsg(groupId, """
                         ⚠️重启指令已下发
                         - 模式: APP
@@ -32,7 +32,7 @@ public class RestartCmd implements Cmd {
                 log.info("☑ [Restart] 重启指令已下发 - Mode: APPLICATION");
                 systemService.restart();
             }
-            case "-jar" -> {
+            case "--jar", "-j" -> {
                 bot.sendGroupMsg(groupId, """
                         ⚠️重启指令已下发
                         - 模式: JAR
@@ -57,9 +57,12 @@ public class RestartCmd implements Cmd {
                 ◉ Restart 命令
                 功能: 重新启动应用
                 限权: %d 级
-                格式:
-                1. Restart [-app]
-                2. Restart [-jar] [可选: 路径]
+                用法: Restart [--app | --jar [路径]]
+
+                选项:
+                  --app           重启应用进程
+                  --jar [路径]    通过 JAR 文件重启
+
                 别名: reboot/重启""", getAccess()
         );
     }

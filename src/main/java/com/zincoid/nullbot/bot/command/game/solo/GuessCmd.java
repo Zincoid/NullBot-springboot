@@ -45,7 +45,7 @@ public class GuessCmd implements Cmd {
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) throws Exception {
         Long groupId = event.getGroupId();
 
-        if ("-f".equals(args.getString(0))) {
+        if ("--forfeit".equals(args.getString(0)) || "-f".equals(args.getString(0))) {
             if (guessStorage.getGuess(groupId) == null)
                 throw new BotInfoException(Emoji.WARN, "未在游戏中");
             botInputManager.cancelWait(BniMode.GS, groupId);
@@ -180,7 +180,11 @@ public class GuessCmd implements Cmd {
                 功能: 猜角色
                 奖励: 5抽数 & 20Exp
                 限权: %d 级
-                格式: Guess [类别|-f(放弃)]
+                用法: Guess [选项] [类别]
+
+                选项:
+                  -f, --forfeit   放弃当前游戏
+
                 别名: 猜角色/猜
                 注意:
                 1. 回答格式为#加你的猜测
@@ -193,7 +197,11 @@ public class GuessCmd implements Cmd {
         return """
                 ◉ Guess 命令
                 功能: 猜角色
-                格式: Guess [类别|-f(放弃)]
+                用法: Guess [选项] [类别]
+
+                选项:
+                  -f, --forfeit   放弃当前游戏
+
                 类别: 明日方舟
                 示例: Guess 明日方舟""";
     }

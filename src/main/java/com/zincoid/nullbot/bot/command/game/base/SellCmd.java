@@ -30,7 +30,7 @@ public class SellCmd implements Cmd {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
-        if ("-r".equals(args.getString(0))) {
+        if ("--rarity".equals(args.getString(0)) || "-r".equals(args.getString(0))) {
             Rarity rarity = Rarity.valueOf(args.getString(1));
             if (!inventoryService.sell(userId, rarity))
                 throw new BotInfoException(Emoji.INFO, "该稀有度物品不足");
@@ -57,8 +57,11 @@ public class SellCmd implements Cmd {
                 ◉ Sell 命令
                 功能: 出售库存物品(可批量出售所有指定稀有度物品)
                 限权: %d 级
-                格式: Sell [物品ID] [可选: 数量(默认为1)]
-                或 Sell -r [稀有度]
+                用法: Sell [选项] [物品ID] [数量]
+
+                选项:
+                  -r, --rarity   按稀有度批量出售
+
                 稀有度: RED/GOLD/PURPLE/BLUE/GREEN/WHITE
                 别名: 出售""", getAccess()
         );

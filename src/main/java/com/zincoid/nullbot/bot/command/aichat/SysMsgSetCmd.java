@@ -36,7 +36,7 @@ public class SysMsgSetCmd implements Cmd {
         Long userId = event.getUserId();
         String option = args.nextString();
 
-        if ("-view".equals(option)) {
+        if ("--view".equals(option) || "-v".equals(option)) {
             String message = "ℹ️当前提示词: %s".formatted(
                     sysMsgManager.getGroupMessage(groupId));
             bot.sendGroupMsg(groupId, message, false);
@@ -51,14 +51,14 @@ public class SysMsgSetCmd implements Cmd {
                         - 你的限权: %s""".formatted(userAccess), false);
             return;
         }
-        if ("-reset".equals(option)) {
+        if ("--reset".equals(option) || "-r".equals(option)) {
             sysMsgManager.resetGroup(groupId);
             qqChatClient.clear(BotCtx.getChatId());
             bot.sendGroupMsg(groupId, "✅提示词已重置", false);
             log.info("☑ [SysMsgSet] 群聊提示词已重置 -> {}", groupId);
             return;
         }
-        if ("-set".equals(option)) {
+        if ("--set".equals(option) || "-s".equals(option)) {
             String newMessage = args.nextFullString();
             sysMsgManager.setGroupMessage(groupId, newMessage);
             qqChatClient.clear(BotCtx.getChatId());
@@ -74,21 +74,21 @@ public class SysMsgSetCmd implements Cmd {
         Long userId = event.getUserId();
         String option = args.nextString();
 
-        if ("-view".equals(option)) {
+        if ("--view".equals(option) || "-v".equals(option)) {
             String message = "ℹ️当前提示词: %s".formatted(
                     sysMsgManager.getUserMessage(userId));
             bot.sendPrivateMsg(userId, message, false);
             log.info("☑ [SysMsgSet] 私聊提示词已查看 -> {}", userId);
             return;
         }
-        if ("-reset".equals(option)) {
+        if ("--reset".equals(option) || "-r".equals(option)) {
             sysMsgManager.resetUser(userId);
             qqChatClient.clear(BotCtx.getChatId());
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已重置", false);
             log.info("☑ [SysMsgSet] 私聊提示词已重置 -> {}", userId);
             return;
         }
-        if ("-set".equals(option)) {
+        if ("--set".equals(option) || "-s".equals(option)) {
             String newMessage = args.nextFullString();
             sysMsgManager.setUserMessage(userId, newMessage);
             qqChatClient.clear(BotCtx.getChatId());
@@ -105,10 +105,13 @@ public class SysMsgSetCmd implements Cmd {
                 ◉ SysMsgSet 命令
                 功能: 设置AI系统提示词并清空历史
                 限权: %d 级
-                格式:
-                1. SysMsgSet [-view]
-                2. SysMsgSet [-set] [提示词]
-                3. SysMsgSet [-reset]
+                用法: SysMsgSet [选项] [提示词]
+
+                选项:
+                  -v, --view      查看当前提示词
+                  -s, --set       设置提示词
+                  -r, --reset     重置提示词
+
                 别名: 提示词设置/提示词
                 注意:
                 - 非Custom模式 变更需限权I及以上

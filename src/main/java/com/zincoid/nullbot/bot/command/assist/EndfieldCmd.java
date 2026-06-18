@@ -63,7 +63,7 @@ public class EndfieldCmd implements Cmd {
         String curVersion = versions.computeIfAbsent(groupId, k -> DEFAULT_VERSION);
         String keyword = args.nextString("");
 
-        if ("-v".equals(keyword)) {
+        if ("--version".equals(keyword) || "-v".equals(keyword)) {
             String newVersion = args.nextString();
             if (!ALLOWED_VERSIONS.contains(newVersion))
                 throw new BotWarnException("版本非法");
@@ -72,7 +72,7 @@ public class EndfieldCmd implements Cmd {
             return;
         }
 
-        if ("-r".equals(keyword)) {
+        if ("--reload".equals(keyword) || "-r".equals(keyword)) {
             init();
             versions.remove(groupId);
             bot.sendGroupMsg(groupId, "\uD83D\uDD79️版本已更新", false);
@@ -80,7 +80,7 @@ public class EndfieldCmd implements Cmd {
         }
 
         boolean continuousQuery = false;
-        if ("-c".equals(keyword)) {
+        if ("--continuous".equals(keyword) || "-c".equals(keyword)) {
             continuousQuery = true;
             keyword = args.nextString("");
         }
@@ -148,13 +148,13 @@ public class EndfieldCmd implements Cmd {
                 ◉ Endfield 命令
                 功能: 获取终末地攻略
                 限权: %d 级
-                格式:
-                1. 按关键字检索
-                - Endfield [可选: -c(启用连查)] [可选: 关键字]
-                2. 资源版本切换
-                - Endfield [-v] [版本号]
-                3. 更新版本目录
-                - Endfield [-r]
+                用法: Endfield [选项] [关键字]
+
+                选项:
+                  -c, --continuous     启用连查模式
+                  -v, --version [版本]  切换资源版本
+                  -r, --reload         更新版本目录
+
                 别名: endfield/end/终末地查询/终末地""", getAccess()
         );
     }

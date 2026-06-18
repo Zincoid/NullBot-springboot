@@ -29,7 +29,7 @@ public class AccessSetCmd implements Cmd {
         long targetId = args.nextLong();
         int targetNewAccess = args.nextInt();
         switch (option) {
-            case "-group" -> {
+            case "--group", "-g" -> {
                 int targetAccess = groupService.getAccess(targetId);
                 int selfAccess = userService.getAccess(event.getUserId());
                 if (selfAccess < 2) {
@@ -47,7 +47,7 @@ public class AccessSetCmd implements Cmd {
                     log.info("☑ [AccessSet] 群限权已修改 - {} -> {}", targetId, targetNewAccess);
                 }
             }
-            case "-user" -> {
+            case "--user", "-u" -> {
                 if (!userService.exist(targetId)) throw new BotInfoException(Emoji.WARN, "用户未注册");
                 int targetAccess = userService.getAccess(targetId);
                 int selfAccess = userService.getAccess(event.getUserId());
@@ -87,7 +87,12 @@ public class AccessSetCmd implements Cmd {
                 ◉ AccessSet 命令
                 功能: 设置用户/群组限权等级
                 限权: %d 级
-                格式: AccessSet [-user|-group] [ID] [限权等级]
+                用法: AccessSet [选项] [ID] [限权等级]
+
+                选项:
+                  -u, --user   针对用户操作
+                  -g, --group  针对群组操作
+
                 别名: 限权设置
                 注意:
                 针对用户 - 无法修改高于或等于自身限权用户, 设置的限权无法高于或等于自身限权
@@ -100,7 +105,12 @@ public class AccessSetCmd implements Cmd {
         return """
                 ◉ AccessSet 命令
                 功能: 设置用户/群组限权等级
-                格式: AccessSet [-user|-group] [ID] [限权等级]
-                示例: AccessSet -user 2660181154 2""";
+                用法: AccessSet [选项] [ID] [限权等级]
+
+                选项:
+                  -u, --user   针对用户操作
+                  -g, --group  针对群组操作
+
+                示例: AccessSet --user 2660181154 2""";
     }
 }

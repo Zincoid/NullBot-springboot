@@ -137,6 +137,83 @@ public final class CmdArgs {
         catch (NumberFormatException e) { throw formatError(); }
     }
 
+    // ── named option support (--xxx / -x) ──────────
+
+    public boolean hasOpt(String longName, String shortName) {
+        for (String p : params) {
+            if (p.equals("--" + longName)) return true;
+            if (shortName != null && p.equals("-" + shortName)) return true;
+        }
+        return false;
+    }
+
+    public String getOptString(String longName, String shortName) {
+        String val = getOptStringOrNull(longName, shortName);
+        if (val == null) throw missingOpt(longName, shortName);
+        return val;
+    }
+
+    public String getOptString(String longName, String shortName, String defaultVal) {
+        String val = getOptStringOrNull(longName, shortName);
+        return val != null ? val : defaultVal;
+    }
+
+    public String getOptFullString(String longName, String shortName) {
+        String val = getOptFullStringOrNull(longName, shortName);
+        if (val == null) throw missingOpt(longName, shortName);
+        return val;
+    }
+
+    public String getOptFullString(String longName, String shortName, String defaultVal) {
+        String val = getOptFullStringOrNull(longName, shortName);
+        return val != null ? val : defaultVal;
+    }
+
+    public int getOptInt(String longName, String shortName, int defaultVal) {
+        String val = getOptStringOrNull(longName, shortName);
+        if (val == null || val.isEmpty()) return defaultVal;
+        try { return Integer.parseInt(val); }
+        catch (NumberFormatException e) { throw formatError(); }
+    }
+
+    public long getOptLong(String longName, String shortName, long defaultVal) {
+        String val = getOptStringOrNull(longName, shortName);
+        if (val == null || val.isEmpty()) return defaultVal;
+        try { return Long.parseLong(val); }
+        catch (NumberFormatException e) { throw formatError(); }
+    }
+
+    public double getOptDouble(String longName, String shortName, double defaultVal) {
+        String val = getOptStringOrNull(longName, shortName);
+        if (val == null || val.isEmpty()) return defaultVal;
+        try { return Double.parseDouble(val); }
+        catch (NumberFormatException e) { throw formatError(); }
+    }
+
+    // ── internal: returns null on not-found ─────────
+
+    private String getOptStringOrNull(String longName, String shortName) {
+        for (int i = 0; i < params.size(); i++) {
+            String p = params.get(i);
+            if (p.equals("--" + longName) || (shortName != null && p.equals("-" + shortName))) {
+                if (i + 1 < params.size() && !params.get(i + 1).startsWith("-"))
+                    return params.get(i + 1);
+                return "";
+            }
+        }
+        return null;
+    }
+
+    private String getOptFullStringOrNull(String longName, String shortName) {
+        for (int i = 0; i < params.size(); i++) {
+            String p = params.get(i);
+            if (p.equals("--" + longName) || (shortName != null && p.equals("-" + shortName))) {
+                return String.join(" ", params.subList(i + 1, params.size()));
+            }
+        }
+        return null;
+    }
+
     // ── private helpers ────────────────────────────
 
     private BotWarnException missingArg() {
@@ -145,5 +222,9 @@ public final class CmdArgs {
 
     private BotWarnException formatError() {
         return new BotWarnException("参数错误");
+    }
+
+    private BotWarnException missingOpt(String longName, String shortName) {
+        return new BotWarnException("参数缺失: --%s / -%s".formatted(longName, shortName));
     }
 }

@@ -42,7 +42,7 @@ public class VideoGetCmd implements Cmd {
         String secondary;
         String keyword;
 
-        if (args.hasNext() && "-c".equals(args.getString(0))) {
+        if (args.hasNext() && ("--collect".equals(args.getString(0)) || "-c".equals(args.getString(0)))) {
             secondary = "collect";
             keyword = args.getFullString(1);
         } else {
@@ -89,11 +89,13 @@ public class VideoGetCmd implements Cmd {
                 ◉ VideoGet 命令
                 功能: 检索获取保存的视频
                 限权: %d 级
-                格式: VideoGet [可选: -c] [关键字]
+                用法: VideoGet [选项] [关键字]
+
+                选项:
+                  -c, --collect   搜索收集库
+
                 别名: 获取视频/视频检索
-                注意:
-                1. 默认搜索 storage 库
-                2. 通过参数 [-c] 搜索 collect 库
+                注意: 默认搜索管理存储库
                 视频库:
                 1. collect 用户收集库
                 2. storage 管理存储库""", getAccess()

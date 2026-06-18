@@ -45,12 +45,12 @@ public class OneTimeAlarmCmd implements Cmd {
         String alarmId = UUID.randomUUID().toString().substring(0, 8);
         try {
             switch (option) {
-                case "-t" -> {
+                case "--time", "-t" -> {
                     alarmTime = parseDateTime(timeStr, FORMATTERS);
                     botTaskScheduler.setOneTimeGroupAtMsgAlarm(
                             alarmId, groupId, userId, message, alarmTime);
                 }
-                case "-d" -> {
+                case "--delay", "-d" -> {
                     int delay = Integer.parseInt(timeStr);
                     alarmTime = LocalDateTime.now().plusMinutes(delay);
                     botTaskScheduler.setOneTimeGroupAtMsgAlarm(
@@ -87,13 +87,12 @@ public class OneTimeAlarmCmd implements Cmd {
                 ◉ OneTimeAlarm 命令
                 功能: 设置单次群内提醒闹钟
                 限权: %d 级
-                格式: OneTimeAlarm [模式] [时间] [文本] [可选: QQ号]
-                模式:
-                - [-t] 时间模式
-                  时间格式: yy-MM-ddTHH:mm
-                  时间示例: 26-02-07T09:00
-                - [-d] 延迟模式
-                  时间格式: 分钟数
+                用法: OneTimeAlarm [选项] [时间] [文本] [QQ号]
+
+                选项:
+                  -t, --time [时间]   时间模式 (格式: yy-MM-ddTHH:mm)
+                  -d, --delay [分钟]  延迟模式 (当前时间 + 分钟数)
+
                 别名: 单次闹钟""", getAccess()
         );
     }
@@ -103,14 +102,14 @@ public class OneTimeAlarmCmd implements Cmd {
         return """
                 ◉ OneTimeAlarm 命令
                 功能: 设置单次群内提醒闹钟
-                格式: OneTimeAlarm [模式] [时间] [文本] [目标QQ号]
-                模式:
-                - [-t] 时间模式
-                  时间格式: yy-MM-ddTHH:mm
-                - [-d] 延迟模式
-                  时间格式: 分钟数
+                用法: OneTimeAlarm [选项] [时间] [文本] [目标QQ号]
+
+                选项:
+                  -t, --time [时间]   时间模式 (格式: yy-MM-ddTHH:mm)
+                  -d, --delay [分钟]  延迟模式
+
                 示例:
-                OneTimeAlarm -t 26-02-07T09:00 九点到了 2660181154
-                OneTimeAlarm -d 10 十分钟了 2660181154""";
+                OneTimeAlarm --time 26-02-07T09:00 九点到了 2660181154
+                OneTimeAlarm --delay 10 十分钟了 2660181154""";
     }
 }

@@ -22,13 +22,13 @@ public class FuncSetCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         String option = args.nextString();
-        if ("-view".equals(option)) {
+        if ("--view".equals(option) || "-v".equals(option)) {
             String status = functionManager.getStatus();
             bot.sendGroupMsg(event.getGroupId(), status, false);
             log.info("☑ [FuncSet] 全局设置已获取");
             return;
         }
-        if ("-change".equals(option)) {
+        if ("--change".equals(option) || "-c".equals(option)) {
             String func = args.nextString();
             boolean enabled = functionManager.switchEnabled(func);
             bot.sendGroupMsg(event.getGroupId(), "🔄已切换: %s".formatted(enabled ? "ON" : "OFF"), false);
@@ -47,11 +47,22 @@ public class FuncSetCmd implements Cmd {
                 ◉ FuncSet 命令
                 功能: 设置全局功能
                 限权: %d 级
-                格式: FuncSet [操作类型] [可选: 参数]
-                操作类型和参数:
-                - [-view] 获取全局设置
-                - [-change] [功能标志] 更改启用状态
-                标志: AIAutoReply/ImgCollect/MsgCollect/KeywordAct/PokeDetect/RecallDetect/PrivateCmd/BottleAutoThrow
+                用法: FuncSet [选项] [标志]
+
+                选项:
+                  -v, --view     获取全局设置
+                  -c, --change   更改启用状态
+
+                标志:
+                  AIAutoReply
+                  ImgCollect
+                  MsgCollect
+                  KeywordAct
+                  PokeDetect
+                  RecallDetect
+                  PrivateCmd
+                  BottleAutoThrow
+                
                 别名: 功能控制""", getAccess()
         );
     }

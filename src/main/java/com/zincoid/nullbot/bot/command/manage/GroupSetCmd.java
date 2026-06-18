@@ -39,13 +39,13 @@ public class GroupSetCmd implements Cmd {
         String option = args.nextString();
         SettingPO setting = BotCtx.getSetting();
 
-        if ("-view".equals(option)) {
+        if ("--view".equals(option) || "-v".equals(option)) {
             bot.sendGroupMsg(groupId, setting.toString(), false);
             log.info("☑ [GroupSet] 群设置已获取 - GroupId: {}", groupId);
             return;
         }
 
-        if ("-limit".equals(option)) {
+        if ("--limit".equals(option) || "-l".equals(option)) {
             String name = args.nextString();
             String msg;
             switch (name) {
@@ -78,7 +78,7 @@ public class GroupSetCmd implements Cmd {
             return;
         }
 
-        if ("-ai".equals(option)) {
+        if ("--ai".equals(option) || "-a".equals(option)) {
             String name = args.nextString();
             String msg;
 
@@ -132,7 +132,7 @@ public class GroupSetCmd implements Cmd {
             return;
         }
 
-        if ("-monitor".equals(option)) {
+        if ("--monitor".equals(option) || "-m".equals(option)) {
             String name = args.nextString();
             boolean enabled = switch (name) {
                 case "img" -> setting.switchImageCollect();
@@ -148,7 +148,7 @@ public class GroupSetCmd implements Cmd {
             return;
         }
 
-        if ("-guess".equals(option)) {
+        if ("--guess".equals(option) || "-g".equals(option)) {
             double cropRatio = args.nextDouble();
             double transparentRatio = args.nextDouble();
             int padding = args.nextInt();
@@ -173,47 +173,42 @@ public class GroupSetCmd implements Cmd {
                 ◉ GroupSet 命令
                 功能: 设置群功能
                 限权: %d 级
-                格式: GroupSet [操作] [参数]
-                
-                操作与参数:
-                • [-view]
-                   获取群设置
-                
-                • [-limit] [选项|其他]
-                   选项:
-                   scp - 限速范围
-                   其他:
-                   cap [上限量] - 限速容量
-                   ref [补充量] - 限速补充
-                   itv [分钟数] - 补充间隔
-                
-                • [-ai] [模式选项|其他]
-                   模式选项:
-                   scp - 会话范围
-                   stg - 对话策略
-                   tkn - 思考模式
-                   voi - 语音模式
-                   ati - 注入保护
-                   ica - 内令鉴权
-                   cus - 允许自定
-                   aur - 自主发言
-                   其他:
-                   frq [0~1] - 发言频率
-                
-                • [-monitor] [监测类型]
-                   监测类型:
-                   img - 图片收集
-                   msg - 消息收集
-                   key - 词语检测
-                   pok - 戳戳检测
-                   rcl - 撤回检测
-                
-                • [-guess] [切割比例] [透明比例] [切割边距]
-                   设置 Guess 游戏难度
-                
+                用法: GroupSet [选项] [参数...]
+
+                选项:
+                  -v, --view       获取群设置
+                  -l, --limit [选项]      限速设置
+                  -a, --ai [选项]         AI设置
+                  -m, --monitor [类型]    监测设置
+                  -g, --guess [比例] [比例] [边距] 猜图难度
+
+                limit 选项:
+                  scp              限速范围
+                  cap [上限量]      限速容量
+                  ref [补充量]      限速补充
+                  itv [分钟数]      补充间隔
+
+                ai 选项:
+                  scp              会话范围
+                  stg              对话策略
+                  tkn              思考模式
+                  voi              语音模式
+                  ati              注入保护
+                  ica              内令鉴权
+                  cus              允许自定
+                  aur              自主发言
+                  frq [0~1]        发言频率
+
+                monitor 类型:
+                  img              图片收集
+                  msg              消息收集
+                  key              词语检测
+                  pok              戳戳检测
+                  rcl              撤回检测
+
                 注意:
                 - 切换AI语音/策略/自定时会清空历史
-                
+
                 别名: 群设置""", getAccess()
         );
     }
@@ -223,21 +218,18 @@ public class GroupSetCmd implements Cmd {
         return """
                 ◉ GroupSet 命令
                 功能: 设置群功能
-                格式: GroupSet [操作] [可选: 参数]
-                
-                操作与参数:
-                • [-view]
-                   获取群设置
-                
-                • [-guess] [切割比例] [透明比例] [切割边距]
-                   设置 Guess 游戏难度
-                
+                用法: GroupSet [选项] [参数...]
+
+                选项:
+                  -v, --view           获取群设置
+                  -g, --guess [比例] [比例] [边距] 猜图难度
+
                 示例:
-                GroupSet -view
-                GroupSet -guess 0.1 0.75 250
-                
+                GroupSet --view
+                GroupSet --guess 0.1 0.75 250
+
                 注意:
-                你不可执行 [-limit] 和 [-ai] 和 [-monitor] 相关设置指令
+                你不可执行 --limit 和 --ai 和 --monitor 相关设置指令
                 针对Guess游戏 - 切割比例和切割边距越小越难 透明比例越大越难""";
     }
 }

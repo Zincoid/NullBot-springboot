@@ -52,7 +52,7 @@ public class BotMonitor {
         double freq = 0.001;  // 固定自动投出频率
         if (freq < Math.random()) return;
         log.info("◉ [GroupMonitor:BottleAutoThrow] 自动投出漂流瓶 {} -> {}", event.getUserId(), event.getMessage());
-        cmdProcessor.processQQ(bot, CmdEvent.of(event, "Bottle", List.of("-auto"), false, false));
+        cmdProcessor.processQQ(bot, CmdEvent.of(event, "Bottle", List.of("--auto"), false, false));
     }
 
     @FuncControl("AIAutoReply")
