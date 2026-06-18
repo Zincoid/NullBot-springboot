@@ -59,38 +59,33 @@ public class EndfieldCmd implements Cmd {
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String endfieldPath = storageProperties.getResourcePath() + "/endfield";
+        String endPath = storageProperties.getResourcePath() + "/endfield";
         String curVersion = versions.computeIfAbsent(groupId, k -> DEFAULT_VERSION);
-        String keyword = args.nextString("");
 
-        if ("--version".equals(keyword) || "-v".equals(keyword)) {
-            String newVersion = args.nextString();
+        if (args.hasOpt("version", "v")) {
+            String newVersion = args.next();
             if (!ALLOWED_VERSIONS.contains(newVersion))
                 throw new BotWarnException("版本非法");
             versions.put(groupId, newVersion);
             bot.sendGroupMsg(groupId, "\uD83D\uDD79️版本已切换", false);
             return;
         }
-
-        if ("--reload".equals(keyword) || "-r".equals(keyword)) {
+        if (args.hasOpt("reload", "r")) {
             init();
             versions.remove(groupId);
             bot.sendGroupMsg(groupId, "\uD83D\uDD79️版本已更新", false);
             return;
         }
 
-        boolean continuousQuery = false;
-        if ("--continuous".equals(keyword) || "-c".equals(keyword)) {
-            continuousQuery = true;
-            keyword = args.nextString("");
-        }
+        boolean continuous = args.hasOpt("continuous", "c");
+        String keyword = args.next("");
         List<FilePO> allFiles = new ArrayList<>();
-        allFiles.addAll(fileService.search(keyword, endfieldPath + "/public"));
-        allFiles.addAll(fileService.search(keyword, endfieldPath + "/" + curVersion));
+        allFiles.addAll(fileService.search(keyword, endPath + "/public"));
+        allFiles.addAll(fileService.search(keyword, endPath + "/" + curVersion));
         boolean globalQuery = allFiles.isEmpty();
         if (globalQuery)
             for (String version : ALLOWED_VERSIONS)
-                allFiles.addAll(fileService.search(keyword, endfieldPath + "/" + version));
+                allFiles.addAll(fileService.search(keyword, endPath + "/" + version));
         if (allFiles.isEmpty())
             throw new BotInfoException(Emoji.INFO, "无匹配项");
 
@@ -106,7 +101,7 @@ public class EndfieldCmd implements Cmd {
                 globalQuery ? "\n[版本 %s 无匹配资源]".formatted(curVersion) : ""
         );
         BotPageSelector<FilePO, String> pager = BotPageSelector.builder(
-                bot, groupId, "终末地", continuousQuery,
+                bot, groupId, "终末地", continuous,
                 allFiles,
                 allFiles.stream().map(f -> {
                     String name = f.getName();

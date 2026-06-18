@@ -20,10 +20,10 @@ public class InvokeCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        String beanName = args.nextString();
-        String methodName = args.nextString();
+        String beanName = args.next();
+        String methodName = args.next();
         Object[] methodArgs = args.hasNext()
-                ? args.getParams().subList(2, args.size()).toArray()
+                ? args.getPos().subList(2, args.size()).toArray()
                 : new Object[0];
         try {
             String result = systemService.invoke(beanName, methodName, methodArgs);

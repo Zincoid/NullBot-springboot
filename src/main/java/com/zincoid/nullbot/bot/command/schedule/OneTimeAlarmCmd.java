@@ -37,26 +37,23 @@ public class OneTimeAlarmCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
-        String option = args.nextString();
-        String timeStr = args.nextString();
-        String message = args.nextString();
+        String timeStr = args.next();
+        String message = args.next();
         Long userId = args.nextLong(event.getUserId());
         LocalDateTime alarmTime;
         String alarmId = UUID.randomUUID().toString().substring(0, 8);
         try {
-            switch (option) {
-                case "--time", "-t" -> {
-                    alarmTime = parseDateTime(timeStr, FORMATTERS);
-                    botTaskScheduler.setOneTimeGroupAtMsgAlarm(
-                            alarmId, groupId, userId, message, alarmTime);
-                }
-                case "--delay", "-d" -> {
-                    int delay = Integer.parseInt(timeStr);
-                    alarmTime = LocalDateTime.now().plusMinutes(delay);
-                    botTaskScheduler.setOneTimeGroupAtMsgAlarm(
-                            alarmId, groupId, userId, message, alarmTime);
-                }
-                default -> throw new BotWarnException("无此模式");
+            if (args.hasOpt("time", "t")) {
+                alarmTime = parseDateTime(timeStr);
+                botTaskScheduler.setOneTimeGroupAtMsgAlarm(
+                        alarmId, groupId, userId, message, alarmTime);
+            } else if (args.hasOpt("delay", "d")) {
+                int delay = Integer.parseInt(timeStr);
+                alarmTime = LocalDateTime.now().plusMinutes(delay);
+                botTaskScheduler.setOneTimeGroupAtMsgAlarm(
+                        alarmId, groupId, userId, message, alarmTime);
+            } else {
+                throw new BotWarnException("无此模式");
             }
         } catch (DateTimeParseException e) {
             throw new BotWarnException("时间格式错误");
@@ -70,8 +67,8 @@ public class OneTimeAlarmCmd implements Cmd {
         log.info("☑ [OneTimeAlarm] 闹钟已设置 - AlarmID: {}", alarmId);
     }
 
-    private LocalDateTime parseDateTime(String str, List<DateTimeFormatter> formatters) {
-        for (DateTimeFormatter formatter : formatters) {
+    private LocalDateTime parseDateTime(String str) {
+        for (DateTimeFormatter formatter : OneTimeAlarmCmd.FORMATTERS) {
             try {
                 return LocalDateTime.parse(str, formatter);
             } catch (DateTimeParseException e) {

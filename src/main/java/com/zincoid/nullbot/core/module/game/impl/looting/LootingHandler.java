@@ -79,7 +79,7 @@ public class LootingHandler extends DualHandler<LootingState, LootingLogic, Loot
 
     @Override
     public Result onAction(DualMatch match, LootingState state, Player self, CmdArgs args) {
-        String command = args.nextFullString("侦察");
+        String command = args.rest("侦察");
 
         if (state.isFinished()) return fail("对局已结束");
 

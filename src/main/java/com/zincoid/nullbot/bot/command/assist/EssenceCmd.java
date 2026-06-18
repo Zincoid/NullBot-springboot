@@ -21,7 +21,7 @@ public class EssenceCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        String weapon = args.nextFullString();
+        String weapon = args.rest();
         String base64 = capturingService.essence(weapon);
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(event.getGroupId(), response, false);

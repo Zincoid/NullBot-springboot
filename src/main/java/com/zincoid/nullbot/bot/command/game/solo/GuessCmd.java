@@ -45,7 +45,7 @@ public class GuessCmd implements Cmd {
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) throws Exception {
         Long groupId = event.getGroupId();
 
-        if ("--forfeit".equals(args.getString(0)) || "-f".equals(args.getString(0))) {
+        if (args.hasOpt("forfeit", "f")) {
             if (guessStorage.getGuess(groupId) == null)
                 throw new BotInfoException(Emoji.WARN, "未在游戏中");
             botInputManager.cancelWait(BniMode.GS, groupId);
@@ -57,7 +57,7 @@ public class GuessCmd implements Cmd {
             throw new BotInfoException(Emoji.INFO, "已在游戏中");
 
         try {
-            GuessInfo guess = guessStorage.initGuess(groupId, args.nextString());
+            GuessInfo guess = guessStorage.initGuess(groupId, args.next());
             SettingPO setting = BotCtx.getSetting();
 
             String start = MsgUtils.builder()

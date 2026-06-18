@@ -23,18 +23,18 @@ public class RememberCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        remember(bot, event.getGroupId(), args.nextFullString(), false);
+        remember(bot, event.getGroupId(), args.rest(), false);
     }
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
-        remember(bot, event.getUserId(), args.nextFullString(), true);
+        remember(bot, event.getUserId(), args.rest(), true);
     }
     @Override
     public void run(Bot bot, PokeNoticeEvent event, CmdArgs args) {
         if (event.getGroupId() != null) {
-            remember(bot, event.getGroupId(), args.nextFullString(), false);
+            remember(bot, event.getGroupId(), args.rest(), false);
         } else {
-            remember(bot, event.getUserId(), args.nextFullString(), true);
+            remember(bot, event.getUserId(), args.rest(), true);
         }
     }
 

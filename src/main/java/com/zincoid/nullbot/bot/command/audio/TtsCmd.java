@@ -44,34 +44,30 @@ public class TtsCmd implements Cmd {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
-        String option = args.nextString();
-        if ("--clone".equals(option) || "-c".equals(option)) {
-            switch (args.nextString()) {
-                case "save"  -> handleCloneSave(bot, event, args, groupId, userId, userName);
-                case "delete" -> handleCloneDelete(bot, args, groupId);
-                case "use"   -> handleCloneUse(bot, args, groupId);
-                case "list"  -> handleCloneList(bot, groupId);
-                default -> throw new BotWarnException("无此操作");
+        switch (args.next()) {
+            case "synth" -> {
+                String message = handleSynthesize(args.rest());
+                bot.sendGroupMsg(groupId, message, false);
             }
-            return;
+            case "clone" -> {
+                if (args.hasOpt("save", "s")) handleCloneSave(bot, event, args, groupId, userId, userName);
+                else if (args.hasOpt("delete", "d")) handleCloneDelete(bot, args, groupId);
+                else if (args.hasOpt("use", "u")) handleCloneUse(bot, args, groupId);
+                else if (args.hasOpt("list", "l")) handleCloneList(bot, groupId);
+                else throw new BotWarnException("无此操作");
+            }
+            default -> throw new BotWarnException("无此子命令");
         }
-        if ("--synth".equals(option) || "-s".equals(option)) {
-            String voiceMsg = handleSynthesize(args.nextFullString());
-            bot.sendGroupMsg(groupId, voiceMsg, false);
-            return;
-        }
-        throw new BotWarnException("无此操作");
     }
 
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
-        String option = args.nextString();
-        if ("--synth".equals(option) || "-s".equals(option)) {
-            String voiceMsg = handleSynthesize(args.nextFullString());
-            bot.sendPrivateMsg(event.getUserId(), voiceMsg, false);
+        if ("synth".equals(args.next())) {
+            String message = handleSynthesize(args.rest());
+            bot.sendPrivateMsg(event.getUserId(), message, false);
             return;
         }
-        throw new BotWarnException("无此操作");
+        throw new BotWarnException("无此子命令");
     }
 
     // ================== synth 子命令 ==================
@@ -98,8 +94,8 @@ public class TtsCmd implements Cmd {
         Map.Entry<String, String> audio = fileMap.entrySet().iterator().next();
         if (!isAudioFile(audio.getKey()))
             throw new BotWarnException("引用文件非音频");
-        String templateName = args.nextString();
-        String templateText = args.nextString();
+        String templateName = args.next();
+        String templateText = args.next();
         FileInfo fileInfo = DownloadUtil.save(audio.getValue());
         String uploadedPath = ttsClient.upload(fileInfo.getPath());
         if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
@@ -109,7 +105,7 @@ public class TtsCmd implements Cmd {
     }
 
     private void handleCloneDelete(Bot bot, CmdArgs args, long groupId) {
-        String templateName = args.nextString();
+        String templateName = args.next();
         if (!ttsTemplateService.delete(templateName))
             throw new BotInfoException(Emoji.INFO, "模板不存在");
         bot.sendGroupMsg(groupId, "⚠️模板已删除", false);
@@ -117,8 +113,8 @@ public class TtsCmd implements Cmd {
     }
 
     private void handleCloneUse(Bot bot, CmdArgs args, long groupId) {
-        String templateName = args.nextString();
-        String text = args.nextString();
+        String templateName = args.next();
+        String text = args.next();
         TtsTemplatePO template = ttsTemplateService.get(templateName);
         if (template == null)
             throw new BotInfoException(Emoji.INFO, "模板不存在");
@@ -164,17 +160,17 @@ public class TtsCmd implements Cmd {
                 ◉ Tts 命令
                 功能: 文本转语音
                 限权: %d 级
-                用法: Tts [选项] [参数...]
+                用法: Tts [子命令] [参数...]
 
-                选项:
-                  -s, --synth [文本]  一般合成
-                  -c, --clone [子命令]  克隆合成
+                子命令:
+                  synth [文本]         一般合成
+                  clone [选项]         克隆合成
 
-                克隆子命令:
-                  list                模板列表
-                  save [模板名] [文本]  保存模板 (需引用音频文件)
-                  delete [模板名]     删除模板
-                  use [模板名] [文本]  音频合成 (使用模板)
+                clone 选项:
+                  -l, --list              模板列表
+                  -s, --save [模板名] [文本]  保存模板 (需引用音频文件)
+                  -d, --delete [模板名]       删除模板
+                  -u, --use [模板名] [文本]   音频克隆
 
                 注意:
                 - 一般合成使用固定人物模型
@@ -190,7 +186,7 @@ public class TtsCmd implements Cmd {
         return """
                 ◉ Tts 命令
                 功能: 文本转语音并发送到群中
-                用法: Tts --synth [文本]
+                用法: Tts synth [文本]
                 注意: 需发送语音替代文字回复时使用""";
     }
 }

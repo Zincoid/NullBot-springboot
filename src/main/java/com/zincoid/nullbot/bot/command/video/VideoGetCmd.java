@@ -39,16 +39,10 @@ public class VideoGetCmd implements Cmd {
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String secondary;
-        String keyword;
+        String keyword = args.rest(0, "");
+        String secondary = "storage";
 
-        if (args.hasNext() && ("--collect".equals(args.getString(0)) || "-c".equals(args.getString(0)))) {
-            secondary = "collect";
-            keyword = args.getFullString(1);
-        } else {
-            secondary = "storage";
-            keyword = args.getFullString(0, "");
-        }
+        if (args.hasOpt("collect", "c")) secondary = "collect";
 
         List<FilePO> files = fileService.search(
                 keyword, storageProperties.getVideoPath() + "/" + secondary);

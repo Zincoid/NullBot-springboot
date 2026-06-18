@@ -22,7 +22,7 @@ public class ChoyenCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) throws Exception {
         Long groupId = event.getGroupId();
-        String base64 = renderingService.choyen(args.nextString(), args.nextString());
+        String base64 = renderingService.choyen(args.next(), args.next());
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);
         log.info("☑ [Choyen] 图像处理已完成");

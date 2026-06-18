@@ -34,9 +34,8 @@ public class SysMsgSetCmd implements Cmd {
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String option = args.nextString();
 
-        if ("--view".equals(option) || "-v".equals(option)) {
+        if (args.hasOpt("view", "v")) {
             String message = "ℹ️当前提示词: %s".formatted(
                     sysMsgManager.getGroupMessage(groupId));
             bot.sendGroupMsg(groupId, message, false);
@@ -51,15 +50,15 @@ public class SysMsgSetCmd implements Cmd {
                         - 你的限权: %s""".formatted(userAccess), false);
             return;
         }
-        if ("--reset".equals(option) || "-r".equals(option)) {
+        if (args.hasOpt("reset", "r")) {
             sysMsgManager.resetGroup(groupId);
             qqChatClient.clear(BotCtx.getChatId());
             bot.sendGroupMsg(groupId, "✅提示词已重置", false);
             log.info("☑ [SysMsgSet] 群聊提示词已重置 -> {}", groupId);
             return;
         }
-        if ("--set".equals(option) || "-s".equals(option)) {
-            String newMessage = args.nextFullString();
+        if (args.hasOpt("set", "s")) {
+            String newMessage = args.rest();
             sysMsgManager.setGroupMessage(groupId, newMessage);
             qqChatClient.clear(BotCtx.getChatId());
             bot.sendGroupMsg(groupId, "✅提示词已设置", false);
@@ -72,24 +71,23 @@ public class SysMsgSetCmd implements Cmd {
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
         Long userId = event.getUserId();
-        String option = args.nextString();
 
-        if ("--view".equals(option) || "-v".equals(option)) {
+        if (args.hasOpt("view", "v")) {
             String message = "ℹ️当前提示词: %s".formatted(
                     sysMsgManager.getUserMessage(userId));
             bot.sendPrivateMsg(userId, message, false);
             log.info("☑ [SysMsgSet] 私聊提示词已查看 -> {}", userId);
             return;
         }
-        if ("--reset".equals(option) || "-r".equals(option)) {
+        if (args.hasOpt("reset", "r")) {
             sysMsgManager.resetUser(userId);
             qqChatClient.clear(BotCtx.getChatId());
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已重置", false);
             log.info("☑ [SysMsgSet] 私聊提示词已重置 -> {}", userId);
             return;
         }
-        if ("--set".equals(option) || "-s".equals(option)) {
-            String newMessage = args.nextFullString();
+        if (args.hasOpt("set", "s")) {
+            String newMessage = args.rest();
             sysMsgManager.setUserMessage(userId, newMessage);
             qqChatClient.clear(BotCtx.getChatId());
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已设置", false);

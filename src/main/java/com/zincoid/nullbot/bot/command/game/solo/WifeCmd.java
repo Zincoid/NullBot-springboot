@@ -109,7 +109,7 @@ public class WifeCmd implements Cmd {
             log.info("☑ [Wife] 今日已选过二次元老婆 - {} -> {}", userId, wifeName);
             return;
         }
-        String category = args.nextString();
+        String category = args.next();
         String acgPath = storageProperties.getImagePath() + "/acg/" + category;
         List<FilePO> wives = fileService.list(acgPath);
         if (wives.isEmpty())

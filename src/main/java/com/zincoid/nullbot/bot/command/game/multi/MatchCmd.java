@@ -21,7 +21,7 @@ public class MatchCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        String type = args.nextString();
+        String type = args.next();
         Result result = gameEngine.join(
                 event.getGroupId(), event.getUserId(),
                 event.getSender().getNickname(),

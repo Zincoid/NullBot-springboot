@@ -30,7 +30,7 @@ public class ChatCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        QQMessage message = QQMessage.user(args.nextFullString())
+        QQMessage message = QQMessage.user(args.rest())
                 .with(event.getGroupId(), event.getUserId(), event.getSender().getNickname())
                 .id(event.getMessageId());
         String response = qqChatClient.handle(message).call().getContent();
@@ -51,7 +51,7 @@ public class ChatCmd implements Cmd {
 
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
-        QQMessage message = QQMessage.user(args.nextFullString())
+        QQMessage message = QQMessage.user(args.rest())
                 .with(event.getUserId(), event.getPrivateSender().getNickname())
                 .id(event.getMessageId());
         String response = qqChatClient.handle(message).call().getContent();

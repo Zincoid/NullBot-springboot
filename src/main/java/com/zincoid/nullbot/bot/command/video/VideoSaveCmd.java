@@ -47,7 +47,7 @@ public class VideoSaveCmd implements Cmd {
         Long userId = event.getUserId();
         Map.Entry<String, String> entry = videoMap.entrySet().iterator().next();
         String fileName = !args.hasNext() ? entry.getKey()
-                : args.nextFullString() + "." + entry.getKey().split("\\.")[1];
+                : args.rest() + "." + entry.getKey().split("\\.")[1];
         if (fileName.matches(".*[\\\\/:*?\"<>|].*"))
             throw new BotWarnException("文件名非法");
         String filePath = storageProperties.getVideoPath() + "/collect";

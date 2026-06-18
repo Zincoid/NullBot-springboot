@@ -22,7 +22,7 @@ public class PucciCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) throws Exception {
         Long groupId = event.getGroupId();
-        String base64 = renderingService.pucci(args.nextFullString());
+        String base64 = renderingService.pucci(args.rest());
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);
         log.info("☑ [Pucci] 图像处理已完成");

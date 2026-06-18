@@ -17,7 +17,7 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public String invoke(String command) throws Exception {
-        List<String> params = List.of(command.split(" "));
+        List<String> params = List.of(command.split("\\s+"));
         if (params.size() < 2)
             throw new IllegalArgumentException("Not enough args...");
         String beanName = params.get(0);

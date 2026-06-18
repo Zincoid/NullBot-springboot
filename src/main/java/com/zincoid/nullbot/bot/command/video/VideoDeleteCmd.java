@@ -32,7 +32,7 @@ public class VideoDeleteCmd implements Cmd {
         String directory = storageProperties.getVideoPath() + "/collect";
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (args.hasNext()) {
-            deleteFile(bot, event, directory, args.nextFullString());
+            deleteFile(bot, event, directory, args.rest());
             return;
         }
         if (reply.getType() == MsgTypeEnum.reply) {

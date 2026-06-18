@@ -25,57 +25,56 @@ public class AccessSetCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        String option = args.nextString();
         long targetId = args.nextLong();
-        int targetNewAccess = args.nextInt();
-        switch (option) {
-            case "--group", "-g" -> {
-                int targetAccess = groupService.getAccess(targetId);
-                int selfAccess = userService.getAccess(event.getUserId());
-                if (selfAccess < 2) {
-                    bot.sendGroupMsg(event.getGroupId(), """
-                            🚫限权操作被阻止
-                            - 群限权修改需限权II
-                            - 你的限权: %s""".formatted(selfAccess), false);
-                    log.info("☑ [AccessSet] 群限权操作被阻止");
-                } else {
-                    groupService.setAccess(targetId, targetNewAccess);
-                    bot.sendGroupMsg(event.getGroupId(), """
-                            ✅群限权已修改
-                            - 群聊: %s
-                            - 变动: %s -> %s""".formatted(targetId, targetAccess, targetNewAccess), false);
-                    log.info("☑ [AccessSet] 群限权已修改 - {} -> {}", targetId, targetNewAccess);
-                }
+        int newAccess = args.nextInt();
+        if (args.hasOpt("group", "g")) {
+            int targetAccess = groupService.getAccess(targetId);
+            int selfAccess = userService.getAccess(event.getUserId());
+            if (selfAccess < 2) {
+                bot.sendGroupMsg(event.getGroupId(), """
+                        🚫限权操作被阻止
+                        - 群限权修改需限权II
+                        - 你的限权: %s""".formatted(selfAccess), false);
+                log.info("☑ [AccessSet] 群限权操作被阻止");
+            } else {
+                groupService.setAccess(targetId, newAccess);
+                bot.sendGroupMsg(event.getGroupId(), """
+                        ✅群限权已修改
+                        - 群聊: %s
+                        - 变动: %s -> %s""".formatted(targetId, targetAccess, newAccess), false);
+                log.info("☑ [AccessSet] 群限权已修改 - {} -> {}", targetId, newAccess);
             }
-            case "--user", "-u" -> {
-                if (!userService.exist(targetId)) throw new BotInfoException(Emoji.WARN, "用户未注册");
-                int targetAccess = userService.getAccess(targetId);
-                int selfAccess = userService.getAccess(event.getUserId());
-                if (targetAccess >= selfAccess) {
-                    bot.sendGroupMsg(event.getGroupId(), """
-                            🚫限权操作被阻止
-                            - 限权未超过目标
-                            - 目标限权: %s
-                            - 你的限权: %s""".formatted(targetAccess, selfAccess), false);
-                    log.info("☑ [AccessSet] 用户限权操作被阻止: 限权未超过目标");
-                } else if (targetNewAccess >= selfAccess) {
-                    bot.sendGroupMsg(event.getGroupId(), """
-                            🚫限权操作被阻止
-                            - 限权未超过新限权
-                            - 新的限权: %s
-                            - 你的限权: %s""".formatted(targetNewAccess, selfAccess), false);
-                    log.info("☑ [AccessSet] 用户限权操作被阻止: 限权未超过新限权");
-                } else {
-                    userService.setAccess(targetId, targetNewAccess);
-                    bot.sendGroupMsg(event.getGroupId(), """
-                            ✅用户限权已修改
-                            - 用户: %s
-                            - 变动: %s -> %s""".formatted(targetId, targetAccess, targetNewAccess), false);
-                    log.info("☑ [AccessSet] 用户限权已修改 - {} -> {}", targetId, targetNewAccess);
-                }
-            }
-            default -> throw new BotWarnException("无此操作");
+            return;
         }
+        if (args.hasOpt("user", "u")) {
+            if (!userService.exist(targetId)) throw new BotInfoException(Emoji.WARN, "用户未注册");
+            int targetAccess = userService.getAccess(targetId);
+            int selfAccess = userService.getAccess(event.getUserId());
+            if (targetAccess >= selfAccess) {
+                bot.sendGroupMsg(event.getGroupId(), """
+                        🚫限权操作被阻止
+                        - 限权未超过目标
+                        - 目标限权: %s
+                        - 你的限权: %s""".formatted(targetAccess, selfAccess), false);
+                log.info("☑ [AccessSet] 用户限权操作被阻止: 限权未超过目标");
+            } else if (newAccess >= selfAccess) {
+                bot.sendGroupMsg(event.getGroupId(), """
+                        🚫限权操作被阻止
+                        - 限权未超过新限权
+                        - 新的限权: %s
+                        - 你的限权: %s""".formatted(newAccess, selfAccess), false);
+                log.info("☑ [AccessSet] 用户限权操作被阻止: 限权未超过新限权");
+            } else {
+                userService.setAccess(targetId, newAccess);
+                bot.sendGroupMsg(event.getGroupId(), """
+                        ✅用户限权已修改
+                        - 用户: %s
+                        - 变动: %s -> %s""".formatted(targetId, targetAccess, newAccess), false);
+                log.info("☑ [AccessSet] 用户限权已修改 - {} -> {}", targetId, newAccess);
+            }
+            return;
+        }
+        throw new BotWarnException("无此操作");
     }
 
     @Override

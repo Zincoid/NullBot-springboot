@@ -67,7 +67,7 @@ public class ReversiHandler extends DualHandler<ReversiState, ReversiLogic, Reve
 
     @Override
     public Result onAction(DualMatch match, ReversiState state, Player self, CmdArgs args) {
-        String pos = args.nextString().toUpperCase();
+        String pos = args.next().toUpperCase();
         if (!pos.matches("^[A-H][1-8]$")) return fail("坐标错误 范围: A1~H8");
         Character sym = symbolOf(state, self);
         if (sym == null) return fail("非对局玩家");

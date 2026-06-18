@@ -31,18 +31,18 @@ public class MemeCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        meme(bot, event.getGroupId(), false, args.nextString());
+        meme(bot, event.getGroupId(), false, args.next());
     }
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
-        meme(bot, event.getUserId(), true, args.nextString());
+        meme(bot, event.getUserId(), true, args.next());
     }
     @Override
     public void run(Bot bot, PokeNoticeEvent event, CmdArgs args) {
         if (event.getGroupId() != null) {
-            meme(bot, event.getGroupId(), false, args.nextString());
+            meme(bot, event.getGroupId(), false, args.next());
         } else {
-            meme(bot, event.getUserId(), true, args.nextString());
+            meme(bot, event.getUserId(), true, args.next());
         }
     }
 

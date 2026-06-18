@@ -30,7 +30,7 @@ public class PUBGCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        String map = switch (args.nextString()) {
+        String map = switch (args.next()) {
             case "艾伦格" -> "Erangel.png";
             case "米拉玛" -> "Miramar.png";
             case "维寒迪" -> "Vikendi.png";

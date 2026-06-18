@@ -31,7 +31,7 @@ public class ImageGetCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         String imagePath = storageProperties.getImagePath() + "/collect";
-        List<FilePO> images = fileService.search(args.nextFullString(), imagePath);
+        List<FilePO> images = fileService.search(args.rest(), imagePath);
         if (images.isEmpty()) throw new BotInfoException(Emoji.INFO, "图片未找到");
         if (images.size() > 1) throw new BotInfoException(Emoji.INFO, "匹配项过多");
         FilePO image = images.getFirst();

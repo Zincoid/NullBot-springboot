@@ -36,17 +36,16 @@ public class GroupSetCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
-        String option = args.nextString();
         SettingPO setting = BotCtx.getSetting();
 
-        if ("--view".equals(option) || "-v".equals(option)) {
+        if (args.hasOpt("view", "v")) {
             bot.sendGroupMsg(groupId, setting.toString(), false);
             log.info("☑ [GroupSet] 群设置已获取 - GroupId: {}", groupId);
             return;
         }
 
-        if ("--limit".equals(option) || "-l".equals(option)) {
-            String name = args.nextString();
+        if (args.hasOpt("limit", "l")) {
+            String name = args.next();
             String msg;
             switch (name) {
                 case "scp" -> {
@@ -78,10 +77,9 @@ public class GroupSetCmd implements Cmd {
             return;
         }
 
-        if ("--ai".equals(option) || "-a".equals(option)) {
-            String name = args.nextString();
+        if (args.hasOpt("ai", "a")) {
+            String name = args.next();
             String msg;
-
             switch (name) {
                 case "scp" -> {
                     ChatScope newScope = setting.switchChatScope();
@@ -132,8 +130,8 @@ public class GroupSetCmd implements Cmd {
             return;
         }
 
-        if ("--monitor".equals(option) || "-m".equals(option)) {
-            String name = args.nextString();
+        if (args.hasOpt("monitor", "m")) {
+            String name = args.next();
             boolean enabled = switch (name) {
                 case "img" -> setting.switchImageCollect();
                 case "msg" -> setting.switchMessageCollect();
@@ -148,7 +146,7 @@ public class GroupSetCmd implements Cmd {
             return;
         }
 
-        if ("--guess".equals(option) || "-g".equals(option)) {
+        if (args.hasOpt("guess", "g")) {
             double cropRatio = args.nextDouble();
             double transparentRatio = args.nextDouble();
             int padding = args.nextInt();

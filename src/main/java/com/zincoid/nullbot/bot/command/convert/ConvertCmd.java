@@ -33,7 +33,7 @@ public class ConvertCmd implements Cmd {
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
         ArrayMsg reply = event.getArrayMsg().getFirst();
-        String method = args.nextString();
+        String method = args.next();
         List<String> urls = new ArrayList<>();
 
         if (reply.getType() == MsgTypeEnum.reply) {

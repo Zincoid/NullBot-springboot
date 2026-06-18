@@ -45,7 +45,7 @@ public class SymmetryCmd implements Cmd {
         }
         if (args.hasNext()) {
             // ID 收集
-            String modeStr = args.nextString();
+            String modeStr = args.next();
             if (List.of("左", "右", "上", "下").contains(modeStr)) {
                 mode = switch (modeStr) {
                     case "左" -> "left";

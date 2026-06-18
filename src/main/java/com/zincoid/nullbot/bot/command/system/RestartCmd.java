@@ -17,35 +17,30 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RestartCmd implements Cmd {
 
+    private static final String RESTART_MSG = """
+                    ⚠️重启指令已下发
+                    - 模式: %s
+                    - 将于3s后重启...""";
+
     private final SystemService systemService;
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
-        String option = args.nextString();
-        switch (option) {
-            case "--app", "-a" -> {
-                bot.sendGroupMsg(groupId, """
-                        ⚠️重启指令已下发
-                        - 模式: APP
-                        - 将于3s后重启...""", false);
-                log.info("☑ [Restart] 重启指令已下发 - Mode: APPLICATION");
-                systemService.restart();
-            }
-            case "--jar", "-j" -> {
-                bot.sendGroupMsg(groupId, """
-                        ⚠️重启指令已下发
-                        - 模式: JAR
-                        - 将于3s后重启...""", false);
-                log.info("☑ [Restart] 重启指令已下发 - Mode: JAR FILE");
-                if (args.size() > 1) {
-                    systemService.restartViaJar(args.nextFullString());
-                } else {
-                    systemService.restartViaJar();
-                }
-            }
-            default -> throw new BotWarnException("无此模式");
+        if (args.hasOpt("app", "a")) {
+            bot.sendGroupMsg(groupId, RESTART_MSG.formatted("APP"), false);
+            log.info("☑ [Restart] 重启指令已下发 - Mode: APPLICATION");
+            systemService.restart();
+            return;
         }
+        if (args.hasOpt("jar", "j")) {
+            bot.sendGroupMsg(groupId, RESTART_MSG.formatted("JAR"), false);
+            log.info("☑ [Restart] 重启指令已下发 - Mode: JAR FILE");
+            if (!args.isEmpty())systemService.restartViaJar(args.rest());
+            else systemService.restartViaJar();
+            return;
+        }
+        throw new BotWarnException("无此模式");
     }
 
     @Override
@@ -60,8 +55,8 @@ public class RestartCmd implements Cmd {
                 用法: Restart [--app | --jar [路径]]
 
                 选项:
-                  --app           重启应用进程
-                  --jar [路径]    通过 JAR 文件重启
+                  -a, --app          通过APP接口重启
+                  -j, --jar [路径]    通过JAR文件重启
 
                 别名: reboot/重启""", getAccess()
         );

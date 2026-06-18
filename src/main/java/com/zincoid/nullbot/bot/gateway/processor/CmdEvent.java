@@ -39,13 +39,13 @@ public class CmdEvent<T extends Event> {
     public static CmdEvent<GroupMessageEvent> of(GroupMessageEvent event) {
         int i = event.getArrayMsg().getFirst().getType() == MsgTypeEnum.reply ? 1 : 0;
         String cmd = event.getArrayMsg().get(i).getStringData("text").substring(1);
-        List<String> information = List.of(cmd.split(" "));
+        List<String> information = List.of(cmd.split("\\s+"));
         return of(event, information.getFirst(), information.subList(1, information.size()), true, true);
     }
 
     public static CmdEvent<PrivateMessageEvent> of(PrivateMessageEvent event) {
         String cmd = event.getMessage().substring(1);
-        List<String> information = List.of(cmd.split(" "));
+        List<String> information = List.of(cmd.split("\\s+"));
         return of(event, information.getFirst(), information.subList(1, information.size()), true, true);
     }
 
@@ -60,7 +60,7 @@ public class CmdEvent<T extends Event> {
     // ================== 内部指令工厂方法 ===================
 
     public static CmdEvent<?> of(String cmd, boolean authRequired) {
-        List<String> information = List.of(cmd.split(" "));
+        List<String> information = List.of(cmd.split("\\s+"));
         return of(BotCtx.getEvent(), information.getFirst(), information.subList(1, information.size()), authRequired, false);
     }
 

@@ -79,7 +79,7 @@ public class BottleCmd implements Cmd {
             boolean thrown = bottleService.add(
                     userId,
                     bot.getStrangerInfo(userId, true).getData().getNickname(),
-                    autoThrow ? message.trim() : args.nextFullString(),
+                    autoThrow ? message.trim() : args.rest(),
                     false
             );
             if (!autoThrow)

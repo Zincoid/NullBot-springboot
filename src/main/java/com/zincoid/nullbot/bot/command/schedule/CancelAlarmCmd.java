@@ -24,7 +24,7 @@ public class CancelAlarmCmd implements Cmd {
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        String alarmId = args.nextString();
+        String alarmId = args.next();
         String taskId = "Alarm-%s-%s".formatted(userId, alarmId);
         if (!botTaskScheduler.cancelTask(taskId)) throw new BotInfoException(Emoji.INFO, "闹钟不存在");
         bot.sendGroupMsg(groupId, "✅闹钟已取消", false);

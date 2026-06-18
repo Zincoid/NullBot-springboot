@@ -23,14 +23,13 @@ public class PRTSCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        String option = args.getString(0);
         String keyword;
         String base64;
-        if (List.of("语音", "档案", "密录", "悖论").contains(option)) {
-            keyword = args.getFullString(1);
-            base64 = capturingService.prtsOpt(option, keyword);
+        if (List.of("语音", "档案", "密录", "悖论").contains(args.get(0))) {
+            keyword = args.rest(1);
+            base64 = capturingService.prtsOpt(args.get(0), keyword);
         } else {
-            keyword = args.getFullString(0);
+            keyword = args.rest(0);
             base64 = capturingService.prtsAny(keyword);
         }
         String response = MsgUtils.builder().img("base64://" + base64).build();

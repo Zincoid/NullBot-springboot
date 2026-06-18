@@ -35,7 +35,7 @@ public class ImageDeleteCmd implements Cmd {
         String directory = storageProperties.getImagePath() + "/collect";
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (args.hasNext()) {
-            deleteFile(bot, event, directory, args.nextFullString());
+            deleteFile(bot, event, directory, args.rest());
             return;
         }
         if (reply.getType() == MsgTypeEnum.reply) {

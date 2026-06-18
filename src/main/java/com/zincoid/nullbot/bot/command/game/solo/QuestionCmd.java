@@ -60,7 +60,7 @@ public class QuestionCmd implements Cmd {
                                 1. timeout根据题目难度设定，简单题15-30秒，中等题45-60秒，困难题90-120秒，
                                 2. 公式相关内容不要使用Latex格式
                                 3. 禁止生成中国国内政治事件和政治人物相关问题，当主题涉及时仅回复REFUSED"""
-                                .formatted(args.nextFullString("二次元")))
+                                .formatted(args.rest("二次元")))
                         .thinking(true)
                         .maxTokens(2048)
                         .call()

@@ -37,14 +37,12 @@ public class BreadCmd implements Cmd {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
-        switch (args.nextString()) {
-            case "--buy", "-b" -> buy(bot, userId, groupId, userName);
-            case "--eat", "-e" -> eat(bot, userId, userName, groupId);
-            case "--rob", "-r" -> rob(bot, event, groupId, userId, userName);
-            case "--gift", "-g" -> gift(bot, event, groupId, userId, userName);
-            case "--look", "-l" -> look(bot, groupId, userId, userName);
-            default -> throw new BotWarnException("无此操作");
-        }
+        if (args.hasOpt("buy", "b")) buy(bot, userId, groupId, userName);
+        else if (args.hasOpt("eat", "e")) eat(bot, userId, userName, groupId);
+        else if (args.hasOpt("rob", "r")) rob(bot, event, groupId, userId, userName);
+        else if (args.hasOpt("gift", "g")) gift(bot, event, groupId, userId, userName);
+        else if (args.hasOpt("look", "l")) look(bot, groupId, userId, userName);
+        else throw new BotWarnException("无此操作");
     }
 
     private void buy(Bot bot, Long userId, Long groupId, String userName) {

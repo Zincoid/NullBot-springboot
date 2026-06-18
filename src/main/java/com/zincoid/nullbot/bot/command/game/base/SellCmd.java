@@ -30,8 +30,8 @@ public class SellCmd implements Cmd {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
 
-        if ("--rarity".equals(args.getString(0)) || "-r".equals(args.getString(0))) {
-            Rarity rarity = Rarity.valueOf(args.getString(1));
+        if (args.hasOpt("rarity", "r")) {
+            Rarity rarity = Rarity.valueOf(args.get(0));
             if (!inventoryService.sell(userId, rarity))
                 throw new BotInfoException(Emoji.INFO, "该稀有度物品不足");
             UserPO user = userService.getById(userId);

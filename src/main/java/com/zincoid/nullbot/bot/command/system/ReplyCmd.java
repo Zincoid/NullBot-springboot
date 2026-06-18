@@ -23,7 +23,7 @@ public class ReplyCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        String message = args.nextFullString();
+        String message = args.rest();
         String content = BotCtx.getSetting().isVoice() ?
                 MsgUtils.builder().voice("base64://" + ttsClient.synthesize(message)).build() : message;
         bot.sendGroupMsg(event.getGroupId(), content, false);
@@ -32,7 +32,7 @@ public class ReplyCmd implements Cmd {
 
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
-        String message = args.nextFullString();
+        String message = args.rest();
         bot.sendPrivateMsg(event.getUserId(), message, false);
         log.info("☑ [Reply] 私聊已回复: {}", message);
     }

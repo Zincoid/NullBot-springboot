@@ -86,7 +86,7 @@ public class TraitCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
-        String key = args.nextString().toUpperCase();
+        String key = args.next().toUpperCase();
 
         if ("RESET".equals(key)) {
             cancelRestoreTask(groupId, false);
@@ -123,7 +123,7 @@ public class TraitCmd implements Cmd {
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
         Long userId = event.getUserId();
-        String key = args.nextString().toUpperCase();
+        String key = args.next().toUpperCase();
 
         if ("RESET".equals(key)) {
             cancelRestoreTask(userId, true);
