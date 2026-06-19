@@ -25,7 +25,7 @@ public class ChatCmd implements Cmd {
     private final CmdRegistry cmdRegistry;
     private final CmdProperties cmdProperties;
 
-    public ChatCmd(@Lazy QQChatClient qqChatClient, CmdRegistry cmdRegistry, CmdProperties cmdProperties) {
+    public ChatCmd(@Lazy QQChatClient qqChatClient, @Lazy CmdRegistry cmdRegistry, CmdProperties cmdProperties) {
         this.qqChatClient = qqChatClient;
         this.cmdRegistry = cmdRegistry;
         this.cmdProperties = cmdProperties;
