@@ -7,7 +7,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.zincoid.nullbot.bot.command.game.solo.BottleCmd;
+import com.zincoid.nullbot.bot.command.game.indie.BottleCmd;
 import com.zincoid.nullbot.core.utils.Base64Util;
 
 import java.time.LocalDateTime;

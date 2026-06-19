@@ -5,7 +5,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.enums.Emoji;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
@@ -26,7 +26,7 @@ public class RandomSayingCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        List<Long> atNumbers = MsgParseUtil.extractAtNumbers(event.getArrayMsg());
+        List<Long> atNumbers = MsgUtil.extractAtNumbers(event.getArrayMsg());
         SayingPO saying = atNumbers.isEmpty()
                 ? args.hasNext()
                 ? sayingService.getRandByUserId(args.nextLong())

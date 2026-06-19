@@ -24,8 +24,8 @@ public class RawMsgCmd implements Cmd {
         ArrayMsg reply = event.getArrayMsg().getFirst();
         if (reply.getType() != MsgTypeEnum.reply) throw new BotWarnException("需引用消息");
         MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
-        log.info("☑ [RawMsg] 原消息已输出:\n{}", replyMsg.getRawMessage());
-        bot.sendGroupMsg(event.getGroupId(), "✅原消息已输出至控制台", false);
+        log.info("☑ [RawMsg] 已输出:\nRaw Message: {}\nMessage: {}", replyMsg.getRawMessage(), replyMsg.getMessage());
+        bot.sendGroupMsg(event.getGroupId(), "✅已输出至控制台", false);
     }
 
     @Override

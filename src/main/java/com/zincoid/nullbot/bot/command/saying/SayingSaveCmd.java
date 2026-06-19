@@ -12,7 +12,7 @@ import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import com.zincoid.nullbot.core.service.base.SayingService;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +31,7 @@ public class SayingSaveCmd implements Cmd {
         MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
         long userId = Long.parseLong(replyMsg.getSender().getUserId());
         String userName = replyMsg.getSender().getNickname();
-        String text = MsgParseUtil.formatSaying(bot, replyMsg.getArrayMsg());
+        String text = MsgUtil.formatSaying(bot, replyMsg.getArrayMsg());
         if (!sayingService.add(userId, userName, text)) throw new BotErrorException("语录保存出错");
         bot.sendGroupMsg(event.getGroupId(), "\uD83D\uDCBE语录已保存", false);
         log.info("☑ [SayingSave] 语录已保存 - {}: {}", userName, text);

@@ -16,7 +16,7 @@ import com.zincoid.nullbot.bot.gateway.processor.CmdEvent;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.context.BotCtx;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -66,7 +66,7 @@ public class BotMonitor {
 
         double freq = BotCtx.getSetting().getReplyFrequency();
         if (freq < Math.random()) return false;
-        String parsed = MsgParseUtil.formatMsg(bot, event.getArrayMsg());
+        String parsed = MsgUtil.formatMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至群聊 {}", event.getGroupId());
         cmdProcessor.processQQ(bot, CmdEvent.of(event, "Chat", List.of(parsed), false, false));
         return true;
@@ -83,7 +83,7 @@ public class BotMonitor {
         String userName = event.getSender().getNickname();
         String filePath = storageProperties.getImagePath() + "/monitor/" + groupId;
 
-        Map<String, String> imageMap = MsgParseUtil.extractImgMap(event.getArrayMsg());
+        Map<String, String> imageMap = MsgUtil.extractImgMap(event.getArrayMsg());
         for (Map.Entry<String, String> entry : imageMap.entrySet()) {
             log.info("◉ [GroupMonitor:ImgCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
             String filename = entry.getKey();
@@ -103,7 +103,7 @@ public class BotMonitor {
         if (!BotCtx.getSetting().isMessageCollect()) return;
 
         if (event.getMessage().startsWith(commandPrefix + "Chat") || event.getMessage().startsWith(commandPrefix + "对话")) return;  // 按需 AI自动记录
-        String parsed = MsgParseUtil.formatMsg(bot, event.getArrayMsg());
+        String parsed = MsgUtil.formatMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:MsgCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         msgWindowMemory.add(
                 ChatScope.MONITOR + "_" + event.getGroupId(),

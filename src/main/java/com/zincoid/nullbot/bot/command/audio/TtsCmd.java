@@ -20,8 +20,8 @@ import com.zincoid.nullbot.core.module.ai.tts.TtsClient;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.model.data.po.TtsTemplatePO;
 import com.zincoid.nullbot.core.service.tts.TtsTemplateService;
-import com.zincoid.nullbot.core.utils.DownloadUtil;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.SaveUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
@@ -86,7 +86,7 @@ public class TtsCmd implements Cmd {
         if (reply.getType() != MsgTypeEnum.reply)
             throw new BotWarnException("未引用模板音频");
         MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
-        Map<String, String> fileMap = MsgParseUtil.extractFileMap(replyMsg.getArrayMsg());
+        Map<String, String> fileMap = MsgUtil.extractFileMap(replyMsg.getArrayMsg());
         if (fileMap.isEmpty())
             throw new BotWarnException("引用未包含音频");
         if (fileMap.size() > 1)
@@ -96,7 +96,7 @@ public class TtsCmd implements Cmd {
             throw new BotWarnException("引用文件非音频");
         String templateName = args.next();
         String templateText = args.next();
-        FileInfo fileInfo = DownloadUtil.save(audio.getValue());
+        FileInfo fileInfo = SaveUtil.save(audio.getValue());
         String uploadedPath = ttsClient.upload(fileInfo.getPath());
         if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
             throw new BotWarnException("存在重名模板");

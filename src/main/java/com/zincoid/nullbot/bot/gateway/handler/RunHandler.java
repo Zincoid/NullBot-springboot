@@ -10,7 +10,7 @@ import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotOmitException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
-import com.zincoid.nullbot.core.utils.DownloadUtil;
+import com.zincoid.nullbot.core.utils.SaveUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.module.system.WsSender;
@@ -67,7 +67,7 @@ public class RunHandler implements Handler {
             throw e;
 
         } finally {
-            int tempCount = DownloadUtil.cleanup();
+            int tempCount = SaveUtil.cleanup();
             log.info("  [RunHandler] 临时文件已清理: {}", tempCount);
         }
 

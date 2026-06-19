@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.bot.command.game.multi;
+package com.zincoid.nullbot.bot.command.game.engine.dual;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;

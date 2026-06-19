@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 
 @Slf4j
-public final class DownloadUtil {
+public final class SaveUtil {
 
     private static final ThreadLocal<Set<Path>> THREAD_TEMP_FILES = ThreadLocal.withInitial(HashSet::new);
 
@@ -29,7 +29,7 @@ public final class DownloadUtil {
     private static final int DRAIN_BUF_SIZE = 2048;
     private static final long MAX_FILE_SIZE = 500L * 1024 * 1024;
 
-    private DownloadUtil() {}
+    private SaveUtil() {}
 
     /** 清除临时文件 (需在线程结束前调用) */
     public static int cleanup() {
@@ -39,7 +39,7 @@ public final class DownloadUtil {
             try {
                 if (Files.deleteIfExists(path)) count++;
             } catch (IOException e) {
-                log.warn("▽ [DownloadUtil] Failed to delete temp file: {}, {}", path, e.getMessage());
+                log.warn("▽ [SaveUtil] Failed to delete temp file: {}, {}", path, e.getMessage());
             }
         }
         files.clear();
@@ -72,11 +72,11 @@ public final class DownloadUtil {
             String contentType = connection.getContentType();
             long contentLength = connection.getContentLengthLong();
             if (contentLength > MAX_FILE_SIZE) {
-                log.warn("▽ [DownloadUtil] File too large: {} > {}",
+                log.warn("▽ [SaveUtil] File too large: {} > {}",
                         formatFileSize(contentLength), formatFileSize(MAX_FILE_SIZE));
                 throw new RuntimeException("Failed: File too large");
             }
-            log.info("▽ [DownloadUtil] Downloading... Content-Type: {}, Size: {}",
+            log.info("▽ [SaveUtil] Downloading... Content-Type: {}, Size: {}",
                     contentType, contentLength > 0 ? formatFileSize(contentLength) : "unknown");
             String fileName = determineFileName(name, contentType, url);
             Path filePath = Paths.get(directory, fileName);
@@ -89,20 +89,20 @@ public final class DownloadUtil {
                 long nextLogThreshold = 10 * 1024 * 1024;
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
                     if (Thread.currentThread().isInterrupted()) {
-                        log.warn("▽ [DownloadUtil] Download interrupted by thread");
+                        log.warn("▽ [SaveUtil] Download interrupted by thread");
                         throw new RuntimeException("Failed: Download interrupted");
                     }
                     outputStream.write(buffer, 0, bytesRead);
                     totalBytesRead += bytesRead;
                     if (contentLength > 0 && totalBytesRead >= nextLogThreshold) {
-                        log.info("▽ [DownloadUtil] Download progress: {}/{}",
+                        log.info("▽ [SaveUtil] Download progress: {}/{}",
                                 formatFileSize(totalBytesRead), formatFileSize(contentLength));
                         nextLogThreshold += 10 * 1024 * 1024;
                     }
                 }
                 streamConsumed = true;
                 long downloadedSize = Files.size(filePath);
-                log.info("▽ [DownloadUtil] Download completed: {} ({})",
+                log.info("▽ [SaveUtil] Download completed: {} ({})",
                         fileName, formatFileSize(downloadedSize));
                 return new FileInfo(directory, fileName, downloadedSize,
                         Files.getLastModifiedTime(filePath)
@@ -114,10 +114,10 @@ public final class DownloadUtil {
                 throw e;
             }
         } catch (IOException e) {
-            log.error("▽ [DownloadUtil] Download failed: {}", e.getMessage(), e);
+            log.error("▽ [SaveUtil] Download failed: {}", e.getMessage(), e);
             throw new RuntimeException("Failed: " + e.getMessage());
         } catch (Exception e) {
-            log.error("▽ [DownloadUtil] Unexpected error: {}", e.getMessage(), e);
+            log.error("▽ [SaveUtil] Unexpected error: {}", e.getMessage(), e);
             throw new RuntimeException("Failed: Unexpected error");
         } finally {
             if (connection != null) {
@@ -163,25 +163,25 @@ public final class DownloadUtil {
         if (fileName != null && !fileName.isEmpty()) {
             ext = extractExtensionFromFileName(fileName);
             if (!ext.isEmpty()) {
-                log.info("▽ [DownloadUtil] Extension from filename: {}", ext);
+                log.info("▽ [SaveUtil] Extension from filename: {}", ext);
                 return ext;
             }
         }
         if (contentType != null && !contentType.isEmpty()) {
             ext = getExtensionFromContentType(contentType);
             if (!ext.isEmpty()) {
-                log.info("▽ [DownloadUtil] Extension from Content-Type: {}", ext);
+                log.info("▽ [SaveUtil] Extension from Content-Type: {}", ext);
                 return ext;
             }
         }
         if (fileUrl != null && !fileUrl.isEmpty()) {
             ext = extractExtensionFromUrl(fileUrl);
             if (!ext.isEmpty()) {
-                log.info("▽ [DownloadUtil] Extension from URL: {}", ext);
+                log.info("▽ [SaveUtil] Extension from URL: {}", ext);
                 return ext;
             }
         }
-        log.info("▽ [DownloadUtil] Using default extension: .dat");
+        log.info("▽ [SaveUtil] Using default extension: .dat");
         return ".dat";
     }
 

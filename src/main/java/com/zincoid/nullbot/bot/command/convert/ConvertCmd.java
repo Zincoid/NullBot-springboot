@@ -11,12 +11,12 @@ import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.service.render.RenderingService;
+import com.zincoid.nullbot.core.utils.SaveUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.model.information.FileInfo;
-import com.zincoid.nullbot.core.utils.DownloadUtil;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -39,7 +39,7 @@ public class ConvertCmd implements Cmd {
         if (reply.getType() == MsgTypeEnum.reply) {
             // 引用收集
             MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
-            Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getArrayMsg());
+            Map<String, String> imageMap = MsgUtil.extractImgMap(replyMsg.getArrayMsg());
             urls.addAll(imageMap.values());
         }
         if (args.hasNext()) {
@@ -48,14 +48,14 @@ public class ConvertCmd implements Cmd {
             urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         } else {
             // AT 收集
-            List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getArrayMsg());
+            List<Long> qqNumbers = MsgUtil.extractAtNumbers(event.getArrayMsg());
             for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         }
 
         if (urls.isEmpty()) throw new BotWarnException("缺少图片引用或ID参数或AT用户");
 
         for (String url : urls) {
-            FileInfo fileInfo = DownloadUtil.save(url);
+            FileInfo fileInfo = SaveUtil.save(url);
             String imagePath = fileInfo.getPath();
             String base64 = switch (method) {
                 case "RIP" -> renderingService.rip(imagePath);

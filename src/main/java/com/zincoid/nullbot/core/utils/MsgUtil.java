@@ -7,22 +7,33 @@ import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.enums.Rps;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public final class MsgParseUtil {
+public final class MsgUtil {
 
     private static final Pattern STANDARD_CQ_PATTERN = Pattern.compile("\\[CQ:.*?]");
+    private static final Pattern RPS_CQ_PATTERN = Pattern.compile("\\[CQ:rps,result=(\\d+)]");
     private static final Pattern SAYING_PATTERN = Pattern.compile("^\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}]\\[No\\.\\d+][\\s\\S]*");
 
-    private MsgParseUtil() {}
+    private MsgUtil() {}
 
     // =================== @QQ号提取方法 ===================
 
     public static List<Long> extractAtNumbers(List<ArrayMsg> arrayMsg) {
         return ShiroUtils.getAtList(arrayMsg);
+    }
+
+    // =================== RPS码提取方法 ===================
+
+    public static Rps extractRps(String rawMsg) {
+        Matcher m = RPS_CQ_PATTERN.matcher(rawMsg);
+        if (m.find()) return Rps.of(Integer.parseInt(m.group(1)));
+        throw new BotWarnException("RPS格式异常");
     }
 
     // =================== 消息格式化方法 ===================
@@ -103,7 +114,7 @@ public final class MsgParseUtil {
         if (arrayMsg == null || arrayMsg.isEmpty()) return Collections.emptyMap();
         return arrayMsg.stream()
                 .filter(it -> "file".equals(it.getRawType()))
-                .map(MsgParseUtil::toFileUrlEntry)
+                .map(MsgUtil::toFileUrlEntry)
                 .filter(e -> e.getKey() != null && e.getValue() != null)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -129,7 +140,7 @@ public final class MsgParseUtil {
         if (arrayMsg == null || arrayMsg.isEmpty()) return Collections.emptyMap();
         return arrayMsg.stream()
                 .filter(it -> it.getType() == type)
-                .map(MsgParseUtil::toFileUrlEntry)
+                .map(MsgUtil::toFileUrlEntry)
                 .filter(e -> e.getKey() != null && e.getValue() != null)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,

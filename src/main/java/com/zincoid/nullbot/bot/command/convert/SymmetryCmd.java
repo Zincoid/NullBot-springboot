@@ -16,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.model.information.FileInfo;
-import com.zincoid.nullbot.core.utils.DownloadUtil;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.SaveUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -40,7 +40,7 @@ public class SymmetryCmd implements Cmd {
         if (reply.getType() == MsgTypeEnum.reply) {
             // 引用收集
             MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
-            Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getArrayMsg());
+            Map<String, String> imageMap = MsgUtil.extractImgMap(replyMsg.getArrayMsg());
             urls.addAll(imageMap.values());
         }
         if (args.hasNext()) {
@@ -58,7 +58,7 @@ public class SymmetryCmd implements Cmd {
                     long qqNumber = args.nextLong();
                     urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
                 } else {
-                    List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getArrayMsg());
+                    List<Long> qqNumbers = MsgUtil.extractAtNumbers(event.getArrayMsg());
                     for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
                 }
             } else {
@@ -67,14 +67,14 @@ public class SymmetryCmd implements Cmd {
             }
         } else {
             // AT 收集
-            List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(event.getArrayMsg());
+            List<Long> qqNumbers = MsgUtil.extractAtNumbers(event.getArrayMsg());
             for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
         }
 
         if (urls.isEmpty()) throw new BotWarnException("缺少引用图片或ID参数或AT用户");
 
         for (String url : urls) {
-            FileInfo fileInfo = DownloadUtil.save(url);
+            FileInfo fileInfo = SaveUtil.save(url);
             String base64 = renderingService.symmetry(fileInfo.getPath(), mode);
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);

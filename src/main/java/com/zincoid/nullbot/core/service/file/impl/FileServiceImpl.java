@@ -17,7 +17,7 @@ import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.web.exception.CommonException;
 import com.zincoid.nullbot.core.mapper.FileMapper;
 import com.zincoid.nullbot.core.service.file.FileService;
-import com.zincoid.nullbot.core.utils.DownloadUtil;
+import com.zincoid.nullbot.core.utils.SaveUtil;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpHeaders;
@@ -119,7 +119,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     @Override
     public FileInfo upload(String url, String directory, String filename, Long uid) {
         directory = getResolvedDirectory(directory);
-        FileInfo fileInfo = DownloadUtil.save(url, directory, filename);
+        FileInfo fileInfo = SaveUtil.save(url, directory, filename);
         boolean recorded = addOrUpdateRecord(directory, fileInfo.getName(),
                 fileInfo.getSize(), fileInfo.getLastModified(),
                 uid, userService.getById(uid).getName());

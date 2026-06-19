@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.bot.command.game.solo;
+package com.zincoid.nullbot.bot.command.game.indie;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -16,7 +16,7 @@ import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
 import com.zincoid.nullbot.core.service.game.BreadService;
 import com.zincoid.nullbot.core.service.base.InventoryService;
 import com.zincoid.nullbot.core.service.base.UserService;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -91,7 +91,7 @@ public class BreadCmd implements Cmd {
     }
 
     private void rob(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
-        List<Long> atUserIds = MsgParseUtil.extractAtNumbers(groupMessageEvent.getArrayMsg());
+        List<Long> atUserIds = MsgUtil.extractAtNumbers(groupMessageEvent.getArrayMsg());
         if (atUserIds.isEmpty()) throw new BotWarnException("未指定对象");
         long targetId = atUserIds.getFirst(); // 抢第一人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();
@@ -103,7 +103,7 @@ public class BreadCmd implements Cmd {
     }
 
     private void gift(Bot bot, GroupMessageEvent groupMessageEvent, Long groupId, Long userId, String userName) {
-        List<Long> qqNumbers = MsgParseUtil.extractAtNumbers(groupMessageEvent.getArrayMsg());
+        List<Long> qqNumbers = MsgUtil.extractAtNumbers(groupMessageEvent.getArrayMsg());
         if (qqNumbers.isEmpty()) throw new BotWarnException("未指定对象");
         long targetId = qqNumbers.getFirst(); // 送第一人
         String targetName = bot.getStrangerInfo(targetId, true).getData().getNickname();

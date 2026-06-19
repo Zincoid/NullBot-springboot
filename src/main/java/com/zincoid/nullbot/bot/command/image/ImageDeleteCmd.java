@@ -15,7 +15,7 @@ import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.file.FileService;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class ImageDeleteCmd implements Cmd {
         }
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
-            Map<String, String> imageMap = MsgParseUtil.extractImgMap(replyMsg.getArrayMsg());
+            Map<String, String> imageMap = MsgUtil.extractImgMap(replyMsg.getArrayMsg());
             if (imageMap.isEmpty()) throw new BotWarnException("引用未包含图片");
             imageMap.forEach((name, url) -> {
                 String key = name.substring(0, name.lastIndexOf("."));  // QQ图片扩展名错误

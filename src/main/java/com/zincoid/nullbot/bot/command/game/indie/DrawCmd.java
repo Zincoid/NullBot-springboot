@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.bot.command.game.solo;
+package com.zincoid.nullbot.bot.command.game.indie;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;

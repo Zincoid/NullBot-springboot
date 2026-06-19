@@ -13,7 +13,7 @@ import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.service.file.FileService;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -37,7 +37,7 @@ public class VideoDeleteCmd implements Cmd {
         }
         if (reply.getType() == MsgTypeEnum.reply) {
             MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
-            Map<String, String> videoMap = MsgParseUtil.extractVidMap(replyMsg.getArrayMsg());
+            Map<String, String> videoMap = MsgUtil.extractVidMap(replyMsg.getArrayMsg());
             if (videoMap.isEmpty()) throw new BotWarnException("引用未包含视频");
             videoMap.forEach((name, url) -> deleteFile(bot, event, directory, name));
             return;

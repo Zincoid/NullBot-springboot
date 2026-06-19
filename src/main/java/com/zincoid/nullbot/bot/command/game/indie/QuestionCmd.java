@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.bot.command.game.solo;
+package com.zincoid.nullbot.bot.command.game.indie;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.fasterxml.jackson.databind.JsonNode;

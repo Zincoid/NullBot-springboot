@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.bot.command.game.solo;
+package com.zincoid.nullbot.bot.command.game.indie;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -19,7 +19,7 @@ import com.zincoid.nullbot.core.model.data.po.BottlePO;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.service.game.BottleService;
 import com.zincoid.nullbot.core.service.file.FileService;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class BottleCmd implements Cmd {
         Long userId = event.getUserId();
         String message = event.getMessage();
         boolean autoThrow = args.hasOpt("auto", "a");
-        Map<String, String> imageMap = MsgParseUtil.extractImgMap(event.getArrayMsg());
+        Map<String, String> imageMap = MsgUtil.extractImgMap(event.getArrayMsg());
 
         if (!imageMap.isEmpty()) {
             if (imageMap.size() != 1) {

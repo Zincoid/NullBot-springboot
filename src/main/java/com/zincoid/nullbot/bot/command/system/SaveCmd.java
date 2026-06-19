@@ -12,7 +12,7 @@ import com.zincoid.nullbot.bot.command.saying.SayingSaveCmd;
 import com.zincoid.nullbot.bot.command.video.VideoSaveCmd;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,9 +33,9 @@ public class SaveCmd implements Cmd {
         if (reply.getType() != MsgTypeEnum.reply) throw new BotWarnException("缺少引用");
         MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
 
-        if (!MsgParseUtil.extractVidMap(replyMsg.getArrayMsg()).isEmpty()) {
+        if (!MsgUtil.extractVidMap(replyMsg.getArrayMsg()).isEmpty()) {
             videoSaveCmd.run(bot, event, args);
-        } else if (!MsgParseUtil.extractImgMap(replyMsg.getArrayMsg()).isEmpty()) {
+        } else if (!MsgUtil.extractImgMap(replyMsg.getArrayMsg()).isEmpty()) {
             imageSaveCmd.run(bot, event, args);
         } else sayingSaveCmd.run(bot, event, args);
     }

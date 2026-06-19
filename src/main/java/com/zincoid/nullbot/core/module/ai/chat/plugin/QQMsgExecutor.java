@@ -7,7 +7,7 @@ import com.zincoid.nullbot.core.module.resource.loader.ResourceLoader;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.utils.Base64Util;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -102,7 +102,7 @@ public class QQMsgExecutor {
     }
 
     boolean filter(String message) {
-        if (!MsgParseUtil.validateCq(message)) return true;
+        if (!MsgUtil.validateCq(message)) return true;
         for (Pattern pattern : FILTERED_PATTERNS)
             if (pattern.matcher(message).find()) return true;
         return false;

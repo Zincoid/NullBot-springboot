@@ -18,7 +18,7 @@ import com.zincoid.nullbot.core.annotation.BotContext;
 import com.zincoid.nullbot.core.annotation.FuncControl;
 import com.zincoid.nullbot.core.module.security.SecurityCodeScheduler;
 import com.zincoid.nullbot.core.context.BotCtx;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -80,7 +80,7 @@ public class BotListener {
             bot.sendPrivateMsg(userId, "❌访问码错误", false);
         } else {
             // 私聊对话处理
-            String parsed = MsgParseUtil.formatMsg(bot, event.getArrayMsg());
+            String parsed = MsgUtil.formatMsg(bot, event.getArrayMsg());
             log.info("◉ [PrivateAction:Chat] 私聊 {}({}) -> {}", userName, userId, parsed);
             cmdProcessor.processQQ(bot, CmdEvent.of(
                     event, "Chat", List.of(parsed), false, false));
@@ -157,7 +157,7 @@ public class BotListener {
         botMonitor.doGroupImgCollect(event);
         botMonitor.doGroupBottleAutoThrow(bot, event);
 
-        String parsed = MsgParseUtil.formatMsg(bot, event.getArrayMsg());
+        String parsed = MsgUtil.formatMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupAction:At] 群聊 {} - {}({}) -> {}",
                 event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         cmdProcessor.processQQ(bot, CmdEvent.of(

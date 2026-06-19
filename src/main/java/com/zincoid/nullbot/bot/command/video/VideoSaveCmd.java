@@ -15,7 +15,7 @@ import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.information.FileInfo;
 import com.zincoid.nullbot.core.service.file.FileService;
-import com.zincoid.nullbot.core.utils.MsgParseUtil;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -37,7 +37,7 @@ public class VideoSaveCmd implements Cmd {
 
         MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
         // 可优化为单个键值对?
-        Map<String, String> videoMap = MsgParseUtil.extractVidMap(replyMsg.getArrayMsg());
+        Map<String, String> videoMap = MsgUtil.extractVidMap(replyMsg.getArrayMsg());
         if (videoMap.isEmpty())
             throw new BotWarnException("引用未包含视频");
         if (videoMap.size() > 1)
