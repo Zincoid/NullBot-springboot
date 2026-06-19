@@ -240,28 +240,49 @@ public final class CmdArgs {
                 : new BotWarnException("参数缺失: --%s".formatted(name));
     }
 
+    // private static boolean tryParseOpt(String p, Map<String, String> opt) {
+    //     if (p.startsWith("--")) {
+    //         String body = p.substring(2);
+    //         if (body.isEmpty() || body.startsWith("-")) return false;
+    //         int eq = body.indexOf('=');
+    //         if (eq >= 0) {
+    //             String name = body.substring(0, eq);
+    //             if (!name.isEmpty()) { opt.put(name, body.substring(eq + 1)); return true; }
+    //         } else {
+    //             opt.put(body, "true");
+    //             return true;
+    //         }
+    //     } else if (p.startsWith("-") && p.length() >= 2 && Character.isLetter(p.charAt(1))) {
+    //         String name = p.substring(1, 2);
+    //         if (p.length() > 2 && p.charAt(2) == '=') {
+    //             opt.put(name, p.substring(3));
+    //             return true;
+    //         }
+    //         if (p.length() == 2) {
+    //             opt.put(name, "true");
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+
     private static boolean tryParseOpt(String p, Map<String, String> opt) {
         if (p.startsWith("--")) {
             String body = p.substring(2);
             if (body.isEmpty() || body.startsWith("-")) return false;
             int eq = body.indexOf('=');
-            if (eq >= 0) {
-                String name = body.substring(0, eq);
-                if (!name.isEmpty()) { opt.put(name, body.substring(eq + 1)); return true; }
-            } else {
-                opt.put(body, "true");
-                return true;
-            }
-        } else if (p.startsWith("-") && p.length() >= 2 && Character.isLetter(p.charAt(1))) {
+            if (eq < 0) { opt.put(body, "true"); return true; }
+            String name = body.substring(0, eq);
+            if (name.isEmpty()) return false;
+            opt.put(name, body.substring(eq + 1));
+            return true;
+        }
+        if (p.startsWith("-") && p.length() >= 2 &&
+                Character.isLetter(p.charAt(1))) {
             String name = p.substring(1, 2);
-            if (p.length() > 2 && p.charAt(2) == '=') {
-                opt.put(name, p.substring(3));
-                return true;
-            }
-            if (p.length() == 2) {
-                opt.put(name, "true");
-                return true;
-            }
+            if (p.length() > 2 && p.charAt(2) == '=')
+            { opt.put(name, p.substring(3)); return true; }
+            if (p.length() == 2) { opt.put(name, "true"); return true; }
         }
         return false;
     }

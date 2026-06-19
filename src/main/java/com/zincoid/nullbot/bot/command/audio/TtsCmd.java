@@ -114,7 +114,7 @@ public class TtsCmd implements Cmd {
 
     private void handleCloneUse(Bot bot, CmdArgs args, long groupId) {
         String templateName = args.next();
-        String text = args.next();
+        String text = args.rest();
         TtsTemplatePO template = ttsTemplateService.get(templateName);
         if (template == null)
             throw new BotInfoException(Emoji.INFO, "模板不存在");
