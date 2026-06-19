@@ -12,7 +12,7 @@ import com.zincoid.nullbot.core.service.base.UserService;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"Me", "me", "个人信息"})
+@CmdMapping({"Me", "个人信息"})
 @Component
 @RequiredArgsConstructor
 public class MeCmd implements Cmd {
@@ -30,10 +30,10 @@ public class MeCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Me 命令
-                功能: 展示个人信息
+                功能: 个人信息
                 限权: %d 级
                 格式: Me
-                别名: me/个人信息""", getAccess()
+                别名: 个人信息""", getAccess()
         );
     }
 }

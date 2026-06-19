@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"Log", "log", "日志"})
+@CmdMapping({"Log", "日志"})
 @Component
 @RequiredArgsConstructor
 public class LogCmd implements Cmd {
@@ -50,7 +50,7 @@ public class LogCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Log 命令
-                功能: 发送日志文件
+                功能: 发送日志
                 限权: %d 级
                 格式: Log
                 别名: 日志""", getAccess()

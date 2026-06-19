@@ -14,7 +14,7 @@ import com.zincoid.nullbot.core.utils.Base64Util;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"Help", "help", "帮助"})
+@CmdMapping({"Help", "帮助"})
 @Component
 @RequiredArgsConstructor
 public class HelpCmd implements Cmd {
@@ -34,9 +34,9 @@ public class HelpCmd implements Cmd {
                 1. Help 帮助
                 2. SysMsgSet 提示词设置
                    选项:
-                     -s, --set [文本]   设置提示词
-                     -r, --reset        重置提示词
-                     -v, --view         查看提示词
+                   -s,--set [文本]  设置提示词
+                   -r,--reset      重置提示词
+                   -v,--view       查看提示词
                 
                 注: 私聊仅实现AI聊天及以上指令且永久处于无鉴权限速/非语音防注入/EMBEDDING对话策略下""", true);
         log.info("☑ [Help] 私聊帮助已获取");
@@ -55,10 +55,10 @@ public class HelpCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Help 命令
-                功能: 发送帮助菜单
+                功能: 帮助菜单
                 限权: %d 级
                 格式: Help
-                别名: help/帮助""", getAccess()
+                别名: 帮助""", getAccess()
         );
     }
 
@@ -66,7 +66,7 @@ public class HelpCmd implements Cmd {
     public String getHelpForAI() {
         return """
                 ◉ Help 命令
-                功能: 发送帮助菜单
+                功能: 帮助菜单
                 格式: Help
                 注意: 当有人想要了解你的功能时使用该指令""";
     }

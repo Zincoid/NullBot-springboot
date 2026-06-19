@@ -61,9 +61,9 @@ public class VideoSaveCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ VideoSave 命令
-                功能: 保存视频至视频库
+                功能: 保存视频
                 限权: %d 级
-                格式: [引用视频] VideoSave [可选: 文件名]
+                格式: [引用] VideoSave [可选: 文件名]
                 别名: 保存视频""", getAccess()
         );
     }

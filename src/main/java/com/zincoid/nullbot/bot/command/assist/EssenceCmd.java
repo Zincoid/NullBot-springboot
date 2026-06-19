@@ -32,7 +32,7 @@ public class EssenceCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Essence 命令
-                功能: 终末地基质刷取方案推荐
+                功能: 终末地基质刷取推荐
                 限权: %d 级
                 格式: Essence [武器名]
                 别名: 基质规划/基质""", getAccess()

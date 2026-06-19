@@ -32,7 +32,7 @@ public class PucciCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Pucci 命令
-                功能: 普奇神父梗图生成
+                功能: 普奇梗图生成
                 限权: %d 级
                 格式: Pucci [文本]
                 别名: 普奇""", getAccess()

@@ -66,7 +66,7 @@ public class DrawCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Draw 命令
-                功能: 抽奖 (可指定次数)
+                功能: 随机抽奖
                 限权: %d 级
                 格式: Draw [可选: 次数]
                 别名: 抽奖""", getAccess()

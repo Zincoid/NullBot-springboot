@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
-@CmdMapping({"Tts", "tts", "语音合成"})
+@CmdMapping({"Tts", "语音合成"})
 @Component
 @RequiredArgsConstructor
 public class TtsCmd implements Cmd {
@@ -158,26 +158,26 @@ public class TtsCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Tts 命令
-                功能: 文本转语音
+                功能: 文本转换语音
                 限权: %d 级
                 用法: Tts [子命令] [参数...]
 
                 子命令:
-                  synth [文本]         一般合成
-                  clone [选项]         克隆合成
+                synth [文本]  一般合成
+                clone [选项]  克隆合成
 
-                clone 选项:
-                  -l, --list              模板列表
-                  -s, --save [模板名] [文本]  保存模板 (需引用音频文件)
-                  -d, --delete [模板名]       删除模板
-                  -u, --use [模板名] [文本]   音频克隆
+                克隆选项:
+                -l,--list              模板列表
+                -s,--save [模板] [文本]  保存模板 (引用音频)
+                -d,--delete [模板]      删除模板
+                -u,--use [模板] [文本]   音频克隆
 
                 注意:
                 - 一般合成使用固定人物模型
                 - 模板音频时长要求 3~10秒
                 - 保存模板需音频的内容文本
 
-                别名: tts/语音合成""", getAccess()
+                别名: 语音合成""", getAccess()
         );
     }
 

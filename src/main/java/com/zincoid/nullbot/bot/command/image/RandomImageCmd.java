@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
-@CmdMapping({"RandomImage", "Image", "image", "img", "随机图片", "图片"})
+@CmdMapping({"RandomImage", "image", "img", "随机图片", "图片"})
 @Component
 @RequiredArgsConstructor
 public class RandomImageCmd implements Cmd {
@@ -47,10 +47,10 @@ public class RandomImageCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ RandomImage 命令
-                功能: 发送保存的随机图片
+                功能: 发送随机保存图片
                 限权: %d 级
                 格式: RandomImage
-                别名: Image/image/img/随机图片/图片""", getAccess()
+                别名: image/img/随机图片/图片""", getAccess()
         );
     }
 
@@ -58,7 +58,7 @@ public class RandomImageCmd implements Cmd {
     public String getHelpForAI() {
         return """
                 ◉ RandomImage 命令
-                功能: 发送保存的随机图片
+                功能: 发送随机保存图片
                 格式: RandomImage""";
     }
 }

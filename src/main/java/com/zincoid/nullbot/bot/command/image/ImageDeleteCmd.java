@@ -71,7 +71,7 @@ public class ImageDeleteCmd implements Cmd {
                 限权: %d 级
                 格式:
                 1. ImageDel [文件名]
-                2. [引用图片] ImageDel
+                2. [引用] ImageDel
                 别名: 删除图片""", getAccess()
         );
     }

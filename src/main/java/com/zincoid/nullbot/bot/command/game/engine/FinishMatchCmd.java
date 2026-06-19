@@ -36,7 +36,7 @@ public class FinishMatchCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ FinishMatch 命令
-                功能: 强制终止自身所处对局
+                功能: 强制终止自身对局
                 限权: %d 级
                 格式: FinishMatch
                 别名: 终止对局""", getAccess()

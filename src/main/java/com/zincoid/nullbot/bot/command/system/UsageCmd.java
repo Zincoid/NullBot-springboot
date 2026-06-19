@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"Usage", "usage", "用量"})
+@CmdMapping({"Usage", "用量"})
 @Component
 @RequiredArgsConstructor
 public class UsageCmd implements Cmd {
@@ -40,10 +40,10 @@ public class UsageCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Usage 命令
-                功能: 获取指令用量
+                功能: 指令用量查询
                 限权: %d 级
                 格式: Usage
-                别名: usage/用量""", getAccess()
+                别名: 用量""", getAccess()
         );
     }
 }

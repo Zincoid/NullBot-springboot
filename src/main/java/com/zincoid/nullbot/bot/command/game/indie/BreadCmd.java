@@ -136,16 +136,16 @@ public class BreadCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Bread 命令
-                功能: 面包小游戏(有特殊事件)
+                功能: 面包小游戏
                 限权: %d 级
                 用法: Bread [选项] [参数]
 
                 选项:
-                  -b, --buy          买面包
-                  -e, --eat          吃面包
-                  -r, --rob [@用户]   抢面包
-                  -g, --gift [@用户]  送面包
-                  -l, --look    查看面包库存
+                -b,--buy          买面包
+                -e,--eat          吃面包
+                -r,--rob [@用户]   抢面包
+                -g,--gift [@用户]  送面包
+                -l,--look         查面包
 
                 别名: 面包/🍞""", getAccess()
         );

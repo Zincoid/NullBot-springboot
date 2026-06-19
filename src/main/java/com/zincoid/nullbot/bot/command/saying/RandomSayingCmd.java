@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Slf4j
-@CmdMapping({"RandomSaying", "Saying", "saying", "say", "随机语录", "语录"})
+@CmdMapping({"RandomSaying", "saying", "say", "随机语录", "语录"})
 @Component
 @RequiredArgsConstructor
 public class RandomSayingCmd implements Cmd {
@@ -44,9 +44,9 @@ public class RandomSayingCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ RandomSaying 命令
-                功能: 随机语录 (可指定发言人)
+                功能: 随机语录
                 限权: %d 级
-                格式: RandomSaying [可选: QQ号]
+                格式: RandomSaying [可选: QQ号|@用户]
                 别名: saying/say/随机语录/语录""", getAccess()
         );
     }
@@ -55,7 +55,7 @@ public class RandomSayingCmd implements Cmd {
     public String getHelpForAI() {
         return """
                 ◉ RandomSaying 命令
-                功能: 随机语录 (可指定发言人)
-                格式: RandomSaying [可选: QQ号]""";
+                功能: 随机语录
+                格式: RandomSaying [可选: QQ号|@用户]""";
     }
 }

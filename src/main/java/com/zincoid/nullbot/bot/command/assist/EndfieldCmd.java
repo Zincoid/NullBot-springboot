@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
-@CmdMapping({"Endfield", "endfield", "end", "终末地查询", "终末地"})
+@CmdMapping({"Endfield", "end", "终末地查询", "终末地"})
 @Component
 @RequiredArgsConstructor
 public class EndfieldCmd implements Cmd {
@@ -141,16 +141,16 @@ public class EndfieldCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Endfield 命令
-                功能: 获取终末地攻略
+                功能: 终末地攻略查询
                 限权: %d 级
                 用法: Endfield [选项] [关键字]
 
                 选项:
-                  -c, --continuous     启用连查模式
-                  -v, --version [版本]  切换资源版本
-                  -r, --reload         更新版本目录
+                -c,--continuous     启用连查
+                -v,--version [版本]  切换版本
+                -r,--reload         更新版本
 
-                别名: endfield/end/终末地查询/终末地""", getAccess()
+                别名: end/终末地查询/终末地""", getAccess()
         );
     }
 }

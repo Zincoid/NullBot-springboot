@@ -14,7 +14,7 @@ import com.zincoid.nullbot.core.service.base.ItemService;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"Item", "item", "物品", "查询物品"})
+@CmdMapping({"Item", "查询物品", "物品"})
 @Component
 @RequiredArgsConstructor
 public class ItemCmd implements Cmd {
@@ -37,7 +37,7 @@ public class ItemCmd implements Cmd {
                 功能: 查询物品详情
                 限权: %d 级
                 格式: Item [物品ID]
-                别名: item/查询物品/物品""", getAccess()
+                别名: 查询物品/物品""", getAccess()
         );
     }
 }

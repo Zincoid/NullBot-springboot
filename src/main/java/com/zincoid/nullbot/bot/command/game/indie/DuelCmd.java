@@ -113,7 +113,7 @@ public class DuelCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Duel 命令
-                功能: 明日方舟斗蛐蛐
+                功能: 多人斗蛐蛐
                 限权: %d 级
                 格式: Duel
                 别名: 斗蛐蛐""", getAccess()

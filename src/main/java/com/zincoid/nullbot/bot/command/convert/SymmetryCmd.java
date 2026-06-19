@@ -86,7 +86,7 @@ public class SymmetryCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Symmetry 命令
-                功能: 图片对称
+                功能: 图片对称转换
                 限权: %d 级
                 格式:
                 1. [引用] Symmetry [可选: 方式]
@@ -100,7 +100,7 @@ public class SymmetryCmd implements Cmd {
     public String getHelpForAI() {
         return """
                 ◉ Symmetry 命令
-                功能: 头像图片对称处理
+                功能: 头像对称转换
                 格式: Symmetry [可选: 方式] [QQ号]
                 方式: 上/下/左/右 (默认左)
                 示例: Symmetry 右 2660181154""";

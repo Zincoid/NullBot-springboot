@@ -30,9 +30,9 @@ public class TicTacToeCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ TicTacToe 命令
-                功能: 匹配成功后发送井字棋落子
-                奖励: 30抽数 & 100Exp
+                功能: 双人井字棋对抗
                 限权: %d 级
+                奖励: 30抽数 & 100Exp
                 格式: TicTacToe [行] [列]
                 示例: TicTacToe 1 1
                 别名: 井字棋""", getAccess()

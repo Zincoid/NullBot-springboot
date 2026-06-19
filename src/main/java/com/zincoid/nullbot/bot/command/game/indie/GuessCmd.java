@@ -177,13 +177,13 @@ public class GuessCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Guess 命令
-                功能: 猜角色
-                奖励: 5抽数 & 20Exp
+                功能: 多人猜角色
                 限权: %d 级
+                奖励: 5抽数 & 20Exp
                 用法: Guess [选项] [类别]
 
                 选项:
-                  -f, --forfeit   放弃当前游戏
+                -f,--forfeit  放弃游戏
 
                 别名: 猜角色/猜
                 注意:
@@ -196,11 +196,11 @@ public class GuessCmd implements Cmd {
     public String getHelpForAI() {
         return """
                 ◉ Guess 命令
-                功能: 猜角色
+                功能: 多人猜角色
                 用法: Guess [选项] [类别]
 
                 选项:
-                  -f, --forfeit   放弃当前游戏
+                -f,--forfeit  放弃游戏
 
                 类别: 明日方舟
                 示例: Guess 明日方舟""";

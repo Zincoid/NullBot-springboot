@@ -33,7 +33,7 @@ public class LockCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Lock 命令
-                功能: 锁定 NullBot 系统
+                功能: 锁定系统
                 限权: %d 级
                 格式: Lock
                 别名: 锁定""", getAccess()

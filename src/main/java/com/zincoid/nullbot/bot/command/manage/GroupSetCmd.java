@@ -174,39 +174,40 @@ public class GroupSetCmd implements Cmd {
                 用法: GroupSet [选项] [参数...]
 
                 选项:
-                  -v, --view       获取群设置
-                  -l, --limit [选项]      限速设置
-                  -a, --ai [选项]         AI设置
-                  -m, --monitor [类型]    监测设置
-                  -g, --guess [比例] [比例] [边距] 猜图难度
+                -v,--view            查询全部
+                -l,--limit [参数...]  限速设置
+                -a,--ai [参数...]     AI设置
+                -m,--monitor [类型]   监测设置
+                -g,--guess [参数...]  猜图设置
 
-                limit 选项:
-                  scp              限速范围
-                  cap [上限量]      限速容量
-                  ref [补充量]      限速补充
-                  itv [分钟数]      补充间隔
+                limit 参数:
+                - scp              限速范围
+                - cap [上限量]      限速容量
+                - ref [补充量]      限速补充
+                - itv [分钟数]      补充间隔
 
-                ai 选项:
-                  scp              会话范围
-                  stg              对话策略
-                  tkn              思考模式
-                  voi              语音模式
-                  ati              注入保护
-                  ica              内令鉴权
-                  cus              允许自定
-                  aur              自主发言
-                  frq [0~1]        发言频率
+                ai 参数:
+                - scp              会话范围
+                - stg              对话策略
+                - tkn              思考模式
+                - voi              语音模式
+                - ati              注入保护
+                - ica              内令鉴权
+                - cus              允许自定
+                - aur              自主发言
+                - frq [0~1]        发言频率
 
                 monitor 类型:
-                  img              图片收集
-                  msg              消息收集
-                  key              词语检测
-                  pok              戳戳检测
-                  rcl              撤回检测
+                - img              图片收集
+                - msg              消息收集
+                - key              词语检测
+                - pok              戳戳检测
+                - rcl              撤回检测
+                
+                guess 参数:
+                [切割比例] [透明比例] [切割边距]
 
-                注意:
-                - 切换AI语音/策略/自定时会清空历史
-
+                注意: 切换AI语音/策略/自定时会清空历史
                 别名: 群设置""", getAccess()
         );
     }
@@ -219,8 +220,11 @@ public class GroupSetCmd implements Cmd {
                 用法: GroupSet [选项] [参数...]
 
                 选项:
-                  -v, --view           获取群设置
-                  -g, --guess [比例] [比例] [边距] 猜图难度
+                -v,--view            查询全部
+                -g,--guess [参数...]  猜图设置
+                
+                guess 参数:
+                [切割比例] [透明比例] [切割边距]
 
                 示例:
                 GroupSet --view

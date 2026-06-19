@@ -35,7 +35,7 @@ public class RawMsgCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ RawMsg 命令
-                功能: 输出原消息至控制台
+                功能: 输出 RawMessage
                 限权: %d 级
                 格式: [引用] RawMsg
                 别名: 原消息""", getAccess()

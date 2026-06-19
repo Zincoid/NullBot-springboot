@@ -51,9 +51,9 @@ public class InvokeCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Invoke 命令
-                功能: 反射调用Spring方法
+                功能: 基于反射进行调用
                 限权: %d 级
-                格式: Invoke [Bean名] [方法名] [参数...]
+                格式: Invoke [Bean] [方法] [参数...]
                 别名: 调用""", getAccess()
         );
     }

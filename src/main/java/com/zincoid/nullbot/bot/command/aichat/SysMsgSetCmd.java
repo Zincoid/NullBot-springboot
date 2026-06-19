@@ -101,14 +101,14 @@ public class SysMsgSetCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ SysMsgSet 命令
-                功能: 设置AI系统提示词并清空历史
+                功能: 设置AI提示词并重置历史
                 限权: %d 级
-                用法: SysMsgSet [选项] [提示词]
+                格式: SysMsgSet [选项]
 
                 选项:
-                  -v, --view      查看当前提示词
-                  -s, --set       设置提示词
-                  -r, --reset     重置提示词
+                -s,--set [文本]  设置提示词
+                -r,--reset      重置提示词
+                -v,--view       查看提示词
 
                 别名: 提示词设置/提示词
                 注意:

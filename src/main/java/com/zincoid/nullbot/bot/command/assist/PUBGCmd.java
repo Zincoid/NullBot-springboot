@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Slf4j
-@CmdMapping({"PUBG", "pubg", "资源地图"})
+@CmdMapping({"PUBG", "PUBG地图"})
 @Component
 @RequiredArgsConstructor
 public class PUBGCmd implements Cmd {
@@ -55,9 +55,9 @@ public class PUBGCmd implements Cmd {
                 ◉ PUBG 命令
                 功能: 获取PUBG资源地图
                 限权: %d 级
-                格式: PUBG [地图名]
+                格式: PUBG [地图]
                 地图: 艾伦格/泰戈/帝斯顿/维寒迪/荣都/米拉玛
-                别名: pubg/资源地图""", getAccess()
+                别名: PUBG地图""", getAccess()
         );
     }
 
@@ -66,7 +66,7 @@ public class PUBGCmd implements Cmd {
         return """
                 ◉ PUBG 命令
                 功能: 获取PUBG资源地图
-                格式: PUBG [地图名]
+                格式: PUBG [地图]
                 地图: 艾伦格/泰戈/帝斯顿/维寒迪/荣都/米拉玛
                 示例: PUBG 帝斯顿""";
     }

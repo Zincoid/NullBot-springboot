@@ -12,6 +12,7 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.zincoid.nullbot.bot.gateway.handler.AuthHandler;
 import com.zincoid.nullbot.bot.gateway.processor.CmdEvent;
 import com.zincoid.nullbot.bot.gateway.processor.CmdProcessor;
+import com.zincoid.nullbot.core.properties.bot.CmdProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.BotContext;
@@ -40,9 +41,8 @@ public class BotListener {
     private final BotMonitor botMonitor;
     private final SecurityCodeScheduler securityCodeScheduler;
     private final AuthHandler authHandler;
+    private final CmdProperties cmdProperties;
 
-    @Value("${bot.command.prefix}")
-    private String commandPrefix;
     @Value("${bot.admin-id}")
     private Long adminId;
 
@@ -63,7 +63,7 @@ public class BotListener {
         //         .formatted(userName, userId, message), false);
         // bot.sendPrivateMsg(userId, "✉️已通知管理员", false);
 
-        if (message.startsWith(commandPrefix)) {
+        if (message.startsWith(cmdProperties.getPrefix())) {
             // 普通命令处理
             log.info("◉ [PrivateAction:Cmd] 私聊 {}({}) -> {}", userName, userId, message);
             cmdProcessor.processQQ(bot, CmdEvent.of(event));
@@ -122,13 +122,13 @@ public class BotListener {
         String userName = event.getSender().getNickname();
         String message = event.getMessage();
 
-        if (message.startsWith(commandPrefix)) {
+        if (message.startsWith(cmdProperties.getPrefix())) {
             // 普通命令处理
             log.info("◉ [GroupAction:Cmd] 群聊 {} - {}({}) -> {}", groupId, userName, userId, message);
             cmdProcessor.processQQ(bot, CmdEvent.of(event));
         } else if (event.getArrayMsg().size() > 1 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
             // 引用命令处理
-            if (!event.getArrayMsg().get(1).getStringData("text").startsWith(commandPrefix)) return;
+            if (!event.getArrayMsg().get(1).getStringData("text").startsWith(cmdProperties.getPrefix())) return;
             log.info("◉ [GroupAction:ReplyCmd] 群聊 {} - {}({}) -> {}", groupId, userName, userId, message);
             cmdProcessor.processQQ(bot, CmdEvent.of(event));
         }

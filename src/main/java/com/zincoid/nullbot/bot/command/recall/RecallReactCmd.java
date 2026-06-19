@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-@CmdMapping({"RecallReact"})
+@CmdMapping({"RecallReact", "撤回响应"})
 @Component
 @RequiredArgsConstructor
 public class RecallReactCmd implements Cmd {

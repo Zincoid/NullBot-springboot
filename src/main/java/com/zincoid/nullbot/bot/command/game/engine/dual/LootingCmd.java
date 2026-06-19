@@ -30,11 +30,10 @@ public class LootingCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Looting 命令
-                功能: 双人 PvPvE 非回合制摸金对抗
-                奖励: 所有带出物品 & 200Exp
+                功能: 双人 PvPvE 摸金对抗
                 限权: %s 级
+                奖励: 所有带出物品 & 200Exp
                 格式: Looting [可选: 指令]
-                别名: 摸金
                 
                 指令:
                 - 侦察
@@ -47,7 +46,8 @@ public class LootingCmd implements Cmd {
                 说明:
                 - 任意玩家行动(除侦察)会推进游戏刻
                 - AI 会在刻中移动或攻击
-                - 25 刻后未撤离则迷失并掉落全部物品""", getAccess()
+                - 25 刻后未撤离则迷失并掉落全部物品
+                别名: 摸金""", getAccess()
         );
     }
 }

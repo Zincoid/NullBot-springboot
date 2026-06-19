@@ -28,9 +28,10 @@ public class UserBanCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ UserBan 命令
-                功能: 用户禁言 (时长设为0时解除禁言)
+                功能: 用户禁言
                 限权: %d 级
                 格式: UserBan [QQ号] [时长(分钟)]
+                注意: 时长设为0时解除禁言
                 别名: ban/禁言""", getAccess()
         );
     }
@@ -39,8 +40,10 @@ public class UserBanCmd implements Cmd {
     public String getHelpForAI() {
         return """
                 ◉ UserBan 命令
-                功能: 用户禁言 (时长设为0时解除禁言)
+                功能: 用户禁言
                 格式: UserBan [QQ号] [时长(分钟)]
-                注意: 你想禁言某人时可主动调用""";
+                注意:
+                - 时长设为0时解除禁言
+                - 你想禁言某人时可主动调用""";
     }
 }

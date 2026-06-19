@@ -44,23 +44,23 @@ public class FuncSetCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ FuncSet 命令
-                功能: 设置全局功能
+                功能: 全局功能设置
                 限权: %d 级
                 用法: FuncSet [选项] [标志]
 
                 选项:
-                  -v, --view     获取全局设置
-                  -c, --change   更改启用状态
+                -v,--view    获取全局设置
+                -c,--change  更改启用状态
 
                 标志:
-                  AIAutoReply
-                  ImgCollect
-                  MsgCollect
-                  KeywordAct
-                  PokeDetect
-                  RecallDetect
-                  PrivateCmd
-                  BottleAutoThrow
+                - AIAutoReply      自主发言
+                - ImgCollect       图片收集
+                - MsgCollect       消息收集
+                - KeywordAct       词语检测
+                - PokeDetect       戳戳检测
+                - RecallDetect     撤回检测
+                - PrivateCmd       私聊指令
+                - BottleAutoThrow  自动投瓶
                 
                 别名: 功能控制""", getAccess()
         );

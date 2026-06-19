@@ -80,7 +80,7 @@ public class ChatHistoryCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ ChatHistory 命令
-                功能: 获取AI聊天历史
+                功能: 获取聊天历史
                 限权: %d 级
                 格式: ChatHistory [可选: 页码]
                 别名: 聊天历史""", getAccess()

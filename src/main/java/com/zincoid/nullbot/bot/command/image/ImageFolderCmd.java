@@ -32,7 +32,7 @@ public class ImageFolderCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ ImageFolder 命令
-                功能: 获取图片目录树结构
+                功能: 获取图片目录结构
                 限权: %d 级
                 格式: ImageFolder
                 别名: 图片目录""",  getAccess()
@@ -43,7 +43,7 @@ public class ImageFolderCmd implements Cmd {
     public String getHelpForAI() {
         return """
                 ◉ ImageFolder 命令
-                功能: 获取图片目录树结构
+                功能: 获取图片目录结构
                 格式: ImageFolder""";
     }
 }

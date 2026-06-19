@@ -133,13 +133,12 @@ public class WifeCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Wife 命令
-                功能: 今日老婆(每日可抽一次)
+                功能: 今日老婆
                 限权: %d 级
                 格式: Wife [可选: 人物来源]
                 注意:
-                - 无参数时选择群友老婆
-                - 带参数时选二次元老婆
-                - 以上两种每日均可抽一次
+                - 无参数时选择群友老婆, 带参数时选二次元老婆
+                - 以上两种选择每日均可抽一次
                 - 人物来源可通过图片目录命令查看acg下子目录名获得
                 别名: 今日老婆""", getAccess()
         );

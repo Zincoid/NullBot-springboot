@@ -52,11 +52,11 @@ public class RestartCmd implements Cmd {
                 ◉ Restart 命令
                 功能: 重新启动应用
                 限权: %d 级
-                用法: Restart [--app | --jar [路径]]
+                用法: Restart [选项]
 
                 选项:
-                  -a, --app          通过APP接口重启
-                  -j, --jar [路径]    通过JAR文件重启
+                -a,--app        上下文重启
+                -j,--jar [路径]  通过包重启
 
                 别名: reboot/重启""", getAccess()
         );

@@ -35,10 +35,10 @@ public class MatchCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Match 命令
-                功能: 按游戏类型匹配
+                功能: 加入游戏匹配
                 限权: %d 级
-                格式: Match [游戏类型]
-                游戏类型:
+                格式: Match [类型]
+                类型:
                 - 井字棋 (TicTacToe)
                 - 黑白棋 (Reversi)
                 - 摸金 (Looting)

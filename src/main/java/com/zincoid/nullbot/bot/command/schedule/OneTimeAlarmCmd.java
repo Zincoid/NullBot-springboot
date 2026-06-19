@@ -37,21 +37,18 @@ public class OneTimeAlarmCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
-        String timeStr = args.next();
         String message = args.next();
         Long userId = args.nextLong(event.getUserId());
         LocalDateTime alarmTime;
         String alarmId = UUID.randomUUID().toString().substring(0, 8);
         try {
             if (args.hasOpt("time", "t")) {
-                alarmTime = parseDateTime(timeStr);
-                botTaskScheduler.setOneTimeGroupAtMsgAlarm(
-                        alarmId, groupId, userId, message, alarmTime);
+                alarmTime = parseDateTime(args.getOpt("time", "t"));
+                botTaskScheduler.setOneTimeGroupAtMsgAlarm(alarmId, groupId, userId, message, alarmTime);
             } else if (args.hasOpt("delay", "d")) {
-                int delay = Integer.parseInt(timeStr);
+                int delay = Integer.parseInt(args.getOpt("delay", "d"));
                 alarmTime = LocalDateTime.now().plusMinutes(delay);
-                botTaskScheduler.setOneTimeGroupAtMsgAlarm(
-                        alarmId, groupId, userId, message, alarmTime);
+                botTaskScheduler.setOneTimeGroupAtMsgAlarm(alarmId, groupId, userId, message, alarmTime);
             } else {
                 throw new BotWarnException("无此模式");
             }
@@ -84,12 +81,16 @@ public class OneTimeAlarmCmd implements Cmd {
                 ◉ OneTimeAlarm 命令
                 功能: 设置单次群内提醒闹钟
                 限权: %d 级
-                用法: OneTimeAlarm [选项] [时间] [文本] [QQ号]
+                用法: OneTimeAlarm [选项] [文本] [可选: QQ号]
 
                 选项:
-                  -t, --time [时间]   时间模式 (格式: yy-MM-ddTHH:mm)
-                  -d, --delay [分钟]  延迟模式 (当前时间 + 分钟数)
+                -t,--time=[时间]   时间模式
+                -d,--delay=[分钟]  延迟模式
 
+                注意:
+                - 时间模式参数格式: yy-MM-ddTHH:mm
+                - 延迟模式在指定时间后触发
+                - 未设置用户时默认为自己
                 别名: 单次闹钟""", getAccess()
         );
     }
@@ -99,14 +100,18 @@ public class OneTimeAlarmCmd implements Cmd {
         return """
                 ◉ OneTimeAlarm 命令
                 功能: 设置单次群内提醒闹钟
-                用法: OneTimeAlarm [选项] [时间] [文本] [目标QQ号]
+                用法: OneTimeAlarm [选项] [文本] [QQ号]
 
                 选项:
-                  -t, --time [时间]   时间模式 (格式: yy-MM-ddTHH:mm)
-                  -d, --delay [分钟]  延迟模式
+                -t,--time=[时间]   时间模式
+                -d,--delay=[分钟]  延迟模式
+
+                注意:
+                - 时间模式参数格式: yy-MM-ddTHH:mm
+                - 延迟模式在指定时间后触发
 
                 示例:
-                OneTimeAlarm --time 26-02-07T09:00 九点到了 2660181154
-                OneTimeAlarm --delay 10 十分钟了 2660181154""";
+                OneTimeAlarm --time=26-02-07T09:00 九点到了 2660181154
+                OneTimeAlarm --delay=10 十分钟了 2660181154""";
     }
 }

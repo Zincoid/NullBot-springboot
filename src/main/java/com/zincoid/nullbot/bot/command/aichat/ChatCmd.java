@@ -7,11 +7,12 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
+import com.zincoid.nullbot.bot.gateway.processor.CmdRegistry;
 import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
+import com.zincoid.nullbot.core.properties.bot.CmdProperties;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -20,12 +21,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class ChatCmd implements Cmd {
 
-    @Value("${bot.command.prefix}")
-    private String commandPrefix;
     private final QQChatClient qqChatClient;
+    private final CmdRegistry cmdRegistry;
+    private final CmdProperties cmdProperties;
 
-    public ChatCmd(@Lazy QQChatClient qqChatClient) {
+    public ChatCmd(@Lazy QQChatClient qqChatClient, CmdRegistry cmdRegistry, CmdProperties cmdProperties) {
         this.qqChatClient = qqChatClient;
+        this.cmdRegistry = cmdRegistry;
+        this.cmdProperties = cmdProperties;
     }
 
     @Override
@@ -37,7 +40,7 @@ public class ChatCmd implements Cmd {
         for (ArrayMsg msg : event.getArrayMsg()) {
             if (msg.getType() != MsgTypeEnum.text) continue;
             String text = msg.getStringData("text").trim();
-            if (!text.startsWith(commandPrefix) || text.startsWith(commandPrefix + "Chat") || text.startsWith(commandPrefix + "对话")) continue;
+            if (!text.startsWith(cmdProperties.getPrefix()) || cmdRegistry.isCmdOf(text, ChatCmd.class)) continue;
             bot.sendGroupMsg(event.getGroupId(), """
                             ⚠️检测到指令前缀
                             - 使用指令不要@Null
@@ -64,7 +67,10 @@ public class ChatCmd implements Cmd {
                 ◉ Chat 命令
                 功能: 与AI对话
                 限权: %d 级
-                格式: Chat [内容] 或 @Null [内容] 或 戳一戳
+                格式:
+                1. Chat [内容]
+                2. @Null [内容]
+                3. 戳一戳
                 别名: 对话""", getAccess()
         );
     }

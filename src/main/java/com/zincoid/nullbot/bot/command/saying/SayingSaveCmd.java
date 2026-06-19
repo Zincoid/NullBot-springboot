@@ -43,7 +43,7 @@ public class SayingSaveCmd implements Cmd {
                 ◉ SayingSave 命令
                 功能: 保存语录
                 限权: %d 级
-                格式: [引用文本] SayingSave
+                格式: [引用] SayingSave
                 别名: 保存语录""", getAccess()
         );
     }

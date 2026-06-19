@@ -42,7 +42,7 @@ public class RecentPlayerCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ RecentPlayer 命令
-                功能: 展示最近活跃的5个玩家
+                功能: 展示最近5个活跃玩家
                 限权: %d 级
                 格式: RecentPlayer
                 别名: 最近玩家""", getAccess()

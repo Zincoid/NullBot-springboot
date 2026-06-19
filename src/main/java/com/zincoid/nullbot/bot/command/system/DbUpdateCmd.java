@@ -24,8 +24,8 @@ public class DbUpdateCmd implements Cmd {
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
 
         // 自定义更新方式
-        groupService.updateAllNames();
-        userService.updateAllNames();
+        // groupService.updateAllNames();
+        // userService.updateAllNames();
 
         bot.sendGroupMsg(event.getGroupId(), "✅数据库已更新", false);
         log.info("☑ [DbUpdate] 数据库已更新");
@@ -38,7 +38,7 @@ public class DbUpdateCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ DbUpdate 命令
-                功能: 更新数据库条目
+                功能: 数据库更新
                 限权: %d 级
                 格式: DbUpdate
                 别名: 数据库更新""", getAccess()

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
-@CmdMapping({"Anime", "anime", "二次元", "色图", "涩图"})
+@CmdMapping({"Anime", "二次元", "色图", "涩图"})
 @Component
 @RequiredArgsConstructor
 public class AnimeCmd implements Cmd {
@@ -47,7 +47,7 @@ public class AnimeCmd implements Cmd {
                 功能: 随机二/三次元图
                 限权: %d 级
                 格式: Anime
-                别名: anime/二次元/色图/涩图""", getAccess()
+                别名: 二次元/色图/涩图""", getAccess()
         );
     }
 

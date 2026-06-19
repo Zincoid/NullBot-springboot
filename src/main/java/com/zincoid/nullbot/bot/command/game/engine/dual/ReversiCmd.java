@@ -30,9 +30,9 @@ public class ReversiCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Reversi 命令
-                功能: 匹配成功后发送黑白棋落子指令
-                奖励: 50抽数 & 200Exp
+                功能: 双人黑白棋对抗
                 限权: %d 级
+                奖励: 50抽数 & 200Exp
                 格式: Reversi [坐标]
                 示例: Reversi D3
                 别名: 黑白棋""", getAccess()

@@ -55,12 +55,12 @@ public class SellCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Sell 命令
-                功能: 出售库存物品(可批量出售所有指定稀有度物品)
+                功能: 库存物品出售
                 限权: %d 级
                 用法: Sell [选项] [物品ID] [数量]
 
                 选项:
-                  -r, --rarity   按稀有度批量出售
+                -r,--rarity   按稀有度全部出售
 
                 稀有度: RED/GOLD/PURPLE/BLUE/GREEN/WHITE
                 别名: 出售""", getAccess()

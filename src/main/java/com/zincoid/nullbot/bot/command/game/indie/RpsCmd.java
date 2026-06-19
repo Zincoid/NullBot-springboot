@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Slf4j
-@CmdMapping({"Rps", "rps", "猜拳"})
+@CmdMapping({"Rps", "猜拳"})
 @Component
 @RequiredArgsConstructor
 public class RpsCmd implements Cmd {
@@ -63,13 +63,14 @@ public class RpsCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Rps 命令
-                功能: 猜拳 (使用互动表情)
+                功能: 单人猜拳
                 限权: %d 级
                 格式: Rps [选项]
                 
                 选项:
-                  -b, --ban=[分钟]  启用禁言处罚
+                -b,--ban=[分钟]  启用禁言处罚
                 
-                别名: rps/猜拳""", getAccess());
+                注意: 需发送互动表情
+                别名: 猜拳""", getAccess());
     }
 }

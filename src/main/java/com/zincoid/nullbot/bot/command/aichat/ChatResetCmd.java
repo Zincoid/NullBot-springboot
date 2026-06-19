@@ -37,7 +37,7 @@ public class ChatResetCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ ChatReset 命令
-                功能: 重置AI聊天记忆
+                功能: 重置聊天历史
                 限权: %d 级
                 格式: ChatReset
                 别名: 重置聊天""", getAccess()
@@ -48,8 +48,7 @@ public class ChatResetCmd implements Cmd {
     public String getHelpForAI() {
         return """
                 ◉ ChatReset 命令
-                功能: 重置AI聊天记忆
-                格式: ChatReset
-                注意: 该指令无法撤回已发送群聊消息""";
+                功能: 重置聊天历史
+                格式: ChatReset""";
     }
 }

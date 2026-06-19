@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
-@CmdMapping({"RandomAudio", "Audio", "audio", "aud", "随机音频", "音频"})
+@CmdMapping({"RandomAudio", "audio", "aud", "随机音频", "音频"})
 @Component
 @RequiredArgsConstructor
 public class RandomAudioCmd implements Cmd {
@@ -47,10 +47,10 @@ public class RandomAudioCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ RandomAudio 命令
-                功能: 发送保存的随机音频
+                功能: 发送随机音频
                 限权: %d 级
                 格式: RandomAudio
-                别名: Audio/audio/aud/随机音频/音频""", getAccess()
+                别名: audio/aud/随机音频/音频""", getAccess()
         );
     }
 
@@ -58,7 +58,7 @@ public class RandomAudioCmd implements Cmd {
     public String getHelpForAI() {
         return """
                 ◉ RandomAudio 命令
-                功能: 发送保存的随机音频
+                功能: 发送随机音频
                 格式: RandomAudio""";
     }
 }

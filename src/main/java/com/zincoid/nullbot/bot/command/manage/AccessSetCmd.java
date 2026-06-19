@@ -84,13 +84,13 @@ public class AccessSetCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ AccessSet 命令
-                功能: 设置用户/群组限权等级
+                功能: 限权等级设置
                 限权: %d 级
                 用法: AccessSet [选项] [ID] [限权等级]
 
                 选项:
-                  -u, --user   针对用户操作
-                  -g, --group  针对群组操作
+                -u,--user   用户操作
+                -g,--group  群组操作
 
                 别名: 限权设置
                 注意:
@@ -103,12 +103,12 @@ public class AccessSetCmd implements Cmd {
     public String getHelpForAI() {
         return """
                 ◉ AccessSet 命令
-                功能: 设置用户/群组限权等级
+                功能: 限权等级设置
                 用法: AccessSet [选项] [ID] [限权等级]
 
                 选项:
-                  -u, --user   针对用户操作
-                  -g, --group  针对群组操作
+                -u,--user   用户操作
+                -g,--group  群组操作
 
                 示例: AccessSet --user 2660181154 2""";
     }

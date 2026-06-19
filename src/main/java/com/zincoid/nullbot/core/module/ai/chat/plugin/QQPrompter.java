@@ -73,7 +73,7 @@ public class QQPrompter {
         sb.append(BASE_PM_PROMPT);
         if (cq) sb.append(CQ_PROMPT);
         if (cmd) sb.append(CMD_PROMPT.formatted(
-                cmdRegistry.getCmdHelpsForAI(QQCmdAllows.getPm())));
+                cmdRegistry.getCmdAIDoc(QQCmdAllows.getPm())));
         sb.append(MEMORY_PROMPT.formatted(
                 formatMemories(sysMsgManager.getUserMemory(userId))));
         return sb.toString();
@@ -85,7 +85,7 @@ public class QQPrompter {
         sb.append(BASE_GC_PROMPT);
         if (cq) sb.append(CQ_PROMPT);
         if (cmd) sb.append(CMD_PROMPT.formatted(
-                cmdRegistry.getCmdHelpsForAI(QQCmdAllows.getGc())));
+                cmdRegistry.getCmdAIDoc(QQCmdAllows.getGc())));
         sb.append(MEMORY_PROMPT.formatted(
                 formatMemories(sysMsgManager.getGroupMemory(groupId))));
         return sb.toString();

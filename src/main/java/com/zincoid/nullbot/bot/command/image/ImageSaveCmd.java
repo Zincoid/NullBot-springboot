@@ -53,9 +53,9 @@ public class ImageSaveCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ ImageSave 命令
-                功能: 保存图片至图库
+                功能: 保存图片
                 限权: %d 级
-                格式: [引用图片] ImageSave
+                格式: [引用] ImageSave
                 别名: 保存图片""", getAccess()
         );
     }

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Slf4j
-@CmdMapping({"PRTS", "prts", "PRTS查询"})
+@CmdMapping({"PRTS", "PRTS查询"})
 @Component
 @RequiredArgsConstructor
 public class PRTSCmd implements Cmd {
@@ -47,7 +47,7 @@ public class PRTSCmd implements Cmd {
                 1. PRTS [查询内容]
                 2. PRTS [可选: 条目] [干员名]
                 条目: 语音/档案/密录/悖论
-                别名: PRTS查询/prts""", getAccess()
+                别名: PRTS查询""", getAccess()
         );
     }
 

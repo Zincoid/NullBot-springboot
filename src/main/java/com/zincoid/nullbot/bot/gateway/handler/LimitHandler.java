@@ -4,6 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.gateway.processor.CmdEvent;
+import com.zincoid.nullbot.core.properties.bot.CmdProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.bot.gateway.processor.CmdHandlerChain;
@@ -19,14 +20,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LimitHandler implements Handler {
 
-    @Value("${bot.command.limit}")
-    private boolean enabled;
-
     private final CmdRateLimiter cmdRateLimiter;
+    private final CmdProperties cmdProperties;
 
     @Override
     public void handle(Bot bot, Cmd cmd, CmdEvent<?> event, CmdHandlerChain chain) throws Exception {
-        if (!enabled) {
+        if (!cmdProperties.isLimit()) {
             log.info("├─[LimitHandler] 未启用限速器");
             chain.doHandle(bot, event, cmd);
             return;

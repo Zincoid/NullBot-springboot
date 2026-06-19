@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@CmdMapping({"Test", "test", "测试"})
+@CmdMapping({"Test", "测试"})
 @Component
 @RequiredArgsConstructor
 public class TestCmd implements Cmd {
@@ -38,7 +38,7 @@ public class TestCmd implements Cmd {
         // 发送合并转发内容到群（groupId为要发送的群）
         bot.sendGroupForwardMsg(groupId, forward);
 
-        log.info("☑ [Test] 测试: {}", "");
+        log.info("☑ [Test] 测试: {}", "ok");
     }
 
     @Override
@@ -51,7 +51,7 @@ public class TestCmd implements Cmd {
                 功能: 测试
                 限权: %d 级
                 格式: 不固定
-                别名: test/测试""", getAccess()
+                别名: 测试""", getAccess()
         );
     }
 }

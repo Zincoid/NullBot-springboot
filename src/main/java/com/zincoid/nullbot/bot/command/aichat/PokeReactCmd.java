@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 @Slf4j
-@CmdMapping({"PokeReact"})
+@CmdMapping({"PokeReact", "戳戳响应"})
 @Component
 public class PokeReactCmd implements Cmd {
 

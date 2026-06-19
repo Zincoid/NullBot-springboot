@@ -120,7 +120,7 @@ public class BottleCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Bottle 命令
-                功能: 扔或者捡一个漂流瓶
+                功能: 扔或捡漂流瓶
                 限权: %d 级
                 格式: Bottle [可选: 文本/图片]
                 别名: 漂流瓶

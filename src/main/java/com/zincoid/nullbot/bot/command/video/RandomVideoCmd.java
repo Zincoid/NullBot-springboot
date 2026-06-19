@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
-@CmdMapping({"RandomVideo", "Video", "video", "vid", "随机视频", "视频"})
+@CmdMapping({"RandomVideo", "video", "vid", "随机视频", "视频"})
 @Component
 @RequiredArgsConstructor
 public class RandomVideoCmd implements Cmd {
@@ -50,7 +50,7 @@ public class RandomVideoCmd implements Cmd {
                 功能: 发送保存的随机视频
                 限权: %d 级
                 格式: RandomVideo
-                别名: Video/video/vid/随机视频/视频""", getAccess()
+                别名: video/vid/随机视频/视频""", getAccess()
         );
     }
 

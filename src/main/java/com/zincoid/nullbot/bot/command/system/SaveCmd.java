@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"Save", "save", "保存"})
+@CmdMapping({"Save", "保存"})
 @Component
 @RequiredArgsConstructor
 public class SaveCmd implements Cmd {
@@ -44,10 +44,10 @@ public class SaveCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Save 命令
-                功能: 保存视频图片或语录
+                功能: 通用保存
                 限权: %d 级
                 格式: [引用] Save
-                别名: 保存/save
+                别名: 保存
                 优先: 视频>图片>语录""", getAccess()
         );
     }

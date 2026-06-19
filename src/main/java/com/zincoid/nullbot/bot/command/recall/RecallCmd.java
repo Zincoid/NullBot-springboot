@@ -13,7 +13,7 @@ import com.zincoid.nullbot.bot.command.Cmd;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"Recall", "recall", "rc", "撤回"})
+@CmdMapping({"Recall", "rc", "撤回"})
 @Component
 @RequiredArgsConstructor
 public class RecallCmd implements Cmd {
@@ -35,10 +35,10 @@ public class RecallCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Recall 命令
-                功能: 撤回任意引用的消息
+                功能: 撤回消息
                 限权: %d 级
-                格式: [引用消息] Recall
-                别名: recall/rc/撤回""", getAccess()
+                格式: [引用] Recall
+                别名: rc/撤回""", getAccess()
         );
     }
 }

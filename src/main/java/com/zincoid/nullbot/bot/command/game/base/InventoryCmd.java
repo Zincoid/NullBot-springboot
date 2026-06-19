@@ -15,7 +15,7 @@ import com.zincoid.nullbot.core.service.base.UserService;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"Inventory", "查看库存", "库存"})
+@CmdMapping({"Inventory", "库存"})
 @Component
 @RequiredArgsConstructor
 public class InventoryCmd implements Cmd {
@@ -53,8 +53,8 @@ public class InventoryCmd implements Cmd {
                 ◉ Inventory 命令
                 功能: 查看库存物品
                 限权: %d 级
-                格式: Inventory [可选: 页码(默认为1)]
-                别名: 查看库存/库存""", getAccess()
+                格式: Inventory [可选: 页码]
+                别名: 库存""", getAccess()
         );
     }
 }

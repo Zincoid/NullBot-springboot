@@ -35,7 +35,7 @@ public class CancelAlarmCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ CancelAlarm 命令
-                功能: 取消个人闹钟
+                功能: 取消闹钟
                 限权: %d 级
                 格式: CancelAlarm [AlarmID]
                 别名: 取消闹钟""", getAccess()

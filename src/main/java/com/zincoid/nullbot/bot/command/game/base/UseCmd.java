@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"Use", "使用物品", "使用"})
+@CmdMapping({"Use", "使用"})
 @Component
 @RequiredArgsConstructor
 public class UseCmd implements Cmd {
@@ -51,10 +51,10 @@ public class UseCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Use 命令
-                功能: 使用库存的物品
+                功能: 库存物品使用
                 限权: %d 级
                 格式: Use [物品ID]
-                别名: 使用物品/使用""", getAccess()
+                别名: 使用""", getAccess()
         );
     }
 }
