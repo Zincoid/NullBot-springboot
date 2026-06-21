@@ -1044,3 +1044,7 @@
 - 新增 CmdProperties 属性类 - 完成优化替换；
 - 优化 针对 ChatCmd 的特殊跳过逻辑；
 - 优化 指令类的 CommandMapping 配置。
+
+### 2026.6.21
+
+- 修复 CmdRegistry 懒加载 NPE 漏洞。

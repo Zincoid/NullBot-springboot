@@ -34,8 +34,8 @@ public class CmdRegistry {
         return cmdMap.get(cmdName);
     }
 
-    @SafeVarargs
-    public final boolean isCmdOf(String message, Class<? extends Cmd>... targetClasses) {
+    @SuppressWarnings("unchecked")
+    public boolean isCmdOf(String message, Class<? extends Cmd>... targetClasses) {
         if (message == null || !message.startsWith(cmdProperties.getPrefix())) return false;
         String cmdName = message.substring(cmdProperties.getPrefix().length()).trim().split("\\s+")[0];
         Cmd cmd = cmdMap.get(cmdName);

@@ -61,13 +61,13 @@ public class GuessCmd implements Cmd {
             SettingPO setting = BotCtx.getSetting();
 
             String start = MsgUtils.builder()
-                    .text("[猜角色] ✨题目是\n")
+                    .text("✨猜图题目如下！\n")
                     .img("base64://" + crop(guess.getPath(),
                             setting.getGuessCropRatio(),
                             setting.getGuessPadding(),
                             setting.getGuessTransparentRatio()
                     ))
-                    .text("注: 请发送\"#内容\"")
+                    .text("注: 请发送\"#文本\"")
                     .build();
             bot.sendGroupMsg(groupId, start, false);
             log.info("☑ [Guess] 猜谜已初始化 - {} -> {}", groupId, guess.getName());
