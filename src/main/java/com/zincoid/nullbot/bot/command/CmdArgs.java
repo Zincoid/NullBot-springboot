@@ -224,6 +224,16 @@ public final class CmdArgs {
         catch (NumberFormatException e) { throw formatError(); }
     }
 
+    // ── Placeholder resolution ───────────────────────────
+
+    public CmdArgs resolve(Map<String, String> vars) {
+        return CmdArgs.of(raw.stream().map(s -> {
+            for (Map.Entry<String, String> e : vars.entrySet())
+                s = s.replace("{" + e.getKey() + "}", e.getValue());
+            return s;
+        }).toList());
+    }
+
     // ── Private helpers ─────────────────────────────────
 
     private static BotWarnException missingArg() {

@@ -9,6 +9,7 @@ import com.zincoid.nullbot.bot.gateway.processor.CmdRegistry;
 import com.zincoid.nullbot.core.module.ai.chat.memory.MsgWindowMemory;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.enums.ChatScope;
+import com.zincoid.nullbot.core.module.control.KeywordReacter;
 import com.zincoid.nullbot.core.properties.bot.CmdProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +34,12 @@ public class BotMonitor {
     /* 聊天机器人工具监听器 */
 
     private final BotInputManager botInputManager;
+    private final KeywordReacter keywordReacter;
     private final CmdProcessor cmdProcessor;
     private final CmdRegistry cmdRegistry;
     private final MsgWindowMemory msgWindowMemory;
-    private final StorageProperties storageProperties;
     private final FileService fileService;
+    private final StorageProperties storageProperties;
     private final CmdProperties cmdProperties;
 
     // =================== 输入响应方法 ===================
@@ -46,13 +48,19 @@ public class BotMonitor {
         return botInputManager.response(event.getGroupId(), event.getUserId(), event.getMessage());
     }
 
+    @FuncControl("KeywordAct")
+    public boolean doGroupKeywordAct(Bot bot, GroupMessageEvent event) throws Exception {
+        if (!BotCtx.getSetting().isKeywordDetect()) return false;
+        return keywordReacter.react(bot, event);
+    }
+
     // =================== 自动动作方法 ===================
 
     @FuncControl(value = "BottleAutoThrow", enabled = false)
     public void doGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception {
         double freq = 0.001;  // 固定自动投出频率
         if (freq < Math.random()) return;
-        log.info("◉ [GroupMonitor:BottleAutoThrow] 自动投出漂流瓶 {} -> {}", event.getUserId(), event.getMessage());
+        log.info("◉ [GroupMonitor:BottleAutoThrow] 用户 {} - 自动投出漂流瓶 -> {}", event.getUserId(), event.getMessage());
         cmdProcessor.processQQ(bot, CmdEvent.of(event, "Bottle", List.of("--auto"), false, false));
     }
 
@@ -68,7 +76,7 @@ public class BotMonitor {
         double freq = BotCtx.getSetting().getReplyFrequency();
         if (freq < Math.random()) return false;
         String parsed = MsgUtil.formatMsg(bot, event.getArrayMsg());
-        log.info("◉ [GroupMonitor:AIAutoReply] 自动回复至群聊 {}", event.getGroupId());
+        log.info("◉ [GroupMonitor:AIAutoReply] 群聊 {} -> 自动回复", event.getGroupId());
         cmdProcessor.processQQ(bot, CmdEvent.of(event, "Chat", List.of(parsed), false, false));
         return true;
     }
@@ -86,7 +94,7 @@ public class BotMonitor {
 
         Map<String, String> imageMap = MsgUtil.extractImgMap(event.getArrayMsg());
         for (Map.Entry<String, String> entry : imageMap.entrySet()) {
-            log.info("◉ [GroupMonitor:ImgCollect] 来自群 {} - {}({}) -> Image", groupId, userName, userId);
+            log.info("◉ [GroupMonitor:ImgCollect] 群聊 {} - {}({}) -> 图片收集", groupId, userName, userId);
             String filename = entry.getKey();
             String url = entry.getValue();
             try {
@@ -99,32 +107,17 @@ public class BotMonitor {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @FuncControl("MsgCollect")
     public void doGroupMsgCollect(Bot bot, GroupMessageEvent event) {
         if (!BotCtx.getSetting().isMessageCollect()) return;
 
         if (cmdRegistry.isCmdOf(event.getMessage(), ChatCmd.class)) return;  // 按需 AI自动记录
         String parsed = MsgUtil.formatMsg(bot, event.getArrayMsg());
-        log.info("◉ [GroupMonitor:MsgCollect] 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
+        log.info("◉ [GroupMonitor:MsgCollect] 群聊 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         msgWindowMemory.add(
                 ChatScope.MONITOR + "_" + event.getGroupId(),
                 QQMessage.user(parsed).with(event.getGroupId(), event.getUserId(), event.getSender().getNickname()).id(event.getMessageId())
         );
-    }
-
-    @FuncControl("KeywordAct")
-    public void doGroupKeywordAct(Bot bot, GroupMessageEvent event) throws Exception {
-        if (!BotCtx.getSetting().isKeywordDetect()) return;
-
-        if (event.getMessage().contains("男娘")) {
-            log.info("◉ [GroupMonitor:KeywordAct] 检测到\"男娘\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
-            bot.sendGroupMsg(event.getGroupId(), "哪有男娘？", false);
-            // cmdProcessor.processQQ(bot, CmdEvent.of(event, "Reply", List.of("哪有男娘？"), false, false));
-        }
-        if (event.getMessage().contains("受着")) {
-            log.info("◉ [GroupMonitor:KeywordAct] 检测到\"受着\"关键字 来自群 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), event.getMessage());
-            cmdProcessor.processQQ(bot, CmdEvent.of(event, "UserBan", List.of(event.getUserId().toString(), "1"), false, false));
-            // cmdProcessor.processQQ(bot, CmdEvent.of(event, "Reply", List.of("你也受着"), false, false));
-        }
     }
 }

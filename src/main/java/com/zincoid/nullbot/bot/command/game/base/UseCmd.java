@@ -39,7 +39,7 @@ public class UseCmd implements Cmd {
             throw new BotInfoException(Emoji.INFO, "物品数不足");
 
         String originalCmd = itemService.getCommand(itemId);
-        String executeCmd = originalCmd.replace("userId", userId.toString());
+        String executeCmd = originalCmd.replace("{userId}", userId.toString());
         eventPublisher.publishEvent(CmdEvent.of(executeCmd, false));
 
         String itemName = itemService.getById(itemId).getName();

@@ -37,8 +37,8 @@ public class BotListener {
     /* 聊天机器人入口监听器 */
     /* Shiro 2.3.3 框架有BUG 回复消息中有@机器人和另一个人时会被判定为 AtEnum.NOT_NEED 的方法 */
 
-    private final CmdProcessor cmdProcessor;
     private final BotMonitor botMonitor;
+    private final CmdProcessor cmdProcessor;
     private final SecurityCodeScheduler securityCodeScheduler;
     private final AuthHandler authHandler;
     private final CmdProperties cmdProperties;
