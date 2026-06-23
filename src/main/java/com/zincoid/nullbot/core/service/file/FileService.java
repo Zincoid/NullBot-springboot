@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zincoid.nullbot.core.model.data.query.FileQuery;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.zincoid.nullbot.core.model.information.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileMeta;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +25,7 @@ public interface FileService extends IService<FilePO> {
 
     List<FilePO> search(String keyword, String directory, boolean hidden);
 
-    FileInfo upload(String url, String directory, String filename, Long uid);
+    FileMeta upload(String url, String directory, String filename, Long uid);
 
     void upload(MultipartFile file, String directory, Long uid);
 

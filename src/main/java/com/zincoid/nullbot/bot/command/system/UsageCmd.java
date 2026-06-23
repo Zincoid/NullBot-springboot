@@ -7,7 +7,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
-import com.zincoid.nullbot.core.model.information.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileMeta;
 import com.zincoid.nullbot.core.service.render.RenderingService;
 import com.zincoid.nullbot.core.service.system.StatsService;
 import com.zincoid.nullbot.core.utils.SaveUtil;
@@ -29,7 +29,7 @@ public class UsageCmd implements Cmd {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         Long times = statsService.getUsage(userId);
-        FileInfo file = SaveUtil.save(ShiroUtils.getUserAvatar(userId, 5));
+        FileMeta file = SaveUtil.save(ShiroUtils.getUserAvatar(userId, 5));
         String base64 = renderingService.usage(file.getPath(), times);
         String response = MsgUtils.builder().img("base64://" + base64).build();
         bot.sendGroupMsg(groupId, response, false);

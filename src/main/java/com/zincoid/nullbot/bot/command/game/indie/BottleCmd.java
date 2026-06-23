@@ -14,7 +14,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.module.control.BotInputManager;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
-import com.zincoid.nullbot.core.model.information.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileMeta;
 import com.zincoid.nullbot.core.model.data.po.BottlePO;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.service.game.BottleService;
@@ -55,22 +55,22 @@ public class BottleCmd implements Cmd {
             String imageUrl = imageMap.entrySet().iterator().next().getValue();
             String imageName = UUID.randomUUID().toString();
             String bottlePath = storageProperties.getImagePath() + "/bottle";
-            FileInfo fileInfo = null;
+            FileMeta fileMeta = null;
             boolean thrown = false;
             try {
-                fileInfo = fileService.upload(imageUrl, bottlePath, imageName, userId);
+                fileMeta = fileService.upload(imageUrl, bottlePath, imageName, userId);
                 thrown = bottleService.add(
                         userId,
                         bot.getStrangerInfo(userId, true).getData().getNickname(),
-                        fileInfo.getPath(),
+                        fileMeta.getPath(),
                         true
                 );
                 if (!autoThrow)
                     bot.sendGroupMsg(event.getGroupId(), thrown ? "✉️已投出" : "❌未投出", false);
                 log.info("☑ [Bottle] 扔漂流瓶(图片) - {} -> {}", userId, thrown);
             } finally {
-                if (fileInfo != null && !thrown)
-                    fileService.delete(bottlePath, fileInfo.getName());
+                if (fileMeta != null && !thrown)
+                    fileService.delete(bottlePath, fileMeta.getName());
             }
             return;
         }

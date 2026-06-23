@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.core.module.ai.tts.TtsClient;
-import com.zincoid.nullbot.core.model.information.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileMeta;
 import com.zincoid.nullbot.core.model.data.po.TtsTemplatePO;
 import com.zincoid.nullbot.core.service.tts.TtsTemplateService;
 import com.zincoid.nullbot.core.utils.SaveUtil;
@@ -96,8 +96,8 @@ public class TtsCmd implements Cmd {
             throw new BotWarnException("引用文件非音频");
         String templateName = args.next();
         String templateText = args.next();
-        FileInfo fileInfo = SaveUtil.save(audio.getValue());
-        String uploadedPath = ttsClient.upload(fileInfo.getPath());
+        FileMeta fileMeta = SaveUtil.save(audio.getValue());
+        String uploadedPath = ttsClient.upload(fileMeta.getPath());
         if (!ttsTemplateService.add(templateName, uploadedPath, templateText, userId, userName))
             throw new BotWarnException("存在重名模板");
         bot.sendGroupMsg(groupId, "💾模板已保存: %s".formatted(uploadedPath), false);

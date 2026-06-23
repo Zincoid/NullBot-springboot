@@ -8,6 +8,7 @@ import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotErrorException;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.enums.Emoji;
+import com.zincoid.nullbot.core.model.information.DuelData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -15,7 +16,6 @@ import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.module.control.BotInputManager;
 import com.zincoid.nullbot.core.module.storage.DuelStorage;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
-import com.zincoid.nullbot.core.model.information.DuelInfo;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.utils.Base64Util;
 import org.springframework.stereotype.Component;
@@ -44,7 +44,7 @@ public class DuelCmd implements Cmd {
             throw new BotInfoException(Emoji.INFO, "已在游戏中");
 
         try {
-            DuelInfo duel = duelStorage.initDuel(groupId);
+            DuelData duel = duelStorage.initDuel(groupId);
 
             MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] ⚔️请交战双方无序入场");
             builder.text("\n[ ====== 左方选手 ====== ]\n");

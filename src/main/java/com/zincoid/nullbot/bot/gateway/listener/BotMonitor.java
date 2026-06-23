@@ -17,7 +17,7 @@ import com.zincoid.nullbot.core.annotation.FuncControl;
 import com.zincoid.nullbot.core.module.control.BotInputManager;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.bot.gateway.processor.CmdEvent;
-import com.zincoid.nullbot.core.model.information.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileMeta;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.context.BotCtx;
 import com.zincoid.nullbot.core.utils.MsgUtil;
@@ -30,6 +30,8 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class BotMonitor {
+
+    private static final double BOTTLE_AUTO_THROW_FREQ = 0.001;  // 固定自动投出频率
 
     /* 聊天机器人工具监听器 */
 
@@ -58,8 +60,7 @@ public class BotMonitor {
 
     @FuncControl(value = "BottleAutoThrow", enabled = false)
     public void doGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception {
-        double freq = 0.001;  // 固定自动投出频率
-        if (freq < Math.random()) return;
+        if (BOTTLE_AUTO_THROW_FREQ < Math.random()) return;
         log.info("◉ [GroupMonitor:BottleAutoThrow] 用户 {} - 自动投出漂流瓶 -> {}", event.getUserId(), event.getMessage());
         cmdProcessor.processQQ(bot, CmdEvent.of(event, "Bottle", List.of("--auto"), false, false));
     }
@@ -72,9 +73,7 @@ public class BotMonitor {
         } else if (event.getArrayMsg().size() > 1 && event.getArrayMsg().get(0).getType() == MsgTypeEnum.reply) {
             if (event.getArrayMsg().get(1).getStringData("text").startsWith(cmdProperties.getPrefix())) return false;
         }
-
-        double freq = BotCtx.getSetting().getReplyFrequency();
-        if (freq < Math.random()) return false;
+        if (BotCtx.getSetting().getReplyFrequency() < Math.random()) return false;
         String parsed = MsgUtil.formatMsg(bot, event.getArrayMsg());
         log.info("◉ [GroupMonitor:AIAutoReply] 群聊 {} -> 自动回复", event.getGroupId());
         cmdProcessor.processQQ(bot, CmdEvent.of(event, "Chat", List.of(parsed), false, false));
@@ -86,23 +85,20 @@ public class BotMonitor {
     @FuncControl("ImgCollect")
     public void doGroupImgCollect(GroupMessageEvent event) {  // 缺失群目录时数据库无法插入文件条目需先SYNC
         if (!BotCtx.getSetting().isImageCollect()) return;
-
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
-        String filePath = storageProperties.getImagePath() + "/monitor/" + groupId;
-
+        String path = storageProperties.getImagePath() + "/monitor/" + groupId;
         Map<String, String> imageMap = MsgUtil.extractImgMap(event.getArrayMsg());
         for (Map.Entry<String, String> entry : imageMap.entrySet()) {
             log.info("◉ [GroupMonitor:ImgCollect] 群聊 {} - {}({}) -> 图片收集", groupId, userName, userId);
-            String filename = entry.getKey();
+            String name = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
             String url = entry.getValue();
             try {
-                FileInfo fileInfo = fileService.upload(url, filePath, filename.substring(0, filename.lastIndexOf(".")), userId);
-                log.info("└─[Saved] {}", fileInfo.getName());
+                FileMeta fileMeta = fileService.upload(url, path, name, userId);
+                log.info("└─[Saved] {}", fileMeta.getName());
             } catch (Exception e) {
                 log.info("└─[Error] {}", e.getMessage());
-                throw e;
             }
         }
     }
@@ -111,13 +107,13 @@ public class BotMonitor {
     @FuncControl("MsgCollect")
     public void doGroupMsgCollect(Bot bot, GroupMessageEvent event) {
         if (!BotCtx.getSetting().isMessageCollect()) return;
-
         if (cmdRegistry.isCmdOf(event.getMessage(), ChatCmd.class)) return;  // 按需 AI自动记录
+        Long groupId = event.getGroupId();
+        Long userId = event.getUserId();
+        String userName = event.getSender().getNickname();
         String parsed = MsgUtil.formatMsg(bot, event.getArrayMsg());
-        log.info("◉ [GroupMonitor:MsgCollect] 群聊 {} - {}({}) -> {}", event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
-        msgWindowMemory.add(
-                ChatScope.MONITOR + "_" + event.getGroupId(),
-                QQMessage.user(parsed).with(event.getGroupId(), event.getUserId(), event.getSender().getNickname()).id(event.getMessageId())
-        );
+        QQMessage qqMsg = QQMessage.user(parsed).with(groupId, userId, userName).id(event.getMessageId());
+        log.info("◉ [GroupMonitor:MsgCollect] 群聊 {} - {}({}) -> {}", groupId, userName, userId, parsed);
+        msgWindowMemory.add(ChatScope.MONITOR + "_" + groupId, qqMsg);
     }
 }

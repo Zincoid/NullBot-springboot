@@ -27,7 +27,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, AdminPO> implemen
 
     @Override
     public boolean regist(RegistDTO registDTO) {
-        if (!securityCodeScheduler.validateCode("regist", registDTO.getActivationCode()))
+        if (!securityCodeScheduler.validate("regist", registDTO.getActivationCode()))
             throw new CommonException("激活码错误");
         UserPO user = userService.getById(registDTO.getId());
         if (user == null)
@@ -40,7 +40,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, AdminPO> implemen
         newAdmin.setPassword(passwordEncoder.encode(registDTO.getPassword()));
         try {
             boolean inserted = save(newAdmin);
-            if (inserted) securityCodeScheduler.refreshCode("regist", true);
+            if (inserted) securityCodeScheduler.refresh("regist", true);
             return inserted;
         } catch (Exception e) {
             return false;

@@ -7,14 +7,14 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class FileInfo {
+public class FileMeta {
 
-    private String directory;
+    private String dir;
     private String name;
     private Long size;
     LocalDateTime lastModified;
 
     public String getPath() {
-        return directory + "/" + name;
+        return dir + "/" + name;
     }
 }

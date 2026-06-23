@@ -15,7 +15,7 @@ import com.zincoid.nullbot.core.utils.SaveUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
-import com.zincoid.nullbot.core.model.information.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileMeta;
 import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
 
@@ -55,8 +55,8 @@ public class ConvertCmd implements Cmd {
         if (urls.isEmpty()) throw new BotWarnException("缺少图片引用或ID参数或AT用户");
 
         for (String url : urls) {
-            FileInfo fileInfo = SaveUtil.save(url);
-            String imagePath = fileInfo.getPath();
+            FileMeta fileMeta = SaveUtil.save(url);
+            String imagePath = fileMeta.getPath();
             String base64 = switch (method) {
                 case "RIP" -> renderingService.rip(imagePath);
                 case "PRTS" -> renderingService.prts(imagePath, false);

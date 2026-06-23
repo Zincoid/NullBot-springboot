@@ -53,8 +53,8 @@ public class RpsCmd implements Cmd {
         boolean win = usrRps.judge(botRps);
         if (win) bot.sendGroupMsg(groupId, "你赢了！", false);
         else {
-            if (args.hasOpt("ban", "b"))
-                bot.setGroupBan(groupId, userId, 60 * args.optInt("ban", "b", 1));
+            if (args.hasOpt("penalty", "p"))
+                bot.setGroupBan(groupId, userId, 60 * args.optInt("penalty", "p", 1));
             bot.sendGroupMsg(groupId, "你输了！", false);
         }
     }
@@ -68,7 +68,7 @@ public class RpsCmd implements Cmd {
                 格式: Rps [选项]
                 
                 选项:
-                -b,--ban=[分钟]  启用禁言处罚
+                -p,--penalty=[分钟]  禁言处罚
                 
                 注意: 需发送互动表情
                 别名: 猜拳""", getAccess());

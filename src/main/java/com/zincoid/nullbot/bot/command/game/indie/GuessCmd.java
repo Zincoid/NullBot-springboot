@@ -14,7 +14,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.module.control.BotInputManager;
 import com.zincoid.nullbot.core.module.storage.GuessStorage;
-import com.zincoid.nullbot.core.model.information.GuessInfo;
+import com.zincoid.nullbot.core.model.information.GuessData;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.service.base.UserService;
@@ -57,12 +57,12 @@ public class GuessCmd implements Cmd {
             throw new BotInfoException(Emoji.INFO, "已在游戏中");
 
         try {
-            GuessInfo guess = guessStorage.initGuess(groupId, args.next());
+            GuessData guess = guessStorage.initGuess(groupId, args.next());
             SettingPO setting = BotCtx.getSetting();
 
             String start = MsgUtils.builder()
                     .text("✨猜图题目如下！\n")
-                    .img("base64://" + crop(guess.getPath(),
+                    .img("base64://" + crop(guess.getImgPath(),
                             setting.getGuessCropRatio(),
                             setting.getGuessPadding(),
                             setting.getGuessTransparentRatio()
@@ -82,7 +82,7 @@ public class GuessCmd implements Cmd {
                             .text("""
                                     游戏结束啦\uD83D\uDCA6
                                     答案是...%s！""".formatted(guess.getName()))
-                            .img("base64://" + Base64Util.from(guess.getPath()))
+                            .img("base64://" + Base64Util.from(guess.getImgPath()))
                             .build();
                     bot.sendGroupMsg(groupId, end, false);
                     log.info("☑ [Guess] 猜谜已结束 - GroupId: {}", groupId);
@@ -107,7 +107,7 @@ public class GuessCmd implements Cmd {
                                     .formatted(bot.getStrangerInfo(answererId, true).getData().getNickname(), answer,
                                             rewardable ? "获得 5抽数 和 20Exp！" : "无奖励: 用户未注册",
                                             guess.getTimes()))
-                            .img("base64://" + Base64Util.from(guess.getPath()))
+                            .img("base64://" + Base64Util.from(guess.getImgPath()))
                             .build();
                     bot.sendGroupMsg(groupId, correct, false);
                     log.info("☑ [Guess] 猜测正确 - UserId: {}", answererId);
@@ -122,7 +122,7 @@ public class GuessCmd implements Cmd {
                     .text("""
                             已经错%s次啦\uD83D\uDCA6
                             答案是...%s！""".formatted(MAX_RETRIES, guess.getName()))
-                    .img("base64://" + Base64Util.from(guess.getPath()))
+                    .img("base64://" + Base64Util.from(guess.getImgPath()))
                     .build();
             bot.sendGroupMsg(groupId, fail, false);
             log.info("☑ [Guess] 猜谜已超限 - GroupId: {}, MaxRetries: {}", groupId, MAX_RETRIES);

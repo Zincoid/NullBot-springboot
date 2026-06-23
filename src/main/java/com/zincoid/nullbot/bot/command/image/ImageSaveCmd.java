@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
-import com.zincoid.nullbot.core.model.information.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileMeta;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
@@ -43,9 +43,9 @@ public class ImageSaveCmd implements Cmd {
         imageMap.forEach((name, url) -> {
             String key = name.substring(0, name.lastIndexOf("."));  // QQ图片扩展名错误
             String filePath = storageProperties.getImagePath() + "/collect";
-            FileInfo fileInfo = fileService.upload(url, filePath, key, userId);
+            FileMeta fileMeta = fileService.upload(url, filePath, key, userId);
             bot.sendGroupMsg(groupId, "\uD83D\uDCBD图片已保存", false);
-            log.info("☑ [ImageSave] 图片已保存: {}", fileInfo.getName());
+            log.info("☑ [ImageSave] 图片已保存: {}", fileMeta.getName());
         });
     }
 

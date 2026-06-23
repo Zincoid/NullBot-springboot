@@ -13,7 +13,7 @@ import org.apache.commons.io.FileUtils;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.model.result.PageResult;
-import com.zincoid.nullbot.core.model.information.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileMeta;
 import com.zincoid.nullbot.web.exception.CommonException;
 import com.zincoid.nullbot.core.mapper.FileMapper;
 import com.zincoid.nullbot.core.service.file.FileService;
@@ -117,17 +117,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     }
 
     @Override
-    public FileInfo upload(String url, String directory, String filename, Long uid) {
+    public FileMeta upload(String url, String directory, String filename, Long uid) {
         directory = getResolvedDirectory(directory);
-        FileInfo fileInfo = SaveUtil.save(url, directory, filename);
-        boolean recorded = addOrUpdateRecord(directory, fileInfo.getName(),
-                fileInfo.getSize(), fileInfo.getLastModified(),
+        FileMeta fileMeta = SaveUtil.save(url, directory, filename);
+        boolean recorded = addOrUpdateRecord(directory, fileMeta.getName(),
+                fileMeta.getSize(), fileMeta.getLastModified(),
                 uid, userService.getById(uid).getName());
         if (!recorded) {
-            FileUtils.deleteQuietly(new File(fileInfo.getPath()));
+            FileUtils.deleteQuietly(new File(fileMeta.getPath()));
             throw new RuntimeException("数据更新失败");
         }
-        return fileInfo;
+        return fileMeta;
     }
 
     @Override

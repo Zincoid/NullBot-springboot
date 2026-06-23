@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.utils;
 
-import com.zincoid.nullbot.core.model.information.DuelInfo;
+import com.zincoid.nullbot.core.model.information.DuelData;
 
 import java.io.*;
 import java.nio.file.*;
@@ -11,11 +11,11 @@ public final class DuelUtil {
     private DuelUtil() {}
 
     /**
-     * CSV文件中随机读取一行加载为 DuelInfo 对象
+     * CSV文件中随机读取一行加载为 DuelData 对象
      * @param filePath CSV 文件路径
-     * @return DuelInfo 对象
+     * @return DuelData 对象
      */
-    public static DuelInfo getRandom(String filePath) {
+    public static DuelData getRandom(String filePath) {
         Path path = Paths.get(filePath);
         long dataLineCount;
         // 计算数据行数 (排除表头)
@@ -52,7 +52,7 @@ public final class DuelUtil {
      * @param line CSV行数据
      * @return Duel对象
      */
-    private static DuelInfo parseLine(String line) {
+    private static DuelData parseLine(String line) {
         String[] values = line.split(",");
         Map<Integer, Integer> left = new HashMap<>();
         for (int i = 0; i < 56 && i < values.length - 1; i++) {
@@ -80,6 +80,6 @@ public final class DuelUtil {
         if (values.length >= 113) {
             winner = values[112].trim(); // 索引 112 对应第 113 列
         }
-        return new DuelInfo(left, right, winner);
+        return new DuelData(left, right, winner);
     }
 }

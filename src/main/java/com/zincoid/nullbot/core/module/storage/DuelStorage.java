@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.module.storage;
 
+import com.zincoid.nullbot.core.model.information.DuelData;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
-import com.zincoid.nullbot.core.model.information.DuelInfo;
 import com.zincoid.nullbot.core.utils.DuelUtil;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class DuelStorage {
 
-    private final Map<Long, DuelInfo> duels;
+    private final Map<Long, DuelData> duels;
     private final String dataPath;
 
     public DuelStorage(StorageProperties storageProperties) {
@@ -19,14 +19,14 @@ public class DuelStorage {
         dataPath = storageProperties.getResourcePath() + "/duel/data.csv";
     }
 
-    public DuelInfo initDuel(Long groupId) {
-        DuelInfo duel = DuelUtil.getRandom(dataPath);
+    public DuelData initDuel(Long groupId) {
+        DuelData duel = DuelUtil.getRandom(dataPath);
         duels.put(groupId, duel);
         return duel;
     }
 
-    public DuelInfo getDuel(Long groupId) {
+    public DuelData getDuel(Long groupId) {
         return duels.getOrDefault(groupId, null);
     }
-    public DuelInfo removeDuel(Long groupId) { return duels.remove(groupId); }
+    public DuelData removeDuel(Long groupId) { return duels.remove(groupId); }
 }

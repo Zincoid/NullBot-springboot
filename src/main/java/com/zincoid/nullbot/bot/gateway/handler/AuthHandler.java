@@ -124,7 +124,7 @@ public class AuthHandler implements Handler {
 
         // ------------------- 群组停用验证 -------------------
 
-        if (!params.isEmpty() && "-x".equals(params.getFirst())) {
+        if (!params.isEmpty() && ("--toggle".equals(params.getFirst()) || "-T".equals(params.getFirst()))) {
             if (userAccess < 1) {
                 log.info("├─[AuthHandler] 停用限权不足");
                 bot.sendGroupMsg(groupId, ACCESS_DENIED_MSG.formatted(1, userAccess), false);
@@ -146,7 +146,7 @@ public class AuthHandler implements Handler {
 
         // ------------------- 用户禁用验证 -------------------
 
-        if (!params.isEmpty() && "-b".equals(params.getFirst())) {
+        if (!params.isEmpty() && ("--ban".equals(params.getFirst()) || "-B".equals(params.getFirst()))) {
             if (userAccess < 1) {
                 log.info("├─[AuthHandler] 封禁限权不足");
                 bot.sendGroupMsg(groupId, ACCESS_DENIED_MSG.formatted(1, userAccess), false);

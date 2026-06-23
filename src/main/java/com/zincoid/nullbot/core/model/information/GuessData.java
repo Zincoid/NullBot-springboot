@@ -6,13 +6,13 @@ import com.zincoid.nullbot.core.model.data.po.FilePO;
 
 @Data
 @AllArgsConstructor
-public class GuessInfo {
+public class GuessData {
 
     private String name;
     private FilePO character;
     private int times;
 
-    public String getPath() {
+    public String getImgPath() {
         return character.getPath();
     }
 }

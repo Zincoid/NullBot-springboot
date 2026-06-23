@@ -15,7 +15,7 @@ import com.zincoid.nullbot.core.service.render.RenderingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
-import com.zincoid.nullbot.core.model.information.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileMeta;
 import com.zincoid.nullbot.core.utils.SaveUtil;
 import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
@@ -74,8 +74,8 @@ public class SymmetryCmd implements Cmd {
         if (urls.isEmpty()) throw new BotWarnException("缺少引用图片或ID参数或AT用户");
 
         for (String url : urls) {
-            FileInfo fileInfo = SaveUtil.save(url);
-            String base64 = renderingService.symmetry(fileInfo.getPath(), mode);
+            FileMeta fileMeta = SaveUtil.save(url);
+            String base64 = renderingService.symmetry(fileMeta.getPath(), mode);
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);
             log.info("☑ [Symmetry] 图像处理已完成");

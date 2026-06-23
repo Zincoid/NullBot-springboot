@@ -70,7 +70,7 @@ public class BotListener {
         } else if (message.startsWith("#")) {
             // 授权命令处理
             log.info("◉ [PrivateAction:Auth] 私聊 {}({}) -> {}", userName, userId, message);
-            if (securityCodeScheduler.validateCode("access", message.substring(1))) {
+            if (securityCodeScheduler.validate("access", message.substring(1))) {
                 authHandler.addAllowedPrivateUser(userId);
                 log.info("└─[Success] {}({}) 已授权", userName, userId);
                 bot.sendPrivateMsg(userId, "✅已授权", false);
@@ -83,7 +83,8 @@ public class BotListener {
             String parsed = MsgUtil.formatMsg(bot, event.getArrayMsg());
             log.info("◉ [PrivateAction:Chat] 私聊 {}({}) -> {}", userName, userId, parsed);
             cmdProcessor.processQQ(bot, CmdEvent.of(
-                    event, "Chat", List.of(parsed), false, false));
+                    event, "Chat", List.of(parsed), false, false
+            ));
         }
     }
 
@@ -161,7 +162,8 @@ public class BotListener {
         log.info("◉ [GroupAction:At] 群聊 {} - {}({}) -> {}",
                 event.getGroupId(), event.getSender().getNickname(), event.getUserId(), parsed);
         cmdProcessor.processQQ(bot, CmdEvent.of(
-                event, "Chat", List.of(parsed), true, true));
+                event, "Chat", List.of(parsed), true, true
+        ));
     }
 
     @FuncControl("RecallDetect")

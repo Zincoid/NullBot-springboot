@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
-import com.zincoid.nullbot.core.model.information.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileMeta;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.utils.MsgUtil;
 import org.springframework.stereotype.Component;
@@ -52,9 +52,9 @@ public class VideoSaveCmd implements Cmd {
             throw new BotWarnException("文件名非法");
         String filePath = storageProperties.getVideoPath() + "/collect";
         String url = entry.getValue();
-        FileInfo fileInfo = fileService.upload(url, filePath, fileName, userId);
+        FileMeta fileMeta = fileService.upload(url, filePath, fileName, userId);
         bot.sendGroupMsg(groupId, "\uD83C\uDFA5视频已保存", false);
-        log.info("☑ [VideoSave] 视频已保存: {}", fileInfo.getName());
+        log.info("☑ [VideoSave] 视频已保存: {}", fileMeta.getName());
     }
 
     @Override

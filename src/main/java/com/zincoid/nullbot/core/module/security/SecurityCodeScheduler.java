@@ -36,15 +36,15 @@ public class SecurityCodeScheduler {
 
     @PostConstruct
     public void init() {
-        // createCode("regist");  // 初始化安全码 (废弃 无法发送群日志)
-        // createCode("access", 86_400_000, true);
+        // create("regist");  // 初始化安全码 (废弃 无法发送群日志)
+        // create("access", 86_400_000, true);
         log.info("▽ [SecurityCodeScheduler] 安全码调度器已启动");
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void initCode() {
-        createCode("regist");
-        createCode("access", 86_400_000, false);
+        create("regist");
+        create("access", 86_400_000, false);
         log.info("▽ [SecurityCodeScheduler] 默认安全码已初始化");
     }
 
@@ -61,8 +61,8 @@ public class SecurityCodeScheduler {
      * @param codeId 安全码标识
      * @return 初始安全码
      */
-    public String createCode(String codeId) {
-        return createCode(codeId, -1, false);
+    public String create(String codeId) {
+        return create(codeId, -1, false);
     }
 
     /**
@@ -72,20 +72,20 @@ public class SecurityCodeScheduler {
      * @param logging 是否启用群日志
      * @return 初始安全码
      */
-    public String createCode(String codeId, long refreshInterval, boolean logging) {
+    public String create(String codeId, long refreshInterval, boolean logging) {
         if (!StringUtils.hasLength(codeId)) throw new IllegalArgumentException("码标识不合法");
-        if (codeEntries.containsKey(codeId)) removeCode(codeId);  // 移除原有任务
+        if (codeEntries.containsKey(codeId)) remove(codeId);  // 移除原有任务
         String initCode = UUID.randomUUID().toString();
         refreshInterval = refreshInterval > 0 ? refreshInterval : DEFAULT_REFRESH_INTERVAL;
         ScheduledFuture<?> future = scheduler.schedule(  // 创建调度任务
-                () -> refreshCode(codeId, true),
+                () -> refresh(codeId, true),
                 refreshInterval,
                 TimeUnit.MILLISECONDS
         );
         codeEntries.put(codeId, new CodeEntry(initCode, future, refreshInterval, logging));  // 存储
         log.info("▽ [SecurityCodeScheduler] 安全码已创建 - CodeID: {}, InitCode: {}", codeId, initCode);
         if (logging) botOperator.sendLogGroupMsg("""
-                [安全码调度] 🔑已初始化
+                🔑安全码已初始化
                 - CodeID: %s
                 - Interval: %sms
                 - InitCode: %s"""
@@ -98,8 +98,8 @@ public class SecurityCodeScheduler {
      * 移除安全码
      * @param codeId 安全码标识
      */
-    public void removeCode(String codeId) {
-        codeExistenceValidation(codeId);
+    public void remove(String codeId) {
+        checkExistence(codeId);
         CodeEntry entry = codeEntries.remove(codeId);
         if (entry.future != null)
             entry.future.cancel(false);
@@ -112,8 +112,8 @@ public class SecurityCodeScheduler {
      * @param resetTimer 是否重置刷新计时
      * @return 新的安全码值
      */
-    public String refreshCode(String codeId, boolean resetTimer) {
-        codeExistenceValidation(codeId);
+    public String refresh(String codeId, boolean resetTimer) {
+        checkExistence(codeId);
         CodeEntry entry = codeEntries.get(codeId);
         if (resetTimer && entry.future != null)
             entry.future.cancel(false);  // 取消当前调度
@@ -121,7 +121,7 @@ public class SecurityCodeScheduler {
         codeEntries.put(codeId, new CodeEntry(  // 更新
                 newCode,
                 resetTimer ? scheduler.schedule(  // 重新调度
-                        () -> refreshCode(codeId, true),
+                        () -> refresh(codeId, true),
                         entry.refreshInterval,
                         TimeUnit.MILLISECONDS
                 ) : entry.future,
@@ -132,7 +132,7 @@ public class SecurityCodeScheduler {
         if (entry.logging) {
             wsSender.broadcast("INFO", "安全码已刷新 -> %s: %s".formatted(codeId, newCode));
             botOperator.sendLogGroupMsg("""
-                [安全码调度] 🔑已刷新
+                🔑安全码已刷新
                 - CodeID: %s
                 - NextOn: %s
                 - NewCode: %s"""
@@ -148,8 +148,8 @@ public class SecurityCodeScheduler {
      * @param codeToCheck 待检查安全码值
      * @return 是否有效
      */
-    public boolean validateCode(String codeId, String codeToCheck) {
-        codeExistenceValidation(codeId);
+    public boolean validate(String codeId, String codeToCheck) {
+        checkExistence(codeId);
         return codeEntries.get(codeId).code.equals(codeToCheck);
     }
 
@@ -161,12 +161,12 @@ public class SecurityCodeScheduler {
      * @param newInterval 新的刷新间隔 (ms) 非正则使用默认值
      */
     public void updateInterval(String codeId, long newInterval) {
-        codeExistenceValidation(codeId);
+        checkExistence(codeId);
         newInterval = newInterval > 0 ? newInterval : DEFAULT_REFRESH_INTERVAL;
         CodeEntry entry = codeEntries.get(codeId);
         if (entry.future != null) entry.future.cancel(false);  // 取消当前调度
         ScheduledFuture<?> newFuture = scheduler.schedule(  // 重新调度
-                () -> refreshCode(codeId, true),
+                () -> refresh(codeId, true),
                 newInterval,
                 TimeUnit.MILLISECONDS
         );
@@ -179,8 +179,8 @@ public class SecurityCodeScheduler {
      * @param codeId 安全码标识
      * @return 安全码值
      */
-    public String getCode(String codeId) {
-        codeExistenceValidation(codeId);
+    public String get(String codeId) {
+        checkExistence(codeId);
         return codeEntries.get(codeId).code;
     }
 
@@ -188,7 +188,7 @@ public class SecurityCodeScheduler {
      * 获取安全码 (全部)
      * @return 安全码映射表
      */
-    public Map<String, String> getCodes() {
+    public Map<String, String> getAll() {
         Map<String, String> result = new ConcurrentHashMap<>();
         for (Map.Entry<String, CodeEntry> entry : codeEntries.entrySet())
             result.put(entry.getKey(), entry.getValue().code);
@@ -197,7 +197,7 @@ public class SecurityCodeScheduler {
 
     // =================== 工具方法 ===================
 
-    private void codeExistenceValidation(String codeId) {
+    private void checkExistence(String codeId) {
         if (!codeEntries.containsKey(codeId))
             throw new IllegalArgumentException("安全码不存在");
     }

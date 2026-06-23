@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.model.information.FileInfo;
+import com.zincoid.nullbot.core.model.information.FileMeta;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,17 +48,17 @@ public final class SaveUtil {
     }
 
     /** 下载临时文件 */
-    public static FileInfo save(String url) {
+    public static FileMeta save(String url) {
         String tempDir = System.getProperty("java.io.tmpdir");
-        FileInfo fileInfo = save(url, tempDir, UUID.randomUUID().toString());
-        Path filePath = Paths.get(fileInfo.getPath());
+        FileMeta fileMeta = save(url, tempDir, UUID.randomUUID().toString());
+        Path filePath = Paths.get(fileMeta.getPath());
         filePath.toFile().deleteOnExit();
         THREAD_TEMP_FILES.get().add(filePath);
-        return fileInfo;
+        return fileMeta;
     }
 
     /** 下载永久文件 */
-    public static FileInfo save(String url, String directory, String name) {
+    public static FileMeta save(String url, String directory, String name) {
         HttpURLConnection connection = null;
         boolean streamConsumed = false;
         try {
@@ -104,7 +104,7 @@ public final class SaveUtil {
                 long downloadedSize = Files.size(filePath);
                 log.info("▽ [SaveUtil] Download completed: {} ({})",
                         fileName, formatFileSize(downloadedSize));
-                return new FileInfo(directory, fileName, downloadedSize,
+                return new FileMeta(directory, fileName, downloadedSize,
                         Files.getLastModifiedTime(filePath)
                                 .toInstant()
                                 .atZone(ZoneId.systemDefault())

@@ -19,7 +19,7 @@ public class HelpHandler implements Handler {
     @Override
     public void handle(Bot bot, Cmd cmd, CmdEvent<?> event, CmdHandlerChain chain) throws Exception {
         List<String> params = event.getCmdParams();
-        if (!params.isEmpty() && ("-help".equals(params.getFirst()) || "-h".equals(params.getFirst()))) {
+        if (!params.isEmpty() && ("--help".equals(params.getFirst()) || "-H".equals(params.getFirst()))) {
             EventScope scope = event.getEventScope();
             if (scope == EventScope.GROUP) {
                 log.info("├─[HelpHandler] 群聊帮助已输出");
