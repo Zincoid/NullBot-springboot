@@ -2,6 +2,17 @@
 
 NullBot 是一个基于 Spring Boot 和 Shiro 框架的 QQ 群聊机器人，支持丰富的娱乐、管理与 AI 对话功能。后端提供 REST API + STOMP WebSocket 供管理前端使用。
 
+## GitHub & Console
+
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+  <a href="https://github.com/Zincoid/NullBot-springboot">
+    <img src="https://img.shields.io/badge/View%20on%20GitHub-181717?logo=github&logoColor=white&style=for-the-badge" alt="GitHub">
+  </a>
+  <a href="http://nullbot.zincoid.online/">
+    <img src="https://img.shields.io/badge/Console-0088CC?style=for-the-badge" alt="控制台">
+  </a>
+</div>
+
 ## 功能特性
 
 - **AI 智能对话** -- 接入 DeepSeek API，支持多轮对话、长短期记忆、工具调用（表情包、语音、戳一戳等）
