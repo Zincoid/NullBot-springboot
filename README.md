@@ -8,7 +8,7 @@ NullBot 是一个基于 Spring Boot 和 Shiro 框架的 QQ 群聊机器人，支
   <a href="https://github.com/Zincoid/NullBot-springboot">
     <img src="https://img.shields.io/badge/View%20on%20GitHub-181717?logo=github&logoColor=white&style=for-the-badge" alt="GitHub">
   </a>
-  <a href="http://nullbot.zincoid.online/">
+  <a href="https://nullbot.zincoid.online/">
     <img src="https://img.shields.io/badge/Console-0088CC?style=for-the-badge" alt="控制台">
   </a>
 </div>
