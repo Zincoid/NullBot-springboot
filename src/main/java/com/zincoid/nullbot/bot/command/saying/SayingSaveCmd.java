@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.bot.command.saying;
 
+import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -26,22 +27,28 @@ public class SayingSaveCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        MsgResp msg;
+        boolean rep;
+        int msgId;
         if (args.hasOpt("id", "i")) {
-            int messageId = args.optInt("id", "i");
-            msg = bot.getMsg(messageId).getData();
+            rep = true;
+            msgId = args.optInt("id", "i");
         } else {
+            rep = false;
             ArrayMsg reply = event.getArrayMsg().getFirst();
             if (reply.getType() != MsgTypeEnum.reply)
                 throw new BotWarnException("需引用文本");
-            msg = bot.getMsg((int) reply.getLongData("id")).getData();
+            msgId = (int) reply.getLongData("id");
         }
+        MsgResp msg = bot.getMsg(msgId).getData();
         long userId = Long.parseLong(msg.getSender().getUserId());
         String userName = msg.getSender().getNickname();
         String text = MsgUtil.formatSaying(bot, msg.getArrayMsg());
         if (!sayingService.add(userId, userName, text))
             throw new BotErrorException("语录保存出错");
-        bot.sendGroupMsg(event.getGroupId(), "\uD83D\uDCBE语录已保存", false);
+        MsgUtils builder = MsgUtils.builder()
+                .text("\uD83D\uDCBE语录已保存");
+        if (rep) builder.reply(msgId);
+        bot.sendGroupMsg(event.getGroupId(), builder.build(), false);
         log.info("☑ [SayingSave] 语录已保存 - {}: {}", userName, text);
     }
 
