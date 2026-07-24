@@ -26,13 +26,21 @@ public class SayingSaveCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        ArrayMsg reply = event.getArrayMsg().getFirst();
-        if (reply.getType() != MsgTypeEnum.reply) throw new BotWarnException("需引用文本");
-        MsgResp replyMsg = bot.getMsg((int) reply.getLongData("id")).getData();
-        long userId = Long.parseLong(replyMsg.getSender().getUserId());
-        String userName = replyMsg.getSender().getNickname();
-        String text = MsgUtil.formatSaying(bot, replyMsg.getArrayMsg());
-        if (!sayingService.add(userId, userName, text)) throw new BotErrorException("语录保存出错");
+        MsgResp msg;
+        if (args.hasOpt("id", "i")) {
+            int messageId = args.optInt("id", "i");
+            msg = bot.getMsg(messageId).getData();
+        } else {
+            ArrayMsg reply = event.getArrayMsg().getFirst();
+            if (reply.getType() != MsgTypeEnum.reply)
+                throw new BotWarnException("需引用文本");
+            msg = bot.getMsg((int) reply.getLongData("id")).getData();
+        }
+        long userId = Long.parseLong(msg.getSender().getUserId());
+        String userName = msg.getSender().getNickname();
+        String text = MsgUtil.formatSaying(bot, msg.getArrayMsg());
+        if (!sayingService.add(userId, userName, text))
+            throw new BotErrorException("语录保存出错");
         bot.sendGroupMsg(event.getGroupId(), "\uD83D\uDCBE语录已保存", false);
         log.info("☑ [SayingSave] 语录已保存 - {}: {}", userName, text);
     }
@@ -46,5 +54,16 @@ public class SayingSaveCmd implements Cmd {
                 格式: [引用] SayingSave
                 别名: 保存语录""", getAccess()
         );
+    }
+
+    @Override
+    public String getHelpForAI() {
+        return """
+                ◉ SayingSave 命令
+                功能: 保存语录
+                格式: SayingSave [选项]
+                选项: -i,--id=[消息ID]
+                示例: SayingSave -i=123456
+                注意: 保存用户逆天或搞笑发言""";
     }
 }
