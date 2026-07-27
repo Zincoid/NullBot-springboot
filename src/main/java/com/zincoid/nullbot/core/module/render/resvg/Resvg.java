@@ -39,9 +39,10 @@ public class Resvg {
 
     /** SVG → PNG */
     public String render(String svg) {
-        String dir = storageProperties.getTempPath();
-        var opts = new ResvgJNI.RenderOptions(dir);
-        opts.LoadFontsDir(dir);
+        String tempPath = storageProperties.getTempPath();
+        String workDir = storageProperties.resolve(tempPath);
+        var opts = new ResvgJNI.RenderOptions(workDir);
+        opts.LoadFontsDir(workDir);
         return Base64.getEncoder().encodeToString(new ResvgJNI.Renderer(opts).RenderPng(svg));
     }
 

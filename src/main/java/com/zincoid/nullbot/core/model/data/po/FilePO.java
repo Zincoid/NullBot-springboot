@@ -3,6 +3,7 @@ package com.zincoid.nullbot.core.model.data.po;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zincoid.nullbot.core.utils.PathUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,7 +39,7 @@ public class FilePO {
     }
 
     public String getPath() {
-        return directory + "/" + fileName;
+        return PathUtil.join(directory, fileName);
     }
 
     public String getName() {
@@ -47,9 +48,10 @@ public class FilePO {
         return fileName;
     }
 
-    public String getDirName() {
-        if (directory.contains("/"))
-            return directory.substring(directory.lastIndexOf("/") + 1);
-        return directory;
+    public static FilePO ofRoot() {
+        return new FilePO(
+                null, null, "", true, true,
+                null, null, null
+        );
     }
 }

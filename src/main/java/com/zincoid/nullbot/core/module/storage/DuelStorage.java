@@ -11,16 +11,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class DuelStorage {
 
+    private final StorageProperties storageProperties;
     private final Map<Long, DuelData> duels;
     private final String dataPath;
 
     public DuelStorage(StorageProperties storageProperties) {
-        duels = new ConcurrentHashMap<>();
-        dataPath = storageProperties.getResourcePath() + "/duel/data.csv";
+        this.storageProperties = storageProperties;
+        this.duels = new ConcurrentHashMap<>();
+        this.dataPath = storageProperties.getResourcePath() + "/duel/data.csv";
     }
 
     public DuelData initDuel(Long groupId) {
-        DuelData duel = DuelUtil.getRandom(dataPath);
+        DuelData duel = DuelUtil.getRandom(storageProperties.resolve(dataPath));
         duels.put(groupId, duel);
         return duel;
     }
@@ -28,5 +30,7 @@ public class DuelStorage {
     public DuelData getDuel(Long groupId) {
         return duels.getOrDefault(groupId, null);
     }
-    public DuelData removeDuel(Long groupId) { return duels.remove(groupId); }
+    public DuelData removeDuel(Long groupId) {
+        return duels.remove(groupId);
+    }
 }

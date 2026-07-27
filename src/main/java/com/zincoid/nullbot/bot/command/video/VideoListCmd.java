@@ -27,7 +27,7 @@ public class VideoListCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        String videoPath = storageProperties.getVideoPath();
+        String videoPath = storageProperties.getVideoPath() + "/collect";
         List<FilePO> videos = fileService.list(videoPath);
         List<String> fileNames = videos.stream().map(FilePO::getFileName).toList();
         if (videos.size() > 50) throw new BotInfoException(Emoji.INFO, "过多暂不展示: 共%s个".formatted(videos.size()));

@@ -23,7 +23,11 @@ public class ImageFolderCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) throws IOException {
-        String structure = StringUtil.getFolderTreeString(storageProperties.getImagePath(), 0);
+        String imagePath = storageProperties.getImagePath();
+        String structure = StringUtil.getFolderTreeString(
+                storageProperties.resolve(imagePath),
+                0
+        );
         bot.sendGroupMsg(event.getGroupId(), "[图片目录结构] \uD83D\uDCC1已获取\n" + structure, false);
         log.info("☑ [ImageFolder] 图片目录已输出");
     }

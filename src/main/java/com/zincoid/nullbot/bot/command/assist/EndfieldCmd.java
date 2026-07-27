@@ -7,6 +7,7 @@ import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.enums.Emoji;
+import com.zincoid.nullbot.core.utils.PathUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -105,7 +106,7 @@ public class EndfieldCmd implements Cmd {
                 allFiles,
                 allFiles.stream().map(f -> {
                     String name = f.getName();
-                    String ver = f.getDirName();
+                    String ver = PathUtil.nameOf(f.getDirectory());
                     return globalQuery ? "[" + ver + "]" + name : name;
                 }).toList(),
                 this::sendResource
@@ -120,8 +121,10 @@ public class EndfieldCmd implements Cmd {
         if (file.getFileName().endsWith(".txt")) {
             // TXT类型 读取文本内容
             try {
-                String response = Files.readString(
-                        Paths.get(file.getPath()), StandardCharsets.UTF_8);
+                String response = Files.readString(Paths.get(
+                        storageProperties.resolve(file.getPath())),
+                        StandardCharsets.UTF_8
+                );
                 bot.sendGroupMsg(groupId, response, false);
                 log.info("☑ [Endfield] 文本已获取: {}", file.getFileName());
             } catch (IOException e) {

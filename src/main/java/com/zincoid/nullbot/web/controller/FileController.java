@@ -24,15 +24,6 @@ public class FileController {
 
     private final FileService fileService;
 
-    @GetMapping("/init")
-    public WebResult<Void> init() {
-        if (fileService.init()) {
-            return WebResult.success("初始化完成");
-        } else {
-            return WebResult.fail("已初始化过");
-        }
-    }
-
     @GetMapping("/sync")
     public WebResult<Void> sync() {
         fileService.sync();

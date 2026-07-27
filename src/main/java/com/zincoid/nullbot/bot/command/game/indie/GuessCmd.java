@@ -8,6 +8,7 @@ import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.enums.Emoji;
+import com.zincoid.nullbot.core.module.resource.builder.ResourceUrlBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,6 +19,7 @@ import com.zincoid.nullbot.core.model.information.GuessData;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.service.base.UserService;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.utils.Base64Util;
 import com.zincoid.nullbot.core.context.BotCtx;
 import org.springframework.stereotype.Component;
@@ -40,6 +42,8 @@ public class GuessCmd implements Cmd {
     private final BotInputManager botInputManager;
     private final GuessStorage guessStorage;
     private final UserService userService;
+    private final StorageProperties storageProperties;
+    private final ResourceUrlBuilder resourceUrlBuilder;
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) throws Exception {
@@ -58,11 +62,13 @@ public class GuessCmd implements Cmd {
 
         try {
             GuessData guess = guessStorage.initGuess(groupId, args.next());
+            String guessPath = guess.getImgPath();
             SettingPO setting = BotCtx.getSetting();
 
             String start = MsgUtils.builder()
                     .text("✨猜图题目如下！\n")
-                    .img("base64://" + crop(guess.getImgPath(),
+                    .img("base64://" + crop(
+                            storageProperties.resolve(guessPath),
                             setting.getGuessCropRatio(),
                             setting.getGuessPadding(),
                             setting.getGuessTransparentRatio()
@@ -82,7 +88,7 @@ public class GuessCmd implements Cmd {
                             .text("""
                                     游戏结束啦\uD83D\uDCA6
                                     答案是...%s！""".formatted(guess.getName()))
-                            .img("base64://" + Base64Util.from(guess.getImgPath()))
+                            .img(resourceUrlBuilder.from(guessPath))
                             .build();
                     bot.sendGroupMsg(groupId, end, false);
                     log.info("☑ [Guess] 猜谜已结束 - GroupId: {}", groupId);
@@ -107,7 +113,7 @@ public class GuessCmd implements Cmd {
                                     .formatted(bot.getStrangerInfo(answererId, true).getData().getNickname(), answer,
                                             rewardable ? "获得 5抽数 和 20Exp！" : "无奖励: 用户未注册",
                                             guess.getTimes()))
-                            .img("base64://" + Base64Util.from(guess.getImgPath()))
+                            .img(resourceUrlBuilder.from(guessPath))
                             .build();
                     bot.sendGroupMsg(groupId, correct, false);
                     log.info("☑ [Guess] 猜测正确 - UserId: {}", answererId);
@@ -122,7 +128,7 @@ public class GuessCmd implements Cmd {
                     .text("""
                             已经错%s次啦\uD83D\uDCA6
                             答案是...%s！""".formatted(MAX_RETRIES, guess.getName()))
-                    .img("base64://" + Base64Util.from(guess.getImgPath()))
+                    .img(resourceUrlBuilder.from(guessPath))
                     .build();
             bot.sendGroupMsg(groupId, fail, false);
             log.info("☑ [Guess] 猜谜已超限 - GroupId: {}, MaxRetries: {}", groupId, MAX_RETRIES);

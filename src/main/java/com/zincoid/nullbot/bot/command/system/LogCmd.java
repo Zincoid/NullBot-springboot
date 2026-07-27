@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
+import com.zincoid.nullbot.core.utils.PathUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ public class LogCmd implements Cmd {
         bot.uploadGroupFile(
                 event.getGroupId(),
                 getLogFilePath(),
-                getLogFilePath().substring(logPath.lastIndexOf("/") + 1)
+                PathUtil.nameOf(getLogFilePath())
         );
         log.info("☑ [Log] 日志已发送: {}", getLogFilePath());
     }

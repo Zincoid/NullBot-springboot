@@ -18,14 +18,14 @@ import java.util.concurrent.ThreadLocalRandom;
 @Data
 public class GuessStorage {
 
+    private final FileService fileService;
     private final Map<Long, GuessData> guesses;
     private final String dataPath;
-    private final FileService fileService;
 
-    public GuessStorage(StorageProperties storageProperties, FileService fileService) {
-        guesses = new ConcurrentHashMap<>();
-        dataPath = storageProperties.getImagePath() + "/acg";
+    public GuessStorage(FileService fileService, StorageProperties storageProperties) {
         this.fileService = fileService;
+        this.guesses = new ConcurrentHashMap<>();
+        this.dataPath = storageProperties.getImagePath() + "/acg";
     }
 
     public GuessData initGuess(Long groupId, String category) {
@@ -42,7 +42,10 @@ public class GuessStorage {
     public GuessData getGuess(Long groupId) {
         return guesses.getOrDefault(groupId, null);
     }
-    public void removeGuess(Long groupId) { guesses.remove(groupId); }
+
+    public void removeGuess(Long groupId) {
+        guesses.remove(groupId);
+    }
 
     public void increaseTimes(Long groupId) {
         guesses.get(groupId).setTimes(guesses.get(groupId).getTimes() + 1);

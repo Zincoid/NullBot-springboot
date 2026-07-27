@@ -13,8 +13,6 @@ import java.util.List;
 
 public interface FileService extends IService<FilePO> {
 
-    boolean init();
-
     void sync();
 
     PageResult<FilePO> page(FileQuery query);

@@ -1,7 +1,8 @@
 package com.zincoid.nullbot.core.module.resource.builder;
 
-import com.zincoid.nullbot.core.mapper.FileMapper;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
+import com.zincoid.nullbot.core.properties.file.StorageProperties;
+import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.utils.Base64Util;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(value = "file.resource.mode", havingValue = "base64")
 public class Base64ResourceUrlBuilder implements ResourceUrlBuilder {
 
-    private final FileMapper fileMapper;
+    private final FileService fileService;
+    private final StorageProperties storageProperties;
 
     @PostConstruct
     public void init() {
@@ -24,14 +26,13 @@ public class Base64ResourceUrlBuilder implements ResourceUrlBuilder {
 
     @Override
     public String from(Integer fileId) {
-        FilePO file = fileMapper.selectById(fileId);
-        if (file == null)
-            throw new IllegalArgumentException("文件不存在: " + fileId);
-        return "base64://" + Base64Util.from(file.getPath());
+        FilePO file = fileService.getById(fileId);
+        if (file == null) throw new IllegalArgumentException("文件不存在: " + fileId);
+        return "base64://" + Base64Util.from(storageProperties.resolve(file.getPath()));
     }
 
     @Override
-    public String from(String path) {
-        return "base64://" + Base64Util.from(path);
+    public String from(String filePath) {
+        return "base64://" + Base64Util.from(storageProperties.resolve(filePath));
     }
 }

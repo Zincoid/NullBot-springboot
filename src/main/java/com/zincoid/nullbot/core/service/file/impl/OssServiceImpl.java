@@ -9,6 +9,7 @@ import org.apache.commons.io.input.BoundedInputStream;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.file.OssService;
+import com.zincoid.nullbot.core.utils.PathUtil;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -34,11 +35,8 @@ public class OssServiceImpl implements OssService {
 
     @Override
     public ResponseEntity<?> getResourceByPath(HttpServletRequest request, String path) {
-        String baseDir = storageProperties.getFileDirectory();
-        String fullPath = baseDir + path;
-        int index = fullPath.lastIndexOf("/");
-        String directory = fullPath.substring(0, index);
-        String filename = fullPath.substring(index + 1);
+        String directory = PathUtil.parentOf(path);
+        String filename = PathUtil.nameOf(path);
         List<FilePO> files = fileService.search(filename, directory);
         if (files.isEmpty()) {
             log.warn("[OssService] 文件未找到 - path={}", path);
@@ -75,7 +73,7 @@ public class OssServiceImpl implements OssService {
         try {
             // 1. 构建安全路径
             Path rootPath = Paths.get(storageProperties.getFileDirectory()).toAbsolutePath().normalize();
-            Path filePath = rootPath.resolve(Paths.get(file.getDirectory(), file.getFileName())).normalize();
+            Path filePath = Paths.get(storageProperties.resolve(file.getDirectory()), file.getFileName()).normalize();
             if (!filePath.startsWith(rootPath)) {
                 log.warn("[OssService] 安全检查未通过 - id={}, path={}", file.getId(), filePath);
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

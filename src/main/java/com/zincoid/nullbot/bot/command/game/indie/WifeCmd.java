@@ -9,13 +9,13 @@ import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.enums.Emoji;
+import com.zincoid.nullbot.core.module.resource.builder.ResourceUrlBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.service.file.FileService;
-import com.zincoid.nullbot.core.utils.Base64Util;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -40,6 +40,7 @@ public class WifeCmd implements Cmd {
 
     private final StorageProperties storageProperties;
     private final FileService fileService;
+    private final ResourceUrlBuilder resourceUrlBuilder;
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
@@ -103,7 +104,7 @@ public class WifeCmd implements Cmd {
                             \n今天已经选过了哦\uD83D\uDCA6...
                             你的二次元老婆是
                             %s""".formatted(wifeName))
-                    .img("base64://" + Base64Util.from(wife.getPath()))
+                    .img(resourceUrlBuilder.from(wife.getPath()))
                     .build();
             bot.sendGroupMsg(event.getGroupId(), response, false);
             log.info("☑ [Wife] 今日已选过二次元老婆 - {} -> {}", userId, wifeName);
@@ -121,7 +122,7 @@ public class WifeCmd implements Cmd {
                 .text("""
                         \n你的今日二次元老婆是✨
                         %s - %s""".formatted(category, wifeName))
-                .img("base64://" + Base64Util.from(wife.getPath()))
+                .img(resourceUrlBuilder.from(wife.getPath()))
                 .build();
         acgWifeMap.put(userId, wife);
         acgExpireMap.put(userId, LocalDate.now().atTime(LocalTime.MAX));

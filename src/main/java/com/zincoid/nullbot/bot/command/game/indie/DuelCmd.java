@@ -9,6 +9,7 @@ import com.zincoid.nullbot.bot.exception.BotErrorException;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.core.enums.Emoji;
 import com.zincoid.nullbot.core.model.information.DuelData;
+import com.zincoid.nullbot.core.module.resource.builder.ResourceUrlBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,7 +18,6 @@ import com.zincoid.nullbot.core.module.control.BotInputManager;
 import com.zincoid.nullbot.core.module.storage.DuelStorage;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.enums.BniMode;
-import com.zincoid.nullbot.core.utils.Base64Util;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -36,6 +36,7 @@ public class DuelCmd implements Cmd {
     private final StorageProperties storageProperties;
     private final DuelStorage duelStorage;
     private final BotInputManager botInputManager;
+    private final ResourceUrlBuilder resourceUrlBuilder;
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
@@ -45,15 +46,16 @@ public class DuelCmd implements Cmd {
 
         try {
             DuelData duel = duelStorage.initDuel(groupId);
+            String enemyPath = storageProperties.getResourcePath() + "/duel/icon";
 
             MsgUtils builder = MsgUtils.builder().text("[斗蛐蛐] ⚔️请交战双方无序入场");
             builder.text("\n[ ====== 左方选手 ====== ]\n");
             for (Map.Entry<Integer, Integer> enemy : duel.getLeft().entrySet())
-                builder.img("base64://" + Base64Util.from(getIconPath(enemy.getKey())))
+                builder.img(resourceUrlBuilder.from(enemyPath + "/" + enemy.getKey() + ".png"))
                         .text("*" + enemy.getValue() + " ");
             builder.text("\n[ ====== 右方选手 ====== ]\n");
             for (Map.Entry<Integer, Integer> enemy : duel.getRight().entrySet())
-                builder.img("base64://" + Base64Util.from(getIconPath(enemy.getKey())))
+                builder.img(resourceUrlBuilder.from(enemyPath + "/" + enemy.getKey() + ".png"))
                         .text("*" + enemy.getValue() + " ");
             builder.text("\n\n注: 发送L或R进行选择(%s秒内)".formatted(SELECT_TIMEOUT_SECONDS));
             bot.sendGroupMsg(groupId, builder.build(), false);
@@ -103,10 +105,6 @@ public class DuelCmd implements Cmd {
         } finally {
             duelStorage.removeDuel(groupId);
         }
-    }
-
-    private String getIconPath(int id) {
-        return storageProperties.getResourcePath() + "/duel/icon/" + id + ".png";
     }
 
     @Override

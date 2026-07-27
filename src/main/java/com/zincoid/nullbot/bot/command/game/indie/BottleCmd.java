@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.bot.command.game.indie;
 
+import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
@@ -19,9 +20,12 @@ import com.zincoid.nullbot.core.model.data.po.BottlePO;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.service.game.BottleService;
 import com.zincoid.nullbot.core.service.file.FileService;
+import com.zincoid.nullbot.core.module.resource.builder.ResourceUrlBuilder;
 import com.zincoid.nullbot.core.utils.MsgUtil;
+import com.zincoid.nullbot.core.utils.PathUtil;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -38,6 +42,7 @@ public class BottleCmd implements Cmd {
     private final FileService fileService;
     private final BottleService bottleService;
     private final BotInputManager botInputManager;
+    private final ResourceUrlBuilder resourceUrlBuilder;
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
@@ -62,7 +67,7 @@ public class BottleCmd implements Cmd {
                 thrown = bottleService.add(
                         userId,
                         bot.getStrangerInfo(userId, true).getData().getNickname(),
-                        fileMeta.getPath(),
+                        PathUtil.join(bottlePath, fileMeta.getName()),
                         true
                 );
                 if (!autoThrow)
@@ -91,7 +96,7 @@ public class BottleCmd implements Cmd {
         BottlePO bottle = bottleService.pick();
         if (bottle == null)
             throw new BotInfoException(Emoji.INFO, "没有漂流瓶了");
-        bot.sendGroupMsg(groupId, bottle.toString(), false);
+        bot.sendGroupMsg(groupId, buildBottleMsg(bottle), false);
 
         List<Pair<Long, String>> inputs = botInputManager
                 .request(BniMode.PS, userId, "扔回去", KEEP_TIMEOUT_SECONDS, true);
@@ -107,14 +112,40 @@ public class BottleCmd implements Cmd {
         }
 
         if (!thrownBack && bottle.getIsImage()) {
-            int index = bottle.getContent().lastIndexOf("/");
-            String fileName = bottle.getContent().substring(index + 1);
-            String directory = bottle.getContent().substring(0, index);
-            fileService.delete(directory, fileName);
+            fileService.delete(
+                    PathUtil.parentOf(bottle.getContent()),
+                    PathUtil.nameOf(bottle.getContent())
+            );
         }
     }
 
-    public static int getKeepTimeoutSeconds() { return KEEP_TIMEOUT_SECONDS; }
+    private String buildBottleMsg(BottlePO bottle) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String formattedTime = bottle.getTime() != null ? bottle.getTime().format(formatter) : "";
+        MsgUtils builder = MsgUtils.builder();
+        builder.text("""
+            [%ss后销毁 - 发送"扔回去"投回]
+            漂流瓶 #%d (%s)
+            时间: %s
+            
+            """
+                .formatted(
+                        KEEP_TIMEOUT_SECONDS,
+                        bottle.getId(),
+                        bottle.getRethrowTimes() == 0 ? "首次被捡到" : "已被投回 " + bottle.getRethrowTimes() + " 次",
+                        formattedTime
+                )
+        );
+        if (bottle.getIsImage()) {
+            builder.img(resourceUrlBuilder.from(bottle.getContent()));
+        } else {
+            builder.text(bottle.getContent() + "\n");
+        }
+        builder.text("""
+                
+                —— %s(%d)""".formatted(bottle.getUserName(), bottle.getUserId()));
+        return builder.build();
+    }
 
     @Override
     public String getHelp() {

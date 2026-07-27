@@ -45,7 +45,7 @@ public class ResourceLoader {
     }
 
     private Path loadResource(String resourcePath, String tempPath) throws IOException {
-        Path tempDir = Path.of(tempPath);
+        Path tempDir = Path.of(storageProperties.resolve(tempPath));
         if (!Files.exists(tempDir)) Files.createDirectories(tempDir);
         String fileName = Path.of(resourcePath).getFileName().toString();
         Path tempFile = Files.createTempFile(tempDir, "resource-", "-" + fileName);
