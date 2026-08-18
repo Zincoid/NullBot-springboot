@@ -35,7 +35,7 @@ public class QQMsgExecutor {
     private static final List<Pattern> FILTERED_PATTERNS;
 
     static {
-        SEGMENT_PATTERN = Pattern.compile("(<cmd>.*?</cmd>|(?:(?!<cmd>).)+)");
+        SEGMENT_PATTERN = Pattern.compile("(<cmd>.*?</cmd>|(?:(?!<cmd>).)+)", Pattern.DOTALL);
         NEWLINE_PATTERN = Pattern.compile("(\r?\n)+");
 
         FILTERED_PATTERNS = new ArrayList<>();

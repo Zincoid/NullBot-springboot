@@ -105,14 +105,12 @@ public class QQChatClient implements Client<QQMessage> {
         String chatId = BotCtx.getChatId();
         memory.lock(chatId);
         try {
-            memory.add(chatId, message);
             if (!message.isPrivate() && BotCtx.getSetting().isAntiInjection()) {
                 if (qqAntiInjector.check(message)) {
-                    QQMessage _message = QQMessage.assistant("对话被拒绝");
-                    memory.add(chatId, _message);
-                    return ClientRes.of(_message);
+                    return ClientRes.of(QQMessage.assistant("对话被拒绝"));
                 }
             }
+            memory.add(chatId, message);
             ChatStrategy strategy = message.isPrivate() ?
                     ChatStrategy.EMBEDDING : BotCtx.getSetting().getChatStrategy();
             return ClientRes.of(
