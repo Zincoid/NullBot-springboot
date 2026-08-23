@@ -58,6 +58,8 @@ public class QQMsgExecutor {
             messageId = send(targetId, filtered(), isPrivate, voice);
         } else {
             content = NEWLINE_PATTERN.matcher(content).replaceAll("\n").trim();
+            if (content.isEmpty())
+                return QQMessage.assistant(content);
             messageId = send(targetId, content, isPrivate, voice);
         }
         return QQMessage.assistant(content).id(messageId);

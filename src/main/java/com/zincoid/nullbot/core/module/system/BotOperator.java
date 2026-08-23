@@ -74,6 +74,11 @@ public class BotOperator {
     public Integer sendGroupMsg(Long groupId, String message, int maxRetries, long retryInterval) {
         Bot bot = getBot(maxRetries, retryInterval);
         ActionData<MsgId> actionData = bot.sendGroupMsg(groupId, message, false);
+        if (actionData.getData() == null) {
+            log.warn("▽ [BotOperator] 群聊({})消息发送失败: retcode={}, status={}",
+                    groupId, actionData.getRetCode(), actionData.getStatus());
+            return null;
+        }
         log.info("▽ [BotOperator] 群聊({})消息已发送: {}", groupId, message);
         return actionData.getData().getMessageId();
     }
@@ -81,6 +86,11 @@ public class BotOperator {
     public Integer sendPrivateMsg(Long userId, String message, int maxRetries, long retryInterval) {
         Bot bot = getBot(maxRetries, retryInterval);
         ActionData<MsgId> actionData = bot.sendPrivateMsg(userId, message, false);
+        if (actionData.getData() == null) {
+            log.warn("▽ [BotOperator] 私聊({})消息发送失败: retcode={}, status={}",
+                    userId, actionData.getRetCode(), actionData.getStatus());
+            return null;
+        }
         log.info("▽ [BotOperator] 私聊({})消息已发送: {}", userId, message);
         return actionData.getData().getMessageId();
     }
