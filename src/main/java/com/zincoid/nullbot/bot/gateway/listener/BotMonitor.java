@@ -6,6 +6,7 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.zincoid.nullbot.bot.command.aichat.ChatCmd;
 import com.zincoid.nullbot.bot.gateway.processor.CmdProcessor;
 import com.zincoid.nullbot.bot.gateway.processor.CmdRegistry;
+import com.zincoid.nullbot.core.module.ai.chat.manage.AiCostManager;
 import com.zincoid.nullbot.core.module.ai.chat.memory.MsgWindowMemory;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.enums.ChatScope;
@@ -35,6 +36,7 @@ public class BotMonitor {
 
     /* 聊天机器人工具监听器 */
 
+    private final AiCostManager aiCostManager;
     private final BotInputManager botInputManager;
     private final KeywordReacter keywordReacter;
     private final CmdProcessor cmdProcessor;
@@ -67,6 +69,7 @@ public class BotMonitor {
 
     @FuncControl("AIAutoReply")
     public boolean doGroupAIAutoReply(Bot bot, GroupMessageEvent event) throws Exception {
+        if (!aiCostManager.isOutOfBalance()) return false;
         if (!BotCtx.getSetting().isAutoReply()) return false;
         if (event.getMessage().startsWith(cmdProperties.getPrefix())) {
             return false;
