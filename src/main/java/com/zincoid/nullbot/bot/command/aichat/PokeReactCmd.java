@@ -4,6 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
+import com.zincoid.nullbot.core.module.ai.chat.manage.AiCostManager;
 import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +20,20 @@ import java.util.Objects;
 public class PokeReactCmd implements Cmd {
 
     private final QQChatClient qqChatClient;
+    private final AiCostManager aiCostManager;
 
-    public PokeReactCmd(@Lazy QQChatClient qqChatClient) {
+    public PokeReactCmd(@Lazy QQChatClient qqChatClient, AiCostManager aiCostManager) {
         this.qqChatClient = qqChatClient;
+        this.aiCostManager = aiCostManager;
     }
 
     @Override
     public void run(Bot bot, PokeNoticeEvent event, CmdArgs args) {
         if (!Objects.equals(event.getTargetId(), event.getSelfId())) return;  // 仅检测戳自身
+        if (aiCostManager.isOutOfBalance()) {
+            log.info("☒ [PokeReact] AI 欠费已拦截");
+            return;
+        }
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
         String userName = bot.getStrangerInfo(userId, true).getData().getNickname();

@@ -8,6 +8,7 @@ import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.gateway.processor.CmdRegistry;
+import com.zincoid.nullbot.core.module.ai.chat.manage.AiCostManager;
 import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.properties.bot.CmdProperties;
@@ -24,15 +25,22 @@ public class ChatCmd implements Cmd {
     private final QQChatClient qqChatClient;
     private final CmdRegistry cmdRegistry;
     private final CmdProperties cmdProperties;
+    private final AiCostManager aiCostManager;
 
-    public ChatCmd(@Lazy QQChatClient qqChatClient, @Lazy CmdRegistry cmdRegistry, CmdProperties cmdProperties) {
+    public ChatCmd(@Lazy QQChatClient qqChatClient, @Lazy CmdRegistry cmdRegistry,
+                   CmdProperties cmdProperties, AiCostManager aiCostManager) {
         this.qqChatClient = qqChatClient;
         this.cmdRegistry = cmdRegistry;
         this.cmdProperties = cmdProperties;
+        this.aiCostManager = aiCostManager;
     }
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
+        if (aiCostManager.isOutOfBalance()) {
+            bot.sendGroupMsg(event.getGroupId(), "💤AI欠费停用中", false);
+            return;
+        }
         QQMessage message = QQMessage.user(args.rest())
                 .with(event.getGroupId(), event.getUserId(), event.getSender().getNickname())
                 .id(event.getMessageId());
@@ -54,6 +62,10 @@ public class ChatCmd implements Cmd {
 
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
+        if (aiCostManager.isOutOfBalance()) {
+            bot.sendPrivateMsg(event.getUserId(), "💤AI服务欠费停用中", false);
+            return;
+        }
         QQMessage message = QQMessage.user(args.rest())
                 .with(event.getUserId(), event.getPrivateSender().getNickname())
                 .id(event.getMessageId());
