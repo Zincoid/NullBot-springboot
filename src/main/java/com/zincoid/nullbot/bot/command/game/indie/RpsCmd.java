@@ -4,6 +4,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.enums.BniMode;
 import com.zincoid.nullbot.core.enums.Rps;
@@ -50,13 +51,23 @@ public class RpsCmd implements Cmd {
             bot.sendGroupMsg(groupId, "平局了！", false);
             return;
         }
-        boolean win = usrRps.judge(botRps);
+        boolean win = judge(usrRps, botRps);
         if (win) bot.sendGroupMsg(groupId, "你赢了！", false);
         else {
             if (args.hasOpt("penalty", "p"))
                 bot.setGroupBan(groupId, userId, 60 * args.optInt("penalty", "p", 1));
             bot.sendGroupMsg(groupId, "你输了！", false);
         }
+    }
+
+    public static boolean judge(Rps self, Rps other) {
+        if (self == null || other == null) throw new BotWarnException("RPS为空");
+        if (self == other) throw new BotWarnException("RPS平局");
+        return switch (other) {
+            case PAPER -> self == Rps.SCISSORS;
+            case SCISSORS -> self == Rps.ROCK;
+            case ROCK -> self == Rps.PAPER;
+        };
     }
 
     @Override

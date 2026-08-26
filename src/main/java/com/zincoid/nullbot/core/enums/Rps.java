@@ -1,6 +1,5 @@
 package com.zincoid.nullbot.core.enums;
 
-import com.zincoid.nullbot.bot.exception.BotWarnException;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -19,16 +18,6 @@ public enum Rps {
     Rps(int value, String desc) {
         this.value = value;
         this.desc = desc;
-    }
-
-    public boolean judge(Rps other) {
-        if (other == null) throw new BotWarnException("RPS为空");
-        if (this == other) throw new BotWarnException("RPS平局");
-        return switch (other) {
-            case PAPER -> this == SCISSORS;
-            case SCISSORS -> this == ROCK;
-            case ROCK -> this == PAPER;
-        };
     }
 
     public static Rps of(int value) {

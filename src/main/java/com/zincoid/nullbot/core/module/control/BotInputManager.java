@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.module.control;
 
-import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.exception.CoreException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -63,7 +63,7 @@ public class BotInputManager {
             if (inputEntries.get(id).coverable) {
                 cancelWait(mode, targetId);
                 log.info("▽ [BotInputManager] 已取消 {} 可覆盖的冲突输入 (Mode: {})", targetId, mode);
-            } else throw new BotWarnException("输入事件冲突");
+            } else throw new CoreException("输入事件冲突");
         }
         if (mode == BniMode.GM)
             inputCaches.put(id, Collections.synchronizedList(new ArrayList<>()));
@@ -79,7 +79,7 @@ public class BotInputManager {
                     .get();
         } catch (Exception e) {
             log.error("▽ [BotInputManager] 输入事件异常 (Mode: {})", mode, e);
-            throw new BotWarnException("输入事件异常");
+            throw new CoreException("输入事件异常");
         } finally {
             inputEntries.remove(id);
         }

@@ -1,7 +1,6 @@
 package com.zincoid.nullbot.core.module.storage;
 
-import com.zincoid.nullbot.bot.exception.BotInfoException;
-import com.zincoid.nullbot.core.enums.Emoji;
+import com.zincoid.nullbot.core.exception.CoreException;
 import lombok.Data;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.information.GuessData;
@@ -30,8 +29,7 @@ public class GuessStorage {
 
     public GuessData initGuess(Long groupId, String category) {
         List<FilePO> characters = fileService.list(dataPath + "/" + category);
-        if (characters.isEmpty())
-            throw new BotInfoException(Emoji.INFO, "暂无可用图片");
+        if (characters.isEmpty()) throw new CoreException("暂无可用图片");
         FilePO character = characters.get(ThreadLocalRandom.current().nextInt(characters.size()));
         String characterName = character.getName().split("_")[0];
         GuessData guess = new GuessData(characterName, character, 0);
