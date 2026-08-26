@@ -6,8 +6,8 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.enums.Rps;
+import com.zincoid.nullbot.core.exception.CoreException;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -33,7 +33,7 @@ public final class MsgUtil {
     public static Rps extractRps(String rawMsg) {
         Matcher m = RPS_CQ_PATTERN.matcher(rawMsg);
         if (m.find()) return Rps.of(Integer.parseInt(m.group(1)));
-        throw new BotWarnException("RPS格式异常");
+        throw new CoreException("RPS格式异常");
     }
 
     // =================== 消息格式化方法 ===================
@@ -82,7 +82,7 @@ public final class MsgUtil {
     public static String formatSaying(Bot bot, List<ArrayMsg> arrayMsg) {
         String rawMsg = ShiroUtils.unescape(MessageConverser.arraysToString(arrayMsg));
         if (SAYING_PATTERN.matcher(rawMsg).matches())
-            throw new BotWarnException("禁止套娃");
+            throw new CoreException("禁止套娃");
         StringBuilder sb = new StringBuilder();
         for (ArrayMsg msg : arrayMsg) {
             switch (msg.getType()) {
@@ -104,7 +104,7 @@ public final class MsgUtil {
             }
         }
         if (sb.toString().trim().isEmpty())
-            throw new BotWarnException("禁止空文本");
+            throw new CoreException("禁止空文本");
         return sb.toString();
     }
 
