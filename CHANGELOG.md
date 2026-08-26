@@ -1088,3 +1088,12 @@
 
 - 修复 BotOperator - 修复 NPE 漏洞；
 - 修复 QQMsgExecutor - 修复空消息漏洞。
+
+### 2026.8.26 - v2.2.3
+
+- 新增 AI 欠费检测功能：
+  - 新增 AiCostManager 组件；
+  - 集成组件至 OpenAiModel；
+  - 集成组件至 AI 指令；
+  - 新增 Recover 指令 - 复位欠费状态；
+- 优化部分泛型警告。
