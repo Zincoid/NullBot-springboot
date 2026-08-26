@@ -52,6 +52,7 @@ public class OpenAiModel implements Model {
             if (insufficient) {
                 aiCostManager.markOutOf();
                 log.warn("▽ [OpenAiModel] API 欠费 ({}): {}", e.getStatusCode().value(), body);
+                return ModelRes.of("💤API已欠费", null);
             }
             throw e;
         }

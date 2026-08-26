@@ -63,7 +63,7 @@ public class ChatCmd implements Cmd {
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
         if (aiCostManager.isOutOfBalance()) {
-            bot.sendPrivateMsg(event.getUserId(), "💤AI服务欠费停用中", false);
+            bot.sendPrivateMsg(event.getUserId(), "💤AI欠费停用中", false);
             return;
         }
         QQMessage message = QQMessage.user(args.rest())
@@ -83,7 +83,9 @@ public class ChatCmd implements Cmd {
                 1. Chat [内容]
                 2. @Null [内容]
                 3. 戳一戳
-                别名: 对话""", getAccess()
+                别名: 对话
+                注意：
+                - 欠费后可用 Recover 指令恢复""", getAccess()
         );
     }
 }
