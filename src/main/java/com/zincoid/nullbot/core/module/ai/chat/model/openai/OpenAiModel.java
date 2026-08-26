@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.core.module.ai.chat.model.openai;
 
+import com.zincoid.nullbot.core.exception.CoreException;
 import com.zincoid.nullbot.core.module.ai.chat.manage.AiCostManager;
 import com.zincoid.nullbot.core.module.ai.chat.model.Model;
 import com.zincoid.nullbot.core.module.ai.chat.model.ModelReq;
@@ -52,7 +53,7 @@ public class OpenAiModel implements Model {
             if (insufficient) {
                 aiCostManager.markOutOf();
                 log.warn("▽ [OpenAiModel] API 欠费 ({}): {}", e.getStatusCode().value(), body);
-                return ModelRes.of("💤API已欠费", null);
+                throw new CoreException("模型 API 已欠费（OpenAI）");
             }
             throw e;
         }

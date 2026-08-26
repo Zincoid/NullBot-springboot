@@ -10,6 +10,7 @@ import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotOmitException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.exception.CoreException;
 import com.zincoid.nullbot.core.utils.SaveUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,8 +58,12 @@ public class RunHandler implements Handler {
             sendError(bot, groupId, userId, e.getMessage());
         } catch (BotOmitException e) {
             log.info("  [RunHandler] 忽略异常: {}", e.getMessage());
-            wsSender.broadcast("INFO", "忽略异常: " + e.getMessage());
             throw e;
+
+        } catch (CoreException e) {
+            log.warn("  [RunHandler] 核心异常: {}", e.getMessage());
+            sendError(bot, groupId, userId, "⚠️Core: %s".formatted(e.getMessage()));
+            wsSender.broadcast("WARN", "核心异常: " + e.getMessage());
 
         } catch (Exception e) {
             log.error("  [RunHandler] 严重异常: {}", e.getMessage());
