@@ -44,7 +44,7 @@ nullbot:
   file:
     storage:
       init: false                                     # 启动时文件同步
-      root: ./file                                    # 文件管理根目录 (绝对路径)
+      root: ./files                                   # 文件管理根目录 (绝对路径)
     resource:
       mode: path                                      # 资源模式: path(默认)/base64/oss
 #      base-url: http://localhost:8080                 # 基础访问路径: OSS 模式下使用
