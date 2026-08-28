@@ -38,7 +38,7 @@ public class ChatCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         if (aiCostManager.isOutOfBalance()) {
-            bot.sendGroupMsg(event.getGroupId(), "💤AI欠费停用中", false);
+            bot.sendGroupMsg(event.getGroupId(), "💤AI欠费已停用", false);
             return;
         }
         QQMessage message = QQMessage.user(args.rest())
@@ -63,7 +63,7 @@ public class ChatCmd implements Cmd {
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
         if (aiCostManager.isOutOfBalance()) {
-            bot.sendPrivateMsg(event.getUserId(), "💤AI欠费停用中", false);
+            bot.sendPrivateMsg(event.getUserId(), "💤AI欠费已停用", false);
             return;
         }
         QQMessage message = QQMessage.user(args.rest())
