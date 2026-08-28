@@ -2,14 +2,16 @@
 
 ## Released
 
-### 2026.8.26 - v2.2.3
+### 2026.8.28 - v2.2.3
 
 - 新增 AI 欠费检测功能：
     - 新增 AiCostManager 组件；
     - 集成组件至 OpenAiModel；
     - 集成组件至 AI 指令；
     - 新增 Recover 指令 - 复位欠费状态；
-- 优化部分泛型警告；
+- 新增 RequestClient - 通用网络请求客户端；
+- 新增 SB6657 指令 - 随机获取玩机器烂梗；
+- 优化 CmdRegistry - 优化 isCmdOf 方法；
 - 优化 异常分层 - 核心包 Bot 异常替换为 Core 异常。
 
 ### 2026.8.24
