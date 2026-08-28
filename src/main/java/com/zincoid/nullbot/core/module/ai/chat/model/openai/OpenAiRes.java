@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.core.module.ai.chat.model.openai;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zincoid.nullbot.core.exception.CoreException;
 import com.zincoid.nullbot.core.module.ai.chat.model.ModelRes;
 import com.zincoid.nullbot.core.module.ai.chat.tool.ToolCall;
 
@@ -23,8 +24,11 @@ public record OpenAiRes(List<Choice> choices) {
             throw new RuntimeException("无可用响应消息");
         String content = msg.content != null ? msg.content : "";
         String reasoning = msg.reasoningContent != null ? msg.reasoningContent : "";
-        if (msg.toolCalls == null || msg.toolCalls.isEmpty())
+        if (msg.toolCalls == null || msg.toolCalls.isEmpty()) {
+            if (content.isBlank() && !reasoning.isBlank())
+                throw new CoreException("请求过于复杂，思考过程已被中断");
             return ModelRes.of(content, reasoning);
+        }
         List<ToolCall> calls = msg.toolCalls.stream()
                 .map(tc -> new ToolCall(tc.id, tc.function.name, tc.function.arguments))
                 .toList();

@@ -9,6 +9,7 @@
     - 集成组件至 OpenAiModel；
     - 集成组件至 AI 指令；
     - 新增 Recover 指令 - 复位欠费状态；
+- 修复 复杂 AI 请求在思考模式下因限制而中断导致的空回复问题；
 - 新增 RequestClient - 通用网络请求客户端；
 - 新增 SB6657 指令 - 随机获取玩机器烂梗；
 - 优化 CmdRegistry - 优化 isCmdOf 方法；
