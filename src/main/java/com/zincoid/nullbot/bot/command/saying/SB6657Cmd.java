@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"SB6657", "6657", "玩机器"})
+@CmdMapping({"SB6657", "6657", "玩机器", "玩机器烂梗"})
 @Component
 @RequiredArgsConstructor
 public class SB6657Cmd implements Cmd {
@@ -39,16 +39,8 @@ public class SB6657Cmd implements Cmd {
                 功能: 随机玩机器烂梗
                 限权: %d 级
                 格式: SB6657
-                别名: 6657/玩机器""", getAccess()
+                别名: 6657/玩机器/玩机器烂梗""", getAccess()
         );
-    }
-
-    @Override
-    public String getHelpForAI() {
-        return """
-                ◉ SB6657 命令
-                功能: 随机玩机器烂梗
-                格式: SB6657""";
     }
 
     private record MachineResp(Integer code, String msg, MachineData data) {}
