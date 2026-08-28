@@ -5,7 +5,6 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.bot.exception.BotErrorException;
-import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.module.request.RequestClient;
 import lombok.RequiredArgsConstructor;
