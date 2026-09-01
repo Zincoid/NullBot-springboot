@@ -84,7 +84,11 @@ public class QQMsgExecutor {
                 String cmd = segment.substring(
                         "<cmd>".length(), segment.length() - "</cmd>".length()).trim();
                 if (cmd.isEmpty()) continue;
-                eventPublisher.publishEvent(CmdEvent.of(cmd));
+                try {
+                    eventPublisher.publishEvent(CmdEvent.of(cmd));
+                } catch (Exception e) {
+                    log.warn("  [QQMsgExecutor] 内嵌指令执行失败: {} - {}", cmd, e.getMessage());
+                }
                 messages.add(QQMessage.assistant(segment));
             } else {
                 if (segment.isEmpty()) continue;

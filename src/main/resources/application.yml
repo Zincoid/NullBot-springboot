@@ -135,4 +135,5 @@ chrome:
   driver-auto: ${nullbot.chrome.driver.auto}
   driver-path: ${nullbot.chrome.driver.path}
   max-retries: 5
-  load-timeout: 10
+  load-timeout: 20
+  ready-timeout: 20

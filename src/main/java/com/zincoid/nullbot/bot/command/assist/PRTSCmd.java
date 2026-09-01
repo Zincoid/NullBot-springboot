@@ -25,6 +25,7 @@ public class PRTSCmd implements Cmd {
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         String keyword;
         String base64;
+        bot.sendGroupMsg(event.getGroupId(), "数据获取中，请稍候...", false);
         if (List.of("语音", "档案", "密录", "悖论").contains(args.get(0))) {
             keyword = args.rest(1);
             base64 = capturingService.prtsOpt(args.get(0), keyword);

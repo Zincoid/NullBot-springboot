@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.core.module.render.browser;
 
+import com.zincoid.nullbot.core.exception.CoreException;
 import com.zincoid.nullbot.core.properties.render.ChromeProperties;
 import com.zincoid.nullbot.core.utils.Base64Util;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -14,6 +15,7 @@ import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,25 +41,26 @@ public class Chrome {
     }
 
     public void ready(WebDriver driver) {
-        new WebDriverWait(driver, Duration.ofSeconds(10))
+        new WebDriverWait(driver, Duration.ofSeconds(chromeProperties.getReadyTimeout()))
                 .until(d -> Objects.equals(((JavascriptExecutor) d)
                         .executeScript("return document.readyState"), "complete"));
     }
 
-    public String capture(WebDriver driver, String cssSelector) {
+    public String capture(WebDriver driver, String... cssSelectors) {
         AShot ashot = new AShot();
         ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-        if (cssSelector == null)
+        if (cssSelectors == null || cssSelectors.length == 0)
             return Base64Util.from(ashot.takeScreenshot(driver).getImage());
-        WebElement el = driver.findElement(By.cssSelector(cssSelector));
         ashot.coordsProvider(new WebDriverCoordsProvider());
-        return Base64Util.from(ashot.takeScreenshot(driver, el).getImage());
-    }
-
-    public String capture(WebDriver driver, List<WebElement> elements) {
-        AShot ashot = new AShot();
-        ashot.shootingStrategy(ShootingStrategies.viewportPasting(500));
-        ashot.coordsProvider(new WebDriverCoordsProvider());
+        List<WebElement> elements = new ArrayList<>();
+        for (String selector : cssSelectors) {
+            try {
+                elements.add(driver.findElement((selector.startsWith("//") || selector.startsWith(".//")
+                        || selector.startsWith("(")) ? By.xpath(selector) : By.cssSelector(selector)));
+            } catch (NoSuchElementException e) {
+                throw new CoreException("页面元素未找到: " + selector);
+            }
+        }
         return Base64Util.from(ashot.takeScreenshot(driver, elements).getImage());
     }
 }

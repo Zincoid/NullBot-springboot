@@ -13,4 +13,5 @@ public class ChromeProperties {
     private String driverPath;
     private int maxRetries;
     private long loadTimeout;
+    private long readyTimeout;
 }
