@@ -12,6 +12,7 @@ import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.bot.gateway.handler.AuthHandler;
 import com.zincoid.nullbot.core.module.ai.chat.client.impl.SingleCallClient;
 import com.zincoid.nullbot.core.enums.Emoji;
+import com.zincoid.nullbot.core.module.ai.chat.manage.AiCostManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,6 +38,7 @@ public class QuestionCmd implements Cmd {
     private final SingleCallClient singleCallClient;
     private final BotInputManager botInputManager;
     private final AuthHandler authHandler;
+    private final AiCostManager aiCostManager;
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
@@ -46,6 +48,8 @@ public class QuestionCmd implements Cmd {
 
         if (inGameUsers.contains(userId))
             throw new BotInfoException(Emoji.INFO, "已在游戏中");
+        if (aiCostManager.isOutOfBalance())
+            throw new BotWarnException("AI 欠费已停用");
 
         try {
             inGameUsers.add(userId);

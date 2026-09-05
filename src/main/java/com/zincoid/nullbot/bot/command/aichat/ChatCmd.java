@@ -7,6 +7,7 @@ import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
+import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.bot.gateway.processor.CmdRegistry;
 import com.zincoid.nullbot.core.module.ai.chat.manage.AiCostManager;
 import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
@@ -37,10 +38,8 @@ public class ChatCmd implements Cmd {
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
-        if (aiCostManager.isOutOfBalance()) {
-            bot.sendGroupMsg(event.getGroupId(), "💤AI欠费已停用", false);
-            return;
-        }
+        if (aiCostManager.isOutOfBalance())
+            throw new BotWarnException("AI 欠费已停用");
         QQMessage message = QQMessage.user(args.rest())
                 .with(event.getGroupId(), event.getUserId(), event.getSender().getNickname())
                 .id(event.getMessageId());
