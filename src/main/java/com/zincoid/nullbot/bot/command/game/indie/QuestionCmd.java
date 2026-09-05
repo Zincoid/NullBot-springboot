@@ -75,7 +75,7 @@ public class QuestionCmd implements Cmd {
 
             if (raw.contains("REFUSED")) {
                 authHandler.setUserBan(userId, this.getClass(), BLOCK_TIME_MINUTES);
-                throw new BotInfoException(Emoji.WARN, "生成问题敏感(封禁%sMin)".formatted(BLOCK_TIME_MINUTES));
+                throw new BotInfoException(Emoji.WARN, "生成问题敏感（已封禁 %s 分钟）".formatted(BLOCK_TIME_MINUTES));
             }
 
             String answer;
