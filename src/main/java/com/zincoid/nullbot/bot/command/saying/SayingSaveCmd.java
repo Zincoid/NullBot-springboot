@@ -2,6 +2,8 @@ package com.zincoid.nullbot.bot.command.saying;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.dto.action.common.ActionData;
+import com.mikuac.shiro.dto.action.response.GetForwardMsgResp;
 import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
@@ -17,11 +19,15 @@ import com.zincoid.nullbot.core.utils.MsgUtil;
 import com.zincoid.nullbot.core.service.base.SayingService;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Slf4j
 @CmdMapping({"SayingSave", "保存语录"})
 @Component
 @RequiredArgsConstructor
 public class SayingSaveCmd implements Cmd {
+
+    private static final int MAX_FORWARDS = 20;
 
     private final SayingService sayingService;
 
@@ -36,13 +42,30 @@ public class SayingSaveCmd implements Cmd {
             rep = false;
             ArrayMsg reply = event.getArrayMsg().getFirst();
             if (reply.getType() != MsgTypeEnum.reply)
-                throw new BotWarnException("需引用文本");
+                throw new BotWarnException("无效消息引用");
             msgId = (int) reply.getLongData("id");
         }
         MsgResp msg = bot.getMsg(msgId).getData();
+        ArrayMsg first = msg.getArrayMsg().getFirst();
+        String text;
+        if (first.getType() == MsgTypeEnum.forward) {
+            ActionData<GetForwardMsgResp> forwards = bot.getForwardMsg(msgId);
+            List<MsgResp> messages = forwards.getData().getMessages();
+            if (messages.size() > MAX_FORWARDS)
+                throw new BotWarnException("转发消息过多（上限 " + MAX_FORWARDS + " 条）");
+            StringBuilder sb = new StringBuilder();
+            for (MsgResp m : messages) {
+                sb.append(m.getSender().getNickname())
+                        .append(": ")
+                        .append(MsgUtil.formatSaying(bot, m.getArrayMsg()))
+                        .append("\n");
+            }
+            text = sb.toString().trim();
+        } else {
+            text = MsgUtil.formatSaying(bot, msg.getArrayMsg());
+        }
         long userId = Long.parseLong(msg.getSender().getUserId());
         String userName = msg.getSender().getNickname();
-        String text = MsgUtil.formatSaying(bot, msg.getArrayMsg());
         if (!sayingService.add(userId, userName, text))
             throw new BotErrorException("语录保存出错");
         MsgUtils builder = MsgUtils.builder()

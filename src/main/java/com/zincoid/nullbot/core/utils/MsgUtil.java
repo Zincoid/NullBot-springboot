@@ -104,7 +104,7 @@ public final class MsgUtil {
             }
         }
         if (sb.toString().trim().isEmpty())
-            throw new CoreException("禁止空文本");
+            throw new CoreException("存在非文本内容");
         return sb.toString();
     }
 
