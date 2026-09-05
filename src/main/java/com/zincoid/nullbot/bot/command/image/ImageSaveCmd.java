@@ -40,13 +40,15 @@ public class ImageSaveCmd implements Cmd {
 
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
+        int size = imageMap.size();
         imageMap.forEach((name, url) -> {
             String key = name.substring(0, name.lastIndexOf("."));  // QQ图片扩展名错误
             String filePath = storageProperties.getImagePath() + "/collect";
             FileMeta fileMeta = fileService.upload(url, filePath, key, userId);
-            bot.sendGroupMsg(groupId, "\uD83D\uDCBD图片已保存", false);
             log.info("☑ [ImageSave] 图片已保存: {}", fileMeta.getName());
         });
+        bot.sendGroupMsg(groupId, "\uD83D\uDCBD图片已保存%s"
+                .formatted(size == 1 ? "" : ": " + size), false);
     }
 
     @Override
