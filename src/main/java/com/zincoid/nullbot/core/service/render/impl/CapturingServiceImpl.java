@@ -61,21 +61,23 @@ public class CapturingServiceImpl implements CapturingService {
     public String ai(String option) {
         String anchor = switch (option) {
             case "智能" -> "artificial-analysis-intelligence-index";
-            case "性价比" -> "intelligence-index-vs-cost-per-intelligence-index-task";
-            case "对比" -> "artificial-analysis-intelligence-index-by-open-weights-proprietary";
             case "历史" -> "frontier-language-model-intelligence-over-time";
+            case "性价比" -> "intelligence-index-vs-cost-per-intelligence-index-task";
+            case "速度" -> "output-speed";
+            case "编程" -> "artificial-analysis-coding-agent-index";
             case "成本" -> "cost-per-intelligence-index-task";
             case "定价" -> "pricing-cache-hit-input-and-output";
-            case "编码" -> "artificial-analysis-coding-agent-index";
-            case "速度" -> "output-speed";
             default -> throw new CommonException("无此查询项");
         };
+        String target = (option.equals("智能") || option.equals("历史"))
+                ? "#" + anchor
+                : "//*[@id='" + anchor + "']/..";
         return webCapturer.load("https://artificialanalysis.ai/")
                 .size(1536, 2400)
                 .scrollTo("#" + anchor)
                 .pause(2000)
                 .clickJs("//button[contains(., 'No, thanks')]")
-                .target("#" + anchor)
+                .target(target)
                 .capture();
     }
 }
