@@ -61,26 +61,21 @@ public class CapturingServiceImpl implements CapturingService {
     public String ai(String option) {
         String anchor = switch (option) {
             case "智能" -> "artificial-analysis-intelligence-index";
-            case "模型对比" -> "artificial-analysis-intelligence-index-by-open-weights-proprietary";
+            case "性价比" -> "intelligence-index-vs-cost-per-intelligence-index-task";
+            case "对比" -> "artificial-analysis-intelligence-index-by-open-weights-proprietary";
             case "历史" -> "frontier-language-model-intelligence-over-time";
             case "成本" -> "cost-per-intelligence-index-task";
-            case "性价比" -> "intelligence-index-vs-cost-per-intelligence-index-task";
-            case "算力成本" -> "cost-to-run-artificial-analysis-intelligence-index";
             case "定价" -> "pricing-cache-hit-input-and-output";
             case "编码" -> "artificial-analysis-coding-agent-index";
-            case "智能体" -> "artificial-analysis-agentic-index";
-            case "开放性" -> "artificial-analysis-openness-index-components";
-            case "Token" -> "output-tokens-per-intelligence-index-task";
             case "速度" -> "output-speed";
-            case "耗时" -> "time-per-intelligence-index-task";
-            case "供应商" -> "endpoint-accuracy-index-gpt-oss-120b-high";
             default -> throw new CommonException("无此查询项");
         };
         return webCapturer.load("https://artificialanalysis.ai/")
                 .size(1536, 2400)
                 .scrollTo("#" + anchor)
                 .pause(2000)
-                .target("//*[@id='" + anchor + "']/..")
+                .clickJs("//button[contains(., 'No, thanks')]")
+                .target("#" + anchor)
                 .capture();
     }
 }

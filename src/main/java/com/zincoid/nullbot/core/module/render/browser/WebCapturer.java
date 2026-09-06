@@ -62,6 +62,11 @@ public class WebCapturer {
             return this;
         }
 
+        public Capture clickJs(String... selectors) {
+            for (String sel : selectors) steps.add(d -> doClickJs(d, sel));
+            return this;
+        }
+
         public Capture waitFor(String selector) {
             steps.add(d -> doWaitFor(d, selector));
             return this;
@@ -144,5 +149,14 @@ public class WebCapturer {
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", el);
             } catch (Exception ignored) {}
         }
+    }
+
+    private void doClickJs(WebDriver driver, String selector) {
+        By by = (selector.startsWith("//") || selector.startsWith(".//") || selector.startsWith("("))
+                ? By.xpath(selector) : By.cssSelector(selector);
+        try {
+            WebElement el = driver.findElement(by);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", el);
+        } catch (Exception ignored) {}
     }
 }

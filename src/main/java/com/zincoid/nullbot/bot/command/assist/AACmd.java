@@ -36,7 +36,7 @@ public class AACmd implements Cmd {
                 功能: ArtificialAnalysis 模型图表查询
                 限权: %d 级
                 格式: AA [可选: 图表]
-                图表: 智能/模型对比/历史/成本/性价比/算力成本/定价/编码/智能体/开放性/Token/速度/耗时/供应商
+                图表: 智能/性价比/对比/历史/成本/定价/编码/速度
                 默认: 智能
                 别名: 模型查询""", getAccess()
         );
@@ -48,7 +48,7 @@ public class AACmd implements Cmd {
                 ◉ AA 命令
                 功能: 通过 ArtificialAnalysis 网站查询 AI 模型榜单图表
                 格式: AA [图表]
-                图表可选值: 智能/模型对比/历史/成本/性价比/算力成本/定价/编码/智能体/开放性/Token/速度/耗时/供应商
+                图表可选值: 智能/性价比/对比/历史/成本/定价/编码/速度
                 示例: AA 速度""";
     }
 }
