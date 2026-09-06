@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Slf4j
-@CmdMapping({"Convert", "图像处理"})
+@CmdMapping({"Convert", "图像转换", "转换"})
 @Component
 @RequiredArgsConstructor
 public class ConvertCmd implements Cmd {
@@ -52,7 +52,7 @@ public class ConvertCmd implements Cmd {
             for (Long qqNumber : qqNumbers) urls.add(ShiroUtils.getUserAvatar(qqNumber, 5));
         }
 
-        if (urls.isEmpty()) throw new BotWarnException("缺少图片引用或ID参数或AT用户");
+        if (urls.isEmpty()) throw new BotWarnException("缺少图片引用/ID/@用户");
 
         for (String url : urls) {
             FileMeta fileMeta = SaveUtil.save(url);
@@ -65,7 +65,7 @@ public class ConvertCmd implements Cmd {
             };
             String response = MsgUtils.builder().img("base64://" + base64).build();
             bot.sendGroupMsg(groupId, response, false);
-            log.info("☑ [Convert] 图像处理已完成");
+            log.info("☑ [Convert] 图像转换已完成");
         }
     }
 
@@ -79,7 +79,7 @@ public class ConvertCmd implements Cmd {
                 1. [引用] Convert [方式]
                 2. Convert [方式] [@用户|QQ号]
                 方式: RIP/PRTS/InvsPRTS
-                别名: 图像处理""", getAccess()
+                别名: 图像转换/转换""", getAccess()
         );
     }
 

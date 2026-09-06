@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Slf4j
-@CmdMapping({"Symmetry", "对称"})
+@CmdMapping({"Symmetry", "图像对称", "对称"})
 @Component
 @RequiredArgsConstructor
 public class SymmetryCmd implements Cmd {
@@ -71,7 +71,7 @@ public class SymmetryCmd implements Cmd {
             for (Long number : qqNumbers) urls.add(ShiroUtils.getUserAvatar(number, 5));
         }
 
-        if (urls.isEmpty()) throw new BotWarnException("缺少引用图片或ID参数或AT用户");
+        if (urls.isEmpty()) throw new BotWarnException("缺少图片引用/ID/@用户");
 
         for (String url : urls) {
             FileMeta fileMeta = SaveUtil.save(url);
@@ -86,13 +86,13 @@ public class SymmetryCmd implements Cmd {
     public String getHelp() {
         return String.format("""
                 ◉ Symmetry 命令
-                功能: 图片对称转换
+                功能: 图像对称
                 限权: %d 级
                 格式:
                 1. [引用] Symmetry [可选: 方式]
                 2. Symmetry [可选: 方式] [@任何人|QQ号]
                 方式: 上/下/左/右 (默认左)
-                别名: 对称""", getAccess()
+                别名: 图像对称/对称""", getAccess()
         );
     }
 
@@ -100,7 +100,7 @@ public class SymmetryCmd implements Cmd {
     public String getHelpForAI() {
         return """
                 ◉ Symmetry 命令
-                功能: 头像对称转换
+                功能: 头像对称
                 格式: Symmetry [可选: 方式] [QQ号]
                 方式: 上/下/左/右 (默认左)
                 示例: Symmetry 右 2660181154""";
