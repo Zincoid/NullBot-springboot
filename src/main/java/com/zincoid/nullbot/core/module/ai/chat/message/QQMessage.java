@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.core.module.ai.chat.message;
 
 import com.zincoid.nullbot.core.enums.Role;
+import com.zincoid.nullbot.core.utils.Base64Util;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -34,27 +35,34 @@ public class QQMessage extends AbstractMessage {
         Map<String, Object> map = new HashMap<>();
         String r = super.role.getValue();
         map.put("role", r);
-        if ("user".equals(r)) {
-            String text = "[%s][%s(%s)]: %s"
-                    .formatted(messageId, userName, userId, super.content);
-            if (vision && !imageUrls.isEmpty()) {
-                List<Map<String, Object>> parts = new ArrayList<>();
-                parts.add(Map.of(
-                        "type", "text",
-                        "text", text
-                ));
-                for (String url : imageUrls) {
-                    parts.add(Map.of(
-                            "type", "image_url",
-                            "image_url", Map.of("url", url)
-                    ));
-                }
-                map.put("content", parts);
-            } else {
-                map.put("content", text);
-            }
-        } else {
+        if (!"user".equals(r)) {
             map.put("content", content);
+            return map;
+        }
+        StringBuilder _content = new StringBuilder("[%s][%s(%s)]: %s"
+                .formatted(messageId, userName, userId, super.content));
+        List<Map<String, Object>> parts = new ArrayList<>();
+        if (vision) {
+            for (String url : imageUrls) {
+                String data = Base64Util.dataUri(url);
+                if (data == null) {
+                    _content.append("[图片下载失败]");
+                    continue;
+                }
+                parts.add(Map.of(
+                        "type", "image_url",
+                        "image_url", Map.of("url", data)
+                ));
+            }
+        }
+        if (parts.isEmpty()) {
+            map.put("content", _content.toString());
+        } else {
+            parts.addFirst(Map.of(
+                    "type", "text",
+                    "text", _content.toString()
+            ));
+            map.put("content", parts);
         }
         return map;
     }
