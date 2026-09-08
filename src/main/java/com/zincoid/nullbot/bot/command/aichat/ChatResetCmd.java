@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"ChatReset", "重置聊天"})
+@CmdMapping({"ChatReset", "重置聊天", "杀"})
 @Component
 public class ChatResetCmd implements Cmd {
 
@@ -40,7 +40,7 @@ public class ChatResetCmd implements Cmd {
                 功能: 重置聊天历史
                 限权: %d 级
                 格式: ChatReset
-                别名: 重置聊天""", getAccess()
+                别名: 重置聊天/杀""", getAccess()
         );
     }
 
