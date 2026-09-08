@@ -38,7 +38,7 @@ public class HelpCmd implements Cmd {
                    -r,--reset      重置提示词
                    -v,--view       查看提示词
                 
-                注: 私聊仅实现AI聊天及以上指令且永久处于无鉴权限速/非语音防注入/EMBEDDING对话策略下""", true);
+                注: 私聊仅实现AI聊天及以上指令且永久处于无鉴权/无限速/非语音/非视觉/防注入/EMBEDDING对话策略下""", true);
         log.info("☑ [Help] 私聊帮助已获取");
     }
 
