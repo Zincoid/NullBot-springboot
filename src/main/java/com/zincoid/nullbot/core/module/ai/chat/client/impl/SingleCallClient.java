@@ -50,7 +50,7 @@ public class SingleCallClient implements Client<StdMessage> {
             messages.add(StdMessage.system(req.getPrompt()));
         if (req.getMessage() != null)
             messages.add(req.getMessage());
-        ModelReq _req = ModelReq.of(messages, req.isThinking(), req.getMaxTokens());
+        ModelReq _req = ModelReq.of(messages, req.isThinking(), false, req.getMaxTokens());
         ModelRes _res = model.invoke(_req);
         StdMessage message = StdMessage.assistant(_res.getContent());
         return ClientRes.of(message);

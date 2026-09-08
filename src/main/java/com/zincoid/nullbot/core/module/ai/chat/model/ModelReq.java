@@ -14,9 +14,10 @@ public class ModelReq {
     private final List<Message> messages;
     private final List<ToolDef> tools;
     private final boolean thinking;
+    private final boolean vision;
     private final int maxTokens;
 
-    public static ModelReq of(List<Message> messages, boolean thinking, int maxTokens) {
-        return ModelReq.of(messages, null, thinking, maxTokens);
+    public static ModelReq of(List<Message> messages, boolean thinking, boolean vision, int maxTokens) {
+        return ModelReq.of(messages, null, thinking, vision, maxTokens);
     }
 }

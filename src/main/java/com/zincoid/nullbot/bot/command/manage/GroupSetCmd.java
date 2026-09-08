@@ -108,6 +108,10 @@ public class GroupSetCmd implements Cmd {
                     boolean enabled = setting.switchVoice();
                     msg = "语音模式 -> %s".formatted(enabled ? "ON" : "OFF");
                 }
+                case "vis" -> {
+                    boolean enabled = setting.switchVision();
+                    msg = "视觉模式 -> %s".formatted(enabled ? "ON" : "OFF");
+                }
                 case "ica" -> {
                     boolean enabled = setting.switchInnerCmdAuth();
                     msg = "内令鉴权 -> %s".formatted(enabled ? "ON" : "OFF");
@@ -191,6 +195,7 @@ public class GroupSetCmd implements Cmd {
                 - stg              对话策略
                 - tkn              思考模式
                 - voi              语音模式
+                - vis              视觉模式
                 - ati              注入保护
                 - ica              内令鉴权
                 - cus              允许自定

@@ -4,7 +4,10 @@ import com.zincoid.nullbot.core.enums.Role;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -16,19 +19,40 @@ public class QQMessage extends AbstractMessage {
     private Long groupId;
     private Long userId;
     private String userName;
+    private List<String> imageUrls = List.of();
 
     private QQMessage(Role role, String content) {
         super(role, content);
     }
 
-    @Override
     public Map<String, Object> toMap() {
+        return toMap(false);
+    }
+
+    @Override
+    public Map<String, Object> toMap(boolean vision) {
         Map<String, Object> map = new HashMap<>();
         String r = super.role.getValue();
         map.put("role", r);
         if ("user".equals(r)) {
-            map.put("content", "[%s][%s(%s)]: %s".formatted(
-                    messageId, userName, userId, super.content));
+            String text = "[%s][%s(%s)]: %s"
+                    .formatted(messageId, userName, userId, super.content);
+            if (vision && !imageUrls.isEmpty()) {
+                List<Map<String, Object>> parts = new ArrayList<>();
+                parts.add(Map.of(
+                        "type", "text",
+                        "text", text
+                ));
+                for (String url : imageUrls) {
+                    parts.add(Map.of(
+                            "type", "image_url",
+                            "image_url", Map.of("url", url)
+                    ));
+                }
+                map.put("content", parts);
+            } else {
+                map.put("content", text);
+            }
         } else {
             map.put("content", content);
         }
@@ -55,6 +79,11 @@ public class QQMessage extends AbstractMessage {
 
     public QQMessage id(Integer messageId) {
         this.messageId = messageId;
+        return this;
+    }
+
+    public QQMessage img(Collection<String> urls) {
+        this.imageUrls = urls == null ? List.of() : List.copyOf(urls);
         return this;
     }
 

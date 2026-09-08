@@ -106,7 +106,6 @@ public class BotMonitor {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @FuncControl("MsgCollect")
     public void doGroupMsgCollect(Bot bot, GroupMessageEvent event) {
         if (!BotCtx.getSetting().isMessageCollect()) return;
@@ -115,7 +114,10 @@ public class BotMonitor {
         Long userId = event.getUserId();
         String userName = event.getSender().getNickname();
         String parsed = MsgUtil.formatMsg(bot, event.getArrayMsg());
-        QQMessage qqMsg = QQMessage.user(parsed).with(groupId, userId, userName).id(event.getMessageId());
+        QQMessage qqMsg = QQMessage.user(parsed)
+                .with(groupId, userId, userName)
+                .id(event.getMessageId())
+                .img(MsgUtil.extractImgMap(event.getArrayMsg()).values());
         log.info("◉ [GroupMonitor:MsgCollect] 群聊 {} - {}({}) -> {}", groupId, userName, userId, parsed);
         msgWindowMemory.add(ChatScope.MONITOR + "_" + groupId, qqMsg);
     }

@@ -3,6 +3,7 @@ package com.zincoid.nullbot.bot.command.aichat;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
+import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import com.zincoid.nullbot.bot.command.Cmd;
@@ -13,10 +14,15 @@ import com.zincoid.nullbot.core.module.ai.chat.manage.AiCostManager;
 import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
 import com.zincoid.nullbot.core.properties.bot.CmdProperties;
+import com.zincoid.nullbot.core.utils.MsgUtil;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @CmdMapping({"Chat", "对话"})
@@ -42,7 +48,8 @@ public class ChatCmd implements Cmd {
             throw new BotWarnException("AI 欠费已停用");
         QQMessage message = QQMessage.user(args.rest())
                 .with(event.getGroupId(), event.getUserId(), event.getSender().getNickname())
-                .id(event.getMessageId());
+                .id(event.getMessageId())
+                .img(images(bot, event.getArrayMsg()));
         String response = qqChatClient.handle(message).call().getContent();
         for (ArrayMsg msg : event.getArrayMsg()) {
             if (msg.getType() != MsgTypeEnum.text) continue;
@@ -67,9 +74,22 @@ public class ChatCmd implements Cmd {
         }
         QQMessage message = QQMessage.user(args.rest())
                 .with(event.getUserId(), event.getPrivateSender().getNickname())
-                .id(event.getMessageId());
+                .id(event.getMessageId())
+                .img(images(bot, event.getArrayMsg()));
         String response = qqChatClient.handle(message).call().getContent();
         log.info("☑ [Chat] 私聊已回复: {}", response);
+    }
+
+    private List<String> images(Bot bot, List<ArrayMsg> arrayMsg) {
+        Map<String, String> images = new LinkedHashMap<>(MsgUtil.extractImgMap(arrayMsg));
+        for (ArrayMsg seg : arrayMsg) {
+            if (seg.getType() != MsgTypeEnum.reply) continue;
+            try {
+                MsgResp replyMsg = bot.getMsg((int) seg.getLongData("id")).getData();
+                images.putAll(MsgUtil.extractImgMap(replyMsg.getArrayMsg()));
+            } catch (Exception ignored) {}
+        }
+        return List.copyOf(images.values());
     }
 
     @Override

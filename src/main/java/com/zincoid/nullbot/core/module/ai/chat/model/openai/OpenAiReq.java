@@ -3,7 +3,6 @@ package com.zincoid.nullbot.core.module.ai.chat.model.openai;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.zincoid.nullbot.core.module.ai.chat.message.Message;
 import com.zincoid.nullbot.core.module.ai.chat.model.ModelReq;
 import com.zincoid.nullbot.core.module.ai.chat.tool.ToolDef;
 import lombok.Builder;
@@ -58,7 +57,7 @@ public class OpenAiReq {
     public static OpenAiReq from(ModelReq req, String modelName) {
         OpenAiReqBuilder builder = OpenAiReq.builder()
                 .model(modelName)
-                .messages(req.getMessages().stream().map(Message::toMap).toList())
+                .messages(req.getMessages().stream().map(m -> m.toMap(req.isVision())).toList())
                 .thinking(req.isThinking()
                         ? Thinking.builder().type("enabled").build()
                         : Thinking.builder().type("disabled").build())

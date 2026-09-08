@@ -21,6 +21,7 @@ public class SettingPO {
     private ChatStrategy chatStrategy = ChatStrategy.EMBEDDING;
     private boolean thinking = false;
     private boolean voice = false;
+    private boolean vision = false;
     private boolean innerCmdAuth = false;
     private boolean antiInjection = true;
     private boolean custom = false;
@@ -47,6 +48,7 @@ public class SettingPO {
     public boolean switchAntiInjection() { return antiInjection = !antiInjection; }
     public boolean switchThinking() { return thinking = !thinking; }
     public boolean switchVoice() { return voice = !voice; }
+    public boolean switchVision() { return vision = !vision; }
     public ChatStrategy switchChatStrategy() { return chatStrategy = chatStrategy.next(); }
     public boolean switchInnerCmdAuth() { return innerCmdAuth = !innerCmdAuth; }
     public boolean switchCustom() { return custom = !custom; }
@@ -70,7 +72,8 @@ public class SettingPO {
                 ├ 会话范围 - %s
                 ├ 对话策略 - %s
                 ├ 思考模式 - %s
-                └ 语音模式 - %s
+                ├ 语音模式 - %s
+                └ 视觉模式 - %s
                 ┌ 注入保护 - %s
                 ├ 内令鉴权 - %s
                 └ 允许自定 - %s
@@ -94,6 +97,7 @@ public class SettingPO {
                 chatStrategy,
                 thinking ? "ON" : "OFF",
                 voice ? "ON" : "OFF",
+                vision ? "ON" : "OFF",
                 antiInjection ? "ON" : "OFF",
                 innerCmdAuth ? "ON" : "OFF",
                 custom ? "ON" : "OFF",

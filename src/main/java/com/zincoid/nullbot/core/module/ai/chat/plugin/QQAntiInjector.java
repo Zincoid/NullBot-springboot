@@ -62,8 +62,7 @@ public class QQAntiInjector {
         String res = model.invoke(
                 ModelReq.of(
                         List.of(StdMessage.system(PROMPT.formatted(message.getContent()))),
-                        false,
-                        100
+                        false, false, 100
                 )
         ).getContent();
         if (!"YES".equals(res.trim())) return false;

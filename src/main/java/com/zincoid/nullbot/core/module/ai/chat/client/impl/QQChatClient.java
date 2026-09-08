@@ -142,11 +142,11 @@ public class QQChatClient implements Client<QQMessage> {
         }
     }
 
-    private QQMessage plainCall(String prompt, QQMessage message, boolean thinking, int maxTokens) {
+    private QQMessage plainCall(String prompt, QQMessage message, boolean thinking, boolean vision, int maxTokens) {
         List<Message> messages = new ArrayList<>();
         messages.add(StdMessage.system(prompt));
         messages.addAll(memory.get(BotCtx.getChatId()));
-        ModelRes _res = model.invoke(ModelReq.of(messages, thinking, maxTokens));
+        ModelRes _res = model.invoke(ModelReq.of(messages, thinking, vision, maxTokens));
         return QQMessage.send(message, _res.getContent());
     }
 
@@ -155,10 +155,11 @@ public class QQChatClient implements Client<QQMessage> {
     private QQMessage chatDirect(QQMessage message) {
         boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();
         boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
+        boolean vision = !message.isPrivate() && BotCtx.getSetting().isVision();
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), !voice, false)
                 : qqPrompter.group(message.getGroupId(), !voice, false);
-        QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
+        QQMessage _message = plainCall(prompt, message, thinking, vision, maxTokens);
         memory.add(BotCtx.getChatId(), qqMsgExecutor.direct(_message, voice));
         return _message;
     }
@@ -168,10 +169,11 @@ public class QQChatClient implements Client<QQMessage> {
     private QQMessage chatEmbedding(QQMessage message) {
         boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();
         boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
+        boolean vision = !message.isPrivate() && BotCtx.getSetting().isVision();
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), !voice, true)
                 : qqPrompter.group(message.getGroupId(), !voice, true);
-        QQMessage _message = plainCall(prompt, message, thinking, maxTokens);
+        QQMessage _message = plainCall(prompt, message, thinking, vision, maxTokens);
         List<QQMessage> messages = qqMsgExecutor.chain(_message, voice);
         for (QQMessage msg : messages) memory.add(BotCtx.getChatId(), msg);
         return _message;
@@ -182,14 +184,15 @@ public class QQChatClient implements Client<QQMessage> {
     private QQMessage chatTools(QQMessage message) {
         boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();
         boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
+        boolean vision = !message.isPrivate() && BotCtx.getSetting().isVision();
         String prompt = message.isPrivate()
                 ? qqPrompter.user(message.getUserId(), !voice, false)
                 : qqPrompter.group(message.getGroupId(), !voice, false);
-        return callAndStoreWithTools(prompt, message, thinking, voice);
+        return callAndStoreWithTools(prompt, message, thinking, vision, voice);
     }
 
     private QQMessage callAndStoreWithTools(String prompt, QQMessage message,
-                                            boolean thinking, boolean voice) {
+                                            boolean thinking, boolean vision, boolean voice) {
         String chatId = BotCtx.getChatId();
         ModelRes _res = null;
         for (int i = 0; i < maxToolCalls; i++) {
@@ -197,7 +200,7 @@ public class QQChatClient implements Client<QQMessage> {
             messages.add(StdMessage.system(prompt));
             messages.addAll(memory.get(chatId));
             ModelRes __res = model
-                    .invoke(ModelReq.of(messages, toolRegistry.getAll(), thinking, maxTokens));
+                    .invoke(ModelReq.of(messages, toolRegistry.getAll(), thinking, vision, maxTokens));
             if (!__res.hasToolCalls()) {
                 _res = __res;
                 break;
@@ -215,7 +218,7 @@ public class QQChatClient implements Client<QQMessage> {
         if (_res == null) {
             log.warn("◎ [ToolCall] 达到最大迭代次数: {} ", maxToolCalls);
             memory.add(chatId, StdMessage.user("达到最大工具调用轮数，请根据已有信息给出最终回答，不要再调用工具。"));
-            _res = model.invoke(ModelReq.of(memory.get(chatId), false, maxTokens));
+            _res = model.invoke(ModelReq.of(memory.get(chatId), thinking, vision, maxTokens));
         }
         QQMessage _message = QQMessage.send(message, _res.getContent());
         memory.add(chatId, qqMsgExecutor.direct(_message, voice));

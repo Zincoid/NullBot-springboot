@@ -61,7 +61,7 @@ public class SimpleChatClient implements Client<StdMessage> {
         if (req.getPrompt() != null)
             messages.add(StdMessage.system(req.getPrompt()));
         messages.addAll(memory.get(chatId));
-        ModelReq _req = ModelReq.of(messages, req.isThinking(), req.getMaxTokens());
+        ModelReq _req = ModelReq.of(messages, req.isThinking(), false, req.getMaxTokens());
         ModelRes _res = model.invoke(_req);
         StdMessage message = StdMessage.assistant(_res.getContent());
         memory.add(chatId, message);

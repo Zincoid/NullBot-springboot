@@ -10,4 +10,8 @@ public interface Message {
     String getContent();
 
     Map<String, Object> toMap();
+
+    default Map<String, Object> toMap(boolean vision) {
+        return toMap();
+    }
 }
