@@ -13,9 +13,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public final class Base64Util {
@@ -24,10 +25,10 @@ public final class Base64Util {
 
     // ============== 网络图片转换 ==============
 
-    private static final int MAX_BYTES = 20 * 1024 * 1024;  // 20MB
-    private static final int MAX_CACHE = 512;
+    private static final long MAX_TOTAL = 128L * 1024 * 1024; // 缓存总量 128MB
 
-    private static final Map<String, Optional<String>> CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Optional<String>> CACHE = new LinkedHashMap<>(128, 0.75f, true);
+    private static long cacheBytes = 0;
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
@@ -36,11 +37,11 @@ public final class Base64Util {
 
     public static String dataUri(String url) {
         if (url == null || url.isBlank()) return null;
-        return CACHE.computeIfAbsent(url, Base64Util::fromUrl).orElse(null);
-    }
-
-    private static Optional<String> fromUrl(String url) {
-        if (CACHE.size() >= MAX_CACHE) CACHE.clear();
+        synchronized (CACHE) {
+            Optional<String> cached = CACHE.get(url);
+            if (cached != null) return cached.orElse(null);
+        }
+        Optional<String> data;
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -49,22 +50,31 @@ public final class Base64Util {
                     .GET()
                     .build();
             HttpResponse<byte[]> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            if (response.statusCode() != 200) {
+            if (response.statusCode() != 200)
                 throw new RuntimeException("HTTP " + response.statusCode());
-            }
             byte[] bytes = response.body();
-            if (bytes.length == 0 || bytes.length > MAX_BYTES) {
-                throw new RuntimeException("图片大小越界: " + bytes.length + " bytes");
-            }
+            if (bytes.length == 0)
+                throw new RuntimeException("空图片内容");
             String mime = sniffMime(bytes);
-            if (mime == null) {
+            if (mime == null)
                 throw new RuntimeException("非图片内容");
-            }
-            return Optional.of("data:" + mime + ";base64," + Base64.getEncoder().encodeToString(bytes));
+            data = Optional.of("data:" + mime + ";base64," + Base64.getEncoder().encodeToString(bytes));
         } catch (Exception e) {
             log.warn("◉ [Base64Util] 图片下载失败: {} - {}", url, e.getMessage());
-            return Optional.empty();
+            data = Optional.empty();
         }
+        synchronized (CACHE) {
+            if (CACHE.containsKey(url)) return data.orElse(null);
+            CACHE.put(url, data);
+            cacheBytes += data.map(String::length).orElse(0);
+            while (cacheBytes > MAX_TOTAL && CACHE.size() > 1) {
+                Iterator<Map.Entry<String, Optional<String>>> it = CACHE.entrySet().iterator();
+                Map.Entry<String, Optional<String>> eldest = it.next();
+                cacheBytes -= eldest.getValue().map(String::length).orElse(0);
+                it.remove();
+            }
+        }
+        return data.orElse(null);
     }
 
     private static String sniffMime(byte[] b) {
