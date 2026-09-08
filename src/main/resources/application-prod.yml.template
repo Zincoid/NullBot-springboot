@@ -55,9 +55,9 @@ nullbot:
       openai:                                         # OpenAI API
         api-url: https://api.deepseek.com
         api-key:
-        model: deepseek-v4-flash
+        model: deepseek-v4-flash-vision-exp
       max-history-length: 100
-      max-tokens: 750
+      max-tokens: 1024
       max-tool-calls: 5
       default-prompt: "你是一只猫娘，你的名字叫Null。"
     tts:                                              # TTS 合成配置
