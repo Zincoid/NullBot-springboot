@@ -15,5 +15,7 @@ public interface GroupService extends IService<GroupPO> {
 
     void setAccess(Long id, Integer newAccess);
 
+    boolean delete(Long id);
+
     void updateAllNames();
 }

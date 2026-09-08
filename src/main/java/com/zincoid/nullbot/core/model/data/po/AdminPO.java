@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @TableName("`admin`")
 public class AdminPO {
+
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     private String username;

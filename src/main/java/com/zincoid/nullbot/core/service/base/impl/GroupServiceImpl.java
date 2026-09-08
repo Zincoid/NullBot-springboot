@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.model.data.query.GroupQuery;
+import com.zincoid.nullbot.core.service.system.SettingService;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.GroupPO;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupPO> implements GroupService {
 
     private final BotOperator botOperator;
+    private final SettingService settingService;
 
     @Override
     public PageResult<GroupPO> page(GroupQuery query) {
@@ -36,6 +38,14 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupPO> implemen
     @Override
     public void setAccess(Long id, Integer newAccess) {
         lambdaUpdate().eq(GroupPO::getId, id).set(GroupPO::getAccess, newAccess).update();
+    }
+
+    @Override
+    @Transactional
+    public boolean delete(Long id) {
+        boolean removed = removeById(id);
+        settingService.removeByGroup(id);
+        return removed;
     }
 
     @Override

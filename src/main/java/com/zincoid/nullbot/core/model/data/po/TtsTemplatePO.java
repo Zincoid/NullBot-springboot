@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @TableName("`tts_template`")
 public class TtsTemplatePO {
+
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private String name;

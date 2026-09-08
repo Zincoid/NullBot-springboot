@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @TableName("`daily`")
 public class DailyPO {
+
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private LocalDate date;

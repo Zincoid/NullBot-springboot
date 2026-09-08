@@ -60,4 +60,10 @@ public class SettingServiceImpl extends ServiceImpl<SettingMapper, SettingPO> im
     public void setAll(List<SettingPO> settings) {
         settings.forEach(this::set);
     }
+
+    @Override
+    public boolean removeByGroup(Long groupId) {
+        cache.remove(groupId);
+        return lambdaUpdate().eq(SettingPO::getGroupId, groupId).remove();
+    }
 }

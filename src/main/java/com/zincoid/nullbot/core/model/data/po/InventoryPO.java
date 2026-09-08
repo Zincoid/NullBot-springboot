@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @TableName("`inventory`")
 public class InventoryPO {
+
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private Long ownerId;

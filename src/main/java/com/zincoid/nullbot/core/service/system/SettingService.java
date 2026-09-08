@@ -14,4 +14,6 @@ public interface SettingService extends IService<SettingPO> {
     List<SettingPO> getAll();
 
     void setAll(List<SettingPO> settings);
+
+    boolean removeByGroup(Long groupId);
 }

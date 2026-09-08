@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @TableName("`file`")
 public class FilePO {
+
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private String fileName;

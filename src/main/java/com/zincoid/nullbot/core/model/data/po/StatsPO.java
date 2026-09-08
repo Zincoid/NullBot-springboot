@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @TableName("`stats`")
 public class StatsPO {
+
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private Long groupId;
