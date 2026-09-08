@@ -11,7 +11,6 @@ public class StorageProperties {
 
     private boolean init;
     private String fileDirectory;
-    private String configPath;
     private String resourcePath;
     private String tempPath;
     private String imagePath;

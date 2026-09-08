@@ -1,4 +1,4 @@
--- =============================================
+﻿-- =============================================
 -- NullBot Database Schema
 -- Version: 1.0
 -- Engine: InnoDB, Charset: utf8mb4
@@ -62,7 +62,39 @@ CREATE TABLE IF NOT EXISTS `admin` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Web admin table';
 
 -- =============================================
--- 5. Item Table
+-- 5. Setting Table
+-- =============================================
+CREATE TABLE IF NOT EXISTS `setting` (
+    `id`                     INT           NOT NULL AUTO_INCREMENT COMMENT 'Primary Key',
+    `group_id`               BIGINT        NOT NULL               COMMENT 'Group QQ number',
+    `limit_scope`            VARCHAR(20)   NOT NULL DEFAULT 'USER' COMMENT 'Rate limit scope: USER/GROUP/CMD',
+    `limit_capacity`         INT           NOT NULL DEFAULT 5     COMMENT 'Rate limit capacity',
+    `limit_refill`           INT           NOT NULL DEFAULT 2     COMMENT 'Rate limit refill amount',
+    `limit_interval`         INT           NOT NULL DEFAULT 1     COMMENT 'Rate limit refill interval in minutes',
+    `chat_scope`             VARCHAR(20)   NOT NULL DEFAULT 'GROUP' COMMENT 'Chat scope: GROUP/PERSONAL/MONITOR',
+    `chat_strategy`          VARCHAR(20)   NOT NULL DEFAULT 'EMBEDDING' COMMENT 'Chat strategy: DIRECT/EMBEDDING/TOOLS',
+    `thinking`               BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'AI thinking mode',
+    `voice`                  BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'AI voice mode',
+    `vision`                 BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'AI vision mode',
+    `inner_cmd_auth`         BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Inner command auth',
+    `anti_injection`         BOOLEAN       NOT NULL DEFAULT TRUE  COMMENT 'Anti prompt injection',
+    `custom`                 BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Allow custom settings',
+    `auto_reply`             BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Auto reply',
+    `reply_frequency`        DOUBLE        NOT NULL DEFAULT 0.001 COMMENT 'Auto reply frequency',
+    `image_collect`          BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Image collect',
+    `message_collect`        BOOLEAN       NOT NULL DEFAULT TRUE  COMMENT 'Message collect',
+    `keyword_detect`         BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Keyword detect',
+    `poke_detect`            BOOLEAN       NOT NULL DEFAULT TRUE  COMMENT 'Poke detect',
+    `recall_detect`          BOOLEAN       NOT NULL DEFAULT FALSE COMMENT 'Recall detect',
+    `guess_crop_ratio`       DOUBLE        NOT NULL DEFAULT 0.1   COMMENT 'Guess crop ratio',
+    `guess_transparent_ratio` DOUBLE       NOT NULL DEFAULT 0.75  COMMENT 'Guess transparent ratio',
+    `guess_padding`          INT           NOT NULL DEFAULT 250   COMMENT 'Guess padding',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_group_id` (`group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Group setting table';
+
+-- =============================================
+-- 6. Item Table
 -- =============================================
 CREATE TABLE IF NOT EXISTS `item` (
     `id`           INT          NOT NULL AUTO_INCREMENT  COMMENT 'Primary Key',
@@ -81,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Item table';
 
 -- =============================================
--- 6. Inventory Table
+-- 7. Inventory Table
 -- =============================================
 CREATE TABLE IF NOT EXISTS `inventory` (
     `id`          INT     NOT NULL AUTO_INCREMENT         COMMENT 'Primary Key',
@@ -94,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `inventory` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='User inventory table';
 
 -- =============================================
--- 7. Saying Table
+-- 8. Saying Table
 -- =============================================
 CREATE TABLE IF NOT EXISTS `saying` (
     `id`          INT          NOT NULL AUTO_INCREMENT  COMMENT 'Primary Key',
@@ -108,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `saying` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Saying table';
 
 -- =============================================
--- 8. Bottle Table
+-- 9. Bottle Table
 -- =============================================
 CREATE TABLE IF NOT EXISTS `bottle` (
     `id`             INT          NOT NULL AUTO_INCREMENT  COMMENT 'Primary Key',
@@ -123,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `bottle` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Drift bottle table';
 
 -- =============================================
--- 9. Daily Table
+-- 10. Daily Table
 -- =============================================
 CREATE TABLE IF NOT EXISTS `daily` (
     `id`          INT     NOT NULL AUTO_INCREMENT         COMMENT 'Primary Key',
@@ -134,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `daily` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Daily visit statistics';
 
 -- =============================================
--- 10. Stats Table
+-- 11. Stats Table
 -- =============================================
 CREATE TABLE IF NOT EXISTS `stats` (
     `id`          INT          NOT NULL AUTO_INCREMENT   COMMENT 'Primary Key',
@@ -147,7 +179,7 @@ CREATE TABLE IF NOT EXISTS `stats` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Per-user command statistics';
 
 -- =============================================
--- 11. TTS Template Table
+-- 12. TTS Template Table
 -- =============================================
 CREATE TABLE IF NOT EXISTS `tts_template` (
     `id`            INT          NOT NULL AUTO_INCREMENT  COMMENT 'Primary Key',
@@ -171,5 +203,5 @@ INSERT INTO `user` (id, name, access) VALUES
     (2660181154, 'Zincoid', 2);
 
 -- =============================================
--- Item seed data lives in mysql/data/itemlist.sql
+-- Item seed data lives in mysql/data.sql
 -- =============================================

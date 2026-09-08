@@ -1,5 +1,8 @@
 package com.zincoid.nullbot.core.model.data.po;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.zincoid.nullbot.core.enums.ChatScope;
@@ -8,13 +11,17 @@ import com.zincoid.nullbot.core.enums.LimitScope;
 
 @Data
 @NoArgsConstructor
+@TableName("setting")
 public class SettingPO {
+
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
     private Long groupId;
 
-    private LimitScope limitScope = LimitScope.GROUP;
-    private int limitCapacity = 25;
-    private int limitRefill = 10;
+    private LimitScope limitScope = LimitScope.USER;
+    private int limitCapacity = 5;
+    private int limitRefill = 2;
     private int limitInterval = 1;
 
     private ChatScope chatScope = ChatScope.GROUP;
@@ -30,7 +37,7 @@ public class SettingPO {
 
     private boolean imageCollect = false;
     private boolean messageCollect = true;
-    private boolean keywordDetect = true;
+    private boolean keywordDetect = false;
     private boolean pokeDetect = true;
     private boolean recallDetect = false;
 
@@ -43,7 +50,6 @@ public class SettingPO {
     }
 
     public LimitScope switchLimitScope() { return this.limitScope = this.limitScope.next(); }
-
     public ChatScope switchChatScope() { return chatScope = chatScope.next(); }
     public boolean switchAntiInjection() { return antiInjection = !antiInjection; }
     public boolean switchThinking() { return thinking = !thinking; }
@@ -53,7 +59,6 @@ public class SettingPO {
     public boolean switchInnerCmdAuth() { return innerCmdAuth = !innerCmdAuth; }
     public boolean switchCustom() { return custom = !custom; }
     public boolean switchAutoReply() { return autoReply = !autoReply; }
-
     public boolean switchImageCollect() { return imageCollect = !imageCollect; }
     public boolean switchMessageCollect() { return messageCollect = !messageCollect; }
     public boolean switchKeywordDetect() { return keywordDetect = !keywordDetect; }

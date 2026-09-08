@@ -2,9 +2,7 @@
 # 1. 可使用 logback.xml 迁移 logging 配置;
 # 2. 暂不使用 Shiro SDK 内置线程池;
 # 3. file.storage 配置各级目录路径为根下子目录且:
-# I. config-path 下可配置文件:
-#   - 持久化群设置: Settings.csv;
-# II. resource-path 下需资源文件:
+# I. resource-path 下需资源文件:
 #   - AI表情包: ai/meme/*;
 #   - 终末地资源: endfield/public或版本号/*;
 #   - PUBG地图: pubg/固定图片;
@@ -102,7 +100,6 @@ file:
   storage:
     init: ${nullbot.file.storage.init}
     file-directory: ${nullbot.file.storage.root}
-    config-path: /config
     resource-path: /resource
     temp-path: /temp
     image-path: /image

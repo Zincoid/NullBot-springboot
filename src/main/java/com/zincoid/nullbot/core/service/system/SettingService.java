@@ -1,10 +1,11 @@
 package com.zincoid.nullbot.core.service.system;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 
 import java.util.List;
 
-public interface SettingService {
+public interface SettingService extends IService<SettingPO> {
 
     SettingPO get(Long groupId);
 
