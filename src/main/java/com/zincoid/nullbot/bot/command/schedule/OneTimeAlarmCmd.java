@@ -4,7 +4,9 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
+import com.zincoid.nullbot.bot.exception.BotInfoException;
 import com.zincoid.nullbot.bot.exception.BotWarnException;
+import com.zincoid.nullbot.core.enums.Emoji;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
@@ -37,6 +39,15 @@ public class OneTimeAlarmCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
+        if (args.hasOpt("cancel", "c")) {
+            String alarmId = args.getOpt("cancel", "c");
+            String taskId = "Alarm-%s-%s".formatted(event.getUserId(), alarmId);
+            if (!botTaskScheduler.cancelTask(taskId))
+                throw new BotInfoException(Emoji.INFO, "闹钟不存在");
+            bot.sendGroupMsg(groupId, "✅闹钟已取消", false);
+            log.info("☑ [OneTimeAlarm] 闹钟已取消 - AlarmID: {}", alarmId);
+            return;
+        }
         String message = args.next();
         Long userId = args.nextLong(event.getUserId());
         LocalDateTime alarmTime;
@@ -84,8 +95,9 @@ public class OneTimeAlarmCmd implements Cmd {
                 用法: OneTimeAlarm [选项] [文本] [可选: QQ号]
 
                 选项:
-                -t,--time=[时间]   时间模式
-                -d,--delay=[分钟]  延迟模式
+                -t,--time=[时间]     时间模式
+                -d,--delay=[分钟]    延迟模式
+                -c,--cancel=[AlarmID] 取消闹钟
 
                 注意:
                 - 时间模式参数格式: yy-MM-ddTHH:mm
@@ -103,8 +115,9 @@ public class OneTimeAlarmCmd implements Cmd {
                 用法: OneTimeAlarm [选项] [文本] [QQ号]
 
                 选项:
-                -t,--time=[时间]   时间模式
-                -d,--delay=[分钟]  延迟模式
+                -t,--time=[时间]     时间模式
+                -d,--delay=[分钟]    延迟模式
+                -c,--cancel=[AlarmID] 取消闹钟
 
                 注意:
                 - 时间模式参数格式: yy-MM-ddTHH:mm
@@ -112,6 +125,7 @@ public class OneTimeAlarmCmd implements Cmd {
 
                 示例:
                 OneTimeAlarm --time=26-02-07T09:00 九点到了 2660181154
-                OneTimeAlarm --delay=10 十分钟了 2660181154""";
+                OneTimeAlarm --delay=10 十分钟了 2660181154
+                OneTimeAlarm --cancel=a1b2c3d4""";
     }
 }
