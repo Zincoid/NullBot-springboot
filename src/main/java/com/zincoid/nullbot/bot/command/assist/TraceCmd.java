@@ -136,11 +136,11 @@ public class TraceCmd implements Cmd {
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record SauceData(Object ext_urls, Object title, Object member_name, Object author, Object creator) {
         private static String firstOf(Object value) {
-            if (value == null) return null;
-            if (value instanceof String s) return s;
-            if (value instanceof List<?> list && !list.isEmpty() && list.getFirst() != null)
-                return list.getFirst().toString();
-            return null;
+            return switch (value) {
+                case String s -> s;
+                case List<?> list when !list.isEmpty() && list.getFirst() != null -> list.getFirst().toString();
+                case null, default -> null;
+            };
         }
 
         private String titleOf() {
