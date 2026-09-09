@@ -3,7 +3,6 @@ package com.zincoid.nullbot.bot.command.assist;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
@@ -65,10 +64,7 @@ public class TraceCmd implements Cmd {
         String query = API_URL.formatted(count, apiKey.isBlank() ? "" : "&api_key=" + apiKey);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", new ByteArrayResource(image) {
-            @Override
-            public String getFilename() { return "image." + mime.substring("image/".length()); }
-        });
+        body.add("file", new NamedResource(image, "image." + mime.substring(6)));
         SauceResp resp = requestClient.post(query, body, MediaType.MULTIPART_FORM_DATA, SauceResp.class);
 
         if (resp == null || resp.header() == null)
@@ -149,5 +145,17 @@ public class TraceCmd implements Cmd {
             }
             return "未知";
         }
+    }
+
+    private static final class NamedResource extends ByteArrayResource {
+        private final String filename;
+
+        private NamedResource(byte[] bytes, String filename) {
+            super(bytes);
+            this.filename = filename;
+        }
+
+        @Override
+        public String getFilename() { return filename; }
     }
 }
