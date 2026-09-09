@@ -17,7 +17,7 @@ public class QQCmdAllows {
                 "aud", "vid", "img", "say",
                 "UserBan", "SayingSave",
                 "Help", "ImageFolder", "PUBG",
-                "Anime", "OneTimeAlarm", "AA",
+                "Anime", "Alarm", "AA",
                 /* ========== 合成命令 ========== */
                 "Convert", "Symmetry", "Tts",
                 /* ========== 加密命令 ========== */

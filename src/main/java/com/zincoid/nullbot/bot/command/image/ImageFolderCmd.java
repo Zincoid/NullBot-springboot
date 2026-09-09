@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Slf4j
-@CmdMapping({"ImageFolder", "图片目录"})
+@CmdMapping({"ImageFolder", "图目录"})
 @Component
 @RequiredArgsConstructor
 public class ImageFolderCmd implements Cmd {
@@ -28,7 +28,7 @@ public class ImageFolderCmd implements Cmd {
                 storageProperties.resolve(imagePath),
                 0
         );
-        bot.sendGroupMsg(event.getGroupId(), "[图片目录结构] \uD83D\uDCC1已获取\n" + structure, false);
+        bot.sendGroupMsg(event.getGroupId(), "[图目录结构] \uD83D\uDCC1已获取\n" + structure, false);
         log.info("☑ [ImageFolder] 图片目录已输出");
     }
 
@@ -39,7 +39,7 @@ public class ImageFolderCmd implements Cmd {
                 功能: 获取图片目录结构
                 限权: %d 级
                 格式: ImageFolder
-                别名: 图片目录""",  getAccess()
+                别名: 图目录""",  getAccess()
         );
     }
 

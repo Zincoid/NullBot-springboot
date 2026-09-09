@@ -16,15 +16,15 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"SysMsgSet", "提示词设置", "提示词"})
+@CmdMapping({"Prompt", "提示词"})
 @Component
-public class SysMsgSetCmd implements Cmd {
+public class PromptCmd implements Cmd {
 
     private final QQChatClient qqChatClient;
     private final SysMsgManager sysMsgManager;
     private final UserService userService;
 
-    public SysMsgSetCmd(@Lazy QQChatClient qqChatClient, SysMsgManager sysMsgManager, UserService userService) {
+    public PromptCmd(@Lazy QQChatClient qqChatClient, SysMsgManager sysMsgManager, UserService userService) {
         this.qqChatClient = qqChatClient;
         this.sysMsgManager = sysMsgManager;
         this.userService = userService;
@@ -39,7 +39,7 @@ public class SysMsgSetCmd implements Cmd {
             String message = "ℹ️当前提示词: %s".formatted(
                     sysMsgManager.getGroupMessage(groupId));
             bot.sendGroupMsg(groupId, message, false);
-            log.info("☑ [SysMsgSet] 群聊提示词已查看 -> {}", groupId);
+            log.info("☑ [Prompt] 群聊提示词已查看 -> {}", groupId);
             return;
         }
         int userAccess = userService.getAccess(userId);
@@ -54,7 +54,7 @@ public class SysMsgSetCmd implements Cmd {
             sysMsgManager.resetGroup(groupId);
             qqChatClient.clear(BotCtx.getChatId());
             bot.sendGroupMsg(groupId, "✅提示词已重置", false);
-            log.info("☑ [SysMsgSet] 群聊提示词已重置 -> {}", groupId);
+            log.info("☑ [Prompt] 群聊提示词已重置 -> {}", groupId);
             return;
         }
         if (args.hasOpt("set", "s")) {
@@ -62,7 +62,7 @@ public class SysMsgSetCmd implements Cmd {
             sysMsgManager.setGroupMessage(groupId, newMessage);
             qqChatClient.clear(BotCtx.getChatId());
             bot.sendGroupMsg(groupId, "✅提示词已设置", false);
-            log.info("☑ [SysMsgSet] 群聊提示词已设置 - {} -> {}", groupId, newMessage);
+            log.info("☑ [Prompt] 群聊提示词已设置 - {} -> {}", groupId, newMessage);
             return;
         }
         throw new BotWarnException("无此操作");
@@ -76,14 +76,14 @@ public class SysMsgSetCmd implements Cmd {
             String message = "ℹ️当前提示词: %s".formatted(
                     sysMsgManager.getUserMessage(userId));
             bot.sendPrivateMsg(userId, message, false);
-            log.info("☑ [SysMsgSet] 私聊提示词已查看 -> {}", userId);
+            log.info("☑ [Prompt] 私聊提示词已查看 -> {}", userId);
             return;
         }
         if (args.hasOpt("reset", "r")) {
             sysMsgManager.resetUser(userId);
             qqChatClient.clear(BotCtx.getChatId());
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已重置", false);
-            log.info("☑ [SysMsgSet] 私聊提示词已重置 -> {}", userId);
+            log.info("☑ [Prompt] 私聊提示词已重置 -> {}", userId);
             return;
         }
         if (args.hasOpt("set", "s")) {
@@ -91,7 +91,7 @@ public class SysMsgSetCmd implements Cmd {
             sysMsgManager.setUserMessage(userId, newMessage);
             qqChatClient.clear(BotCtx.getChatId());
             bot.sendPrivateMsg(userId, "[提示词设置] ✅已设置", false);
-            log.info("☑ [SysMsgSet] 私聊提示词已设置 - {} -> {}", userId, newMessage);
+            log.info("☑ [Prompt] 私聊提示词已设置 - {} -> {}", userId, newMessage);
             return;
         }
         throw new BotWarnException("无此操作");
@@ -100,17 +100,17 @@ public class SysMsgSetCmd implements Cmd {
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ SysMsgSet 命令
+                ◉ Prompt 命令
                 功能: 设置AI提示词并重置历史
                 限权: %d 级
-                格式: SysMsgSet [选项]
+                格式: Prompt [选项]
 
                 选项:
                 -s,--set [文本]  设置提示词
                 -r,--reset      重置提示词
                 -v,--view       查看提示词
 
-                别名: 提示词设置/提示词
+                别名: 提示词
                 注意:
                 - 非Custom模式 变更需限权I及以上
                 - Custom模式 变更需限权0及以上""", getAccess()

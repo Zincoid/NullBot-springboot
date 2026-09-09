@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.bot.command.assist;
+package com.zincoid.nullbot.bot.command.system;
 
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
@@ -32,7 +32,7 @@ public class HelpCmd implements Cmd {
         bot.sendPrivateMsg(event.getUserId(), """
                 [ ====== 可用指令 ====== ]
                 1. Help 帮助
-                2. SysMsgSet 提示词设置
+                2. Prompt 提示词
                    选项:
                    -s,--set [文本]  设置提示词
                    -r,--reset      重置提示词

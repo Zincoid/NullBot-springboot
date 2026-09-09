@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.bot.command.schedule;
+package com.zincoid.nullbot.bot.command.assist;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@CmdMapping({"OneTimeAlarm", "单次闹钟"})
+@CmdMapping({"Alarm", "闹钟"})
 @Component
 @RequiredArgsConstructor
-public class OneTimeAlarmCmd implements Cmd {
+public class AlarmCmd implements Cmd {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final List<DateTimeFormatter> FORMATTERS = Arrays.asList(
@@ -45,7 +45,7 @@ public class OneTimeAlarmCmd implements Cmd {
             if (!botTaskScheduler.cancelTask(taskId))
                 throw new BotInfoException(Emoji.INFO, "闹钟不存在");
             bot.sendGroupMsg(groupId, "✅闹钟已取消", false);
-            log.info("☑ [OneTimeAlarm] 闹钟已取消 - AlarmID: {}", alarmId);
+            log.info("☑ [Alarm] 闹钟已取消 - AlarmID: {}", alarmId);
             return;
         }
         String message = args.next();
@@ -67,16 +67,16 @@ public class OneTimeAlarmCmd implements Cmd {
             throw new BotWarnException("时间格式错误");
         }
         bot.sendGroupMsg(groupId, """
-                    ⏰单次闹钟已设置
+                    ⏰闹钟已设置
                     - AlarmID: %s
                     - Time: %s""".formatted(alarmId, alarmTime.format(FORMATTER)),
                 false
         );
-        log.info("☑ [OneTimeAlarm] 闹钟已设置 - AlarmID: {}", alarmId);
+        log.info("☑ [Alarm] 闹钟已设置 - AlarmID: {}", alarmId);
     }
 
     private LocalDateTime parseDateTime(String str) {
-        for (DateTimeFormatter formatter : OneTimeAlarmCmd.FORMATTERS) {
+        for (DateTimeFormatter formatter : AlarmCmd.FORMATTERS) {
             try {
                 return LocalDateTime.parse(str, formatter);
             } catch (DateTimeParseException e) {
@@ -89,10 +89,10 @@ public class OneTimeAlarmCmd implements Cmd {
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ OneTimeAlarm 命令
-                功能: 设置单次群内提醒闹钟
+                ◉ Alarm 命令
+                功能: 设置群内提醒闹钟
                 限权: %d 级
-                用法: OneTimeAlarm [选项] [文本] [可选: QQ号]
+                用法: Alarm [选项] [文本] [可选: QQ号]
 
                 选项:
                 -t,--time=[时间]     时间模式
@@ -103,16 +103,16 @@ public class OneTimeAlarmCmd implements Cmd {
                 - 时间模式参数格式: yy-MM-ddTHH:mm
                 - 延迟模式在指定时间后触发
                 - 未设置用户时默认为自己
-                别名: 单次闹钟""", getAccess()
+                别名: 闹钟""", getAccess()
         );
     }
 
     @Override
     public String getHelpForAI() {
         return """
-                ◉ OneTimeAlarm 命令
-                功能: 设置单次群内提醒闹钟
-                用法: OneTimeAlarm [选项] [文本] [QQ号]
+                ◉ Alarm 命令
+                功能: 设置群内提醒闹钟
+                用法: Alarm [选项] [文本] [QQ号]
 
                 选项:
                 -t,--time=[时间]     时间模式
@@ -124,8 +124,8 @@ public class OneTimeAlarmCmd implements Cmd {
                 - 延迟模式在指定时间后触发
 
                 示例:
-                OneTimeAlarm --time=26-02-07T09:00 九点到了 2660181154
-                OneTimeAlarm --delay=10 十分钟了 2660181154
-                OneTimeAlarm --cancel=a1b2c3d4""";
+                Alarm --time=26-02-07T09:00 九点到了 2660181154
+                Alarm --delay=10 十分钟了 2660181154
+                Alarm --cancel=a1b2c3d4""";
     }
 }
