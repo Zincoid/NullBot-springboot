@@ -82,8 +82,8 @@ public class TraceCmd implements Cmd {
                     .append("\n来源: ").append(header.index_name())
                     .append("\n标题: ").append(data.titleOf())
                     .append("\n作者: ").append(data.authorOf());
-            if (data.ext_urls() != null && !data.ext_urls().isEmpty())
-                text.append("\n链接: ").append(data.ext_urls().getFirst());
+            String url = SauceData.firstOf(data.ext_urls());
+            if (url != null) text.append("\n链接: ").append(url);
             var builder = MsgUtils.builder();
             if (header.thumbnail() != null && !header.thumbnail().isBlank()) {
                 String thumb = Base64Util.fromUrl(header.thumbnail());
@@ -134,13 +134,23 @@ public class TraceCmd implements Cmd {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record SauceData(List<String> ext_urls, String title, String member_name, String author, String creator) {
+    private record SauceData(Object ext_urls, Object title, Object member_name, Object author, Object creator) {
+        private static String firstOf(Object value) {
+            if (value == null) return null;
+            if (value instanceof String s) return s;
+            if (value instanceof List<?> list && !list.isEmpty() && list.getFirst() != null)
+                return list.getFirst().toString();
+            return null;
+        }
+
         private String titleOf() {
-            return title != null && !title.isBlank() ? title : "未知";
+            String t = firstOf(title);
+            return t != null && !t.isBlank() ? t : "未知";
         }
 
         private String authorOf() {
-            for (String name : new String[]{member_name, author, creator}) {
+            for (Object field : new Object[]{member_name, author, creator}) {
+                String name = firstOf(field);
                 if (name != null && !name.isBlank()) return name;
             }
             return "未知";
