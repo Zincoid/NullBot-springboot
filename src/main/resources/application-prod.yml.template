@@ -47,7 +47,7 @@ nullbot:
       root: ./files                                   # 文件管理根目录 (绝对路径)
     resource:
       mode: path                                      # 资源模式: path(默认)/base64/oss
-#      base-url: http://localhost:8080                 # 基础访问路径: OSS 模式下使用
+#      base-url: http://localhost:8080                # 基础访问路径: OSS 模式下使用
 
   # ---------------------------- AI --------------------------- #
   ai:
@@ -71,3 +71,7 @@ nullbot:
     driver:
       auto: true                                      # 驱动自动下载
       path:                                           # 驱动自定路径
+
+  # ------------------------ SauceNAO ------------------------ #
+  saucenao:                                           # SauceNAO API
+    api-key:                                          # 设置提高限流

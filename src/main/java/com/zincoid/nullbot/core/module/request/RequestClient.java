@@ -46,4 +46,20 @@ public class RequestClient {
             throw new CoreException("请求异常: " + url);
         }
     }
+
+    public <T> T post(String url, Object body, MediaType contentType, Class<T> responseType) {
+        try {
+            RestClient.RequestBodySpec spec = restClient.post().uri(url);
+            if (contentType != null) spec = spec.contentType(contentType);
+            return spec.body(body)
+                    .retrieve()
+                    .body(responseType);
+        } catch (RestClientResponseException e) {
+            log.warn("▽ [RequestClient] 请求失败 ({}): {}", e.getStatusCode().value(), url);
+            throw new CoreException("请求失败: " + e.getStatusCode().value());
+        } catch (ResourceAccessException e) {
+            log.warn("▽ [RequestClient] 请求异常: {} - {}", url, e.getMessage());
+            throw new CoreException("请求异常: " + url);
+        }
+    }
 }
