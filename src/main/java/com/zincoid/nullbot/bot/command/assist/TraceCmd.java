@@ -89,8 +89,11 @@ public class TraceCmd implements Cmd {
             if (data.ext_urls() != null && !data.ext_urls().isEmpty())
                 text.append("\n链接: ").append(data.ext_urls().getFirst());
             var builder = MsgUtils.builder();
-            if (header.thumbnail() != null && !header.thumbnail().isBlank())
-                builder.img(header.thumbnail());
+            if (header.thumbnail() != null && !header.thumbnail().isBlank()) {
+                String thumb = Base64Util.fromUrl(header.thumbnail());
+                if (thumb != null) builder.img("base64://" + thumb);
+                else builder.text("[图片未载入]");
+            }
             bot.sendGroupMsg(event.getGroupId(), builder.text(text.toString()).build(), false);
         }
         log.info("☑ [Trace] 溯源完成 - 数量: {}", count);

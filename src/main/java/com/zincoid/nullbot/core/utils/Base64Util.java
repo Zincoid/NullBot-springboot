@@ -35,6 +35,19 @@ public final class Base64Util {
             .followRedirects(HttpClient.Redirect.ALWAYS)
             .build();
 
+    public static String fromUrl(String url) {
+        if (url == null || url.isBlank()) return null;
+        try {
+            byte[] bytes = download(url);
+            if (sniffMime(bytes) == null)
+                throw new RuntimeException("非图片内容");
+            return Base64.getEncoder().encodeToString(bytes);
+        } catch (Exception e) {
+            log.warn("◉ [Base64Util] 图片下载失败: {} - {}", url, e.getMessage());
+            return null;
+        }
+    }
+
     public static String dataUri(String url) {
         if (url == null || url.isBlank()) return null;
         synchronized (CACHE) {
@@ -43,18 +56,7 @@ public final class Base64Util {
         }
         Optional<String> data;
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-                    .timeout(Duration.ofSeconds(15))
-                    .GET()
-                    .build();
-            HttpResponse<byte[]> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            if (response.statusCode() != 200)
-                throw new RuntimeException("HTTP " + response.statusCode());
-            byte[] bytes = response.body();
-            if (bytes.length == 0)
-                throw new RuntimeException("空图片内容");
+            byte[] bytes = download(url);
             String mime = sniffMime(bytes);
             if (mime == null)
                 throw new RuntimeException("非图片内容");
@@ -75,6 +77,22 @@ public final class Base64Util {
             }
         }
         return data.orElse(null);
+    }
+
+    private static byte[] download(String url) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                .timeout(Duration.ofSeconds(15))
+                .GET()
+                .build();
+        HttpResponse<byte[]> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofByteArray());
+        if (response.statusCode() != 200)
+            throw new RuntimeException("HTTP " + response.statusCode());
+        byte[] bytes = response.body();
+        if (bytes.length == 0)
+            throw new RuntimeException("空图片内容");
+        return bytes;
     }
 
     private static String sniffMime(byte[] b) {
