@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.zincoid.nullbot.core.enums.ChatScope;
-import com.zincoid.nullbot.core.enums.ChatStrategy;
-import com.zincoid.nullbot.core.enums.LimitScope;
+import com.zincoid.nullbot.core.enums.setting.ChatScope;
+import com.zincoid.nullbot.core.enums.setting.ChatStrategy;
+import com.zincoid.nullbot.core.enums.setting.LimitScope;
 
 @Data
 @NoArgsConstructor

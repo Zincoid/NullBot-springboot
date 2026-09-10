@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
-import com.zincoid.nullbot.core.enums.Rarity;
+import com.zincoid.nullbot.core.enums.data.Rarity;
 import com.zincoid.nullbot.core.service.base.InventoryService;
 import com.zincoid.nullbot.core.service.base.UserService;
 import org.springframework.stereotype.Component;

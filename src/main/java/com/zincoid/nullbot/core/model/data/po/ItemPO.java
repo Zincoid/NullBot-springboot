@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.zincoid.nullbot.core.enums.Category;
-import com.zincoid.nullbot.core.enums.Rarity;
+import com.zincoid.nullbot.core.enums.data.Category;
+import com.zincoid.nullbot.core.enums.data.Rarity;
 
 @Data
 @AllArgsConstructor

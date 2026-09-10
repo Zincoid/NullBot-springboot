@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.module.ai.chat.client.impl;
 
-import com.zincoid.nullbot.core.enums.ChatStrategy;
+import com.zincoid.nullbot.core.enums.setting.ChatStrategy;
 import com.zincoid.nullbot.core.module.ai.chat.client.Client;
 import com.zincoid.nullbot.core.module.ai.chat.client.ClientReq;
 import com.zincoid.nullbot.core.module.ai.chat.client.ClientRes;

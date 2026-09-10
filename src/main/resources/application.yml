@@ -81,9 +81,10 @@ shiro:
 #    thread-name-prefix: "ShiroTaskPool-"
 
 bot:
-  bot-id: ${nullbot.basic.ids.bot}
-  admin-id: ${nullbot.basic.ids.admin}
-  log-id: ${nullbot.basic.ids.log}
+  ids:
+    bot-id: ${nullbot.basic.ids.bot}
+    admin-id: ${nullbot.basic.ids.admin}
+    log-id: ${nullbot.basic.ids.log}
   command:
     prefix: ${nullbot.basic.cmd.prefix}
     ignore-case: ${nullbot.basic.cmd.ignore-case}
@@ -112,10 +113,11 @@ file:
 ai:
   chat:
     repository: ${nullbot.ai.chat.repository}
-    max-history-length: ${nullbot.ai.chat.max-history-length}
-    max-tokens: ${nullbot.ai.chat.max-tokens}
-    max-tool-calls: ${nullbot.ai.chat.max-tool-calls}
-    default-sys-msg: ${nullbot.ai.chat.default-prompt}
+    config:
+      max-history-length: ${nullbot.ai.chat.config.max-history-length}
+      max-tokens: ${nullbot.ai.chat.config.max-tokens}
+      max-tool-calls: ${nullbot.ai.chat.config.max-tool-calls}
+      default-sys-msg: ${nullbot.ai.chat.config.default-prompt}
     openai:
       api-url: ${nullbot.ai.chat.openai.api-url}
       api-key: ${nullbot.ai.chat.openai.api-key}

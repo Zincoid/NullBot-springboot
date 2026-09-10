@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.enums;
+package com.zincoid.nullbot.core.enums.data;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;

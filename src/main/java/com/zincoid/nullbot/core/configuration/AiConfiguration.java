@@ -11,7 +11,7 @@ import com.zincoid.nullbot.core.module.ai.chat.plugin.QQMsgExecutor;
 import com.zincoid.nullbot.core.module.ai.chat.plugin.QQPrompter;
 import com.zincoid.nullbot.core.module.ai.chat.repository.Repository;
 import com.zincoid.nullbot.core.module.ai.chat.tool.ToolRegistry;
-import com.zincoid.nullbot.core.properties.ai.AiChatProperties;
+import com.zincoid.nullbot.core.properties.ai.ChatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +22,7 @@ public class AiConfiguration {
 
     @Bean
     public MsgWindowMemory msgWindowMemory(
-            Repository repository, AiChatProperties properties
+            Repository repository, ChatProperties properties
     ) {
         MsgWindowMemory msgWindowMemory = MsgWindowMemory.builder(repository)
                 .windowSize(properties.getMaxHistoryLength())
@@ -35,7 +35,7 @@ public class AiConfiguration {
 
     @Bean
     public QQChatClient qqChatClient(
-            AiChatProperties properties, Memory memory, Model model, ToolRegistry registry,
+            ChatProperties properties, Memory memory, Model model, ToolRegistry registry,
             QQAntiInjector antiInjector, QQPrompter prompter, QQMsgExecutor executor
     ) {
         QQChatClient qqChatClient = QQChatClient.builder(

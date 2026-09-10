@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.web.controller;
 
 import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
-import com.zincoid.nullbot.core.enums.ChatScope;
+import com.zincoid.nullbot.core.enums.setting.ChatScope;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.module.control.CmdRateLimiter;

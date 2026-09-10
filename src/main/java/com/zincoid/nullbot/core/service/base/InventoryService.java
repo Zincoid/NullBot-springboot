@@ -5,7 +5,7 @@ import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.InventoryPO;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
-import com.zincoid.nullbot.core.enums.Rarity;
+import com.zincoid.nullbot.core.enums.data.Rarity;
 
 import java.util.List;
 

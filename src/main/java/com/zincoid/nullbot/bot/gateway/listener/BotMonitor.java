@@ -9,7 +9,7 @@ import com.zincoid.nullbot.bot.gateway.processor.CmdRegistry;
 import com.zincoid.nullbot.core.module.ai.chat.manage.AiCostManager;
 import com.zincoid.nullbot.core.module.ai.chat.memory.MsgWindowMemory;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
-import com.zincoid.nullbot.core.enums.ChatScope;
+import com.zincoid.nullbot.core.enums.setting.ChatScope;
 import com.zincoid.nullbot.core.module.control.KeywordReacter;
 import com.zincoid.nullbot.core.properties.bot.CmdProperties;
 import lombok.RequiredArgsConstructor;

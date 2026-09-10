@@ -13,6 +13,7 @@ import com.zincoid.nullbot.bot.gateway.handler.AuthHandler;
 import com.zincoid.nullbot.bot.gateway.processor.CmdEvent;
 import com.zincoid.nullbot.bot.gateway.processor.CmdProcessor;
 import com.zincoid.nullbot.core.properties.bot.CmdProperties;
+import com.zincoid.nullbot.core.properties.bot.IdsProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.BotContext;
@@ -20,7 +21,6 @@ import com.zincoid.nullbot.core.annotation.FuncControl;
 import com.zincoid.nullbot.core.module.security.SecurityCodeScheduler;
 import com.zincoid.nullbot.core.context.BotCtx;
 import com.zincoid.nullbot.core.utils.MsgUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -42,9 +42,7 @@ public class BotListener {
     private final SecurityCodeScheduler securityCodeScheduler;
     private final AuthHandler authHandler;
     private final CmdProperties cmdProperties;
-
-    @Value("${bot.admin-id}")
-    private Long adminId;
+    private final IdsProperties idsProperties;
 
     // ================================== 私聊动作捕获 ==================================
 

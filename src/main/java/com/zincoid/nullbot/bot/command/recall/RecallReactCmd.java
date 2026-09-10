@@ -6,7 +6,7 @@ import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
 import com.zincoid.nullbot.core.module.ai.chat.memory.MsgWindowMemory;
 import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
-import com.zincoid.nullbot.core.enums.ChatScope;
+import com.zincoid.nullbot.core.enums.setting.ChatScope;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;

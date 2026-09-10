@@ -53,10 +53,11 @@ nullbot:
   ai:
     chat:                                             # AI 对话配置
       repository: file                                # 历史存储: memory | db | file
-      max-history-length: 100
-      max-tokens: 1024
-      max-tool-calls: 5
-      default-prompt: "你是一只猫娘，你的名字叫Null。"
+      config:
+        max-history-length: 64
+        max-tokens: 1024
+        max-tool-calls: 5
+        default-prompt: "你是一只猫娘，你的名字叫Null。"
       openai:                                         # OpenAI API
         api-url: https://api.deepseek.com
         api-key:

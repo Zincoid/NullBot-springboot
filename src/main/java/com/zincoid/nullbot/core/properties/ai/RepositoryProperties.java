@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.core.properties.ai;
 
+import com.zincoid.nullbot.core.enums.config.RepositoryType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -7,11 +8,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "ai.chat")
-public class AiChatProperties {
+public class RepositoryProperties {
 
-    private String repository;
-    private Integer maxHistoryLength;
-    private Integer maxTokens;
-    private Integer maxToolCalls;
-    private String DefaultSysMsg;
+    private RepositoryType repository;
 }

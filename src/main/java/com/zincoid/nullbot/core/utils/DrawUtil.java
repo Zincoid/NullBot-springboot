@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.utils;
 
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
-import com.zincoid.nullbot.core.enums.Rarity;
+import com.zincoid.nullbot.core.enums.data.Rarity;
 
 import java.util.List;
 import java.util.Random;

@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
-import com.zincoid.nullbot.core.enums.Rarity;
+import com.zincoid.nullbot.core.enums.data.Rarity;
 import com.zincoid.nullbot.core.mapper.InventoryMapper;
 import com.zincoid.nullbot.core.model.data.po.InventoryPO;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;

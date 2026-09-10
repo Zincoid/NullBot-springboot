@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.module.control;
 
-import com.zincoid.nullbot.core.properties.ai.AiChatProperties;
+import com.zincoid.nullbot.core.properties.ai.ChatProperties;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -20,12 +20,12 @@ public class SysMsgManager {
     private final Map<Long, List<String>> groupMemories = new ConcurrentHashMap<>();  // 群聊记忆
     private final Map<Long, List<String>> userMemories = new ConcurrentHashMap<>();  // 私聊记忆
 
-    private final AiChatProperties aiChatProperties;
+    private final ChatProperties chatProperties;
 
     // =================== 提示词功能相关 ===================
 
-    public String getGroupMessage(Long groupId) { return groupMessages.computeIfAbsent(groupId, k -> aiChatProperties.getDefaultSysMsg()); }
-    public String getUserMessage(Long userId) { return userMessages.computeIfAbsent(userId, k -> aiChatProperties.getDefaultSysMsg()); }
+    public String getGroupMessage(Long groupId) { return groupMessages.computeIfAbsent(groupId, k -> chatProperties.getDefaultSysMsg()); }
+    public String getUserMessage(Long userId) { return userMessages.computeIfAbsent(userId, k -> chatProperties.getDefaultSysMsg()); }
     public void setGroupMessage(Long groupId, String message) { groupMessages.put(groupId, message); }
     public void setUserMessage(Long userId, String message) { userMessages.put(userId, message); }
 

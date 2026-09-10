@@ -6,9 +6,9 @@ import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
 import com.mikuac.shiro.dto.action.response.GroupInfoResp;
 import com.zincoid.nullbot.core.context.BotCtx;
+import com.zincoid.nullbot.core.properties.bot.IdsProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -19,11 +19,7 @@ public class BotOperator {
     private static final int DEFAULT_MAX_RETRIES = 10;
     private static final int DEFAULT_RETRY_INTERVAL = 1000;
 
-    @Value("${bot.bot-id}")
-    private Long botId;
-    @Value("${bot.log-id}")
-    private Long logId;
-
+    private final IdsProperties idsProperties;
     private final BotContainer botContainer;
 
     // =================== 获取方法 ===================
@@ -32,7 +28,7 @@ public class BotOperator {
         Bot bot = BotCtx.getBot();
         if (bot != null) return bot;
         for (int i = 0; i < maxRetries; i++) {
-            bot = botContainer.robots.get(botId);
+            bot = botContainer.robots.get(idsProperties.getBotId());
             if (bot != null) return bot;
             log.info("▽ [BotOperator] 获取Bot失败({}/{}): 将于 {}ms 后重试", i + 1, maxRetries, retryInterval);
             sleep(retryInterval);
@@ -47,7 +43,7 @@ public class BotOperator {
     // =================== 默认方法 ===================
 
     public void sendLogGroupMsg(String message) {
-        sendGroupMsg(logId ,message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
+        sendGroupMsg(idsProperties.getLogId() ,message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
     }
 
     public void sendAllGroupMsg(String message) {
