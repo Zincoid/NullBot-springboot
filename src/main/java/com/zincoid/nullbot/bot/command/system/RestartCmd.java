@@ -17,12 +17,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RestartCmd implements Cmd {
 
-    private static final String RESTART_MSG = """
-                    ⚠️重启指令已下发
-                    - 模式: %s
-                    - 将于3s后重启...""";
-
+    private static final String RESTART_MSG;
     private final SystemService systemService;
+
+    static {
+        RESTART_MSG = """
+                ⚠️重启指令已下发
+                - 模式: %s
+                - 将于3s后重启...""";
+    }
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {

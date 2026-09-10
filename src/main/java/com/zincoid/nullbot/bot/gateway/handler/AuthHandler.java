@@ -29,20 +29,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class AuthHandler implements Handler {
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
-    private static final String ACCESS_DENIED_MSG = """
-            🚫访问限权不足
-            - 需要限权: %s
-            - 你的限权: %s""";
+    private static final DateTimeFormatter FORMATTER;
+    private static final String ACCESS_DENIED_MSG;
 
     private final Map<Long, List<String>> bannedCmds = new ConcurrentHashMap<>();  // GroupId -> CmdNames
     private final Map<String, LocalDateTime> bannedUsers = new ConcurrentHashMap<>();  // UserId#CmdName -> BanUntil
     private final Set<Long> allowedPrivateUsers = new ConcurrentHashSet<>();  // UserId
+    private final AtomicBoolean inMaintenance = new AtomicBoolean(false);
 
     private final GroupService groupService;
     private final UserService userService;
 
-    private final AtomicBoolean inMaintenance = new AtomicBoolean(false);
+    static {
+        FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
+        ACCESS_DENIED_MSG = """
+                🚫访问限权不足
+                - 需要限权: %s
+                - 你的限权: %s""";
+    }
 
     @Override
     public void handle(Bot bot, Cmd cmd, CmdEvent<?> event, CmdHandlerChain chain) throws Exception {
