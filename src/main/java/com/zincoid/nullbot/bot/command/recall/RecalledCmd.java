@@ -22,33 +22,38 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class RecalledCmd implements Cmd {
 
+    private static final String TEMPLATE;
     private final MsgWindowMemory msgWindowMemory;
+
+    static {
+        TEMPLATE = """
+                检测到撤回消息！
+                用户: %s(%s)
+                内容: %s""";
+    }
 
     @Override
     public void run(Bot bot, GroupMsgDeleteNoticeEvent event, CmdArgs args) {
         Long groupId = event.getGroupId();
         Long userId = event.getUserId();
-        Long operatorId = event.getOperatorId();
         String userName = bot.getStrangerInfo(userId, true).getData().getNickname();
-        String operatorName = bot.getStrangerInfo(operatorId, true).getData().getNickname();
         Integer messageId = event.getMessageId();
 
-        List<QQMessage> messages = msgWindowMemory.get(ChatScope.MONITOR + "_" + groupId)
+        List<QQMessage> messages = msgWindowMemory
+                .get(ChatScope.MONITOR + "_" + groupId)
                 .stream().map(m -> (QQMessage) m).toList();
         for (QQMessage message : messages) {
-            if (!Objects.equals(message.getMessageId(), messageId)) continue;
-            String content = message.getContent();
-            String header = userId.equals(operatorId)
-                    ? "%s(%s)撤回消息: %s".formatted(userName, userId, content)
-                    : "%s(%s)撤回%s(%s)消息: %s".formatted(operatorName, operatorId, userName, userId, content);
+            if (!Objects.equals(message.getMessageId(), messageId))
+                continue;
+            String header = TEMPLATE.formatted(userName, userId, message.getContent());
             MsgUtils builder = MsgUtils.builder().text(header);
             for (String data : message.getImages())
                 builder.img("base64://" + data.substring(data.indexOf(',') + 1));
             bot.sendGroupMsg(groupId, builder.build(), false);
-            log.info("☑ [Recalled] 撤回消息已重发: {}", content);
+            log.info("☑ [Recalled] 消息已重发: {}", messageId);
             return;
         }
-        log.warn("☒ [Recalled] 消息已被清理: {}", messageId);
+        log.warn("☒ [Recalled] 消息已丢失: {}", messageId);
     }
 
     @Override
