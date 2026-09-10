@@ -51,7 +51,10 @@ public class DbRepository implements Repository {
         List<MessagePO> pos = new ArrayList<>(messages.size());
         try {
             for (Message message : messages)
-                pos.add(new MessagePO(chatId, objectMapper.writeValueAsString(MessageDTO.of(message))));
+                pos.add(new MessagePO(
+                        chatId,
+                        objectMapper.writeValueAsString(MessageDTO.of(message))
+                ));
         } catch (JsonProcessingException e) {
             log.error("▽ [DbRepository] 序列化失败 - chatId: {}", chatId, e);
             return;
