@@ -74,7 +74,7 @@ public class HistoryCmd implements Cmd {
             MsgUtils builder = MsgUtils.builder().text("消息含图片: ");
             for (String data : q.getImages())
                 builder.img("base64://" + data.substring(data.indexOf(',') + 1));
-            bot.sendGroupMsg(groupId, builder.build(), true);
+            bot.sendGroupMsg(groupId, builder.build(), false);
         }
         bot.sendGroupMsg(groupId, "消息元数据: " + message.toMap().toString(), true);
         log.info("☑ [History] 记录已获取: {}", message.toMap());
