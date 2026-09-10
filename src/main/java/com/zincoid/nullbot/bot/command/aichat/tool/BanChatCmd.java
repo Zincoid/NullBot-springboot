@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.aichat.ChatCmd;
-import com.zincoid.nullbot.bot.command.aichat.PokeReactCmd;
+import com.zincoid.nullbot.bot.command.aichat.PokedCmd;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -32,7 +32,7 @@ public class BanChatCmd implements Cmd {
 
     private void banChat(Bot bot, Long groupId, Long userId, int banTime) {
         authHandler.setUserBan(userId, ChatCmd.class, banTime);
-        authHandler.setUserBan(userId, PokeReactCmd.class, banTime);
+        authHandler.setUserBan(userId, PokedCmd.class, banTime);
         if (banTime > 0) {
             bot.sendGroupMsg(groupId, """
                     ⛔️对话已临时封禁

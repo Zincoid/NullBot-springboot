@@ -22,16 +22,16 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Slf4j
-@CmdMapping({"ChatHistory", "聊天历史"})
+@CmdMapping({"History", "聊天历史", "历史"})
 @Component
-public class ChatHistoryCmd implements Cmd {
+public class HistoryCmd implements Cmd {
 
     private static final int PAGE_SIZE = 10;  // 查询单页大小
     private static final int WAIT_TIMEOUT_SECONDS = 60;  // 等待超时时间
 
     private final QQChatClient qqChatClient;
 
-    public ChatHistoryCmd(@Lazy QQChatClient qqChatClient) {
+    public HistoryCmd(@Lazy QQChatClient qqChatClient) {
         this.qqChatClient = qqChatClient;
     }
 
@@ -70,7 +70,7 @@ public class ChatHistoryCmd implements Cmd {
 
     private void sendInfo(Bot bot, Long groupId, Message message) {
         bot.sendGroupMsg(groupId, message.toMap().toString(), true);
-        log.info("☑ [ChatHistory] 记录已获取: {}", message.toMap());
+        log.info("☑ [History] 记录已获取: {}", message.toMap());
     }
 
     @Override
@@ -79,11 +79,11 @@ public class ChatHistoryCmd implements Cmd {
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ ChatHistory 命令
+                ◉ History 命令
                 功能: 获取聊天历史
                 限权: %d 级
-                格式: ChatHistory [可选: 页码]
-                别名: 聊天历史""", getAccess()
+                格式: History [可选: 页码]
+                别名: 聊天历史/历史""", getAccess()
         );
     }
 }

@@ -30,7 +30,7 @@ import java.io.File;
 import java.util.List;
 
 @Slf4j
-@CmdMapping({"Guess", "猜角色", "猜"})
+@CmdMapping({"Guess", "猜"})
 @Component
 @RequiredArgsConstructor
 public class GuessCmd implements Cmd {
@@ -191,24 +191,10 @@ public class GuessCmd implements Cmd {
                 选项:
                 -f,--forfeit  放弃游戏
 
-                别名: 猜角色/猜
+                别名: 猜
                 注意:
                 1. 回答格式为#加你的猜测
                 2. 回答时也可使用##放弃""", getAccess()
         );
-    }
-
-    @Override
-    public String getHelpForAI() {
-        return """
-                ◉ Guess 命令
-                功能: 多人猜角色
-                用法: Guess [选项] [类别]
-
-                选项:
-                -f,--forfeit  放弃游戏
-
-                类别: 明日方舟
-                示例: Guess 明日方舟""";
     }
 }

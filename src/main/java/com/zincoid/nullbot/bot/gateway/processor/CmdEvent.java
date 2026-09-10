@@ -50,11 +50,11 @@ public class CmdEvent<T extends Event> {
     }
 
     public static CmdEvent<PokeNoticeEvent> of(PokeNoticeEvent event) {
-        return of(event, "PokeReact", List.of(), true, true);
+        return of(event, "Poked", List.of(), true, true);
     }
 
     public static CmdEvent<GroupMsgDeleteNoticeEvent> of(GroupMsgDeleteNoticeEvent event) {
-        return of(event, "RecallReact", List.of(), false, false);
+        return of(event, "Recalled", List.of(), false, false);
     }
 
     // ================== 内部指令工厂方法 ===================

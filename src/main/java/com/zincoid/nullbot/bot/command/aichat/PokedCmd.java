@@ -15,14 +15,14 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 @Slf4j
-@CmdMapping({"PokeReact", "戳戳响应"})
+@CmdMapping({"Poked"})
 @Component
-public class PokeReactCmd implements Cmd {
+public class PokedCmd implements Cmd {
 
     private final QQChatClient qqChatClient;
     private final AiCostManager aiCostManager;
 
-    public PokeReactCmd(@Lazy QQChatClient qqChatClient, AiCostManager aiCostManager) {
+    public PokedCmd(@Lazy QQChatClient qqChatClient, AiCostManager aiCostManager) {
         this.qqChatClient = qqChatClient;
         this.aiCostManager = aiCostManager;
     }
@@ -31,7 +31,7 @@ public class PokeReactCmd implements Cmd {
     public void run(Bot bot, PokeNoticeEvent event, CmdArgs args) {
         if (!Objects.equals(event.getTargetId(), event.getSelfId())) return;  // 仅检测戳自身
         if (aiCostManager.isOutOfBalance()) {
-            log.info("☒ [PokeReact] AI 欠费已拦截");
+            log.info("☒ [Poked] AI 欠费已拦截");
             return;
         }
         Long groupId = event.getGroupId();
@@ -41,6 +41,6 @@ public class PokeReactCmd implements Cmd {
                 ? QQMessage.user("揉了你一下").with(groupId, userId, userName)
                 : QQMessage.user("揉了你一下").with(userId, userName);
         String response = qqChatClient.handle(message).call().getContent();
-        log.info("☑ [PokeReact] 戳戳已回复: {}", response);
+        log.info("☑ [Poked] 戳戳已回复: {}", response);
     }
 }

@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-@CmdMapping({"RecallReact", "撤回响应"})
+@CmdMapping({"Recalled"})
 @Component
 @RequiredArgsConstructor
-public class RecallReactCmd implements Cmd {
+public class RecalledCmd implements Cmd {
 
     private final MsgWindowMemory msgWindowMemory;
 
@@ -41,11 +41,10 @@ public class RecallReactCmd implements Cmd {
                     ? "%s(%s)撤回消息: %s".formatted(userName, userId, content)
                     : "%s(%s)撤回%s(%s)消息: %s".formatted(operatorName, operatorId, userName, userId, content);
             bot.sendGroupMsg(groupId, response, false);
-            log.info("☑ [RecallReact] 撤回消息已重发: {}", content);
+            log.info("☑ [Recalled] 撤回消息已重发: {}", content);
             return;
         }
-
-        // throw new BotWarnException("该消息已清理");
+        log.warn("☒ [Recalled] 消息已被清理: {}", messageId);
     }
 
     @Override

@@ -12,13 +12,13 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@CmdMapping({"ChatReset", "重置聊天", "杀"})
+@CmdMapping({"Reset", "重置聊天", "重置", "杀"})
 @Component
-public class ChatResetCmd implements Cmd {
+public class ResetCmd implements Cmd {
 
     private final QQChatClient qqChatClient;
 
-    public ChatResetCmd(@Lazy QQChatClient qqChatClient) {
+    public ResetCmd(@Lazy QQChatClient qqChatClient) {
         this.qqChatClient = qqChatClient;
     }
 
@@ -36,19 +36,11 @@ public class ChatResetCmd implements Cmd {
     @Override
     public String getHelp() {
         return String.format("""
-                ◉ ChatReset 命令
+                ◉ Reset 命令
                 功能: 重置聊天历史
                 限权: %d 级
-                格式: ChatReset
-                别名: 重置聊天/杀""", getAccess()
+                格式: Reset
+                别名: 重置聊天/重置/杀""", getAccess()
         );
-    }
-
-    @Override
-    public String getHelpForAI() {
-        return """
-                ◉ ChatReset 命令
-                功能: 重置聊天历史
-                格式: ChatReset""";
     }
 }
