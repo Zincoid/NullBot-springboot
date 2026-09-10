@@ -38,7 +38,7 @@ public class TraceCmd implements Cmd {
 
     private final RequestClient requestClient;
 
-    @Value("${nullbot.saucenao.api-key:}")
+    @Value("${trace.saucenao.api-key:}")
     private String apiKey;
 
     @Override

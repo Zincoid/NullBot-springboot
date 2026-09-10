@@ -197,6 +197,17 @@ CREATE TABLE IF NOT EXISTS `tts_template` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='TTS template table';
 
 -- =============================================
+-- 13. Message Table
+-- =============================================
+CREATE TABLE IF NOT EXISTS `message` (
+    `id`        BIGINT       NOT NULL AUTO_INCREMENT  COMMENT 'Primary Key',
+    `chat_id`   VARCHAR(64)  NOT NULL                 COMMENT 'Chat session id',
+    `payload`   LONGTEXT     NOT NULL                 COMMENT 'Serialized message JSON',
+    PRIMARY KEY (`id`),
+    KEY `idx_chat` (`chat_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Chat history table';
+
+-- =============================================
 -- Preset data: admin-level user
 -- =============================================
 INSERT INTO `user` (id, name, access) VALUES

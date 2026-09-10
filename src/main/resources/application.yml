@@ -111,6 +111,7 @@ file:
 
 ai:
   chat:
+    repository: ${nullbot.ai.chat.repository}
     max-history-length: ${nullbot.ai.chat.max-history-length}
     max-tokens: ${nullbot.ai.chat.max-tokens}
     max-tool-calls: ${nullbot.ai.chat.max-tool-calls}
@@ -127,6 +128,10 @@ ai:
     prompt-text-lang: 中文
     text-lang: 中文
     emotion: 默认
+
+trace:
+  saucenao:
+    api-key: ${nullbot.saucenao.api-key}
 
 chrome:
   driver-auto: ${nullbot.chrome.driver.auto}

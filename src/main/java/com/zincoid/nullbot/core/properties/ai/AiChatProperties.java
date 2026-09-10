@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "ai.chat")
 public class AiChatProperties {
 
+    private String repository;
     private Integer maxHistoryLength;
     private Integer maxTokens;
     private Integer maxToolCalls;

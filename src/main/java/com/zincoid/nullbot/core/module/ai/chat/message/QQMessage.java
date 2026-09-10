@@ -15,12 +15,14 @@ import java.util.Map;
 @ToString(callSuper = true)
 public class QQMessage extends AbstractMessage {
 
+    private static final String DATA_URI_PREFIX = "data:";
+
     private boolean isPrivate;
     private Integer messageId;
     private Long groupId;
     private Long userId;
     private String userName;
-    private List<String> imageUrls = List.of();
+    private List<String> images = List.of();
 
     private QQMessage(Role role, String content) {
         super(role, content);
@@ -43,15 +45,14 @@ public class QQMessage extends AbstractMessage {
                 .formatted(messageId, userName, userId, super.content));
         List<Map<String, Object>> parts = new ArrayList<>();
         if (vision) {
-            for (String url : imageUrls) {
-                String data = Base64Util.dataUri(url);
-                if (data == null) {
-                    _content.append("[图片下载失败]");
+            for (String image : images) {
+                if (!image.startsWith(DATA_URI_PREFIX)) {
+                    _content.append("[图片失效]");
                     continue;
                 }
                 parts.add(Map.of(
                         "type", "image_url",
-                        "image_url", Map.of("url", data)
+                        "image_url", Map.of("url", image)
                 ));
             }
         }
@@ -91,7 +92,9 @@ public class QQMessage extends AbstractMessage {
     }
 
     public QQMessage img(Collection<String> urls) {
-        this.imageUrls = urls == null ? List.of() : List.copyOf(urls);
+        this.images = urls == null ? List.of() : urls.stream()
+                .map(url -> url.startsWith(DATA_URI_PREFIX) ? url : Base64Util.dataUri(url))
+                .toList();
         return this;
     }
 

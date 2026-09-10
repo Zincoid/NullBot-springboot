@@ -52,14 +52,15 @@ nullbot:
   # ---------------------------- AI --------------------------- #
   ai:
     chat:                                             # AI 对话配置
-      openai:                                         # OpenAI API
-        api-url: https://api.deepseek.com
-        api-key:
-        model: deepseek-v4-flash-vision-exp
+      repository: db                                  # 历史存储方式: memory | db
       max-history-length: 100
       max-tokens: 1024
       max-tool-calls: 5
       default-prompt: "你是一只猫娘，你的名字叫Null。"
+      openai:                                         # OpenAI API
+        api-url: https://api.deepseek.com
+        api-key:
+        model:
     tts:                                              # TTS 合成配置
       api-url: http://localhost:8000                  # GSVI API
       api-key: null
