@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.bot.command.recall;
 
 import com.mikuac.shiro.core.Bot;
+import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.zincoid.nullbot.bot.command.Cmd;
 import com.zincoid.nullbot.bot.command.CmdArgs;
@@ -37,10 +38,13 @@ public class RecalledCmd implements Cmd {
         for (QQMessage message : messages) {
             if (!Objects.equals(message.getMessageId(), messageId)) continue;
             String content = message.getContent();
-            String response = userId.equals(operatorId)
+            String header = userId.equals(operatorId)
                     ? "%s(%s)撤回消息: %s".formatted(userName, userId, content)
                     : "%s(%s)撤回%s(%s)消息: %s".formatted(operatorName, operatorId, userName, userId, content);
-            bot.sendGroupMsg(groupId, response, false);
+            MsgUtils builder = MsgUtils.builder().text(header);
+            for (String data : message.getImages())
+                builder.img("base64://" + data.substring(data.indexOf(',') + 1));
+            bot.sendGroupMsg(groupId, builder.build(), false);
             log.info("☑ [Recalled] 撤回消息已重发: {}", content);
             return;
         }
