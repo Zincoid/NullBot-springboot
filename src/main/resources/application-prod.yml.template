@@ -52,7 +52,7 @@ nullbot:
   # ---------------------------- AI --------------------------- #
   ai:
     chat:                                             # AI 对话配置
-      repository: db                                  # 历史存储方式: memory | db
+      repository: file                                # 历史存储: memory | db | file
       max-history-length: 100
       max-tokens: 1024
       max-tool-calls: 5

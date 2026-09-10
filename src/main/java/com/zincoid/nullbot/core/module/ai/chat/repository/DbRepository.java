@@ -3,6 +3,7 @@ package com.zincoid.nullbot.core.module.ai.chat.repository;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zincoid.nullbot.core.model.data.dto.MessageDTO;
 import com.zincoid.nullbot.core.model.data.po.MessagePO;
 import com.zincoid.nullbot.core.module.ai.chat.message.Message;
 import com.zincoid.nullbot.core.service.chat.MessageService;

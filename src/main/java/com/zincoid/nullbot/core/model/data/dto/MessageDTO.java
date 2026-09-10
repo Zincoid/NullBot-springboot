@@ -1,4 +1,4 @@
-package com.zincoid.nullbot.core.module.ai.chat.repository;
+package com.zincoid.nullbot.core.model.data.dto;
 
 import com.zincoid.nullbot.core.enums.Role;
 import com.zincoid.nullbot.core.module.ai.chat.message.Message;
