@@ -16,9 +16,9 @@ import com.zincoid.nullbot.core.enums.Emoji;
 import com.zincoid.nullbot.core.module.request.RequestClient;
 import com.zincoid.nullbot.core.utils.ImgUtil;
 import com.zincoid.nullbot.core.utils.MsgUtil;
+import com.zincoid.nullbot.core.properties.trace.SauceNaoProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -37,9 +37,7 @@ public class TraceCmd implements Cmd {
     private static final String API_URL = "https://saucenao.com/search.php?output_type=2&db=999&numres=%s%s";
 
     private final RequestClient requestClient;
-
-    @Value("${trace.saucenao.api-key:}")
-    private String apiKey;
+    private final SauceNaoProperties sauceNaoProperties;
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
@@ -61,7 +59,8 @@ public class TraceCmd implements Cmd {
         if (dataUri == null) throw new BotWarnException("图片下载失败");
         String mime = dataUri.substring(5, dataUri.indexOf(';'));
         byte[] image = Base64.getDecoder().decode(dataUri.substring(dataUri.indexOf(',') + 1));
-        String query = API_URL.formatted(count, apiKey.isBlank() ? "" : "&api_key=" + apiKey);
+        String apiKey = sauceNaoProperties.getApiKey();
+        String query = API_URL.formatted(count, apiKey == null || apiKey.isBlank() ? "" : "&api_key=" + apiKey);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", new NamedResource(image, "image." + mime.substring(6)));
