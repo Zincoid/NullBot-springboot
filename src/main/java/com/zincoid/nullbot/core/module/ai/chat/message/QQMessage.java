@@ -1,7 +1,7 @@
 package com.zincoid.nullbot.core.module.ai.chat.message;
 
 import com.zincoid.nullbot.core.enums.Role;
-import com.zincoid.nullbot.core.utils.Base64Util;
+import com.zincoid.nullbot.core.utils.ImgUtil;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Getter
 @ToString(callSuper = true)
@@ -91,9 +92,11 @@ public class QQMessage extends AbstractMessage {
         return this;
     }
 
-    public QQMessage img(Collection<String> urls) {
-        this.images = urls == null ? List.of() : urls.stream()
-                .map(url -> url.startsWith(DATA_URI_PREFIX) ? url : Base64Util.dataUri(url))
+    public QQMessage img(Collection<String> sources) {
+        this.images = sources == null ? List.of() : sources.stream()
+                .map(source -> source.startsWith(DATA_URI_PREFIX) ? source : ImgUtil.toDataUri(source))
+                .filter(Objects::nonNull)
+                .map(ImgUtil::compressDataUri)
                 .toList();
         return this;
     }

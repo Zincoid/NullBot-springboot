@@ -14,7 +14,7 @@ import com.zincoid.nullbot.bot.exception.BotWarnException;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.enums.Emoji;
 import com.zincoid.nullbot.core.module.request.RequestClient;
-import com.zincoid.nullbot.core.utils.Base64Util;
+import com.zincoid.nullbot.core.utils.ImgUtil;
 import com.zincoid.nullbot.core.utils.MsgUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +57,7 @@ public class TraceCmd implements Cmd {
         if (urls.isEmpty())
             throw new BotWarnException("缺少图片引用");
         bot.sendGroupMsg(event.getGroupId(), "图像溯源中，请稍候...", false);
-        String dataUri = Base64Util.dataUri(urls.iterator().next());
+        String dataUri = ImgUtil.toDataUri(urls.iterator().next());
         if (dataUri == null) throw new BotWarnException("图片下载失败");
         String mime = dataUri.substring(5, dataUri.indexOf(';'));
         byte[] image = Base64.getDecoder().decode(dataUri.substring(dataUri.indexOf(',') + 1));
@@ -86,7 +86,7 @@ public class TraceCmd implements Cmd {
             if (url != null) text.append("\n链接: ").append(url);
             var builder = MsgUtils.builder();
             if (header.thumbnail() != null && !header.thumbnail().isBlank()) {
-                String thumb = Base64Util.fromUrl(header.thumbnail());
+                String thumb = ImgUtil.toBase64(header.thumbnail());
                 if (thumb != null) builder.img("base64://" + thumb);
                 else builder.text("[图片未载入]");
             }
