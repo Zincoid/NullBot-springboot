@@ -94,7 +94,7 @@ public class SvgCanvas {
                 } else if (fileName.endsWith(".webp")) {
                     mimeType = "image/webp";
                 } else {
-                    throw new IllegalArgumentException("不支持的图像格式: " + imagePath);
+                    throw new IllegalArgumentException("图格式不支持: " + imagePath);
                 }
             }
 

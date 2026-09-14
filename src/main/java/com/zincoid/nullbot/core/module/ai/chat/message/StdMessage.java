@@ -29,12 +29,10 @@ public class StdMessage extends AbstractMessage {
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("role", super.role.getValue());
-        if (super.content != null && !super.content.isEmpty()) {
+        if (super.content != null && !super.content.isEmpty())
             map.put("content", super.content);
-        }
-        if (reasoningContent != null && !reasoningContent.isEmpty()) {
+        if (reasoningContent != null && !reasoningContent.isEmpty())
             map.put("reasoning_content", reasoningContent);
-        }
         if (toolCalls != null && !toolCalls.isEmpty()) {
             List<Map<String, Object>> tcList = new ArrayList<>();
             for (ToolCall tc : toolCalls) {
@@ -46,9 +44,8 @@ public class StdMessage extends AbstractMessage {
             }
             map.put("tool_calls", tcList);
         }
-        if (toolCallId != null) {
+        if (toolCallId != null)
             map.put("tool_call_id", toolCallId);
-        }
         return map;
     }
 

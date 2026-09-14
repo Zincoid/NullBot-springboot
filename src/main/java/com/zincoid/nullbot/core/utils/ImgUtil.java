@@ -1,7 +1,5 @@
 package com.zincoid.nullbot.core.utils;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -19,15 +17,13 @@ import java.util.Base64;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
-@Slf4j
 public final class ImgUtil {
 
     private ImgUtil() {}
 
     private static final long CACHE_MAX_BYTES = 128L * 1024 * 1024;  // 128 MB 图缓存
-    private static final Map<String, Optional<String>> CACHE = new LinkedHashMap<>(128, 0.75f, true);
+    private static final Map<String, String> CACHE = new LinkedHashMap<>(128, 0.75f, true);
     private static long cacheBytes = 0;
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
@@ -46,54 +42,52 @@ public final class ImgUtil {
         }
         String mime = sniffMime(bytes);
         if (mime == null)
-            throw new RuntimeException("不支持的格式");
+            throw new RuntimeException("图格式不支持");
         return "data:" + mime + ";base64," + Base64.getEncoder().encodeToString(bytes);
     }
 
     // ============== 网络转换 ==============
 
     public static String toBase64(String url) {
-        if (url == null || url.isBlank()) return null;
         try {
             byte[] bytes = download(url);
             if (sniffMime(bytes) == null)
-                throw new RuntimeException("不支持的格式");
+                throw new RuntimeException("图格式不支持");
             return Base64.getEncoder().encodeToString(bytes);
         } catch (Exception e) {
-            log.warn("▽ [ImgUtil::toBase64] 图片下载失败: {} - {}", url, e.getMessage());
-            return null;
+            throw new RuntimeException("图像转换失败: " + url, e);
         }
     }
 
     public static String toDataUri(String url) {
         if (url == null || url.isBlank()) return null;
         synchronized (CACHE) {
-            Optional<String> cached = CACHE.get(url);
-            if (cached != null) return cached.orElse(null);
+            String cached = CACHE.get(url);
+            if (cached != null) return cached;
         }
-        Optional<String> data;
+        byte[] bytes;
         try {
-            byte[] bytes = download(url);
-            String mime = sniffMime(bytes);
-            if (mime == null)
-                throw new RuntimeException("不支持的格式");
-            data = Optional.of("data:" + mime + ";base64," + Base64.getEncoder().encodeToString(bytes));
+            bytes = download(url);
         } catch (Exception e) {
-            log.warn("▽ [ImgUtil::toDataUri] 图片下载失败: {} - {}", url, e.getMessage());
-            data = Optional.empty();
+            throw new RuntimeException("图片下载失败: " + url, e);
         }
+        String mime = sniffMime(bytes);
+        if (mime == null)
+            throw new RuntimeException("图格式不支持: " + url);
+        String data = "data:" + mime + ";base64,"
+                + Base64.getEncoder().encodeToString(bytes);
         synchronized (CACHE) {
-            if (CACHE.containsKey(url)) return data.orElse(null);
+            if (CACHE.containsKey(url)) return CACHE.get(url);
             CACHE.put(url, data);
-            cacheBytes += data.map(String::length).orElse(0);
+            cacheBytes += data.length();
             while (cacheBytes > CACHE_MAX_BYTES && CACHE.size() > 1) {
-                Iterator<Map.Entry<String, Optional<String>>> it = CACHE.entrySet().iterator();
-                Map.Entry<String, Optional<String>> eldest = it.next();
-                cacheBytes -= eldest.getValue().map(String::length).orElse(0);
+                Iterator<Map.Entry<String, String>> it = CACHE.entrySet().iterator();
+                Map.Entry<String, String> eldest = it.next();
+                cacheBytes -= eldest.getValue().length();
                 it.remove();
             }
         }
-        return data.orElse(null);
+        return data;
     }
 
     // ============== 图片压缩 ==============
@@ -123,7 +117,6 @@ public final class ImgUtil {
                 return "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(out.toByteArray());
             }
         } catch (Exception e) {
-            log.warn("▽ [ImgUtil::compressDataUri] 图片压缩失败: {}", e.getMessage());
             return dataUri;
         }
     }

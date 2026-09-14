@@ -4,6 +4,7 @@ import com.zincoid.nullbot.core.enums.Role;
 import com.zincoid.nullbot.core.utils.ImgUtil;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@Slf4j
 @Getter
 @ToString(callSuper = true)
 public class QQMessage extends AbstractMessage {
@@ -36,36 +38,27 @@ public class QQMessage extends AbstractMessage {
     @Override
     public Map<String, Object> toMap(boolean vision) {
         Map<String, Object> map = new HashMap<>();
-        String r = super.role.getValue();
-        map.put("role", r);
-        if (!"user".equals(r)) {
-            map.put("content", content);
+        map.put("role", super.role.getValue());
+        if (super.role != Role.USER) {
+            map.put("content", super.content);
             return map;
         }
-        StringBuilder _content = new StringBuilder("[%s][%s(%s)]: %s"
-                .formatted(messageId, userName, userId, super.content));
+        String _content = "[%s][%s(%s)]: %s".formatted(
+                messageId, userName, userId, super.content);
+        if (!vision) {
+            map.put("content", _content);
+            return map;
+        }
         List<Map<String, Object>> parts = new ArrayList<>();
-        if (vision) {
-            for (String image : images) {
-                if (!image.startsWith(DATA_URI_PREFIX)) {
-                    _content.append("[图片失效]");
-                    continue;
-                }
-                parts.add(Map.of(
-                        "type", "image_url",
-                        "image_url", Map.of("url", image)
-                ));
-            }
-        }
-        if (parts.isEmpty()) {
-            map.put("content", _content.toString());
-        } else {
-            parts.addFirst(Map.of(
-                    "type", "text",
-                    "text", _content.toString()
-            ));
-            map.put("content", parts);
-        }
+        images.forEach(image -> parts.add(Map.of(
+                "type", "image_url",
+                "image_url", Map.of("url", image)
+        )));
+        parts.addFirst(Map.of(
+                "type", "text",
+                "text", _content
+        ));
+        map.put("content", parts);
         return map;
     }
 
@@ -94,7 +87,18 @@ public class QQMessage extends AbstractMessage {
 
     public QQMessage img(Collection<String> sources) {
         this.images = sources == null ? List.of() : sources.stream()
-                .map(source -> source.startsWith(DATA_URI_PREFIX) ? source : ImgUtil.toDataUri(source))
+                .map(source -> {
+                    if (source.startsWith(DATA_URI_PREFIX))
+                        return source;
+                    try {
+                        return ImgUtil.toDataUri(source);
+                    } catch (RuntimeException e) {
+                        log.warn("▽ [QQMessage] 图源失效已丢弃: {} - {}",
+                                source, e.getMessage());
+                        this.content += " [图片失效]";
+                        return null;
+                    }
+                })
                 .filter(Objects::nonNull)
                 .map(ImgUtil::compressDataUri)
                 .toList();

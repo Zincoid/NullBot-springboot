@@ -56,7 +56,6 @@ public class TraceCmd implements Cmd {
             throw new BotWarnException("缺少图片引用");
         bot.sendGroupMsg(event.getGroupId(), "图像溯源中，请稍候...", false);
         String dataUri = ImgUtil.toDataUri(urls.iterator().next());
-        if (dataUri == null) throw new BotWarnException("图片下载失败");
         String mime = dataUri.substring(5, dataUri.indexOf(';'));
         byte[] image = Base64.getDecoder().decode(dataUri.substring(dataUri.indexOf(',') + 1));
         String apiKey = sauceNaoProperties.getApiKey();
@@ -85,9 +84,11 @@ public class TraceCmd implements Cmd {
             if (url != null) text.append("\n链接: ").append(url);
             var builder = MsgUtils.builder();
             if (header.thumbnail() != null && !header.thumbnail().isBlank()) {
-                String thumb = ImgUtil.toBase64(header.thumbnail());
-                if (thumb != null) builder.img("base64://" + thumb);
-                else builder.text("[图片未载入]");
+                try {
+                    builder.img("base64://" + ImgUtil.toBase64(header.thumbnail()));
+                } catch (Exception e) {
+                    builder.text("[图片未载入]");
+                }
             }
             bot.sendGroupMsg(event.getGroupId(), builder.text(text.toString()).build(), false);
         }
