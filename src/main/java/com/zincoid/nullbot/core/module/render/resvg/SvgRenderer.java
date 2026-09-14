@@ -37,13 +37,13 @@ public class SvgRenderer {
             ctx.put(key, value);
             return this;
         }
-        public Template image(String key, String path, boolean gray) {
-            ctx.put(key, Resvg.toImgUri(path, gray));
+        public Template image(String key, String path) {
+            ctx.put(key, Resvg.toImgUri(path));
             return this;
         }
-        public Template resource(String key, String path, boolean gray) {
+        public Template resource(String key, String path) {
             Path p = resourceLoader.getCache(path);
-            return image(key, p.toAbsolutePath().toString(), gray);
+            return image(key, p.toAbsolutePath().toString());
         }
 
         // ================= 渲染方法 =================

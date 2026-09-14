@@ -25,7 +25,7 @@ public class RenderingServiceImpl implements RenderingService {
     @Override
     public String rip(String imagePath) {
         return svgRenderer.load("rip")
-                .image("image", imagePath, true)
+                .image("image", imagePath)
                 .render();
     }
 
@@ -33,8 +33,8 @@ public class RenderingServiceImpl implements RenderingService {
     public String prts(String imagePath, boolean invert) {
         String prtsResourcePath = invert ? "static/image/InvsPRTS.png" : "static/image/PRTS.png";
         return svgRenderer.load("prts")
-                .image("image", imagePath, false)
-                .resource("prts", prtsResourcePath, false)
+                .image("image", imagePath)
+                .resource("prts", prtsResourcePath)
                 .render();
     }
 
@@ -43,7 +43,7 @@ public class RenderingServiceImpl implements RenderingService {
         String timesStr = String.format("%06d", times);
         return svgRenderer.load("usage")
                 .string("times", timesStr)
-                .image("avatar", avatarPath, false)
+                .image("avatar", avatarPath)
                 .render();
     }
 
