@@ -32,7 +32,7 @@ public abstract class Handler<M extends Match, S extends State, L extends Logic<
 
     public abstract GameMode getMode();
 
-    // ================== 对局控制方法 ==================
+    // ══════ 对局控制方法 ══════════
 
     @SuppressWarnings("unchecked")
     public final void start(Match match) {
@@ -75,7 +75,7 @@ public abstract class Handler<M extends Match, S extends State, L extends Logic<
         }
     }
 
-    // ================== 逻辑抽象方法 ==================
+    // ══════ 逻辑抽象方法 ══════════
 
     protected abstract void onStart(M match, S state);
 
@@ -83,16 +83,16 @@ public abstract class Handler<M extends Match, S extends State, L extends Logic<
 
     protected abstract Result onAction(M match, S state, Player self, CmdArgs args);
 
-    // ================== 响应构建方法 ==================
+    // ══════ 响应构建方法 ══════════
 
-    // ---------------- 通用错误响应方法 ----------------
+    // ────── 通用错误响应方法 ──────
 
     protected final Result fail(String message) {
         Player self = CURRENT_PLAYER.get();
         return Result.fail().add(self.getInProgressGroupId(), "❌" + message);
     }
 
-    // ---------------- 单人模式响应方法 ----------------
+    // ────── 单人模式响应方法 ──────
 
     protected Result success(String msg) {
         throw new UnsupportedOperationException("不支持的模式响应");
@@ -102,7 +102,7 @@ public abstract class Handler<M extends Match, S extends State, L extends Logic<
         throw new UnsupportedOperationException("不支持的模式响应");
     }
 
-    // ---------------- 双人模式响应方法 ----------------
+    // ────── 双人模式响应方法 ──────
 
     protected Result success(boolean async, String self, String opp) {
         throw new UnsupportedOperationException("不支持的模式响应");
@@ -113,7 +113,7 @@ public abstract class Handler<M extends Match, S extends State, L extends Logic<
     }
 
 
-    // ================== 输入监听方法 ==================
+    // ══════ 输入监听方法 ══════════
 
     public final boolean isActive(String matchId) {
         return states.containsKey(matchId);

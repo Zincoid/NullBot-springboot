@@ -22,7 +22,7 @@ public class BotOperator {
     private final IdsProperties idsProperties;
     private final BotContainer botContainer;
 
-    // =================== 获取方法 ===================
+    // ══════ 获取方法 ══════
 
     public Bot getBot(int maxRetries, long retryInterval) {
         Bot bot = BotCtx.getBot();
@@ -40,7 +40,7 @@ public class BotOperator {
         return getBot(DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
     }
 
-    // =================== 默认方法 ===================
+    // ══════ 默认方法 ══════
 
     public void sendLogGroupMsg(String message) {
         sendGroupMsg(idsProperties.getLogId() ,message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
@@ -58,7 +58,7 @@ public class BotOperator {
         return sendPrivateMsg(userId, message, DEFAULT_MAX_RETRIES, DEFAULT_RETRY_INTERVAL);
     }
 
-    // =================== 消息方法 ===================
+    // ══════ 消息方法 ══════
 
     public void sendAllGroupMsg(String message, int maxRetries, long retryInterval) {
         Bot bot = getBot(maxRetries, retryInterval);
@@ -91,7 +91,7 @@ public class BotOperator {
         return actionData.getData().getMessageId();
     }
 
-    // =================== 工具方法 ===================
+    // ══════ 工具方法 ══════
 
     private static void sleep(long ms) {
         try {

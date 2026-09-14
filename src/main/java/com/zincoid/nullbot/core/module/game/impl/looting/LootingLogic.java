@@ -87,7 +87,7 @@ public class LootingLogic extends Logic<DualMatch, LootingState> {
         return sb.toString();
     }
 
-    // ===== 推进游戏刻 =====
+    // ══════ 推进游戏刻 ═════════════════════════════════════
 
     public List<String> tick(LootingState s, Long selfId) {
         s.setTick(s.getTick() + 1);
@@ -95,7 +95,7 @@ public class LootingLogic extends Logic<DualMatch, LootingState> {
         return aiAction(s, selfId);
     }
 
-    // ===== 移动 / 侦察 / 搜刮 / 攻击 / AI行为 / 撤离 =====
+    // ══════ 移动 / 侦察 / 搜刮 / 攻击 / AI行为 / 撤离 ══════
 
     public String move(LootingState s, LootingPlayer p, String target) {
         MapNode cur = s.getMap().node(p.getLocation());

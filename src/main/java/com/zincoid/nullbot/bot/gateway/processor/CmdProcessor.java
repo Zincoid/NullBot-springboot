@@ -35,7 +35,7 @@ public class CmdProcessor {
         doProcess("▶", "■", "Test", null, event);
     }
 
-    // =========== 工具 ===========
+    // ══════ 工具 ══════
 
     private void doProcess(String start, String end, String tag, Bot bot, CmdEvent<?> event) throws Exception {
         Cmd cmd = registry.getCmd(event.getCmdType());

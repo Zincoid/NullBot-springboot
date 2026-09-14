@@ -26,7 +26,7 @@ public class BreadServiceImpl implements BreadService {
     private final UserService userService;
     private final InventoryService inventoryService;
 
-    // =================== 面包游戏相关 ===================
+    // ══════ 面包游戏相关 ══════
 
     @Override
     public List<InventoryVO> listVO(Long userId) {

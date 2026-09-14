@@ -32,7 +32,7 @@ public class BotInputManager {
         private boolean coverable;
     }
 
-    // ============= BotInputer 注册方法 ==============
+    // ══════ BotInputer 注册方法 ══════
 
     public static List<Pair<Long, String>> register(BotInputer inputer) {
         return SpringCtxHolder.getBean(BotInputManager.class)
@@ -45,7 +45,7 @@ public class BotInputManager {
                 );
     }
 
-    // =================== 调用方法 ===================
+    // ══════ 调用方法 ═════════════════
 
     /* 注册输入事件 (默认非可覆盖模式) - 阻塞直到收到响应或超时 (视模式而定) */
     public List<Pair<Long, String>> request(BniMode mode, Long targetId, String pattern, long timeout) {
@@ -115,7 +115,7 @@ public class BotInputManager {
         return true;
     }
 
-    // =================== 工具方法 ===================
+    // ══════ 工具方法 ═════════════════
 
     public boolean isWaiting(BniMode mode, Long targetId) {
         String id = switch (mode) {

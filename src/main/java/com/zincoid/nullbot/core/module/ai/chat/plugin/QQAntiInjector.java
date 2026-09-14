@@ -55,7 +55,7 @@ public class QQAntiInjector {
         return this;
     }
 
-    // =================== 检查方法 ===================
+    // ══════ 检查方法 ══════
 
     public boolean check(QQMessage message) {
         if (model == null) throw new RuntimeException("防注检测模型未设置");
@@ -74,7 +74,7 @@ public class QQAntiInjector {
         return true;
     }
 
-    // =================== 消息方法 ===================
+    // ══════ 消息方法 ══════
 
     private String refused() {
         return MsgUtils.builder()

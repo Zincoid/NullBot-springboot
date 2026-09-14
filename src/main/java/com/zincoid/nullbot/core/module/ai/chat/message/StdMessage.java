@@ -49,7 +49,7 @@ public class StdMessage extends AbstractMessage {
         return map;
     }
 
-    // ==================== 构建方法 ====================
+    // ══════ 构建方法 ══════
 
     public StdMessage withReasoning(String content) {
         this.reasoningContent = content;

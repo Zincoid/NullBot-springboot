@@ -77,7 +77,7 @@ public class QQPrompter {
 
     }
 
-    // =================== 生成方法 ===================
+    // ══════ 生成方法 ══════
 
     public String user(Long userId, boolean cq, boolean cmd, boolean vision) {
         StringBuilder sb = new StringBuilder();
@@ -105,7 +105,7 @@ public class QQPrompter {
         return sb.toString();
     }
 
-    // =================== 工具方法 ===================
+    // ══════ 工具方法 ══════
 
     private String formatMemories(List<String> memories) {
         if (memories == null || memories.isEmpty())

@@ -55,7 +55,7 @@ public class AuthHandler implements Handler {
         List<String> params = event.getCmdParams();
         EventScope eventScope = event.getEventScope();
 
-        // =================== 未知类型验证 ===================
+        // ══════ 未知类型验证 ══════
 
         if (eventScope == EventScope.UNKNOWN) {
             log.info("├─[AuthHandler] 未知事件默认通过");
@@ -63,7 +63,7 @@ public class AuthHandler implements Handler {
             return;
         }
 
-        // =================== 私聊类型验证 ===================
+        // ══════ 私聊类型验证 ══════
 
         if (eventScope == EventScope.PRIVATE) {
             Long userId = event.getUserId();
@@ -84,18 +84,18 @@ public class AuthHandler implements Handler {
             return;
         }
 
-        // =================== 群聊类型验证 ===================
+        // ══════ 群聊类型验证 ══════
 
         Long userId = event.getUserId();
         Long groupId = event.getGroupId();
 
-        // ------------------- 限权信息查询 -------------------
+        // ────── 限权信息查询 ──────
 
         int cmdAccess = cmd.getAccess();
         int groupAccess = groupService.getAccess(groupId);
         int userAccess = userService.getAccess(userId);
 
-        // ------------------- 系统锁定验证 -------------------
+        // ────── 系统锁定验证 ──────
 
         if (inMaintenance.get() && userAccess < 2) {
             log.info("├─[AuthHandler] 系统已锁定");
@@ -105,7 +105,7 @@ public class AuthHandler implements Handler {
             return;
         }
 
-        // ------------------- 指令限权验证 -------------------
+        // ────── 指令限权验证 ──────
 
         if (groupAccess >= cmdAccess) {
             log.info("├─[AuthHandler] 群限权满足");
@@ -126,7 +126,7 @@ public class AuthHandler implements Handler {
             log.info("├─[AuthHandler] 无需验证用户限权");
         }
 
-        // ------------------- 群组停用验证 -------------------
+        // ────── 群组停用验证 ──────
 
         if (!params.isEmpty() && ("--toggle".equals(params.getFirst()) || "-T".equals(params.getFirst()))) {
             if (userAccess < 1) {
@@ -148,7 +148,7 @@ public class AuthHandler implements Handler {
             return;
         }
 
-        // ------------------- 用户禁用验证 -------------------
+        // ────── 用户禁用验证 ──────
 
         if (!params.isEmpty() && ("--ban".equals(params.getFirst()) || "-B".equals(params.getFirst()))) {
             if (userAccess < 1) {
@@ -201,7 +201,7 @@ public class AuthHandler implements Handler {
         chain.doHandle(bot, event, cmd);
     }
 
-    // =================== 系统锁定方法 ===================
+    // ══════ 系统锁定方法 ══════
 
     public boolean switchInMaintenance() {
         boolean current, next;
@@ -212,7 +212,7 @@ public class AuthHandler implements Handler {
         return next;
     }
 
-    // =================== 私聊授权方法 ===================
+    // ══════ 私聊授权方法 ══════
 
     public void addAllowedPrivateUser(Long userId) {
         allowedPrivateUsers.add(userId);
@@ -222,7 +222,7 @@ public class AuthHandler implements Handler {
         allowedPrivateUsers.remove(userId);
     }
 
-    // =================== 群聊封禁方法 ===================
+    // ══════ 群聊封禁方法 ══════
 
     public boolean switchCmdBan(Long groupId, Class<? extends Cmd> cmdClass) {
         String cmdName = cmdClass.getSimpleName();

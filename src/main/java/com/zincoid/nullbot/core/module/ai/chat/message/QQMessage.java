@@ -62,7 +62,7 @@ public class QQMessage extends AbstractMessage {
         return map;
     }
 
-    // ====================== 构建方法 ======================
+    // ══════ 构建方法 ══════
 
     public static QQMessage send(QQMessage message, String content) {
         return message.isPrivate
@@ -78,7 +78,7 @@ public class QQMessage extends AbstractMessage {
         return new QQMessage(Role.ASSISTANT, content);
     }
 
-    // ====================== 设置方法 ======================
+    // ══════ 设置方法 ══════
 
     public QQMessage id(Integer messageId) {
         this.messageId = messageId;

@@ -93,7 +93,7 @@ public class BotPageSelector<K, V> {
         }
     }
 
-    // =================== BotInputer 控制方案 ====================
+    // ══════ BotInputer 控制方案 ═══════════
 
     public void start(BotInputer inputer) {
         init();
@@ -111,7 +111,7 @@ public class BotPageSelector<K, V> {
         return input(inputs.getFirst().getRight().toUpperCase());
     }
 
-    // ================= BotInputManager 控制方案 =================
+    // ══════ BotInputManager 控制方案 ══════
 
     public void start(BotInputManager manager) {
         init();
@@ -141,7 +141,7 @@ public class BotPageSelector<K, V> {
         return input(inputs.getFirst().getRight().toUpperCase());
     }
 
-    // ======================= 直接控制方案 =======================
+    // ══════ 直接控制方案 ══════════════════
 
     public boolean input(String cmd) {
         return switch (cmd.toUpperCase()) {
@@ -157,7 +157,7 @@ public class BotPageSelector<K, V> {
         return page();
     }
 
-    // ======================= 内部操作工具 =======================
+    // ══════ 内部操作工具 ══════════════════
 
     private boolean next() {
         if (current < pages) {

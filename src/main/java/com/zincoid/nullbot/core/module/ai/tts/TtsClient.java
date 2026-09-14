@@ -30,7 +30,7 @@ public class TtsClient {
         log.info("▽ [TtsClient] TTS客户端已初始化 - ModelName: {}", ttsProperties.getModelName());
     }
 
-    // ================== 用户方法 ==================
+    // ══════ 用户方法 ══════
 
     public String synthesize(String text) {
         if (!isOnline()) throw new RuntimeException("TTS服务已离线");
@@ -74,7 +74,7 @@ public class TtsClient {
         }
     }
 
-    // ================== 工具方法 ==================
+    // ══════ 工具方法 ══════
 
     private String resolveUrl(String path) {
         String url = ttsProperties.getApiUrl();

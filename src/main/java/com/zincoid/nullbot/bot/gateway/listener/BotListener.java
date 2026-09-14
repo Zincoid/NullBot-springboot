@@ -44,7 +44,7 @@ public class BotListener {
     private final CmdProperties cmdProperties;
     private final IdsProperties idsProperties;
 
-    // ================================== 私聊动作捕获 ==================================
+    // ══════ 私聊动作捕获 ══════
 
     @FuncControl("PrivateCmd")
     @PrivateMessageHandler
@@ -96,7 +96,7 @@ public class BotListener {
         }
     }
 
-    // ================================== 群聊动作捕获 ==================================
+    // ══════ 群聊动作捕获 ══════
 
     @GroupMessageHandler
     @MessageHandlerFilter(at = AtEnum.NOT_NEED)

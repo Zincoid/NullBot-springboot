@@ -25,7 +25,7 @@ public class WebCapturer {
         this.maxRetries = props.getMaxRetries();
     }
 
-    // ============================= 链式入口 =============================
+    // ══════ 链式入口 ══════
 
     public Capture load(String url) {
         return new Capture(url);
@@ -106,7 +106,7 @@ public class WebCapturer {
         }
     }
 
-    // ============================= 工具方法 =============================
+    // ══════ 工具方法 ══════
 
     private String withRetry(Supplier<String> action) {
         for (int i = 0; i < maxRetries; i++) {

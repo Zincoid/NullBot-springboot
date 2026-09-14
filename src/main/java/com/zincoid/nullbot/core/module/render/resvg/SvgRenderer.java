@@ -28,7 +28,7 @@ public class SvgRenderer {
 
         private Template(String svg) { this.svg = svg; }
 
-        // ================= 构建方法 =================
+        // ══════ 构建方法 ══════
 
         public Template string(String key, String value) {
             ctx.put(key, value);
@@ -47,7 +47,7 @@ public class SvgRenderer {
             return image(key, p.toAbsolutePath().toString());
         }
 
-        // ================= 渲染方法 =================
+        // ══════ 渲染方法 ══════
 
         public String render() {
             try {

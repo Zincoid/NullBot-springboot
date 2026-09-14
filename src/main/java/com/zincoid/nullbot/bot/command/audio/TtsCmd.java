@@ -70,7 +70,7 @@ public class TtsCmd implements Cmd {
         throw new BotWarnException("无此子命令");
     }
 
-    // ================== synth 子命令 ==================
+    // ══════ synth 子命令 ══════
 
     private String handleSynthesize(String text) {
         String base64 = ttsClient.synthesize(text);
@@ -78,7 +78,7 @@ public class TtsCmd implements Cmd {
         return MsgUtils.builder().voice("base64://" + base64).build();
     }
 
-    // ================== clone 子命令 ==================
+    // ══════ clone 子命令 ══════
 
     private void handleCloneSave(Bot bot, GroupMessageEvent event, CmdArgs args,
                                   long groupId, long userId, String userName) {
@@ -137,7 +137,7 @@ public class TtsCmd implements Cmd {
         log.info("☑ [Tts] 模板列表已获取");
     }
 
-    // ================== 工具方法 ==================
+    // ══════ 工具方法 ══════════
 
     private void incrementUsedSafe(int templateId) {
         try {

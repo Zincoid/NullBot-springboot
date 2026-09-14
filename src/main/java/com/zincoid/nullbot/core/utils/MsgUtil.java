@@ -22,13 +22,13 @@ public final class MsgUtil {
 
     private MsgUtil() {}
 
-    // =================== @QQ号提取方法 ===================
+    // ══════ @QQ号提取方法 ══════════
 
     public static List<Long> extractAtNumbers(List<ArrayMsg> arrayMsg) {
         return ShiroUtils.getAtList(arrayMsg);
     }
 
-    // =================== RPS码提取方法 ===================
+    // ══════ RPS码提取方法 ══════════
 
     public static Rps extractRps(String rawMsg) {
         Matcher m = RPS_CQ_PATTERN.matcher(rawMsg);
@@ -36,7 +36,7 @@ public final class MsgUtil {
         throw new CoreException("RPS格式异常");
     }
 
-    // =================== 消息格式化方法 ===================
+    // ══════ 消息格式化方法 ═════════
 
     public static String formatMsg(Bot bot, List<ArrayMsg> arrayMsgs) {
         StringBuilder message = new StringBuilder();
@@ -77,7 +77,7 @@ public final class MsgUtil {
         return message.toString();
     }
 
-    // =================== 语录格式化方法 ===================
+    // ══════ 语录格式化方法 ═════════
 
     public static String formatSaying(Bot bot, List<ArrayMsg> arrayMsg) {
         String rawMsg = ShiroUtils.unescape(MessageConverser.arraysToString(arrayMsg));
@@ -108,7 +108,7 @@ public final class MsgUtil {
         return sb.toString();
     }
 
-    // =================== 资源 URL 提取方法 ===================
+    // ══════ 资源 URL 提取方法 ══════
 
     public static Map<String, String> extractFileMap(List<ArrayMsg> arrayMsg) {
         if (arrayMsg == null || arrayMsg.isEmpty()) return Collections.emptyMap();
@@ -158,7 +158,7 @@ public final class MsgUtil {
         return new AbstractMap.SimpleEntry<>(file, url);
     }
 
-    // =================== 违规CQ码检查方法 ===================
+    // ══════ 违规CQ码检查方法 ═══════
 
     public static boolean validateCq(String rawMsg) {
         if (rawMsg == null || !rawMsg.contains("CQ:")) return true;

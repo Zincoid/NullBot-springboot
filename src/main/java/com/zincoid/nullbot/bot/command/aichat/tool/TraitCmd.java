@@ -22,8 +22,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TraitCmd implements Cmd {
 
-    // ================== 静态特质提示词 ==================
-
     /** 攻击模式 - 尖酸刻薄 */
     public static final String ATTACK_PROMPT = """
             - 你当前处于【攻击模式】，性格变得极具攻击性和侵略性。
@@ -76,12 +74,8 @@ public class TraitCmd implements Cmd {
             "SOUL", SOUL_PROMPT
     );
 
-    // ==================== 依赖注入 ====================
-
     private final SysMsgManager sysMsgManager;
     private final BotTaskScheduler botTaskScheduler;
-
-    // ==================== 群聊事件 ====================
 
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
@@ -118,8 +112,6 @@ public class TraitCmd implements Cmd {
         log.info("☑ [Trait] 群聊特质已切换: {} -> [{}]{}", groupId, key, duration > 0 ? duration + "min" : "永久");
     }
 
-    // ==================== 私聊事件 ====================
-
     @Override
     public void run(Bot bot, PrivateMessageEvent event, CmdArgs args) {
         Long userId = event.getUserId();
@@ -155,8 +147,6 @@ public class TraitCmd implements Cmd {
         log.info("☑ [Trait] 私聊特质已切换: {} -> [{}]{}", userId, key, duration > 0 ? duration + "min" : "永久");
     }
 
-    // ==================== 工具方法 ====================
-
     private static String taskId(Long targetId, boolean isPrivate) {
         return "Trait-%s-%s".formatted(isPrivate ? 'U' : 'G', targetId);
     }
@@ -164,8 +154,6 @@ public class TraitCmd implements Cmd {
     private void cancelRestoreTask(Long targetId, boolean isPrivate) {
         botTaskScheduler.cancelTask(taskId(targetId, isPrivate));
     }
-
-    // ==================== 指令信息 ====================
 
     @Override
     public Integer getAccess() { return 2; }

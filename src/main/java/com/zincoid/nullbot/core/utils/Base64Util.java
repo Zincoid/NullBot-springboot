@@ -11,7 +11,7 @@ public final class Base64Util {
 
     private Base64Util() {}
 
-    // ============== 本地图片转换 ==============
+    // ══════ 本地图片转换 ══════
 
     public static String from(BufferedImage image) {
         return from(image, "png");
@@ -26,7 +26,7 @@ public final class Base64Util {
         }
     }
 
-    // ============== 本地文件转换 ==============
+    // ══════ 本地文件转换 ══════
 
     public static String from(String path) {
         return from(Path.of(path));

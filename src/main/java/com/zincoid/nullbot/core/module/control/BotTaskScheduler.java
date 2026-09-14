@@ -49,7 +49,7 @@ public class BotTaskScheduler {
         log.info("▽ [BotTaskScheduler] 任务调度器已关闭");
     }
 
-    // =================== BOT方法 ===================
+    // ══════ BOT方法 ═══════
 
     public void setOneTimeGroupAtMsgAlarm(
             String alarmId, Long groupId, Long userId,
@@ -80,7 +80,7 @@ public class BotTaskScheduler {
         log.info("▽ [BotTaskScheduler] 每日全群通知任务已设置 - TaskID: {}", taskId);
     }
 
-    // =================== 任务方法 ===================
+    // ══════ 任务方法 ══════
 
     public void setOneTimeTask(String taskId, LocalDateTime alarmTime, Runnable task) {
         long delay = calculateDelay(alarmTime);
@@ -128,7 +128,7 @@ public class BotTaskScheduler {
         return status;
     }
 
-    // =================== 工具方法 ===================
+    // ══════ 工具方法 ══════
 
     private long calculateDelay(LocalDateTime time) {
         return Duration.between(LocalDateTime.now(), time).toMillis();

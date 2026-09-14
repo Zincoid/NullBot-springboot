@@ -67,7 +67,7 @@ public class OssServiceImpl implements OssService {
         return getResource(request, file);
     }
 
-    // =========================================== 工具方法 ===========================================
+    // ══════ 工具方法 ══════
 
     public ResponseEntity<?> getResource(HttpServletRequest request, @NonNull FilePO file) {
         try {

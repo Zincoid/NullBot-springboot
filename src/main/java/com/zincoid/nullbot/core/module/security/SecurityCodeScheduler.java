@@ -54,7 +54,7 @@ public class SecurityCodeScheduler {
         log.info("▽ [SecurityCodeScheduler] 安全码调度器已关闭");
     }
 
-    // =================== 调用方法 ===================
+    // ══════ 调用方法 ══════
 
     /**
      * 创建安全码 (使用默认刷新间隔 无群日志)
@@ -153,7 +153,7 @@ public class SecurityCodeScheduler {
         return codeEntries.get(codeId).code.equals(codeToCheck);
     }
 
-    // =================== 辅助方法 ===================
+    // ══════ 辅助方法 ══════
 
     /**
      * 更新安全码刷新间隔
@@ -195,7 +195,7 @@ public class SecurityCodeScheduler {
         return result;
     }
 
-    // =================== 工具方法 ===================
+    // ══════ 工具方法 ══════
 
     private void checkExistence(String codeId) {
         if (!codeEntries.containsKey(codeId))

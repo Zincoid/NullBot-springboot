@@ -17,7 +17,7 @@ public final class BotCtx {
 
     private BotCtx() {}
 
-    // =================== 系统资源方法 ===================
+    // ══════ 系统资源方法 ══════
 
     public static void setCore(Bot bot, Event event) {
         BotCtx.BOT.set(bot);
@@ -30,7 +30,7 @@ public final class BotCtx {
         return EVENT.get();
     }
 
-    // =================== 基本数据方法 ===================
+    // ══════ 基本数据方法 ══════
 
     public static void setGroup(Long userId, Long groupId, SettingPO setting) {
         BotCtx.SCOPE.set(EventScope.GROUP);
@@ -64,7 +64,7 @@ public final class BotCtx {
         return SETTING.get();
     }
 
-    // =================== 清除数据方法 ===================
+    // ══════ 清除数据方法 ══════
 
     public static void remove() {
         BOT.remove();
@@ -75,7 +75,7 @@ public final class BotCtx {
         SETTING.remove();
     }
 
-    // =================== 应用工具方法 ===================
+    // ══════ 应用工具方法 ══════
 
     public static String getChatId() {
         if (getScope() == EventScope.PRIVATE) return "Private_" + getUserId();

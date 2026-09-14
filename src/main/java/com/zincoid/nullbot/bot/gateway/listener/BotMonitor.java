@@ -46,7 +46,7 @@ public class BotMonitor {
     private final StorageProperties storageProperties;
     private final CmdProperties cmdProperties;
 
-    // =================== 输入响应方法 ===================
+    // ══════ 输入响应方法 ══════
 
     public boolean doGroupInputResponse(GroupMessageEvent event) {
         return botInputManager.response(event.getGroupId(), event.getUserId(), event.getMessage());
@@ -58,7 +58,7 @@ public class BotMonitor {
         return keywordReacter.react(bot, event);
     }
 
-    // =================== 自动动作方法 ===================
+    // ══════ 自动动作方法 ══════
 
     @FuncControl(value = "BottleAutoThrow", enabled = false)
     public void doGroupBottleAutoThrow(Bot bot, GroupMessageEvent event) throws Exception {
@@ -83,7 +83,7 @@ public class BotMonitor {
         return true;
     }
 
-    // =================== 资源监听方法 ===================
+    // ══════ 资源监听方法 ══════
 
     @FuncControl("ImgCollect")
     public void doGroupImgCollect(GroupMessageEvent event) {  // 缺失群目录时数据库无法插入文件条目需先SYNC

@@ -89,7 +89,7 @@ public class QQChatClient implements Client<QQMessage> {
         return new Caller(message);
     }
 
-    // ===================================== 应用方法 =====================================
+    // ══════ 应用方法 ════════════
 
     public void clear(String chatId) {
         memory.clear(chatId);
@@ -128,7 +128,7 @@ public class QQChatClient implements Client<QQMessage> {
         }
     }
 
-    // ===================================== 工具方法 =====================================
+    // ══════ 工具方法 ════════════
 
     private String executeTool(ToolCall toolCall) {
         Tool tool = toolRegistry.get(toolCall.getName());
@@ -150,7 +150,7 @@ public class QQChatClient implements Client<QQMessage> {
         return QQMessage.send(message, _res.getContent());
     }
 
-    // ---------------------------------- DIRECT 方案 ----------------------------------
+    // ────── DIRECT 方案 ─────────
 
     private QQMessage chatDirect(QQMessage message) {
         boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();
@@ -164,7 +164,7 @@ public class QQChatClient implements Client<QQMessage> {
         return _message;
     }
 
-    // --------------------------------- EMBEDDING 方案 --------------------------------
+    // ────── EMBEDDING 方案 ──────
 
     private QQMessage chatEmbedding(QQMessage message) {
         boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();
@@ -179,7 +179,7 @@ public class QQChatClient implements Client<QQMessage> {
         return _message;
     }
 
-    // ----------------------------------- TOOLS 方案 -----------------------------------
+    // ────── TOOLS 方案 ──────────
 
     private QQMessage chatTools(QQMessage message) {
         boolean thinking = !message.isPrivate() && BotCtx.getSetting().isThinking();

@@ -52,7 +52,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     private final AdminService adminService;
     private final UserService userService;
 
-    // ================== 预载方法 ==================
+    // ══════ 预载方法 ══════════
 
     // @PostConstruct  // 阻塞启动
     @EventListener(ApplicationReadyEvent.class)
@@ -62,7 +62,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         scanAndSyncFiles();
     }
 
-    // ================== 应用方法 ==================
+    // ══════ 应用方法 ══════════
 
     @Override
     @Transactional
@@ -276,7 +276,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         updateById(file);
     }
 
-    // ================= 记录增改工具 =================
+    // ══════ 记录增改工具 ══════
 
     private boolean addOrUpdateRecord(
             String directory, String filename, Long fileSize,
@@ -301,7 +301,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                 dir.getVisible(), ownerId, ownerName, lastModified));
     }
 
-    // ================= 路径更新工具 =================
+    // ══════ 路径更新工具 ══════
 
     private void updateSubFilesPath(String oldDirPath, String newDirPath) {
         // 直接匹配目录批量更新
@@ -319,7 +319,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         }
     }
 
-    // ================ 路径时间工具 ================
+    // ══════ 路径时间工具 ══════
 
     private String toAbsolutePath(String relativePath) {
         return storageProperties.resolve(relativePath);
@@ -355,7 +355,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         }
     }
 
-    // ================ 通用校验工具 ================
+    // ══════ 通用校验工具 ══════
 
     private FilePO checkFileExists(Integer id) {
         FilePO file = getById(id);
@@ -412,7 +412,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
             throw new RuntimeException("磁盘存在同名冲突");
     }
 
-    // ================ 文件同步工具 ================
+    // ══════ 文件同步工具 ══════
 
     public void scanAndSyncFiles() {
         if (!isScanning.compareAndSet(false, true))

@@ -47,7 +47,7 @@ public class HtmlRenderer {
 
         private Template(String html) { this.html = html; }
 
-        // ================= 构建方法 =================
+        // ══════ 构建方法 ══════
 
         public Template string(String key, String value) {
             ctx.put(key, value);
@@ -68,7 +68,7 @@ public class HtmlRenderer {
             return image(key, p.toAbsolutePath().toString());
         }
 
-        // ================= 渲染方法 =================
+        // ══════ 渲染方法 ══════
 
         public String render(String cssSelector) {
             try {

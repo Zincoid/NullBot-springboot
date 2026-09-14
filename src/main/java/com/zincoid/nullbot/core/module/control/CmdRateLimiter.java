@@ -19,7 +19,7 @@ public class CmdRateLimiter {
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
     private final Map<Long, Long> lastProcess = new ConcurrentHashMap<>();
 
-    // =================== 调用方法 ===================
+    // ══════ 调用方法 ══════
 
     public boolean tryConsume(Long groupId, Long userId, String cmdType) {
         if (isSpam(groupId, 500)) return false;
@@ -40,7 +40,7 @@ public class CmdRateLimiter {
         }
     }
 
-    // =================== 工具方法 ===================
+    // ══════ 工具方法 ══════
 
     public boolean isSpam(Long groupId, long msLimit) {
         long now = System.currentTimeMillis();

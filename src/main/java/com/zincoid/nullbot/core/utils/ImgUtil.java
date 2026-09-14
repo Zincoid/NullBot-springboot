@@ -31,7 +31,7 @@ public final class ImgUtil {
             .followRedirects(HttpClient.Redirect.ALWAYS)
             .build();
 
-    // ============== 本地转换 ==============
+    // ══════ 本地转换 ══════
 
     public static String toDataUri(Path path) {
         byte[] bytes;
@@ -46,7 +46,7 @@ public final class ImgUtil {
         return "data:" + mime + ";base64," + Base64.getEncoder().encodeToString(bytes);
     }
 
-    // ============== 网络转换 ==============
+    // ══════ 网络转换 ══════
 
     public static String toBase64(String url) {
         try {
@@ -90,7 +90,7 @@ public final class ImgUtil {
         return data;
     }
 
-    // ============== 图片压缩 ==============
+    // ══════ 图片压缩 ══════
 
     private static final int COMPRESS_THRESHOLD = 900 * 1024;
     private static final int MAX_WIDTH = 2000;
@@ -121,7 +121,7 @@ public final class ImgUtil {
         }
     }
 
-    // ============== 私有工具 ==============
+    // ══════ 私有工具 ══════
 
     private static byte[] download(String url) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()

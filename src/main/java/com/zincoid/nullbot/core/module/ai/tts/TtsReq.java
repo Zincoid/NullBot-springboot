@@ -11,7 +11,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TtsReq {
 
-    // --------- 通用字段 ---------
+    // ────── 通用字段 ────────────────
 
     private String version;
     private String text;
@@ -20,13 +20,13 @@ public class TtsReq {
     @JsonProperty("prompt_text_lang")
     private String promptTextLang;
 
-    // ---- infer_single 专属 ----
+    // ────── infer_single 专属 ───────
 
     @JsonProperty("model_name")
     private String modelName;
     private String emotion;
 
-    // ---- infer_classic 专属 ----
+    // ────── infer_classic 专属 ──────
 
     @JsonProperty("gpt_model_name")
     private String gptModelName;
@@ -37,7 +37,7 @@ public class TtsReq {
     @JsonProperty("prompt_text")
     private String promptText;
 
-    // ------ 合成参数 (共用) ------
+    // ────── 合成参数 (共用) ─────────
 
     @JsonProperty("top_k")
     private int topK;

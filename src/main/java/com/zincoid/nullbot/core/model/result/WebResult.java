@@ -26,7 +26,7 @@ public class WebResult<T> {
         return result;
     }
 
-    // =========== build 方法 ===========
+    // ══════ build 方法 ════════
 
     public static <T> WebResult<T> build(Integer code) {
         return create(code, null, null);
@@ -38,7 +38,7 @@ public class WebResult<T> {
         return create(code, message, data);
     }
 
-    // ========== success 方法 ==========
+    // ══════ success 方法 ══════
 
     public static <T> WebResult<T> success() {
         return create(SUCCESS_CODE, SUCCESS_MSG, null);
@@ -53,7 +53,7 @@ public class WebResult<T> {
         return create(SUCCESS_CODE, message, data);
     }
 
-    // ============ fail 方法 ============
+    // ══════ fail 方法 ═════════
 
     public static <T> WebResult<T> fail() {
         return create(FAIL_CODE, FAIL_MSG, null);

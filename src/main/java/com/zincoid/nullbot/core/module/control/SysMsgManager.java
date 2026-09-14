@@ -22,14 +22,14 @@ public class SysMsgManager {
 
     private final ChatProperties chatProperties;
 
-    // =================== 提示词功能相关 ===================
+    // ══════ 提示词功能相关 ══════
 
     public String getGroupMessage(Long groupId) { return groupMessages.computeIfAbsent(groupId, k -> chatProperties.getDefaultSysMsg()); }
     public String getUserMessage(Long userId) { return userMessages.computeIfAbsent(userId, k -> chatProperties.getDefaultSysMsg()); }
     public void setGroupMessage(Long groupId, String message) { groupMessages.put(groupId, message); }
     public void setUserMessage(Long userId, String message) { userMessages.put(userId, message); }
 
-    // ==================== 记忆功能相关 ====================
+    // ══════ 记忆功能相关 ════════
 
     public List<String> getGroupMemory(Long groupId) { return groupMemories.computeIfAbsent(groupId, k -> new CopyOnWriteArrayList<>()); }
     public List<String> getUserMemory(Long userId) { return userMemories.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>()); }
@@ -48,7 +48,7 @@ public class SysMsgManager {
     public void clearGroupMemory(Long groupId) { groupMemories.remove(groupId); }
     public void clearUserMemory(Long userId) { userMemories.remove(userId); }
 
-    // =================== 重置功能相关 ===================
+    // ══════ 重置功能相关 ════════
 
     public void resetGroup(Long groupId) {
         groupMessages.remove(groupId);

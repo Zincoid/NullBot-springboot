@@ -36,7 +36,7 @@ public final class CsvUtil {
     private CsvUtil() {
     }
 
-    // ==================== Import ====================
+    // ══════ Import ═══════════════
 
     /**
      * Import CSV from multipart file, using the first row as header.
@@ -172,7 +172,7 @@ public final class CsvUtil {
         }
     }
 
-    // ==================== Export ====================
+    // ══════ Export ═══════════════
 
     /**
      * Export data list to CSV via HttpServletResponse.
@@ -224,7 +224,7 @@ public final class CsvUtil {
         }
     }
 
-    // ==================== Private helpers ====================
+    // ══════ Private helpers ══════
 
     private static CSVParser createParser(Reader reader, boolean hasHeader) throws IOException {
         return hasHeader
@@ -395,7 +395,7 @@ public final class CsvUtil {
         }
     }
 
-    // ==================== Export helpers ====================
+    // ══════ Export helpers ═══════
 
     private static void setResponseHeaders(HttpServletResponse response, String fileName) {
         response.setContentType("text/csv; charset=UTF-8");
@@ -479,7 +479,7 @@ public final class CsvUtil {
         }
     }
 
-    // ==================== Inner types ====================
+    // ══════ Inner types ══════════
 
     private record FieldMapping(Field field, String fieldName) {
     }

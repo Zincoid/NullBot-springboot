@@ -44,7 +44,7 @@ public class QQMsgExecutor {
         FILTERED_PATTERNS.add(Pattern.compile("\\[\\d+]\\[.+?\\(\\d+\\)]:"));
     }
 
-    // =================== 执行方法 ===================
+    // ══════ 执行方法 ══════
 
     public QQMessage direct(QQMessage message, boolean voice) {
         boolean isPrivate = message.isPrivate();
@@ -99,7 +99,7 @@ public class QQMsgExecutor {
         return messages;
     }
 
-    // =================== 工具方法 ===================
+    // ══════ 工具方法 ══════
 
     private Integer send(Long targetId, String message, boolean isPrivate, boolean voice) {
         return  isPrivate
@@ -114,7 +114,7 @@ public class QQMsgExecutor {
         return false;
     }
 
-    // =================== 消息方法 ===================
+    // ══════ 消息方法 ══════
 
     private String filtered() {
         return MsgUtils.builder()

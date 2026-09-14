@@ -28,13 +28,13 @@ public class CmdEvent<T extends Event> {
     private final Long userId;
     private final Long groupId;
 
-    // =================== 全参指令工厂方法 ===================
+    // ══════ 全参指令工厂方法 ══════
 
     public static <T extends Event> CmdEvent<T> of(T event, String cmdType, List<String> cmdParams, boolean authRequired, boolean rateLimit) {
         return of(event, cmdType, cmdParams, authRequired, rateLimit, BotCtx.getScope(), BotCtx.getUserId(), BotCtx.getGroupId());
     }
 
-    // =================== 便捷指令工厂方法 ===================
+    // ══════ 便捷指令工厂方法 ══════
 
     public static CmdEvent<GroupMessageEvent> of(GroupMessageEvent event) {
         int i = event.getArrayMsg().getFirst().getType() == MsgTypeEnum.reply ? 1 : 0;
@@ -57,7 +57,7 @@ public class CmdEvent<T extends Event> {
         return of(event, "Recalled", List.of(), false, false);
     }
 
-    // ================== 内部指令工厂方法 ===================
+    // ══════ 内部指令工厂方法 ══════
 
     public static CmdEvent<?> of(String cmd, boolean authRequired) {
         List<String> information = List.of(cmd.split("\\s+"));
