@@ -12,6 +12,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Iterator;
@@ -33,14 +35,29 @@ public final class ImgUtil {
             .followRedirects(HttpClient.Redirect.ALWAYS)
             .build();
 
-    // ============== 网络图片转换 ==============
+    // ============== 本地转换 ==============
+
+    public static String toDataUri(Path path) {
+        byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(path);
+        } catch (Exception e) {
+            throw new RuntimeException("无法读取图像", e);
+        }
+        String mime = sniffMime(bytes);
+        if (mime == null)
+            throw new RuntimeException("不支持的格式");
+        return "data:" + mime + ";base64," + Base64.getEncoder().encodeToString(bytes);
+    }
+
+    // ============== 网络转换 ==============
 
     public static String toBase64(String url) {
         if (url == null || url.isBlank()) return null;
         try {
             byte[] bytes = download(url);
             if (sniffMime(bytes) == null)
-                throw new RuntimeException("非图片内容");
+                throw new RuntimeException("不支持的格式");
             return Base64.getEncoder().encodeToString(bytes);
         } catch (Exception e) {
             log.warn("▽ [ImgUtil::toBase64] 图片下载失败: {} - {}", url, e.getMessage());
@@ -59,7 +76,7 @@ public final class ImgUtil {
             byte[] bytes = download(url);
             String mime = sniffMime(bytes);
             if (mime == null)
-                throw new RuntimeException("非图片内容");
+                throw new RuntimeException("不支持的格式");
             data = Optional.of("data:" + mime + ";base64," + Base64.getEncoder().encodeToString(bytes));
         } catch (Exception e) {
             log.warn("▽ [ImgUtil::toDataUri] 图片下载失败: {} - {}", url, e.getMessage());
@@ -77,36 +94,6 @@ public final class ImgUtil {
             }
         }
         return data.orElse(null);
-    }
-
-    private static byte[] download(String url) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-                .timeout(Duration.ofSeconds(15))
-                .GET()
-                .build();
-        HttpResponse<byte[]> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofByteArray());
-        if (response.statusCode() != 200)
-            throw new RuntimeException("HTTP " + response.statusCode());
-        byte[] bytes = response.body();
-        if (bytes.length == 0)
-            throw new RuntimeException("空图片内容");
-        return bytes;
-    }
-
-    private static String sniffMime(byte[] b) {
-        if (b.length < 12) return null;
-        if ((b[0] & 0xFF) == 0xFF && (b[1] & 0xFF) == 0xD8 && (b[2] & 0xFF) == 0xFF)
-            return "image/jpeg";
-        if ((b[0] & 0xFF) == 0x89 && b[1] == 0x50 && b[2] == 0x4E && b[3] == 0x47)
-            return "image/png";
-        if (b[0] == 0x47 && b[1] == 0x49 && b[2] == 0x46 && b[3] == 0x38)
-            return "image/gif";
-        if (b[0] == 0x52 && b[1] == 0x49 && b[2] == 0x46 && b[3] == 0x46
-                && b[8] == 0x57 && b[9] == 0x45 && b[10] == 0x42 && b[11] == 0x50)
-            return "image/webp";
-        return null;
     }
 
     // ============== 图片压缩 ==============
@@ -139,5 +126,37 @@ public final class ImgUtil {
             log.warn("▽ [ImgUtil::compressDataUri] 图片压缩失败: {}", e.getMessage());
             return dataUri;
         }
+    }
+
+    // ============== 私有工具 ==============
+
+    private static byte[] download(String url) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                .timeout(Duration.ofSeconds(15))
+                .GET()
+                .build();
+        HttpResponse<byte[]> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofByteArray());
+        if (response.statusCode() != 200)
+            throw new RuntimeException("HTTP " + response.statusCode());
+        byte[] bytes = response.body();
+        if (bytes.length == 0)
+            throw new RuntimeException("下载内容为空");
+        return bytes;
+    }
+
+    private static String sniffMime(byte[] b) {
+        if (b.length < 12) return null;
+        if ((b[0] & 0xFF) == 0xFF && (b[1] & 0xFF) == 0xD8 && (b[2] & 0xFF) == 0xFF)
+            return "image/jpeg";
+        if ((b[0] & 0xFF) == 0x89 && b[1] == 0x50 && b[2] == 0x4E && b[3] == 0x47)
+            return "image/png";
+        if (b[0] == 0x47 && b[1] == 0x49 && b[2] == 0x46 && b[3] == 0x38)
+            return "image/gif";
+        if (b[0] == 0x52 && b[1] == 0x49 && b[2] == 0x46 && b[3] == 0x46
+                && b[8] == 0x57 && b[9] == 0x45 && b[10] == 0x42 && b[11] == 0x50)
+            return "image/webp";
+        return null;
     }
 }

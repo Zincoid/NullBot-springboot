@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.core.module.render.resvg;
 
 import com.zincoid.nullbot.core.module.resource.loader.ResourceLoader;
+import com.zincoid.nullbot.core.utils.ImgUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
@@ -38,7 +39,7 @@ public class SvgRenderer {
             return this;
         }
         public Template image(String key, String path) {
-            ctx.put(key, Resvg.toImgUri(path));
+            ctx.put(key, ImgUtil.toDataUri(Path.of(path)));
             return this;
         }
         public Template resource(String key, String path) {

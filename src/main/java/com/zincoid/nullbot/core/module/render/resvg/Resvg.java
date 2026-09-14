@@ -1,7 +1,6 @@
 package com.zincoid.nullbot.core.module.render.resvg;
 
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
-import com.zincoid.nullbot.core.utils.Base64Util;
 import lombok.RequiredArgsConstructor;
 import me.aloic.ResvgJNI;
 import org.springframework.stereotype.Component;
@@ -9,10 +8,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Base64;
 
 @Component
@@ -43,16 +38,5 @@ public class Resvg {
         var opts = new ResvgJNI.RenderOptions(workDir);
         opts.LoadFontsDir(workDir);
         return Base64.getEncoder().encodeToString(new ResvgJNI.Renderer(opts).RenderPng(svg));
-    }
-
-    /** IMG → Data URI */
-    public static String toImgUri(String path) {
-        BufferedImage img;
-        try {
-            img = ImageIO.read(Path.of(path).toFile());
-        } catch (IOException e) {
-            throw new RuntimeException("无法读取图像", e);
-        }
-        return "data:image/png;base64," + Base64Util.from(img);
     }
 }
