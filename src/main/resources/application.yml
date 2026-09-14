@@ -1,4 +1,4 @@
-# ============== NullBot 基础配置文件 ============== #
+# ══════ NullBot 基础配置文件 ══════ #
 # 1. 可使用 logback.xml 迁移 logging 配置;
 # 2. 暂不使用 Shiro SDK 内置线程池;
 # 3. file.storage 配置各级目录路径为根下子目录且:
@@ -11,7 +11,7 @@
 #    /root/Nullbot/driver/chromedriver 但文件不存在
 #    则使用由 Dockerfile.base 构建的
 #    nullbot-jre-chrome:21 环境内置 Chrome 驱动程序.
-# ================================================ #
+# ══════════════════════════════════ #
 
 spring:
   application:

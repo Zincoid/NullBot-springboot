@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "ai.chat.repository", havingValue = "file")
+@ConditionalOnProperty(name = "ai.chat.repository", havingValue = "file", matchIfMissing = true)
 public class FileRepository implements Repository {
 
     private static final String DIR_NAME = "chats";

@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-@ConditionalOnProperty(name = "ai.chat.repository", havingValue = "memory", matchIfMissing = true)
+@ConditionalOnProperty(name = "ai.chat.repository", havingValue = "memory")
 public class InMemoryRepository implements Repository {
 
     private final Map<String, List<Message>> data = new ConcurrentHashMap<>();
