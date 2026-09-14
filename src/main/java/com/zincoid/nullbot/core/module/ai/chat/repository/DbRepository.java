@@ -3,7 +3,7 @@ package com.zincoid.nullbot.core.module.ai.chat.repository;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zincoid.nullbot.core.model.data.dto.MessageDTO;
+import com.zincoid.nullbot.core.module.ai.chat.message.MessageSnap;
 import com.zincoid.nullbot.core.model.data.po.MessagePO;
 import com.zincoid.nullbot.core.module.ai.chat.message.Message;
 import com.zincoid.nullbot.core.service.chat.MessageService;
@@ -36,7 +36,7 @@ public class DbRepository implements Repository {
             try {
                 messages.add(
                         objectMapper
-                                .readValue(po.getPayload(), MessageDTO.class)
+                                .readValue(po.getPayload(), MessageSnap.class)
                                 .toMessage()
                 );
             } catch (JsonProcessingException e) {
@@ -54,7 +54,7 @@ public class DbRepository implements Repository {
             for (Message message : messages)
                 pos.add(new MessagePO(
                         chatId,
-                        objectMapper.writeValueAsString(MessageDTO.of(message))
+                        objectMapper.writeValueAsString(MessageSnap.of(message))
                 ));
         } catch (JsonProcessingException e) {
             log.error("▽ [DbRepository] 序列化失败 - chatId: {}", chatId, e);

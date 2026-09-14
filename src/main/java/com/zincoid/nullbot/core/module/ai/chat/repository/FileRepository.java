@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.module.ai.chat.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zincoid.nullbot.core.model.data.dto.MessageDTO;
+import com.zincoid.nullbot.core.module.ai.chat.message.MessageSnap;
 import com.zincoid.nullbot.core.module.ai.chat.message.Message;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class FileRepository implements Repository {
             for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
                 if (line.isBlank()) continue;
                 try {
-                    messages.add(objectMapper.readValue(line, MessageDTO.class).toMessage());
+                    messages.add(objectMapper.readValue(line, MessageSnap.class).toMessage());
                 } catch (JsonProcessingException e) {
                     log.warn("▽ [FileRepository] 反序列化失败 - chatId: {}", chatId);
                 }
@@ -65,7 +65,7 @@ public class FileRepository implements Repository {
         try {
             StringBuilder payload = new StringBuilder();
             for (Message message : messages)
-                payload.append(objectMapper.writeValueAsString(MessageDTO.of(message))).append('\n');
+                payload.append(objectMapper.writeValueAsString(MessageSnap.of(message))).append('\n');
             Files.createDirectories(getDir());
             Path file = getFile(chatId);
             Path temp = file.resolveSibling(file.getFileName() + ".tmp");

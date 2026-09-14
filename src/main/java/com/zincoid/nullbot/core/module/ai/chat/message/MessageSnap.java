@@ -1,11 +1,7 @@
-package com.zincoid.nullbot.core.model.data.dto;
+package com.zincoid.nullbot.core.module.ai.chat.message;
 
 import com.zincoid.nullbot.core.enums.Role;
-import com.zincoid.nullbot.core.module.ai.chat.message.Message;
-import com.zincoid.nullbot.core.module.ai.chat.message.QQMessage;
-import com.zincoid.nullbot.core.module.ai.chat.message.StdMessage;
 import com.zincoid.nullbot.core.module.ai.chat.tool.ToolCall;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +9,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class MessageDTO {
+public class MessageSnap {
 
     private String type;
     private Role role;
@@ -27,21 +23,11 @@ public class MessageDTO {
     private List<String> images;
 
     private String reasoningContent;
-    private List<ToolCallDTO> toolCalls;
+    private List<ToolCall> toolCalls;
     private String toolCallId;
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ToolCallDTO {
-
-        private String id;
-        private String name;
-        private String arguments;
-    }
-
-    public static MessageDTO of(Message message) {
-        MessageDTO dto = new MessageDTO();
+    public static MessageSnap of(Message message) {
+        MessageSnap dto = new MessageSnap();
         if (message instanceof QQMessage q) {
             dto.type = "QQ";
             dto.role = q.getRole();
@@ -59,18 +45,18 @@ public class MessageDTO {
             dto.role = s.getRole();
             dto.content = s.getContent();
             dto.reasoningContent = s.getReasoningContent();
-            dto.toolCalls = s.getToolCalls() == null ? null : s.getToolCalls().stream()
-                    .map(tc -> new ToolCallDTO(tc.getId(), tc.getName(), tc.getArguments()))
-                    .toList();
+            dto.toolCalls = s.getToolCalls();
             dto.toolCallId = s.getToolCallId();
             return dto;
         }
-        throw new IllegalArgumentException("未知消息类型: " + message.getClass().getName());
+        throw new IllegalArgumentException("未知消息类型 (CLASS): "
+                + message.getClass().getName());
     }
 
     public Message toMessage() {
         if ("QQ".equals(type)) {
-            QQMessage message = role == Role.ASSISTANT ? QQMessage.assistant(content) : QQMessage.user(content);
+            QQMessage message = role == Role.ASSISTANT
+                    ? QQMessage.assistant(content) : QQMessage.user(content);
             if (messageId != null) message.id(messageId);
             if (Boolean.TRUE.equals(isPrivate)) message.with(userId, userName);
             else message.with(groupId, userId, userName);
@@ -82,15 +68,14 @@ public class MessageDTO {
                 case TOOL -> StdMessage.tool(toolCallId, content);
                 case SYSTEM -> StdMessage.system(content);
                 case ASSISTANT -> toolCalls != null && !toolCalls.isEmpty()
-                        ? StdMessage.assistant(toolCalls.stream()
-                        .map(tc -> new ToolCall(tc.getId(), tc.getName(), tc.getArguments()))
-                        .toList())
+                        ? StdMessage.assistant(toolCalls)
                         : StdMessage.assistant(content);
                 default -> StdMessage.user(content);
             };
-            if (reasoningContent != null && !reasoningContent.isEmpty()) message.withReasoning(reasoningContent);
+            if (reasoningContent != null && !reasoningContent.isEmpty())
+                message.withReasoning(reasoningContent);
             return message;
         }
-        throw new IllegalArgumentException("未知消息类型标记: " + type);
+        throw new IllegalArgumentException("未知消息类型 (TYPE): " + type);
     }
 }
