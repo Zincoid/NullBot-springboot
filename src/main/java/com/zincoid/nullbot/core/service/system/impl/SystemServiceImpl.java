@@ -1,12 +1,17 @@
 package com.zincoid.nullbot.core.service.system.impl;
 
+import com.zincoid.nullbot.web.exception.CommonException;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.module.system.Restarter;
 import com.zincoid.nullbot.core.module.system.Invoker;
+import com.zincoid.nullbot.core.module.control.FunctionManager;
+import com.zincoid.nullbot.core.properties.ai.OpenAiProperties;
+import com.zincoid.nullbot.core.model.data.vo.ModelVO;
 import com.zincoid.nullbot.core.service.system.SystemService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +19,23 @@ public class SystemServiceImpl implements SystemService {
 
     private final Restarter restarter;
     private final Invoker invoker;
+    private final FunctionManager functionManager;
+    private final OpenAiProperties openAiProperties;
+
+    @Override
+    public void restart() {
+        restarter.restart();
+    }
+
+    @Override
+    public void restartViaJar() {
+        restarter.restartViaJar();
+    }
+
+    @Override
+    public void restartViaJar(String jarPath) {
+        restarter.restartViaJar(jarPath);
+    }
 
     @Override
     public String invoke(String command) throws Exception {
@@ -34,17 +56,34 @@ public class SystemServiceImpl implements SystemService {
     }
 
     @Override
-    public void restart() {
-        restarter.restart();
+    public Map<String, Boolean> getFuncFlags() {
+        return functionManager.getStatus();
     }
 
     @Override
-    public void restartViaJar() {
-        restarter.restartViaJar();
+    public void setFuncFlag(String function, Boolean enabled) {
+        if (enabled == null) {
+            functionManager.switchEnabled(function);
+            return;
+        }
+        functionManager.setEnabled(function, enabled);
     }
 
     @Override
-    public void restartViaJar(String jarPath) {
-        restarter.restartViaJar(jarPath);
+    public ModelVO getModels() {
+        ModelVO vo = new ModelVO();
+        vo.setActive(openAiProperties.current().getName());
+        vo.setProviders(openAiProperties.getProviders() == null ? List.of() :
+                openAiProperties.getProviders().stream()
+                        .map(p -> new ModelVO.ProviderVO(p.getName(), p.getModel()))
+                        .toList());
+        return vo;
+    }
+
+    @Override
+    public void setModel(String provider) {
+        if (openAiProperties.find(provider) == null)
+            throw new CommonException("未知供应商: " + provider);
+        openAiProperties.switchTo(provider);
     }
 }

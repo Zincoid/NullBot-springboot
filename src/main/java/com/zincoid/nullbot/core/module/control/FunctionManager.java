@@ -40,6 +40,10 @@ public class FunctionManager {
         }
     }
 
+    public Map<String, Boolean> getStatus() {
+        return Map.copyOf(enableFlags);
+    }
+
     public boolean isEnabled(String function) {
         Boolean enabled = enableFlags.get(function);
         if (enabled == null)
@@ -56,20 +60,5 @@ public class FunctionManager {
     public boolean switchEnabled(String function) {
         boolean enabled = isEnabled(function);
         return setEnabled(function, !enabled);
-    }
-
-    public String getStatus() {
-        StringBuilder status = new StringBuilder(" ◉ Global\n");
-        Iterator<Map.Entry<String, Boolean>> iterator = enableFlags.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, Boolean> entry = iterator.next();
-            char prefix = iterator.hasNext() ? '├' : '└';
-            status.append(prefix).append(' ').append(entry.getKey()).append(" - ")
-                    .append(entry.getValue() ? "ON" : "OFF");
-            if (iterator.hasNext()) {
-                status.append('\n');
-            }
-        }
-        return status.toString();
     }
 }

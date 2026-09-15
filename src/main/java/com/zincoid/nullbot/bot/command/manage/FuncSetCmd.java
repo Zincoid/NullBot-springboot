@@ -11,6 +11,9 @@ import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.core.module.control.FunctionManager;
 import org.springframework.stereotype.Component;
 
+import java.util.Iterator;
+import java.util.Map;
+
 @Slf4j
 @CmdMapping({"FuncSet", "全局设置"})
 @Component
@@ -22,8 +25,19 @@ public class FuncSetCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         if (args.hasOpt("view", "v")) {
-            String status = functionManager.getStatus();
-            bot.sendGroupMsg(event.getGroupId(), status, false);
+            Map<String, Boolean> flags = functionManager.getStatus();
+            StringBuilder resp = new StringBuilder(" ◉ Global\n");
+            Iterator<Map.Entry<String, Boolean>> iterator = flags.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, Boolean> entry = iterator.next();
+                char prefix = iterator.hasNext() ? '├' : '└';
+                resp.append(prefix).append(' ').append(entry.getKey()).append(" - ")
+                        .append(entry.getValue() ? "ON" : "OFF");
+                if (iterator.hasNext()) {
+                    resp.append('\n');
+                }
+            }
+            bot.sendGroupMsg(event.getGroupId(), resp.toString(), false);
             log.info("☑ [FuncSet] 全局设置已获取");
             return;
         }
