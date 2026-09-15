@@ -84,7 +84,7 @@ public class BotPageSelector<K, V> {
                 throw new IllegalArgumentException("键值大小不匹配");
             int total = keys.size();
             int pages = (total + size - 1) / size;
-            int current = Math.max(1, Math.min(this.current, pages));
+            int current = Math.clamp(this.current, 1, pages);
             return new BotPageSelector<>(
                     bot, groupId, userId, title, info, continuous,
                     keys, values, action,
@@ -199,7 +199,7 @@ public class BotPageSelector<K, V> {
     }
 
     private boolean select(int i) {
-        i = Math.max(1, Math.min(i, total));
+        i = Math.clamp(i, 1, total);
         action.accept(bot, groupId, keys.get(i - 1));
         return continuous;
     }

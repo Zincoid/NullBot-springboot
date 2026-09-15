@@ -25,7 +25,7 @@ public class ModelCmd implements Cmd {
         if (args.isEmpty()) {
             OpenAiProperties.Provider cur = openAiProperties.current();
             List<OpenAiProperties.Provider> providers = openAiProperties.getProviders();
-            StringBuilder sb = new StringBuilder("[模型配置] %s可用:".formatted(providers.size()));
+            StringBuilder sb = new StringBuilder("[模型配置] 可用: %s".formatted(providers.size()));
             for (OpenAiProperties.Provider p : providers)
                 sb.append('\n')
                         .append(p.getName().equalsIgnoreCase(cur.getName()) ? "[*] " : "[ ] ")
