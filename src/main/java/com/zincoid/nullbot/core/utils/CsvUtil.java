@@ -27,11 +27,16 @@ import java.util.function.Function;
 @Slf4j
 public final class CsvUtil {
 
+    static final DateTimeFormatter ISO_DATETIME = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
     private static final List<String> DATE_FORMATS = Arrays.asList(
-            "yyyy-MM-dd", "yyyy/MM/dd", "dd-MM-yyyy", "dd/MM/yyyy", "yyyy.MM.dd");
+            "yyyy-MM-dd", "yyyy/MM/dd", "dd-MM-yyyy", "dd/MM/yyyy", "yyyy.MM.dd"
+    );
+
     private static final List<String> DATETIME_FORMATS = Arrays.asList(
             "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss",
-            "yyyy-MM-dd HH:mm:ss.SSS", "yyyy/MM/dd HH:mm:ss.SSS");
+            "yyyy-MM-dd HH:mm:ss.SSS", "yyyy/MM/dd HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm"
+    );
 
     private CsvUtil() {
     }
@@ -373,6 +378,10 @@ public final class CsvUtil {
     }
 
     private static LocalDateTime parseLocalDateTime(String value) {
+        try {
+            return LocalDateTime.parse(value, ISO_DATETIME);
+        } catch (DateTimeParseException ignored) {
+        }
         for (String fmt : DATETIME_FORMATS) {
             try {
                 return LocalDateTime.parse(value, DateTimeFormatter.ofPattern(fmt));
@@ -428,12 +437,17 @@ public final class CsvUtil {
             fields[i].setAccessible(true);
             try {
                 Object value = fields[i].get(data);
-                row[i] = value != null ? value.toString() : "";
+                row[i] = value != null ? formatValue(value) : "";
             } catch (IllegalAccessException e) {
                 row[i] = "";
             }
         }
         return row;
+    }
+
+    private static String formatValue(Object value) {
+        if (value instanceof LocalDateTime ldt) return ldt.format(ISO_DATETIME);
+        return value.toString();
     }
 
     private static void writeCsvResponse(HttpServletResponse response,
