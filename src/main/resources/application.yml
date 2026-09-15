@@ -118,10 +118,7 @@ ai:
       max-tokens: ${nullbot.ai.chat.config.max-tokens}
       max-tool-calls: ${nullbot.ai.chat.config.max-tool-calls}
       default-sys-msg: ${nullbot.ai.chat.config.default-prompt}
-    openai:
-      api-url: ${nullbot.ai.chat.openai.api-url}
-      api-key: ${nullbot.ai.chat.openai.api-key}
-      model: ${nullbot.ai.chat.openai.model}
+      # OpenAI 供应商由子配置直接管理
   tts:
     api-url: ${nullbot.ai.tts.api-url}
     api-key: ${nullbot.ai.tts.api-key}

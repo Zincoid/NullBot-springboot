@@ -5,10 +5,8 @@
 nullbot:
   # ─── 数据库 ───────── #
   database:
-    url: jdbc:mysql://localhost:3306/nullbot          # 本地部署
-    # url: jdbc:mysql://nullbot-mysql:3306/nullbot    # 容器部署
-    # url: jdbc:mysql://172.17.0.1:3306/nullbot       # 宿主数据库
-    username: root                                    # 数据库用户名
+    url: jdbc:mysql://localhost:3306/nullbot          # 数据库地址
+    username: root                                    # 数据库用户
     password:                                         # 数据库密码
 
   # ─── 日志 ─────────── #
@@ -26,7 +24,7 @@ nullbot:
     ids:
       bot:                                            # 机器人账号
       admin:                                          # 管理员账号
-      log:                                            # 日志输出群聊
+      log:                                            # 日志群聊号
     cmd:
       prefix: "/"                                     # 指令前缀
       ignore-case: true                               # 指令忽略大小写
@@ -44,36 +42,43 @@ nullbot:
   file:
     storage:
       init: false                                     # 启动时文件同步
-      root: ./files                                   # 文件管理根目录 (绝对路径)
+      root: ./files                                   # 文件管理根目录
     resource:
       mode: path                                      # 资源模式: path (default) | base64 | oss
-#      base-url: http://localhost:8080                # 基础访问路径: OSS 模式下使用
+      # base-url: http://localhost:8080               # 公网链接: oss 模式配置
 
   # ─── AI ──────────── #
   ai:
-    chat:                                             # AI 对话配置
+    chat:                                             ## AI 聊天配置
       repository: file                                # 存储模式: memory | db | file (default)
       config:
-        max-history-length: 64
-        max-tokens: 1024
-        max-tool-calls: 5
-        default-prompt: "你是一只猫娘，你的名字叫Null。"
-      openai:                                         # OpenAI API
-        api-url: https://api.deepseek.com
-        api-key:
-        model:
-    tts:                                              # TTS 合成配置
-      api-url: http://localhost:8000                  # GSVI API
-      api-key: null
-      version: v4
-      model: 明日方舟-中文-羽毛笔
+        max-history-length: 64                        # 最大历史长度
+        max-tokens: 1024                              # 最大输出长度
+        max-tool-calls: 5                             # 最大工具调用
+        default-prompt: "你是一只猫娘，你的名字叫Null。"   # 默认提示词
+      openai:
+        active: deepseek                              # 默认供应商
+        providers:
+          - name: deepseek                            # 供应商名称
+            api-url: https://api.deepseek.com         # OpenAI API 地址
+            api-key:                                  # OpenAI API 密钥
+            model:                                    # 模型名称
+          # - name:
+          #   api-url:
+          #   api-key:
+          #   model:
+    tts:                                              ## TTS 语音配置
+      api-url: http://localhost:8000                  # GSVI API 地址
+      api-key: null                                   # GSVI API 密钥
+      version:                                        # 模型版本
+      model:                                          # 模型名称
 
   # ─── 浏览器 ────────── #
   chrome:
     driver:
-      auto: true                                      # 驱动自动下载
-      path:                                           # 驱动自定路径
+      auto: true                                      # 自动驱动下载
+      path:                                           # 自定驱动路径
 
   # ─── 搜图 ──────────── #
   saucenao:                                           # SauceNAO API
-    api-key:                                          # 设置提高限流
+    api-key:                                          # 配置减少限流
