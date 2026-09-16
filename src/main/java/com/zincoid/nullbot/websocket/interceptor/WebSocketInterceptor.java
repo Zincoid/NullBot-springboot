@@ -60,7 +60,7 @@ public class WebSocketInterceptor implements ChannelInterceptor {
                 }
                 Long userId = jwtTool.getAs(jwt, "id", Long.class);
                 Integer userType = jwtTool.getAs(jwt, "type", Integer.class);
-                WebCtx.set(userId, userType);  // 存储此次用户信息
+                WebCtx.init(userId, userType);  // 存储此次用户信息
                 AdminPO admin = adminService.getById(userId);
                 if (admin == null) {
                     log.info("├─[WebSocketInterceptor] 管理员不存在");

@@ -9,9 +9,13 @@ public final class WebCtx {
 
     private WebCtx() {}
 
-    public static void set(Long id, Integer type) {
+    public static void init(Long id, Integer type) {
         setId(id);
         setType(type);
+    }
+    public static void remove() {
+        USER_ID.remove();
+        USER_TYPE.remove();
     }
 
     public static void setId(Long id) {
@@ -20,7 +24,6 @@ public final class WebCtx {
     public static void setType(Integer type) {
         USER_TYPE.set(type);
     }
-
     public static Long getId() {
         return USER_ID.get();
     }
@@ -30,13 +33,8 @@ public final class WebCtx {
 
     public static void requireAdmin() {
         if (getType() == null)
-            throw new CoreException("未登录");
+            throw new CoreException("暂未登录");
         if (getType() != 1)
             throw new CoreException("访客受限");
-    }
-
-    public static void remove() {
-        USER_ID.remove();
-        USER_TYPE.remove();
     }
 }

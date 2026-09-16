@@ -59,8 +59,7 @@ public class WebInterceptor implements HandlerInterceptor {
 
         Long userId = jwtTool.getAs(jwt, "id", Long.class);
         Integer userType = jwtTool.getAs(jwt, "type", Integer.class);
-
-        WebCtx.set(userId, userType);  // 存储此次用户信息
+        WebCtx.init(userId, userType);
 
         if (userType == 0) {
             log.info("└─[WebInterceptor] 访客放行");
