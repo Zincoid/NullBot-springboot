@@ -14,7 +14,7 @@ import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.information.FileMeta;
-import com.zincoid.nullbot.web.exception.CommonException;
+import com.zincoid.nullbot.core.exception.CoreException;
 import com.zincoid.nullbot.core.mapper.FileMapper;
 import com.zincoid.nullbot.core.service.file.FileService;
 import com.zincoid.nullbot.core.utils.SaveUtil;
@@ -95,7 +95,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     @Override
     public List<FilePO> search(String keyword, String directory, boolean hidden) {
         if (keyword != null && (keyword.contains("/") || keyword.contains("\\")))
-            throw new CommonException("关键字不允许出现斜杠");
+            throw new CoreException("关键字不允许出现斜杠");
         String prefix = directory.equals("/") ? "/" : directory + "/";
         return lambdaQuery()
                 .like(keyword != null, FilePO::getFileName, keyword)
@@ -214,13 +214,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     public void rename(Integer id, String filename) {
         FilePO file = checkFileExists(id);
         if (filename == null || filename.trim().isEmpty())
-            throw new CommonException("新文件名不能为空");
+            throw new CoreException("新文件名不能为空");
         if (filename.contains("/") || filename.contains("\\") ||
                 filename.contains(":") || filename.contains("*") ||
                 filename.contains("?") || filename.contains("\"") ||
                 filename.contains("<") || filename.contains(">") ||
                 filename.contains("|"))
-            throw new CommonException("新文件名包含非法字符");
+            throw new CoreException("新文件名包含非法字符");
         checkNameConflict(file.getDirectory(), filename, id);
 
         String oldRelativePath = file.getPath();
@@ -241,14 +241,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         FilePO file = checkFileExists(id);
         String oldDir = file.getDirectory();
         if (oldDir.equals(directory))
-            throw new CommonException("数据库路径未修改");
+            throw new CoreException("数据库路径未修改");
         checkDirectoryExists(directory);
         checkNameConflict(directory, file.getFileName(), null);
 
         String sourceRelative = file.getPath();
         String sourceAbsolute = toAbsolutePath(sourceRelative);
         if (file.getIsDir() && directory.startsWith(sourceRelative + "/"))
-            throw new CommonException("无法将目录移入自身子目录");
+            throw new CoreException("无法将目录移入自身子目录");
         String targetRelative = PathUtil.join(directory, file.getFileName());
         String targetAbsolute = toAbsolutePath(targetRelative);
         if (file.getIsDir())
@@ -360,7 +360,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     private FilePO checkFileExists(Integer id) {
         FilePO file = getById(id);
         if (file == null)
-            throw new CommonException("数据库文件不存在");
+            throw new CoreException("数据库文件不存在");
         if (!Files.exists(Path.of(toAbsolutePath(file.getPath()))))
             throw new RuntimeException("磁盘文件不存在");
         return file;
@@ -372,7 +372,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                 .eq(FilePO::getFileName, filename)
                 .one();
         if (file == null)
-            throw new CommonException("数据库文件不存在");
+            throw new CoreException("数据库文件不存在");
         if (!Files.exists(Path.of(toAbsolutePath(directory), filename)))
             throw new RuntimeException("磁盘文件不存在");
         return file;
@@ -393,7 +393,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                 .eq(FilePO::getIsDir, true)
                 .one();
         if (dir == null)
-            throw new CommonException("数据库目录不存在");
+            throw new CoreException("数据库目录不存在");
         Path path = Path.of(toAbsolutePath(directory));
         if (!Files.exists(path) || !Files.isDirectory(path))
             throw new RuntimeException("磁盘目录不存在");
@@ -407,7 +407,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
                 .ne(excludeId != null, FilePO::getId, excludeId)
                 .count();
         if (count > 0)
-            throw new CommonException("数据库存在同名冲突");
+            throw new CoreException("数据库存在同名冲突");
         if (Files.exists(Path.of(toAbsolutePath(directory), filename)))
             throw new RuntimeException("磁盘存在同名冲突");
     }
@@ -416,7 +416,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
 
     public void scanAndSyncFiles() {
         if (!isScanning.compareAndSet(false, true))
-            throw new CommonException("已有文件同步任务进行中");
+            throw new CoreException("已有文件同步任务进行中");
         try {
             // 1. 存储目录获取
             String baseDir = getNormalizedBase();

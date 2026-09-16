@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.service.system.impl;
 
-import com.zincoid.nullbot.web.exception.CommonException;
+import com.zincoid.nullbot.core.exception.CoreException;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.module.system.Restarter;
 import com.zincoid.nullbot.core.module.system.Invoker;
@@ -83,7 +83,7 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public void setModel(String provider) {
         if (openAiProperties.find(provider) == null)
-            throw new CommonException("未知供应商: " + provider);
+            throw new CoreException("未知供应商: " + provider);
         openAiProperties.switchTo(provider);
     }
 }

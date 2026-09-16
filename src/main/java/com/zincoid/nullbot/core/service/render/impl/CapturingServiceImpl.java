@@ -2,7 +2,7 @@ package com.zincoid.nullbot.core.service.render.impl;
 
 import com.zincoid.nullbot.core.module.render.browser.WebCapturer;
 import com.zincoid.nullbot.core.service.render.CapturingService;
-import com.zincoid.nullbot.web.exception.CommonException;
+import com.zincoid.nullbot.core.exception.CoreException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +53,7 @@ public class CapturingServiceImpl implements CapturingService {
                     .hide(".backToTop", "#rightToc", ".mw-collapsible-toggle")
                     .target("//table[.//th//b[contains(text(),'悖论模拟')]]")
                     .capture();
-            default -> throw new CommonException("无此查询项");
+            default -> throw new CoreException("无此查询项");
         };
     }
 
@@ -67,7 +67,7 @@ public class CapturingServiceImpl implements CapturingService {
             case "编程" -> "artificial-analysis-coding-agent-index";
             case "成本" -> "cost-per-intelligence-index-task";
             case "定价" -> "pricing-cache-hit-input-and-output";
-            default -> throw new CommonException("无此查询项");
+            default -> throw new CoreException("无此查询项");
         };
         String target = (option.equals("智能") || option.equals("历史"))
                 ? "#" + anchor
