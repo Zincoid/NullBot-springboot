@@ -1,14 +1,11 @@
 package com.zincoid.nullbot.core.service.system.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zincoid.nullbot.core.model.data.dto.*;
 import com.zincoid.nullbot.core.service.base.UserService;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.module.security.SecurityCodeScheduler;
 import com.zincoid.nullbot.core.converter.AdminConverter;
-import com.zincoid.nullbot.core.model.data.dto.AdminUpdateDTO;
-import com.zincoid.nullbot.core.model.data.dto.LoginDTO;
-import com.zincoid.nullbot.core.model.data.dto.PwdChangeDTO;
-import com.zincoid.nullbot.core.model.data.dto.RegistDTO;
 import com.zincoid.nullbot.core.model.data.po.AdminPO;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.web.exception.CommonException;
@@ -26,18 +23,18 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, AdminPO> implemen
     private final UserService userService;
 
     @Override
-    public boolean regist(RegistDTO registDTO) {
-        if (!securityCodeScheduler.validate("regist", registDTO.getActivationCode()))
+    public boolean regist(RegistDTO regist) {
+        if (!securityCodeScheduler.validate("regist", regist.getActivationCode()))
             throw new CommonException("激活码错误");
-        UserPO user = userService.getById(registDTO.getId());
+        UserPO user = userService.getById(regist.getId());
         if (user == null)
             throw new CommonException("用户不可用 (未使用过 NullBot)");
-        AdminPO admin = getById(registDTO.getId());
+        AdminPO admin = getById(regist.getId());
         if (admin != null)
             throw new CommonException("用户已注册");
         AdminPO newAdmin = AdminConverter.INSTANCE.toPO(user);
-        newAdmin.setEmail(registDTO.getEmail());
-        newAdmin.setPassword(passwordEncoder.encode(registDTO.getPassword()));
+        newAdmin.setEmail(regist.getEmail());
+        newAdmin.setPassword(passwordEncoder.encode(regist.getPassword()));
         try {
             boolean inserted = save(newAdmin);
             if (inserted) securityCodeScheduler.refresh("regist", true);
@@ -48,25 +45,25 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, AdminPO> implemen
     }
 
     @Override
-    public boolean login(LoginDTO loginDTO) {
-        AdminPO admin = getById(loginDTO.getId());
-        return admin != null && passwordEncoder.matches(loginDTO.getPassword(), admin.getPassword());
+    public boolean login(LoginDTO login) {
+        AdminPO admin = getById(login.getId());
+        return admin != null && passwordEncoder.matches(login.getPassword(), admin.getPassword());
     }
 
     @Override
-    public boolean update(AdminUpdateDTO adminUpdateDTO) {
-        AdminPO admin = AdminConverter.INSTANCE.toPO(adminUpdateDTO);
+    public boolean update(AdminDTO adminDTO) {
+        AdminPO admin = AdminConverter.INSTANCE.toPO(adminDTO);
         return updateById(admin);
     }
 
     @Override
-    public boolean changePwd(Long id, PwdChangeDTO pwdChangeDTO) {
+    public boolean changePwd(Long id, PasswordDTO password) {
         AdminPO admin = getById(id);
         if (admin == null)
             throw new CommonException("用户不存在");
-        if (!passwordEncoder.matches(pwdChangeDTO.getOldPassword(), admin.getPassword()))
+        if (!passwordEncoder.matches(password.getOldPassword(), admin.getPassword()))
             throw new CommonException("旧密码错误");
-        admin.setPassword(passwordEncoder.encode(pwdChangeDTO.getNewPassword()));
+        admin.setPassword(passwordEncoder.encode(password.getNewPassword()));
         return updateById(admin);
     }
 }

@@ -1,19 +1,16 @@
 package com.zincoid.nullbot.core.service.system;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.zincoid.nullbot.core.model.data.dto.AdminUpdateDTO;
-import com.zincoid.nullbot.core.model.data.dto.LoginDTO;
-import com.zincoid.nullbot.core.model.data.dto.PwdChangeDTO;
-import com.zincoid.nullbot.core.model.data.dto.RegistDTO;
+import com.zincoid.nullbot.core.model.data.dto.*;
 import com.zincoid.nullbot.core.model.data.po.AdminPO;
 
 public interface AdminService extends IService<AdminPO> {
 
-    boolean regist(RegistDTO registDTO);
+    boolean regist(RegistDTO regist);
 
-    boolean login(LoginDTO loginDTO);
+    boolean login(LoginDTO login);
 
-    boolean update(AdminUpdateDTO admin);
+    boolean update(AdminDTO admin);
 
-    boolean changePwd(Long id, PwdChangeDTO pwdChangeDTO);
+    boolean changePwd(Long id, PasswordDTO password);
 }

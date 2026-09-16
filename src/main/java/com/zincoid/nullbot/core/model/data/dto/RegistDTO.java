@@ -13,7 +13,6 @@ public class RegistDTO {
 
     @NotBlank(message = "密码不能为空")
     @Size(min = 6, max = 20, message = "密码长度必须在6~20位之间")
-    // @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", message = "密码必须包含大小写字母和数字")
     private String password;
 
     @NotBlank(message = "邮箱不能为空")

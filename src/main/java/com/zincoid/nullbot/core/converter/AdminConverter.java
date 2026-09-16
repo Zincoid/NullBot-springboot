@@ -1,6 +1,6 @@
 package com.zincoid.nullbot.core.converter;
 
-import com.zincoid.nullbot.core.model.data.dto.AdminUpdateDTO;
+import com.zincoid.nullbot.core.model.data.dto.AdminDTO;
 import com.zincoid.nullbot.core.model.data.po.AdminPO;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import org.mapstruct.Mapper;
@@ -13,7 +13,7 @@ public interface AdminConverter {
     AdminConverter INSTANCE = Mappers.getMapper(AdminConverter.class);
 
     @Mapping(target = "password", ignore = true)
-    AdminPO toPO(AdminUpdateDTO dto);
+    AdminPO toPO(AdminDTO dto);
 
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "email", ignore = true)

@@ -1,15 +1,12 @@
 package com.zincoid.nullbot.web.controller;
 
+import com.zincoid.nullbot.core.model.data.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.module.security.JwtTool;
 import com.zincoid.nullbot.web.properties.JwtProperties;
-import com.zincoid.nullbot.core.model.data.dto.AdminUpdateDTO;
-import com.zincoid.nullbot.core.model.data.dto.PwdChangeDTO;
-import com.zincoid.nullbot.core.model.data.dto.RegistDTO;
 import com.zincoid.nullbot.core.model.data.po.AdminPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
-import com.zincoid.nullbot.core.model.data.dto.LoginDTO;
 import com.zincoid.nullbot.core.service.system.AdminService;
 import com.zincoid.nullbot.core.context.WebCtx;
 import org.springframework.validation.annotation.Validated;
@@ -30,9 +27,9 @@ public class LoginController {
     private final AdminService adminService;
 
     @PostMapping("/regist")
-    public WebResult<Void> regist(@RequestBody @Validated RegistDTO registDTO) {
-        log.info("└─[LoginController] 管理员注册 - {}", registDTO);
-        if (adminService.regist(registDTO)) {
+    public WebResult<Void> regist(@RequestBody @Validated RegistDTO regist) {
+        log.info("└─[LoginController] 管理员注册 - {}", regist);
+        if (adminService.regist(regist)) {
             return WebResult.success("管理员注册成功");
         } else {
             return WebResult.fail("管理员注册失败");
@@ -50,11 +47,11 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public WebResult<String> login(@RequestBody @Validated LoginDTO loginDTO) {
-        log.info("└─[LoginController] 管理员登录 - {}", loginDTO);
-        if (adminService.login(loginDTO)) {
+    public WebResult<String> login(@RequestBody @Validated LoginDTO login) {
+        log.info("└─[LoginController] 管理员登录 - {}", login);
+        if (adminService.login(login)) {
             String token = jwtTool.createJwt(
-                    loginDTO.getId(), 1,
+                    login.getId(), 1,
                     jwtProperties.getTokenTTL()
             );
             return WebResult.success("管理员登录成功", token);
@@ -75,11 +72,11 @@ public class LoginController {
     }
 
     @PostMapping("/update")
-    public WebResult<Void> update(@RequestBody @Validated AdminUpdateDTO adminUpdateDTO) {
+    public WebResult<Void> update(@RequestBody @Validated AdminDTO admin) {
         Long id = WebCtx.getId();
-        adminUpdateDTO.setId(id);
+        admin.setId(id);
         log.info("└─[LoginController] 管理员更新 - ID: {}", id);
-        if (adminService.update(adminUpdateDTO)) {
+        if (adminService.update(admin)) {
             return WebResult.success("管理员更新成功");
         } else {
             return WebResult.fail("管理员更新失败");
@@ -87,10 +84,10 @@ public class LoginController {
     }
 
     @PostMapping("/changePwd")
-    public WebResult<Void> changePwd(@RequestBody @Validated PwdChangeDTO pwdChangeDTO) {
+    public WebResult<Void> changePwd(@RequestBody @Validated PasswordDTO password) {
         Long id = WebCtx.getId();
         log.info("└─[LoginController] 管理员密码更改 - ID: {}", id);
-        if (adminService.changePwd(id, pwdChangeDTO)) {
+        if (adminService.changePwd(id, password)) {
             return WebResult.success("管理员密码更改成功");
         } else {
             return WebResult.fail("管理员密码更改失败");
