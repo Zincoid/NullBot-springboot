@@ -42,7 +42,7 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void increase(Long userId, Integer itemId) {
         if (!add(userId, itemId, 1))
             throw new CoreException("增加失败");
@@ -93,7 +93,7 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean sell(Long userId, Integer itemId, int i) {
         ItemPO item = itemService.getById(itemId);
         if (item == null) return false;
@@ -106,7 +106,7 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean sell(Long userId, Rarity rarity) {
         List<InventoryVO> inventoryVOSByRarity = listVO(userId).stream()
                 .filter(inventoryVO -> inventoryVO.getRarity() == rarity)

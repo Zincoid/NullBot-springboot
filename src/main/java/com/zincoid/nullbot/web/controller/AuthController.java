@@ -22,7 +22,7 @@ public class AuthController {
 
     @PostMapping("/regist")
     public WebResult<Void> regist(@RequestBody @Validated RegistDTO regist) {
-        log.info("└─[AuthController] 管理账号注册 - {}", regist);
+        log.info("└─[AuthController] 管理账号注册 - {}", regist.getId());
         authService.regist(regist);
         return WebResult.success("注册成功");
     }
@@ -36,7 +36,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public WebResult<String> login(@RequestBody @Validated LoginDTO login) {
-        log.info("└─[AuthController] 管理账号登录 - {}", login);
+        log.info("└─[AuthController] 管理账号登录 - {}", login.getId());
         String token = authService.login(login);
         return WebResult.success("登录成功", token);
     }
