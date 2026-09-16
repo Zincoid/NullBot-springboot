@@ -30,7 +30,7 @@ public class WebInterceptor implements HandlerInterceptor {
 
         String uri = req.getRequestURI();
         String ip = WebUtil.getClientIpAddress();
-        log.info("◎ [WebInterceptor] 来自 {} 的请求 - {}", ip, uri);
+        log.info("◎ [WebInterceptor] 来自 {} 的请求 - {} {}", ip, req.getMethod(), uri);
 
         if (uri.equals("/nullbot/auth/login") || uri.equals("/nullbot/auth/guest")) {
             log.info("└─[WebInterceptor] 登录放行");
