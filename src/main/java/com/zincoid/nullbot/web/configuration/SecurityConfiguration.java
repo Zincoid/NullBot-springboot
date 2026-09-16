@@ -8,6 +8,7 @@ import org.springframework.security.crypto.encrypt.KeyStoreKeyFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 
 @Configuration
 public class SecurityConfiguration {
@@ -35,7 +36,13 @@ public class SecurityConfiguration {
 
     // 秘钥生成工具
     @Bean
-    public KeyPair keyPair(JwtProperties properties){
+    public KeyPair keyPair(JwtProperties properties) throws Exception {
+        if (properties.getLocation() == null || !properties.getLocation().exists()) {
+            // 密钥文件缺失时生成临时密钥
+            KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+            generator.initialize(2048);
+            return generator.generateKeyPair();
+        }
         KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(
                 properties.getLocation(),
                 properties.getPassword().toCharArray()
