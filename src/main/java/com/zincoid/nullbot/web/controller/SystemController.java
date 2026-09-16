@@ -37,6 +37,7 @@ public class SystemController {
 
     @GetMapping("/func")
     public WebResult<Map<String, Boolean>> funcList() {
+        WebCtx.requireAdmin();
         Map<String, Boolean> flags = systemService.getFuncFlags();
         return WebResult.success("查询成功", flags);
     }
@@ -55,6 +56,7 @@ public class SystemController {
 
     @GetMapping("/model")
     public WebResult<ModelVO> model() {
+        WebCtx.requireAdmin();
         ModelVO models = systemService.getModels();
         return WebResult.success("查询成功", models);
     }

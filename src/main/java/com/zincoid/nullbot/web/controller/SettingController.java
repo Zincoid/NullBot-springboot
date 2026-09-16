@@ -39,6 +39,7 @@ public class SettingController {
 
     @GetMapping("/{id}")
     public WebResult<SettingPO> get(@PathVariable Long id) {
+        WebCtx.requireAdmin();
         SettingPO setting = settingService.get(id);
         return WebResult.success("获取成功", setting);
     }

@@ -89,39 +89,30 @@ public class FileController {
     @PutMapping("/{id}/name")
     public WebResult<Void> rename(
             @PathVariable Integer id,
-            @RequestBody NameBody body
+            @RequestParam String filename
     ) {
         WebCtx.requireAdmin();
-        fileService.rename(id, body.filename());
+        fileService.rename(id, filename);
         return WebResult.success("重命名成功");
     }
 
     @PutMapping("/{id}/directory")
     public WebResult<Void> move(
             @PathVariable Integer id,
-            @RequestBody DirectoryBody body
+            @RequestParam String directory
     ) {
         WebCtx.requireAdmin();
-        fileService.move(id, body.directory());
+        fileService.move(id, directory);
         return WebResult.success("移动成功");
     }
 
     @PutMapping("/{id}/visible")
     public WebResult<Void> visualize(
             @PathVariable Integer id,
-            @RequestBody VisibleBody body
+            @RequestParam Boolean flag
     ) {
         WebCtx.requireAdmin();
-        fileService.visualize(id, body.flag());
+        fileService.visualize(id, flag);
         return WebResult.success("设置成功");
     }
-}
-
-record NameBody(String filename) {
-}
-
-record DirectoryBody(String directory) {
-}
-
-record VisibleBody(Boolean flag) {
 }
