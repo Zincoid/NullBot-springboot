@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.module.security.JwtTool;
+import com.zincoid.nullbot.web.exception.UnauthorizedException;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.context.WebCtx;
 import com.zincoid.nullbot.core.utils.WebUtil;
@@ -45,13 +46,12 @@ public class WebInterceptor implements HandlerInterceptor {
                 "/password",
 
                 // 禁用部分文件功能
-                "/file/init",
                 "/file/sync",
                 "/file/upload",
-                "/file/createDir",
+                "/file/mkdir",
                 "/file/rename",
                 "/file/move",
-                "/file/setVisible"
+                "/file/visualize"
         );
     }
 
@@ -83,7 +83,7 @@ public class WebInterceptor implements HandlerInterceptor {
 
         try {
             jwt = jwtTool.parseJwt(token);
-        } catch (Exception e) {
+        } catch (UnauthorizedException e) {
             log.info("└─[WebInterceptor] 验证失败");
             WebResult<Void> error = WebResult.fail(e.getMessage());
             res.getWriter().write(JSONObject.toJSONString(error));

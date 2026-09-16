@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import com.zincoid.nullbot.core.properties.file.StorageProperties;
 import com.zincoid.nullbot.core.model.data.po.FilePO;
+import com.zincoid.nullbot.core.model.data.po.AdminPO;
+import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.information.FileMeta;
 import com.zincoid.nullbot.core.exception.CoreException;
@@ -112,7 +114,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         FileMeta fileMeta = SaveUtil.save(url, absoluteDir, filename);
         boolean recorded = addOrUpdateRecord(directory, fileMeta.getName(),
                 fileMeta.getSize(), fileMeta.getLastModified(),
-                uid, userService.getById(uid).getName());
+                uid, requireUserName(uid));
         if (!recorded) {
             FileUtils.deleteQuietly(new File(fileMeta.getPath()));
             throw new RuntimeException("数据更新失败");
@@ -136,7 +138,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         try {
             save(new FilePO(file.getOriginalFilename(), file.getSize(),
                     directory, false, dir.getVisible(), uid,
-                    adminService.getById(uid).getUsername(),
+                    requireAdminName(uid),
                     getLastModified(Path.of(filePath))));
         } catch (Exception e) {
             FileUtils.deleteQuietly(new File(filePath));
@@ -201,7 +203,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
         }
         try {
             save(new FilePO(name, 0L, directory, true, dir.getVisible(), uid,
-                    adminService.getById(uid).getUsername(),
+                    requireAdminName(uid),
                     getLastModified(dirPath)));
         } catch (Exception e) {
             FileUtils.deleteQuietly(dirPath.toFile());
@@ -356,6 +358,20 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FilePO> implements 
     }
 
     // ══════ 通用校验工具 ══════
+
+    private String requireAdminName(Long uid) {
+        AdminPO admin = adminService.getById(uid);
+        if (admin == null)
+            throw new CoreException("管理不存在");
+        return admin.getUsername();
+    }
+
+    private String requireUserName(Long uid) {
+        UserPO user = userService.getById(uid);
+        if (user == null)
+            throw new CoreException("用户不存在");
+        return user.getName();
+    }
 
     private FilePO checkFileExists(Integer id) {
         FilePO file = getById(id);

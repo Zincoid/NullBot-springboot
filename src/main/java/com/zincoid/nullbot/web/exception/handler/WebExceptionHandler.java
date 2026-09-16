@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 import com.zincoid.nullbot.core.model.result.WebResult;
 import com.zincoid.nullbot.core.exception.CoreException;
-import com.zincoid.nullbot.web.exception.UnauthorizedException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,13 +39,6 @@ public class WebExceptionHandler {
     // 自定义服务器异常
     @ExceptionHandler(CoreException.class)
     public WebResult<Void> handleCoreException(CoreException e) {
-        return WebResult.fail(e.getMessage());
-    }
-
-    // Web 鉴权异常
-    @ExceptionHandler(UnauthorizedException.class)
-    public WebResult<Void> handleUnauthorized(UnauthorizedException e) {
-        log.warn("▽ [WebExceptionHandler] 未授权访问: {}", e.getMessage());
         return WebResult.fail(e.getMessage());
     }
 
