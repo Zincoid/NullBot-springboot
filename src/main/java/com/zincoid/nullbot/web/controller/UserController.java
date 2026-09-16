@@ -1,7 +1,9 @@
 package com.zincoid.nullbot.web.controller;
 
+import com.zincoid.nullbot.core.model.data.dto.UserDTO;
 import com.zincoid.nullbot.core.model.data.query.UserQuery;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.model.result.PageResult;
@@ -45,8 +47,8 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public WebResult<Void> update(@RequestBody UserPO user) {
-        if (userService.updateById(user)) {
+    public WebResult<Void> update(@RequestBody @Valid UserDTO user) {
+        if (userService.updateById(user.toPo())) {
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新出错");
