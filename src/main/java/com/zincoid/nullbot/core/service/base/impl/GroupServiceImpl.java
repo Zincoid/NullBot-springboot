@@ -32,7 +32,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupPO> implemen
     @Override
     @Transactional
     public void delete(Long id) {
-        boolean removed = removeById(id) && settingService.removeByGroup(id);
+        boolean removed = removeById(id) && settingService.delete(id);
         if (!removed) throw new CoreException("删除失败");
     }
 

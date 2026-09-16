@@ -3,6 +3,8 @@ package com.zincoid.nullbot.core.service.system.impl;
 import jakarta.annotation.PostConstruct;
 import com.zincoid.nullbot.core.exception.CoreException;
 import lombok.extern.slf4j.Slf4j;
+import com.zincoid.nullbot.core.converter.SettingConverter;
+import com.zincoid.nullbot.core.model.data.dto.SettingDTO;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.mapper.SettingMapper;
 import com.zincoid.nullbot.core.service.system.SettingService;
@@ -39,6 +41,11 @@ public class SettingServiceImpl extends ServiceImpl<SettingMapper, SettingPO> im
     }
 
     @Override
+    public void set(SettingDTO setting) {
+        set(SettingConverter.INSTANCE.toPO(setting));
+    }
+
+    @Override
     public void set(SettingPO setting) {
         SettingPO existing = lambdaQuery().eq(SettingPO::getGroupId, setting.getGroupId()).one();
         boolean updated;
@@ -52,6 +59,12 @@ public class SettingServiceImpl extends ServiceImpl<SettingMapper, SettingPO> im
     }
 
     @Override
+    public boolean delete(Long groupId) {
+        cache.remove(groupId);
+        return lambdaUpdate().eq(SettingPO::getGroupId, groupId).remove();
+    }
+
+    @Override
     public List<SettingPO> getAll() {
         return new ArrayList<>(cache.values());
     }
@@ -59,11 +72,5 @@ public class SettingServiceImpl extends ServiceImpl<SettingMapper, SettingPO> im
     @Override
     public void setAll(List<SettingPO> settings) {
         settings.forEach(this::set);
-    }
-
-    @Override
-    public boolean removeByGroup(Long groupId) {
-        cache.remove(groupId);
-        return lambdaUpdate().eq(SettingPO::getGroupId, groupId).remove();
     }
 }

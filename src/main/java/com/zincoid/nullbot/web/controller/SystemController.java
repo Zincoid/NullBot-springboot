@@ -34,11 +34,15 @@ public class SystemController {
 
     @GetMapping("/func")
     public WebResult<Map<String, Boolean>> funcList() {
-        return WebResult.success("查询成功", systemService.getFuncFlags());
+        Map<String, Boolean> flags = systemService.getFuncFlags();
+        return WebResult.success("查询成功", flags);
     }
 
     @PutMapping("/func/set")
-    public WebResult<Void> funcSet(@RequestParam String function, @RequestParam(required = false) Boolean enabled) {
+    public WebResult<Void> funcSet(
+            @RequestParam String function,
+            @RequestParam(required = false) Boolean enabled
+    ) {
         systemService.setFuncFlag(function, enabled);
         return WebResult.success("设置成功");
     }
@@ -47,7 +51,8 @@ public class SystemController {
 
     @GetMapping("/model")
     public WebResult<ModelVO> model() {
-        return WebResult.success("查询成功", systemService.getModels());
+        ModelVO models = systemService.getModels();
+        return WebResult.success("查询成功", models);
     }
 
     @PutMapping("/model/set")

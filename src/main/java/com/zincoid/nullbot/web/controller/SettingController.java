@@ -1,7 +1,6 @@
 package com.zincoid.nullbot.web.controller;
 
 import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
-import com.zincoid.nullbot.core.converter.SettingConverter;
 import com.zincoid.nullbot.core.enums.setting.ChatScope;
 import com.zincoid.nullbot.core.model.data.dto.SettingDTO;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
@@ -47,7 +46,7 @@ public class SettingController {
     public WebResult<Void> set(@RequestBody @Valid SettingDTO setting) {
         Long groupId = setting.getGroupId();
         ChatScope oldScope = settingService.get(groupId).getChatScope();
-        settingService.set(SettingConverter.INSTANCE.toPO(setting));
+        settingService.set(setting);
         if (oldScope != ChatScope.PERSONAL) qqChatClient.clear(oldScope + "_" + groupId);
         cmdRateLimiter.reset(groupId);
         return WebResult.success("更新成功");
