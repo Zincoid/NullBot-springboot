@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.web.controller;
 
 import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
+import com.zincoid.nullbot.core.context.WebCtx;
 import com.zincoid.nullbot.core.enums.setting.ChatScope;
 import com.zincoid.nullbot.core.model.data.dto.SettingDTO;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
-@RequestMapping("/nullbot/setting")
+@RequestMapping("/nullbot/settings")
 @RestController
 public class SettingController {
 
@@ -42,9 +43,10 @@ public class SettingController {
         return WebResult.success("获取成功", setting);
     }
 
-    @PutMapping("/set")
-    public WebResult<Void> set(@RequestBody @Valid SettingDTO setting) {
-        Long groupId = setting.getGroupId();
+    @PutMapping("/{groupId}")
+    public WebResult<Void> set(@PathVariable Long groupId, @RequestBody @Valid SettingDTO setting) {
+        WebCtx.requireAdmin();
+        setting.setGroupId(groupId);
         ChatScope oldScope = settingService.get(groupId).getChatScope();
         settingService.set(setting);
         if (oldScope != ChatScope.PERSONAL) qqChatClient.clear(oldScope + "_" + groupId);
@@ -52,14 +54,16 @@ public class SettingController {
         return WebResult.success("更新成功");
     }
 
-    @GetMapping("/exportCsv")
+    @GetMapping("/export")
     public void exportCsv(HttpServletResponse response) throws IOException {
+        WebCtx.requireAdmin();
         List<SettingPO> settings = settingService.getAll();
         CsvUtil.exportCsv(response, "Settings_" + LocalDateTime.now(), settings, SettingPO.class);
     }
 
-    @PostMapping("/importCsv")
+    @PostMapping("/import")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
+        WebCtx.requireAdmin();
         List<SettingPO> settings = CsvUtil.importCsv(csvFile, SettingPO.class);
         settingService.setAll(settings);
     }
