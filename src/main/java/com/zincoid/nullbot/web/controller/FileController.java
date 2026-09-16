@@ -16,20 +16,21 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Slf4j
-@RequestMapping("/nullbot/file")
+@RequestMapping("/nullbot/files")
 @RestController
 @RequiredArgsConstructor
 public class FileController {
 
     private final FileService fileService;
 
-    @GetMapping("/sync")
+    @PostMapping("/sync")
     public WebResult<Void> sync() {
+        WebCtx.requireAdmin();
         fileService.sync();
         return WebResult.success("本地与数据库 已同步");
     }
 
-    @GetMapping("/page")
+    @GetMapping
     public WebResult<PageResult<FilePO>> page(FileQuery query) {
         query.setHidden(WebCtx.getType() == 0);
         PageResult<FilePO> filePage = fileService.page(query);
@@ -47,17 +48,18 @@ public class FileController {
         return WebResult.success("查询成功", fileList);
     }
 
-    @PostMapping("/upload")
+    @PostMapping
     public WebResult<Void> upload(
             MultipartFile file,
             @RequestParam(defaultValue = "/") String directory
     ) {
+        WebCtx.requireAdmin();
         Long userId = WebCtx.getId();
         fileService.upload(file, directory, userId);
         return WebResult.success("上传成功");
     }
 
-    @GetMapping("/download/{id}")
+    @GetMapping("/{id}/download")
     public void download(
             @PathVariable Integer id,
             HttpServletRequest request,
@@ -66,46 +68,60 @@ public class FileController {
         fileService.download(id, request, response);
     }
 
-    @GetMapping("/mkdir")
+    @PostMapping("/dir")
     public WebResult<Void> mkdir(
-            String directory,
-            String name
+            @RequestParam String directory,
+            @RequestParam String name
     ) {
+        WebCtx.requireAdmin();
         Long userId = WebCtx.getId();
         fileService.mkdir(directory, name, userId);
         return WebResult.success("创建成功");
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public WebResult<Void> delete(@PathVariable Integer id) {
+        WebCtx.requireAdmin();
         fileService.delete(id);
         return WebResult.success("删除成功");
     }
 
-    @GetMapping("/rename/{id}")
+    @PutMapping("/{id}/name")
     public WebResult<Void> rename(
             @PathVariable Integer id,
-            @RequestParam String filename
+            @RequestBody NameBody body
     ) {
-        fileService.rename(id, filename);
+        WebCtx.requireAdmin();
+        fileService.rename(id, body.filename());
         return WebResult.success("重命名成功");
     }
 
-    @GetMapping("/move/{id}")
+    @PutMapping("/{id}/directory")
     public WebResult<Void> move(
             @PathVariable Integer id,
-            @RequestParam String directory
+            @RequestBody DirectoryBody body
     ) {
-        fileService.move(id, directory);
+        WebCtx.requireAdmin();
+        fileService.move(id, body.directory());
         return WebResult.success("移动成功");
     }
 
-    @GetMapping("/visualize/{id}")
+    @PutMapping("/{id}/visible")
     public WebResult<Void> visualize(
             @PathVariable Integer id,
-            @RequestParam Boolean flag
+            @RequestBody VisibleBody body
     ) {
-        fileService.visualize(id, flag);
+        WebCtx.requireAdmin();
+        fileService.visualize(id, body.flag());
         return WebResult.success("设置成功");
     }
+}
+
+record NameBody(String filename) {
+}
+
+record DirectoryBody(String directory) {
+}
+
+record VisibleBody(Boolean flag) {
 }
