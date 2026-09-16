@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.core.model.data.dto;
 
+import com.zincoid.nullbot.core.converter.GroupConverter;
 import com.zincoid.nullbot.core.model.data.po.GroupPO;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -55,7 +56,7 @@ public class GroupDTOTests {
 
     @Test
     void toPoMapsAllFields() {
-        GroupPO po = valid().toPo();
+        GroupPO po = GroupConverter.INSTANCE.toPO(valid());
         assertTrue(123456L == po.getId() && "测试群".equals(po.getName()) && 1 == po.getAccess());
     }
 }

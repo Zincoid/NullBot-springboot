@@ -1,7 +1,7 @@
-package com.zincoid.nullbot;
+package com.zincoid.nullbot.core.module.ai.tts;
 
-import com.zincoid.nullbot.core.module.ai.tts.TtsClient;
 import jakarta.annotation.Resource;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -11,15 +11,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
 
+@Disabled("须 TTS 服务, 手动验证")
 @ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class NullBotApiTests {
+public class TtsClientTests {
 
     @Resource
     TtsClient ttsClient;
 
     @Test
-    void TtsTest() throws IOException {
+    void synthesizeToFile() throws IOException {
         String text = "大家好呀";
         String base64 = ttsClient.synthesize(text);
         byte[] bytes = Base64.getDecoder().decode(base64);

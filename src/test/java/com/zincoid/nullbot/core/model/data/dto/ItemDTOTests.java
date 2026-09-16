@@ -2,6 +2,7 @@ package com.zincoid.nullbot.core.model.data.dto;
 
 import com.zincoid.nullbot.core.enums.data.Category;
 import com.zincoid.nullbot.core.enums.data.Rarity;
+import com.zincoid.nullbot.core.converter.ItemConverter;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -71,13 +72,13 @@ public class ItemDTOTests {
     void toPoMapsFields() {
         ItemDTO dto = valid();
         dto.setId(7);
-        ItemPO po = dto.toPo();
+        ItemPO po = ItemConverter.INSTANCE.toPO(dto);
         assertTrue(po.getId() == 7 && "徽章".equals(po.getName())
                 && po.getPrice() == 50 && Boolean.TRUE.equals(po.getAvailable()));
     }
 
     @Test
     void toPoKeepsNullId() {
-        assertNull(valid().toPo().getId());
+        assertNull(ItemConverter.INSTANCE.toPO(valid()).getId());
     }
 }

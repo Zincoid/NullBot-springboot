@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.core.model.data.dto;
 
+import com.zincoid.nullbot.core.converter.UserConverter;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -60,7 +61,7 @@ public class UserDTOTests {
 
     @Test
     void toPoMapsAllFields() {
-        UserPO po = valid().toPo();
+        UserPO po = UserConverter.INSTANCE.toPO(valid());
         assertTrue(1024L == po.getId() && "用户A".equals(po.getName())
                 && po.getAccess() == 1 && po.getLevel() == 3
                 && po.getExperience() == 80 && po.getCash() == 100

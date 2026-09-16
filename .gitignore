@@ -28,3 +28,8 @@ Thumbs.db
 # Logs
 *.log
 logs/
+*.gz
+
+# Test outputs (generated media)
+/src/test/file/
+

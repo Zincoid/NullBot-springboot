@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.core.model.data.dto;
 
+import com.zincoid.nullbot.core.converter.InventoryConverter;
 import com.zincoid.nullbot.core.model.data.po.InventoryPO;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -56,7 +57,7 @@ public class InventoryDTOTests {
 
     @Test
     void toPoMapsAllFields() {
-        InventoryPO po = valid().toPo();
+        InventoryPO po = InventoryConverter.INSTANCE.toPO(valid());
         assertTrue(po.getId() == 9 && po.getOwnerId() == 1024L
                 && po.getItemId() == 3 && po.getAmount() == 2);
     }

@@ -3,6 +3,7 @@ package com.zincoid.nullbot.core.model.data.dto;
 import com.zincoid.nullbot.core.enums.setting.ChatScope;
 import com.zincoid.nullbot.core.enums.setting.ChatStrategy;
 import com.zincoid.nullbot.core.enums.setting.LimitScope;
+import com.zincoid.nullbot.core.converter.SettingConverter;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -79,7 +80,7 @@ public class SettingDTOTests {
 
     @Test
     void toPoMapsAllFields() {
-        SettingPO po = valid().toPo();
+        SettingPO po = SettingConverter.INSTANCE.toPO(valid());
         assertTrue(123456L == po.getGroupId() && po.getLimitScope() == LimitScope.USER
                 && po.getChatScope() == ChatScope.GROUP && po.getChatStrategy() == ChatStrategy.EMBEDDING
                 && po.getLimitCapacity() == 5 && po.getReplyFrequency() == 0.001
