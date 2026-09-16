@@ -4,18 +4,21 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.GroupPO;
 import com.zincoid.nullbot.core.model.data.query.GroupQuery;
+import com.zincoid.nullbot.core.model.data.dto.GroupDTO;
 
 public interface GroupService extends IService<GroupPO> {
 
     PageResult<GroupPO> page(GroupQuery query);
+
+    void update(GroupDTO group);
+
+    void delete(Long id);
 
     boolean exist(Long id);
 
     int getAccess(Long id);
 
     void setAccess(Long id, Integer newAccess);
-
-    void delete(Long id);
 
     void updateAllNames();
 }

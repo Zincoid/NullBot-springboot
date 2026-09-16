@@ -1,6 +1,5 @@
 package com.zincoid.nullbot.web.controller;
 
-import com.zincoid.nullbot.core.converter.GroupConverter;
 import com.zincoid.nullbot.core.model.data.dto.GroupDTO;
 import com.zincoid.nullbot.core.model.data.query.GroupQuery;
 import jakarta.servlet.http.HttpServletResponse;
@@ -46,11 +45,8 @@ public class GroupController {
 
     @PutMapping("/update")
     public WebResult<Void> update(@RequestBody @Valid GroupDTO group) {
-        if (groupService.updateById(GroupConverter.INSTANCE.toPO(group))) {
-            return WebResult.success("更新成功");
-        } else {
-            return WebResult.fail("更新出错");
-        }
+        groupService.update(group);
+        return WebResult.success("更新成功");
     }
 
     @GetMapping("/exportCsv")

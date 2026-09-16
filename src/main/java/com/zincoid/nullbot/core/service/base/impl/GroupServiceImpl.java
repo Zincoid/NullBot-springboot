@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.model.data.query.GroupQuery;
+import com.zincoid.nullbot.core.converter.GroupConverter;
+import com.zincoid.nullbot.core.model.data.dto.GroupDTO;
 import com.zincoid.nullbot.core.service.system.SettingService;
 import com.zincoid.nullbot.core.exception.CoreException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,19 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupPO> implemen
 
     private final BotOperator botOperator;
     private final SettingService settingService;
+
+    @Override
+    public void update(GroupDTO group) {
+        if (!updateById(GroupConverter.INSTANCE.toPO(group)))
+            throw new CoreException("更新失败");
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        boolean removed = removeById(id) && settingService.removeByGroup(id);
+        if (!removed) throw new CoreException("删除失败");
+    }
 
     @Override
     public PageResult<GroupPO> page(GroupQuery query) {
@@ -41,13 +56,6 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupPO> implemen
     @Override
     public void setAccess(Long id, Integer newAccess) {
         lambdaUpdate().eq(GroupPO::getId, id).set(GroupPO::getAccess, newAccess).update();
-    }
-
-    @Override
-    @Transactional
-    public void delete(Long id) {
-        boolean removed = removeById(id) && settingService.removeByGroup(id);
-        if (!removed) throw new CoreException("删除失败");
     }
 
     @Override
