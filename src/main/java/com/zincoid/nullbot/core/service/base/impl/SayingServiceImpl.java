@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.core.service.base.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zincoid.nullbot.core.exception.CoreException;
 import com.zincoid.nullbot.core.model.data.query.SayingQuery;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.result.PageResult;
@@ -16,10 +17,6 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 public class SayingServiceImpl extends ServiceImpl<SayingMapper, SayingPO> implements SayingService {
 
-    public PageResult<SayingPO> page(SayingQuery query) {
-        return PageResult.of(page(query.toPage(), null));
-    }
-
     @Override
     public boolean add(Long userId, String userName, String text) {
         SayingPO saying = new SayingPO();
@@ -31,7 +28,17 @@ public class SayingServiceImpl extends ServiceImpl<SayingMapper, SayingPO> imple
     }
 
     @Override
-    public SayingPO getRand() {
+    public void delete(Integer id) {
+        if (!removeById(id))
+            throw new CoreException("语录不存在");
+    }
+
+    public PageResult<SayingPO> page(SayingQuery query) {
+        return PageResult.of(page(query.toPage(), null));
+    }
+
+    @Override
+    public SayingPO random() {
         long count = count();
         if (count == 0) return null;
         long randomOffset = ThreadLocalRandom.current().nextLong(0, count);
@@ -39,7 +46,7 @@ public class SayingServiceImpl extends ServiceImpl<SayingMapper, SayingPO> imple
     }
 
     @Override
-    public SayingPO getRandByUserId(Long userId) {
+    public SayingPO random(Long userId) {
         long count = lambdaQuery().eq(SayingPO::getUserId, userId).count();
         if (count == 0) return null;
         long randomOffset = ThreadLocalRandom.current().nextLong(0, count);

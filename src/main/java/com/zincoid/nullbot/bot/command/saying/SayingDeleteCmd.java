@@ -23,8 +23,9 @@ public class SayingDeleteCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         int id = args.nextInt();
-        if (!sayingService.removeById(id)) throw new BotInfoException(Emoji.INFO, "语录不存在");
-        bot.sendGroupMsg(event.getGroupId(), "⚠️语录No.%s已删除".formatted(id), false);
+        sayingService.delete(id);
+        bot.sendGroupMsg(event.getGroupId(), "⚠️语录No.%s已删除"
+                .formatted(id), false);
         log.info("☑ [SayingDelete] 语录已删除 -> No.{}", id);
     }
 

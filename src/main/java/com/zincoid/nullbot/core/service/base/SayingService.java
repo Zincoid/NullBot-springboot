@@ -7,11 +7,13 @@ import com.zincoid.nullbot.core.model.data.query.SayingQuery;
 
 public interface SayingService extends IService<SayingPO> {
 
-    PageResult<SayingPO> page(SayingQuery query);
-
     boolean add(Long userId, String userName, String text);
 
-    SayingPO getRand();
+    void delete(Integer id);
 
-    SayingPO getRandByUserId(Long userId);
+    PageResult<SayingPO> page(SayingQuery query);
+
+    SayingPO random();
+
+    SayingPO random(Long userId);
 }

@@ -1,7 +1,6 @@
 package com.zincoid.nullbot.web.controller;
 
 import com.zincoid.nullbot.core.model.data.query.SayingQuery;
-import com.zincoid.nullbot.core.exception.CoreException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +38,7 @@ public class SayingController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult<Void> delete(@PathVariable Integer id) {
-        if (!sayingService.removeById(id))
-            throw new CoreException("删除失败");
+        sayingService.delete(id);
         return WebResult.success("删除成功");
     }
 

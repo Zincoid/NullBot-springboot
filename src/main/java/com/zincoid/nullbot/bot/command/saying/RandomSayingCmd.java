@@ -29,10 +29,10 @@ public class RandomSayingCmd implements Cmd {
         List<Long> atNumbers = MsgUtil.extractAtNumbers(event.getArrayMsg());
         SayingPO saying = atNumbers.isEmpty()
                 ? args.hasNext()
-                ? sayingService.getRandByUserId(args.nextLong())
-                : sayingService.getRand()
-                : sayingService.getRandByUserId(atNumbers.getFirst());
-        if (saying == null) throw new BotInfoException(Emoji.INFO, "暂无用户记录");
+                ? sayingService.random(args.nextLong())
+                : sayingService.random()
+                : sayingService.random(atNumbers.getFirst());
+        if (saying == null) throw new BotInfoException(Emoji.INFO, "暂无语录");
         bot.sendGroupMsg(event.getGroupId(), saying.toString(), false);
         log.info("☑ [RandomSaying] 语录已发送 -> No.{}", saying.getId());
     }
