@@ -42,7 +42,7 @@ public class WebInterceptor implements HandlerInterceptor {
                 "/update",
 
                 // 禁止修改密码
-                "/changePwd",
+                "/password",
 
                 // 禁用部分文件功能
                 "/file/init",
@@ -99,7 +99,7 @@ public class WebInterceptor implements HandlerInterceptor {
             for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
                 if (uri.contains(forbiddenUrl)) {
                     log.info("└─[WebInterceptor] 访客受限");
-                    WebResult<Void> error = WebResult.fail("No Access");
+                    WebResult<Void> error = WebResult.fail("访客受限");
                     res.getWriter().write(JSONObject.toJSONString(error));
                     return false;
                 }

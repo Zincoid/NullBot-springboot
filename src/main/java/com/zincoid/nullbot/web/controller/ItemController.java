@@ -3,6 +3,7 @@ package com.zincoid.nullbot.web.controller;
 import com.zincoid.nullbot.core.converter.ItemConverter;
 import com.zincoid.nullbot.core.model.data.dto.ItemDTO;
 import com.zincoid.nullbot.core.model.data.query.ItemQuery;
+import com.zincoid.nullbot.core.exception.CoreException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,29 +41,23 @@ public class ItemController {
 
     @PostMapping("/add")
     public WebResult<Void> add(@RequestBody @Valid ItemDTO item) {
-        if (itemService.save(ItemConverter.INSTANCE.toPO(item))) {
-            return WebResult.success("新增成功");
-        } else {
-            return WebResult.fail("新增失败");
-        }
+        if (!itemService.save(ItemConverter.INSTANCE.toPO(item)))
+            throw new CoreException("新增失败");
+        return WebResult.success("新增成功");
     }
 
     @DeleteMapping("/delete/{id}")
     public WebResult<Void> delete(@PathVariable Integer id) {
-        if (itemService.removeById(id)) {
-            return WebResult.success("删除成功");
-        } else {
-            return WebResult.fail("删除失败");
-        }
+        if (!itemService.removeById(id))
+            throw new CoreException("删除失败");
+        return WebResult.success("删除成功");
     }
 
     @PutMapping("/update")
     public WebResult<Void> update(@RequestBody @Valid ItemDTO item) {
-        if (itemService.updateById(ItemConverter.INSTANCE.toPO(item))) {
-            return WebResult.success("更新成功");
-        } else {
-            return WebResult.fail("更新失败");
-        }
+        if (!itemService.updateById(ItemConverter.INSTANCE.toPO(item)))
+            throw new CoreException("更新失败");
+        return WebResult.success("更新成功");
     }
 
     @GetMapping("/exportCsv")

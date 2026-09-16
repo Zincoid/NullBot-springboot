@@ -3,7 +3,6 @@ package com.zincoid.nullbot.core.service.tts.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.exception.CoreException;
 import com.zincoid.nullbot.core.model.data.po.TtsTemplatePO;
 import com.zincoid.nullbot.core.mapper.TtsTemplateMapper;
 import com.zincoid.nullbot.core.service.tts.TtsTemplateService;

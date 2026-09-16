@@ -3,6 +3,7 @@ package com.zincoid.nullbot.web.controller;
 import com.zincoid.nullbot.core.converter.UserConverter;
 import com.zincoid.nullbot.core.model.data.dto.UserDTO;
 import com.zincoid.nullbot.core.model.data.query.UserQuery;
+import com.zincoid.nullbot.core.exception.CoreException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,20 +41,16 @@ public class UserController {
 
     @DeleteMapping("/delete/{id}")
     public WebResult<Void> delete(@PathVariable Long id) {
-        if (userService.removeById(id)) {
-            return WebResult.success("删除成功");
-        } else {
-            return WebResult.fail("删除失败");
-        }
+        if (!userService.removeById(id))
+            throw new CoreException("删除失败");
+        return WebResult.success("删除成功");
     }
 
     @PutMapping("/update")
     public WebResult<Void> update(@RequestBody @Valid UserDTO user) {
-        if (userService.updateById(UserConverter.INSTANCE.toPO(user))) {
-            return WebResult.success("更新成功");
-        } else {
-            return WebResult.fail("更新出错");
-        }
+        if (!userService.updateById(UserConverter.INSTANCE.toPO(user)))
+            throw new CoreException("更新失败");
+        return WebResult.success("更新成功");
     }
 
     @GetMapping("/exportCsv")
