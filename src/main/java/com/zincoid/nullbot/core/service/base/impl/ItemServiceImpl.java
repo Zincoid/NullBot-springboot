@@ -1,6 +1,9 @@
 package com.zincoid.nullbot.core.service.base.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zincoid.nullbot.core.converter.ItemConverter;
+import com.zincoid.nullbot.core.exception.CoreException;
+import com.zincoid.nullbot.core.model.data.dto.ItemDTO;
 import com.zincoid.nullbot.core.model.data.query.ItemQuery;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.result.PageResult;
@@ -19,6 +22,24 @@ import java.util.List;
 public class ItemServiceImpl extends ServiceImpl<ItemMapper, ItemPO> implements ItemService {
 
     @Override
+    public void add(ItemDTO item) {
+        if (!save(ItemConverter.INSTANCE.toPO(item)))
+            throw new CoreException("新增失败");
+    }
+
+    @Override
+    public void update(ItemDTO item) {
+        if (!updateById(ItemConverter.INSTANCE.toPO(item)))
+            throw new CoreException("更新失败");
+    }
+
+    @Override
+    public void delete(Integer id) {
+        if (!removeById(id))
+            throw new CoreException("删除失败");
+    }
+
+    @Override
     public PageResult<ItemPO> page(ItemQuery query) {
         return PageResult.of(page(query.toPage(), null));
     }
@@ -35,7 +56,7 @@ public class ItemServiceImpl extends ServiceImpl<ItemMapper, ItemPO> implements 
 
     @Override
     public String getCommand(Integer id) {
-        return  getById(id).getCommand();
+        return getById(id).getCommand();
     }
 
     @Override
