@@ -2,6 +2,7 @@ package com.zincoid.nullbot.core.service.base.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zincoid.nullbot.core.exception.CoreException;
 import com.zincoid.nullbot.core.service.base.ItemService;
 import com.zincoid.nullbot.core.service.base.UserService;
 import lombok.RequiredArgsConstructor;
@@ -86,13 +87,13 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
     @Override
     @Transactional
     public boolean sell(Long userId, Rarity rarity) {
-        List<InventoryVO> InventoryVOS = listVO(userId);
-        List<InventoryVO> inventoryVOSByRarity = InventoryVOS.stream()
+        List<InventoryVO> inventoryVOSByRarity = listVO(userId).stream()
                 .filter(inventoryVO -> inventoryVO.getRarity() == rarity)
                 .toList();
         if (inventoryVOSByRarity.isEmpty()) return false;
         for (InventoryVO inventoryVO : inventoryVOSByRarity) {
-            sell(userId, inventoryVO.getItemId(), inventoryVO.getAmount());
+            if (!sell(userId, inventoryVO.getItemId(), inventoryVO.getAmount()))
+                throw new CoreException("批量出售出错: id=" + inventoryVO.getId());
         }
         return true;
     }

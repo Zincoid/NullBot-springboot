@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.model.data.query.UserQuery;
+import com.zincoid.nullbot.core.exception.CoreException;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.mapper.UserMapper;
@@ -30,7 +31,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
 
     @Override
     public int getAccess(Long id) {
-        return getById(id).getAccess();
+        UserPO user = getById(id);
+        if (user == null) throw new CoreException("未知用户");
+        return user.getAccess();
     }
 
     @Override

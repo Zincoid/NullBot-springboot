@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.core.service.game.impl;
 
+import com.zincoid.nullbot.core.exception.CoreException;
 import com.zincoid.nullbot.core.service.base.ItemService;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.data.po.InventoryPO;
@@ -114,11 +115,10 @@ public class BreadServiceImpl implements BreadService {
                 .one();
         if (userBread == null) return 0;
         int i = Math.min(ThreadLocalRandom.current().nextInt(10) + 1, userBread.getAmount());
-        if (inventoryService.remove(fromId, bread.getId(), i)) {
-            inventoryService.add(toId, bread.getId(), i);
-            return i;
-        } else
-            return 0;
+        if (!inventoryService.remove(fromId, bread.getId(), i)) return 0;
+        if (!inventoryService.add(toId, bread.getId(), i))
+            throw new CoreException("面包转赠失败");
+        return i;
     }
 
     private ItemPO getBasicBread() {

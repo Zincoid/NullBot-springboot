@@ -40,15 +40,14 @@ public class SettingServiceImpl extends ServiceImpl<SettingMapper, SettingPO> im
     @Override
     public boolean set(SettingPO setting) {
         SettingPO existing = lambdaQuery().eq(SettingPO::getGroupId, setting.getGroupId()).one();
-        boolean replaced = existing != null;
-        if (replaced) {
+        boolean updated;
+        if (existing != null) {
             setting.setId(existing.getId());
-            updateById(setting);
-        } else {
-            save(setting);
-        }
-        cache.put(setting.getGroupId(), setting);
-        return replaced;
+            updated = updateById(setting);
+        } else updated = save(setting);
+        if (updated)
+            cache.put(setting.getGroupId(), setting);
+        return updated;
     }
 
     @Override

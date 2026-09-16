@@ -33,7 +33,9 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupPO> implemen
 
     @Override
     public int getAccess(Long id) {
-        return getById(id).getAccess();
+        GroupPO group = getById(id);
+        if (group == null) throw new CoreException("未知群组");
+        return group.getAccess();
     }
 
     @Override
