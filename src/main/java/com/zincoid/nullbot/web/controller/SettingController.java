@@ -48,9 +48,8 @@ public class SettingController {
     @PutMapping("/set")
     public WebResult<Void> set(@RequestBody @Valid SettingDTO setting) {
         Long groupId = setting.getGroupId();
-        SettingPO po = SettingConverter.INSTANCE.toPO(setting);
         ChatScope oldScope = settingService.get(groupId).getChatScope();
-        if (settingService.set(po)) {
+        if (settingService.set(SettingConverter.INSTANCE.toPO(setting))) {
             if (oldScope != ChatScope.PERSONAL)
                 qqChatClient.clear(oldScope + "_" + groupId);
             cmdRateLimiter.reset(groupId);

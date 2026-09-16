@@ -5,6 +5,7 @@ import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.model.data.query.GroupQuery;
 import com.zincoid.nullbot.core.service.system.SettingService;
+import com.zincoid.nullbot.web.exception.CommonException;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.GroupPO;
@@ -42,10 +43,9 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupPO> implemen
 
     @Override
     @Transactional
-    public boolean delete(Long id) {
-        boolean removed = removeById(id);
-        settingService.removeByGroup(id);
-        return removed;
+    public void delete(Long id) {
+        boolean removed = removeById(id) && settingService.removeByGroup(id);
+        if (!removed) throw new CommonException("删除失败");
     }
 
     @Override
