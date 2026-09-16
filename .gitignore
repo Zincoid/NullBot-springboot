@@ -33,3 +33,4 @@ logs/
 # Test outputs (generated media)
 /src/test/file/
 
+.superpowers/
