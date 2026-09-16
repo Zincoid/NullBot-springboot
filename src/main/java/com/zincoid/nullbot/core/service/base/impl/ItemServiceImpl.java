@@ -23,12 +23,15 @@ public class ItemServiceImpl extends ServiceImpl<ItemMapper, ItemPO> implements 
 
     @Override
     public void add(ItemDTO item) {
+        item.setId(null);
         if (!save(ItemConverter.INSTANCE.toPO(item)))
             throw new CoreException("新增失败");
     }
 
     @Override
     public void update(ItemDTO item) {
+        if (item.getId() == null)
+            throw new CoreException("ID不能为空");
         if (!updateById(ItemConverter.INSTANCE.toPO(item)))
             throw new CoreException("更新失败");
     }
