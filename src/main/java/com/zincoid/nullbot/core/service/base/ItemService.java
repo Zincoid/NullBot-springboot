@@ -16,12 +16,6 @@ public interface ItemService extends IService<ItemPO> {
 
     PageResult<ItemPO> page(ItemQuery query);
 
-    boolean exist(Integer id);
-
-    boolean isUsable(Integer id);
-
-    String getCommand(Integer id);
-
     ItemPO getRandom();
 
     ItemPO getRandomHighValue();

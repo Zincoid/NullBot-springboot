@@ -45,21 +45,6 @@ public class ItemServiceImpl extends ServiceImpl<ItemMapper, ItemPO> implements 
     }
 
     @Override
-    public boolean exist(Integer id) {
-        return lambdaQuery().eq(ItemPO::getId, id).exists();
-    }
-
-    @Override
-    public boolean isUsable(Integer id) {
-        return getById(id).getCommand() != null;
-    }
-
-    @Override
-    public String getCommand(Integer id) {
-        return getById(id).getCommand();
-    }
-
-    @Override
     public ItemPO getRandom() {
         Rarity rarity = DrawUtil.drawRarityByProbability();
         List<ItemPO> itemList = lambdaQuery()

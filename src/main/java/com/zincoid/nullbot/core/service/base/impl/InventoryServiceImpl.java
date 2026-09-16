@@ -114,7 +114,7 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
         if (inventoryVOSByRarity.isEmpty()) return false;
         for (InventoryVO inventoryVO : inventoryVOSByRarity) {
             if (!sell(userId, inventoryVO.getItemId(), inventoryVO.getAmount()))
-                throw new CoreException("批量出售出错: id=" + inventoryVO.getId());
+                throw new CoreException("批量出售出错: id=%s".formatted(inventoryVO.getId()));
         }
         return true;
     }

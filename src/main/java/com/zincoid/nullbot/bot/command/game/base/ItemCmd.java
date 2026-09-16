@@ -24,8 +24,8 @@ public class ItemCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         int itemId = args.nextInt();
-        if (!itemService.exist(itemId)) throw new BotInfoException(Emoji.INFO, "物品不存在");
         ItemPO item = itemService.getById(itemId);
+        if (item == null) throw new BotInfoException(Emoji.INFO, "物品不存在");
         bot.sendGroupMsg(event.getGroupId(), item.toString(), false);
         log.info("☑ [Item] 物品详情已获取 - ItemId: {}", itemId);
     }

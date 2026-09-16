@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.annotation.CmdMapping;
 import com.zincoid.nullbot.bot.command.Cmd;
+import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.service.base.InventoryService;
 import com.zincoid.nullbot.core.service.base.ItemService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -28,22 +29,22 @@ public class UseCmd implements Cmd {
     @Override
     public void run(Bot bot, GroupMessageEvent event, CmdArgs args) {
         Long userId = event.getUserId();
-        String userName = event.getSender().getNickname();
         int itemId = args.nextInt();
+        ItemPO item = itemService.getById(itemId);
 
-        if (!itemService.exist(itemId))
+        if (item == null)
             throw new BotInfoException(Emoji.INFO, "物品不存在");
-        if (!itemService.isUsable(itemId))
+        if (item.getCommand() == null)
             throw new BotInfoException(Emoji.INFO, "物品不可用");
         if (!inventoryService.remove(userId, itemId, 1))
             throw new BotInfoException(Emoji.INFO, "物品数不足");
 
-        String originalCmd = itemService.getCommand(itemId);
-        String executeCmd = originalCmd.replace("{userId}", userId.toString());
+        String executeCmd = item.getCommand()
+                .replace("{userId}", userId.toString());
         eventPublisher.publishEvent(CmdEvent.of(executeCmd, false));
 
-        String itemName = itemService.getById(itemId).getName();
-        bot.sendGroupMsg(event.getGroupId(), "✅%s已使用%s".formatted(userName, itemName), false);
+        bot.sendGroupMsg(event.getGroupId(), "✅已使用: %s"
+                .formatted(item.getName()), false);
         log.info("☑ [Use] 物品已使用 - {} -> {}", userId, itemId);
     }
 
