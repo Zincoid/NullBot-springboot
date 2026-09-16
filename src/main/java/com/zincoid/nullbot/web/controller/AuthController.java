@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Slf4j
 @Validated
-@RequestMapping("/nullbot")
+@RequestMapping("/nullbot/auth")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -41,16 +41,18 @@ public class AuthController {
         return WebResult.success("登录成功", token);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/me")
     public WebResult<Void> delete() {
+        WebCtx.requireAdmin();
         Long id = WebCtx.getId();
         log.info("└─[AuthController] 管理账号注销 - ID: {}", id);
         authService.delete(id);
         return WebResult.success("注销成功");
     }
 
-    @PostMapping("/update")
+    @PutMapping("/me")
     public WebResult<Void> update(@RequestBody @Validated AdminDTO admin) {
+        WebCtx.requireAdmin();
         Long id = WebCtx.getId();
         admin.setId(id);
         log.info("└─[AuthController] 管理信息更新 - ID: {}", id);
@@ -58,15 +60,16 @@ public class AuthController {
         return WebResult.success("更新成功");
     }
 
-    @PostMapping("/password")
+    @PutMapping("/me/password")
     public WebResult<Void> changePassword(@RequestBody @Validated PasswordDTO password) {
+        WebCtx.requireAdmin();
         Long id = WebCtx.getId();
         log.info("└─[AuthController] 管理密码更改 - ID: {}", id);
         authService.changePassword(id, password);
         return WebResult.success("更改成功");
     }
 
-    @GetMapping("/info")
+    @GetMapping("/me")
     public WebResult<Map<String, Object>> info() {
         Integer type = WebCtx.getType();
         Long id = WebCtx.getId();

@@ -15,45 +15,12 @@ import com.zincoid.nullbot.core.utils.WebUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class WebInterceptor implements HandlerInterceptor {
 
     private final JwtTool jwtTool;
-    private static final List<String> GUEST_FORBIDDEN_URLS;
-
-    static {
-        GUEST_FORBIDDEN_URLS = Arrays.asList(
-
-                // 禁用系统和设置功能
-                "/system",
-                "/setting",
-
-                // 禁止操作 Csv
-                "/exportCsv",
-                "/importCsv",
-
-                // 禁止增删改
-                "/add",
-                "/delete",
-                "/update",
-
-                // 禁止修改密码
-                "/password",
-
-                // 禁用部分文件功能
-                "/file/sync",
-                "/file/upload",
-                "/file/mkdir",
-                "/file/rename",
-                "/file/move",
-                "/file/visualize"
-        );
-    }
 
     public boolean preHandle(
             HttpServletRequest req,
@@ -65,11 +32,11 @@ public class WebInterceptor implements HandlerInterceptor {
         String ip = WebUtil.getClientIpAddress();
         log.info("◎ [WebInterceptor] 来自 {} 的请求 - {}", ip, uri);
 
-        if (uri.equals("/nullbot/login") || uri.equals("/nullbot/guest")) {
+        if (uri.equals("/nullbot/auth/login") || uri.equals("/nullbot/auth/guest")) {
             log.info("└─[WebInterceptor] 登录放行");
             return true;
         }
-        if (uri.equals("/nullbot/regist")) {
+        if (uri.equals("/nullbot/auth/regist")) {
             log.info("└─[WebInterceptor] 注册放行");
             return true;
         }
@@ -96,14 +63,6 @@ public class WebInterceptor implements HandlerInterceptor {
         WebCtx.set(userId, userType);  // 存储此次用户信息
 
         if (userType == 0) {
-            for (String forbiddenUrl : GUEST_FORBIDDEN_URLS) {
-                if (uri.contains(forbiddenUrl)) {
-                    log.info("└─[WebInterceptor] 访客受限");
-                    WebResult<Void> error = WebResult.fail("访客受限");
-                    res.getWriter().write(JSONObject.toJSONString(error));
-                    return false;
-                }
-            }
             log.info("└─[WebInterceptor] 访客放行");
             return true;
         }
