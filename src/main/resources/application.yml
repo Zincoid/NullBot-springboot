@@ -52,10 +52,10 @@ mybatis-plus:
 
 logging:
   file:
-    name: ${nullbot.logging.path}
+    name: ${nullbot.logging.path:./output.log}
   level:
-    root: ${nullbot.logging.level}
-    com.zincoid.nullbot: ${nullbot.logging.level}
+    root: ${nullbot.logging.level:INFO}
+    com.zincoid.nullbot: ${nullbot.logging.level:INFO}
 
 shiro:
   ws:
@@ -86,38 +86,38 @@ bot:
     admin-id: ${nullbot.basic.ids.admin}
     log-id: ${nullbot.basic.ids.log}
   command:
-    prefix: ${nullbot.basic.cmd.prefix}
-    ignore-case: ${nullbot.basic.cmd.ignore-case}
-    limit: ${nullbot.basic.cmd.limit}
+    prefix: ${nullbot.basic.cmd.prefix:/}
+    ignore-case: ${nullbot.basic.cmd.ignore-case:true}
+    limit: ${nullbot.basic.cmd.limit:true}
 
 web:
   jwt:
     location: ${nullbot.web.jwt.location}
     alias: ${nullbot.web.jwt.alias}
     password: ${nullbot.web.jwt.password}
-    tokenTTL: ${nullbot.web.jwt.ttl}
+    tokenTTL: ${nullbot.web.jwt.ttl:24h}
 
 file:
   storage:
-    init: ${nullbot.file.storage.init}
-    file-directory: ${nullbot.file.storage.root}
+    init: ${nullbot.file.storage.init:true}
+    file-directory: ${nullbot.file.storage.root:.}
     resource-path: /resource
     temp-path: /temp
     image-path: /image
     video-path: /video
     audio-path: /audio
   resource:
-    mode: ${nullbot.file.resource.mode}
+    mode: ${nullbot.file.resource.mode:path}
     oss-base-url: ${nullbot.file.resource.base-url}
 
 ai:
   chat:
-    repository: ${nullbot.ai.chat.repository}
+    repository: ${nullbot.ai.chat.repository:file}
     config:
-      max-history-length: ${nullbot.ai.chat.config.max-history-length}
-      max-tokens: ${nullbot.ai.chat.config.max-tokens}
-      max-tool-calls: ${nullbot.ai.chat.config.max-tool-calls}
-      default-sys-msg: ${nullbot.ai.chat.config.default-prompt}
+      max-history-length: ${nullbot.ai.chat.config.max-history-length:64}
+      max-tokens: ${nullbot.ai.chat.config.max-tokens:1024}
+      max-tool-calls: ${nullbot.ai.chat.config.max-tool-calls:5}
+      default-sys-msg: ${nullbot.ai.chat.config.default-prompt:}
       # OpenAI 供应商由子配置直接管理
   tts:
     api-url: ${nullbot.ai.tts.api-url}
@@ -133,7 +133,7 @@ trace:
     api-key: ${nullbot.saucenao.api-key}
 
 chrome:
-  driver-auto: ${nullbot.chrome.driver.auto}
+  driver-auto: ${nullbot.chrome.driver.auto:true}
   driver-path: ${nullbot.chrome.driver.path}
   max-retries: 5
   load-timeout: 20

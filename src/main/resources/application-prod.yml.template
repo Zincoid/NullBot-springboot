@@ -32,7 +32,7 @@ nullbot:
 
   # ─── 网页 ─────────── #
   web:
-    jwt:
+    jwt:                                              ## 可选: Jwt 密钥
       location: classpath:secret/JwtSignKey.jks       # jks 密钥路径
       alias:                                          # jks 密钥别名
       password:                                       # jks 密钥密码

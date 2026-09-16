@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.web.configuration;
 
 import com.zincoid.nullbot.web.properties.JwtProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
+@Slf4j
 @Configuration
 public class SecurityConfiguration {
 
@@ -38,7 +40,7 @@ public class SecurityConfiguration {
     @Bean
     public KeyPair keyPair(JwtProperties properties) throws Exception {
         if (properties.getLocation() == null || !properties.getLocation().exists()) {
-            // 密钥文件缺失时生成临时密钥
+            log.warn("▽ [SecurityConfiguration] 未配置网页密钥: 使用随机密钥");
             KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
             generator.initialize(2048);
             return generator.generateKeyPair();
