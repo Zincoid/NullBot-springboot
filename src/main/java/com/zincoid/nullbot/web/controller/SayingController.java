@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.web.controller;
 
 import com.zincoid.nullbot.core.model.data.query.SayingQuery;
+import com.zincoid.nullbot.core.context.WebCtx;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +18,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
-@RequestMapping("/nullbot/saying")
+@RequestMapping("/nullbot/sayings")
 @RestController
 @RequiredArgsConstructor
 public class SayingController {
 
     private final SayingService sayingService;
 
-    @GetMapping("/list")
+    @GetMapping
     public WebResult<List<SayingPO>> getList() {
         List<SayingPO> sayings = sayingService.list();
         return WebResult.success("查询成功", sayings);
@@ -36,20 +37,23 @@ public class SayingController {
         return WebResult.success("查询成功", sayingPage);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public WebResult<Void> delete(@PathVariable Integer id) {
+        WebCtx.requireAdmin();
         sayingService.delete(id);
         return WebResult.success("删除成功");
     }
 
-    @GetMapping("/exportCsv")
+    @GetMapping("/export")
     public void exportCsv(HttpServletResponse response) throws IOException {
+        WebCtx.requireAdmin();
         List<SayingPO> sayings = sayingService.list();
         CsvUtil.exportCsv(response, "Sayings_" + LocalDateTime.now(), sayings, SayingPO.class);
     }
 
-    @PostMapping("/importCsv")
+    @PostMapping("/import")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
+        WebCtx.requireAdmin();
         List<SayingPO> sayings = CsvUtil.importCsv(csvFile, SayingPO.class);
         sayingService.saveBatch(sayings);
     }
