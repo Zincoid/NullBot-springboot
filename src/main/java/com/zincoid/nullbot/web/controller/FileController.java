@@ -42,8 +42,8 @@ public class FileController {
             String directory
     ) {
         Integer userType = WebCtx.getType();
-        List<FilePO> fileList = fileService.search(
-                keyword, directory, userType == 0);
+        List<FilePO> fileList = fileService
+                .search(keyword, directory, userType == 0);
         return WebResult.success("查询成功", fileList);
     }
 

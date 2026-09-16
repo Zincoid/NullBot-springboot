@@ -9,7 +9,7 @@ public interface SettingService extends IService<SettingPO> {
 
     SettingPO get(Long groupId);
 
-    boolean set(SettingPO setting);
+    void set(SettingPO setting);
 
     List<SettingPO> getAll();
 

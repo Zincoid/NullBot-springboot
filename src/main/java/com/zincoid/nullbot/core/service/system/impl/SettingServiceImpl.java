@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.core.service.system.impl;
 
 import jakarta.annotation.PostConstruct;
+import com.zincoid.nullbot.core.exception.CoreException;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.mapper.SettingMapper;
@@ -38,16 +39,16 @@ public class SettingServiceImpl extends ServiceImpl<SettingMapper, SettingPO> im
     }
 
     @Override
-    public boolean set(SettingPO setting) {
+    public void set(SettingPO setting) {
         SettingPO existing = lambdaQuery().eq(SettingPO::getGroupId, setting.getGroupId()).one();
         boolean updated;
         if (existing != null) {
             setting.setId(existing.getId());
             updated = updateById(setting);
         } else updated = save(setting);
-        if (updated)
-            cache.put(setting.getGroupId(), setting);
-        return updated;
+        if (!updated)
+            throw new CoreException("更新失败");
+        cache.put(setting.getGroupId(), setting);
     }
 
     @Override

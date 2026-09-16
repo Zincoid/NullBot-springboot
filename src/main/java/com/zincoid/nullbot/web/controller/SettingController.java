@@ -29,7 +29,9 @@ public class SettingController {
     private final CmdRateLimiter cmdRateLimiter;
     private final QQChatClient qqChatClient;
 
-    public SettingController(SettingService settingService, CmdRateLimiter cmdRateLimiter, @Lazy QQChatClient qqChatClient) {
+    public SettingController(SettingService settingService,
+                             CmdRateLimiter cmdRateLimiter,
+                             @Lazy QQChatClient qqChatClient) {
         this.settingService = settingService;
         this.cmdRateLimiter = cmdRateLimiter;
         this.qqChatClient = qqChatClient;
@@ -38,25 +40,17 @@ public class SettingController {
     @GetMapping("/{id}")
     public WebResult<SettingPO> get(@PathVariable Long id) {
         SettingPO setting = settingService.get(id);
-        if (setting != null) {
-            return WebResult.success("获取成功", setting);
-        } else {
-            return WebResult.fail("获取失败");
-        }
+        return WebResult.success("获取成功", setting);
     }
 
     @PutMapping("/set")
     public WebResult<Void> set(@RequestBody @Valid SettingDTO setting) {
         Long groupId = setting.getGroupId();
         ChatScope oldScope = settingService.get(groupId).getChatScope();
-        if (settingService.set(SettingConverter.INSTANCE.toPO(setting))) {
-            if (oldScope != ChatScope.PERSONAL)
-                qqChatClient.clear(oldScope + "_" + groupId);
-            cmdRateLimiter.reset(groupId);
-            return WebResult.success("更新成功");
-        } else {
-            return WebResult.fail("更新失败");
-        }
+        settingService.set(SettingConverter.INSTANCE.toPO(setting));
+        if (oldScope != ChatScope.PERSONAL) qqChatClient.clear(oldScope + "_" + groupId);
+        cmdRateLimiter.reset(groupId);
+        return WebResult.success("更新成功");
     }
 
     @GetMapping("/exportCsv")
