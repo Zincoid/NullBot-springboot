@@ -43,7 +43,8 @@ public class StatsServiceImpl implements StatsService {
         StatsPO statsPO = statsMapper.selectOne(new LambdaQueryWrapper<StatsPO>()
                 .eq(StatsPO::getGroupId, groupId)
                 .eq(StatsPO::getUserId, userId)
-                .eq(StatsPO::getCommand, command));
+                .eq(StatsPO::getCommand, command)
+                .last("LIMIT 1"));
         if (statsPO == null)
             statsMapper.insert(new StatsPO(null, groupId, userId, command, 1L));
         else {

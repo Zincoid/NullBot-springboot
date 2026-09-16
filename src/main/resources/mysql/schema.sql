@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `stats` (
     `command`     VARCHAR(50)  NOT NULL                  COMMENT 'Command name',
     `visits`      BIGINT       NOT NULL DEFAULT 0        COMMENT 'Visit count',
     PRIMARY KEY (`id`),
-    KEY `idx_command` (`group_id`, `user_id`, `command`)
+    UNIQUE KEY `uk_group_user_command` (`group_id`, `user_id`, `command`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Per-user command statistics';
 
 -- =============================================
