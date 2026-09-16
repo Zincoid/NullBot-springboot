@@ -8,7 +8,7 @@ public interface StatsService {
 
     void increase(Long groupId, Long userId, String command);
 
-    StatsVO getStatsVO();
+    StatsVO getStats();
 
     Long getUsage(Long userId);
 }

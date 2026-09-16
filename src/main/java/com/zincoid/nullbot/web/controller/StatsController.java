@@ -19,11 +19,7 @@ public class StatsController {
 
     @GetMapping
     public WebResult<StatsVO> stats() {
-        StatsVO statsVO = statsService.getStatsVO();
-        if (statsVO != null) {
-            return WebResult.success("获取成功", statsVO);
-        } else {
-            return WebResult.fail("获取失败");
-        }
+        StatsVO stats = statsService.getStats();
+        return WebResult.success("获取成功", stats);
     }
 }

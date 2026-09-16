@@ -54,7 +54,7 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     @Transactional
-    public StatsVO getStatsVO() {
+    public StatsVO getStats() {
         Long totalVisit = dailyMapper.selectTotalVisits();
 
         // 获取当前日期和10天前的日期
