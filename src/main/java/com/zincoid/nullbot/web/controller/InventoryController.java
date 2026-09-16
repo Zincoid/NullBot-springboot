@@ -27,8 +27,8 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     @GetMapping
-    public WebResult<List<InventoryVO>> getInventoryList(@RequestParam Long userId) {
-        List<InventoryVO> inventories = inventoryService.listVO(userId);
+    public WebResult<List<InventoryVO>> list(@RequestParam Long userId) {
+        List<InventoryVO> inventories = inventoryService.list(userId);
         return WebResult.success("查询成功", inventories);
     }
 

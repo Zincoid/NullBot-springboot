@@ -26,13 +26,13 @@ public class SayingController {
     private final SayingService sayingService;
 
     @GetMapping
-    public WebResult<List<SayingPO>> getList() {
+    public WebResult<List<SayingPO>> list() {
         List<SayingPO> sayings = sayingService.list();
         return WebResult.success("查询成功", sayings);
     }
 
     @GetMapping("/page")
-    public WebResult<PageResult<SayingPO>> getPage(SayingQuery query) {
+    public WebResult<PageResult<SayingPO>> page(SayingQuery query) {
         PageResult<SayingPO> sayingPage = sayingService.page(query);
         return WebResult.success("查询成功", sayingPage);
     }

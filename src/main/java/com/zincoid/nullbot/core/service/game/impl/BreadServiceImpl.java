@@ -31,7 +31,7 @@ public class BreadServiceImpl implements BreadService {
 
     @Override
     public List<InventoryVO> listVO(Long userId) {
-        return inventoryService.listVO(userId).stream()
+        return inventoryService.list(userId).stream()
                 .filter(vo -> vo.getCategory() == Category.BREAD)
                 .toList();
     }

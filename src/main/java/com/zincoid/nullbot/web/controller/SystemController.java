@@ -55,7 +55,7 @@ public class SystemController {
     // ── 模型设置 ──────────────
 
     @GetMapping("/model")
-    public WebResult<ModelVO> model() {
+    public WebResult<ModelVO> modelList() {
         WebCtx.requireAdmin();
         ModelVO models = systemService.getModels();
         return WebResult.success("查询成功", models);

@@ -30,12 +30,12 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
     private final ItemService itemService;
 
     @Override
-    public List<InventoryVO> listVO(Long userId) {
+    public List<InventoryVO> list(Long userId) {
         return baseMapper.selectVOList(userId);
     }
 
     @Override
-    public PageResult<InventoryVO> pageVO(Long userId, Integer current, Integer size) {
+    public PageResult<InventoryVO> page(Long userId, Integer current, Integer size) {
         Page<InventoryVO> page = Page.of(current, size);
         Page<InventoryVO> inventoryVOPage = baseMapper.selectVOPage(page, userId);
         return PageResult.of(inventoryVOPage);
@@ -108,7 +108,7 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean sell(Long userId, Rarity rarity) {
-        List<InventoryVO> inventoryVOSByRarity = listVO(userId).stream()
+        List<InventoryVO> inventoryVOSByRarity = list(userId).stream()
                 .filter(inventoryVO -> inventoryVO.getRarity() == rarity)
                 .toList();
         if (inventoryVOSByRarity.isEmpty()) return false;

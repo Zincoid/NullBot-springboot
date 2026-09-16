@@ -12,9 +12,9 @@ import java.util.List;
 
 public interface InventoryService extends IService<InventoryPO> {
 
-    List<InventoryVO> listVO(Long userId);
+    List<InventoryVO> list(Long userId);
 
-    PageResult<InventoryVO> pageVO(Long userId, Integer current, Integer size);
+    PageResult<InventoryVO> page(Long userId, Integer current, Integer size);
 
     void increase(Long userId, Integer itemId);
 

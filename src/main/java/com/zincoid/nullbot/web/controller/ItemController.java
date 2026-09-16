@@ -28,12 +28,12 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public WebResult<List<ItemPO>> getList() {
+    public WebResult<List<ItemPO>> list() {
         return WebResult.success("查询成功", itemService.list());
     }
 
     @GetMapping("/page")
-    public WebResult<PageResult<ItemPO>> getPage(ItemQuery query) {
+    public WebResult<PageResult<ItemPO>> page(ItemQuery query) {
         PageResult<ItemPO> itemPage = itemService.page(query);
         return WebResult.success("查询成功", itemPage);
     }

@@ -61,7 +61,7 @@ public class AuthController {
     }
 
     @PutMapping("/me/password")
-    public WebResult<Void> changePassword(@RequestBody @Validated PasswordDTO password) {
+    public WebResult<Void> password(@RequestBody @Validated PasswordDTO password) {
         WebCtx.requireAdmin();
         Long id = WebCtx.getId();
         log.info("└─[AuthController] 管理密码更改 - ID: {}", id);

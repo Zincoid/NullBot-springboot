@@ -28,12 +28,12 @@ public class GroupController {
     private final GroupService groupService;
 
     @GetMapping
-    public WebResult<List<GroupPO>> getList() {
+    public WebResult<List<GroupPO>> list() {
         return WebResult.success("查询成功", groupService.list());
     }
 
     @GetMapping("/page")
-    public WebResult<PageResult<GroupPO>> getPage(GroupQuery query) {
+    public WebResult<PageResult<GroupPO>> page(GroupQuery query) {
         PageResult<GroupPO> groupPage = groupService.page(query);
         return WebResult.success("查询成功", groupPage);
     }

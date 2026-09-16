@@ -28,12 +28,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public WebResult<List<UserPO>> getList() {
+    public WebResult<List<UserPO>> list() {
         return WebResult.success("查询成功", userService.list());
     }
 
     @GetMapping("/page")
-    public WebResult<PageResult<UserPO>> getPage(UserQuery query) {
+    public WebResult<PageResult<UserPO>> page(UserQuery query) {
         PageResult<UserPO> userPage = userService.page(query);
         return WebResult.success("查询成功", userPage);
     }
