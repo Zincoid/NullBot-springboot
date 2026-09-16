@@ -18,6 +18,8 @@ spring:
     name: NullBot
   profiles:
     active: prod  # 激活配置文件
+  thymeleaf:
+    check-template-location: false
   servlet:
     multipart:
       max-file-size: 1024MB
