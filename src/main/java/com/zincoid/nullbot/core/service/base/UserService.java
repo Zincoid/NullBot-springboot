@@ -4,8 +4,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.UserPO;
 import com.zincoid.nullbot.core.model.data.query.UserQuery;
+import com.zincoid.nullbot.core.model.data.dto.UserDTO;
 
 public interface UserService extends IService<UserPO> {
+
+    void update(UserDTO user);
+
+    void delete(Long id);
 
     PageResult<UserPO> page(UserQuery query);
 

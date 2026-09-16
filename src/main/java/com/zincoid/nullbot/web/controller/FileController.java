@@ -13,7 +13,6 @@ import com.zincoid.nullbot.core.context.WebCtx;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -52,7 +51,7 @@ public class FileController {
     public WebResult<Void> upload(
             MultipartFile file,
             @RequestParam(defaultValue = "/") String directory
-    ) throws IOException {
+    ) {
         Long userId = WebCtx.getId();
         fileService.upload(file, directory, userId);
         return WebResult.success("上传成功");

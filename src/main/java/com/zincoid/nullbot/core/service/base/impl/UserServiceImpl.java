@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mikuac.shiro.core.Bot;
 import com.zincoid.nullbot.core.module.system.BotOperator;
 import com.zincoid.nullbot.core.model.data.query.UserQuery;
+import com.zincoid.nullbot.core.converter.UserConverter;
 import com.zincoid.nullbot.core.exception.CoreException;
+import com.zincoid.nullbot.core.model.data.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.mapper.UserMapper;
@@ -18,6 +20,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements UserService {
 
     private final BotOperator botOperator;
+
+    @Override
+    public void update(UserDTO user) {
+        if (!updateById(UserConverter.INSTANCE.toPO(user)))
+            throw new CoreException("更新失败");
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (!removeById(id))
+            throw new CoreException("删除失败");
+    }
 
     @Override
     public PageResult<UserPO> page(UserQuery query) {
