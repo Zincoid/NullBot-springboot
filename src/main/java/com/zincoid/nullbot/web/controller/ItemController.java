@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.web.controller;
 
+import com.zincoid.nullbot.core.converter.ItemConverter;
 import com.zincoid.nullbot.core.model.data.dto.ItemDTO;
 import com.zincoid.nullbot.core.model.data.query.ItemQuery;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,7 +40,7 @@ public class ItemController {
 
     @PostMapping("/add")
     public WebResult<Void> add(@RequestBody @Valid ItemDTO item) {
-        if (itemService.save(item.toPo())) {
+        if (itemService.save(ItemConverter.INSTANCE.toPO(item))) {
             return WebResult.success("新增成功");
         } else {
             return WebResult.fail("新增失败");
@@ -57,7 +58,7 @@ public class ItemController {
 
     @PutMapping("/update")
     public WebResult<Void> update(@RequestBody @Valid ItemDTO item) {
-        if (itemService.updateById(item.toPo())) {
+        if (itemService.updateById(ItemConverter.INSTANCE.toPO(item))) {
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新失败");

@@ -3,7 +3,6 @@ package com.zincoid.nullbot.core.model.data.dto;
 import com.zincoid.nullbot.core.enums.setting.ChatScope;
 import com.zincoid.nullbot.core.enums.setting.ChatStrategy;
 import com.zincoid.nullbot.core.enums.setting.LimitScope;
-import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -62,32 +61,4 @@ public class SettingDTO {
 
     @Min(value = 0, message = "切割边距不能为负数")
     private int guessPadding;
-
-    public SettingPO toPo() {
-        SettingPO po = new SettingPO();
-        po.setGroupId(groupId);
-        po.setLimitScope(limitScope);
-        po.setLimitCapacity(limitCapacity);
-        po.setLimitRefill(limitRefill);
-        po.setLimitInterval(limitInterval);
-        po.setChatScope(chatScope);
-        po.setChatStrategy(chatStrategy);
-        po.setThinking(thinking);
-        po.setVoice(voice);
-        po.setVision(vision);
-        po.setInnerCmdAuth(innerCmdAuth);
-        po.setAntiInjection(antiInjection);
-        po.setCustom(custom);
-        po.setAutoReply(autoReply);
-        po.setReplyFrequency(replyFrequency);
-        po.setImageCollect(imageCollect);
-        po.setMessageCollect(messageCollect);
-        po.setKeywordDetect(keywordDetect);
-        po.setPokeDetect(pokeDetect);
-        po.setRecallDetect(recallDetect);
-        po.setGuessCropRatio(guessCropRatio);
-        po.setGuessTransparentRatio(guessTransparentRatio);
-        po.setGuessPadding(guessPadding);
-        return po;
-    }
 }

@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.web.controller;
 
+import com.zincoid.nullbot.core.converter.InventoryConverter;
 import com.zincoid.nullbot.core.model.data.dto.InventoryDTO;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -51,7 +52,7 @@ public class InventoryController {
 
     @PutMapping("/update")
     public WebResult<Void> update(@RequestBody @Valid InventoryDTO inventory) {
-        if (inventoryService.updateById(inventory.toPo())) {
+        if (inventoryService.updateById(InventoryConverter.INSTANCE.toPO(inventory))) {
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新失败");

@@ -1,6 +1,5 @@
 package com.zincoid.nullbot.core.model.data.dto;
 
-import com.zincoid.nullbot.core.model.data.po.GroupPO;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,12 +17,4 @@ public class GroupDTO {
     @NotNull(message = "权限不能为空")
     @Min(value = 0, message = "权限不能为负数")
     private Integer access;
-
-    public GroupPO toPo() {
-        GroupPO po = new GroupPO();
-        po.setId(id);
-        po.setName(name);
-        po.setAccess(access);
-        return po;
-    }
 }

@@ -2,7 +2,6 @@ package com.zincoid.nullbot.core.model.data.dto;
 
 import com.zincoid.nullbot.core.enums.data.Category;
 import com.zincoid.nullbot.core.enums.data.Rarity;
-import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,19 +32,4 @@ public class ItemDTO {
     private String command;
     private String imagePath;
     private Boolean available;
-
-    public ItemPO toPo() {
-        ItemPO po = new ItemPO();
-        po.setId(id);
-        po.setName(name);
-        po.setRarity(rarity);
-        po.setCategory(category);
-        po.setPrice(price);
-        po.setWeight(weight);
-        po.setDescription(description);
-        po.setCommand(command);
-        po.setImagePath(imagePath);
-        po.setAvailable(available);
-        return po;
-    }
 }

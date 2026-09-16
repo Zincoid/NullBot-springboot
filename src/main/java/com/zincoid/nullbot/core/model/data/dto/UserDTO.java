@@ -1,6 +1,5 @@
 package com.zincoid.nullbot.core.model.data.dto;
 
-import com.zincoid.nullbot.core.model.data.po.UserPO;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,17 +34,4 @@ public class UserDTO {
 
     @Min(value = 0, message = "抽取次数不能为负数")
     private Integer drawTimes;
-
-    public UserPO toPo() {
-        UserPO po = new UserPO();
-        po.setId(id);
-        po.setName(name);
-        po.setAccess(access);
-        po.setLevel(level);
-        po.setExperience(experience);
-        po.setCash(cash);
-        po.setCapacity(capacity);
-        po.setDrawTimes(drawTimes);
-        return po;
-    }
 }

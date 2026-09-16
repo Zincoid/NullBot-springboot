@@ -1,6 +1,5 @@
 package com.zincoid.nullbot.core.model.data.dto;
 
-import com.zincoid.nullbot.core.model.data.po.InventoryPO;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -23,13 +22,4 @@ public class InventoryDTO {
     @NotNull(message = "数量不能为空")
     @Min(value = 0, message = "数量不能为负数")
     private Integer amount;
-
-    public InventoryPO toPo() {
-        InventoryPO po = new InventoryPO();
-        po.setId(id);
-        po.setOwnerId(ownerId);
-        po.setItemId(itemId);
-        po.setAmount(amount);
-        return po;
-    }
 }

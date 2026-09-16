@@ -1,5 +1,6 @@
 package com.zincoid.nullbot.web.controller;
 
+import com.zincoid.nullbot.core.converter.UserConverter;
 import com.zincoid.nullbot.core.model.data.dto.UserDTO;
 import com.zincoid.nullbot.core.model.data.query.UserQuery;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,7 +49,7 @@ public class UserController {
 
     @PutMapping("/update")
     public WebResult<Void> update(@RequestBody @Valid UserDTO user) {
-        if (userService.updateById(user.toPo())) {
+        if (userService.updateById(UserConverter.INSTANCE.toPO(user))) {
             return WebResult.success("更新成功");
         } else {
             return WebResult.fail("更新出错");
