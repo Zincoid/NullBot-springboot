@@ -3,6 +3,7 @@ package com.zincoid.nullbot.core.service.base;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zincoid.nullbot.core.model.result.PageResult;
 import com.zincoid.nullbot.core.model.data.po.InventoryPO;
+import com.zincoid.nullbot.core.model.data.dto.InventoryDTO;
 import com.zincoid.nullbot.core.model.data.po.ItemPO;
 import com.zincoid.nullbot.core.model.data.vo.InventoryVO;
 import com.zincoid.nullbot.core.enums.data.Rarity;
@@ -14,6 +15,12 @@ public interface InventoryService extends IService<InventoryPO> {
     List<InventoryVO> listVO(Long userId);
 
     PageResult<InventoryVO> pageVO(Long userId, Integer current, Integer size);
+
+    void increase(Long userId, Integer itemId);
+
+    void update(InventoryDTO inventory);
+
+    void delete(Integer id);
 
     boolean add(Long userId, Integer itemId, int i);
 

@@ -2,6 +2,8 @@ package com.zincoid.nullbot.core.service.base.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zincoid.nullbot.core.converter.InventoryConverter;
+import com.zincoid.nullbot.core.model.data.dto.InventoryDTO;
 import com.zincoid.nullbot.core.exception.CoreException;
 import com.zincoid.nullbot.core.service.base.ItemService;
 import com.zincoid.nullbot.core.service.base.UserService;
@@ -37,6 +39,25 @@ public class InventoryServiceImpl extends ServiceImpl<InventoryMapper, Inventory
         Page<InventoryVO> page = Page.of(current, size);
         Page<InventoryVO> inventoryVOPage = baseMapper.selectVOPage(page, userId);
         return PageResult.of(inventoryVOPage);
+    }
+
+    @Override
+    @Transactional
+    public void increase(Long userId, Integer itemId) {
+        if (!add(userId, itemId, 1))
+            throw new CoreException("增加失败");
+    }
+
+    @Override
+    public void update(InventoryDTO inventory) {
+        if (!updateById(InventoryConverter.INSTANCE.toPO(inventory)))
+            throw new CoreException("更新失败");
+    }
+
+    @Override
+    public void delete(Integer id) {
+        if (!removeById(id))
+            throw new CoreException("删除失败");
     }
 
     @Override

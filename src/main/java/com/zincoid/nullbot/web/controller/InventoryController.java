@@ -1,8 +1,6 @@
 package com.zincoid.nullbot.web.controller;
 
-import com.zincoid.nullbot.core.converter.InventoryConverter;
 import com.zincoid.nullbot.core.model.data.dto.InventoryDTO;
-import com.zincoid.nullbot.core.exception.CoreException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,22 +33,19 @@ public class InventoryController {
 
     @PostMapping("/add")
     public WebResult<Void> add(Long userId, Integer itemId) {
-        if (!inventoryService.add(userId, itemId, 1))
-            throw new CoreException("增加失败");
+        inventoryService.increase(userId, itemId);
         return WebResult.success("增加成功");
     }
 
     @DeleteMapping("/delete/{id}")
     public WebResult<Void> delete(@PathVariable Integer id) {
-        if (!inventoryService.removeById(id))
-            throw new CoreException("删除失败");
+        inventoryService.delete(id);
         return WebResult.success("删除成功");
     }
 
     @PutMapping("/update")
     public WebResult<Void> update(@RequestBody @Valid InventoryDTO inventory) {
-        if (!inventoryService.updateById(InventoryConverter.INSTANCE.toPO(inventory)))
-            throw new CoreException("更新失败");
+        inventoryService.update(inventory);
         return WebResult.success("更新成功");
     }
 
