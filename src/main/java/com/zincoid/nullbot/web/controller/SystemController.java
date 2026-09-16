@@ -27,12 +27,6 @@ public class SystemController {
         return WebResult.success("调用成功", result);
     }
 
-    @PostMapping("/exception")
-    public WebResult<Void> exception() throws Exception {
-        WebCtx.requireAdmin();
-        throw new Exception("测试异常");
-    }
-
     // ── 全局设置 ──────────────
 
     @GetMapping("/func")
@@ -43,10 +37,8 @@ public class SystemController {
     }
 
     @PutMapping("/func")
-    public WebResult<Void> funcSet(
-            @RequestParam String function,
-            @RequestParam(required = false) Boolean enabled
-    ) {
+    public WebResult<Void> funcSet(@RequestParam String function,
+                                   @RequestParam(required = false) Boolean enabled) {
         WebCtx.requireAdmin();
         systemService.setFuncFlag(function, enabled);
         return WebResult.success("设置成功");

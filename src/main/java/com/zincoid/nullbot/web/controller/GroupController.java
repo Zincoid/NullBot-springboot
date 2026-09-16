@@ -46,7 +46,8 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
-    public WebResult<Void> update(@PathVariable Long id, @RequestBody @Valid GroupDTO group) {
+    public WebResult<Void> update(@PathVariable Long id,
+                                  @RequestBody @Valid GroupDTO group) {
         WebCtx.requireAdmin();
         group.setId(id);
         groupService.update(group);

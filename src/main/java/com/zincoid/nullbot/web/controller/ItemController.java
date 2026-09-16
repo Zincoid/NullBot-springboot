@@ -53,7 +53,8 @@ public class ItemController {
     }
 
     @PutMapping("/{id}")
-    public WebResult<Void> update(@PathVariable Integer id, @RequestBody @Valid ItemDTO item) {
+    public WebResult<Void> update(@PathVariable Integer id,
+                                  @RequestBody @Valid ItemDTO item) {
         WebCtx.requireAdmin();
         item.setId(id);
         itemService.update(item);

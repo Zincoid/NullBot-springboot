@@ -38,10 +38,8 @@ public class FileController {
     }
 
     @GetMapping("/search")
-    public WebResult<List<FilePO>> search(
-            String keyword,
-            String directory
-    ) {
+    public WebResult<List<FilePO>> search(String keyword,
+                                          String directory) {
         Integer userType = WebCtx.getType();
         List<FilePO> fileList = fileService
                 .search(keyword, directory, userType == 0);
@@ -49,10 +47,8 @@ public class FileController {
     }
 
     @PostMapping
-    public WebResult<Void> upload(
-            MultipartFile file,
-            @RequestParam(defaultValue = "/") String directory
-    ) {
+    public WebResult<Void> upload(MultipartFile file,
+                                  @RequestParam(defaultValue = "/") String directory) {
         WebCtx.requireAdmin();
         Long userId = WebCtx.getId();
         fileService.upload(file, directory, userId);
@@ -60,19 +56,15 @@ public class FileController {
     }
 
     @GetMapping("/{id}/download")
-    public void download(
-            @PathVariable Integer id,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
+    public void download(@PathVariable Integer id,
+                         HttpServletRequest request,
+                         HttpServletResponse response) {
         fileService.download(id, request, response);
     }
 
     @PostMapping("/dir")
-    public WebResult<Void> mkdir(
-            @RequestParam String directory,
-            @RequestParam String name
-    ) {
+    public WebResult<Void> mkdir(@RequestParam String directory,
+                                 @RequestParam String name) {
         WebCtx.requireAdmin();
         Long userId = WebCtx.getId();
         fileService.mkdir(directory, name, userId);
@@ -87,30 +79,24 @@ public class FileController {
     }
 
     @PutMapping("/{id}/name")
-    public WebResult<Void> rename(
-            @PathVariable Integer id,
-            @RequestParam String filename
-    ) {
+    public WebResult<Void> rename(@PathVariable Integer id,
+                                  @RequestParam String filename) {
         WebCtx.requireAdmin();
         fileService.rename(id, filename);
         return WebResult.success("重命名成功");
     }
 
     @PutMapping("/{id}/directory")
-    public WebResult<Void> move(
-            @PathVariable Integer id,
-            @RequestParam String directory
-    ) {
+    public WebResult<Void> move(@PathVariable Integer id,
+                                @RequestParam String directory) {
         WebCtx.requireAdmin();
         fileService.move(id, directory);
         return WebResult.success("移动成功");
     }
 
     @PutMapping("/{id}/visible")
-    public WebResult<Void> visualize(
-            @PathVariable Integer id,
-            @RequestParam Boolean flag
-    ) {
+    public WebResult<Void> visualize(@PathVariable Integer id,
+                                     @RequestParam Boolean flag) {
         WebCtx.requireAdmin();
         fileService.visualize(id, flag);
         return WebResult.success("设置成功");

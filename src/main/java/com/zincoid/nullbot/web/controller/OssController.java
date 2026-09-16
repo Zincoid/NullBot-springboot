@@ -16,19 +16,15 @@ public class OssController {
     private final OssService ossService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> resource(
-            HttpServletRequest request,
-            @PathVariable Integer id
-    ) {
+    public ResponseEntity<?> resource(HttpServletRequest request,
+                                      @PathVariable Integer id) {
         log.info("◎ [OssController] id: {}", id);
         return ossService.getResourceById(request, id);
     }
 
     @GetMapping("/to/{*path}")
-    public ResponseEntity<?> resource(
-            HttpServletRequest request,
-            @PathVariable String path
-    ) {
+    public ResponseEntity<?> resource(HttpServletRequest request,
+                                      @PathVariable String path) {
         log.info("◎ [OssController] path: {}", path);
         return ossService.getResourceByPath(request, path);
     }

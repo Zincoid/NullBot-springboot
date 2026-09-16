@@ -33,7 +33,8 @@ public class InventoryController {
     }
 
     @PostMapping
-    public WebResult<Void> add(@RequestParam Long userId, @RequestParam Integer itemId) {
+    public WebResult<Void> add(@RequestParam Long userId,
+                               @RequestParam Integer itemId) {
         WebCtx.requireAdmin();
         inventoryService.increase(userId, itemId);
         return WebResult.success("增加成功");
@@ -47,7 +48,8 @@ public class InventoryController {
     }
 
     @PutMapping("/{id}")
-    public WebResult<Void> update(@PathVariable Integer id, @RequestBody @Valid InventoryDTO inventory) {
+    public WebResult<Void> update(@PathVariable Integer id,
+                                  @RequestBody @Valid InventoryDTO inventory) {
         WebCtx.requireAdmin();
         inventory.setId(id);
         inventoryService.update(inventory);

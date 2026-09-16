@@ -17,11 +17,6 @@ public class Invoker {
 
     private final ApplicationContext applicationContext;
 
-    // public String test() { return "test-non"; }
-    // public String test(int a) { return "test-int " + a; }
-    // public String test(int a, int b) { return "test-int-plus " + (a + b); }
-    // public String test(double a, double b) { return "test-double-plus" + (a + b); }
-
     public Object invokeSpringMethod(String beanName, String methodName,
                                      Object... args) throws Exception {
         // 从 Spring 容器获取 Bean

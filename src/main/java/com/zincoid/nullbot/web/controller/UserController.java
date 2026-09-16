@@ -46,7 +46,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public WebResult<Void> update(@PathVariable Long id, @RequestBody @Valid UserDTO user) {
+    public WebResult<Void> update(@PathVariable Long id,
+                                  @RequestBody @Valid UserDTO user) {
         WebCtx.requireAdmin();
         user.setId(id);
         userService.update(user);

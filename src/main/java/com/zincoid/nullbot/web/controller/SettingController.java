@@ -45,7 +45,8 @@ public class SettingController {
     }
 
     @PutMapping("/{groupId}")
-    public WebResult<Void> set(@PathVariable Long groupId, @RequestBody @Valid SettingDTO setting) {
+    public WebResult<Void> set(@PathVariable Long groupId,
+                               @RequestBody @Valid SettingDTO setting) {
         WebCtx.requireAdmin();
         setting.setGroupId(groupId);
         ChatScope oldScope = settingService.get(groupId).getChatScope();
