@@ -2,11 +2,13 @@ package com.zincoid.nullbot.web.controller;
 
 import com.zincoid.nullbot.core.module.ai.chat.client.impl.QQChatClient;
 import com.zincoid.nullbot.core.enums.setting.ChatScope;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
-import com.zincoid.nullbot.core.module.control.CmdRateLimiter;
+import com.zincoid.nullbot.core.model.data.dto.SettingDTO;
 import com.zincoid.nullbot.core.model.data.po.SettingPO;
 import com.zincoid.nullbot.core.model.result.WebResult;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import com.zincoid.nullbot.core.module.control.CmdRateLimiter;
 import com.zincoid.nullbot.core.service.system.SettingService;
 import com.zincoid.nullbot.core.utils.CsvUtil;
 import org.springframework.context.annotation.Lazy;
@@ -43,8 +45,9 @@ public class SettingController {
     }
 
     @PutMapping("/set")
-    public WebResult<Void> set(@RequestBody SettingPO setting) {
-        Long groupId = setting.getGroupId();
+    public WebResult<Void> set(@RequestBody @Valid SettingDTO settingDto) {
+        Long groupId = settingDto.getGroupId();
+        SettingPO setting = settingDto.toPo();
         ChatScope oldScope = settingService.get(groupId).getChatScope();
         if (settingService.set(setting)) {
             if (oldScope != ChatScope.PERSONAL)
