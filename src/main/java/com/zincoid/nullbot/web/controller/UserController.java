@@ -1,6 +1,7 @@
 package com.zincoid.nullbot.web.controller;
 
 import com.zincoid.nullbot.core.model.data.dto.UserDTO;
+import com.zincoid.nullbot.core.context.WebCtx;
 import com.zincoid.nullbot.core.model.data.query.UserQuery;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -19,14 +20,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
-@RequestMapping("/nullbot/user")
+@RequestMapping("/nullbot/users")
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/list")
+    @GetMapping
     public WebResult<List<UserPO>> getList() {
         return WebResult.success("查询成功", userService.list());
     }
@@ -37,26 +38,31 @@ public class UserController {
         return WebResult.success("查询成功", userPage);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public WebResult<Void> delete(@PathVariable Long id) {
+        WebCtx.requireAdmin();
         userService.delete(id);
         return WebResult.success("删除成功");
     }
 
-    @PutMapping("/update")
-    public WebResult<Void> update(@RequestBody @Valid UserDTO user) {
+    @PutMapping("/{id}")
+    public WebResult<Void> update(@PathVariable Long id, @RequestBody @Valid UserDTO user) {
+        WebCtx.requireAdmin();
+        user.setId(id);
         userService.update(user);
         return WebResult.success("更新成功");
     }
 
-    @GetMapping("/exportCsv")
+    @GetMapping("/export")
     public void exportCsv(HttpServletResponse response) throws IOException {
+        WebCtx.requireAdmin();
         List<UserPO> users = userService.list();
         CsvUtil.exportCsv(response, "Users_" + LocalDateTime.now(), users, UserPO.class);
     }
 
-    @PostMapping("/importCsv")
+    @PostMapping("/import")
     public void importCsv(@RequestParam("file") MultipartFile csvFile) throws IOException {
+        WebCtx.requireAdmin();
         List<UserPO> users = CsvUtil.importCsv(csvFile, UserPO.class);
         userService.saveBatch(users);
     }
