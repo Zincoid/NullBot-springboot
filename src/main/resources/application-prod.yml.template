@@ -33,9 +33,9 @@ nullbot:
   # ─── 网页 ─────────── #
   web:
     jwt:                                              ## 可选: Jwt 密钥
-      location: classpath:secret/JwtSignKey.jks       # jks 密钥路径
-      alias:                                          # jks 密钥别名
-      password:                                       # jks 密钥密码
+      # location: classpath:secret/JwtSignKey.jks     # jks 密钥路径
+      # alias:                                        # jks 密钥别名
+      # password:                                     # jks 密钥密码
       ttl: 24h                                        # jwt 生存时间
 
   # ─── 文件 ─────────── #
