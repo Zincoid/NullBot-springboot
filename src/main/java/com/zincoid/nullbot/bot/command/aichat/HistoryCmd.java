@@ -70,7 +70,7 @@ public class HistoryCmd implements Cmd {
     }
 
     private void sendInfo(Bot bot, Long groupId, Message message) {
-        if (message instanceof QQMessage q) {
+        if (message instanceof QQMessage q && !q.getImages().isEmpty()) {
             MsgUtils builder = MsgUtils.builder().text("消息含图片: ");
             for (String data : q.getImages())
                 builder.img("base64://" + data.substring(data.indexOf(',') + 1));
