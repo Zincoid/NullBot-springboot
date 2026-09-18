@@ -9,10 +9,15 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "chrome")
 public class ChromeProperties {
 
-    private Boolean driverAuto;
-    private String driverPath;
+    private Driver driver;
     private Instance instance;
     private Capture capture;
+
+    @Data
+    public static class Driver {
+        private Boolean auto;
+        private String path;
+    }
 
     @Data
     public static class Instance {

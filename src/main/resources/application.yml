@@ -135,8 +135,9 @@ trace:
     api-key: ${nullbot.saucenao.api-key}
 
 chrome:
-  driver-auto: ${nullbot.chrome.driver.auto:true}
-  driver-path: ${nullbot.chrome.driver.path}
+  driver:
+    auto: ${nullbot.chrome.driver.auto:true}
+    path: ${nullbot.chrome.driver.path}
   instance:
     max-concurrent: 1
     queue-timeout: 60

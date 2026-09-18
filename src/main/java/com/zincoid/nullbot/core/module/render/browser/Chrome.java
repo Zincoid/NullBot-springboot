@@ -52,11 +52,11 @@ public class Chrome {
         }
         WebDriver driver;
         try {
-            if (chromeProperties.getDriverAuto()) {
+            if (chromeProperties.getDriver().getAuto()) {
                 WebDriverManager.chromedriver().setup();
             } else {
                 System.setProperty("webdriver.chrome.driver",
-                        chromeProperties.getDriverPath());
+                        chromeProperties.getDriver().getPath());
             }
             ChromeOptions options = new ChromeOptions();
             options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
