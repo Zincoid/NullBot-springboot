@@ -137,6 +137,9 @@ trace:
 chrome:
   driver-auto: ${nullbot.chrome.driver.auto:true}
   driver-path: ${nullbot.chrome.driver.path}
+  max-concurrent: 1
+  queue-timeout: 60
+  live-timeout: 120
   max-retries: 5
   load-timeout: 20
   ready-timeout: 20

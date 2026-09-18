@@ -11,7 +11,10 @@ public class ChromeProperties {
 
     private Boolean driverAuto;
     private String driverPath;
+    private int maxConcurrent;
+    private int queueTimeout;
+    private int liveTimeout;
     private int maxRetries;
-    private long loadTimeout;
-    private long readyTimeout;
+    private int loadTimeout;
+    private int readyTimeout;
 }

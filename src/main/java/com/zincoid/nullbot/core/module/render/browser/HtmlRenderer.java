@@ -86,7 +86,7 @@ public class HtmlRenderer {
                     return chrome.capture(driver, cssSelector);
                 } finally {
                     if (tmp != null) Files.deleteIfExists(tmp);
-                    if (driver != null) driver.quit();
+                    if (driver != null) chrome.destroy(driver);
                 }
             } catch (Exception e) {
                 throw new RuntimeException("HtmlRenderer: 渲染时出错", e);

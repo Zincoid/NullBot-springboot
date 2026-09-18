@@ -101,7 +101,7 @@ public class WebCapturer {
                     return chrome.capture(driver, targets.toArray(String[]::new));
                 });
             } finally {
-                driver.quit();
+                chrome.destroy(driver);
             }
         }
     }
