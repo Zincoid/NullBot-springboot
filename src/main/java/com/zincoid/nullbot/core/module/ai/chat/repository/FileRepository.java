@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
@@ -45,8 +46,8 @@ public class FileRepository implements Repository {
         Path file = getFile(chatId);
         List<Message> messages = new ArrayList<>();
         if (!Files.exists(file)) return messages;
-        try {
-            for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
+        try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+            for (String line; (line = reader.readLine()) != null; ) {
                 if (line.isBlank()) continue;
                 try {
                     messages.add(objectMapper.readValue(line, MessageSnap.class).toMessage());
@@ -63,13 +64,13 @@ public class FileRepository implements Repository {
     @Override
     public void update(String chatId, List<Message> messages) {
         try {
-            StringBuilder payload = new StringBuilder();
-            for (Message message : messages)
-                payload.append(objectMapper.writeValueAsString(MessageSnap.of(message))).append('\n');
             Files.createDirectories(getDir());
             Path file = getFile(chatId);
             Path temp = file.resolveSibling(file.getFileName() + ".tmp");
-            Files.writeString(temp, payload.toString(), StandardCharsets.UTF_8);
+            try (var writer = Files.newBufferedWriter(temp, StandardCharsets.UTF_8)) {
+                for (Message message : messages)
+                    writer.write(objectMapper.writeValueAsString(MessageSnap.of(message)) + '\n');
+            }
             Files.move(temp, file, StandardCopyOption.REPLACE_EXISTING);
         } catch (JsonProcessingException e) {
             log.error("▽ [FileRepository] 序列化失败 - chatId: {}", chatId, e);

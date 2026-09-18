@@ -22,7 +22,7 @@ public final class ImgUtil {
 
     private ImgUtil() {}
 
-    private static final long CACHE_MAX_BYTES = 128L * 1024 * 1024;  // 128 MB 图缓存
+    private static final long CACHE_MAX_BYTES = 64L * 1024 * 1024;  // 64 MB 图缓存
     private static final Map<String, String> CACHE = new LinkedHashMap<>(128, 0.75f, true);
     private static long cacheBytes = 0;
 
@@ -92,8 +92,8 @@ public final class ImgUtil {
 
     // ══════ 图片压缩 ══════
 
-    private static final int COMPRESS_THRESHOLD = 900 * 1024;
-    private static final int MAX_WIDTH = 2000;
+    private static final int COMPRESS_THRESHOLD = 512 * 1024;
+    private static final int MAX_WIDTH = 1024;
 
     public static String compressDataUri(String dataUri) {
         int head = dataUri.indexOf(',');
