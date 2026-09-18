@@ -4,11 +4,9 @@ import com.zincoid.nullbot.core.exception.CoreException;
 import com.zincoid.nullbot.core.properties.render.ChromeProperties;
 import com.zincoid.nullbot.core.utils.Base64Util;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
@@ -17,7 +15,6 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -35,7 +32,7 @@ public class Chrome {
 
     public Chrome(ChromeProperties chromeProperties) {
         this.chromeProperties = chromeProperties;
-        this.semaphore = new Semaphore(Math.max(1, chromeProperties.getMaxConcurrent()));
+        this.semaphore = new Semaphore(Math.max(1, chromeProperties.getInstance().getMaxConcurrent()));
         this.active = ConcurrentHashMap.newKeySet();
         this.watchdog = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread thread = new Thread(r, "chrome-watcher");
@@ -46,7 +43,7 @@ public class Chrome {
 
     public WebDriver create(String windowSize) {
         try {
-            if (!semaphore.tryAcquire(chromeProperties.getQueueTimeout(),
+            if (!semaphore.tryAcquire(chromeProperties.getInstance().getQueueTimeout(),
                     TimeUnit.SECONDS))
                 throw new CoreException("WebDriver 等待超时");
         } catch (InterruptedException e) {
@@ -80,7 +77,8 @@ public class Chrome {
         }
         driver.manage()
                 .timeouts()
-                .pageLoadTimeout(Duration.ofSeconds(chromeProperties.getLoadTimeout()));
+                .pageLoadTimeout(Duration.ofSeconds(
+                        chromeProperties.getInstance().getLoadTimeout()));
         active.add(driver);
         watchdog.schedule(
                 () -> {
@@ -89,7 +87,7 @@ public class Chrome {
                             destroy(driver);
                     } catch (Exception ignored) {}
                 },
-                Math.max(1, chromeProperties.getLiveTimeout()),
+                Math.max(1, chromeProperties.getInstance().getLiveTimeout()),
                 TimeUnit.SECONDS
         );
         return driver;
@@ -104,15 +102,6 @@ public class Chrome {
         } finally {
             if (owned) semaphore.release();
         }
-    }
-
-    public void ready(WebDriver driver) {
-        new WebDriverWait(driver, Duration.ofSeconds(chromeProperties.getReadyTimeout()))
-                .until(d ->
-                        Objects.equals(
-                                ((JavascriptExecutor) d).executeScript("return document.readyState"),
-                                "complete"
-                        ));
     }
 
     public String capture(WebDriver driver, String... cssSelectors) {

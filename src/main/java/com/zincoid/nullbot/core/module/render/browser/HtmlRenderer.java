@@ -31,7 +31,7 @@ public class HtmlRenderer {
     private final Chrome chrome;
     private final ResourceLoader resourceLoader;
 
-    public Template load(String resourcePath) {  // 载入模板
+    public Template load(String resourcePath) {
         try {
             return new Template(Files.readString(
                     resourceLoader.getCache(resourcePath)));
@@ -82,7 +82,6 @@ public class HtmlRenderer {
                     tmp = Files.createTempFile("render-", ".html");
                     Files.writeString(tmp, resolved);
                     driver.get("file://" + tmp.toAbsolutePath());
-                    chrome.ready(driver);
                     return chrome.capture(driver, cssSelector);
                 } finally {
                     if (tmp != null) Files.deleteIfExists(tmp);

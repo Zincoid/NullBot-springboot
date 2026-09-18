@@ -11,10 +11,19 @@ public class ChromeProperties {
 
     private Boolean driverAuto;
     private String driverPath;
-    private int maxConcurrent;
-    private int queueTimeout;
-    private int liveTimeout;
-    private int maxRetries;
-    private int loadTimeout;
-    private int readyTimeout;
+    private Instance instance;
+    private Capture capture;
+
+    @Data
+    public static class Instance {
+        private int maxConcurrent;
+        private int queueTimeout;
+        private int liveTimeout;
+        private int loadTimeout;
+    }
+
+    @Data
+    public static class Capture {
+        private int maxRetries;
+    }
 }

@@ -1,5 +1,7 @@
 package com.zincoid.nullbot.core.module.render.browser;
 
+import com.zincoid.nullbot.core.exception.CoreException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.zincoid.nullbot.core.properties.render.ChromeProperties;
 import org.openqa.selenium.*;
@@ -15,15 +17,11 @@ import java.util.function.Supplier;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class WebCapturer {
 
     private final Chrome chrome;
-    private final int maxRetries;
-
-    public WebCapturer(Chrome chrome, ChromeProperties props) {
-        this.chrome = chrome;
-        this.maxRetries = props.getMaxRetries();
-    }
+    private final ChromeProperties chromeProperties;
 
     // ══════ 链式入口 ══════
 
@@ -94,7 +92,6 @@ public class WebCapturer {
                 return withRetry(() -> {
                     driver.get(url);
                     driver.manage().window().setSize(new Dimension(width, height));
-                    chrome.ready(driver);
                     for (Consumer<WebDriver> step : steps) step.accept(driver);
                     if (targets.isEmpty())
                         return chrome.capture(driver);
@@ -109,14 +106,15 @@ public class WebCapturer {
     // ══════ 工具方法 ══════
 
     private String withRetry(Supplier<String> action) {
+        int maxRetries = chromeProperties.getCapture().getMaxRetries();
         for (int i = 0; i < maxRetries; i++) {
             try {
                 return action.get();
             } catch (TimeoutException e) {
-                log.info("▽ [WebCapturer] 页面访问超时: {} Times", i + 1);
+                log.warn("▽ [WebCapturer] 页面访问超时: {}", i + 1);
             }
         }
-        throw new RuntimeException("网页访问失败");
+        throw new CoreException("网页访问失败");
     }
 
     private void doWaitFor(WebDriver driver, String css) {
