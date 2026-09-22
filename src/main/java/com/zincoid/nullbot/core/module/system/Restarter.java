@@ -11,7 +11,7 @@ import java.io.*;
 public class Restarter {
 
     private static final String SCREEN_SESSION_NAME = "nullbot";
-    private static final String DEFAULT_JAR_PATH = "/root/Nullbot/target/NullBot-springboot-2.0.0-SNAPSHOT.jar";
+    private static final String DEFAULT_JAR_PATH = "/root/Nullbot/target/NullBot-springboot-2.2.5-SNAPSHOT.jar";
     private static final String JAVA_BIN = "java";
 
     public void restart() {

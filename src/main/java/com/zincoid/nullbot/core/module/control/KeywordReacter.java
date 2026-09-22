@@ -28,8 +28,10 @@ public class KeywordReacter {
     public void init() {
         register("男娘", "Reply 哪有男娘？");
         register("受着", "UserBan {userId} 1");
+        register("闹麻", "UserBan {userId} 1");
         // register("男娘", "Reply", List.of("哪有男娘？"));
         // register("受着", "UserBan", List.of("{userId}", "1"));
+        // register("闹麻", "UserBan", List.of("{userId}", "1"));
         log.info("▽ [KeywordReacter] 默认关键字已注册 - {}", handlers.keySet());
     }
 
