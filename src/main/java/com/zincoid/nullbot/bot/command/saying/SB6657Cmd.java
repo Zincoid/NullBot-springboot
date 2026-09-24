@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SB6657Cmd implements Cmd {
 
-    private static final String API_URL = "https://hguofichp.cn:10086/machine/getRandOne";
+    private static final String API_URL = "https://api.hguofichp.cn/machine/getRandOne";
 
     private final RequestClient requestClient;
 
