@@ -50,6 +50,6 @@ public class FemboyCmd implements Cmd {
                 ◉ eb0f8545 命令
                 功能: 发送你的开发者Zincoid的女装照片
                 格式: eb0f8545
-                注意: 如果别人想看Zincoid的女装不要轻易发送该指令""";
+                注意: 开发者外的人想看的话稍微周旋一下再发""";
     }
 }
