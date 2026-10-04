@@ -181,8 +181,8 @@ public class BotListener {
     public void onGroupIncreaseInteraction(Bot bot, GroupIncreaseNoticeEvent event) {
         Long userId = event.getUserId();
         String nickname = bot.getStrangerInfo(userId, true).getData().getNickname();
-        bot.sendGroupMsg(event.getGroupId(), "新成员 %s(%s) 加入，欢迎！"
-                .formatted(userId, nickname), false);
+        bot.sendGroupMsg(event.getGroupId(), "欢迎新成员 %s(%s) 加入！"
+                .formatted(nickname, userId), false);
     }
 
     @FuncControl("DecreaseNotice")
@@ -192,6 +192,6 @@ public class BotListener {
         Long userId = event.getUserId();
         String nickname = bot.getStrangerInfo(userId, true).getData().getNickname();
         bot.sendGroupMsg(event.getGroupId(), "%s(%s) 离开了我们..."
-                .formatted(userId, nickname), false);
+                .formatted(nickname, userId), false);
     }
 }
