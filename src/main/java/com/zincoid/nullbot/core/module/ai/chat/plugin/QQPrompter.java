@@ -1,11 +1,13 @@
 package com.zincoid.nullbot.core.module.ai.chat.plugin;
 
 import com.zincoid.nullbot.bot.gateway.processor.CmdRegistry;
+import com.zincoid.nullbot.core.enums.setting.ChatStrategy;
 import com.zincoid.nullbot.core.module.control.SysMsgManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -13,10 +15,11 @@ public class QQPrompter {
 
     private static final String BASE_PM_PROMPT;
     private static final String BASE_GC_PROMPT;
-
     private static final String CQ_PROMPT;
-    private static final String CMD_PROMPT;
     private static final String MEMORY_PROMPT;
+
+    private static final String EMBEDDING_PROMPT;
+    private static final String TOOLS_PROMPT;
 
     private static final String VISION_ON_PROMPT;
     private static final String VISION_OFF_PROMPT;
@@ -25,25 +28,26 @@ public class QQPrompter {
     private final CmdRegistry cmdRegistry;
 
     static {
-
         BASE_PM_PROMPT = """
                 你在一个私聊中接收对话，用户消息开头带有消息ID和用户标识，格式为[MessageId][Username(UserId)]。
                 回复消息时不要带以上格式化标识。尽量少用换行符，不要用emoji。禁止讨论中国国内政治事件和人物相关问题。
                 你可以在回复内容中嵌入 <discard /> 来放弃回复保持静默，此时回复内容不会被发送。
                 """;
-
         BASE_GC_PROMPT = """
                 你在一个群聊中接收对话，用户消息开头带有消息ID和用户标识，格式为[MessageId][Username(UserId)]。
                 你需要优先响应@你的消息。回复消息时不要带以上格式化标识。尽量少用换行符，不要用emoji。禁止讨论中国国内政治事件和人物相关问题。
                 你可以在回复内容中嵌入 <discard /> 来放弃回复/保持静默，此时回复内容不会被发送。
                 """;
-
         CQ_PROMPT = """
                 你可以通过在回复内容前紧跟[CQ:reply,id=消息ID]来引用指定消息，仅在需强调回复某消息时使用，例如：[CQ:reply,id=1234567890]你好。
                 你可以在回复中嵌入[CQ:at,qq=用户ID]来@别人，例如：[CQ:at,qq=2660181154]你好。
                 """;
+        MEMORY_PROMPT = """
+                现有长时记忆如下：
+                %s
+                """;
 
-        CMD_PROMPT = """
+        EMBEDDING_PROMPT = """
                 你可以使用 <cmd>指令</cmd> 在回复中嵌入指令进行各种操作。
                 被指令分隔的消息会以多条消息形式发送。
                 如果你想分开发送消息也可以使用空指令 <cmd></cmd> 来分割。
@@ -62,51 +66,53 @@ public class QQPrompter {
                 - 不推荐在单消息内针对多个人的消息进行回复；
                 - 不必要的时候不要经常发指令，回复指令时要说些什么。
                 """;
-
-        MEMORY_PROMPT = """
-                现有长时记忆如下：
-                %s
+        TOOLS_PROMPT = """
+                你可以通过调用工具来进行各种操作，需要时可自行调用合适的工具。
                 """;
 
         VISION_ON_PROMPT = """
                 当前已启用视觉模式，用户消息可能附带图片，图片会紧跟在消息文本之后，你可以描述或引用图片内容。
                 """;
-
         VISION_OFF_PROMPT = """
                 当前未启用视觉模式，你无法查看用户发送的图片，可提醒用户开启视觉模式后重新发送。
                 """;
-
     }
 
     // ══════ 生成方法 ══════
 
-    public String user(Long userId, boolean cq, boolean cmd, boolean vision) {
+    public String user(Long userId, ChatStrategy strategy, boolean cq, boolean vision) {
         StringBuilder sb = new StringBuilder();
         sb.append(sysMsgManager.getUserMessage(userId));
         sb.append(BASE_PM_PROMPT);
         sb.append(vision ? VISION_ON_PROMPT : VISION_OFF_PROMPT);
         if (cq) sb.append(CQ_PROMPT);
-        if (cmd) sb.append(CMD_PROMPT.formatted(
-                cmdRegistry.getCmdAIDoc(QQCmdAllows.getPm())));
+        sb.append(strategyPrompt(strategy, QQCmdAllows.getPm()));
         sb.append(MEMORY_PROMPT.formatted(
                 formatMemories(sysMsgManager.getUserMemory(userId))));
         return sb.toString();
     }
 
-    public String group(Long groupId, boolean cq, boolean cmd, boolean vision) {
+    public String group(Long groupId, ChatStrategy strategy, boolean cq, boolean vision) {
         StringBuilder sb = new StringBuilder();
         sb.append(sysMsgManager.getGroupMessage(groupId));
         sb.append(BASE_GC_PROMPT);
         sb.append(vision ? VISION_ON_PROMPT : VISION_OFF_PROMPT);
         if (cq) sb.append(CQ_PROMPT);
-        if (cmd) sb.append(CMD_PROMPT.formatted(
-                cmdRegistry.getCmdAIDoc(QQCmdAllows.getGc())));
+        sb.append(strategyPrompt(strategy, QQCmdAllows.getGc()));
         sb.append(MEMORY_PROMPT.formatted(
                 formatMemories(sysMsgManager.getGroupMemory(groupId))));
         return sb.toString();
     }
 
     // ══════ 工具方法 ══════
+
+    private String strategyPrompt(ChatStrategy strategy, Set<String> cmds) {
+        return switch (strategy) {
+            case EMBEDDING -> EMBEDDING_PROMPT.formatted(cmdRegistry.getCmdAIDoc(cmds));
+            case TOOLS -> TOOLS_PROMPT;
+            case DIRECT -> "";
+        };
+    }
 
     private String formatMemories(List<String> memories) {
         if (memories == null || memories.isEmpty())

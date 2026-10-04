@@ -157,8 +157,8 @@ public class QQChatClient implements Client<QQMessage> {
         boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
         boolean vision = !message.isPrivate() && BotCtx.getSetting().isVision();
         String prompt = message.isPrivate()
-                ? qqPrompter.user(message.getUserId(), !voice, false, vision)
-                : qqPrompter.group(message.getGroupId(), !voice, false, vision);
+                ? qqPrompter.user(message.getUserId(), ChatStrategy.DIRECT, !voice, vision)
+                : qqPrompter.group(message.getGroupId(), ChatStrategy.DIRECT, !voice, vision);
         QQMessage _message = plainCall(prompt, message, thinking, vision, maxTokens);
         memory.add(BotCtx.getChatId(), qqMsgExecutor.direct(_message, voice));
         return _message;
@@ -171,8 +171,8 @@ public class QQChatClient implements Client<QQMessage> {
         boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
         boolean vision = !message.isPrivate() && BotCtx.getSetting().isVision();
         String prompt = message.isPrivate()
-                ? qqPrompter.user(message.getUserId(), !voice, true, vision)
-                : qqPrompter.group(message.getGroupId(), !voice, true, vision);
+                ? qqPrompter.user(message.getUserId(), ChatStrategy.EMBEDDING, !voice, vision)
+                : qqPrompter.group(message.getGroupId(), ChatStrategy.EMBEDDING, !voice, vision);
         QQMessage _message = plainCall(prompt, message, thinking, vision, maxTokens);
         List<QQMessage> messages = qqMsgExecutor.chain(_message, voice);
         for (QQMessage msg : messages) memory.add(BotCtx.getChatId(), msg);
@@ -186,8 +186,8 @@ public class QQChatClient implements Client<QQMessage> {
         boolean voice = !message.isPrivate() && BotCtx.getSetting().isVoice();
         boolean vision = !message.isPrivate() && BotCtx.getSetting().isVision();
         String prompt = message.isPrivate()
-                ? qqPrompter.user(message.getUserId(), !voice, false, vision)
-                : qqPrompter.group(message.getGroupId(), !voice, false, vision);
+                ? qqPrompter.user(message.getUserId(), ChatStrategy.TOOLS, !voice, vision)
+                : qqPrompter.group(message.getGroupId(), ChatStrategy.TOOLS, !voice, vision);
         return callAndStoreWithTools(prompt, message, thinking, vision, voice);
     }
 
