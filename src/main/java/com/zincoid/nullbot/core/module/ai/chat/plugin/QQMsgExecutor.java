@@ -30,18 +30,23 @@ public class QQMsgExecutor {
     private final ApplicationEventPublisher eventPublisher;
     private final TtsClient ttsClient;
 
-    private static final Pattern SEGMENT_PATTERN;
+    private static final Pattern SPLIT_PATTERN;
+    private static final Pattern CMD_PATTERN;
     private static final Pattern NEWLINE_PATTERN;
     private static final List<Pattern> FILTERED_PATTERNS;
 
     static {
-        SEGMENT_PATTERN = Pattern.compile("(<cmd>.*?</cmd>|(?:(?!<cmd>).)+)", Pattern.DOTALL);
+        SPLIT_PATTERN = Pattern.compile("<split\\s*/>");
+        CMD_PATTERN = Pattern.compile("<cmd>(.*?)</cmd>", Pattern.DOTALL);
         NEWLINE_PATTERN = Pattern.compile("(\r?\n)+");
 
-        FILTERED_PATTERNS = new ArrayList<>();
-        Set<String> allCmds = QQCmdAllows.getAll().stream().map(Pattern::quote).collect(Collectors.toSet());
-        FILTERED_PATTERNS.add(Pattern.compile("(?<!<cmd>)\\b(" + String.join("|", allCmds) + ")\\b(?!</cmd>)"));
-        FILTERED_PATTERNS.add(Pattern.compile("\\[\\d+]\\[.+?\\(\\d+\\)]:"));
+        FILTERED_PATTERNS = new ArrayList<>() {{
+            add(Pattern.compile("\\[\\d+]\\[.+?\\(\\d+\\)]:"));
+            add(Pattern.compile(
+                    "(?<!<cmd>)\\b("
+                            + String.join("|", QQCmdAllows.getAll().stream().map(Pattern::quote).collect(Collectors.toSet()))
+                            + ")\\b(?!</cmd>)"));
+        }};
     }
 
     // ══════ 执行方法 ══════
@@ -76,22 +81,29 @@ public class QQMsgExecutor {
             return List.of(QQMessage.assistant("回复被过滤").id(messageId));
         }
         content = NEWLINE_PATTERN.matcher(content).replaceAll("\n").trim();
-        Matcher matcher = SEGMENT_PATTERN.matcher(content);
         List<QQMessage> messages = new ArrayList<>();
-        while (matcher.find()) {
-            String segment = matcher.group(1).trim();
-            if (segment.startsWith("<cmd>") && segment.endsWith("</cmd>")) {
-                String cmd = segment.substring(
-                        "<cmd>".length(), segment.length() - "</cmd>".length()).trim();
+        for (String block : SPLIT_PATTERN.split(content)) {
+            List<String> cmds = new ArrayList<>();
+            StringBuilder text = new StringBuilder();
+            Matcher matcher = CMD_PATTERN.matcher(block);
+            int last = 0;
+            while (matcher.find()) {
+                text.append(block, last, matcher.start());
+                cmds.add(matcher.group(1).trim());
+                last = matcher.end();
+            }
+            text.append(block, last, block.length());
+            for (String cmd : cmds) {
                 if (cmd.isEmpty()) continue;
                 try {
                     eventPublisher.publishEvent(CmdEvent.of(cmd));
                 } catch (Exception e) {
                     log.warn("  [QQMsgExecutor] 内嵌指令执行失败: {} - {}", cmd, e.getMessage());
                 }
-                messages.add(QQMessage.assistant(segment));
-            } else {
-                if (segment.isEmpty()) continue;
+                messages.add(QQMessage.assistant("<cmd>" + cmd + "</cmd>"));
+            }
+            String segment = text.toString().trim();
+            if (!segment.isEmpty()) {
                 Integer messageId = send(targetId, segment, isPrivate, voice);
                 messages.add(QQMessage.assistant(segment).id(messageId));
             }
@@ -102,7 +114,7 @@ public class QQMsgExecutor {
     // ══════ 工具方法 ══════
 
     private Integer send(Long targetId, String message, boolean isPrivate, boolean voice) {
-        return  isPrivate
+        return isPrivate
                 ? botOperator.sendPrivateMsg(targetId, voice ? voiced(message) : message)
                 : botOperator.sendGroupMsg(targetId, voice ? voiced(message) : message);
     }
