@@ -39,14 +39,10 @@ public class QQMsgExecutor {
         SPLIT_PATTERN = Pattern.compile("<split\\s*/>");
         CMD_PATTERN = Pattern.compile("<cmd>(.*?)</cmd>", Pattern.DOTALL);
         NEWLINE_PATTERN = Pattern.compile("(\r?\n)+");
-
-        FILTERED_PATTERNS = new ArrayList<>() {{
-            add(Pattern.compile("\\[\\d+]\\[.+?\\(\\d+\\)]:"));
-            add(Pattern.compile(
-                    "(?<!<cmd>)\\b("
-                            + String.join("|", QQCmdAllows.getAll().stream().map(Pattern::quote).collect(Collectors.toSet()))
-                            + ")\\b(?!</cmd>)"));
-        }};
+        FILTERED_PATTERNS = List.of(
+                Pattern.compile("\\[\\d+]\\[.+?\\(\\d+\\)]:"),  // MSG_HEADER_PATTERN
+                Pattern.compile("\\b(" + String.join("|", QQCmdAllows.getAll().stream().map(Pattern::quote).collect(Collectors.toSet())) + ")\\b")  // CMD_LEAK_PATTERN
+        );
     }
 
     // ══════ 执行方法 ══════
@@ -121,8 +117,9 @@ public class QQMsgExecutor {
 
     boolean filter(String message) {
         if (!MsgUtil.validateCq(message)) return true;
+        String plain = CMD_PATTERN.matcher(message).replaceAll("");
         for (Pattern pattern : FILTERED_PATTERNS)
-            if (pattern.matcher(message).find()) return true;
+            if (pattern.matcher(plain).find()) return true;
         return false;
     }
 
