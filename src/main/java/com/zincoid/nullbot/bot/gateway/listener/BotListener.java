@@ -5,6 +5,8 @@ import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
+import com.mikuac.shiro.dto.event.notice.GroupDecreaseNoticeEvent;
+import com.mikuac.shiro.dto.event.notice.GroupIncreaseNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.GroupMsgDeleteNoticeEvent;
 import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import com.mikuac.shiro.enums.AtEnum;
@@ -171,5 +173,25 @@ public class BotListener {
         if (!BotCtx.getSetting().isRecallDetect()) return;
         log.info("◉ [GroupAction:Recall] 群聊 {} -> {}", event.getGroupId(), event.getUserId());
         cmdProcessor.processQQ(bot, CmdEvent.of(event));
+    }
+
+    @FuncControl("IncreaseNotice")
+    @GroupIncreaseHandler
+    @Async("ThreadExecutor")
+    public void onGroupIncreaseInteraction(Bot bot, GroupIncreaseNoticeEvent event) {
+        Long userId = event.getUserId();
+        String nickname = bot.getStrangerInfo(userId, true).getData().getNickname();
+        bot.sendGroupMsg(event.getGroupId(), "新成员 %s(%s) 加入，欢迎！"
+                .formatted(userId, nickname), false);
+    }
+
+    @FuncControl("DecreaseNotice")
+    @GroupDecreaseHandler
+    @Async("ThreadExecutor")
+    public void onGroupDecreaseInteraction(Bot bot, GroupDecreaseNoticeEvent event) {
+        Long userId = event.getUserId();
+        String nickname = bot.getStrangerInfo(userId, true).getData().getNickname();
+        bot.sendGroupMsg(event.getGroupId(), "%s(%s) 离开了我们..."
+                .formatted(userId, nickname), false);
     }
 }

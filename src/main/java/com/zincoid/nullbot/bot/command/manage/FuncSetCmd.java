@@ -75,6 +75,8 @@ public class FuncSetCmd implements Cmd {
                 - RecallDetect     撤回检测
                 - PrivateCmd       私聊指令
                 - BottleAutoThrow  自动投瓶
+                - IncreaseNotice   入群通知
+                - DecreaseNotice   退群通知
                 
                 别名: 功能控制""", getAccess()
         );
