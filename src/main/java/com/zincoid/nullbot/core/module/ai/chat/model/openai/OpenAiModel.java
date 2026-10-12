@@ -7,6 +7,7 @@ import com.zincoid.nullbot.core.module.ai.chat.model.ModelReq;
 import com.zincoid.nullbot.core.module.ai.chat.model.ModelRes;
 import com.zincoid.nullbot.core.properties.ai.OpenAiProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -67,10 +68,10 @@ public class OpenAiModel implements Model {
     private RestClient getClient(OpenAiProperties.Provider provider) {
         return restClients.computeIfAbsent(provider.getName(), name ->
                 RestClient.builder()
-                        .defaultHeader("Authorization", "Bearer " + provider.getApiKey())
-                        .defaultHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                        .defaultHeader("Accept", MediaType.APPLICATION_JSON_VALUE)
-                        .defaultHeader("Accept-Encoding", "gzip, deflate")
+                        .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + provider.getApiKey())
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate")
                         // 禁用 br: DeepSeek API 返回的 brotli 在 HC5 下解压损坏
                         .build());
     }

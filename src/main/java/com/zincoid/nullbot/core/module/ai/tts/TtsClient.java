@@ -3,6 +3,7 @@ package com.zincoid.nullbot.core.module.ai.tts;
 import com.zincoid.nullbot.core.properties.ai.TtsProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -23,9 +24,9 @@ public class TtsClient {
     public TtsClient(TtsProperties ttsProperties) {
         this.ttsProperties = ttsProperties;
         this.restClient = RestClient.builder()
-                .defaultHeader("Authorization", "Bearer " + ttsProperties.getApiKey())
-                .defaultHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader("Accept", MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + ttsProperties.getApiKey())
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
         log.info("▽ [TtsClient] TTS客户端已初始化 - ModelName: {}", ttsProperties.getModelName());
     }
