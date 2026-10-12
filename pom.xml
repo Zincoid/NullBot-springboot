@@ -181,6 +181,12 @@
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
             <version>6.1.0</version>
+            <!--<exclusions>  &lt;!&ndash; 排除 brotli: 会导致解压流损坏 &ndash;&gt;-->
+            <!--    <exclusion>-->
+            <!--        <groupId>org.brotli</groupId>-->
+            <!--        <artifactId>dec</artifactId>-->
+            <!--    </exclusion>-->
+            <!--</exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>

@@ -70,6 +70,8 @@ public class OpenAiModel implements Model {
                         .defaultHeader("Authorization", "Bearer " + provider.getApiKey())
                         .defaultHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                         .defaultHeader("Accept", MediaType.APPLICATION_JSON_VALUE)
+                        .defaultHeader("Accept-Encoding", "gzip, deflate")
+                        // 禁用 br: DeepSeek API 返回的 brotli 在 HC5 下解压损坏
                         .build());
     }
 
