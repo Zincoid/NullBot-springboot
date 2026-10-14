@@ -191,7 +191,8 @@ public class BotListener {
     public void onGroupDecreaseInteraction(Bot bot, GroupDecreaseNoticeEvent event) {
         Long userId = event.getUserId();
         String nickname = bot.getStrangerInfo(userId, true).getData().getNickname();
-        bot.sendGroupMsg(event.getGroupId(), "%s(%s) 离开了我们..."
+        boolean isKick = "kick".equals(event.getSubType());
+        bot.sendGroupMsg(event.getGroupId(), isKick ? "%s(%s) 被驱逐了..." : "%s(%s) 离开了我们..."
                 .formatted(nickname, userId), false);
     }
 }
