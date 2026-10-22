@@ -31,7 +31,7 @@ NullBot 是一个基于 Spring Boot 和 Shiro 框架的 QQ 群聊机器人，支
 
 | 类别    | 技术                                                      |
 |-------|---------------------------------------------------------|
-| 语言    | Java 21                                                 |
+| 语言    | Java 27                                                 |
 | 框架    | Spring Boot 4.x                                         |
 | QQ 协议 | Shiro (com.mikuac:shiro) + NapCat/Shamrock WebSocket 桥接 |
 | ORM   | MyBatis-Plus                                            |
@@ -48,7 +48,7 @@ NullBot 是一个基于 Spring Boot 和 Shiro 框架的 QQ 群聊机器人，支
 
 ### 环境要求
 
-- JDK 21+
+- JDK 27+
 - Maven 3.8+
 - MySQL 8.0+
 - Chrome / ChromeDriver (使用渲染功能时需要)
